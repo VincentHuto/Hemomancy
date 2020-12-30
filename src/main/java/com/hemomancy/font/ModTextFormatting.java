@@ -17,8 +17,7 @@ public class ModTextFormatting {
 	 * @return
 	 */
 
-	public static Rarity SANGUINE = Rarity.create("Sanguine", TextFormatting.RED);
-
+	public static Rarity SANGUINE = Rarity.create("Sanguine", TextFormatting.DARK_RED);
 
 	@OnlyIn(Dist.CLIENT)
 	public static String stringToRedObf(String parString, int parShineLocation, boolean parReturnToBlack) {
@@ -46,7 +45,6 @@ public class ModTextFormatting {
 		return outputString + TextFormatting.WHITE;
 	}
 
-
 	/***
 	 * 
 	 * @param input a string to be formated
@@ -58,7 +56,7 @@ public class ModTextFormatting {
 		String culledString = input.replaceAll("_", " ");
 		input = culledString;
 		for (int i = 0; i < input.length(); i++) {
-	
+
 			if (i == 0) {
 				String temp = StringUtils.toUpperCase(String.valueOf(input.charAt(i)));
 				newString = newString + temp;
