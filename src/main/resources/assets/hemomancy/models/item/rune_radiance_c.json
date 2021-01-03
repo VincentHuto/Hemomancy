@@ -1,0 +1,6 @@
+{
+   "parent": "item/generated",
+   "textures": {
+       "layer0": "hemomancy:items/rune/rune_radiance_c"
+   }
+}
