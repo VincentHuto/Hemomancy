@@ -1,4 +1,4 @@
-package com.huto.hemomancy.registries;
+package com.huto.hemomancy.init;
 
 import java.util.ArrayList;
 import java.util.List;

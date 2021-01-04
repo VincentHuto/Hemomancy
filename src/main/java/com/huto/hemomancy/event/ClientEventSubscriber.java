@@ -7,8 +7,8 @@ import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
-import com.huto.hemomancy.registries.ContainerInit;
-import com.huto.hemomancy.registries.TileEntityInit;
+import com.huto.hemomancy.init.ContainerInit;
+import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 

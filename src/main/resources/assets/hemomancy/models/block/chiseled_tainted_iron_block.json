@@ -1,0 +1,6 @@
+{
+   "parent": "block/cube_all",
+   "textures": {
+       "all": "hemomancy:blocks/chiseled_tainted_iron_block"
+   }
+}

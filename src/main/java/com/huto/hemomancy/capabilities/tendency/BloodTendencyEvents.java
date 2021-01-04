@@ -6,13 +6,12 @@ import java.util.Map;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.font.ModTextFormatting;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.BloodTendencyPacketServer;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.registries.ItemInit;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,22 +43,22 @@ public class BloodTendencyEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerDevotion(player);
+		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
 				new BloodTendencyPacketServer(BloodTendency));
 		player.sendStatusMessage(
-				new StringTextComponent("Welcome! Current BloodTendency: " + TextFormatting.GOLD + BloodTendency),
+				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerDevotion(player);
+		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
 				new BloodTendencyPacketServer(BloodTendency));
 		player.sendStatusMessage(
-				new StringTextComponent("Welcome! Current BloodTendency: " + TextFormatting.GOLD + BloodTendency),
+				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
 	}
 
@@ -69,7 +68,7 @@ public class BloodTendencyEvents {
 				.orElseThrow(IllegalStateException::new);
 		IBloodTendency BloodTendencyNew = event.getEntity().getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(IllegalStateException::new);
-		BloodTendencyNew.setTendency(BloodTendencyOld.getDevotion());
+		BloodTendencyNew.setTendency(BloodTendencyOld.getTendency());
 	}
 
 	@SubscribeEvent
@@ -81,7 +80,7 @@ public class BloodTendencyEvents {
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-						new BloodTendencyPacketServer(tendency.getDevotion()));
+						new BloodTendencyPacketServer(tendency.getTendency()));
 			}
 		}
 	}
@@ -111,14 +110,14 @@ public class BloodTendencyEvents {
 					int centerY = (Minecraft.getInstance().getMainWindow().getScaledHeight() / 2) - 15;
 					double angleBetweenEach = 360.0 / EnumBloodTendency.values().length;
 					Point point = new Point(centerX - 34, centerY - 36), center = new Point(centerX, centerY);
-					for (int i = 0; i < tendency.getDevotion().keySet().size(); i++) {
-						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getDevotion().keySet()
+					for (int i = 0; i < tendency.getTendency().keySet().size(); i++) {
+						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getTendency().keySet()
 								.toArray()[i];
 						GlStateManager.pushMatrix();
 						fontRenderer.drawString(event.getMatrixStack(), ModTextFormatting.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
-								String.valueOf(tendency.getDevotionByTendency(selectedCoven)), point.x, point.y + 30,
+								String.valueOf(tendency.getTendencyByTendency(selectedCoven)), point.x, point.y + 30,
 								new Color(255, 0, 0, 255).getRGB());
 						GlStateManager.popMatrix();
 						/*
@@ -161,10 +160,10 @@ public class BloodTendencyEvents {
 				 * EquipmentSlotType.HEAD))
 				 * .containsKey(EnchantmentInit.influence_suppression.get()))) {}
 				 */
-				for (EnumBloodTendency tendencys : tendency.getDevotion().keySet()) {
-					if (tendency.getDevotionByTendency(tendencys) >= 10) {
-						float devoMult = (tendency.getDevotionByTendency(tendencys) / 3) < 250
-								? (tendency.getDevotionByTendency(tendencys) / 3)
+				for (EnumBloodTendency tendencys : tendency.getTendency().keySet()) {
+					if (tendency.getTendencyByTendency(tendencys) >= 10) {
+						float devoMult = (tendency.getTendencyByTendency(tendencys) / 3) < 250
+								? (tendency.getTendencyByTendency(tendencys) / 3)
 								: 250;
 						switch (tendencys) {
 						/*
@@ -205,11 +204,13 @@ public class BloodTendencyEvents {
 						 * .bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 						 * break;
 						 */
+						
 						default:
-							AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
+					/*		AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
 									event.getWindow().getHeight(), new Color(0, 0, 0, 0).getRGB());
+							
 							fontRenderer.drawString(event.getMatrixStack(), "No BloodTendency", 5, 5,
-									new Color(0, 0, 0, 0).getRGB());
+									new Color(0, 0, 0, 0).getRGB());*/
 							Minecraft.getInstance().textureManager
 									.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 							break;

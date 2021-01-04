@@ -38,8 +38,8 @@ public class BloodTendencyProvider implements ICapabilitySerializable<INBT> {
 
 	}
 
-	public static Map<EnumBloodTendency, Float> getPlayerDevotion(PlayerEntity player) {
-		return player.getCapability(TENDENCY_CAPA).orElseThrow(IllegalStateException::new).getDevotion();
+	public static Map<EnumBloodTendency, Float> getPlayerTendency(PlayerEntity player) {
+		return player.getCapability(TENDENCY_CAPA).orElseThrow(IllegalStateException::new).getTendency();
 	}
 
 }

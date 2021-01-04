@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "hemomancy:block/tainted_iron_block" }
+    }
+}

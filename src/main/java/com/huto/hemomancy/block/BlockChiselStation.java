@@ -1,5 +1,7 @@
 package com.huto.hemomancy.block;
 
+import java.util.stream.Stream;
+
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 
 import net.minecraft.block.Block;
@@ -30,8 +32,16 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 public class BlockChiselStation extends Block {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
-	private static final VoxelShape SHAPE_N = VoxelShapes.combineAndSimplify(Block.makeCuboidShape(4, 0, 4, 12, 3, 12),
-			Block.makeCuboidShape(2, 3, 2, 14, 7, 14), IBooleanFunction.OR);
+	private static final VoxelShape SHAPE_N = Stream
+			.of(Block.makeCuboidShape(1.0999999999999996, 6.9, 1.0999999999999996, 14.9, 7.9, 14.899999999999999),
+					Block.makeCuboidShape(1.0999999999999996, 0.09999999999999998, 1.0999999999999996, 14.9, 1,
+							14.899999999999999),
+					Block.makeCuboidShape(12.5, 0, 12.7, 15, 8.2, 15.2),
+					Block.makeCuboidShape(12.5, 0, 1, 15, 8.2, 3.5), Block.makeCuboidShape(1, 0, 1, 3.5, 8.2, 3.5),
+					Block.makeCuboidShape(1, 0, 12.7, 3.5, 8.2, 15.2), Block.makeCuboidShape(2, 1, 2, 14, 8, 14))
+			.reduce((v1, v2) -> {
+				return VoxelShapes.combineAndSimplify(v1, v2, IBooleanFunction.OR);
+			}).get();
 
 	public BlockChiselStation(Properties properties) {
 		super(properties);
@@ -50,7 +60,7 @@ public class BlockChiselStation extends Block {
 					NetworkHooks.openGui((ServerPlayerEntity) player, (TileEntityChiselStation) tile, pos);
 					return ActionResultType.SUCCESS;
 				}
-			}else {
+			} else {
 				return ActionResultType.PASS;
 
 			}

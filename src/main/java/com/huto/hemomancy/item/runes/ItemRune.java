@@ -42,11 +42,11 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyDevotion(getAssignedCovenant(), getDeepenAmount());
+					coven.setTendencyTendency(getAssignedCovenant(), getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
-							new BloodTendencyPacketServer(coven.getDevotion()));
+							new BloodTendencyPacketServer(coven.getTendency()));
 				}
 			}
 		}
@@ -59,11 +59,11 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyDevotion(getAssignedCovenant(), -getDeepenAmount());
+					coven.setTendencyTendency(getAssignedCovenant(), -getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
-							new BloodTendencyPacketServer(coven.getDevotion()));
+							new BloodTendencyPacketServer(coven.getTendency()));
 				}
 			}
 		}
@@ -97,7 +97,7 @@ public class ItemRune extends Item implements IRune {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new StringTextComponent(
 				TextFormatting.GOLD + "Devoted Coven: " + ModTextFormatting.toProperCase(assignedCovenant.name())));
-		tooltip.add(new StringTextComponent(TextFormatting.GREEN + "Devotion Amount: " + deepenAmount));
+		tooltip.add(new StringTextComponent(TextFormatting.GREEN + "Tendency Amount: " + deepenAmount));
 
 	}
 

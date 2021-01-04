@@ -11,13 +11,19 @@ public class PacketHandler {
 	private static final String PROTOCOL_VERSION = "1";
 	public static SimpleChannel INSTANCE;
 	public static final SimpleChannel CHANNELBLOODTENDENCY = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "bloodtendencychannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+			new ResourceLocation(Hemomancy.MOD_ID, "bloodtendencychannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+	public static final SimpleChannel CHANNELVASCULARSYSTEM = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "vascularsystemchannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+	public static final SimpleChannel CHANNELBLOODVOLUME = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "bloodvolumechannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static final SimpleChannel HANDLER = NetworkRegistry.ChannelBuilder
 			.named(new ResourceLocation(Hemomancy.MOD_ID + ("main_channel")))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
-	
-	
+
 	public static void registerChannels() {
 
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketClient.class,
@@ -26,12 +32,27 @@ public class PacketHandler {
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketServer.class,
 				BloodTendencyPacketServer::encode, BloodTendencyPacketServer::decode,
 				BloodTendencyPacketServer::handle);
-	
+
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemPacketClient.class,
+				VascularSystemPacketClient::encode, VascularSystemPacketClient::decode,
+				VascularSystemPacketClient::handle);
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemPacketServer.class,
+				VascularSystemPacketServer::encode, VascularSystemPacketServer::decode,
+				VascularSystemPacketServer::handle);
+		
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketClient.class,
+				BloodVolumePacketClient::encode, BloodVolumePacketClient::decode,
+				BloodVolumePacketClient::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketServer.class,
+				BloodVolumePacketServer::encode, BloodVolumePacketServer::decode,
+				BloodVolumePacketServer::handle);
+		
+
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
-		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"), () -> "1.0",
+		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"), () -> PROTOCOL_VERSION,
 				s -> true, s -> true);
 		INSTANCE.registerMessage(networkID++, OpenRunesInvPacket.class, OpenRunesInvPacket::toBytes,
 				OpenRunesInvPacket::new, OpenRunesInvPacket::handle);
@@ -39,14 +60,13 @@ public class PacketHandler {
 				OpenNormalInvPacket::new, OpenNormalInvPacket::handle);
 		INSTANCE.registerMessage(networkID++, SyncPacket.class, SyncPacket::toBytes, SyncPacket::new,
 				SyncPacket::handle);
-		
-		
+
 	}
 
 	public static SimpleChannel RUNEBINDER = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "runebindernetwork"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-	
+
 	public static SimpleChannel registerRuneBinderChannels() {
 		RUNEBINDER.messageBuilder(PacketBinderTogglePickup.class, networkID++).decoder(PacketBinderTogglePickup::decode)
 				.encoder(PacketBinderTogglePickup::encode).consumer(PacketBinderTogglePickup::handle).add();

@@ -5,7 +5,7 @@ import com.huto.hemomancy.capabilities.mindrunes.IRunesItemHandler;
 import com.huto.hemomancy.capabilities.mindrunes.RunesCapabilities;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.event.ClientTickHandler;
-import com.huto.hemomancy.registries.ItemInit;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.render.layer.IRenderRunes;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;

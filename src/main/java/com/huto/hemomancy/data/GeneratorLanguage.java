@@ -2,8 +2,8 @@ package com.huto.hemomancy.data;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.font.ModTextFormatting;
-import com.huto.hemomancy.registries.BlockInit;
-import com.huto.hemomancy.registries.ItemInit;
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;

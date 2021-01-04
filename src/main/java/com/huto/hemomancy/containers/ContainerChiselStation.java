@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.huto.hemomancy.containers.slots.SlotChisel;
 import com.huto.hemomancy.containers.slots.SlotOutput;
 import com.huto.hemomancy.containers.slots.SlotRunePattern;
-import com.huto.hemomancy.registries.ContainerInit;
+import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 
 import net.minecraft.entity.player.PlayerEntity;

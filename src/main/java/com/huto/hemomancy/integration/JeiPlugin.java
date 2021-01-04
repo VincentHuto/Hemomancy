@@ -4,9 +4,9 @@ package com.huto.hemomancy.integration;
 import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.integration.jei.ChiselRecipeCategory;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
-import com.huto.hemomancy.registries.BlockInit;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;

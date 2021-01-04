@@ -4,13 +4,13 @@ import java.util.Map;
 
 public interface IBloodTendency {
 
-	public Map<EnumBloodTendency, Float> getDevotion();
+	public Map<EnumBloodTendency, Float> getTendency();
 
-	public void setTendency(Map<EnumBloodTendency, Float> devotion);
+	public void setTendency(Map<EnumBloodTendency, Float> Tendency);
 
-	public void setTendencyDevotion(EnumBloodTendency tendencyIn, float value);
+	public void setTendencyTendency(EnumBloodTendency tendencyIn, float value);
 
-	public float getDevotionByTendency(EnumBloodTendency tendencyIn);
+	public float getTendencyByTendency(EnumBloodTendency tendencyIn);
 
 	public EnumBloodTendency getOpposingTendency(EnumBloodTendency tendencyIn);
 }

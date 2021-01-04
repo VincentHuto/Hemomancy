@@ -1,9 +1,9 @@
 package com.huto.hemomancy.item.runes.patterns;
 
 import com.huto.hemomancy.gui.mindrunes.GuiRunePattern;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 import com.huto.hemomancy.recipes.RecipeChiselStation;
-import com.huto.hemomancy.registries.ItemInit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;

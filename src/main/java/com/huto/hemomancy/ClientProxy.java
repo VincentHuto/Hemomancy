@@ -2,7 +2,7 @@ package com.huto.hemomancy;
 
 import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinderViewer;
-import com.huto.hemomancy.registries.ItemInit;
+import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PVP",
+    "LCL",
+    "LTL"
+  ],
+  "key": {
+    "C": {
+      "item": "hemomancy:chiseled_tainted_iron_block"
+    },
+    "T": {
+      "item": "hemomancy:tainted_iron_block"
+    },
+    "V": {
+      "item": "hemomancy:venous_stone"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "result": {
+    "item": "hemomancy:runic_chisel_station"
+  }
+}

@@ -2,8 +2,8 @@ package com.huto.hemomancy.data;
 
 import java.util.function.Consumer;
 
-import com.huto.hemomancy.registries.BlockInit;
-import com.huto.hemomancy.registries.ItemInit;
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -113,6 +113,17 @@ public class GeneratorRecipes extends RecipeProvider {
 				.key('A', Items.GOLD_INGOT).key('L', Ingredient.fromTag(ItemTags.LOGS))
 				.key('M', BlockInit.rune_mod_station.get()).patternLine("AGA").patternLine("GMG").patternLine("ALA")
 				.addCriterion("has_rune_mod_station", hasItem(BlockInit.rune_mod_station.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.runic_chisel_station.get())
+				.key('C', BlockInit.chiseled_tainted_iron_block.get())
+				.key('T', BlockInit.tainted_iron_block.get())
+				.key('V', BlockInit.venous_stone.get())
+				.key('P', Ingredient.fromTag(ItemTags.PLANKS))
+				.key('L', Ingredient.fromTag(ItemTags.LOGS))
+				.patternLine("PVP")
+				.patternLine("LCL")
+				.patternLine("LTL")
+				.addCriterion("has_venous_stone", hasItem(BlockInit.venous_stone.get())).build(consumer);
 
 	}
 }

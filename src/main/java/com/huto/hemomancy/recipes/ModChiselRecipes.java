@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.huto.hemomancy.registries.ItemInit;
+import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;

@@ -23,7 +23,7 @@ public class BloodTendencyPacketClient {
 				IBloodTendency BloodTendency = sender.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> sender),
-						new BloodTendencyPacketServer(BloodTendency.getDevotion()));
+						new BloodTendencyPacketServer(BloodTendency.getTendency()));
 			}
 		});
 		ctx.get().setPacketHandled(true);

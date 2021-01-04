@@ -1,6 +1,6 @@
 package com.huto.hemomancy.tile;
 
-import com.huto.hemomancy.registries.TileEntityInit;
+import com.huto.hemomancy.init.TileEntityInit;
 
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ITickableTileEntity;

@@ -9,7 +9,7 @@ import com.huto.hemomancy.containers.slots.SlotContractRune;
 import com.huto.hemomancy.containers.slots.SlotRune;
 import com.huto.hemomancy.containers.slots.SlotRuneArmor;
 import com.huto.hemomancy.containers.slots.SlotRuneOffHand;
-import com.huto.hemomancy.registries.ContainerInit;
+import com.huto.hemomancy.init.ContainerInit;
 
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;

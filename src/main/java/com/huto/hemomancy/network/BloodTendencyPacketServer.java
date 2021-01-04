@@ -14,10 +14,10 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public class BloodTendencyPacketServer {
-	private Map<EnumBloodTendency, Float> devotion = new HashMap<>();
+	private Map<EnumBloodTendency, Float> Tendency = new HashMap<>();
 
-	public BloodTendencyPacketServer(Map<EnumBloodTendency, Float> devotionIn) {
-		this.devotion = devotionIn;
+	public BloodTendencyPacketServer(Map<EnumBloodTendency, Float> TendencyIn) {
+		this.Tendency = TendencyIn;
 	}
 
 	// This code only runs on the client
@@ -27,7 +27,7 @@ public class BloodTendencyPacketServer {
 			ServerPlayerEntity sender = ctx.get().getSender();
 
 			Minecraft.getInstance().player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-					.orElseThrow(IllegalStateException::new).setTendency(msg.devotion);
+					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
 
 		});
 		ctx.get().setPacketHandled(true);
@@ -36,8 +36,8 @@ public class BloodTendencyPacketServer {
 	public static void encode(final BloodTendencyPacketServer msg, final PacketBuffer packetBuffer) {
 		CompoundNBT covenTag = new CompoundNBT();
 		for (EnumBloodTendency key : EnumBloodTendency.values()) {
-			if (msg.devotion.get(key) != null) {
-				covenTag.putFloat(key.toString(), msg.devotion.get(key));
+			if (msg.Tendency.get(key) != null) {
+				covenTag.putFloat(key.toString(), msg.Tendency.get(key));
 				packetBuffer.writeCompoundTag(covenTag);
 			} else {
 				covenTag.putFloat(key.toString(), 0);

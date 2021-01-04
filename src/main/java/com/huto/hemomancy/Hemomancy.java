@@ -5,17 +5,19 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeEvents;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
+import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.CapabilityInit;
+import com.huto.hemomancy.init.ContainerInit;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
-import com.huto.hemomancy.registries.BlockInit;
-import com.huto.hemomancy.registries.CapabilityInit;
-import com.huto.hemomancy.registries.ContainerInit;
-import com.huto.hemomancy.registries.ItemInit;
-import com.huto.hemomancy.registries.TileEntityInit;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 
 import net.minecraft.client.Minecraft;
@@ -75,6 +77,8 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::onClientTick);
+		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
+		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
 
 	}

@@ -44,44 +44,71 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 					.equals(FaceDirection.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(90));
-				matrixStackIn.translate(1.3, -1.0, 1.5f);
+				matrixStackIn.translate(1.3, -1.0, 1.85f);
 			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.EAST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-360));
 				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(-90));
-				matrixStackIn.translate(1.3, 1.0, -0.5f);
+				matrixStackIn.translate(1.3, 1.0, -0.5f+0.35f);
 			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.NORTH.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(90));
-				matrixStackIn.translate(1.3, -1.0, -0.5f);
+				matrixStackIn.translate(1.3, -1.0, -0.5f+0.35f);
 			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.SOUTH.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(90));
-				matrixStackIn.translate(1.3, 1f, 1.5f);
+				matrixStackIn.translate(1.3, 1f, 1.5f+0.35f);
 			}
 			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn);
 
 		}
-		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
-		matrixStackIn.rotate(Vector3f.XP.rotationDegrees(0));
-		matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180));
+		matrixStackIn.pop();
 
-		matrixStackIn.translate(-0.5, 0f, -0.4f);
-		mc.getItemRenderer().renderItem(te.getStackInSlot(0), TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-				matrixStackIn, bufferIn);
-		matrixStackIn.translate(0, 0f, 0.05);
+		matrixStackIn.push();
+		
+		matrixStackIn.translate(0.5F, 1F, 0.69F);
+		matrixStackIn.translate(0.025F, -0.32F, 0.025F);
+		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
+		if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+				.equals(FaceDirection.EAST.toString())) {
+			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180f));
+			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
 
-		mc.getItemRenderer().renderItem(te.getStackInSlot(1), TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-				matrixStackIn, bufferIn);
-		mc.getItemRenderer().renderItem(te.getStackInSlot(2), TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-				matrixStackIn, bufferIn);
+			matrixStackIn.translate(-0.22, 0.38D, -0.2F);
+		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+				.equals(FaceDirection.WEST.toString())) {
+			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
+			matrixStackIn.translate(0.21, 0.36D, -0.25F);
+		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+				.equals(FaceDirection.NORTH.toString())) {
+			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90f));
+			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
+
+			matrixStackIn.translate(-0.028F, 0.28D, -0.42F);
+		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+				.equals(FaceDirection.SOUTH.toString())) {
+			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
+			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
+
+			matrixStackIn.translate(0.02F, 0.45D, -0.02F);
+		}
+		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+		matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
+		matrixStackIn.translate(-0.005F, -0.55D, 0.65F);
+		ItemStack stack = te.getStackInSlot(0);
+		if (!stack.isEmpty()) {
+			GlStateManager.pushMatrix();
+			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
+					matrixStackIn, bufferIn);
+			GlStateManager.popMatrix();
+		}
 		matrixStackIn.pop();
 
 		/*

@@ -1,4 +1,4 @@
-package com.huto.hemomancy.registries;
+package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
@@ -27,8 +27,10 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMoon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternOedon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRadianceContract;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
+import com.huto.hemomancy.item.tool.ItemKnapper;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.RegistryObject;
@@ -45,6 +47,16 @@ public class ItemInit {
 	//Base ItemsHemomancyItemGroup
 	public static final RegistryObject<Item> grey_ingot = BASEITEMS.register("grey_ingot",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	
+	public static final RegistryObject<Item> iron_knapper = ITEMS.register("iron_knapper", () -> new ItemKnapper(25f, 1,
+			0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> obsidian_knapper = ITEMS.register("obsidian_knapper",
+			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
 	
 	// Runes
 

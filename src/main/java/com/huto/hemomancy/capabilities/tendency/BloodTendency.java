@@ -4,31 +4,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BloodTendency implements IBloodTendency {
-	private Map<EnumBloodTendency, Float> devotion = new HashMap<>();
+	@SuppressWarnings("serial")
+	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>(){
+		{
+			put(EnumBloodTendency.ANIMUS, 0f);
+			put(EnumBloodTendency.MORTEM, 0f);
+			put(EnumBloodTendency.DUCTILIS, 0f);
+			put(EnumBloodTendency.FERRIC, 0f);
+			put(EnumBloodTendency.LUX, 0f);
+			put(EnumBloodTendency.TENEBRIS, 0f);
+			put(EnumBloodTendency.FLAMMEUS, 0f);
+			put(EnumBloodTendency.CONGEATIO, 0f);
 
-	public Map<EnumBloodTendency, Float> getDevotion() {
-		return devotion;
+		}
+	};
+
+	public Map<EnumBloodTendency, Float> getTendency() {
+		return tendency;
 	}
 
-	public void setTendency(Map<EnumBloodTendency, Float> devotion) {
-		this.devotion = devotion;
+	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
+		this.tendency = tendency;
 	}
 
-	public void setTendencyDevotion(EnumBloodTendency tendencyIn, float value) {
-		if (devotion != null) {
+	public void setTendencyTendency(EnumBloodTendency tendencyIn, float value) {
+		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
-				Map<EnumBloodTendency, Float> newDevo = devotion;
-				newDevo.put(tendencyIn, getDevotionByTendency(tendencyIn) + value);
+				Map<EnumBloodTendency, Float> newDevo = tendency;
+				newDevo.put(tendencyIn, getTendencyByTendency(tendencyIn) + value);
 				newDevo.put(getOpposingTendency(tendencyIn),
-						getDevotionByTendency(getOpposingTendency(tendencyIn)) - value);
+						getTendencyByTendency(getOpposingTendency(tendencyIn)) - value);
 				setTendency(newDevo);
 			}
 		}
 	}
 
-	public float getDevotionByTendency(EnumBloodTendency tendencyIn) {
-		if (devotion != null && devotion.get(tendencyIn) != null) {
-			return devotion.get(tendencyIn);
+	public float getTendencyByTendency(EnumBloodTendency tendencyIn) {
+		if (tendency != null && tendency.get(tendencyIn) != null) {
+			return tendency.get(tendencyIn);
 		} else {
 			return 0;
 		}

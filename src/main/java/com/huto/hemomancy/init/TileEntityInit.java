@@ -1,4 +1,4 @@
-package com.huto.hemomancy.registries;
+package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
