@@ -6,8 +6,8 @@
   "block.hemomancy.sanguine_pane": "Sanguine Pane",
   "block.hemomancy.tainted_iron_block": "Tainted Iron Block",
   "block.hemomancy.venous_stone": "Venous Stone",
-  "item.hemomancy.grey_ingot": "Grey Ingot",
   "item.hemomancy.iron_knapper": "Iron Knapper",
+  "item.hemomancy.liber_sanguinum": "Liber Sanguinum",
   "item.hemomancy.mind_spike": "Mind Spike",
   "item.hemomancy.obsidian_knapper": "Obsidian Knapper",
   "item.hemomancy.rune_beast": "Rune Beast",
@@ -50,5 +50,8 @@
   "item.hemomancy.rune_pattern_rapture": "Rune Pattern Rapture",
   "item.hemomancy.rune_radiance_c": "Rune Radiance C",
   "item.hemomancy.rune_rapture": "Rune Rapture",
-  "item.hemomancy.self_reflection_mirror": "Self Reflection Mirror"
+  "item.hemomancy.sanguine_formation": "Sanguine Formation",
+  "item.hemomancy.self_reflection_mirror": "Self Reflection Mirror",
+  "item.hemomancy.spawn_egg_leech": "Spawn Egg Leech",
+  "itemGroup.hemomancy": "Hemomancy; Sanguine Mastery"
 }

@@ -106,7 +106,7 @@ public class GeneratorRecipes extends RecipeProvider {
 				.addCriterion("has_redstone", hasItem(Items.REDSTONE)).build(consumer);
 
 		ShapedRecipeBuilder.shapedRecipe(ItemInit.rune_binder.get()).key('R', ItemInit.rune_pattern.get())
-				.key('G', ItemInit.grey_ingot.get()).patternLine("GGG").patternLine("GRG").patternLine("GGG")
+				.key('G', ItemInit.sanguine_formation.get()).patternLine("GGG").patternLine("GRG").patternLine("GGG")
 				.addCriterion("has_rune_pattern", hasItem(ItemInit.rune_pattern.get())).build(consumer);
 
 		ShapedRecipeBuilder.shapedRecipe(ItemInit.self_reflection_mirror.get()).key('G', Items.GOLD_INGOT)

@@ -1,7 +1,7 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
 public class BloodVolume implements IBloodVolume {
-	private float bloodVolume = 50000.0F;
+	private float bloodVolume = 5000.0F;
 
 	public void subtractBloodVolume(float points) {
 		this.bloodVolume -= points;

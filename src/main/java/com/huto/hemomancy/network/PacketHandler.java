@@ -39,21 +39,21 @@ public class PacketHandler {
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemPacketServer.class,
 				VascularSystemPacketServer::encode, VascularSystemPacketServer::decode,
 				VascularSystemPacketServer::handle);
-		
-		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketClient.class,
-				BloodVolumePacketClient::encode, BloodVolumePacketClient::decode,
-				BloodVolumePacketClient::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketServer.class,
-				BloodVolumePacketServer::encode, BloodVolumePacketServer::decode,
-				BloodVolumePacketServer::handle);
-		
+
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketClient.class, BloodVolumePacketClient::encode,
+				BloodVolumePacketClient::decode, BloodVolumePacketClient::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketServer.class, BloodVolumePacketServer::encode,
+				BloodVolumePacketServer::decode, BloodVolumePacketServer::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodFormationKeyPress.class,
+				PacketBloodFormationKeyPress::encode, PacketBloodFormationKeyPress::decode,
+				PacketBloodFormationKeyPress::handle);
 
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
-		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"), () -> PROTOCOL_VERSION,
-				s -> true, s -> true);
+		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"),
+				() -> PROTOCOL_VERSION, s -> true, s -> true);
 		INSTANCE.registerMessage(networkID++, OpenRunesInvPacket.class, OpenRunesInvPacket::toBytes,
 				OpenRunesInvPacket::new, OpenRunesInvPacket::handle);
 		INSTANCE.registerMessage(networkID++, OpenNormalInvPacket.class, OpenNormalInvPacket::toBytes,

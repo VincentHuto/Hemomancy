@@ -2,16 +2,16 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"0": "hemomancy:blocks/wandmakerbase",
-		"2": "hemomancy:blocks/wandmakerplatform",
-		"3": "hemomancy:blocks/wandmakercolumn",
-		"4": "hemomancy:blocks/dark_oak",
-		"5": "hemomancy:blocks/dark_oak_top",
-		"6": "hemomancy:blocks/rune_mod_top",
-		"7": "hemomancy:blocks/gold_block",
-		"8": "hemomancy:blocks/mirror",
-		"9": "hemomancy:blocks/mirror_animated",
-		"particle": "hemomancy:blocks/wandmakerbase"
+		"0": "hemomancy:block/wandmakerbase",
+		"2": "hemomancy:block/wandmakerplatform",
+		"3": "hemomancy:block/wandmakercolumn",
+		"4": "hemomancy:block/dark_oak",
+		"5": "hemomancy:block/dark_oak_top",
+		"6": "hemomancy:block/rune_mod_top",
+		"7": "hemomancy:block/gold_block",
+		"8": "hemomancy:block/mirror",
+		"9": "hemomancy:block/mirror_animated",
+		"particle": "hemomancy:block/wandmakerbase"
 	},
 	"elements": [
 		{

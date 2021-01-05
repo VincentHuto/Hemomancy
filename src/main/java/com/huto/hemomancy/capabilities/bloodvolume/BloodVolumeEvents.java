@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -57,6 +58,15 @@ public class BloodVolumeEvents {
 				new StringTextComponent(TextFormatting.ITALIC + "Upon death, your blood volume has decreased to: "
 						+ TextFormatting.RED + TextFormatting.ITALIC + bloodVolumeNew.getBloodVolume() + "ml"),
 				false);
+	}
+
+	@SubscribeEvent
+	public static void regainBloodVolume(PlayerTickEvent e) {
+		IBloodVolume bloodVolume = e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		if (bloodVolume.getBloodVolume() < 5000) {
+			bloodVolume.addBloodVolume(0.5f);
+		}
 	}
 
 }

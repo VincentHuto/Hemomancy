@@ -8,10 +8,13 @@ import org.apache.logging.log4j.Logger;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeEvents;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
+import com.huto.hemomancy.event.KeyBindEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
+import com.huto.hemomancy.gui.guide.GuideBookLib;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.CapabilityInit;
 import com.huto.hemomancy.init.ContainerInit;
+import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
@@ -28,7 +31,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,12 +66,19 @@ public class Hemomancy {
 		proxy.registerHandlers();
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		ItemInit.ITEMS.register(modEventBus);
 		ItemInit.BASEITEMS.register(modEventBus);
-		BlockInit.BLOCKS.register(modEventBus);
+		ItemInit.HANDHELDITEMS.register(modEventBus);
+		ItemInit.SPECIALITEMS.register(modEventBus);
+		ItemInit.SPAWNEGGS.register(modEventBus);
 		BlockInit.BASEBLOCKS.register(modEventBus);
+		BlockInit.COLUMNBLOCKS.register(modEventBus);
+		BlockInit.CROSSBLOCKS.register(modEventBus);
+		BlockInit.OBJBLOCKS.register(modEventBus);
+		BlockInit.SPECIALBLOCKS.register(modEventBus);
+		BlockInit.MODELEDBLOCKS.register(modEventBus);
 		TileEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
+		EntityInit.ENTITY_TYPES.register(modEventBus);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
@@ -77,6 +86,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::onClientTick);
+		MinecraftForge.EVENT_BUS.addListener(KeyBindEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
@@ -87,13 +97,37 @@ public class Hemomancy {
 	@SubscribeEvent
 	public static void onRegisterItems(final RegistryEvent.Register<Item> event) {
 		final IForgeRegistry<Item> registry = event.getRegistry();
-		BlockInit.BLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+		BlockInit.BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
 			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
 			final BlockItem blockItem = new BlockItem(block, properties);
 			blockItem.setRegistryName(block.getRegistryName());
 			registry.register(blockItem);
 		});
-		BlockInit.BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+		BlockInit.COLUMNBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.CROSSBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
 			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
 			final BlockItem blockItem = new BlockItem(block, properties);
 			blockItem.setRegistryName(block.getRegistryName());
@@ -112,7 +146,7 @@ public class Hemomancy {
 		@Override
 
 		public ItemStack createIcon() {
-			return new ItemStack(Items.RED_BANNER);
+			return new ItemStack(ItemInit.sanguine_formation.get());
 		}
 
 	}
@@ -125,6 +159,7 @@ public class Hemomancy {
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
+		GuideBookLib.registerPages();
 		this.addLayers();
 
 	}

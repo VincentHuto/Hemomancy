@@ -105,7 +105,7 @@ public class BloodTendencyEvents {
 
 				// Allegiance Identifier overlay
 				if (item == ItemInit.self_reflection_mirror.get()) {
-					Item renderItem = ItemInit.grey_ingot.get();
+					Item renderItem = ItemInit.sanguine_formation.get();
 					int centerX = (Minecraft.getInstance().getMainWindow().getScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getMainWindow().getScaledHeight() / 2) - 15;
 					double angleBetweenEach = 360.0 / EnumBloodTendency.values().length;

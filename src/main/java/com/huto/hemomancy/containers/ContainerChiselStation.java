@@ -10,6 +10,8 @@ import com.huto.hemomancy.tile.TileEntityChiselStation;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -32,12 +34,12 @@ public class ContainerChiselStation extends Container {
 		this.numRows = 4;
 		// te.openInventory(player);
 		// SLOTS
-		this.addSlot(new SlotChisel(te, 3, 8, 14));
-		this.addSlot(new Slot(te, 0, 8, 18 + 1 * 18));
-		this.addSlot(new Slot(te, 1, 8, 22 + 2 * 18));
-		this.addSlot(new SlotRunePattern(te, 4, 8, 26 + 3 * 18));
+		addSlot(new SlotChisel(te, 3, 8, 14));
+		addSlot(new Slot(te, 0, 8, 18 + 1 * 18));
+		addSlot(new Slot(te, 1, 8, 22 + 2 * 18));
+		addSlot(new SlotRunePattern(te, 4, 8, 26 + 3 * 18));
 
-		this.addSlot(new SlotOutput(te, 2, 145, 44));
+		addSlot(new SlotOutput((IInventory) te, 2, 145, 44));
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -69,12 +71,33 @@ public class ContainerChiselStation extends Container {
 	@Override
 	public void onContainerClosed(PlayerEntity playerIn) {
 		super.onContainerClosed(playerIn);
-		te.closeInventory(playerIn);
 	}
 
 	@Override
+	public void detectAndSendChanges() {
+		te.sendUpdates();
+		super.detectAndSendChanges();
+	}
+
+	
+	@Override
+	public void putStackInSlot(int slotID, ItemStack stack) {
+		te.sendUpdates();
+		super.putStackInSlot(slotID, stack);
+	}
+	
+	@Override
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+		te.sendUpdates();
+		return super.slotClick(slotId, dragType, clickTypeIn, player);
+	}
+
+	
+	
+	@Override
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
 		ItemStack stack = ItemStack.EMPTY;
+		te.sendUpdates();
 		Slot slot = this.inventorySlots.get(index);
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemStack = slot.getStack();

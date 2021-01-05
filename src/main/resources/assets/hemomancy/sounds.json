@@ -149,22 +149,22 @@
 			}
 		]
 	},
-	"item.star_slug.strike": {
+	"item.star_leech.strike": {
 		"category": "item",
-		"subtitle": "item.star_slug.strike",
+		"subtitle": "item.star_leech.strike",
 		"sounds": [
 			{
-				"name": "hutosmod:item/star_slug/strike",
+				"name": "hutosmod:item/star_leech/strike",
 				"stream": true
 			}
 		]
 	},
-	"item.star_slug.storm": {
+	"item.star_leech.storm": {
 		"category": "item",
-		"subtitle": "item.star_slug.storm",
+		"subtitle": "item.star_leech.storm",
 		"sounds": [
 			{
-				"name": "hutosmod:item/star_slug/storm",
+				"name": "hutosmod:item/star_leech/storm",
 				"stream": true
 			}
 		]

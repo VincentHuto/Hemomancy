@@ -8,8 +8,8 @@ import net.minecraft.item.ItemStack;
 
 public class SlotChisel extends Slot {
 
-	public SlotChisel(IInventory inventoryIn, int index, int xPosition, int yPosition) {
-		super(inventoryIn, index, xPosition, yPosition);
+	public SlotChisel(IInventory iItemHandlerModifiable, int index, int xPosition, int yPosition) {
+		super(iItemHandlerModifiable, index, xPosition, yPosition);
 	}
 
 	@Override

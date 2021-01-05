@@ -203,7 +203,7 @@ public class ModChiselRecipes {
 						add(63);
 
 					}
-				}, Ingredient.fromItems(ItemInit.rune_blank.get()), Ingredient.fromItems(ItemInit.grey_ingot.get()));
+				}, Ingredient.fromItems(ItemInit.rune_blank.get()), Ingredient.fromItems(ItemInit.sanguine_formation.get()));
 
 		recipeCommunion = registerChiselRecipe(new ResourceLocation("recipecommunion"),
 				new ItemStack(ItemInit.rune_communion.get(), 1), new ArrayList<Integer>() {
@@ -232,7 +232,7 @@ public class ModChiselRecipes {
 						add(51);
 						add(61);
 					}
-				}, Ingredient.fromItems(ItemInit.rune_blank.get()), Ingredient.fromItems(ItemInit.grey_ingot.get()));
+				}, Ingredient.fromItems(ItemInit.rune_blank.get()), Ingredient.fromItems(ItemInit.mind_spike.get()));
 
 		recipeBeast = registerChiselRecipe(new ResourceLocation("recipebeast"),
 				new ItemStack(ItemInit.rune_beast.get(), 1), new ArrayList<Integer>() {

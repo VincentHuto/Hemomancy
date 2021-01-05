@@ -2,6 +2,7 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
+import com.huto.hemomancy.network.VanillaPacketDispatcher;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 
 import net.minecraft.block.Block;
@@ -9,7 +10,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
@@ -54,8 +54,11 @@ public class BlockChiselStation extends Block {
 			Hand handIn, BlockRayTraceResult result) {
 		if (!worldIn.isRemote) {
 			TileEntity tile = worldIn.getTileEntity(pos);
+	
 			if (tile instanceof TileEntityChiselStation) {
 				TileEntityChiselStation te = (TileEntityChiselStation) tile;
+				te.sendUpdates();
+				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 				if (te.numPlayersUsing < 2) {
 					NetworkHooks.openGui((ServerPlayerEntity) player, (TileEntityChiselStation) tile, pos);
 					return ActionResultType.SUCCESS;
@@ -66,17 +69,6 @@ public class BlockChiselStation extends Block {
 			}
 		}
 		return ActionResultType.FAIL;
-	}
-
-	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
-			if (te instanceof TileEntityChiselStation) {
-				InventoryHelper.dropItems(worldIn, pos, ((TileEntityChiselStation) te).getItems());
-			}
-		}
-
 	}
 
 	@Override

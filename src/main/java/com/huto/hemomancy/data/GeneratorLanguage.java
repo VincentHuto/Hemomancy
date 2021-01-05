@@ -18,7 +18,11 @@ public class GeneratorLanguage extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-		for (RegistryObject<Block> b : BlockInit.BLOCKS.getEntries()) {
+		
+		
+		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
+		
+		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			addBlock(b, ModTextFormatting
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
@@ -26,7 +30,31 @@ public class GeneratorLanguage extends LanguageProvider {
 			addBlock(b, ModTextFormatting
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
-		for (RegistryObject<Item> i : ItemInit.ITEMS.getEntries()) {
+		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+			addBlock(b, ModTextFormatting
+					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+		for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
+			addBlock(b, ModTextFormatting
+					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+		for (RegistryObject<Block> b : BlockInit.OBJBLOCKS.getEntries()) {
+			addBlock(b, ModTextFormatting
+					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+			addBlock(b, ModTextFormatting
+					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
+			addItem(i, ModTextFormatting
+					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+		}
+		for (RegistryObject<Item> i : ItemInit.SPECIALITEMS.getEntries()) {
+			addItem(i, ModTextFormatting
+					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+		}
+		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
 			addItem(i, ModTextFormatting
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}

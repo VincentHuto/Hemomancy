@@ -126,7 +126,7 @@ public class VascularSystemEvents {
 
 				// Allegiance Identifier overlay
 				if (item == ItemInit.mind_spike.get()) {
-					Item renderItem = ItemInit.grey_ingot.get();
+					Item renderItem = ItemInit.mind_spike.get();
 					int centerX = (Minecraft.getInstance().getMainWindow().getScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getMainWindow().getScaledHeight() / 2) - 15;
 					double angleBetweenEach = 360.0 / EnumVeinSections.values().length;

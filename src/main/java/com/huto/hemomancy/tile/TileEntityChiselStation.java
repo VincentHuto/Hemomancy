@@ -194,6 +194,7 @@ public class TileEntityChiselStation extends LockableLootTileEntity
 	@Override
 	public SUpdateTileEntityPacket getUpdatePacket() {
 		super.getUpdatePacket();
+		
 		CompoundNBT tag = new CompoundNBT();
 		writePacketNBT(tag);
 		ListNBT tagList = new ListNBT();
@@ -213,6 +214,10 @@ public class TileEntityChiselStation extends LockableLootTileEntity
 	public void readPacketNBT(CompoundNBT par1CompoundNBT) {
 		itemHandler = createItemHandler();
 		itemHandler.deserializeNBT(par1CompoundNBT);
+		this.chestContents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		if (!this.checkLootAndRead(par1CompoundNBT)) {
+			ItemStackHelper.loadAllItems(par1CompoundNBT, this.chestContents);
+		}
 	}
 
 	public void writePacketNBT(CompoundNBT par1CompoundNBT) {
@@ -223,6 +228,10 @@ public class TileEntityChiselStation extends LockableLootTileEntity
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
 		super.onDataPacket(net, pkt);
+		this.chestContents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		if (!this.checkLootAndRead(pkt.getNbtCompound())) {
+			ItemStackHelper.loadAllItems(pkt.getNbtCompound(), this.chestContents);
+		}
 		ListNBT tagList = pkt.getNbtCompound().getList(TAG_RUNELIST, Constants.NBT.TAG_COMPOUND);
 		List<Integer> test = new ArrayList<Integer>();
 		for (int i = 0; i < tagList.size(); i++) {
@@ -238,6 +247,10 @@ public class TileEntityChiselStation extends LockableLootTileEntity
 	@Override
 	public void handleUpdateTag(BlockState state, CompoundNBT tag) {
 		super.handleUpdateTag(state, tag);
+		this.chestContents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+		if (!this.checkLootAndRead(tag)) {
+			ItemStackHelper.loadAllItems(tag, this.chestContents);
+		}
 		if (tag.get(TAG_RUNELIST) != null) {
 			for (int i = 0; i < runesList.size(); i++) {
 				clientRuneList.add(runesList.get(i));

@@ -35,11 +35,10 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 		Minecraft.getInstance().textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 		Minecraft mc = Minecraft.getInstance();
 
-		
-		
+		// Chisel
 		matrixStackIn.push();
-		if (te.getStackInSlot(3) != null) {
-			ItemStack stack = te.getStackInSlot(3);
+		if (te.chestContents.get(3) != null) {
+			ItemStack stack = te.chestContents.get(3);
 			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
@@ -51,81 +50,128 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-360));
 				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(180));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(-90));
-				matrixStackIn.translate(1.3, 1.0, -0.5f+0.35f);
+				matrixStackIn.translate(1.3, 1.0, -0.5f + 0.35f);
 			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.NORTH.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(90));
-				matrixStackIn.translate(1.3, -1.0, -0.5f+0.35f);
+				matrixStackIn.translate(1.3, -1.0, -0.5f + 0.35f);
 			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
 					.equals(FaceDirection.SOUTH.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
 				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(90));
-				matrixStackIn.translate(1.3, 1f, 1.5f+0.35f);
+				matrixStackIn.translate(1.3, 1f, 1.5f + 0.35f);
 			}
 			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn);
 
 		}
+
 		matrixStackIn.pop();
 
+		// Output
 		matrixStackIn.push();
-		
-		matrixStackIn.translate(0.5F, 1F, 0.69F);
-		matrixStackIn.translate(0.025F, -0.32F, 0.025F);
-		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
-		if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-				.equals(FaceDirection.EAST.toString())) {
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180f));
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-			matrixStackIn.translate(-0.22, 0.38D, -0.2F);
-		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-				.equals(FaceDirection.WEST.toString())) {
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-			matrixStackIn.translate(0.21, 0.36D, -0.25F);
-		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-				.equals(FaceDirection.NORTH.toString())) {
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90f));
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-			matrixStackIn.translate(-0.028F, 0.28D, -0.42F);
-		} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-				.equals(FaceDirection.SOUTH.toString())) {
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-			matrixStackIn.translate(0.02F, 0.45D, -0.02F);
-		}
-		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-		matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-		matrixStackIn.translate(-0.005F, -0.55D, 0.65F);
-		ItemStack stack = te.getStackInSlot(0);
-		if (!stack.isEmpty()) {
-			GlStateManager.pushMatrix();
+		if (te.chestContents.get(2) != ItemStack.EMPTY) {
+			ItemStack stack = te.chestContents.get(2);
+			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.WEST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(75));
+				matrixStackIn.translate(-1f, 0.25, -1f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.EAST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(75));
+				matrixStackIn.translate(1f, -1.65, -1.5);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.NORTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(75));
+				matrixStackIn.translate(1f, 0.25, -1f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.SOUTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-75));
+				matrixStackIn.translate(1f, -1.65, 1.5f);
+			}
 			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn);
-			GlStateManager.popMatrix();
 		}
 		matrixStackIn.pop();
 
-		/*
-		 * for (int i = 0; i < te.getSizeInventory(); i++) {
-		 * 
-		 * GlStateManager.pushMatrix(); GlStateManager.translatef(0.5F, 1.25F, 0.5F);
-		 * 
-		 * GlStateManager.translatef(0.025F, -0.5F, 0.025F); GlStateManager.rotatef(90F,
-		 * 1F, 0F, 0F); GlStateManager.rotatef(270F, 0F, 0F, 1F);
-		 * GlStateManager.translatef(0F, -0.1F, 0.3F);
-		 * 
-		 * GlStateManager.scalef(0.15f, 0.15f, 0.15f); GlStateManager.popMatrix();
-		 * 
-		 * ItemStack stack = te.chestContents.get(i); if (!stack.isEmpty()) {
-		 * mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn,
-		 * combinedOverlayIn, matrixStackIn, bufferIn); } }
-		 */
+		//Blank Rune
+		matrixStackIn.push();
+		if (te.chestContents.get(0) != ItemStack.EMPTY) {
+			ItemStack stack = te.chestContents.get(0);
+			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.WEST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(-1f, 1.75, -0.35f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.EAST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(1f, 0.35, -1.75);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.NORTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(1f, 1.75f, -0.35f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.SOUTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-45));
+				matrixStackIn.translate(1f, 0.35f,1.75f);
+			}
+			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
+					matrixStackIn, bufferIn);
+		}
+		matrixStackIn.pop();
+		
+		//Aux Slot
+		matrixStackIn.push();
+		if (te.chestContents.get(1) != ItemStack.EMPTY) {
+			ItemStack stack = te.chestContents.get(1);
+			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.WEST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(-1f, 1.75, -0.35f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.EAST.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(1f, 0.35, -1.75);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.NORTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(45));
+				matrixStackIn.translate(1f, 1.75f, -0.35f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceDirection.SOUTH.toString())) {
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
+				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-45));
+				matrixStackIn.translate(1f, 0.35f,1.75f);
+			}
+			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
+					matrixStackIn, bufferIn);
+		}
+		matrixStackIn.pop();
 	}
 
 }

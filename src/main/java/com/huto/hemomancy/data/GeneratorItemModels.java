@@ -1,9 +1,9 @@
 package com.huto.hemomancy.data;
 
-
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.runes.patterns.ItemRunePattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -14,89 +14,61 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.RegistryObject;
 
 public class GeneratorItemModels extends ItemModelProvider {
-    public GeneratorItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, Hemomancy.MOD_ID, existingFileHelper);
-    }
+	public GeneratorItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {
+		super(generator, Hemomancy.MOD_ID, existingFileHelper);
+	}
 
-    @Override
-    protected void registerModels() {
-        // Our block items
-    	
+	@Override
+	protected void registerModels() {
+		// Our block items
+
 		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
-	        registerBlockModel(b.get());
-    	}
-    	
-       /* String path = ModBlocks.GOO_DETECTOR.get().getRegistryName().getPath();
-        getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path))).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT)
-                .rotation(45, 0, 90)
-                .translation(0, 0, 0)
-                .scale(.5f)
-                .end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT)
-                .rotation(45, 0, 90)
-                .translation(0, 0, 0)
-                .scale(.5f)
-                .end()
-                .transform(ModelBuilder.Perspective.GUI)
-                .rotation(90, 0, 0)
-                .translation(0, 0, 0)
-                .scale(1f)
-                .end()
-                .end();
-        ;
+			registerBlockModel(b.get());
+		}
+		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+			registerBasicItem(b.get().asItem());
+		}
+		
+		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
+			registerBasicItem(item.get());
+		}
+		for (RegistryObject<Item> item : ItemInit.SPAWNEGGS.getEntries()) {
+			registerSpawnEggItem(item.get());
+		}
+		for (RegistryObject<Item> item : ItemInit.HANDHELDITEMS.getEntries()) {
+			registerHandheldItem(item.get());
+		}
+	}
 
-        //Our Item Models
-        String gooRemover = ModItems.GOO_REMOVER.get().getRegistryName().getPath();
-        singleTexture(gooRemover, mcLoc("item/handheld"), "layer0", modLoc("item/" + gooRemover)).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT)
-                .rotation(0, 80, 0)
-                .translation(0, 0, 0)
-                .scale(.5f)
-                .end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT)
-                .rotation(0, 80, 0)
-                .translation(6, 0, -7)
-                .scale(1f)
-                .end()
-                .end();
+	private void registerBlockModel(Block block) {
+		String path = block.getRegistryName().getPath();
+		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
+	}
 
-        String gooZapper = ModItems.GOO_ZAPPER.get().getRegistryName().getPath();
-        singleTexture(gooZapper, mcLoc("item/handheld"), "layer0", modLoc("item/" + gooZapper)).transforms()
-                .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT)
-                .rotation(0, 80, 0)
-                .translation(0, 0, 0)
-                .scale(.5f)
-                .end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT)
-                .rotation(0, 80, 0)
-                .translation(6, 0, -7)
-                .scale(1f)
-                .end()
-                .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT)
-                .rotation(0, -80, 0)
-                .translation(6, 0, -7)
-                .scale(1f)
-                .end()
-                .end();
-*/
-        for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
-            registerBasicItem(item.get());
-        }
-    }
+	private void registerBasicItem(Item item) {
+		String path = item.getRegistryName().getPath();
+		if (!(item instanceof ItemRunePattern)) {
+			singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
+		} else {
+			singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/rune_pattern"));
 
-    private void registerBlockModel(Block block) {
-        String path = block.getRegistryName().getPath();
-        getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
-    }
+		}
 
-    private void registerBasicItem(Item item) {
-        String path = item.getRegistryName().getPath();
-        singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
-    }
+	}
+	
 
-    @Override
-    public String getName() {
-        return "Item Models";
-    }
+	private void registerHandheldItem(Item item) {
+		String path = item.getRegistryName().getPath();
+		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
+	}
+	
+	private void registerSpawnEggItem(Item item) {
+		String path = item.getRegistryName().getPath();
+		withExistingParent(path,  mcLoc("item/template_spawn_egg"));
+	}
+
+	@Override
+	public String getName() {
+		return "Item Models";
+	}
 }

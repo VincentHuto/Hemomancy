@@ -67,10 +67,6 @@ public abstract class TileSimpleInventory extends TileMod {
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		/*
-		 * if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return
-		 * CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
-		 */
 		return super.getCapability(cap, side);
 	}
 
