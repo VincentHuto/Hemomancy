@@ -70,7 +70,7 @@ public class ItemTome extends Item {
 
 		this.nextPageAngle += f2 * 0.4F;
 		this.nextPageTurningSpeed = MathHelper.clamp(this.nextPageTurningSpeed, 0.0F, 1.0F);
-		++this.ticks;
+		//++this.ticks;
 		this.field_195524_g = this.field_195523_f;
 		float f = (this.field_195525_h - this.field_195523_f) * 0.4F;
 		f = MathHelper.clamp(f, -0.2F, 0.2F);

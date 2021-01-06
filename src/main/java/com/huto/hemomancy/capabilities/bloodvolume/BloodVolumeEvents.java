@@ -1,12 +1,14 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.BloodVolumePacketServer;
 import com.huto.hemomancy.network.PacketHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -21,6 +23,13 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof PlayerEntity) {
+			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+		}
+	}
+
+	@SubscribeEvent
+	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
+		if (((ItemStack) event.getObject()).getItem() instanceof ItemBloodGourd) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}
@@ -62,11 +71,11 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
-		IBloodVolume bloodVolume = e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+	/*	IBloodVolume bloodVolume = e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		if (bloodVolume.getBloodVolume() < 5000) {
 			bloodVolume.addBloodVolume(0.5f);
-		}
+		}*/
 	}
 
 }

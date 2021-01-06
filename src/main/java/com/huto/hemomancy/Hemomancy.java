@@ -16,10 +16,13 @@ import com.huto.hemomancy.init.CapabilityInit;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
+import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 
@@ -66,6 +69,7 @@ public class Hemomancy {
 		proxy.registerHandlers();
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		ItemInit.BASEITEMS.register(modEventBus);
 		ItemInit.HANDHELDITEMS.register(modEventBus);
 		ItemInit.SPECIALITEMS.register(modEventBus);
@@ -205,5 +209,9 @@ public class Hemomancy {
 	public static void onRecipeRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
 		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "rune_binder_upgrade")));
+		event.getRegistry().register(new CopyBloodGourdDataRecipe.Serializer()
+				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
+		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
+				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
 	}
 }

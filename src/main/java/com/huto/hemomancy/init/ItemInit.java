@@ -29,20 +29,29 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMoon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternOedon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRadianceContract;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
+import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -57,10 +66,21 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
+	//Staff
+	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
+	/// Blood Gourds
+	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 500));
+	public static final RegistryObject<Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 1500));
+	public static final RegistryObject<Item> blood_gourd_black = SPECIALITEMS.register("blood_gourd_black",
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 2500));
 	// Base ItemsHemomancyItemGroup
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -221,6 +241,57 @@ public class ItemInit {
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech);
+	}
+
+	// Item Property Override
+	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
+	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
+		ItemModelsProperties.registerProperty(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
+		ItemModelsProperties.registerProperty(blood_gourd_red.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
+		ItemModelsProperties.registerProperty(blood_gourd_black.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
 	}
 
 	@SafeVarargs
