@@ -95,7 +95,6 @@ public class VascularSystemEvents {
 				for (EnumVeinSections section : system.getVascularSystem().keySet()) {
 
 					if (section != EnumVeinSections.HEART) {
-
 						system.setVascularSectionHealth(section, -player.world.rand.nextFloat() * 3f);
 						PacketHandler.CHANNELVASCULARSYSTEM.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),

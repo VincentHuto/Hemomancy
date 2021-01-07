@@ -10,7 +10,7 @@ import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePattern;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.PacketToggleBinderMessage;
+import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;

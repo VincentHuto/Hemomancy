@@ -1,12 +1,13 @@
-package com.huto.hemomancy.network;
+package com.huto.hemomancy.network.crafting;
 
 import java.util.function.Supplier;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.event.ClientEventSubscriber;
-import com.huto.hemomancy.event.ModBlockPatterns;
-import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
+import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -14,10 +15,10 @@ import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -27,38 +28,51 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class PacketBookCraftingKeyPress {
-	public static PacketBookCraftingKeyPress decode(final PacketBuffer buffer) {
-		buffer.readByte();
-		return new PacketBookCraftingKeyPress();
+public class PacketBloodCraftingKeyPress {
+
+	public static BaseBloodCraftingRecipe targetPattern;
+
+	public PacketBloodCraftingKeyPress(BaseBloodCraftingRecipe targetPatternIn) {
+		targetPattern = targetPatternIn;
 	}
 
-	public static void encode(final PacketBookCraftingKeyPress message, final PacketBuffer buffer) {
+	public static PacketBloodCraftingKeyPress decode(final PacketBuffer buffer) {
+		buffer.readByte();
+		return new PacketBloodCraftingKeyPress(targetPattern);
+	}
+
+	public static void encode(final PacketBloodCraftingKeyPress message, final PacketBuffer buffer) {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final PacketBookCraftingKeyPress message, final Supplier<NetworkEvent.Context> ctx) {
+	public static void handle(final PacketBloodCraftingKeyPress message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			PlayerEntity player = ctx.get().getSender();
 			if (player == null)
 				return;
 			IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
+
 			ServerWorld sWorld = (ServerWorld) ctx.get().getSender().world;
-			if (player.getHeldItemMainhand().getItem() instanceof AxeItem) {
-				if (bloodVolume.getBloodVolume() > 100) {
+			if (player.getHeldItemMainhand().getItem() == targetPattern.getHeldItem()) {
+				if (bloodVolume.getBloodVolume() > targetPattern.getCost()) {
 					RayTraceResult rayTrace = player.pick(3, 102, false);
 					if (rayTrace.getType() == RayTraceResult.Type.BLOCK) {
 						BlockRayTraceResult blockResult = (BlockRayTraceResult) rayTrace;
 						BlockPos hitPos = blockResult.getPos();
 						Block hitBlock = sWorld.getBlockState(hitPos).getBlock();
-						if (hitBlock == Blocks.BOOKSHELF) {
-							BlockPattern.PatternHelper patternHelper = ModBlockPatterns.getBookPatten().match(sWorld,
-									hitPos);
+						if (hitBlock == targetPattern.getHitBlock()) {
+							BlockPattern.PatternHelper patternHelper = targetPattern.getBundledPattern()
+									.getBlockPattern().match(sWorld, hitPos);
+							// System.out.println(targetPattern.getBundledPattern().getBlockPosBlockList());
 							if (patternHelper != null) {
-								for (int i = 0; i < ModBlockPatterns.getBookPatten().getPalmLength(); ++i) {
-									for (int j = 0; j < ModBlockPatterns.getBookPatten().getThumbLength(); ++j) {
-										for (int k = 0; k < ModBlockPatterns.getBookPatten().getFingerLength(); ++k) {
+
+								for (int i = 0; i < targetPattern.getBundledPattern().getBlockPattern()
+										.getPalmLength(); ++i) {
+									for (int j = 0; j < targetPattern.getBundledPattern().getBlockPattern()
+											.getThumbLength(); ++j) {
+										for (int k = 0; k < targetPattern.getBundledPattern().getBlockPattern()
+												.getFingerLength(); ++k) {
 											CachedBlockInfo cachedBlockInfo = patternHelper.translateOffset(i, j, k);
 											sWorld.setBlockState(cachedBlockInfo.getPos(), Blocks.AIR.getDefaultState(),
 													2);
@@ -70,8 +84,11 @@ public class PacketBookCraftingKeyPress {
 								ClientEventSubscriber.getClientPlayer().playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, 1,
 										1);
 								sWorld.addEntity(new ItemEntity(sWorld, hitPos.getX(), hitPos.getY(), hitPos.getZ(),
-										new ItemStack(ItemInit.liber_sanguinum.get())));
-								bloodVolume.subtractBloodVolume(100);
+										new ItemStack(targetPattern.getCreation())));
+								ItemStack oldStack = player.getHeldItemMainhand().copy();
+								player.setHeldItem(Hand.MAIN_HAND,
+										new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
+								bloodVolume.subtractBloodVolume(targetPattern.getCost());
 								PacketHandler.CHANNELBLOODVOLUME.send(
 										PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
 										new BloodVolumePacketServer(bloodVolume.getBloodVolume()));

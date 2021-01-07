@@ -2,8 +2,8 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.network.OpenRunesInvPacket;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 
 import net.minecraft.block.Block;

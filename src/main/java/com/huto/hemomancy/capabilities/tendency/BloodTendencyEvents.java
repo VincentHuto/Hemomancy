@@ -7,8 +7,8 @@ import java.util.Map;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.network.BloodTendencyPacketServer;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;

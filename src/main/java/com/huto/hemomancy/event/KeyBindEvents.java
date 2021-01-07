@@ -1,9 +1,11 @@
 package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.network.PacketBloodFormationKeyPress;
-import com.huto.hemomancy.network.PacketBookCraftingKeyPress;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
+import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
+import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
+import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,9 +18,14 @@ public class KeyBindEvents {
 		if (ClientEventSubscriber.bloodFormation.isPressed()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodFormationKeyPress());
 		}
-		if (ClientEventSubscriber.bookCrafting.isPressed()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBookCraftingKeyPress());
+		if (ClientEventSubscriber.bloodCrafting.isPressed()) {
+			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.PATTERNS) {
+				if(ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(pattern));
+				}
+			}
 		}
+
 	}
 
 }

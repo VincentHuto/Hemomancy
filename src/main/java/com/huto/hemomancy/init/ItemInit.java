@@ -3,6 +3,7 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
 import com.huto.hemomancy.item.runes.ItemContractRune;
@@ -31,6 +32,8 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRadianceContract;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemKnapper;
+import com.huto.hemomancy.item.tool.ItemLivingGrasp;
+import com.huto.hemomancy.item.tool.ItemLivingStaff;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -65,26 +68,32 @@ public class ItemInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
-
-	//Staff
-	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	
 	
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	
+	//Living tools
+	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
+			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
+			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 500));
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.SIMPLE));
 	public static final RegistryObject<Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 1500));
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.CRIMSON));
 	public static final RegistryObject<Item> blood_gourd_black = SPECIALITEMS.register("blood_gourd_black",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), 2500));
-	// Base ItemsHemomancyItemGroup
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.ASHEN));
+	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-
+	public static final RegistryObject<Item> smoldering_ash = BASEITEMS.register("smoldering_ash",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> befouling_ash = BASEITEMS.register("befouling_ash",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",

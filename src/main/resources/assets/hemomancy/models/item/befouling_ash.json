@@ -1,6 +1,6 @@
 {
    "parent": "item/generated",
    "textures": {
-       "layer0": "hemomancy:item/cured_clay_flask"
+       "layer0": "hemomancy:item/befouling_ash"
    }
 }

@@ -2,8 +2,8 @@ package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
-import com.huto.hemomancy.network.BloodVolumePacketServer;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

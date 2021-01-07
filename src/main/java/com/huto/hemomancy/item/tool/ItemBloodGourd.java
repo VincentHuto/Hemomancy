@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.item.EnumBloodGourdTiers;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -25,13 +26,11 @@ public class ItemBloodGourd extends Item {
 
 	public static boolean state;
 	public static String TAG_STATE = "state";
-	public float maxBlood;
 	public float currentBlood;
-
-	public ItemBloodGourd(Properties prop, float maxBloodIn) {
+	EnumBloodGourdTiers tier;
+	public ItemBloodGourd(Properties prop,EnumBloodGourdTiers tierIn) {
 		super(prop);
-		maxBlood = maxBloodIn;
-
+		this.tier = tierIn;
 	}
 
 	public boolean getState() {
@@ -53,8 +52,8 @@ public class ItemBloodGourd extends Item {
 			if (stack.hasTag()) {
 
 				// Prevent overflow
-				if (bloodVolume.getBloodVolume() > maxBlood) {
-					bloodVolume.setBloodVolume(maxBlood);
+				if (bloodVolume.getBloodVolume() > tier.getMaxVolume()) {
+					bloodVolume.setBloodVolume(tier.getMaxVolume());
 				}
 				if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 					// Restore player blood
@@ -68,7 +67,7 @@ public class ItemBloodGourd extends Item {
 
 				} else {
 					// Refill from player
-					if (bloodVolume.getBloodVolume() < maxBlood) {
+					if (bloodVolume.getBloodVolume() < tier.getMaxVolume()) {
 						Random rand = worldIn.rand;
 						if (rand.nextInt(200) == 20) {
 							player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
@@ -105,7 +104,7 @@ public class ItemBloodGourd extends Item {
 		if (bloodPresent) {
 			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-			tooltip.add(new TranslationTextComponent("Max Blood Volume: " + maxBlood).mergeStyle(TextFormatting.GOLD));
+			tooltip.add(new TranslationTextComponent("Max Blood Volume: " + tier.getMaxVolume()).mergeStyle(TextFormatting.GOLD));
 
 			if (stack.hasTag()) {
 				tooltip.add(new TranslationTextComponent("Blood Volume: " + bloodVolume.getBloodVolume())
@@ -120,7 +119,7 @@ public class ItemBloodGourd extends Item {
 	}
 
 	public float getMaxBlood() {
-		return maxBlood;
+		return tier.getMaxVolume();
 	}
 
 	public float getCurrentBlood() {

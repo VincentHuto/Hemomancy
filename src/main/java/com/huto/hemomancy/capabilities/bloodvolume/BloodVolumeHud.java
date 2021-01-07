@@ -4,8 +4,8 @@ import java.text.DecimalFormat;
 
 import org.lwjgl.opengl.GL11;
 
-import com.huto.hemomancy.network.BloodVolumePacketClient;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.BloodVolumePacketClient;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;

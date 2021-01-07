@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network;
+package com.huto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 

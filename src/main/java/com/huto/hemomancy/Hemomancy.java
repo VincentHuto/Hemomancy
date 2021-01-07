@@ -23,6 +23,7 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
+import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 
@@ -157,6 +158,8 @@ public class Hemomancy {
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		CapabilityInit.init();
+		ModBloodCraftingRecipes.initPatterns();
+		ModBloodCraftingRecipes.initRecipes();
 		ModChiselRecipes.init();
 		PacketHandler.registerChannels();
 		PacketHandler.registerRuneBinderChannels();

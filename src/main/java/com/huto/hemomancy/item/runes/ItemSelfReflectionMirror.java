@@ -1,7 +1,7 @@
 package com.huto.hemomancy.item.runes;
 
-import com.huto.hemomancy.network.OpenRunesInvPacket;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

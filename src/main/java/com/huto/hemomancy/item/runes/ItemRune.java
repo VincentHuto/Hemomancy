@@ -8,8 +8,8 @@ import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.font.ModTextFormatting;
-import com.huto.hemomancy.network.BloodTendencyPacketServer;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

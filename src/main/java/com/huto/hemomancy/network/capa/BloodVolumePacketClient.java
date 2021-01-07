@@ -1,9 +1,10 @@
-package com.huto.hemomancy.network;
+package com.huto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.network.PacketHandler;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;

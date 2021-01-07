@@ -4,6 +4,8 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
+import com.huto.hemomancy.render.RenderMultiBlock;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -14,7 +16,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -97,7 +98,11 @@ public class GuiGuideTitlePage extends Screen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translatef(3, -5, 0);
 			GlStateManager.scalef(0.5f, 0.5f, 0.5f);
-			mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.FIRE_CHARGE), 0, -9);
+			RenderMultiBlock.renderPatternInGUI(matrixStack, minecraft,
+					ModBloodCraftingRecipes.liber_sanguinum_pattern);
+
+			// mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.FIRE_CHARGE), 0,
+			// -9);
 			GlStateManager.popMatrix();
 
 			GlStateManager.scalef(15, 15, 15);

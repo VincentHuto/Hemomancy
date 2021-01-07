@@ -1,6 +1,17 @@
 package com.huto.hemomancy.network;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
+import com.huto.hemomancy.network.binder.PacketOpenRuneBinder;
+import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
+import com.huto.hemomancy.network.capa.BloodTendencyPacketClient;
+import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
+import com.huto.hemomancy.network.capa.BloodVolumePacketClient;
+import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
+import com.huto.hemomancy.network.capa.OpenNormalInvPacket;
+import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
+import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
+import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -47,9 +58,9 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodFormationKeyPress.class,
 				PacketBloodFormationKeyPress::encode, PacketBloodFormationKeyPress::decode,
 				PacketBloodFormationKeyPress::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBookCraftingKeyPress.class,
-				PacketBookCraftingKeyPress::encode, PacketBookCraftingKeyPress::decode,
-				PacketBookCraftingKeyPress::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodCraftingKeyPress.class,
+				PacketBloodCraftingKeyPress::encode, PacketBloodCraftingKeyPress::decode,
+				PacketBloodCraftingKeyPress::handle);
 
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);

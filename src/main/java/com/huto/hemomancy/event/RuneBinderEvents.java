@@ -3,8 +3,8 @@ package com.huto.hemomancy.event;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
-import com.huto.hemomancy.network.PacketBinderTogglePickup;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
