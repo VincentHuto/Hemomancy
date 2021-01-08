@@ -4,7 +4,11 @@
 	"block.hemomancy.runic_chisel_station": "Runic Chisel Station",
 	"block.hemomancy.sanguine_glass": "Sanguine Glass",
 	"block.hemomancy.sanguine_pane": "Sanguine Pane",
+	"block.hemomancy.conscious_mass": "Conscious Mass",
+	"block.hemomancy.semi_sentient_construct": "Semi-Sentient Consturct",
 	"block.hemomancy.tainted_iron_block": "Tainted Iron Block",
+	"block.hemomancy.smouldering_ash_trail": "Smouldering Ash",
+	"block.hemomancy.befouling_ash_trail": "Befouling Ash",
 	"block.hemomancy.venous_stone": "Venous Stone",
 	"item.hemomancy.iron_knapper": "Iron Knapper",
 	"item.hemomancy.liber_sanguinum": "Liber Sanguinum",
@@ -56,7 +60,8 @@
 	"item.hemomancy.blood_gourd_red": "Red Blood Gourd",
 	"item.hemomancy.blood_gourd_black": "Red Blood Gourd",
 	"item.hemomancy.living_staff": "Living Staff",
-		"item.hemomancy.living_grasp": "Living Grasp",
+	"item.hemomancy.living_grasp": "Living Grasp",
 	"item.hemomancy.spawn_egg_leech": "Spawn Egg Leech",
-	"itemGroup.hemomancy": "Hemomancy; Sanguine Mastery"
+	"itemGroup.hemomancy": "Hemomancy; Sanguine Mastery",
+	"hemomancy.jei.chisel_station": "Runic Chiseling"
 }

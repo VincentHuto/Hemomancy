@@ -64,9 +64,9 @@ public class PacketBloodCraftingKeyPress {
 						if (hitBlock == targetPattern.getHitBlock()) {
 							BlockPattern.PatternHelper patternHelper = targetPattern.getBundledPattern()
 									.getBlockPattern().match(sWorld, hitPos);
-							// System.out.println(targetPattern.getBundledPattern().getBlockPosBlockList());
+						//	 System.out.println(targetPattern.getCreation());
 							if (patternHelper != null) {
-
+								//System.out.println("t");
 								for (int i = 0; i < targetPattern.getBundledPattern().getBlockPattern()
 										.getPalmLength(); ++i) {
 									for (int j = 0; j < targetPattern.getBundledPattern().getBlockPattern()

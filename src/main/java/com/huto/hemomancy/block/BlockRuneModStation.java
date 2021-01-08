@@ -32,14 +32,20 @@ import net.minecraft.world.World;
 public class BlockRuneModStation extends Block {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.makeCuboidShape(1, 0, 1, 15, 1, 15), Block.makeCuboidShape(3, 12, 3, 13, 14, 13),
-					Block.makeCuboidShape(2, 1, 2, 14, 2, 14), Block.makeCuboidShape(2, 11, 2, 14, 12, 14),
-					Block.makeCuboidShape(3, 2, 11, 5, 12, 13), Block.makeCuboidShape(11, 2, 11, 13, 12, 13),
-					Block.makeCuboidShape(11, 2, 3, 13, 12, 5), Block.makeCuboidShape(13, 12, 1, 15, 14, 3),
-					Block.makeCuboidShape(13.5, 14, 1.5, 14.5, 15, 2.5), Block.makeCuboidShape(13, 12, 13, 15, 14, 15),
-					Block.makeCuboidShape(13.5, 14, 13.5, 14.5, 15, 14.5), Block.makeCuboidShape(1, 12, 1, 3, 14, 3),
-					Block.makeCuboidShape(1.5, 14, 1.5, 2.5, 15, 2.5), Block.makeCuboidShape(1, 12, 13, 3, 14, 15),
-					Block.makeCuboidShape(1.5, 14, 13.5, 2.5, 15, 14.5), Block.makeCuboidShape(3, 2, 3, 5, 12, 5))
+			.of(Block.makeCuboidShape(3, 0, 3, 13, 1, 13), Block.makeCuboidShape(4, 12, 4, 12, 14.01, 12),
+					Block.makeCuboidShape(3, 12, 3, 13, 14, 13), Block.makeCuboidShape(6, 14, 6, 10, 15, 10),
+					Block.makeCuboidShape(5.800000000000001, 14, 5.800000000000001, 10.2, 14.9, 10.2),
+					Block.makeCuboidShape(7.5, 15, 7.5, 8.5, 15.5, 8.5), Block.makeCuboidShape(6, 16, 6, 10, 20, 10),
+					Block.makeCuboidShape(6.5, 16.5, 5.499999999999998, 9.5, 19.5, 6.499999999999998),
+					Block.makeCuboidShape(6.5, 16.5, 9.499999999999998, 9.5, 19.5, 10.499999999999998),
+					Block.makeCuboidShape(5.499999999999998, 16.5, 6.5, 6.499999999999998, 19.5, 9.5),
+					Block.makeCuboidShape(9.499999999999998, 16.5, 6.5, 10.499999999999998, 19.5, 9.5),
+					Block.makeCuboidShape(6.5, 19.499999999999993, 6.6, 9.5, 20.499999999999993, 9.5),
+					Block.makeCuboidShape(6.5, 15.499999999999993, 6.6, 9.5, 16.499999999999993, 9.5),
+					Block.makeCuboidShape(3, 10, 3, 13, 12, 13), Block.makeCuboidShape(2, 11, 3, 3, 13, 13),
+					Block.makeCuboidShape(13, 11, 3, 14, 13, 13), Block.makeCuboidShape(3, 11, 13, 13, 13, 14),
+					Block.makeCuboidShape(3, 11, 2, 13, 13, 3), Block.makeCuboidShape(4, 1, 4, 12, 2, 12),
+					Block.makeCuboidShape(4, 9, 4, 12, 10, 12), Block.makeCuboidShape(5, 2, 5, 11, 9, 11))
 			.reduce((v1, v2) -> {
 				return VoxelShapes.combineAndSimplify(v1, v2, IBooleanFunction.OR);
 			}).get();

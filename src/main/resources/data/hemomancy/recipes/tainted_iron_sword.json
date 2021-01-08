@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "R",
+    "R",
+    "N"
+  ],
+  "key": {
+    "R": {
+      "item": "hemomancy:tainted_iron_scrap"
+    },
+    "N": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "hemomancy:tainted_iron_sword"
+  }
+}

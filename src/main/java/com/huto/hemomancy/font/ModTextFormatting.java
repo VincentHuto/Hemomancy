@@ -76,6 +76,7 @@ public class ModTextFormatting {
 
 		StringBuilder converted = new StringBuilder();
 		boolean convertNext = true;
+		text.replace("_trail", "");
 		for (char ch : text.toCharArray()) {
 			if (ch == '_') {
 				ch = ' ';

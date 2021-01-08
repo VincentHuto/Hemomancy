@@ -30,6 +30,8 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMoon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternOedon;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRadianceContract;
 import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
+import com.huto.hemomancy.item.tool.EnumModArmorTiers;
+import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.ItemLivingGrasp;
@@ -39,6 +41,9 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -46,6 +51,7 @@ import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -68,13 +74,12 @@ public class ItemInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
-	
-	
+
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	
-	//Living tools
+
+	// Living tools
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
@@ -82,24 +87,49 @@ public class ItemInit {
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.SIMPLE));
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					EnumBloodGourdTiers.SIMPLE));
 	public static final RegistryObject<Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.CRIMSON));
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					EnumBloodGourdTiers.CRIMSON));
 	public static final RegistryObject<Item> blood_gourd_black = SPECIALITEMS.register("blood_gourd_black",
-			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), EnumBloodGourdTiers.ASHEN));
+			() -> new ItemBloodGourd(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					EnumBloodGourdTiers.ASHEN));
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> smoldering_ash = BASEITEMS.register("smoldering_ash",
+	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
+			() -> new BlockNamedItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
+	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
+			() -> new BlockNamedItem(BlockInit.befouling_ash_trail.get(),
+					(new Item.Properties())));
+	public static final RegistryObject<Item> tainted_iron_scrap = BASEITEMS.register("tainted_iron_scrap",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> befouling_ash = BASEITEMS.register("befouling_ash",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	//Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
 			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-
+	//Armor
+	public static final RegistryObject<Item> tainted_iron_helm = BASEITEMS.register("tainted_iron_helm",
+			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.HEAD,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> tainted_iron_chestplate = BASEITEMS.register("tainted_iron_chestplate",
+			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.CHEST,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> tainted_iron_leggings = BASEITEMS.register("tainted_iron_leggings",
+			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.LEGS,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> tainted_iron_boots = BASEITEMS.register("tainted_iron_boots",
+			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.FEET,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	// Old Iron
+	public static final RegistryObject<Item> tainted_iron_sword = HANDHELDITEMS.register("tainted_iron_sword",
+			() -> new SwordItem(EnumModToolTiers.TAINTED_IRON, 3, -2.4F,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	
 	// Runes
 
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",

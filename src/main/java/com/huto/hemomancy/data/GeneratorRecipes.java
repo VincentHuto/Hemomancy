@@ -23,6 +23,15 @@ public class GeneratorRecipes extends RecipeProvider {
 
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+
+		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.befouling_ash_trail.get(), 3).addIngredient(Items.NETHER_WART)
+				.addIngredient(Items.GUNPOWDER).addIngredient(Items.BONE_MEAL)
+				.addCriterion("has_nether_wart", hasItem(Items.NETHER_WART)).build(consumer);
+
+		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.smouldering_ash_trail.get(), 3)
+				.addIngredient(Items.BLAZE_POWDER).addIngredient(Items.GUNPOWDER).addIngredient(Items.BONE_MEAL)
+				.addCriterion("has_blaze_powder", hasItem(Items.BLAZE_POWDER)).build(consumer);
+
 		ShapelessRecipeBuilder.shapelessRecipe(ItemInit.rune_pattern.get()).addIngredient(Items.PAPER)
 				.addIngredient(ItemInit.rune_blank.get())
 				.addCriterion("has_rune_blank", hasItem(ItemInit.rune_blank.get())).build(consumer);
@@ -115,15 +124,39 @@ public class GeneratorRecipes extends RecipeProvider {
 				.addCriterion("has_rune_mod_station", hasItem(BlockInit.rune_mod_station.get())).build(consumer);
 
 		ShapedRecipeBuilder.shapedRecipe(BlockInit.runic_chisel_station.get())
-				.key('C', BlockInit.chiseled_tainted_iron_block.get())
-				.key('T', BlockInit.tainted_iron_block.get())
-				.key('V', BlockInit.venous_stone.get())
-				.key('P', Ingredient.fromTag(ItemTags.PLANKS))
-				.key('L', Ingredient.fromTag(ItemTags.LOGS))
-				.patternLine("PVP")
-				.patternLine("LCL")
-				.patternLine("LTL")
+				.key('C', BlockInit.chiseled_tainted_iron_block.get()).key('T', BlockInit.tainted_iron_block.get())
+				.key('V', BlockInit.venous_stone.get()).key('P', Ingredient.fromTag(ItemTags.PLANKS))
+				.key('L', Ingredient.fromTag(ItemTags.LOGS)).patternLine("PVP").patternLine("LCL").patternLine("LTL")
 				.addCriterion("has_venous_stone", hasItem(BlockInit.venous_stone.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.chiseled_tainted_iron_block.get(), 4)
+				.key('T', BlockInit.tainted_iron_block.get()).patternLine("TT").patternLine("TT")
+				.addCriterion("has_tainted_iron_block", hasItem(BlockInit.tainted_iron_block.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.tainted_iron_block.get(), 4)
+				.key('T', BlockInit.chiseled_tainted_iron_block.get()).patternLine("TT").patternLine("TT")
+				.addCriterion("has_chiseled_tainted_iron_block", hasItem(BlockInit.chiseled_tainted_iron_block.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.tainted_iron_helm.get()).key('R', ItemInit.tainted_iron_scrap.get())
+				.patternLine("RRR").patternLine("R R")
+				.addCriterion("has_tainted_iron_scrap", hasItem(ItemInit.tainted_iron_scrap.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.tainted_iron_chestplate.get())
+				.key('R', ItemInit.tainted_iron_scrap.get()).patternLine("R R").patternLine("RRR").patternLine("RRR")
+				.addCriterion("has_tainted_iron_scrap", hasItem(ItemInit.tainted_iron_scrap.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.tainted_iron_leggings.get())
+				.key('R', ItemInit.tainted_iron_scrap.get()).patternLine("RRR").patternLine("R R").patternLine("R R")
+				.addCriterion("has_tainted_iron_scrap", hasItem(ItemInit.tainted_iron_scrap.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.tainted_iron_boots.get()).key('R', ItemInit.tainted_iron_scrap.get())
+				.patternLine("R R").patternLine("R R")
+				.addCriterion("has_tainted_iron_scrap", hasItem(ItemInit.tainted_iron_scrap.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.tainted_iron_sword.get()).key('R', ItemInit.tainted_iron_scrap.get())
+				.key('N', Items.STICK).patternLine("R").patternLine("R").patternLine("N")
+				.addCriterion("has_tainted_iron_scrap", hasItem(ItemInit.tainted_iron_scrap.get())).build(consumer);
 
 	}
 }

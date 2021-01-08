@@ -39,9 +39,13 @@ public class ClientEventSubscriber {
 	public static KeyBinding bloodCrafting = new KeyBinding("key.Hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
 			"key.Hemomancy.category");
 
+
+
+	
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
+		
 		// Tiles
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);

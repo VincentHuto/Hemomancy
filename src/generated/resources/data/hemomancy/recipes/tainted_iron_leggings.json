@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "R R",
+    "R R"
+  ],
+  "key": {
+    "R": {
+      "item": "hemomancy:tainted_iron_scrap"
+    }
+  },
+  "result": {
+    "item": "hemomancy:tainted_iron_leggings"
+  }
+}

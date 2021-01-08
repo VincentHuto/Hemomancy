@@ -10,7 +10,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.FaceDirection;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
@@ -51,41 +50,22 @@ public class RenderRuneModStation extends TileEntityRenderer<TileEntityRuneModSt
 
 			double time = ClientTickHandler.ticksInGame + partialTicks;
 			Minecraft mc = Minecraft.getInstance();
-
 			matrixStackIn.push();
-			matrixStackIn.translate(0.5F, 1F, 0.69F);
-			matrixStackIn.translate(0.025F, -0.32F, 0.025F);
+			matrixStackIn.translate(0.5F, 1.25F, 0.5F);
+			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(angles[0] + (float) time));
+			// Edit True Radius
+			matrixStackIn.translate(0.025F, -0.3F, 0.025F);
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
-			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceDirection.EAST.toString())) {
-				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180f));
-				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-				matrixStackIn.translate(-0.22, 0.38D, -0.2F);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceDirection.WEST.toString())) {
-				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-				matrixStackIn.translate(0.21, 0.36D, -0.25F);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceDirection.NORTH.toString())) {
-				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90f));
-				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-				matrixStackIn.translate(-0.028F, 0.28D, -0.42F);
-			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
-					.equals(FaceDirection.SOUTH.toString())) {
-				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
-				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(22.5f));
-
-				matrixStackIn.translate(0.02F, 0.45D, -0.02F);
-			}
+			// Edit Radius Movement
+			matrixStackIn.translate(0D, 0.175D +  0* 0.55, 0F);
+			// Block/Item Scale
+			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 			matrixStackIn.scale(0.25f, 0.25f, 0.25f);
+
 			ItemStack stack = runes.getStackInSlot(0);
 			if (!stack.isEmpty()) {
-				GlStateManager.pushMatrix();
 				mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 						matrixStackIn, bufferIn);
-				GlStateManager.popMatrix();
 			}
 			matrixStackIn.pop();
 

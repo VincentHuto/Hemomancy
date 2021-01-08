@@ -26,12 +26,12 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemRune extends Item implements IRune {
 
-	EnumBloodTendency assignedCovenant;
+	EnumBloodTendency assignedTendency;
 	float deepenAmount;
 
 	public ItemRune(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
 		super(properties);
-		this.assignedCovenant = tendencyIn;
+		this.assignedTendency = tendencyIn;
 		this.deepenAmount = deepenAmountIn;
 	}
 
@@ -42,7 +42,7 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyTendency(getAssignedCovenant(), getDeepenAmount());
+					coven.setTendencyTendency(getAssignedTendency(), getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
@@ -59,7 +59,7 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyTendency(getAssignedCovenant(), -getDeepenAmount());
+					coven.setTendencyTendency(getAssignedTendency(), -getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
@@ -78,12 +78,12 @@ public class ItemRune extends Item implements IRune {
 		this.deepenAmount = deepenAmount;
 	}
 
-	public EnumBloodTendency getAssignedCovenant() {
-		return assignedCovenant;
+	public EnumBloodTendency getAssignedTendency() {
+		return assignedTendency;
 	}
 
-	public void setAssignedCovenant(EnumBloodTendency assignedCovenant) {
-		this.assignedCovenant = assignedCovenant;
+	public void setAssignedTendency(EnumBloodTendency assignedTendency) {
+		this.assignedTendency = assignedTendency;
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ItemRune extends Item implements IRune {
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new StringTextComponent(
-				TextFormatting.GOLD + "Devoted Coven: " + ModTextFormatting.toProperCase(assignedCovenant.name())));
+				TextFormatting.GOLD + "Tendency: " + ModTextFormatting.toProperCase(assignedTendency.name())));
 		tooltip.add(new StringTextComponent(TextFormatting.GREEN + "Tendency Amount: " + deepenAmount));
 
 	}
