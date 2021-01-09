@@ -23,7 +23,6 @@ public class GuideBookLib {
 	public static List<GuiGuidePage> VascularPageList = new ArrayList<GuiGuidePage>();
 	public static List<GuiGuidePage> TendencyPageList = new ArrayList<GuiGuidePage>();
 	public static List<GuiGuidePage> ManipulationPageList = new ArrayList<GuiGuidePage>();
-	public static List<GuiGuidePage> HiddenPageList = new ArrayList<GuiGuidePage>();
 	public static List<GuiGuidePageTOC> TOCPageList = new ArrayList<GuiGuidePageTOC>();
 	public static List<List<GuiGuidePage>> ChapterList = new ArrayList<List<GuiGuidePage>>();
 
@@ -64,21 +63,12 @@ public class GuideBookLib {
 	public static String MANIPULATION_PAGE_7 = "Due to the nature of life itself, being inherently organized, living beings are naturally enriched with essence, almost completely filled with positive vibrations in fact. This is not to say that ALL creatures are positive, there are some exceptions that have net negative vibrations(withers and end creatures), and some that have none at all(skeletons and other inorganic life)! Because of this, the essence can be farmed quite readily through the process of death, with the correct tools, of course, ones that nullified vibrations maybe?";
 	public static String MANIPULATION_PAGE_8 = "title.somnolenttome.intro.page.8.text";
 
-	public static String HIDDEN_PAGE_1 = "The big bang created the universe, making existence out of nothing, pushing everything out from a central point with incredible momentum. With this massive amount of force, came an equal production of both antimatter and standard matter. From the start, everything had it's opposite. This fact can be claimed to be one of the few principles in existence that always holds true, be it science or magic. The forging of the universe is not a relic of ages past, literal reverberations from the explosion can still be felt and interacted with.";
-	public static String HIDDEN_PAGE_2 = "The reverberations previously mentioned are in a sense, cosmic whiplash on a universal scale. As the singularity expanded, every particle was thrown around in every which way. While at first, this was cause for chaos, the wheels of time have marched on and calmed things down as they do rendering the vibrations very minute, but minute is not zero. Minute for one atom can be magnified exponentially when concentrated enough, resonating with one another allowing for the force of the big bang to be felt once more";
-	public static String HIDDEN_PAGE_3 = "One of the quirks of the antimatter/matter duality is that the vibrations of these particles are opposite and equal as well. These vibrations follow the same principle that all other forms of vibration be it sound/light/electricity etc, in that they amplify when met with similar waves and cancel when met with opposing waves. Building on the concentration effect of these vibrations, the idea of karma can even be traced back as the balance of these vibrations within your body, and mana is just the net force of the anti and positive waves manifesting as a physical and invisible force.";
-	public static String HIDDEN_PAGE_4 = "Matter and antimatter can become \"vibratory\" in some rare examples simply by happenstance when enough of a single frequency of resonating matter comes into close proximity and will somewhat meld together. When they coalesce they are called \"drops\" or \"tears\" for vibrations and antivibration respectively with \"essence\" being the overarching term for both forms of concentrated vibrational matter. Essence can be found in all forms of life with a very low concentration but can be coerced out of them upon death with specialized tools discussed later.";
-	public static String HIDDEN_PAGE_5 = "The process of inducing vibrations is known as \"Channeling\", somnolental sounding in nature, but the hiddens can be blamed for this. This can be done in a variety of ways all modeled off of trying to artificially induce the natural essence production, by essentially taking a chunk of vibratory or \"conductive\" matter and allowing it to collect more and more matter that begins to resonate with it, which is an exponential process. The beauty of this process is that once an original drop or tear of matter is created, it will naturally start to produce more of itself with little aide.If only there was a way to contain this growth...";
-	public static String HIDDEN_PAGE_6 = "As mentioned prior, these vibrations behave the same way that any other wave does, and as such can be stopped or dampened with an opposite waveform. Producing this waveform can be tricky but with a little bit of experimenting, discovering that the more your around concentrated matter, the more sensitive you become to it, beginning to be able to sense slight differences in direction and amplitude each drop. By using matter of specific frequency you can change the characteristics of other matter by forcing contact with the target. The process of canceling vibrations intentionally is called \"Nullification\" and is incredibly useful.";
-	public static String HIDDEN_PAGE_7 = "Due to the nature of life itself, being inherently organized, living beings are naturally enriched with essence, almost completely filled with positive vibrations in fact. This is not to say that ALL creatures are positive, there are some exceptions that have net negative vibrations(withers and end creatures), and some that have none at all(skeletons and other inorganic life)! Because of this, the essence can be farmed quite readily through the process of death, with the correct tools, of course, ones that nullified vibrations maybe?";
-	public static String HIDDEN_PAGE_8 = "title.somnolenttome.intro.page.8.text";
 
 	public static void registerPages() {
 
 		IntroPageList.clear();
 		VascularPageList.clear();
 		TendencyPageList.clear();
-		HiddenPageList.clear();
 		ManipulationPageList.clear();
 		ChapterList.clear();
 		TOCPageList.clear();
@@ -187,26 +177,9 @@ public class GuideBookLib {
 				new GuiTomeImage(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/pageimages/blue.png"), 0, 0)));
 
 		// Hiddenn
-		HiddenPageList.add(new GuiGuidePage(1, EnumTomeCatagories.HIDDEN, "In the Begining", "It Started Somewhere",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_1)));
-		HiddenPageList.add(new GuiGuidePage(2, EnumTomeCatagories.HIDDEN, "Duality of Nature", "Yin and Yang",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_2)));
-		HiddenPageList.add(new GuiGuidePage(3, EnumTomeCatagories.HIDDEN, "Vibes", "Cosmic Vibrations",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_3)));
-		HiddenPageList.add(new GuiGuidePage(4, EnumTomeCatagories.HIDDEN, "A World of Essence", "Only the Essentials",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_4)));
-		HiddenPageList.add(new GuiGuidePage(5, EnumTomeCatagories.HIDDEN, "Channeling Basics", "Use the Force",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_5)));
-		HiddenPageList.add(new GuiGuidePage(6, EnumTomeCatagories.HIDDEN, "Nullification", "Counter Attack",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_6)));
-		HiddenPageList.add(new GuiGuidePage(7, EnumTomeCatagories.HIDDEN, "Vital Essence", "The Power of Vitals",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(HIDDEN_PAGE_7)));
-		HiddenPageList.add(new GuiGuideImagePage(8, EnumTomeCatagories.HIDDEN, "ImageTest", "Picture Yo", "",
-				new GuiTomeImage(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/pageimages/blue.png"), 0, 0)));
 
 		// Adding Chapters
-		Collections.addAll(ChapterList, IntroPageList, VascularPageList, TendencyPageList, ManipulationPageList,
-				HiddenPageList);
+		Collections.addAll(ChapterList, IntroPageList, VascularPageList, TendencyPageList, ManipulationPageList);
 
 		// TOC PAGES
 		TOCPageList
@@ -216,15 +189,12 @@ public class GuideBookLib {
 		TOCPageList.add(new GuiGuidePageTOC(EnumTomeCatagories.TENDENCY, new ItemStack(BlockInit.venous_stone.get())));
 		TOCPageList.add(
 				new GuiGuidePageTOC(EnumTomeCatagories.MANIPULATION, new ItemStack(ItemInit.sanguine_formation.get())));
-		TOCPageList
-				.add(new GuiGuidePageTOC(EnumTomeCatagories.HIDDEN, new ItemStack(ItemInit.sanguine_formation.get())));
 
 		// Adding the table of contents to each chapter
 		IntroPageList.add(0, TOCPageList.get(0));
 		VascularPageList.add(0, TOCPageList.get(1));
 		TendencyPageList.add(0, TOCPageList.get(2));
 		ManipulationPageList.add(0, TOCPageList.get(3));
-		HiddenPageList.add(0, TOCPageList.get(4));
 
 	}
 
@@ -244,9 +214,6 @@ public class GuideBookLib {
 		return TendencyPageList;
 	}
 
-	public static List<GuiGuidePage> getHiddenPageList() {
-		return HiddenPageList;
-	}
 
 	public static List<List<GuiGuidePage>> getChapterList() {
 		return ChapterList;

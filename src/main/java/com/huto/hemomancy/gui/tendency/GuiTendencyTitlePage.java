@@ -1,4 +1,4 @@
-package com.huto.hemomancy.gui.guide;
+package com.huto.hemomancy.gui.tendency;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.GuiButtonTextured;
@@ -23,33 +23,43 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiGuideTitlePage extends Screen {
+public class GuiTendencyTitlePage extends Screen {
 
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/guidebook.png");
 	Minecraft mc = Minecraft.getInstance();
 	int guiWidth = 186;
 	int guiHeight = 240;
 	int left, top;
 	final int BUTTONCLOSE = 0;
-	final int BUTTONINTRO = 1;
-	final int BUTTONVASCULAR = 2;
-	final int BUTTONTENDENCY = 3;
-	final int BUTTONMANIPULATION = 4;
-	final int BUTTONHIDDEN = 8;
+	final int BUTTONANIMUS = 1;
+	final int BUTTONMORTEM = 2;
+	final int BUTTONDUCTILIS = 3;
+	final int BUTTONFERRIC = 4;
+
+	final int BUTTONLUX = 5;
+	final int BUTTONTENEBRIS = 6;
+	final int BUTTONFLAMMEUS = 7;
+	final int BUTTONCONGEATIO = 8;
+	final int BUTTONHIDDEN = 9;
 	static String title = " Table of Contents";
 	static StringTextComponent titleComponent = new StringTextComponent(title);
-	String subtitle = " Hemomancy; Sanguine Mastery";
+	String subtitle = " Hemomancy; Blood Tendency";
 	ItemStack icon = new ItemStack(ItemInit.sanguine_formation.get());
-	GuiButtonTextured buttonclose, introButton, vascularButton, tendencyButton, manipulationButton, hiddenButton;
+	GuiButtonTextured buttonclose, animusButton, mortemButton, ductilisButton, ferricButton, luxButton, tenebrisButton,
+			flammeusButton, congeatioButton, hiddenButton;
 	boolean isElder;
+	ResourceLocation texture;
 
-	public GuiGuideTitlePage() {
+	public GuiTendencyTitlePage(boolean isElderIn) {
 		super(titleComponent);
+		this.isElder = isElderIn;
+		texture = isElder ? new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook_hidden.png")
+				: new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook.png");
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+
 		int centerX = (width / 2) - guiWidth / 2;
 		int centerY = (height / 2) - guiHeight / 2;
 		this.renderBackground(matrixStack);
@@ -96,7 +106,7 @@ public class GuiGuideTitlePage extends Screen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translatef(3, -5, 0);
 			GlStateManager.scalef(0.5f, 0.5f, 0.5f);
-			RenderMultiBlock.renderPatternInGUI(matrixStack, minecraft, ModBloodCraftingRecipes.tainted_iron_pattern);
+			RenderMultiBlock.renderPatternInGUI(matrixStack, minecraft, ModBloodCraftingRecipes.ssc_pattern);
 
 			// mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.FIRE_CHARGE), 0,
 			// -9);
@@ -137,18 +147,31 @@ public class GuiGuideTitlePage extends Screen {
 		if (buttonclose.isHovered()) {
 			renderTooltip(matrixStack, new StringTextComponent("Close"), mouseX, mouseY);
 		}
-		if (introButton.isHovered()) {
-			renderTooltip(matrixStack, new StringTextComponent("Intro"), mouseX, mouseY);
+		if (animusButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Animus"), mouseX, mouseY);
 		}
-		if (vascularButton.isHovered()) {
-			renderTooltip(matrixStack, new StringTextComponent("Vascular System"), mouseX, mouseY);
+		if (mortemButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Mortem"), mouseX, mouseY);
 		}
-		if (tendencyButton.isHovered()) {
-			renderTooltip(matrixStack, new StringTextComponent("Blood Tendency"), mouseX, mouseY);
+		if (ductilisButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Ductilis"), mouseX, mouseY);
 		}
-		if (manipulationButton.isHovered()) {
-			renderTooltip(matrixStack, new StringTextComponent("Manipulations"), mouseX, mouseY);
+		if (ferricButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Ferric"), mouseX, mouseY);
 		}
+		if (luxButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Lux"), mouseX, mouseY);
+		}
+		if (tenebrisButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Tenebris"), mouseX, mouseY);
+		}
+		if (flammeusButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Flammeus"), mouseX, mouseY);
+		}
+		if (congeatioButton.isHovered()) {
+			renderTooltip(matrixStack, new StringTextComponent("Congeatio"), mouseX, mouseY);
+		}
+
 		if (isElder) {
 			if (hiddenButton.isHovered()) {
 				renderTooltip(matrixStack, new StringTextComponent("Hidden"), mouseX, mouseY);
@@ -167,22 +190,46 @@ public class GuiGuideTitlePage extends Screen {
 				verticalLoc - 50, 32, 32, 209, 32, null, (press) -> {
 					closeScreen();
 				}));
-		this.addButton(introButton = new GuiButtonTextured(texture, BUTTONINTRO, sideLoc - (guiWidth - 174),
+		this.addButton(animusButton = new GuiButtonTextured(texture, BUTTONANIMUS, sideLoc - (guiWidth - 174),
 				verticalLoc - 226, 23, 16, 186, 0, null, (press) -> {
-					mc.displayGuiScreen(GuideBookLib.getIntroPageList().get(0));
+					mc.displayGuiScreen(TendencyBookLib.getAnimusPageList().get(0));
 				}));
-		this.addButton(vascularButton = new GuiButtonTextured(texture, BUTTONVASCULAR, sideLoc - (guiWidth - 175),
+		this.addButton(mortemButton = new GuiButtonTextured(texture, BUTTONMORTEM, sideLoc - (guiWidth - 175),
 				verticalLoc - 181, 23, 16, 186, 32, null, (press) -> {
-					mc.displayGuiScreen(GuideBookLib.getVascularPageList().get(0));
+					mc.displayGuiScreen(TendencyBookLib.getMortemPageList().get(0));
 				}));
-		this.addButton(tendencyButton = new GuiButtonTextured(texture, BUTTONTENDENCY, sideLoc - (guiWidth - 175),
+		this.addButton(ductilisButton = new GuiButtonTextured(texture, BUTTONDUCTILIS, sideLoc - (guiWidth - 175),
 				verticalLoc - 153, 23, 16, 186, 64, null, (press) -> {
-					mc.displayGuiScreen(GuideBookLib.getTendencyPageList().get(0));
+					mc.displayGuiScreen(TendencyBookLib.getDuctilisPageList().get(0));
 				}));
-		this.addButton(manipulationButton = new GuiButtonTextured(texture, BUTTONMANIPULATION,
-				sideLoc - (guiWidth - 177), verticalLoc - 121, 24, 16, 186, 96, null, (press) -> {
-					mc.displayGuiScreen(GuideBookLib.getManipulationPageList().get(0));
+		this.addButton(ferricButton = new GuiButtonTextured(texture, BUTTONFERRIC, sideLoc - (guiWidth - 177),
+				verticalLoc - 121, 24, 16, 186, 96, null, (press) -> {
+					mc.displayGuiScreen(TendencyBookLib.getFerricPageList().get(0));
 				}));
+		this.addButton(luxButton = new GuiButtonTextured(texture, BUTTONLUX, sideLoc - (guiWidth - 180),
+				verticalLoc - 91, 24, 16, 186, 128, null, (press) -> {
+					mc.displayGuiScreen(TendencyBookLib.getLuxPageList().get(0));
+				}));
+		this.addButton(tenebrisButton = new GuiButtonTextured(texture, BUTTONTENEBRIS, sideLoc - (guiWidth - 177),
+				verticalLoc - 49, 24, 16, 186, 160, null, (press) -> {
+					mc.displayGuiScreen(TendencyBookLib.getTenebrisPageList().get(0));
+				}));
+		this.addButton(flammeusButton = new GuiButtonTextured(texture, BUTTONFLAMMEUS, sideLoc - (guiWidth - 177),
+				verticalLoc - 69, 24, 16, 209, 160, null, (press) -> {
+					mc.displayGuiScreen(TendencyBookLib.getFlammeusPageList().get(0));
+				}));
+		this.addButton(congeatioButton = new GuiButtonTextured(texture, BUTTONCONGEATIO, sideLoc - (guiWidth - 177),
+				verticalLoc - 200, 24, 16, 186, 192, null, (press) -> {
+					mc.displayGuiScreen(TendencyBookLib.getCongeatioPageList().get(0));
+				}));
+
+		if (isElder) {
+			this.addButton(hiddenButton = new GuiButtonTextured(texture, BUTTONHIDDEN, sideLoc - (guiWidth - 155),
+					verticalLoc - 30, 16, 16, 209, 0, null, (press) -> {
+						mc.displayGuiScreen(TendencyBookLib.getHiddenPageList().get(0));
+					}));
+		}
+
 	}
 
 	@Override

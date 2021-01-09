@@ -1,6 +1,6 @@
 package com.huto.hemomancy.item;
 
-import com.huto.hemomancy.gui.guide.GuiGuideTitlePage;
+import com.huto.hemomancy.gui.tendency.GuiTendencyTitlePage;
 import com.huto.hemomancy.render.item.RenderItemTome;
 
 import net.minecraft.client.Minecraft;
@@ -15,9 +15,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemBloodyBook extends ItemTome {
+public class ItemTendencyHiddenBook extends ItemTome {
 
-	public ItemBloodyBook(Properties prop) {
+	public ItemTendencyHiddenBook(Properties prop) {
 		super(prop.setISTER(() -> RenderItemTome::new));
 	}
 
@@ -27,7 +27,7 @@ public class ItemBloodyBook extends ItemTome {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		if (worldIn.isRemote) {
-			Minecraft.getInstance().displayGuiScreen(new GuiGuideTitlePage());
+			Minecraft.getInstance().displayGuiScreen(new GuiTendencyTitlePage(true));
 			playerIn.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, 0.40f, 1F);
 
 		}

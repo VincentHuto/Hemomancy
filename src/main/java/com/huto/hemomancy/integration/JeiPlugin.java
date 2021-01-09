@@ -5,7 +5,10 @@ import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.integration.jei.BloodCraftingCategory;
 import com.huto.hemomancy.integration.jei.ChiselRecipeCategory;
+import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 
 import mezz.jei.api.IModPlugin;
@@ -29,6 +32,7 @@ public class JeiPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		registry.addRecipeCategories(new ChiselRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new BloodCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -39,6 +43,7 @@ public class JeiPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		registry.addRecipes(ModChiselRecipes.runeRecipies, ChiselRecipeCategory.UID);
+		registry.addRecipes(ModBloodCraftingRecipes.RECIPES, BloodCraftingCategory.UID);
 
 	}
 
@@ -50,6 +55,7 @@ public class JeiPlugin implements IModPlugin {
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
 
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), ChiselRecipeCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.sanguine_formation.get()), BloodCraftingCategory.UID);
 
 	}
 

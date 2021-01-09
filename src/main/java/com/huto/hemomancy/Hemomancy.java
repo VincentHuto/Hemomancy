@@ -11,6 +11,7 @@ import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
 import com.huto.hemomancy.event.KeyBindEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
 import com.huto.hemomancy.gui.guide.GuideBookLib;
+import com.huto.hemomancy.gui.tendency.TendencyBookLib;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.CapabilityInit;
 import com.huto.hemomancy.init.ContainerInit;
@@ -167,6 +168,7 @@ public class Hemomancy {
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		GuideBookLib.registerPages();
+		TendencyBookLib.registerPages();
 		this.addLayers();
 
 	}

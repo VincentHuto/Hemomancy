@@ -1,6 +1,7 @@
 package com.huto.hemomancy.render.item;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemTome;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -18,11 +19,9 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class RenderItemTome extends ItemStackTileEntityRenderer {
 	public final BookModel model = new BookModel();
-/*	public static ResourceLocation guide = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/somnolent_tome.png");
-	public static ResourceLocation elder = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/elder_tome.png");
-	public static ResourceLocation coven = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/coven_tome.png");*/
-	
 	public static ResourceLocation liber_sanguinum = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_sanguinum.png");
+	public static ResourceLocation liber_inclinatio= new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio.png");
+	public static ResourceLocation liber_inclinatio_hidden = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio_hidden.png");
 
 	public int ticks;
 	public float field_195523_f;
@@ -70,12 +69,10 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 			this.model.setBookState(f, MathHelper.clamp(f4, 0.0F, 1.0F), MathHelper.clamp(f5, 0.0F, 1.0F), f6);
 			IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer
 					.getImpl(Tessellator.getInstance().getBuffer());
-
-		/*	ResourceLocation location = stack.getItem() == ItemInit.somnolent_tome.get() ? guide
-					: stack.getItem() == ItemInit.elder_tome.get() ? elder
-							: stack.getItem() == ItemInit.coven_tome.get() ? coven : guide*/;
-							
-			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(model.getRenderType(liber_sanguinum));
+			ResourceLocation location = stack.getItem() == ItemInit.liber_sanguinum.get() ? liber_sanguinum
+					: stack.getItem() == ItemInit.liber_inclinatio.get() ? liber_inclinatio
+							: stack.getItem() == ItemInit.liber_inclinatio_hidden.get() ? liber_inclinatio_hidden : liber_sanguinum;
+			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(model.getRenderType(location));
 			ms.scale(0.75f, 0.75f, 0.75f);
 			model.render(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			irendertypebuffer$impl.finish();

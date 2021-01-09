@@ -1,6 +1,8 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.entity.EntityIronPillar;
+import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
@@ -41,9 +43,25 @@ public class EntityInit {
 					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_blood_orb").toString()));
 
+	public static final RegistryObject<EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register(
+			"iron_pillar",
+			() -> EntityType.Builder
+					.<EntityIronPillar>create(EntityIronPillar::new, EntityClassification.MISC)
+					.size(1.4F, 1.5F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
+	
+	public static final RegistryObject<EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register(
+			"iron_spike",
+			() -> EntityType.Builder
+					.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
+					.size(1.4F, 1.5F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
+	
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {
 		GlobalEntityTypeAttributes.put(EntityInit.leech.get(), EntityLeech.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
 
 	}
 

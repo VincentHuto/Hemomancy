@@ -1,4 +1,4 @@
-package com.huto.hemomancy.gui.guide;
+package com.huto.hemomancy.gui.tendency;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,20 +6,21 @@ import java.util.List;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.lwjgl.glfw.GLFW;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
+import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
+import com.huto.hemomancy.init.ItemInit;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,8 +28,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiGuideImagePage extends GuiGuidePage {
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/guidepage.png");
+public class GuiTendencyPage extends Screen {
+	 ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/guidepage.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;
@@ -40,27 +41,22 @@ public class GuiGuideImagePage extends GuiGuidePage {
 	String text;
 	ItemStack icon;
 	GuiButtonBookArrow arrowF, arrowB;
-	private final ImmutableList<GuiTomeImage> images;
-	GuiButtonTextured buttonTitle, buttonCloseTab;
-	List<GuiTomeImage> imagesArray;
-
+	GuiButtonTextured buttonTitle;
+	GuiButtonTextured buttonCloseTab;
 	TextFieldWidget textBox;
-	EnumTomeCatagories catagory;
+	EnumTendencyCatagories catagory;
 	Minecraft mc = Minecraft.getInstance();
 
 	@OnlyIn(Dist.CLIENT)
-	public GuiGuideImagePage(int pageNumIn, EnumTomeCatagories catagoryIn, String titleIn, String subtitleIn,
-			String textIn, GuiTomeImage... imagesIn) {
-		super(pageNumIn, catagoryIn, titleIn, subtitleIn, new ItemStack(Items.AIR), textIn);
-		Preconditions.checkArgument(imagesIn.length <= 12);
+	public GuiTendencyPage(int pageNumIn, EnumTendencyCatagories catagoryIn, String titleIn, String subtitleIn,
+			ItemStack iconIn, String textIn) {
+		super(titleComponent);
 		this.title = titleIn;
 		this.subtitle = subtitleIn;
-		this.pageNum = pageNumIn;
+		this.icon = iconIn;
 		this.text = textIn;
+		this.pageNum = pageNumIn;
 		this.catagory = catagoryIn;
-		this.icon = new ItemStack(Items.AIR);
-		this.images = ImmutableList.copyOf(imagesIn);
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -70,7 +66,6 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		int centerY = (height / 2) - guiHeight / 2;
 		this.renderBackground(matrixStack);
 
-		// Draw Background
 		GlStateManager.pushMatrix();
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
@@ -79,7 +74,6 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		}
 		GlStateManager.popMatrix();
 
-		// Title Strings
 		GlStateManager.pushMatrix();
 		{
 			GlStateManager.translatef((width / 2) - 40, centerY + 10, 10);
@@ -89,21 +83,20 @@ public class GuiGuideImagePage extends GuiGuidePage {
 			drawString(matrixStack, font, subtitle, -5, 10, 8060954);
 		}
 		GlStateManager.popMatrix();
-		// String Text
+
 		GlStateManager.pushMatrix();
 		{
-			GlStateManager.translatef((width / 2) - 20, centerY + 10, 11);
+			GlStateManager.translatef((width / 2) - 20, centerY + 10, 10);
 			GlStateManager.scalef(0.9f, 1, 1);
 			GlStateManager.translatef(-65f, 25, 0);
 
 			// drawCenteredString(matrixStack, font, I18n.format(text), 175, 10, 10);
 			// Split String(text,x,y,wrapwidth,color)
-			// Max text length 377 characters
-			font.func_238418_a_(new StringTextComponent(I18n.format(text)), 0, 77, 175, 0);
+			// Max Character Length ~663
+			font.func_238418_a_(new StringTextComponent(I18n.format(text)), 0, 0, 175, 0);
 		}
 		GlStateManager.popMatrix();
 
-		// Button Rendering
 		GlStateManager.pushMatrix();
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
@@ -117,19 +110,9 @@ public class GuiGuideImagePage extends GuiGuidePage {
 			}
 			buttonTitle.renderButton(matrixStack, mouseX, mouseY, 311);
 			buttonCloseTab.renderButton(matrixStack, mouseX, mouseY, 411);
-
-			for (int j = 0; j < imagesArray.size(); j++) {
-				imagesArray.get(j).render(matrixStack, mouseX, mouseY, partialTicks, centerX + 5, centerY + 6);
-			}
-			for (int j = 0; j < imagesArray.size(); j++) {
-				if (imagesArray.get(j).isHovered()) {
-					func_243308_b(matrixStack, imagesArray.get(j).getText(), mouseX, mouseY);
-				}
-			}
 			GlStateManager.popMatrix();
 
 		}
-		// Icon Rendering
 		GlStateManager.translatef(3, 0, 0);
 		GlStateManager.pushMatrix();
 		{
@@ -140,10 +123,9 @@ public class GuiGuideImagePage extends GuiGuidePage {
 			Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(icon, 0, 2);
 		}
 		GlStateManager.popMatrix();
-		// ToolTips
 		textBox.render(matrixStack, mouseX, mouseY, partialTicks);
-		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2)+20
-				&& mouseY <= (16 * 2)+20 + height)) {
+		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2) + 20
+				&& mouseY <= (16 * 2) + 20 + height)) {
 			List<ITextComponent> text = new ArrayList<ITextComponent>();
 			text.add(new StringTextComponent(I18n.format(icon.getDisplayName().getString())));
 			func_243308_b(matrixStack, text, centerX, centerY);
@@ -152,21 +134,19 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		titlePage.add(new StringTextComponent(I18n.format("Title")));
 		titlePage.add(new StringTextComponent(I18n.format("Return to Catagories")));
 		if (buttonTitle.isHovered()) {
-			func_243308_b(matrixStack, titlePage, left - guiWidth + 149, top + guiHeight - 209);
+			func_243308_b(matrixStack, titlePage, mouseX, mouseY);
 		}
 		List<ITextComponent> ClosePage = new ArrayList<ITextComponent>();
 		ClosePage.add(new StringTextComponent(I18n.format("Close Book")));
 		if (buttonCloseTab.isHovered()) {
-			func_243308_b(matrixStack, ClosePage, left - guiWidth + 149, top + guiHeight - 193);
+			func_243308_b(matrixStack, ClosePage, mouseX, mouseY);
 		}
-
 	}
 
 	@Override
 	protected void init() {
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
-		imagesArray = new ArrayList<>(images);
 		buttons.clear();
 
 		if (pageNum != (getMatchingChapter().size() - 1)) {
@@ -193,7 +173,13 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		}
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-						mc.displayGuiScreen(new GuiGuideTitlePage());
+					if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+							.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
+						mc.displayGuiScreen(new GuiTendencyTitlePage(true));
+					} else {
+						mc.displayGuiScreen(new GuiTendencyTitlePage(false));
+
+					}
 				}));
 		this.addButton(buttonCloseTab = new GuiButtonTextured(texture, CLOSEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 193, 24, 16, 174, 64, null, (press) -> {
@@ -201,7 +187,6 @@ public class GuiGuideImagePage extends GuiGuidePage {
 				}));
 		textBox = new TextFieldWidget(font, left - guiWidth + 155, top + guiHeight - 227, 14, 14,
 				new StringTextComponent(""));
-
 		super.init();
 	}
 
@@ -237,4 +222,29 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		return false;
 	}
 
+	public List<GuiTendencyPage> getMatchingChapter() {
+		switch (this.catagory) {
+		case ANIMUS:
+			return TendencyBookLib.getAnimusPageList();
+		case MORTEM:
+			return TendencyBookLib.getMortemPageList();
+		case DUCTILIS:
+			return TendencyBookLib.getDuctilisPageList();
+		case FERRIC:
+			return TendencyBookLib.getFerricPageList();
+		case LUX:
+			return TendencyBookLib.getLuxPageList();
+		case TENEBRIS:
+			return TendencyBookLib.getTenebrisPageList();
+		case FLAMMEUS:
+			return TendencyBookLib.getFlammeusPageList();
+		case CONGEATIO:
+			return TendencyBookLib.getCongeatioPageList();
+		case HIDDEN:
+			return TendencyBookLib.getHiddenPageList();
+		default:
+			break;
+		}
+		return null;
+	}
 }

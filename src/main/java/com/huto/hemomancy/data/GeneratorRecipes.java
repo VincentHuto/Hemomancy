@@ -24,6 +24,13 @@ public class GeneratorRecipes extends RecipeProvider {
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
 
+		
+		
+		ShapelessRecipeBuilder.shapelessRecipe(ItemInit.tainted_iron_scrap.get(),4)
+		.addIngredient(BlockInit.tainted_iron_block.get())
+		.addCriterion("has_tainted_iron_block", hasItem(BlockInit.tainted_iron_block.get())).build(consumer);
+		
+		
 		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.befouling_ash_trail.get(), 3).addIngredient(Items.NETHER_WART)
 				.addIngredient(Items.GUNPOWDER).addIngredient(Items.BONE_MEAL)
 				.addCriterion("has_nether_wart", hasItem(Items.NETHER_WART)).build(consumer);

@@ -7,10 +7,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
-import com.huto.hemomancy.init.ItemInit;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -25,6 +23,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 @OnlyIn(Dist.CLIENT)
 public class GuiGuidePage extends Screen {
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/guidepage.png");
@@ -90,7 +89,7 @@ public class GuiGuidePage extends Screen {
 
 			// drawCenteredString(matrixStack, font, I18n.format(text), 175, 10, 10);
 			// Split String(text,x,y,wrapwidth,color)
-			//Max Character Length ~663
+			// Max Character Length ~663
 			font.func_238418_a_(new StringTextComponent(I18n.format(text)), 0, 0, 175, 0);
 		}
 		GlStateManager.popMatrix();
@@ -122,8 +121,8 @@ public class GuiGuidePage extends Screen {
 		}
 		GlStateManager.popMatrix();
 		textBox.render(matrixStack, mouseX, mouseY, partialTicks);
-		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2)+20
-				&& mouseY <= (16 * 2)+20 + height)) {
+		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2) + 20
+				&& mouseY <= (16 * 2) + 20 + height)) {
 			List<ITextComponent> text = new ArrayList<ITextComponent>();
 			text.add(new StringTextComponent(I18n.format(icon.getDisplayName().getString())));
 			func_243308_b(matrixStack, text, centerX, centerY);
@@ -171,13 +170,9 @@ public class GuiGuidePage extends Screen {
 		}
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-					if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == ItemInit.liber_sanguinum
-							.get()) {
-						mc.displayGuiScreen(new GuiGuideTitlePage(true));
-					} else {
-						mc.displayGuiScreen(new GuiGuideTitlePage(false));
 
-					}
+					mc.displayGuiScreen(new GuiGuideTitlePage());
+
 				}));
 		this.addButton(buttonCloseTab = new GuiButtonTextured(texture, CLOSEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 193, 24, 16, 174, 64, null, (press) -> {
@@ -220,19 +215,16 @@ public class GuiGuidePage extends Screen {
 		return false;
 	}
 
-
 	public List<GuiGuidePage> getMatchingChapter() {
 		switch (this.catagory) {
 		case INTRO:
-			return	GuideBookLib.getIntroPageList();
+			return GuideBookLib.getIntroPageList();
 		case VASCULARSYSTEM:
 			return GuideBookLib.getVascularPageList();
 		case TENDENCY:
-			return 	GuideBookLib.getTendencyPageList();
+			return GuideBookLib.getTendencyPageList();
 		case MANIPULATION:
-			return	GuideBookLib.getManipulationPageList();
-		case HIDDEN:
-			return	GuideBookLib.getHiddenPageList();
+			return GuideBookLib.getManipulationPageList();
 		default:
 			break;
 		}

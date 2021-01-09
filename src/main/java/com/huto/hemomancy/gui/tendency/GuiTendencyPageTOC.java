@@ -1,11 +1,14 @@
-package com.huto.hemomancy.gui.guide;
+package com.huto.hemomancy.gui.tendency;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
+import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
+import com.huto.hemomancy.init.ItemInit;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -23,7 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiGuidePageTOC extends GuiGuidePage {
+public class GuiTendencyPageTOC extends GuiTendencyPage {
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/guidepage.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
@@ -34,14 +37,14 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 	GuiButtonTextured buttonTitle;
 	GuiButtonTextured buttonCloseTab;
 	GuiButtonTextured buttonTOC;
-	public static List<GuiGuidePage> chapterPages = new ArrayList<GuiGuidePage>();
+	public static List<GuiTendencyPage> chapterPages = new ArrayList<GuiTendencyPage>();
 	GuiButtonTextured[] buttonArray = new GuiButtonTextured[chapterPages.size()];
 	public static List<GuiButtonTextured> buttonList = new ArrayList<GuiButtonTextured>();
 	ItemStack icon;
-	EnumTomeCatagories catagory;
+	EnumTendencyCatagories catagory;
 
 	@OnlyIn(Dist.CLIENT)
-	public GuiGuidePageTOC(EnumTomeCatagories catagoryIn, ItemStack iconIn) {
+	public GuiTendencyPageTOC(EnumTendencyCatagories catagoryIn, ItemStack iconIn) {
 		super(0, catagoryIn, "Table of Contents", "", iconIn, "");
 		this.icon = iconIn;
 		this.catagory = catagoryIn;
@@ -142,7 +145,12 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 		checkChapter();
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-					mc.displayGuiScreen(new GuiGuideTitlePage());
+					if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+							.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
+						mc.displayGuiScreen(new GuiTendencyTitlePage(true));
+					} else {
+						mc.displayGuiScreen(new GuiTendencyTitlePage(false));
+					}
 				}));
 
 		this.addButton(buttonCloseTab = new GuiButtonTextured(texture, CLOSEBUTTON, left - guiWidth + 150,
@@ -178,9 +186,12 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 				arrowB = new GuiButtonBookArrow(ARROWB, left, top + guiHeight - 10, 16, 14, 192, 1, new IPressable() {
 					@Override
 					public void onPress(Button p_onPress_1_) {
-
-						mc.displayGuiScreen(new GuiGuideTitlePage());
-
+						if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+								.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
+							mc.displayGuiScreen(new GuiTendencyTitlePage(true));
+						} else {
+							mc.displayGuiScreen(new GuiTendencyTitlePage(false));
+						}
 					}
 				}));
 
@@ -217,33 +228,58 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 
 	public void checkChapter() {
 		switch (this.catagory) {
-		case INTRO:
-			chapterPages = GuideBookLib.getIntroPageList();
+		case ANIMUS:
+			chapterPages = TendencyBookLib.getAnimusPageList();
 			break;
-		case VASCULARSYSTEM:
-			chapterPages = GuideBookLib.getVascularPageList();
+		case MORTEM:
+			chapterPages = TendencyBookLib.getMortemPageList();
 			break;
-		case TENDENCY:
-			chapterPages = GuideBookLib.getTendencyPageList();
+		case DUCTILIS:
+			chapterPages = TendencyBookLib.getDuctilisPageList();
 			break;
-		case MANIPULATION:
-			chapterPages = GuideBookLib.getManipulationPageList();
+		case FERRIC:
+			chapterPages = TendencyBookLib.getFerricPageList();
+			break;
+		case LUX:
+			chapterPages = TendencyBookLib.getLuxPageList();
+			break;
+		case TENEBRIS:
+			chapterPages = TendencyBookLib.getTenebrisPageList();
+			break;
+		case FLAMMEUS:
+			chapterPages = TendencyBookLib.getFlammeusPageList();
+			break;
+		case CONGEATIO:
+			chapterPages = TendencyBookLib.getCongeatioPageList();
+			break;	
+		case HIDDEN:
+			chapterPages = TendencyBookLib.getHiddenPageList();
 			break;
 		default:
 			break;
 		}
 	}
 
-	public List<GuiGuidePage> getMatchingChapter() {
+	public List<GuiTendencyPage> getMatchingChapter() {
 		switch (this.catagory) {
-		case INTRO:
-			return GuideBookLib.getIntroPageList();
-		case VASCULARSYSTEM:
-			return GuideBookLib.getVascularPageList();
-		case TENDENCY:
-			return GuideBookLib.getTendencyPageList();
-		case MANIPULATION:
-			return GuideBookLib.getManipulationPageList();
+		case ANIMUS:
+			return TendencyBookLib.getAnimusPageList();
+		case MORTEM:
+			return TendencyBookLib.getMortemPageList();
+		case DUCTILIS:
+			return TendencyBookLib.getDuctilisPageList();
+		case FERRIC:
+			return TendencyBookLib.getFerricPageList();
+		case LUX:
+			return TendencyBookLib.getLuxPageList();
+		case TENEBRIS:
+			return TendencyBookLib.getTenebrisPageList();
+		case FLAMMEUS:
+			return TendencyBookLib.getFlammeusPageList();
+		case CONGEATIO:
+			return TendencyBookLib.getCongeatioPageList();
+		case HIDDEN:
+			return TendencyBookLib.getHiddenPageList();
 		default:
 			break;
 		}

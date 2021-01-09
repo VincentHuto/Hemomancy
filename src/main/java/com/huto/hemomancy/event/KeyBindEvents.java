@@ -19,7 +19,7 @@ public class KeyBindEvents {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodFormationKeyPress());
 		}
 		if (ClientEventSubscriber.bloodCrafting.isPressed()) {
-			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.PATTERNS) {
+			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.RECIPES) {
 				if(ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(pattern));
 				}
