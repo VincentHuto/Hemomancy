@@ -12,13 +12,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderIronSpike extends MobRenderer<EntityIronSpike, ModelIronSpike> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/iron_spike/model_iron_spike.png");
+	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/iron_spike/model_iron_spike.png");
 
 	public RenderIronSpike(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn, new ModelIronSpike(), 0.1f);
 
 	}
-	
+
 	@Override
 	public void render(EntityIronSpike entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
@@ -32,21 +33,21 @@ public class RenderIronSpike extends MobRenderer<EntityIronSpike, ModelIronSpike
 			float partialTickTime) {
 		super.preRenderCallback(entitylivingbaseIn, matrixStackIn, partialTickTime);
 		float f = 0.0F;
-		int i = entitylivingbaseIn.ticksExisted * 1;
+		int i = entitylivingbaseIn.ticksExisted * 2;
 		if (i > 0) {
 			f = ((float) i - partialTickTime) / 30.0F * 0.5F;
 		}
 
-		if (f > 3.3) {
-			f = 3.3f;
+		if (f > 2.3) {
+			f = 2.3f;
 		}
 		if (entitylivingbaseIn.deathTicks == 1) {
-			matrixStackIn.scale(1 /(f*0.8f), f, 1/(f*0.8f));
+			matrixStackIn.scale(1 * (f * 0.8f), 1 * (f * 0.8f), 1 * (f * 0.8f));
 		}
 
 		if (entitylivingbaseIn.deathTicks > 0) {
-			float d = entitylivingbaseIn.deathTicks* 2;
-			matrixStackIn.scale(1, d, 1);
+			float d = entitylivingbaseIn.deathTicks / 2;
+			matrixStackIn.scale(d, d, d);
 
 		}
 	}

@@ -35,6 +35,27 @@ public class EntityIronSpike extends CreatureEntity {
 	}
 
 	@Override
+	public boolean canBeAttackedWithItem() {
+		return false;
+	}
+
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
+
+	// Later implement a potion of dispelling that will remove them
+	@Override
+	public boolean canBeHitWithPotion() {
+		return super.canBeHitWithPotion();
+	}
+
+	@Override
+	public boolean canBeLeashedTo(PlayerEntity player) {
+		return false;
+	}
+
+	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
 	}
@@ -69,33 +90,28 @@ public class EntityIronSpike extends CreatureEntity {
 		float f = (this.rand.nextFloat() - 0.5F) * 2.0F;
 		float f1 = -1;
 		float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
+		float f3 = (this.rand.nextFloat() - 0.5F) * 1.5F;
 		if (this.ticksExisted < 2) {
 			this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) f,
 					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
 		}
 
-		if (this.ticksExisted > 2 && this.ticksExisted < 20) {
-
-			this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f,
-					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
-		}
-
-		if (this.ticksExisted > 80 && this.ticksExisted < 120) {
-			this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f,
-					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
-
+		if (this.ticksExisted > 2 && this.ticksExisted < 120) {
+			for (int i = 0; i < 2; i++) {
+				this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f * 0.5,
+						this.getPosY(), this.getPosZ() + (double) f2 * 0.5, 0.0D, 0.0D, 0.0D);
+				this.world.addParticle(ParticleTypes.ASH, this.getPosX() + (double) f,
+						this.getPosY() + (0.0D + i) + (double) f3, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
+			}
 		}
 		if (this.ticksExisted == 120) {
 			this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) f,
 					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
-			if (!this.world.isRemote) {
-				this.setHealth(0);
-			} else {
-				if (!world.isRemote) {
-					world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
-							SoundEvents.ENTITY_IRON_GOLEM_DAMAGE, SoundCategory.HOSTILE, 3f, 1.2f, false);
-				}
-			}
+			this.setHealth(0);
+
+			world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_DAMAGE,
+					SoundCategory.HOSTILE, 3f, 1.2f, false);
+
 		}
 	}
 

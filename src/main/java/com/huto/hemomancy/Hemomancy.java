@@ -18,6 +18,7 @@ import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.ParticleInit;
+import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
 import com.huto.hemomancy.network.PacketHandler;
@@ -72,6 +73,8 @@ public class Hemomancy {
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
+		PotionInit.EFFECTS.register(modEventBus);
+		PotionInit.POTION_TYPES.register(modEventBus);
 		ItemInit.BASEITEMS.register(modEventBus);
 		ItemInit.HANDHELDITEMS.register(modEventBus);
 		ItemInit.SPECIALITEMS.register(modEventBus);

@@ -8,6 +8,8 @@ import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
+import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.data.GlowParticleData;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -41,21 +43,21 @@ public class PacketBloodFormationKeyPress {
 					.orElseThrow(NullPointerException::new);
 			ServerWorld sWorld = (ServerWorld) ctx.get().getSender().world;
 			if (player.getHeldItemMainhand().getItem() instanceof SwordItem) {
-				if (bloodVolume.getBloodVolume() > 500) {
+				if (bloodVolume.getBloodVolume() > 100) {
 					player.sendStatusMessage(new StringTextComponent("Blood has been drawn for a greater cause"), true);
-					bloodVolume.subtractBloodVolume(500);
+					bloodVolume.subtractBloodVolume(100);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
 							new BloodVolumePacketServer(bloodVolume.getBloodVolume()));
 					BlockPos pos = player.getPosition();
 					Random random = player.world.rand;
 					for (int i = 0; i < 30; i++) {
-						sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST, pos.getX() + random.nextDouble(),
-								pos.getY() + random.nextDouble() + 1, pos.getZ() + random.nextDouble(), 3, 0f, 0.2f, 0f,
+						sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)), pos.getX() + random.nextDouble(),
+								pos.getY() + random.nextDouble() + 1, pos.getZ() + random.nextDouble(),53, 0f, 0.2f, 0f,
 								2);
-						sWorld.spawnParticle(ParticleTypes.ASH, pos.getX() + random.nextDouble(),
+				/*		sWorld.spawnParticle(ParticleTypes.ASH, pos.getX() + random.nextDouble(),
 								pos.getY() + random.nextDouble() + 1, pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f,
-								2);
+								2);*/
 					}
 					player.dropItem(new ItemStack(ItemInit.sanguine_formation.get(), random.nextInt(4)), false);
 				} else {

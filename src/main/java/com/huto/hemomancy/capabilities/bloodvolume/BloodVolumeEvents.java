@@ -1,19 +1,27 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.entity.utils.Vector3;
+import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
+import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.ParticleUtil;
+import com.huto.hemomancy.particle.data.GlowParticleData;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -71,11 +79,54 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
-	/*	IBloodVolume bloodVolume = e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
-		if (bloodVolume.getBloodVolume() < 5000) {
-			bloodVolume.addBloodVolume(0.5f);
-		}*/
+		Vector3 centerVec = Vector3.fromEntityCenter(e.player);
+		if (e.player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {}
+
+		 if (!e.player.world.isRemote) {
+				ServerWorld sWorld = (ServerWorld) e.player.world;
+				sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+						centerVec.x + Math.sin(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+						centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
+						centerVec.z + Math.cos(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+						1, 0f, 0.2f, 0f, 0);
+			}else {
+/*				e.player.world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+						centerVec.x + Math.sin(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+						centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
+						centerVec.z + Math.cos(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1), 0, 0, 0);*/
+			}
+		/*
+		 * IBloodVolume bloodVolume =
+		 * e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		 * .orElseThrow(NullPointerException::new); if (bloodVolume.getBloodVolume() <
+		 * 5000) { bloodVolume.addBloodVolume(0.5f); }
+		 */
+	}
+
+	@SubscribeEvent
+	public static void bloodBindingEffect(LivingEvent e) {
+		if (e.getEntityLiving() != null) {
+			Vector3 centerVec = Vector3.fromEntityCenter(e.getEntityLiving());
+			if (e.getEntityLiving().getActivePotionEffect(PotionInit.blood_binding.get()) != null) {
+				e.getEntityLiving().setMotion(0, 0, 0);
+				if (e.getEntityLiving().world.isRemote) {
+/*
+					e.getEntityLiving().getEntityWorld().addParticle(
+							GlowParticleData.createData(new ParticleColor(200, 0, 0)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+							centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+							0, 0.005, 0);*/
+				} else if (!e.getEntityLiving().world.isRemote) {
+					ServerWorld sWorld = (ServerWorld) e.getEntityLiving().world;
+					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+							centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
+							1, 0f, 0.2f, 0f, 0);
+				}
+			}
+		}
 	}
 
 }

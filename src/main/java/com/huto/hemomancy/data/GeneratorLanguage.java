@@ -4,10 +4,12 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.init.PotionInit;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Effect;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.fml.RegistryObject;
 
@@ -62,5 +64,13 @@ public class GeneratorLanguage extends LanguageProvider {
 			addItem(i, ModTextFormatting
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
+		
+		for (RegistryObject<Effect> i : PotionInit.EFFECTS.getEntries()) {
+			
+			addEffect(() -> i.get(), "Blood Binding");
+		}
+		
+		
+		
 	}
 }

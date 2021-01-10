@@ -41,8 +41,9 @@ public class ParticleColor {
 
     public static ParticleColor deserialize(String string){
         String[] arr = string.split(",");
-        return new ParticleColor(Integer.parseInt(arr[0].trim()), Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
-    }
+      //  return new ParticleColor((int)(Double.parseDouble(arr[0].trim())),(int)(Double.parseDouble(arr[1].trim())),(int)(Double.parseDouble(arr[2].trim())));
+
+        return new ParticleColor((int)(Double.parseDouble(arr[0].trim())),(int)(Double.parseDouble(arr[1].trim())),(int)(Double.parseDouble(arr[2].trim())));    }
 
     public static class IntWrapper{
         public int r;
@@ -73,7 +74,7 @@ public class ParticleColor {
 
         public static ParticleColor.IntWrapper deserialize(String string){
             String[] arr = string.split(",");
-            return new ParticleColor.IntWrapper(Integer.parseInt(arr[0].trim()), Integer.parseInt(arr[1].trim()), Integer.parseInt(arr[2].trim()));
+            return new ParticleColor.IntWrapper((int)(Double.parseDouble(arr[0].trim())),(int)(Double.parseDouble(arr[1].trim())),(int)(Double.parseDouble(arr[2].trim())));
         }
     }
 }
