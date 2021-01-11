@@ -35,6 +35,7 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
 import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
+import com.huto.hemomancy.item.tool.ItemIronRod;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.ItemLivingGrasp;
 import com.huto.hemomancy.item.tool.ItemLivingStaff;
@@ -90,6 +91,14 @@ public class ItemInit {
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	
+	//Iron Rod
+	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
+			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> rod_of_exhortation_pillar = SPECIALITEMS.register("rod_of_exhortation_pillar",
+			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> rod_of_exhortation_spike = SPECIALITEMS.register("rod_of_exhortation_spike",
+			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",

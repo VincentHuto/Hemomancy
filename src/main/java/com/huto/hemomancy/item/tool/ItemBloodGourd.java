@@ -59,7 +59,7 @@ public class ItemBloodGourd extends Item {
 					// Restore player blood
 					IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
-					if (playerVolume.getBloodVolume() < 5000) {
+					if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
 						bloodVolume.subtractBloodVolume(0.5f);
 						playerVolume.addBloodVolume(0.5f);
 

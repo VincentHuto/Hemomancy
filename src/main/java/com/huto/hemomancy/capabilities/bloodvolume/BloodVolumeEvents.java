@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -79,23 +80,22 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
-		Vector3 centerVec = Vector3.fromEntityCenter(e.player);
-		if (e.player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {}
-
-		 if (!e.player.world.isRemote) {
-				ServerWorld sWorld = (ServerWorld) e.player.world;
-				sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-						centerVec.x + Math.sin(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-						centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
-						centerVec.z + Math.cos(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-						1, 0f, 0.2f, 0f, 0);
-			}else {
-/*				e.player.world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-						centerVec.x + Math.sin(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-						centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
-						centerVec.z + Math.cos(e.player.ticksExisted) + ParticleUtil.inRange(-0.1, 0.1), 0, 0, 0);*/
-			}
 		/*
+		 * Vector3 centerVec = Vector3.fromEntityCenter(e.player); if
+		 * (e.player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {}
+		 * 
+		 * if (!e.player.world.isRemote) { ServerWorld sWorld = (ServerWorld)
+		 * e.player.world; sWorld.spawnParticle(GlowParticleData.createData(new
+		 * ParticleColor(255, 0, 0)), centerVec.x + Math.sin(e.player.ticksExisted) +
+		 * ParticleUtil.inRange(-0.1, 0.1), centerVec.y + ParticleUtil.inRange(-0.1,
+		 * 0.1), centerVec.z + Math.cos(e.player.ticksExisted) +
+		 * ParticleUtil.inRange(-0.1, 0.1), 1, 0f, 0.2f, 0f, 0); }else {
+		 * e.player.world.addParticle(GlowParticleData.createData(new ParticleColor(255,
+		 * 0, 0)), centerVec.x + Math.sin(e.player.ticksExisted) +
+		 * ParticleUtil.inRange(-0.1, 0.1), centerVec.y + ParticleUtil.inRange(-0.1,
+		 * 0.1), centerVec.z + Math.cos(e.player.ticksExisted) +
+		 * ParticleUtil.inRange(-0.1, 0.1), 0, 0, 0); }
+		 * 
 		 * IBloodVolume bloodVolume =
 		 * e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 		 * .orElseThrow(NullPointerException::new); if (bloodVolume.getBloodVolume() <
@@ -110,20 +110,36 @@ public class BloodVolumeEvents {
 			if (e.getEntityLiving().getActivePotionEffect(PotionInit.blood_binding.get()) != null) {
 				e.getEntityLiving().setMotion(0, 0, 0);
 				if (e.getEntityLiving().world.isRemote) {
-/*
-					e.getEntityLiving().getEntityWorld().addParticle(
-							GlowParticleData.createData(new ParticleColor(200, 0, 0)),
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-							centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-							0, 0.005, 0);*/
+
+					/*
+					 * e.getEntityLiving().getEntityWorld().addParticle(ParticleTypes.ASH),
+					 * centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) +
+					 * ParticleUtil.inRange(-0.1, 0.1), centerVec.y + ParticleUtil.inRange(-0.1,
+					 * 0.1), centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) +
+					 * ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
+					 */
 				} else if (!e.getEntityLiving().world.isRemote) {
+
 					ServerWorld sWorld = (ServerWorld) e.getEntityLiving().world;
 					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-							centerVec.y + ParticleUtil.inRange(-0.1, 0.1),
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) + ParticleUtil.inRange(-0.1, 0.1),
-							1, 0f, 0.2f, 0f, 0);
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted*0.1), centerVec.y,
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted*0.1), 6, 0f, 0.0f, 0f, 0);
+					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted*0.1), centerVec.y,
+							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted*0.1), 6, 0f, 0.0f, 0f, 0);
+					sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST,
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 3, 0f, 0.0f, 0f, 0);
+					sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST,
+							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
+							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 3, 0f, 0.0f, 0f, 0);
+
+					/*
+					 * sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0,
+					 * 0)), centerVec.x + Math.sin(e.getEntityLiving().ticksExisted), centerVec.y,
+					 * centerVec.z + Math.cos(e.getEntityLiving().ticksExisted), 6, 0f, 0.0f, 0f,
+					 * 0);
+					 */
 				}
 			}
 		}
