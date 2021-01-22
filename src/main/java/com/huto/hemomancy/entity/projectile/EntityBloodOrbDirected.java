@@ -46,14 +46,18 @@ public class EntityBloodOrbDirected extends ThrowableEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		world.addParticle(GlowParticleData.createData(new ParticleColor(200, 0, 0)),
-				getPosX() + ParticleUtil.inRange(-0.1, 0.1), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
-				getPosZ() + ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
-		world.addParticle(ParticleTypes.ASH, this.getPosX() + (Math.random() - 0.5) * 0.4,
-				this.getPosY() + (Math.random() - 0.5) * 0.4, this.getPosZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
-		world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (Math.random() - 0.5) * 0.4,
-				this.getPosY() + (Math.random() - 0.5) * 0.4, this.getPosZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
+		if (world.isRemote) {
+			world.addParticle(GlowParticleData.createData(new ParticleColor(200, 0, 0)),
+					getPosX() + ParticleUtil.inRange(-0.1, 0.1), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
+					getPosZ() + ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
+			world.addParticle(ParticleTypes.ASH, this.getPosX() + (Math.random() - 0.5) * 0.4,
+					this.getPosY() + (Math.random() - 0.5) * 0.4, this.getPosZ() + (Math.random() - 0.5) * 0.4, 0, 0,
+					0);
+			world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (Math.random() - 0.5) * 0.4,
+					this.getPosY() + (Math.random() - 0.5) * 0.4, this.getPosZ() + (Math.random() - 0.5) * 0.4, 0, 0,
+					0);
 
+		}
 	}
 
 	@Override

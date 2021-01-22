@@ -18,10 +18,13 @@ public class KeyBindEvents {
 		if (ClientEventSubscriber.bloodFormation.isPressed()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodFormationKeyPress());
 		}
+
 		if (ClientEventSubscriber.bloodCrafting.isPressed()) {
 			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.RECIPES) {
 				if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(pattern));
+					
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(
+							ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()));
 				}
 			}
 		}
