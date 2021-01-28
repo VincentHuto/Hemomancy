@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeEvents;
+import com.huto.hemomancy.capabilities.bloodvolume.RenderBloodLaserEvent;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
 import com.huto.hemomancy.event.KeyBindEvents;
@@ -46,6 +47,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -65,11 +67,13 @@ public class Hemomancy {
 	public static Hemomancy instance;
 	public static IProxy proxy = new IProxy() {
 	};
+	public static boolean forcesLoaded = false;
 
 	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();
+		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
@@ -170,6 +174,7 @@ public class Hemomancy {
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
+		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
 		this.addLayers();
@@ -177,6 +182,7 @@ public class Hemomancy {
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
+
 	}
 
 	private void processIMC(final InterModProcessEvent event) {

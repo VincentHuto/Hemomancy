@@ -61,6 +61,8 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodCraftingKeyPress.class,
 				PacketBloodCraftingKeyPress::encode, PacketBloodCraftingKeyPress::decode,
 				PacketBloodCraftingKeyPress::handle);
+		CHANNELBLOODVOLUME.messageBuilder(PacketAirDraw.class, networkID++).decoder(PacketAirDraw::decode)
+				.encoder(PacketAirDraw::encode).consumer(PacketAirDraw::handle).add();
 
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);

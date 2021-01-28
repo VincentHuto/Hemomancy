@@ -30,7 +30,6 @@ public class ParticleInit {
 			() -> new LineParticleType());
 	public static final RegistryObject<ParticleType<ColoredDynamicTypeData>> sparkle = PARTICLE_TYPES
 			.register("sparkle", () -> new SparkleParticleType());
-
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {
 		Minecraft.getInstance().particles.registerFactory(glow.get(), GlowParticleData::new);

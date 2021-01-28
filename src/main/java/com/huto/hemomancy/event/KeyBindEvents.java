@@ -1,6 +1,7 @@
 package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.network.PacketAirDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
@@ -22,11 +23,16 @@ public class KeyBindEvents {
 		if (ClientEventSubscriber.bloodCrafting.isPressed()) {
 			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.RECIPES) {
 				if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
-					
+
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(
 							ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()));
 				}
 			}
+		}
+
+		if (ClientEventSubscriber.bloodDraw.isKeyDown()) {
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketAirDraw(ClientEventSubscriber.getPartialTicks()));
+
 		}
 
 	}

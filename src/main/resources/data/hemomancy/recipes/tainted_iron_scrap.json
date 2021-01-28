@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:tainted_iron_block"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:tainted_iron_scrap",
+    "count": 4
+  }
+}

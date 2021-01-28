@@ -13,11 +13,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -109,57 +109,39 @@ public class BloodVolumeEvents {
 				e.getEntityLiving().setMotion(0, 0, 0);
 				if (e.getEntityLiving().world.isRemote) {
 
-					/*
-					 * e.getEntityLiving().getEntityWorld().addParticle(ParticleTypes.ASH),
-					 * centerVec.x + Math.sin(e.getEntityLiving().ticksExisted) +
-					 * ParticleUtil.inRange(-0.1, 0.1), centerVec.y + ParticleUtil.inRange(-0.1,
-					 * 0.1), centerVec.z + Math.cos(e.getEntityLiving().ticksExisted) +
-					 * ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
-					 */
-
-					e.getEntityLiving().world.addParticle(GlowParticleData.createData(new ParticleColor(200, 0, 0)),
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0.005, 0);
-					e.getEntityLiving().world.addParticle(ParticleTypes.ASH,
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0, 0);
-					e.getEntityLiving().world.addParticle(RedstoneParticleData.REDSTONE_DUST,
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0, 0);
-					
-					e.getEntityLiving().world.addParticle(GlowParticleData.createData(new ParticleColor(200, 0, 0)),
-							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0.005, 0);
-					e.getEntityLiving().world.addParticle(ParticleTypes.ASH,
-							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0, 0);
-					e.getEntityLiving().world.addParticle(RedstoneParticleData.REDSTONE_DUST,
-							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 0, 0, 0);
-					
-
 				} else if (!e.getEntityLiving().world.isRemote) {
-
-				/*	ServerWorld sWorld = (ServerWorld) e.getEntityLiving().world;
+					ServerWorld sWorld = (ServerWorld) e.getEntityLiving().world;
 					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 6, 0f, 0.0f, 0f, 0);
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(30)),
+							centerVec.y,
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(30)), 6, 0f,
+							0.0f, 0f, 0);
 					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 6, 0f, 0.0f, 0f, 0);
+							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(90)),
+							centerVec.y,
+							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(90)), 6, 0f,
+							0.0f, 0f, 0);
+					sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x - (Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(-30))),
+							centerVec.y,
+							centerVec.z - (Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(-30))), 6,
+							0f, 0.0f, 0f, 0);
 					sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST,
-							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1), 3, 0f, 0.0f, 0f, 0);
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(30)),
+							centerVec.y,
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(30)), 3, 0f,
+							0.0f, 0f, 0);
 					sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST,
-							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1), centerVec.y,
-							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1), 3, 0f, 0.0f, 0f, 0);
+							centerVec.x - Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(90)),
+							centerVec.y,
+							centerVec.z - Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(90)), 3, 0f,
+							0.0f, 0f, 0);
+					sWorld.spawnParticle(RedstoneParticleData.REDSTONE_DUST,
+							centerVec.x - (Math.sin(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(-30))),
+							centerVec.y,
+							centerVec.z - (Math.cos(e.getEntityLiving().ticksExisted * 0.1 + Math.toRadians(-30))), 6,
+							0f, 0.0f, 0f, 0);
 
-					
-					 * sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0,
-					 * 0)), centerVec.x + Math.sin(e.getEntityLiving().ticksExisted), centerVec.y,
-					 * centerVec.z + Math.cos(e.getEntityLiving().ticksExisted), 6, 0f, 0.0f, 0f,
-					 * 0);
-					 */
 				}
 			}
 		}
