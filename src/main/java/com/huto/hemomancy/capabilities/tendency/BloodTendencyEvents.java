@@ -5,8 +5,12 @@ import java.awt.Point;
 import java.util.Map;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.network.PacketAirBloodDraw;
+import com.huto.hemomancy.network.PacketEntityHitParticle;
+import com.huto.hemomancy.network.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -19,15 +23,19 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -60,6 +68,39 @@ public class BloodTendencyEvents {
 		player.sendStatusMessage(
 				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
+	}
+
+	@SubscribeEvent
+	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
+		// Causes particles when the air is hit
+		if (e.getWorld().isRemote) {
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerAirDraw(PlayerTickEvent e) {
+	/*	if (e.player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
+			if (e.player.isHandActive()) {
+				if (e.player.world.isRemote) {
+					PacketHandler.CHANNELBLOODVOLUME
+							.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+				}
+			}
+		}*/
+
+	}
+
+	@SubscribeEvent
+	public static void onPlayerDamage(LivingDamageEvent e) {
+		if (e.getSource().getTrueSource() instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) e.getSource().getTrueSource();
+			double dist = player.getDistance(e.getEntityLiving());
+			RayTraceResult trace = player.pick(dist, 0, false);
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
+		}
 	}
 
 	@SubscribeEvent
@@ -114,7 +155,8 @@ public class BloodTendencyEvents {
 						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getTendency().keySet()
 								.toArray()[i];
 						GlStateManager.pushMatrix();
-						fontRenderer.drawString(event.getMatrixStack(), ModTextFormatting.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
+						fontRenderer.drawString(event.getMatrixStack(),
+								ModTextFormatting.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
 								String.valueOf(tendency.getTendencyByTendency(selectedCoven)), point.x, point.y + 30,
@@ -204,13 +246,15 @@ public class BloodTendencyEvents {
 						 * .bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 						 * break;
 						 */
-						
+
 						default:
-					/*		AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
-									event.getWindow().getHeight(), new Color(0, 0, 0, 0).getRGB());
-							
-							fontRenderer.drawString(event.getMatrixStack(), "No BloodTendency", 5, 5,
-									new Color(0, 0, 0, 0).getRGB());*/
+							/*
+							 * AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
+							 * event.getWindow().getHeight(), new Color(0, 0, 0, 0).getRGB());
+							 * 
+							 * fontRenderer.drawString(event.getMatrixStack(), "No BloodTendency", 5, 5, new
+							 * Color(0, 0, 0, 0).getRGB());
+							 */
 							Minecraft.getInstance().textureManager
 									.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 							break;

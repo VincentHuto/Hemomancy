@@ -1,7 +1,7 @@
 package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.network.PacketAirDraw;
+import com.huto.hemomancy.network.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
@@ -31,7 +31,8 @@ public class KeyBindEvents {
 		}
 
 		if (ClientEventSubscriber.bloodDraw.isKeyDown()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketAirDraw(ClientEventSubscriber.getPartialTicks()));
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
 
 		}
 

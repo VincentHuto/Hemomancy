@@ -17,28 +17,28 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-public class PacketAirDraw {
+public class PacketGroundBloodDraw {
 
 	float parTick;
 
-	public PacketAirDraw() {
+	public PacketGroundBloodDraw() {
 	}
 
-	public PacketAirDraw(float par) {
+	public PacketGroundBloodDraw(float par) {
 		this.parTick = par;
 	}
 
-	public static PacketAirDraw decode(final PacketBuffer buffer) {
+	public static PacketGroundBloodDraw decode(final PacketBuffer buffer) {
 		buffer.readByte();
-		return new PacketAirDraw(buffer.readFloat());
+		return new PacketGroundBloodDraw(buffer.readFloat());
 	}
 
-	public static void encode(final PacketAirDraw message, final PacketBuffer buffer) {
+	public static void encode(final PacketGroundBloodDraw message, final PacketBuffer buffer) {
 		buffer.writeByte(0);
 		buffer.writeFloat(message.parTick);
 	}
 
-	public static void handle(final PacketAirDraw message, final Supplier<NetworkEvent.Context> ctx) {
+	public static void handle(final PacketGroundBloodDraw message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			PlayerEntity player = ctx.get().getSender();
 			if (player == null)
@@ -48,6 +48,7 @@ public class PacketAirDraw {
 				if (player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
 					ServerWorld sWorld = (ServerWorld) player.world;
 					RayTraceResult trace = player.pick(6, pTic, false);
+					
 					if (trace != null) {
 						if (trace.getType() == RayTraceResult.Type.BLOCK) {
 							BlockRayTraceResult bHit = (BlockRayTraceResult) trace;
