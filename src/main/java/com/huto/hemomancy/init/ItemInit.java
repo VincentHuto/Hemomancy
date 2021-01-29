@@ -92,6 +92,16 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	
+	//Morphlings
+	public static final RegistryObject<Item> morphling_jar = BASEITEMS.register("morphling_jar",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	
+	
+	
+	
+	
+	
 	//Iron Rod
 	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));

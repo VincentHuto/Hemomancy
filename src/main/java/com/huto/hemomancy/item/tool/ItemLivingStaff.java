@@ -34,7 +34,6 @@ public class ItemLivingStaff extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-
 		playerIn.setActiveHand(handIn);
 		return ActionResult.resultConsume(itemstack);
 

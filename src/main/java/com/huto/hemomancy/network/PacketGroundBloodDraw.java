@@ -115,10 +115,10 @@ public class PacketGroundBloodDraw {
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() != BlockInit.befouling_ash_trail.get()
 									&& sWorld.getBlockState(bHit.getPos()).getBlock() != BlockInit.smouldering_ash_trail
 											.get()) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 255, 255)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
-										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.005f);
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 100, 100)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 							}

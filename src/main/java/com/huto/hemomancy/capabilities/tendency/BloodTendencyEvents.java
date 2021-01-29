@@ -5,10 +5,11 @@ import java.awt.Point;
 import java.util.Map;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.capabilities.mindrunes.IRunesItemHandler;
+import com.huto.hemomancy.capabilities.mindrunes.RunesCapabilities;
 import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketEntityHitParticle;
 import com.huto.hemomancy.network.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
@@ -30,7 +31,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -80,27 +80,28 @@ public class BloodTendencyEvents {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerAirDraw(PlayerTickEvent e) {
-	/*	if (e.player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
-			if (e.player.isHandActive()) {
-				if (e.player.world.isRemote) {
-					PacketHandler.CHANNELBLOODVOLUME
-							.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
-				}
-			}
-		}*/
-
-	}
-
-	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent e) {
-		if (e.getSource().getTrueSource() instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) e.getSource().getTrueSource();
-			double dist = player.getDistance(e.getEntityLiving());
-			RayTraceResult trace = player.pick(dist, 0, false);
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-					new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
+		// Radiant Protection
+		if (e.getEntityLiving() instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) e.getEntityLiving();
+			IRunesItemHandler itemHandler = player.getCapability(RunesCapabilities.RUNES)
+					.orElseThrow(NullPointerException::new);
+			if (itemHandler.getStackInSlot(0).getItem() == ItemInit.rune_radiance_c.get()) {
+				double dist = e.getEntityLiving().getDistance(player);
+				RayTraceResult trace = e.getEntityLiving().pick(dist, 0, false);
+				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+						new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
+			}
 		}
+		// Makes it so everytime a player hits an entity, cause particles
+		/*
+		 * if (e.getSource().getTrueSource() instanceof PlayerEntity) { PlayerEntity
+		 * player = (PlayerEntity) e.getSource().getTrueSource(); double dist =
+		 * player.getDistance(e.getEntityLiving()); RayTraceResult trace =
+		 * player.pick(dist, 0, false); PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+		 * new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y,
+		 * trace.getHitVec().z)); }
+		 */
 	}
 
 	@SubscribeEvent
