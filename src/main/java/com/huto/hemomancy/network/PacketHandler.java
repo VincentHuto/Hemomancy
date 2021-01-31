@@ -12,6 +12,9 @@ import com.huto.hemomancy.network.capa.OpenNormalInvPacket;
 import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
 import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
+import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
+import com.huto.hemomancy.network.jar.PacketOpenJar;
+import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -97,5 +100,21 @@ public class PacketHandler {
 				.decoder(PacketToggleBinderMessage::decode).encoder(PacketToggleBinderMessage::encode)
 				.consumer(PacketToggleBinderMessage::handle).add();
 		return RUNEBINDER;
+
+	}
+
+	public static SimpleChannel MORPHLINGJAR = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "morphlingjarnetwork"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+
+	public static SimpleChannel registerMorphlingJarChannels() {
+		MORPHLINGJAR.messageBuilder(PacketJarTogglePickup.class, networkID++).decoder(PacketJarTogglePickup::decode)
+				.encoder(PacketJarTogglePickup::encode).consumer(PacketJarTogglePickup::handle).add();
+		MORPHLINGJAR.messageBuilder(PacketOpenJar.class, networkID++).decoder(PacketOpenJar::decode)
+				.encoder(PacketOpenJar::encode).consumer(PacketOpenJar::handle).add();
+		MORPHLINGJAR.messageBuilder(PacketToggleJarMessage.class, networkID++)
+				.decoder(PacketToggleJarMessage::decode).encoder(PacketToggleJarMessage::encode)
+				.consumer(PacketToggleJarMessage::handle).add();
+		return MORPHLINGJAR;
 	}
 }

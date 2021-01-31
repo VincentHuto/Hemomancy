@@ -3,10 +3,12 @@ package com.huto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.containers.ContainerMorphlingJar;
 import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
+import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJar;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
@@ -43,6 +45,8 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding bloodDraw = new KeyBinding("key.Hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.Hemomancy.category");
+	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.Hemomancy.morphjarpickup.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
+			"key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -55,6 +59,8 @@ public class ClientEventSubscriber {
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
 		ScreenManager.registerFactory(ContainerInit.playerrunes, PlayerExpandedScreen::new);
 		ScreenManager.registerFactory(ContainerRuneBinder.type, GuiRuneBinder::new);
+		ScreenManager.registerFactory(ContainerMorphlingJar.type, GuiMorphlingJar::new);
+
 		// Entity
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.leech.get(), RenderLeech::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.iron_pillar.get(), RenderIronPillar::new);
@@ -69,11 +75,13 @@ public class ClientEventSubscriber {
 		keyBinds.add(1, bloodFormation);
 		keyBinds.add(2, bloodCrafting);
 		keyBinds.add(3, bloodDraw);
+		keyBinds.add(4, toggleMorphlingJarPickup);
 
 		ClientRegistry.registerKeyBinding(keyBinds.get(0));
 		ClientRegistry.registerKeyBinding(keyBinds.get(1));
 		ClientRegistry.registerKeyBinding(keyBinds.get(2));
 		ClientRegistry.registerKeyBinding(keyBinds.get(3));
+		ClientRegistry.registerKeyBinding(keyBinds.get(4));
 
 	}
 

@@ -10,6 +10,7 @@ import com.huto.hemomancy.capabilities.bloodvolume.RenderBloodLaserEvent;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
 import com.huto.hemomancy.event.KeyBindEvents;
+import com.huto.hemomancy.event.MorphlingJarEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
 import com.huto.hemomancy.gui.guide.GuideBookLib;
 import com.huto.hemomancy.gui.tendency.TendencyBookLib;
@@ -22,8 +23,10 @@ import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
+import com.huto.hemomancy.item.tool.ItemMorphlingJar;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
+import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
@@ -99,6 +102,8 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::onClientTick);
+		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::pickupEvent);
+		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.addListener(KeyBindEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
@@ -171,6 +176,7 @@ public class Hemomancy {
 		ModChiselRecipes.init();
 		PacketHandler.registerChannels();
 		PacketHandler.registerRuneBinderChannels();
+		PacketHandler.registerMorphlingJarChannels();
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
@@ -219,8 +225,24 @@ public class Hemomancy {
 		return ItemStack.EMPTY;
 	}
 
+	public static ItemStack findMorphlingJar(PlayerEntity player) {
+		if (player.getHeldItemMainhand().getItem() instanceof ItemMorphlingJar)
+			return player.getHeldItemMainhand();
+		if (player.getHeldItemOffhand().getItem() instanceof ItemMorphlingJar)
+			return player.getHeldItemOffhand();
+		PlayerInventory inventory = player.inventory;
+		for (int i = 0; i <= 35; i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
+			if (stack.getItem() instanceof ItemMorphlingJar)
+				return stack;
+		}
+		return ItemStack.EMPTY;
+	}
+
 	@SubscribeEvent
 	public static void onRecipeRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
+		event.getRegistry().register(new CopyMorphlingJarDataRecipe.Serializer()
+				.setRegistryName(new ResourceLocation(MOD_ID, "morphling_jar_upgrade")));
 		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "rune_binder_upgrade")));
 		event.getRegistry().register(new CopyBloodGourdDataRecipe.Serializer()

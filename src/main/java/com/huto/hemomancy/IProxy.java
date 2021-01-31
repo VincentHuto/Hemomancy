@@ -8,4 +8,7 @@ public interface IProxy {
 
 	default void openBinderGui() {
 	}
+
+	default void openJarGui() {
+	}
 }

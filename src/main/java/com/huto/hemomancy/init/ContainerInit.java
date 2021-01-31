@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.containers.ContainerChiselStation;
+import com.huto.hemomancy.containers.ContainerMorphlingJar;
 import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.containers.PlayerExpandedContainer;
+import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 
 import net.minecraft.inventory.container.Container;
@@ -48,6 +50,7 @@ public class ContainerInit {
 	public static void onContainerRegister(final RegistryEvent.Register<ContainerType<?>> event) {
 		event.getRegistry().registerAll(RUNECONTAINER.toArray(new ContainerType[0]));
 		event.getRegistry().register(ContainerRuneBinder.type);
+		event.getRegistry().register(ContainerMorphlingJar.type);
 
 	}
 
@@ -55,5 +58,7 @@ public class ContainerInit {
 	public static void onRecipeRegistry(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
 		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, "backpack_upgrade")));
+		event.getRegistry().register(new CopyMorphlingJarDataRecipe.Serializer()
+				.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, "morphling_jar_upgrade")));
 	}
 }

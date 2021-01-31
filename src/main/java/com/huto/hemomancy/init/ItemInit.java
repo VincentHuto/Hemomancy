@@ -39,6 +39,8 @@ import com.huto.hemomancy.item.tool.ItemIronRod;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.ItemLivingGrasp;
 import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.ItemMorphling;
+import com.huto.hemomancy.item.tool.ItemMorphlingJar;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -94,14 +96,17 @@ public class ItemInit {
 	
 	//Morphlings
 	public static final RegistryObject<Item> morphling_jar = BASEITEMS.register("morphling_jar",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	
-	
-	
-	
-	
-	
+			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
+	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
+			() -> new ItemMorphling(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
+			() -> new ItemMorphling(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+	public static final RegistryObject<Item> morphling_symbiote = BASEITEMS.register("morphling_symbiote",
+			() -> new ItemMorphling(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+	public static final RegistryObject<Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
+			() -> new ItemMorphling(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
+			() -> new ItemMorphling(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
 	//Iron Rod
 	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
