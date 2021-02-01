@@ -14,6 +14,7 @@ import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
 import com.huto.hemomancy.network.jar.PacketOpenJar;
+import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 
 import net.minecraft.util.ResourceLocation;
@@ -112,9 +113,10 @@ public class PacketHandler {
 				.encoder(PacketJarTogglePickup::encode).consumer(PacketJarTogglePickup::handle).add();
 		MORPHLINGJAR.messageBuilder(PacketOpenJar.class, networkID++).decoder(PacketOpenJar::decode)
 				.encoder(PacketOpenJar::encode).consumer(PacketOpenJar::handle).add();
-		MORPHLINGJAR.messageBuilder(PacketToggleJarMessage.class, networkID++)
-				.decoder(PacketToggleJarMessage::decode).encoder(PacketToggleJarMessage::encode)
-				.consumer(PacketToggleJarMessage::handle).add();
+		MORPHLINGJAR.messageBuilder(PacketToggleJarMessage.class, networkID++).decoder(PacketToggleJarMessage::decode)
+				.encoder(PacketToggleJarMessage::encode).consumer(PacketToggleJarMessage::handle).add();
+		MORPHLINGJAR.messageBuilder(PacketOpenStaff.class, networkID++).decoder(PacketOpenStaff::decode)
+				.encoder(PacketOpenStaff::encode).consumer(PacketOpenStaff::handle).add();
 		return MORPHLINGJAR;
 	}
 }

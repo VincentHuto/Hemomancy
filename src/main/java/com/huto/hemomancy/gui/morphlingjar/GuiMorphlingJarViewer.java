@@ -3,7 +3,7 @@ package com.huto.hemomancy.gui.morphlingjar;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
-import com.huto.hemomancy.item.tool.ItemMorphling;
+import com.huto.hemomancy.item.morphlings.ItemMorphling;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;

@@ -3,11 +3,13 @@ package com.huto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.containers.ContainerLivingStaff;
 import com.huto.hemomancy.containers.ContainerMorphlingJar;
 import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
+import com.huto.hemomancy.gui.morphlingjar.GuiLivingStaff;
 import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJar;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
@@ -60,6 +62,7 @@ public class ClientEventSubscriber {
 		ScreenManager.registerFactory(ContainerInit.playerrunes, PlayerExpandedScreen::new);
 		ScreenManager.registerFactory(ContainerRuneBinder.type, GuiRuneBinder::new);
 		ScreenManager.registerFactory(ContainerMorphlingJar.type, GuiMorphlingJar::new);
+		ScreenManager.registerFactory(ContainerLivingStaff.type,  GuiLivingStaff::new);
 
 		// Entity
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.leech.get(), RenderLeech::new);

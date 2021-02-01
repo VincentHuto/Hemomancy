@@ -11,4 +11,7 @@ public interface IProxy {
 
 	default void openJarGui() {
 	}
+	
+	default void openStaffGui() {
+	}
 }

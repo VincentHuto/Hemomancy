@@ -22,8 +22,9 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.runes.ItemRuneBinder;
-import com.huto.hemomancy.item.tool.ItemMorphlingJar;
+import com.huto.hemomancy.item.tool.ItemLivingStaff;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
@@ -234,6 +235,20 @@ public class Hemomancy {
 		for (int i = 0; i <= 35; i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack.getItem() instanceof ItemMorphlingJar)
+				return stack;
+		}
+		return ItemStack.EMPTY;
+	}
+
+	public static ItemStack findLivingStaff(PlayerEntity player) {
+		if (player.getHeldItemMainhand().getItem() instanceof ItemLivingStaff)
+			return player.getHeldItemMainhand();
+		if (player.getHeldItemOffhand().getItem() instanceof ItemLivingStaff)
+			return player.getHeldItemOffhand();
+		PlayerInventory inventory = player.inventory;
+		for (int i = 0; i <= 35; i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
+			if (stack.getItem() instanceof ItemLivingStaff)
 				return stack;
 		}
 		return ItemStack.EMPTY;

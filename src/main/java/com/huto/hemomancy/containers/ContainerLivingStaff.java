@@ -1,8 +1,8 @@
 package com.huto.hemomancy.containers;
 
 import com.huto.hemomancy.containers.slots.SlotMorphlingJar;
-import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
-import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
+import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,18 +16,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ContainerMorphlingJar extends Container {
-	public ContainerMorphlingJar(final int windowId, final PlayerInventory playerInventory) {
+public class ContainerLivingStaff extends Container {
+	public ContainerLivingStaff(final int windowId, final PlayerInventory playerInventory) {
 		this(windowId, playerInventory.player.world, playerInventory.player.getPosition(), playerInventory,
 				playerInventory.player);
 	}
 
-	public ContainerMorphlingJar(int windowId, World world, BlockPos pos, PlayerInventory playerInventory,
+	public ContainerLivingStaff(int windowId, World world, BlockPos pos, PlayerInventory playerInventory,
 			PlayerEntity playerEntity) {
 		super(type, windowId);
 
 		playerInv = playerInventory;
-		ItemStack stack = findMorphlingJar(playerEntity);
+		ItemStack stack = findLivingStaff(playerEntity);
 
 		if (stack == null || stack.isEmpty()) {
 			playerEntity.closeScreen();
@@ -36,8 +36,8 @@ public class ContainerMorphlingJar extends Container {
 
 		IItemHandler tmp = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
 
-		if (tmp instanceof MorphlingJarItemHandler) {
-			handler = (MorphlingJarItemHandler) tmp;
+		if (tmp instanceof LivingStaffItemHandler) {
+			handler = (LivingStaffItemHandler) tmp;
 			handler.load();
 			slotcount = tmp.getSlots();
 			itemKey = stack.getTranslationKey();
@@ -48,7 +48,7 @@ public class ContainerMorphlingJar extends Container {
 			playerEntity.closeScreen();
 	}
 
-	public ContainerMorphlingJar(int openType, int windowId, World world, BlockPos pos, PlayerInventory playerInventory,
+	public ContainerLivingStaff(int openType, int windowId, World world, BlockPos pos, PlayerInventory playerInventory,
 			PlayerEntity playerEntity) {
 		this(windowId, world, pos, playerInventory, playerEntity);
 	}
@@ -57,22 +57,22 @@ public class ContainerMorphlingJar extends Container {
 	private int slotID;
 	public String itemKey = "";
 	@SuppressWarnings("rawtypes")
-	public static final ContainerType type = new ContainerType<>(ContainerMorphlingJar::new)
-			.setRegistryName("morphling_jar_container");
+	public static final ContainerType type = new ContainerType<>(ContainerLivingStaff::new)
+			.setRegistryName("living_staff_container");
 	private PlayerInventory playerInv;
-	public MorphlingJarItemHandler handler;
+	public LivingStaffItemHandler handler;
 
 	@Override
 	public boolean canInteractWith(PlayerEntity playerIn) {
 		if (slotID == -106)
-			return playerIn.getHeldItemOffhand().getItem() instanceof ItemMorphlingJar;
-		return playerIn.inventory.getStackInSlot(slotID).getItem() instanceof ItemMorphlingJar;
+			return playerIn.getHeldItemOffhand().getItem() instanceof ItemLivingStaff;
+		return playerIn.inventory.getStackInSlot(slotID).getItem() instanceof ItemLivingStaff;
 	}
 
 	@Override
 	public ItemStack slotClick(int slot, int dragType, ClickType clickTypeIn, PlayerEntity player) {
 		if (slot >= 0) {
-			if (getSlot(slot).getStack().getItem() instanceof ItemMorphlingJar)
+			if (getSlot(slot).getStack().getItem() instanceof ItemLivingStaff)
 				return ItemStack.EMPTY;
 		}
 		if (clickTypeIn == ClickType.SWAP)
@@ -87,7 +87,7 @@ public class ContainerMorphlingJar extends Container {
 		int originX = 0;
 		int originY = 0;
 		switch (slotcount) {
-		case 4:
+		case 1:
 			originX = 7;
 			originY = 145;
 			break;
@@ -122,7 +122,7 @@ public class ContainerMorphlingJar extends Container {
 		if (handler == null)
 			return;
 
-		int cols = slotcount % 2 == 0 ? 2 : 10;
+		int cols = slotcount % 1 == 0 ? 1 : 10;
 		int rows = slotcount / cols;
 		int slotindex = 0;
 
@@ -164,10 +164,10 @@ public class ContainerMorphlingJar extends Container {
 		return itemstack;
 	}
 
-	private ItemStack findMorphlingJar(PlayerEntity playerEntity) {
+	private ItemStack findLivingStaff(PlayerEntity playerEntity) {
 		PlayerInventory inv = playerEntity.inventory;
 
-		if (playerEntity.getHeldItemMainhand().getItem() instanceof ItemMorphlingJar) {
+		if (playerEntity.getHeldItemMainhand().getItem() instanceof ItemLivingStaff) {
 			for (int i = 0; i <= 35; i++) {
 				ItemStack stack = inv.getStackInSlot(i);
 				if (stack == playerEntity.getHeldItemMainhand()) {
@@ -175,13 +175,13 @@ public class ContainerMorphlingJar extends Container {
 					return stack;
 				}
 			}
-		} else if (playerEntity.getHeldItemOffhand().getItem() instanceof ItemMorphlingJar) {
+		} else if (playerEntity.getHeldItemOffhand().getItem() instanceof ItemLivingStaff) {
 			slotID = -106;
 			return playerEntity.getHeldItemOffhand();
 		} else {
 			for (int i = 0; i <= 35; i++) {
 				ItemStack stack = inv.getStackInSlot(i);
-				if (stack.getItem() instanceof ItemMorphlingJar) {
+				if (stack.getItem() instanceof ItemLivingStaff) {
 					slotID = i;
 					return stack;
 				}

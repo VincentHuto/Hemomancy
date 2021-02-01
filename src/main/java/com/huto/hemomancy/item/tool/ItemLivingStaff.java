@@ -1,29 +1,53 @@
 package com.huto.hemomancy.item.tool;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.containers.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class ItemLivingStaff extends Item {
 
@@ -33,11 +57,55 @@ public class ItemLivingStaff extends Item {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		playerIn.setActiveHand(handIn);
-		return ActionResult.resultConsume(itemstack);
+
+		IItemHandler handler = Hemomancy.findLivingStaff(playerIn)
+				.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(NullPointerException::new);
+
+		if (handler != null) {
+			for(int i = 0; i<handler.getSlots(); i++) {
+			System.out.println(handler.getStackInSlot(i));
+
+			}
+		}
+
+		if (worldIn.isRemote) {
+			if (!playerIn.isSneaking()) {
+				// Hemomancy.proxy.openJarGui();
+				playerIn.playSound(SoundEvents.BLOCK_GLASS_PLACE, 0.40f, 1F);
+			}
+		}
+
+		if (!worldIn.isRemote) {
+			if (playerIn.isSneaking()) {
+				// open
+				playerIn.openContainer(new INamedContainerProvider() {
+					@Override
+					public ITextComponent getDisplayName() {
+						return playerIn.getHeldItem(handIn).getDisplayName();
+					}
+
+					@Nullable
+					@Override
+					public Container createMenu(int windowId, PlayerInventory p_createMenu_2_,
+							PlayerEntity p_createMenu_3_) {
+						return new ContainerLivingStaff(windowId, p_createMenu_3_.world, p_createMenu_3_.getPosition(),
+								p_createMenu_2_, p_createMenu_3_);
+					}
+				});
+
+			}
+		}
+		return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
 
 	}
+	/*
+	 * @Override public ActionResult<ItemStack> onItemRightClick(World worldIn,
+	 * PlayerEntity playerIn, Hand handIn) { ItemStack itemstack =
+	 * playerIn.getHeldItem(handIn); playerIn.setActiveHand(handIn); return
+	 * ActionResult.resultConsume(itemstack);
+	 * 
+	 * }
+	 */
 
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
@@ -140,6 +208,61 @@ public class ItemLivingStaff extends Item {
 				world.addEntity(tentArray[i]);
 
 			}
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
+			ITooltipFlag flagIn) {
+
+		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+				.orElseThrow(NullPointerException::new);
+		for (int i = 0; i < handler.getSlots(); i++) {
+			tooltip.add(new StringTextComponent("slots " + handler.getStackInSlot(i)));
+		}
+
+	}
+
+	@Nullable
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+		return new LivingStaffInventoryCap(stack, 1, nbt);
+	}
+
+	@SuppressWarnings("rawtypes")
+	class LivingStaffInventoryCap implements ICapabilitySerializable {
+		public LivingStaffInventoryCap(ItemStack stack, int size, CompoundNBT nbtIn) {
+			itemStack = stack;
+			this.size = size;
+			inventory = new LivingStaffItemHandler(itemStack, size);
+			optional = LazyOptional.of(() -> inventory);
+		}
+
+		@SuppressWarnings("unused")
+		private int size;
+		private ItemStack itemStack;
+		private LivingStaffItemHandler inventory;
+		private LazyOptional<IItemHandler> optional;
+
+		@Nonnull
+		@Override
+		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+			if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+				return optional.cast();
+			} else
+				return LazyOptional.empty();
+		}
+
+		@Override
+		public INBT serializeNBT() {
+			inventory.save();
+			return new CompoundNBT();
+		}
+
+		@Override
+		public void deserializeNBT(INBT nbt) {
+			inventory.load();
 		}
 	}
 

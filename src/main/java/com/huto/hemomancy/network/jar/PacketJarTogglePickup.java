@@ -2,7 +2,7 @@ package com.huto.hemomancy.network.jar;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.item.tool.ItemMorphlingJar;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

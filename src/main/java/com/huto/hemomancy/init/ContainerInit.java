@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.containers.ContainerChiselStation;
+import com.huto.hemomancy.containers.ContainerLivingStaff;
 import com.huto.hemomancy.containers.ContainerMorphlingJar;
 import com.huto.hemomancy.containers.ContainerRuneBinder;
 import com.huto.hemomancy.containers.PlayerExpandedContainer;
@@ -51,6 +52,7 @@ public class ContainerInit {
 		event.getRegistry().registerAll(RUNECONTAINER.toArray(new ContainerType[0]));
 		event.getRegistry().register(ContainerRuneBinder.type);
 		event.getRegistry().register(ContainerMorphlingJar.type);
+		event.getRegistry().register(ContainerLivingStaff.type);
 
 	}
 

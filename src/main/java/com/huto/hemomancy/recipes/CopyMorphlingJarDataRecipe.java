@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.item.tool.ItemMorphlingJar;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;

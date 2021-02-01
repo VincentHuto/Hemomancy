@@ -23,4 +23,11 @@ public class ClientProxy implements IProxy {
 		Minecraft.getInstance().displayGuiScreen(new GuiMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
 				ClientEventSubscriber.getClientPlayer()));
 	}
+	
+	@Override
+	public void openStaffGui() {
+		Minecraft.getInstance().displayGuiScreen(new GuiMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
+				ClientEventSubscriber.getClientPlayer()));
+	}
+	
 }

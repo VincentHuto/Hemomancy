@@ -2,7 +2,7 @@ package com.huto.hemomancy.containers.slots;
 
 import javax.annotation.Nonnull;
 
-import com.huto.hemomancy.item.tool.ItemMorphling;
+import com.huto.hemomancy.item.morphlings.ItemMorphling;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
 
 import net.minecraft.item.ItemStack;

@@ -2,7 +2,7 @@ package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.containers.ContainerMorphlingJar;
-import com.huto.hemomancy.item.tool.ItemMorphlingJar;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
 

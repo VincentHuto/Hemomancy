@@ -62,6 +62,7 @@ public class ItemRuneBinder extends Item {
 		return rarity;
 	}
 
+	
 	public ItemRuneBinder setName() {
 		setRegistryName(Hemomancy.MOD_ID, name);
 		return this;
@@ -105,6 +106,8 @@ public class ItemRuneBinder extends Item {
 
 	}
 
+	
+	
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {

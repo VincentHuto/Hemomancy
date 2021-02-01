@@ -1,4 +1,4 @@
-package com.huto.hemomancy.item.tool;
+package com.huto.hemomancy.item.morphlings;
 
 import java.util.List;
 
