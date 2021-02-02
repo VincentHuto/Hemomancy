@@ -1,5 +1,7 @@
 package com.huto.hemomancy.item.morphlings;
 
+import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -30,6 +32,12 @@ public class ItemMorphlingPest extends ItemMorphling implements IMorphling {
 
 	@Override
 	public void use(PlayerEntity playerIn, Hand handIn, ItemStack itemStack, World worldIn) {
+		EntityTrackingPests[] arr = new EntityTrackingPests[5];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = new EntityTrackingPests((PlayerEntity) playerIn, false);
+			arr[i].setPosition(playerIn.getPosX() - 0.5, playerIn.getPosY() + 0.6, playerIn.getPosZ() - 0.5);
+			worldIn.addEntity(arr[i]);
+		}
 	}
 
 }

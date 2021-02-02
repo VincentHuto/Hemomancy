@@ -1,5 +1,8 @@
 package com.huto.hemomancy.item.morphlings;
 
+import com.huto.hemomancy.entity.EntityLeech;
+import com.huto.hemomancy.init.EntityInit;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -30,6 +33,12 @@ public class ItemMorphlingLeech extends ItemMorphling implements IMorphling {
 
 	@Override
 	public void use(PlayerEntity playerIn, Hand handIn, ItemStack itemStack, World worldIn) {
+		EntityLeech[] arr = new EntityLeech[5];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = new EntityLeech(EntityInit.leech.get(), worldIn);
+			arr[i].setPosition(playerIn.getPosX() - 0.5, playerIn.getPosY() + 0.25, playerIn.getPosZ() - 0.5);
+			worldIn.addEntity(arr[i]);
+		}
 	}
 
 }

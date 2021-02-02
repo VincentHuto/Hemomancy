@@ -6,6 +6,8 @@ import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
+import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
+import com.huto.hemomancy.entity.projectile.EntityTrackingSerpent;
 
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -42,6 +44,19 @@ public class EntityInit {
 					.<EntityBloodOrbTracking>create(EntityBloodOrbTracking::new, EntityClassification.MISC)
 					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_blood_orb").toString()));
+	
+	public static final RegistryObject<EntityType<EntityTrackingSerpent>> tracking_snake = ENTITY_TYPES.register(
+			"tracking_snake",
+			() -> EntityType.Builder
+					.<EntityTrackingSerpent>create(EntityTrackingSerpent::new, EntityClassification.MISC)
+					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.25F, 0.25F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_snake").toString()));
+	public static final RegistryObject<EntityType<EntityTrackingPests>> tracking_pests = ENTITY_TYPES.register(
+			"tracking_pests",
+			() -> EntityType.Builder
+					.<EntityTrackingPests>create(EntityTrackingPests::new, EntityClassification.MISC)
+					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.25F, 0.25F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_pests").toString()));
 
 	public static final RegistryObject<EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register(
 			"iron_pillar",

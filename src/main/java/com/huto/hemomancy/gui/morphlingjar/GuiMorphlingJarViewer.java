@@ -5,6 +5,8 @@ import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.item.morphlings.ItemMorphling;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
+import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.PacketUpdateLivingStaffMorph;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -13,7 +15,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.Button.IPressable;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -156,10 +157,8 @@ public class GuiMorphlingJarViewer extends Screen {
 
 					}
 					if (buttons.get(i).isHovered()) {
-						renderTooltip(matrixStack,
-								new StringTextComponent(I18n
-										.format(binderHandler.getStackInSlot(i).getItem().getRegistryName().toString())),
-								mouseX, mouseY);
+						renderTooltip(matrixStack, binderHandler.getStackInSlot(i).getItem()
+								.getDisplayName(binderHandler.getStackInSlot(i)), mouseX, mouseY);
 					}
 				}
 			}
@@ -203,12 +202,11 @@ public class GuiMorphlingJarViewer extends Screen {
 					@Override
 					public void onPress(Button press) {
 						if (press instanceof GuiButtonTextured) {
-							player.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, 0.40f, 1F);
-
-							if (binderHandler.getStackInSlot(((GuiButtonTextured) press).getId())
-									.getItem() instanceof ItemMorphling) {
-								System.out.println(binderHandler.getStackInSlot(((GuiButtonTextured) press).getId())
-										.getItem().getRegistryName().getPath());
+							player.playSound(SoundEvents.BLOCK_GLASS_PLACE, 0.40f, 1F);
+							ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
+							if (morphStack.getItem() instanceof ItemMorphling) {
+								PacketHandler.HANDLER.sendToServer(
+										new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
 							}
 
 						}
@@ -219,11 +217,6 @@ public class GuiMorphlingJarViewer extends Screen {
 		}
 		super.init();
 
-	}
-
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override

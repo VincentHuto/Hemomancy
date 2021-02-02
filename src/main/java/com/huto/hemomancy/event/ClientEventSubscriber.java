@@ -19,6 +19,8 @@ import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
+import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
+import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 
@@ -73,6 +75,11 @@ public class ClientEventSubscriber {
 				RenderBloodOrbDirected::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),
 				RenderBloodOrbTracking::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(),
+				RenderTrackingSerpent::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(),
+				RenderTrackingPests::new);
+		
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);
 		keyBinds.add(1, bloodFormation);

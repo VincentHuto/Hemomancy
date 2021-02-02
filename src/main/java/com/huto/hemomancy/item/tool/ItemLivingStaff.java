@@ -5,23 +5,24 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.containers.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
-import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -29,18 +30,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -58,33 +57,22 @@ public class ItemLivingStaff extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 
-		IItemHandler handler = Hemomancy.findLivingStaff(playerIn)
-				.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(NullPointerException::new);
-
-		if (handler != null) {
-			for(int i = 0; i<handler.getSlots(); i++) {
-			System.out.println(handler.getStackInSlot(i));
-
-			}
-		}
-
-		if (worldIn.isRemote) {
-			if (!playerIn.isSneaking()) {
-				// Hemomancy.proxy.openJarGui();
-				playerIn.playSound(SoundEvents.BLOCK_GLASS_PLACE, 0.40f, 1F);
-			}
-		}
-
 		if (!worldIn.isRemote) {
 			if (playerIn.isSneaking()) {
-				// open
+				// For "Lore" Reasons Ive made it so that morphlings can only be applied from
+				// the jar, no where else but ill leave this container as a vestigial limb of
+				// sorts
+				// Totally not becasue of a weird bug with the jar self emptying every slot....
+
 				playerIn.openContainer(new INamedContainerProvider() {
+
 					@Override
 					public ITextComponent getDisplayName() {
 						return playerIn.getHeldItem(handIn).getDisplayName();
 					}
 
 					@Nullable
+
 					@Override
 					public Container createMenu(int windowId, PlayerInventory p_createMenu_2_,
 							PlayerEntity p_createMenu_3_) {
@@ -93,26 +81,34 @@ public class ItemLivingStaff extends Item {
 					}
 				});
 
+			} else {
+				ItemStack itemstack = playerIn.getHeldItem(handIn);
+				playerIn.setActiveHand(handIn);
+				return ActionResult.resultConsume(itemstack);
 			}
 		}
 		return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
 
 	}
-	/*
-	 * @Override public ActionResult<ItemStack> onItemRightClick(World worldIn,
-	 * PlayerEntity playerIn, Hand handIn) { ItemStack itemstack =
-	 * playerIn.getHeldItem(handIn); playerIn.setActiveHand(handIn); return
-	 * ActionResult.resultConsume(itemstack);
-	 * 
-	 * }
-	 */
+
+	@Override
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+		if (entityIn.world.isRemote) {
+			if (stack.getEquipmentSlot() == EquipmentSlotType.MAINHAND) {
+				PacketHandler.CHANNELBLOODVOLUME
+						.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+			}
+		}
+	}
 
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
-		if (player.world.isRemote) {
-			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
-		}
+		/*
+		 * if (player.world.isRemote) { PacketHandler.CHANNELBLOODVOLUME
+		 * .sendToServer(new
+		 * PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks())); }
+		 */
 		super.onUsingTick(stack, player, count);
 	}
 
@@ -124,19 +120,36 @@ public class ItemLivingStaff extends Item {
 					.orElseThrow(NullPointerException::new);
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isRemote) {
-					playerVolume.subtractBloodVolume(50f);
-					PacketHandler.CHANNELBLOODVOLUME.send(
-							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-							new BloodVolumePacketServer(playerVolume.getBloodVolume()));
+
 					if (worldIn.rand.nextInt(10) == 6) {
 
 						player.sendStatusMessage(new StringTextComponent(
 								TextFormatting.DARK_PURPLE + "Abuse of Power does not come without consequence"), true);
 					}
-					if (player.isCrouching()) {
-						this.summonNoteStorm(worldIn.rand.nextInt(3), worldIn, player);
+					if (!player.isCrouching()) {
+						CompoundNBT compoundnbt = stack.getOrCreateTag();
+						CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+						if (items != null) {
+							if (items.contains("Items", 9)) {
+								@SuppressWarnings("static-access")
+								ItemStack selectedStack = stack.read(((ListNBT) items.get("Items")).getCompound(0));
+								if (selectedStack.getItem() instanceof IMorphling) {
+									IMorphling morphling = (IMorphling) selectedStack.getItem();
+									morphling.use(player, player.getActiveHand(), stack, worldIn);
+									playerVolume.subtractBloodVolume(morphling.getBloodCost());
+									PacketHandler.CHANNELBLOODVOLUME.send(
+											PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+											new BloodVolumePacketServer(playerVolume.getBloodVolume()));
+								}
+							}
+						}
+
 					} else {
 						this.summonDirectedOrb(worldIn, player);
+						playerVolume.subtractBloodVolume(50f);
+						PacketHandler.CHANNELBLOODVOLUME.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+								new BloodVolumePacketServer(playerVolume.getBloodVolume()));
 					}
 				} else {
 					player.playSound(SoundEvents.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,
@@ -161,7 +174,7 @@ public class ItemLivingStaff extends Item {
 
 	@Override
 	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.BOW;
+		return UseAction.SPEAR;
 	}
 
 	public void summonDirectedOrb(World worldIn, PlayerEntity playerIn) {
@@ -171,57 +184,17 @@ public class ItemLivingStaff extends Item {
 		worldIn.addEntity(miss);
 	}
 
-	public void summomCorruptNote(World worldIn, PlayerEntity playerIn) {
-		EntityBloodOrbTracking missile = new EntityBloodOrbTracking(playerIn, false);
-		missile.setPosition(playerIn.getPosX() + (Math.random() - 0.5 * 0.1), playerIn.getPosY() + 0.8f,
-				playerIn.getPosZ() + (Math.random() - 0.5 * 0.1));
-		if (missile.findTarget()) {
-			playerIn.playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, 0.6F, 0.8F + (float) Math.random() * 0.2F);
-			worldIn.addEntity(missile);
-		}
-	}
-
-	public void summonNoteStorm(int numMiss, World worldIn, PlayerEntity playerIn) {
-		EntityBloodOrbTracking[] missArray = new EntityBloodOrbTracking[numMiss];
-		for (int i = 0; i < numMiss; i++) {
-			missArray[i] = new EntityBloodOrbTracking(playerIn, false);
-			missArray[i].setPosition(playerIn.getPosX() + ((Math.random()) * 1.5), playerIn.getPosY() + 0.8f,
-					playerIn.getPosZ() + ((Math.random()) * 1.5));
-			if (!worldIn.isRemote) {
-				playerIn.playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, 0.6F, 0.8F + (float) Math.random() * 0.2F);
-				worldIn.addEntity(missArray[i]);
-
-			}
-		}
-	}
-
-	public void summonTentacleAid(int numTent, World world, PlayerEntity player, Vector3d hitVec) {
-		EntityBloodOrbTracking[] tentArray = new EntityBloodOrbTracking[numTent];
-		for (int i = 0; i < numTent; i++) {
-			tentArray[i] = new EntityBloodOrbTracking(player, false);
-			float xMod = (world.rand.nextFloat() - 0.5F) * 8.0F;
-			float yMod = (world.rand.nextFloat() - 0.5F) * 4.0F;
-			float zMod = (world.rand.nextFloat() - 0.5F) * 8.0F;
-			tentArray[i].setPosition(hitVec.getX() + 0.5 + xMod, hitVec.getY() + 1.5 + yMod,
-					hitVec.getZ() + 0.5 + zMod);
-			if (!world.isRemote) {
-				world.addEntity(tentArray[i]);
-
-			}
-		}
-	}
-
-	@OnlyIn(Dist.CLIENT)
+	@SuppressWarnings("static-access")
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
 			ITooltipFlag flagIn) {
-
-		IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-				.orElseThrow(NullPointerException::new);
-		for (int i = 0; i < handler.getSlots(); i++) {
-			tooltip.add(new StringTextComponent("slots " + handler.getStackInSlot(i)));
+		CompoundNBT compoundnbt = stack.getOrCreateTag();
+		CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+		if (items != null) {
+			if (items.contains("Items", 9)) {
+				tooltip.add(stack.read(((ListNBT) items.get("Items")).getCompound(0)).getDisplayName());
+			}
 		}
-
 	}
 
 	@Nullable

@@ -77,6 +77,8 @@ public class PacketHandler {
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
+		HANDLER.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class, PacketUpdateLivingStaffMorph::encode,
+				PacketUpdateLivingStaffMorph::decode, PacketUpdateLivingStaffMorph.Handler::handle);
 		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"),
 				() -> PROTOCOL_VERSION, s -> true, s -> true);
 		INSTANCE.registerMessage(networkID++, OpenRunesInvPacket.class, OpenRunesInvPacket::toBytes,

@@ -14,6 +14,7 @@ import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -25,6 +26,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.Rarity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -49,12 +51,29 @@ public class ItemMorphlingJar extends Item {
 	String name;
 	Integer size;
 	Rarity rarity;
+	public static String TAG_SIZE = "size";
 
 	public ItemMorphlingJar(String name, Integer size, Rarity rarity) {
 		super(new Item.Properties().maxStackSize(1).group(com.huto.hemomancy.Hemomancy.HemomancyItemGroup.instance));
 		this.name = name;
 		this.size = size;
 		this.rarity = rarity;
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+		if (entityIn instanceof PlayerEntity) {
+			CompoundNBT compoundnbt = stack.getOrCreateTag();
+			if (stack.hasTag()) {
+				CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+				if (items != null) {
+					if (items.contains("Items", 9)) {
+						compoundnbt.putInt(TAG_SIZE, ((ListNBT) items.get("Items")).size());
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -135,6 +154,9 @@ public class ItemMorphlingJar extends Item {
 				return LazyOptional.empty();
 		}
 
+		
+		
+		
 		@Override
 		public INBT serializeNBT() {
 			inventory.save();
@@ -201,6 +223,7 @@ public class ItemMorphlingJar extends Item {
 		return pickedUp.isEmpty();
 	}
 
+	@SuppressWarnings("unused")
 	private boolean hasTranslation(String key) {
 		return !I18n.format(key).equals(key);
 	}
@@ -210,24 +233,12 @@ public class ItemMorphlingJar extends Item {
 		return tmp.equals(key) ? fallback : tmp;
 	}
 
+	@SuppressWarnings("static-access")
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
 			ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-		String translationKey = getTranslationKey();
-
-		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-				.orElseThrow(NullPointerException::new);
-		int count = 0;
-		if (binderHandler != null) {
-			for (int i = 0; i < binderHandler.getSlots(); i++) {
-				if (binderHandler.getStackInSlot(i).getItem() != Items.AIR) {
-					count+=1;
-				}
-			}
-			tooltip.add(new StringTextComponent(String.valueOf(count)));
-		}
 
 		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
 		if (pickupEnabled)
@@ -236,11 +247,25 @@ public class ItemMorphlingJar extends Item {
 			tooltip.add(new StringTextComponent(I18n.format("Hemomancy.autopickupdisabled")));
 
 		if (Screen.hasShiftDown()) {
-			tooltip.add(new StringTextComponent(I18n.format(translationKey + ".info")));
-			if (hasTranslation(translationKey + ".info2"))
-				tooltip.add(new StringTextComponent(I18n.format(translationKey + ".info2")));
-			if (hasTranslation(translationKey + ".info3"))
-				tooltip.add(new StringTextComponent(I18n.format(translationKey + ".info3")));
+			IItemHandler jarHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+					.orElseThrow(NullPointerException::new);
+			if (jarHandler != null) {
+				for (int i = 0; i < jarHandler.getSlots(); i++) {
+					if (jarHandler.getStackInSlot(i).getItem() != Items.AIR) {
+					}
+				}
+				CompoundNBT compoundnbt = stack.getOrCreateTag();
+				CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+				if (items != null) {
+					if (items.contains("Items", 9)) {
+						for (int i = 0; i < ((ListNBT) items.get("Items")).size(); i++) {
+							tooltip.add(stack.read(((ListNBT) items.get("Items")).getCompound(i)).getDisplayName());
+
+						}
+					}
+				}
+			}
+
 		} else {
 			tooltip.add(new StringTextComponent(fallbackString("Hemomancy.shift", "Press <§6§oShift§r> for info.")));
 		}

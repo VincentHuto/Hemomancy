@@ -1,5 +1,7 @@
 package com.huto.hemomancy.item.morphlings;
 
+import com.huto.hemomancy.entity.projectile.EntityTrackingSerpent;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -30,6 +32,9 @@ public class ItemMorphlingSerpent extends ItemMorphling implements IMorphling {
 
 	@Override
 	public void use(PlayerEntity playerIn, Hand handIn, ItemStack itemStack, World worldIn) {
+		EntityTrackingSerpent miss = new EntityTrackingSerpent((PlayerEntity) playerIn, false);
+		miss.setPosition(playerIn.getPosX() - 0.5, playerIn.getPosY() + 0.6, playerIn.getPosZ() - 0.5);
+		worldIn.addEntity(miss);
 	}
 
 }

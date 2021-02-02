@@ -91,32 +91,37 @@ public class ItemInit {
 			() -> new ItemTendencyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	
+
 	// Living tools
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	
-	//Morphlings
+
+	// Morphlings
 	public static final RegistryObject<Item> morphling_jar = BASEITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-			() -> new ItemMorphlingFungal(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+			() -> new ItemMorphlingFungal(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					""));
 	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
 			() -> new ItemMorphlingLeech(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
 	public static final RegistryObject<Item> morphling_symbiote = BASEITEMS.register("morphling_symbiote",
-			() -> new ItemMorphlingSymbiote(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+			() -> new ItemMorphlingSymbiote(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					""));
 	public static final RegistryObject<Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-			() -> new ItemMorphlingSerpent(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+			() -> new ItemMorphlingSerpent(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
+					""));
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
 			() -> new ItemMorphlingPest(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
-	//Iron Rod
+	// Iron Rod
 	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> rod_of_exhortation_pillar = SPECIALITEMS.register("rod_of_exhortation_pillar",
+	public static final RegistryObject<Item> rod_of_exhortation_pillar = SPECIALITEMS.register(
+			"rod_of_exhortation_pillar",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> rod_of_exhortation_spike = SPECIALITEMS.register("rod_of_exhortation_spike",
+	public static final RegistryObject<Item> rod_of_exhortation_spike = SPECIALITEMS.register(
+			"rod_of_exhortation_spike",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	/// Blood Gourds
@@ -135,19 +140,18 @@ public class ItemInit {
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
 			() -> new BlockNamedItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
-			() -> new BlockNamedItem(BlockInit.befouling_ash_trail.get(),
-					(new Item.Properties())));
+			() -> new BlockNamedItem(BlockInit.befouling_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> tainted_iron_scrap = BASEITEMS.register("tainted_iron_scrap",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_will = BASEITEMS.register("living_will",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	//Tools
+	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
 			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-	//Armor
+	// Armor
 	public static final RegistryObject<Item> tainted_iron_helm = BASEITEMS.register("tainted_iron_helm",
 			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.HEAD,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
@@ -164,8 +168,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> tainted_iron_sword = HANDHELDITEMS.register("tainted_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.TAINTED_IRON, 3, -2.4F,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	
+
 	// Runes
 
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
@@ -364,6 +367,18 @@ public class ItemInit {
 							}
 						}
 						return 0;
+					}
+				});
+
+		ItemModelsProperties.registerProperty(morphling_jar.get(), new ResourceLocation(Hemomancy.MOD_ID, "size"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							return stack.getTag().getInt("size");
+						} else {
+							return 0;
+						}
 					}
 				});
 
