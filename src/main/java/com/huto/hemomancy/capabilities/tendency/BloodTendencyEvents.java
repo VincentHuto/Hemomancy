@@ -7,11 +7,9 @@ import java.util.Map;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capabilities.mindrunes.IRunesItemHandler;
 import com.huto.hemomancy.capabilities.mindrunes.RunesCapabilities;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketEntityHitParticle;
-import com.huto.hemomancy.network.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -72,11 +70,11 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
-		// Causes particles when the air is hit
+	/*	// Causes particles when the air is hit
 		if (e.getWorld().isRemote) {
 			PacketHandler.CHANNELBLOODVOLUME
 					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
-		}
+		}*/
 	}
 
 	@SubscribeEvent

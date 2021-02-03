@@ -9,10 +9,8 @@ import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.containers.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
-import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 
@@ -22,7 +20,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -59,11 +56,6 @@ public class ItemLivingStaff extends Item {
 
 		if (!worldIn.isRemote) {
 			if (playerIn.isSneaking()) {
-				// For "Lore" Reasons Ive made it so that morphlings can only be applied from
-				// the jar, no where else but ill leave this container as a vestigial limb of
-				// sorts
-				// Totally not becasue of a weird bug with the jar self emptying every slot....
-
 				playerIn.openContainer(new INamedContainerProvider() {
 
 					@Override
@@ -90,26 +82,24 @@ public class ItemLivingStaff extends Item {
 		return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
 
 	}
+	
+	@Override
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new StringTextComponent("Living Staff").mergeStyle(TextFormatting.DARK_RED).mergeStyle(TextFormatting.ITALIC);
+	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		if (entityIn.world.isRemote) {
-			if (stack.getEquipmentSlot() == EquipmentSlotType.MAINHAND) {
-				PacketHandler.CHANNELBLOODVOLUME
-						.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+		CompoundNBT staffnbt = stack.getOrCreateTag();
+		if (!staffnbt.contains("Inventory")) {
+			IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+					.orElseThrow(NullPointerException::new);
+			if (handler instanceof LivingStaffItemHandler) {
+				LivingStaffItemHandler staffHandler = (LivingStaffItemHandler) handler;
+				staffHandler.setDirty();
 			}
 		}
-	}
-
-	@Override
-	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
-		/*
-		 * if (player.world.isRemote) { PacketHandler.CHANNELBLOODVOLUME
-		 * .sendToServer(new
-		 * PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks())); }
-		 */
-		super.onUsingTick(stack, player, count);
 	}
 
 	@Override
@@ -121,11 +111,11 @@ public class ItemLivingStaff extends Item {
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isRemote) {
 
-					if (worldIn.rand.nextInt(10) == 6) {
-
-						player.sendStatusMessage(new StringTextComponent(
-								TextFormatting.DARK_PURPLE + "Abuse of Power does not come without consequence"), true);
-					}
+					/*
+					 * if (worldIn.rand.nextInt(10) == 6) { player.sendStatusMessage(new
+					 * StringTextComponent( TextFormatting.DARK_PURPLE +
+					 * "Abuse of Power does not come without consequence"), true); }
+					 */
 					if (!player.isCrouching()) {
 						CompoundNBT compoundnbt = stack.getOrCreateTag();
 						CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");

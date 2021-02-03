@@ -59,15 +59,11 @@ public class PacketAirBloodDraw {
 				if (items != null) {
 					if (items.contains("Items", 9)) {
 						selected = staff.read(((ListNBT) items.get("Items")).getCompound(0));
-
 						if (selected.getItem() == ItemInit.morphling_pests.get()) {
 							sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 255, 0)),
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 5, 0, 0, 0,
 									0.015f);
 						} else if (selected.getItem() == ItemInit.morphling_serpent.get()) {
-							sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 255, 0)),
-									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 5, 0, 0, 0,
-									0.0015f);
 							sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 20, 0)),
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 2, 0, 0, 0,
 									0.0015f);

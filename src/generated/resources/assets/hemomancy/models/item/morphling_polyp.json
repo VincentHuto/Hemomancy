@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/morphling_jar"
+    "layer0": "hemomancy:item/morphling_polyp"
   }
 }

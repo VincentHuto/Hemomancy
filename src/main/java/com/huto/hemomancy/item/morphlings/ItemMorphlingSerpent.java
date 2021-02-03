@@ -32,9 +32,16 @@ public class ItemMorphlingSerpent extends ItemMorphling implements IMorphling {
 
 	@Override
 	public void use(PlayerEntity playerIn, Hand handIn, ItemStack itemStack, World worldIn) {
-		EntityTrackingSerpent miss = new EntityTrackingSerpent((PlayerEntity) playerIn, false);
+	/*	EntityTrackingSerpent miss = new EntityTrackingSerpent((PlayerEntity) playerIn, false);
 		miss.setPosition(playerIn.getPosX() - 0.5, playerIn.getPosY() + 0.6, playerIn.getPosZ() - 0.5);
-		worldIn.addEntity(miss);
+		worldIn.addEntity(miss);*/
+		EntityTrackingSerpent[] arr = new EntityTrackingSerpent[5];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = new EntityTrackingSerpent((PlayerEntity) playerIn, false);
+			arr[i].setPosition(playerIn.getPosX() - 0.5, playerIn.getPosY() + 0.6, playerIn.getPosZ() - 0.5);
+			worldIn.addEntity(arr[i]);
+		}
+		
 	}
 
 }

@@ -99,6 +99,8 @@ public class ItemInit {
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	// Morphlings
+	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> morphling_jar = BASEITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",

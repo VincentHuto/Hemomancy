@@ -9,6 +9,7 @@ import com.huto.hemomancy.entity.utils.Vector3;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
 
 import net.minecraft.block.Block;
@@ -131,10 +132,12 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 
 			Vector3 targetVec = evil ? new Vector3(lockX, lockY, lockZ) : Vector3.fromEntityCenter(target);
 			Vector3 diffVec = targetVec.subtract(thisVec);
-			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.5 : 0.6);
+			// This normalize part changes how angular the beam gets
+			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.15 : 0.6);
 			setMotion(motionVec.toVector3d());
 			if (time < 10)
-				setMotion(getMotion().getX(), Math.abs(getMotion().getY()), getMotion().getZ());
+				setMotion(getMotion().getX() + ParticleUtil.inRange(-0.15, 0.15), Math.abs(getMotion().getY()),
+						getMotion().getZ() + ParticleUtil.inRange(-0.15, 0.15));
 			List<LivingEntity> targetList = world.getEntitiesWithinAABB(LivingEntity.class,
 					new AxisAlignedBB(getPosX() - 0.5, getPosY() - 0.5, getPosZ() - 0.5, getPosX() + 0.5,
 							getPosY() + 0.5, getPosZ() + 0.5));
@@ -143,9 +146,9 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 				if (thrower != null) {
 					PlayerEntity player = thrower instanceof PlayerEntity ? (PlayerEntity) thrower : null;
 					target.attackEntityFrom(player == null ? DamageSource.causeMobDamage(thrower)
-							: DamageSource.causePlayerDamage(player), evil ? 12 : 7);
+							: DamageSource.causePlayerDamage(player), evil ? 2 : 2);
 				} else
-					target.attackEntityFrom(DamageSource.GENERIC, evil ? 12 : 7);
+					target.attackEntityFrom(DamageSource.GENERIC, evil ? 2 : 2);
 
 				remove();
 			}
@@ -211,14 +214,15 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 			Block block = world.getBlockState(((BlockRayTraceResult) pos).getPos()).getBlock();
 			if (!(block instanceof BushBlock) && !(block instanceof LeavesBlock))
 				remove();
-			break;
+				break;
 		}
 		case ENTITY: {
-			if (((EntityRayTraceResult) pos).getEntity() == getTargetEntity())
-				((LivingEntity) ((EntityRayTraceResult) pos).getEntity())
-						.addPotionEffect(new EffectInstance(PotionInit.blood_binding.get(), 100));
-			remove();
-
+			if (!(pos instanceof BlockRayTraceResult)) {
+				if (((EntityRayTraceResult) pos).getEntity() == getTargetEntity())
+					((LivingEntity) ((EntityRayTraceResult) pos).getEntity())
+							.addPotionEffect(new EffectInstance(PotionInit.blood_binding.get(), 300));
+				remove();
+			}
 			break;
 		}
 		default: {

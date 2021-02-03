@@ -2,8 +2,12 @@ package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.utils.Vector3;
+import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
+import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 import com.huto.hemomancy.particle.ParticleColor;
@@ -13,6 +17,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -39,7 +45,7 @@ public class BloodVolumeEvents {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
@@ -77,6 +83,40 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
+		if (e.player.world.isRemote) {
+			ItemStack stack = e.player.getHeldItemMainhand();
+			ItemStack offStack = e.player.getHeldItemOffhand();
+
+			if (stack.getItem() == ItemInit.living_staff.get()) {
+				CompoundNBT compoundnbt = stack.getOrCreateTag();
+				CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+				if (items != null) {
+					if (items.contains("Items", 9)) {
+						@SuppressWarnings("static-access")
+						ItemStack selectedStack = stack.read(((ListNBT) items.get("Items")).getCompound(0));
+						if (selectedStack.getItem() instanceof IMorphling) {
+							PacketHandler.CHANNELBLOODVOLUME
+									.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+						}
+					}
+				}
+			}
+
+			if (offStack.getItem() == ItemInit.living_staff.get()) {
+				CompoundNBT compoundnbt = offStack.getOrCreateTag();
+				CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+				if (items != null) {
+					if (items.contains("Items", 9)) {
+						@SuppressWarnings("static-access")
+						ItemStack selectedStack = offStack.read(((ListNBT) items.get("Items")).getCompound(0));
+						if (selectedStack.getItem() instanceof IMorphling) {
+							PacketHandler.CHANNELBLOODVOLUME
+									.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+						}
+					}
+				}
+			}
+		}
 		/*
 		 * Vector3 centerVec = Vector3.fromEntityCenter(e.player); if
 		 * (e.player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {}
@@ -110,50 +150,35 @@ public class BloodVolumeEvents {
 				if (!e.getEntityLiving().world.isRemote) {
 					ServerWorld sWorld = (ServerWorld) e.getEntityLiving().world;
 
-					if (e.getEntityLiving().getHeight() <= e.getEntityLiving().getWidth()) {
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(50, 50, 50)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.z + Math.sin(e.getEntityLiving().ticksExisted * 0.1), 2, 0f, 0.0f, 0f,
-								0);
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(100, 100, 0)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.z + Math.sin(e.getEntityLiving().ticksExisted * 0.1), 4, 0f, 0.0f, 0f,
-								0.0005f);
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
-								centerVec.x +Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.z + Math.sin(e.getEntityLiving().ticksExisted * 0.1), 8, 0f, 0.0f, 0f,
-								0.0015f);
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.z + Math.sin(e.getEntityLiving().ticksExisted * 0.1), 1, 0f, 0.0f, 0f,
-								0.0035f);
-					} else {
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(50, 50, 50)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05), 2, 0f, 0.0f, 0f,
-								0);
+					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(50, 50, 50)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							2, 0f, 0.0f, 0f, 0);
 
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(100, 100, 0)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05), 4, 0f, 0.0f, 0f,
-								0.0005f);
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05), 8, 0f, 0.0f, 0f,
-								0.0015f);
-						sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
-								centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05),
-								centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
-								centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3) *(0.50+ Math.sin(e.getEntityLiving().ticksExisted )*0.05), 1, 0f, 0.0f, 0f,
-								0.0035f);
-					}
+					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(100, 0, 0)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							4, 0f, 0.0f, 0f, 0.0005f);
+					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							8, 0f, 0.0f, 0f, 0.0015f);
+					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x + Math.sin(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							centerVec.y + Math.sin(e.getEntityLiving().ticksExisted * 0.1),
+							centerVec.z + Math.cos(e.getEntityLiving().ticksExisted * 0.3)
+									* (0.50 + Math.sin(e.getEntityLiving().ticksExisted) * 0.05),
+							1, 0f, 0.0f, 0f, 0.0035f);
 
 					/*
 					 * sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(50, 50,
