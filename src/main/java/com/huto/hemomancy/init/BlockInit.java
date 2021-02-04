@@ -59,6 +59,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> venous_stone = BASEBLOCKS.register("venous_stone",
 			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
 					.hardnessAndResistance(1.5F, 6.0F)));
+	public static final RegistryObject<Block> infested_venous_stone = BASEBLOCKS.register("infested_venous_stone",
+			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
+					.hardnessAndResistance(1.5F, 6.0F)));
 	public static final RegistryObject<Block> conscious_mass = BASEBLOCKS.register("conscious_mass",
 			() -> new Block(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.PINK).sound(SoundType.WART)
 					.hardnessAndResistance(0.2F, 1.0F)));

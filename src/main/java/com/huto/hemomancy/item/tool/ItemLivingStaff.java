@@ -164,7 +164,7 @@ public class ItemLivingStaff extends Item {
 
 	@Override
 	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.SPEAR;
+		return UseAction.BOW;
 	}
 
 	public void summonDirectedOrb(World worldIn, PlayerEntity playerIn) {

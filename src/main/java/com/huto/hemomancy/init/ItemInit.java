@@ -61,6 +61,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTier;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.SwordItem;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -101,7 +103,7 @@ public class ItemInit {
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> morphling_jar = BASEITEMS.register("morphling_jar",
+	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
 			() -> new ItemMorphlingFungal(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
@@ -381,6 +383,50 @@ public class ItemInit {
 						} else {
 							return 0;
 						}
+					}
+				});
+
+		ItemModelsProperties.registerProperty(living_staff.get(), new ResourceLocation(Hemomancy.MOD_ID, "morph"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							CompoundNBT compoundnbt = stack.getOrCreateTag();
+							CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+							if (items != null) {
+								if (items.contains("Items", 9)) {
+									@SuppressWarnings("static-access")
+									ItemStack selectedStack = stack.read(((ListNBT) items.get("Items")).getCompound(0));
+									if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
+										return 1;
+
+									} else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
+										return 2;
+
+									} else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
+										return 3;
+
+									} else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
+										return 4;
+
+									} else if (selectedStack.getItem() == ItemInit.morphling_symbiote.get()) {
+										return 5;
+
+									} else {
+										return 0;
+
+									}
+								}
+							} else {
+								return 0;
+
+							}
+
+						} else {
+							return 0;
+
+						}
+						return 0;
 					}
 				});
 

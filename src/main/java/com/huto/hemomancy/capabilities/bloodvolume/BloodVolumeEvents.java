@@ -2,12 +2,8 @@ package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.utils.Vector3;
-import com.huto.hemomancy.event.ClientEventSubscriber;
-import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
-import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
-import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 import com.huto.hemomancy.particle.ParticleColor;
@@ -17,8 +13,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -83,7 +77,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
-		if (e.player.world.isRemote) {
+	/*	if (e.player.world.isRemote) {
 			ItemStack stack = e.player.getHeldItemMainhand();
 			ItemStack offStack = e.player.getHeldItemOffhand();
 
@@ -116,7 +110,7 @@ public class BloodVolumeEvents {
 					}
 				}
 			}
-		}
+		}*/
 		/*
 		 * Vector3 centerVec = Vector3.fromEntityCenter(e.player); if
 		 * (e.player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {}
