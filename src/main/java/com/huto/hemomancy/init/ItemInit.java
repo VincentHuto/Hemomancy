@@ -149,6 +149,10 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_will = BASEITEMS.register("living_will",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	
+	
+	
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));

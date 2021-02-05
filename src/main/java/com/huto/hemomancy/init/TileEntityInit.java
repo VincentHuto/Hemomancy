@@ -2,6 +2,7 @@ package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
+import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
 
@@ -22,5 +23,8 @@ public class TileEntityInit {
 	public static final RegistryObject<TileEntityType<TileEntitySemiSentientConstruct>> semi_sentient_construct = TILES
 			.register("semi_sentient_construct", () -> TileEntityType.Builder
 					.create(TileEntitySemiSentientConstruct::new, BlockInit.semi_sentient_construct.get()).build(null));
+	public static final RegistryObject<TileEntityType<TileEntityMorphlingIncubator>> morphling_incubator = TILES
+			.register("morphling_incubator", () -> TileEntityType.Builder
+					.create(TileEntityMorphlingIncubator::new, BlockInit.morphling_incubator.get()).build(null));
 	
 }

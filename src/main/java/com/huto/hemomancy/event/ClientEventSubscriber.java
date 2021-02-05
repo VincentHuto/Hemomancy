@@ -19,9 +19,9 @@ import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
-import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
+import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 
 import net.minecraft.client.Minecraft;
@@ -59,6 +59,8 @@ public class ClientEventSubscriber {
 		// Tiles
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);
+		ClientRegistry.bindTileEntityRenderer(TileEntityInit.morphling_incubator.get(), RenderMorphlingIncubator::new);
+
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
 		ScreenManager.registerFactory(ContainerInit.playerrunes, PlayerExpandedScreen::new);
@@ -77,8 +79,6 @@ public class ClientEventSubscriber {
 				RenderBloodOrbTracking::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(),
 				RenderTrackingSerpent::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(),
-				RenderTrackingPests::new);
 		
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);

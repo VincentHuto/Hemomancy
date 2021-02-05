@@ -3,6 +3,7 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.block.BlockBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockChiselStation;
+import com.huto.hemomancy.block.BlockMorphlingIncubator;
 import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
@@ -77,6 +78,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
 			() -> new BlockChiselStation(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+	
+	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
+			() -> new BlockMorphlingIncubator(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+	
 	public static final RegistryObject<Block> rune_mod_station = MODELEDBLOCKS.register("rune_mod_station",
 			() -> new BlockRuneModStation(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
@@ -92,6 +98,7 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.getCutoutMipped());
 			RenderTypeLookup.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.getTranslucent());
+			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());
 
 		}
 	}
