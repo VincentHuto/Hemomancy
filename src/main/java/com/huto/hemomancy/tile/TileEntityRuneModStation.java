@@ -2,10 +2,12 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.GlowParticleData;
 
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class TileEntityRuneModStation extends TileEntity implements ITickableTileEntity {
 
@@ -16,18 +18,20 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 	@Override
 	public void tick() {
 		if (world.isRemote) {
-				double randX = pos.getX() + Math.sin(world.getGameTime() * 0.2f) * 0.3f + 0.4f;
-				double randY = pos.getY();
-				double randZ = pos.getZ() + Math.cos(world.getGameTime() * 0.2f) * 0.3f + 0.4f;
+			Vector3d[] fibboSphere = ParticleUtil.pointOnSphere(512, -this.world.getGameTime() * 0.01);
+			Vector3d[] randomSwimming = ParticleUtil.randomSwimming(512, -this.world.getGameTime() * 0.01);
+			Vector3d[] squashStretch = ParticleUtil.squashAndStretch(512, -this.world.getGameTime() * 0.01);
+			Vector3d[] funMovement = ParticleUtil.funMovement(512, -this.world.getGameTime() * 0.01);
 
-				world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0,255)), randX + 0.1, randY + 1,
-						randZ + 0.1, 0, 0.00, 0);
-			
-				double randX1 = pos.getX() + Math.sin(-world.getGameTime() * 0.2f) * 0.3f + 0.4f;
-				double randY1 = pos.getY();
-				double randZ1 = pos.getZ() + Math.cos(-world.getGameTime() * 0.2f) * 0.3f + 0.4f;
-				world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 255)), randX1 + 0.1, randY1 + 1,
-						randZ1 + 0.1, 0, 0.005, 0);
+			for (int i = 0; i < funMovement.length; i++) {
+
+				world.addParticle(
+						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
+						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 2 + +fibboSphere[i].y,
+						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
+
+			}
 		}
 
 	}
