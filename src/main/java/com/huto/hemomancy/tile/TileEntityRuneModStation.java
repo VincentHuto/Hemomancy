@@ -18,20 +18,30 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 	@Override
 	public void tick() {
 		if (world.isRemote) {
-			Vector3d[] fibboSphere = ParticleUtil.pointOnSphere(512, -this.world.getGameTime() * 0.01);
-			Vector3d[] randomSwimming = ParticleUtil.randomSwimming(512, -this.world.getGameTime() * 0.01);
-			Vector3d[] squashStretch = ParticleUtil.squashAndStretch(512, -this.world.getGameTime() * 0.01);
-			Vector3d[] funMovement = ParticleUtil.funMovement(512, -this.world.getGameTime() * 0.01);
-
-			for (int i = 0; i < funMovement.length; i++) {
-
+			int partCount = 256;
+			double time = -this.world.getGameTime() * 0.01;
+			Vector3d[] fibboSphere = ParticleUtil.fibboSphere(partCount, time, 1);
+			Vector3d[] expandingSphere = ParticleUtil.randomSphere(partCount, time, Math.sin(time));
+			Vector3d[] randomSphere = ParticleUtil.randomSphere(partCount, time, 1);
+			Vector3d[] randomSwimming = ParticleUtil.randomSwimming(partCount, time, 1);
+			Vector3d[] squashStretch = ParticleUtil.squashAndStretch(partCount, time, 1);
+			Vector3d[] funMovement = ParticleUtil.tangentFunnel(partCount, time, 1);
+			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(partCount, time, 1);
+			Vector3d[] lotusFountain = ParticleUtil.lotusFountain(partCount, time, 1);
+			Vector3d[] cosmicBirthFlip = ParticleUtil.cosmicBirthFlip(partCount, time, 1);
+			Vector3d[] bloomingFlower = ParticleUtil.bloomingFlower(partCount, time, 1);
+			Vector3d[] bloomingFlowerFlip = ParticleUtil.bloomingFlowerFlip(partCount, time, 1);
+			Vector3d[] cosmicBirthInverse = ParticleUtil.cosmicBirthInverse(partCount, time, 1);
+			Vector3d[] cosmicBirthInverseFlip = ParticleUtil.cosmicBirthInverseFlip(partCount, time, 1);
+			for (int i = 0; i < partCount; i++) {
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
-								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 2 + +fibboSphere[i].y,
-						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
+						GlowParticleData.createData(new ParticleColor((int) (lotusFountain[i].x * 255),
+								(int) (lotusFountain[i].y * 255), (int) (lotusFountain[i].z * 255))),
+						pos.getX() + lotusFountain[i].x + .5, pos.getY() + 2 + lotusFountain[i].y,
+						pos.getZ() + lotusFountain[i].z + .5, 0, 0.00, 0);
 
 			}
+
 		}
 
 	}

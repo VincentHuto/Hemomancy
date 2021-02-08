@@ -9,9 +9,6 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-/**
- * Created by Bailey on 12/26/2016.
- */
 public class ParticleUtil {
 	public static Random r = new Random();
 
@@ -23,80 +20,289 @@ public class ParticleUtil {
 		return (a + .5);
 	}
 
-	public static Vector3d[] funMovement(int numPoint, double rotMod) {
+	/*
+	 * An Imploding Sphere Shape
+	 */
+	public static Vector3d[] implode(int numPoint, double rotMod, double radMod) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135)); // Golden angle in radians
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75)); // Golden angle in radians
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35)); // Golden angle in radians
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
 		for (int i = 0; i < numPoint; i++) {
-			double y = 1 - (i / ((float) numPoint - 1)) * 2; // y goes from 1 to -1
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
-			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i; // Golden angle Increment
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-
-			// Random Swimming
-			// points[i] = new Vector3d(x + Math.sin(rotThing), y, z + Math.cos(rotThing));
-			// squash and stretch
-			points[i] = new Vector3d(x * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)), y,
-					z * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)));
+			points[i] = new Vector3d(x * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)) * radMod,
+					y * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)) * radMod,
+					z * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)) * radMod);
 
 		}
 		return points;
 	}
 
-///https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere
-	public static Vector3d[] squashAndStretch(int numPoint, double rotMod) {
+	/*
+	 * Like Imploding Sphere except its always funneling down
+	 */
+	public static Vector3d[] tangentFunnel(int numPoint, double rotMod, double radMod) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135)); // Golden angle in radians
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75)); // Golden angle in radians
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35)); // Golden angle in radians
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
 		for (int i = 0; i < numPoint; i++) {
-			double y = 1 - (i / ((float) numPoint - 1)) * 2; // y goes from 1 to -1
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
-			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i; // Golden angle Increment
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-
-			// Random Swimming
-			// points[i] = new Vector3d(x + Math.sin(rotThing), y, z + Math.cos(rotThing));
-			// squash and stretch
-			points[i] = new Vector3d(x * Math.pow(Math.tan(rotThing), -0.35), y,
-					z * Math.pow(Math.tan(rotThing), 0.35));
+			points[i] = new Vector3d(x * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)) * radMod, y * radMod,
+					z * Math.sqrt(Math.pow(Math.tan(rotThing), 0.75)) * radMod);
 
 		}
 		return points;
 	}
 
-	public static Vector3d[] randomSwimming(int numPoint, double rotMod) {
+	
+	/*
+	 *Pulls in the X direction and Pinches in the Z 
+	 */
+	public static Vector3d[] squashAndStretch(int numPoint, double rotMod, double radMod) {
 		Vector3d[] points = new Vector3d[numPoint];
-		// odd numbers = horizontal lines
-		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135)); // Golden angle in radians
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75)); // Golden angle in radians
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35)); // Golden angle in radians
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
 		for (int i = 0; i < numPoint; i++) {
-			double y = 1 - (i / ((float) numPoint - 1)) * 2; // y goes from 1 to -1
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
-			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i; // Golden angle Increment
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-
-			// Random Swimming
-			points[i] = new Vector3d(x + Math.sin(rotThing), y, z + Math.cos(rotThing));
+			points[i] = new Vector3d(x * Math.pow(Math.tan(rotThing) * radMod, -0.35), y * radMod,
+					z * Math.pow(Math.tan(rotThing), 0.35) * radMod);
 
 		}
 		return points;
 	}
 
-	public static Vector3d[] pointOnSphere(int numPoint, double rotMod) {
+	
+	/*
+	 * Starting at a small point shoots rays out to the radius
+	 */
+	public static Vector3d[] inversedSphere(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
+			double radius = Math.sqrt(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.sin(rotThing), exp) * radMod,
+					y * Math.pow(Math.sin(rotThing), exp * 1) * radMod, z * Math.pow(Math.sin(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+
+	/*
+	 * A misty cloud that grows up and down in a blazar shape
+	 */
+	public static Vector3d[] cosmicBirth(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
+			double radius = Math.sqrt(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0. ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.sin(rotThing), exp) * radMod,
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.sin(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+	/*
+	 * A misty cloud that grows down and up in a blazar shape
+	 */
+	public static Vector3d[] cosmicBirthFlip(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		// odd numbers = horizontal lines
+		// even numbers = vertical lines
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
+			double radius = Math.sqrt(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0. ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.sin(rotThing), exp) * radMod,
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.sin(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+	/*
+	 * Like Cosmic Birth but Large on outside and not inside
+	 */
+	public static Vector3d[] cosmicBirthInverse(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
+			double radius = Math.exp(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0. ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.sin(rotThing), exp) * radMod,
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.sin(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+	/*
+	 * Like Cosmic Birth but Large on outside and not inside
+	 */
+	public static Vector3d[] cosmicBirthInverseFlip(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
+			double radius = Math.exp(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0. ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.sin(rotThing) * radMod, exp),
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.sin(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+
+	
+	/*
+	 * Like a lotus fountain with point twords y+
+	 */
+	public static Vector3d[] bloomingFlower(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
+			double radius = -Math.max(Math.sqrt(1 - y * y) * 1, 0.75);
+
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.cos(rotThing) * radMod, exp),
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.cos(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+	
+	/*
+	 * Like a lotus fountain with point twords y-
+	 */
+	public static Vector3d[] bloomingFlowerFlip(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
+			double radius = Math.max(Math.sqrt(1 - y * y) * 1, 0.75);
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.cos(rotThing) * radMod, exp),
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.cos(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+
+	public static Vector3d[] lotusFountain(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
+			double radius = Math.sqrt(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.cos(rotThing) * radMod, exp),
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.cos(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+
+	
+	/*
+	 * Like a School of swimming tetras
+	 */
+	public static Vector3d[] randomSwimming(int numPoint, double rotMod, double radMod) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
+		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
+		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		for (int i = 0; i < numPoint; i++) {
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
+			double radius = Math.sqrt(1 - y * y);
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			points[i] = new Vector3d(x + Math.sin(rotThing) * radMod, y * Math.sin(rotThing) * radMod,
+					z + Math.cos(rotThing) * radMod);
+
+		}
+		return points;
+	}
+
+	/*
+	 * Fibbonachi Sphere with vertical Lines
+	 */
+	public static Vector3d[] fibboSphere(int numPoint, double rotMod, double radMod) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
@@ -108,27 +314,28 @@ public class ParticleUtil {
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			// Fibonachi sphere
-			points[i] = new Vector3d(x, y, z);
+			points[i] = new Vector3d(x * radMod, y * radMod, z * radMod);
 
 		}
 		return points;
 	}
 
-	public static Vector3d[] randomSphere(int numPoint, double rotMod) {
+	
+	/*
+	 * A cloud of ever changing particles
+	 */
+	public static Vector3d[] randomSphere(int numPoint, double rotMod, double radMod) {
 		Vector3d[] points = new Vector3d[numPoint];
-		// odd numbers = horizontal lines
-		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135)); // Golden angle in radians
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75)); // Golden angle in radians
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35)); // Golden angle in radians
+		double phiX = Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
-			double y = 1 - (i / ((float) numPoint - 1)) * 2; // y goes from 1 to -1
+			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
-			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i; // Golden angle Increment
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
-			// Fibonachi sphere
-			points[i] = new Vector3d(x, y, z);
+			points[i] = new Vector3d(x * radMod, y * radMod, z * radMod);
 
 		}
 		return points;
