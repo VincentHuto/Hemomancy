@@ -9,6 +9,7 @@ import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
@@ -29,7 +30,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public class BlockRuneModStation extends Block {
+@SuppressWarnings("deprecation")
+public class BlockRuneModStation extends Block implements ITileEntityProvider {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 	private static final VoxelShape SHAPE_N = Stream
 			.of(Block.makeCuboidShape(3, 0, 3, 13, 1, 13), Block.makeCuboidShape(4, 12, 4, 12, 14.01, 12),
@@ -62,6 +64,8 @@ public class BlockRuneModStation extends Block {
 		if (worldIn.isRemote) {
 			PacketHandler.INSTANCE.sendToServer(new OpenRunesInvPacket());
 		}
+
+		((TileEntityRuneModStation) worldIn.getTileEntity(pos)).onActivated(player, player.getHeldItemMainhand());
 		return ActionResultType.SUCCESS;
 
 	}
@@ -90,7 +94,6 @@ public class BlockRuneModStation extends Block {
 		return state.with(FACING, rot.rotate(state.get(FACING)));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
@@ -101,7 +104,6 @@ public class BlockRuneModStation extends Block {
 		builder.add(FACING);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
 		super.onBlockClicked(state, worldIn, pos, player);
@@ -113,7 +115,14 @@ public class BlockRuneModStation extends Block {
 	}
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public boolean eventReceived(BlockState state, World world, BlockPos pos, int id, int param) {
+		super.eventReceived(state, world, pos, id, param);
+		TileEntity tileentity = world.getTileEntity(pos);
+		return tileentity != null && tileentity.receiveClientEvent(id, param);
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(IBlockReader worldIn) {
 		return new TileEntityRuneModStation();
 	}
 

@@ -23,13 +23,13 @@ public class ParticleUtil {
 	/*
 	 * An Imploding Sphere Shape
 	 */
-	public static Vector3d[] implode(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] implode(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
@@ -48,13 +48,13 @@ public class ParticleUtil {
 	/*
 	 * Like Imploding Sphere except its always funneling down
 	 */
-	public static Vector3d[] tangentFunnel(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] tangentFunnel(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
@@ -69,15 +69,14 @@ public class ParticleUtil {
 		return points;
 	}
 
-	
 	/*
-	 *Pulls in the X direction and Pinches in the Z 
+	 * Pulls in the X direction and Pinches in the Z
 	 */
-	public static Vector3d[] squashAndStretch(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] squashAndStretch(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
@@ -92,16 +91,14 @@ public class ParticleUtil {
 		return points;
 	}
 
-	
 	/*
 	 * Starting at a small point shoots rays out to the radius
 	 */
-	public static Vector3d[] inversedSphere(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] inversedSphere(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y) * 1;
@@ -120,11 +117,11 @@ public class ParticleUtil {
 	/*
 	 * A misty cloud that grows up and down in a blazar shape
 	 */
-	public static Vector3d[] cosmicBirth(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] cosmicBirth(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
 			double radius = Math.sqrt(1 - y * y) * 1;
@@ -139,16 +136,17 @@ public class ParticleUtil {
 		}
 		return points;
 	}
+
 	/*
 	 * A misty cloud that grows down and up in a blazar shape
 	 */
-	public static Vector3d[] cosmicBirthFlip(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] cosmicBirthFlip(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
 		// odd numbers = horizontal lines
 		// even numbers = vertical lines
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
 			double radius = Math.sqrt(1 - y * y) * 1;
@@ -163,14 +161,15 @@ public class ParticleUtil {
 		}
 		return points;
 	}
+
 	/*
 	 * Like Cosmic Birth but Large on outside and not inside
 	 */
-	public static Vector3d[] cosmicBirthInverse(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] cosmicBirthInverse(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
 			double radius = Math.exp(1 - y * y) * 1;
@@ -185,14 +184,15 @@ public class ParticleUtil {
 		}
 		return points;
 	}
+
 	/*
 	 * Like Cosmic Birth but Large on outside and not inside
 	 */
-	public static Vector3d[] cosmicBirthInverseFlip(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] cosmicBirthInverseFlip(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.25);
 			double radius = Math.exp(1 - y * y) * 1;
@@ -208,39 +208,37 @@ public class ParticleUtil {
 		return points;
 	}
 
-	
 	/*
 	 * Like a lotus fountain with point twords y+
 	 */
-	public static Vector3d[] bloomingFlower(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] bloomingFlower(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
-			double radius = -Math.max(Math.sqrt(1 - y * y) * 1, 0.75);
-
+			double radius = Math.cbrt(-Math.max(Math.sqrt(1 - y * y) * 1, 1.0));
 			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-			double exp = 3;
+			double exp = 2;
 			points[i] = new Vector3d(x * Math.pow(Math.cos(rotThing) * radMod, exp),
 					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.cos(rotThing), exp) * radMod);
 
 		}
 		return points;
 	}
-	
+
 	/*
 	 * Like a lotus fountain with point twords y-
 	 */
-	public static Vector3d[] bloomingFlowerFlip(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] bloomingFlowerFlip(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
 			double radius = Math.max(Math.sqrt(1 - y * y) * 1, 0.75);
@@ -256,11 +254,11 @@ public class ParticleUtil {
 		return points;
 	}
 
-	public static Vector3d[] lotusFountain(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] lotusFountain(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !!isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = -Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
 			double radius = Math.sqrt(1 - y * y) * 1;
@@ -276,15 +274,34 @@ public class ParticleUtil {
 		return points;
 	}
 
-	
+	public static Vector3d[] lotusFountainFlip(int numPoint, double rotMod, double radMod, boolean isRand) {
+		Vector3d[] points = new Vector3d[numPoint];
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
+		for (int i = 0; i < numPoint; i++) {
+			double y = Math.abs(Math.sin(rotMod) - (i / ((float) numPoint - 1)) * 0.15);
+			double radius = Math.sqrt(1 - y * y) * 1;
+			double theta = i % 2 == 0 ? phiE * i : Math.random() > 0.5 ? phiO * i : phiX * i;
+			double x = Math.cos(theta) * radius;
+			double z = Math.sin(theta) * radius;
+			double rotThing = rotMod * radius;
+			double exp = 3;
+			points[i] = new Vector3d(x * Math.pow(Math.cos(rotThing) * radMod, exp),
+					y * Math.pow(Math.sin(rotThing), exp * 2) * radMod, z * Math.pow(Math.cos(rotThing), exp) * radMod);
+
+		}
+		return points;
+	}
+
 	/*
 	 * Like a School of swimming tetras
 	 */
-	public static Vector3d[] randomSwimming(int numPoint, double rotMod, double radMod) {
+	public static Vector3d[] randomSwimming(int numPoint, double rotMod, double radMod, boolean isRand) {
 		Vector3d[] points = new Vector3d[numPoint];
-		double phiX = Math.PI * (2.6 - Math.sqrt(.1135));
-		double phiO = Math.PI * (3.0 - Math.sqrt(.75));
-		double phiE = Math.PI * (2.0 - Math.sqrt(.35));
+		double phiX = !isRand ? Math.PI * (2.6 - Math.sqrt(.1135)) : Math.PI * (2.6 - Math.sqrt(Math.random()));
+		double phiO = !isRand ? Math.PI * (3.0 - Math.sqrt(.75)) : Math.PI * (3.0 - Math.sqrt(Math.random()));
+		double phiE = !isRand ? Math.PI * (2.0 - Math.sqrt(.35)) : Math.PI * (2.0 - Math.sqrt(Math.random()));
 		for (int i = 0; i < numPoint; i++) {
 			double y = 1 - (i / ((float) numPoint - 1)) * 2;
 			double radius = Math.sqrt(1 - y * y);
@@ -292,8 +309,8 @@ public class ParticleUtil {
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-			points[i] = new Vector3d(x + Math.sin(rotThing) * radMod, y * Math.sin(rotThing) * radMod,
-					z + Math.cos(rotThing) * radMod);
+			points[i] = new Vector3d(x +Math.cos(rotThing) * radMod, y *Math.pow(Math.sin(radius),3),
+					z + Math.sin(rotThing) * radMod);
 
 		}
 		return points;
@@ -320,7 +337,6 @@ public class ParticleUtil {
 		return points;
 	}
 
-	
 	/*
 	 * A cloud of ever changing particles
 	 */
