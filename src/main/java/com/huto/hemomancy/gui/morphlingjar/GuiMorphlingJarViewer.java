@@ -78,14 +78,6 @@ public class GuiMorphlingJarViewer extends Screen {
 				@SuppressWarnings("unused")
 				IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 						.orElseThrow(NullPointerException::new);
-				/*
-				 * if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
-				 * ItemRunePattern pat = (ItemRunePattern)
-				 * binderHandler.getStackInSlot(i).getItem(); List<ITextComponent> text = new
-				 * ArrayList<ITextComponent>(); text.add(new StringTextComponent(
-				 * I18n.format(pat.getRecipe().getOutput().getDisplayName().getString())));
-				 * func_243308_b(matrixStack, text, mouseX, mouseY); }
-				 */
 			}
 		}
 		GlStateManager.popMatrix();

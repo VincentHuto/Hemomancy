@@ -75,6 +75,8 @@ public class PacketHandler {
 				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
+		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
+				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class, PacketUpdateLivingStaffMorph::encode,

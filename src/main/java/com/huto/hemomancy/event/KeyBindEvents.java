@@ -1,6 +1,7 @@
 package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.network.PacketChangeMorphKey;
 import com.huto.hemomancy.network.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
@@ -35,6 +36,12 @@ public class KeyBindEvents {
 					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
 
 		}
+		if (ClientEventSubscriber.toggleMorphlingOpenJar.isPressed()) {
+			PacketHandler.HANDLER
+					.sendToServer(new PacketChangeMorphKey());
+
+		}
+
 
 	}
 

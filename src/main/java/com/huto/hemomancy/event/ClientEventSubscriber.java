@@ -19,6 +19,7 @@ import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
+import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
@@ -51,6 +52,9 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.Hemomancy.morphjarpickup.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.Hemomancy.category");
+	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.Hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
+			"key.Hemomancy.category");
+
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -79,6 +83,8 @@ public class ClientEventSubscriber {
 				RenderBloodOrbTracking::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(),
 				RenderTrackingSerpent::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(),
+				RenderTrackingPests::new);
 		
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);
@@ -86,12 +92,14 @@ public class ClientEventSubscriber {
 		keyBinds.add(2, bloodCrafting);
 		keyBinds.add(3, bloodDraw);
 		keyBinds.add(4, toggleMorphlingJarPickup);
+		keyBinds.add(5, toggleMorphlingOpenJar);
 
 		ClientRegistry.registerKeyBinding(keyBinds.get(0));
 		ClientRegistry.registerKeyBinding(keyBinds.get(1));
 		ClientRegistry.registerKeyBinding(keyBinds.get(2));
 		ClientRegistry.registerKeyBinding(keyBinds.get(3));
 		ClientRegistry.registerKeyBinding(keyBinds.get(4));
+		ClientRegistry.registerKeyBinding(keyBinds.get(5));
 
 	}
 
