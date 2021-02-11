@@ -4,6 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.EntityIronPillar;
 import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
+import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
@@ -44,7 +45,7 @@ public class EntityInit {
 					.<EntityBloodOrbTracking>create(EntityBloodOrbTracking::new, EntityClassification.MISC)
 					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_blood_orb").toString()));
-	
+
 	public static final RegistryObject<EntityType<EntityTrackingSerpent>> tracking_snake = ENTITY_TYPES.register(
 			"tracking_snake",
 			() -> EntityType.Builder
@@ -53,25 +54,22 @@ public class EntityInit {
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_snake").toString()));
 	public static final RegistryObject<EntityType<EntityTrackingPests>> tracking_pests = ENTITY_TYPES.register(
 			"tracking_pests",
-			() -> EntityType.Builder
-					.<EntityTrackingPests>create(EntityTrackingPests::new, EntityClassification.MISC)
+			() -> EntityType.Builder.<EntityTrackingPests>create(EntityTrackingPests::new, EntityClassification.MISC)
 					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.25F, 0.25F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_pests").toString()));
 
-	public static final RegistryObject<EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register(
-			"iron_pillar",
-			() -> EntityType.Builder
-					.<EntityIronPillar>create(EntityIronPillar::new, EntityClassification.MISC)
-					.size(1.4F, 1.5F)
-					.build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
-	
-	public static final RegistryObject<EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register(
-			"iron_spike",
-			() -> EntityType.Builder
-					.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
-					.size(1.4F, 1.5F)
-					.build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
-	
+	public static final RegistryObject<EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register("iron_pillar",
+			() -> EntityType.Builder.<EntityIronPillar>create(EntityIronPillar::new, EntityClassification.MISC)
+					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
+
+	public static final RegistryObject<EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register("iron_spike",
+			() -> EntityType.Builder.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
+					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
+
+	public static final RegistryObject<EntityType<EntityMorphlingPolypItem>> morphling_polyp = ENTITY_TYPES.register("morphling_polyp",
+			() -> EntityType.Builder.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
+					.size(0.25F, 0.25F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
+
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {
 		GlobalEntityTypeAttributes.put(EntityInit.leech.get(), EntityLeech.setAttributes().create());

@@ -5,6 +5,7 @@ import com.huto.hemomancy.tile.TileEntityChiselStation;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
+import com.huto.hemomancy.tile.TileEntityUnstainedPodium;
 
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
@@ -26,5 +27,8 @@ public class TileEntityInit {
 	public static final RegistryObject<TileEntityType<TileEntityMorphlingIncubator>> morphling_incubator = TILES
 			.register("morphling_incubator", () -> TileEntityType.Builder
 					.create(TileEntityMorphlingIncubator::new, BlockInit.morphling_incubator.get()).build(null));
+	public static final RegistryObject<TileEntityType<TileEntityUnstainedPodium>> unstained_podium = TILES
+			.register("unstained_podium", () -> TileEntityType.Builder
+					.create(TileEntityUnstainedPodium::new, BlockInit.unstained_podium.get()).build(null));
 	
 }

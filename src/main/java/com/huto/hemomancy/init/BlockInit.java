@@ -7,6 +7,7 @@ import com.huto.hemomancy.block.BlockMorphlingIncubator;
 import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
+import com.huto.hemomancy.block.BlockUnstainedPodium;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -64,8 +65,8 @@ public class BlockInit {
 			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
 					.hardnessAndResistance(1.5F, 6.0F)));
 	public static final RegistryObject<Block> conscious_mass = BASEBLOCKS.register("conscious_mass",
-			() -> new Block(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.PINK).sound(SoundType.WART)
-					.hardnessAndResistance(0.2F, 1.0F)));
+			() -> new Block(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.PINK)
+					.sound(SoundType.WART).hardnessAndResistance(0.2F, 1.0F)));
 	public static final RegistryObject<Block> tainted_iron_block = BASEBLOCKS.register("tainted_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
@@ -73,22 +74,30 @@ public class BlockInit {
 			"chiseled_tainted_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
+	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem", () -> new Block(
+			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
+	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap", () -> new Block(
+			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
 
 	// Tiles
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
 			() -> new BlockChiselStation(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
-	
+
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new BlockMorphlingIncubator(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
-	
+
 	public static final RegistryObject<Block> rune_mod_station = MODELEDBLOCKS.register("rune_mod_station",
 			() -> new BlockRuneModStation(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
-	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS.register("semi_sentient_construct",
-			() -> new BlockSemiSentientConstruct(
+	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
+			.register("semi_sentient_construct", () -> new BlockSemiSentientConstruct(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
+			() -> new BlockUnstainedPodium(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
 		if (FMLEnvironment.dist == Dist.CLIENT) {

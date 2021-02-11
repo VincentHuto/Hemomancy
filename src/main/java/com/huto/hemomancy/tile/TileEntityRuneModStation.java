@@ -52,7 +52,7 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 	public void tick() {
 		double globalTime = cooldown * 0.02;
 		if (world.isRemote) {
-			int globalPartCount = 512;
+			int globalPartCount = 128;
 			Vector3d[] fibboSphere = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5);
 			Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.55);
 			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5,
@@ -64,38 +64,38 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 					false);
 
 			for (int i = 0; i < globalPartCount; i++) {
-				/*
-				 * world.addParticle( GlowParticleData.createData(new ParticleColor((int)
-				 * (fibboSphere[i].x * 255), (int) (fibboSphere[i].y * 255), (int)
-				 * (fibboSphere[i].z * 255))), pos.getX() + fibboSphere[i].x + .5, pos.getY() +
-				 * 1.5 + fibboSphere[i].y, pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
-				 * 
-				 * world.addParticle( GlowParticleData.createData(new ParticleColor((int)
-				 * (inversedSphere[i].x * 255), (int) (inversedSphere[i].y * 255), (int)
-				 * (inversedSphere[i].z * 255))), pos.getX() + inversedSphere[i].x + .5,
-				 * pos.getY() + 1.5 + inversedSphere[i].y, pos.getZ() + inversedSphere[i].z +
-				 * .5, 0, 0.00, 0);
-				 * 
-				 * world.addParticle( GlowParticleData.createData(new ParticleColor((int)
-				 * (randomSwim[i].x * 255), (int) (randomSwim[i].y * 255), (int)
-				 * (randomSwim[i].z * 255))), pos.getX() + randomSwim[i].x + .5, pos.getY() +
-				 * 1.1 + randomSwim[i].y, pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
-				 */
 
-				// This creates a Star like effect
-				world.addParticle(GlowParticleData.createData(new ParticleColor(255, (world.rand.nextInt()), 0)),
+				world.addParticle(
+						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
 						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
 
-				if (i % 2 == 0) {
-					world.addParticle(GlowParticleData.createData(new ParticleColor(100, 80, 10)),
-							pos.getX() + corona[i].x + .5, pos.getY() + 1.5 + corona[i].y,
-							pos.getZ() + corona[i].z + .5, 0.0, -0.00, 0.0);
-				}
-				world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+				world.addParticle(
+						GlowParticleData.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
+								(int) (inversedSphere[i].y * 255), (int) (inversedSphere[i].z * 255))),
 						pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
 						pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
 
+				world.addParticle(
+						GlowParticleData.createData(new ParticleColor((int) (randomSwim[i].x * 255),
+								(int) (randomSwim[i].y * 255), (int) (randomSwim[i].z * 255))),
+						pos.getX() + randomSwim[i].x + .5, pos.getY() + 1.1 + randomSwim[i].y,
+						pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
+
+				/*
+				 * // This creates a Star like effect
+				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255,
+				 * (world.rand.nextInt()), 0)), pos.getX() + fibboSphere[i].x + .5, pos.getY() +
+				 * 1.5 + fibboSphere[i].y, pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
+				 * 
+				 * if (i % 2 == 0) { world.addParticle(GlowParticleData.createData(new
+				 * ParticleColor(100, 80, 10)), pos.getX() + corona[i].x + .5, pos.getY() + 1.5
+				 * + corona[i].y, pos.getZ() + corona[i].z + .5, 0.0, -0.00, 0.0); }
+				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+				 * pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 +
+				 * inversedSphere[i].y, pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
+				 */
 			}
 		}
 

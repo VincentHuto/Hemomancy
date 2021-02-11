@@ -32,6 +32,7 @@ import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
+import com.huto.hemomancy.recipes.PolypRecipes;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 
 import net.minecraft.client.Minecraft;
@@ -175,6 +176,7 @@ public class Hemomancy {
 		ModBloodCraftingRecipes.initPatterns();
 		ModBloodCraftingRecipes.initRecipes();
 		ModChiselRecipes.init();
+		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
 		PacketHandler.registerRuneBinderChannels();
 		PacketHandler.registerMorphlingJarChannels();

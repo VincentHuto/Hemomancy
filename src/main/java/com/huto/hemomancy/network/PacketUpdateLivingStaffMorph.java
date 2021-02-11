@@ -44,27 +44,30 @@ public class PacketUpdateLivingStaffMorph {
 								.orElseThrow(NullPointerException::new);
 						IItemHandler jarHandler = jar.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 								.orElseThrow(NullPointerException::new);
-						CompoundNBT compoundnbt = jar.getOrCreateTag();
-						CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
-						if (items != null) {
-							if (items.contains("Items", 9)) {
-								@SuppressWarnings("static-access")
-								ItemStack selectedStack = jar
-										.read(((ListNBT) items.get("Items")).getCompound(msg.selected));
-								if (selectedStack.getItem() instanceof IMorphling) {
-									IMorphling morphling = (IMorphling) selectedStack.getItem();
-									System.out.println(morphling);
-									CompoundNBT staffnbt = staff.getOrCreateTag();
-									CompoundNBT staffItems = (CompoundNBT) staffnbt.get("Inventory");
-									if (staffItems != null) {
-										if (staffItems.contains("Items", 9)) {
-											@SuppressWarnings("static-access")
-											ItemStack selectedStaffStack = staff
-													.read(((ListNBT) staffItems.get("Items")).getCompound(0));
-											if (staffHandler instanceof LivingStaffItemHandler) {
-												LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
-												if (jarHandler instanceof MorphlingJarItemHandler) {
-													MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
+						if (staffHandler instanceof LivingStaffItemHandler) {
+							LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
+							if (jarHandler instanceof MorphlingJarItemHandler) {
+								MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
+								castedJar.setDirty();
+								castedStaff.setDirty();
+								CompoundNBT compoundnbt = jar.getOrCreateTag();
+								CompoundNBT items = (CompoundNBT) compoundnbt.get("Inventory");
+								if (items != null) {
+									if (items.contains("Items", 9)) {
+										@SuppressWarnings("static-access")
+										ItemStack selectedStack = jar
+												.read(((ListNBT) items.get("Items")).getCompound(msg.selected));
+										if (selectedStack.getItem() instanceof IMorphling) {
+											CompoundNBT staffnbt = staff.getOrCreateTag();
+											CompoundNBT staffItems = (CompoundNBT) staffnbt.get("Inventory");
+											if (staffItems != null) {
+												if (staffItems.contains("Items", 9)) {
+													@SuppressWarnings("static-access")
+													ItemStack selectedStaffStack = staff
+															.read(((ListNBT) staffItems.get("Items")).getCompound(0));
+
+													castedJar.setDirty();
+													castedStaff.setDirty();
 													castedJar.setStackInSlot(msg.selected, selectedStaffStack);
 													castedJar.setDirty();
 													castedStaff.setStackInSlot(0, selectedStack);

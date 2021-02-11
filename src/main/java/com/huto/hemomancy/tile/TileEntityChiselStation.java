@@ -194,7 +194,7 @@ public class TileEntityChiselStation extends LockableLootTileEntity
 	@Override
 	public SUpdateTileEntityPacket getUpdatePacket() {
 		super.getUpdatePacket();
-		
+
 		CompoundNBT tag = new CompoundNBT();
 		writePacketNBT(tag);
 		ListNBT tagList = new ListNBT();

@@ -21,9 +21,11 @@ import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
+import com.huto.hemomancy.render.item.RenderMorphlingPolypItem;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
+import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
@@ -50,11 +52,10 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding bloodDraw = new KeyBinding("key.Hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.Hemomancy.category");
-	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.Hemomancy.morphjarpickup.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
-			"key.Hemomancy.category");
+	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.Hemomancy.morphjarpickup.desc",
+			GLFW.GLFW_KEY_LEFT_CONTROL, "key.Hemomancy.category");
 	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.Hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
 			"key.Hemomancy.category");
-
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -64,13 +65,14 @@ public class ClientEventSubscriber {
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.morphling_incubator.get(), RenderMorphlingIncubator::new);
+		ClientRegistry.bindTileEntityRenderer(TileEntityInit.unstained_podium.get(), RenderUnstainedPodium::new);
 
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
 		ScreenManager.registerFactory(ContainerInit.playerrunes, PlayerExpandedScreen::new);
 		ScreenManager.registerFactory(ContainerRuneBinder.type, GuiRuneBinder::new);
 		ScreenManager.registerFactory(ContainerMorphlingJar.type, GuiMorphlingJar::new);
-		ScreenManager.registerFactory(ContainerLivingStaff.type,  GuiLivingStaff::new);
+		ScreenManager.registerFactory(ContainerLivingStaff.type, GuiLivingStaff::new);
 
 		// Entity
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.leech.get(), RenderLeech::new);
@@ -81,11 +83,11 @@ public class ClientEventSubscriber {
 				RenderBloodOrbDirected::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),
 				RenderBloodOrbTracking::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(),
-				RenderTrackingSerpent::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(),
-				RenderTrackingPests::new);
-		
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp.get(),
+				RenderMorphlingPolypItem::new);
+
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);
 		keyBinds.add(1, bloodFormation);

@@ -82,10 +82,11 @@ public class ItemLivingStaff extends Item {
 		return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
 
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent("Living Staff").mergeStyle(TextFormatting.DARK_RED).mergeStyle(TextFormatting.ITALIC);
+		return new StringTextComponent("Living Staff").mergeStyle(TextFormatting.DARK_RED)
+				.mergeStyle(TextFormatting.ITALIC);
 	}
 
 	@Override
@@ -102,6 +103,9 @@ public class ItemLivingStaff extends Item {
 		}
 	}
 
+	
+	
+	
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof PlayerEntity) {

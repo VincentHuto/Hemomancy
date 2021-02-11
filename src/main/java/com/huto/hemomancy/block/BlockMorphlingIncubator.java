@@ -2,13 +2,17 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
+import com.huto.hemomancy.containers.InventoryHelper;
+import com.huto.hemomancy.network.VanillaPacketDispatcher;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -27,7 +31,8 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public class BlockMorphlingIncubator extends Block {
+@SuppressWarnings("deprecation")
+public class BlockMorphlingIncubator extends Block implements ITileEntityProvider {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 	private static final VoxelShape SHAPE_N = Stream.of(Block.makeCuboidShape(7, 0, 7, 9, 3, 9),
 			Block.makeCuboidShape(6, 2, 6, 10, 4, 10), Block.makeCuboidShape(10.75, 3, 5, 11.75, 4, 11),
@@ -52,19 +57,24 @@ public class BlockMorphlingIncubator extends Block {
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult result) {
-		/*
-		 * if (!worldIn.isRemote) { TileEntity tile = worldIn.getTileEntity(pos);
-		 * 
-		 * if (tile instanceof TileEntityChiselStation) { TileEntityChiselStation te =
-		 * (TileEntityChiselStation) tile; te.sendUpdates();
-		 * VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos); if
-		 * (te.numPlayersUsing < 2) { NetworkHooks.openGui((ServerPlayerEntity) player,
-		 * (TileEntityChiselStation) tile, pos); return ActionResultType.SUCCESS; } }
-		 * else { return ActionResultType.PASS;
-		 * 
-		 * } }
-		 */
-		return ActionResultType.FAIL;
+		if (worldIn.isRemote) {
+			return ActionResultType.SUCCESS;
+		}
+
+		TileEntityMorphlingIncubator te = (TileEntityMorphlingIncubator) worldIn.getTileEntity(pos);
+		ItemStack stack = player.getHeldItem(handIn);
+
+		if (player.isSneaking()) {
+			InventoryHelper.withdrawFromInventory(te, player);
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+			return ActionResultType.SUCCESS;
+		} else if (!stack.isEmpty()) {
+			boolean hit = te.addItem(player, stack, handIn);
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+			return hit ? ActionResultType.SUCCESS : ActionResultType.PASS;
+		}
+
+		return ActionResultType.PASS;
 	}
 
 	@Override
@@ -91,7 +101,6 @@ public class BlockMorphlingIncubator extends Block {
 		return state.with(FACING, rot.rotate(state.get(FACING)));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
@@ -108,14 +117,20 @@ public class BlockMorphlingIncubator extends Block {
 	}
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new TileEntityMorphlingIncubator();
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
 	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
 		super.onBlockClicked(state, worldIn, pos, player);
+	}
+
+	@Override
+	public boolean eventReceived(BlockState state, World world, BlockPos pos, int id, int param) {
+		super.eventReceived(state, world, pos, id, param);
+		TileEntity tileentity = world.getTileEntity(pos);
+		return tileentity != null && tileentity.receiveClientEvent(id, param);
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(IBlockReader worldIn) {
+		return new TileEntityMorphlingIncubator();
 	}
 
 }

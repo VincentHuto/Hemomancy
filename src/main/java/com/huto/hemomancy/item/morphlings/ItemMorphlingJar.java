@@ -154,9 +154,6 @@ public class ItemMorphlingJar extends Item {
 				return LazyOptional.empty();
 		}
 
-		
-		
-		
 		@Override
 		public INBT serializeNBT() {
 			inventory.save();

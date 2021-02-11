@@ -12,6 +12,7 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSymbiote;
 import com.huto.hemomancy.item.runes.ItemContractRune;
@@ -102,7 +103,7 @@ public class ItemInit {
 
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+			() -> new ItemMorphlingPolyp(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
@@ -121,6 +122,7 @@ public class ItemInit {
 	// Iron Rod
 	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	
 	public static final RegistryObject<Item> rod_of_exhortation_pillar = SPECIALITEMS.register(
 			"rod_of_exhortation_pillar",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -149,8 +151,16 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_will = BASEITEMS.register("living_will",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	
+	public static final RegistryObject<Item> serpent_scale = BASEITEMS.register("serpent_scale",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> swollen_leech = BASEITEMS.register("swollen_leech",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> dried_leech = BASEITEMS.register("dried_leech",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> chitinous_husk = BASEITEMS.register("chitinous_husk",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	
 	
 	// Tools
