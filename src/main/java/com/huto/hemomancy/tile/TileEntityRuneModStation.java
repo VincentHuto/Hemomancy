@@ -32,9 +32,6 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 		case CRAFT_EFFECT_EVENT: {
 			if (world.isRemote) {
 				for (int i = 0; i < 25; i++) {
-					float red = (float) Math.random();
-					float green = (float) Math.random();
-					float blue = (float) Math.random();
 					IParticleData data = GlowParticleData.createData(new ParticleColor(255, 0, 0));
 					world.addParticle(data, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1,
 							pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, 0, 0, 0);
@@ -60,7 +57,7 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 			Vector3d[] earth = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.1);
 			Vector3d[] mars = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.08);
 
-			Vector3d[] randomSwim = ParticleUtil.randomSwimming(globalPartCount, -world.getGameTime() * 0.005, 1,
+			Vector3d[] randomSwim = ParticleUtil.randomSwimming(globalPartCount, -world.getGameTime() * 0.005, 0.25,
 					false);
 
 			for (int i = 0; i < globalPartCount; i++) {
@@ -145,7 +142,6 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 		if (world.isRemote) {
 			return;
 		}
-		System.out.println("Clicked");
 		world.addBlockEvent(getPos(), BlockInit.rune_mod_station.get(), SET_COOLDOWN_EVENT, 60);
 		world.addBlockEvent(getPos(), BlockInit.rune_mod_station.get(), CRAFT_EFFECT_EVENT, 0);
 	}

@@ -25,6 +25,8 @@ public class ModBloodCraftingRecipes {
 	public static BaseBloodCraftingRecipe living_grip_recipe;
 	public static BaseBloodCraftingRecipe ssc_recipe;
 	public static BaseBloodCraftingRecipe tainted_iron_recipe;
+	public static BaseBloodCraftingRecipe unstained_pillar_recipe;
+	public static BaseBloodCraftingRecipe morphling_incubator_recipe;
 
 	public static void initRecipes() {
 		liber_sanguinum_recipe = new BaseBloodCraftingRecipe(ItemInit.liber_sanguinum.get(), 100,
@@ -44,6 +46,14 @@ public class ModBloodCraftingRecipes {
 				Blocks.IRON_BLOCK, tainted_iron_pattern);
 		RECIPES.add(tainted_iron_recipe);
 
+		unstained_pillar_recipe = new BaseBloodCraftingRecipe(BlockInit.unstained_podium.get(), 50,
+				Items.GLOWSTONE_DUST, BlockInit.tainted_iron_block.get(), unstained_pillar_pattern);
+		RECIPES.add(unstained_pillar_recipe);
+
+		morphling_incubator_recipe = new BaseBloodCraftingRecipe(BlockInit.morphling_incubator.get(), 50,
+				ItemInit.morphling_polyp.get(), BlockInit.tainted_iron_block.get(), morphling_polyp_pattern);
+		RECIPES.add(morphling_incubator_recipe);
+
 	}
 
 	public static List<BloodCraftingBundledPattern> BUNDELDPATTERNS = new ArrayList<>();
@@ -52,6 +62,8 @@ public class ModBloodCraftingRecipes {
 	public static BloodCraftingBundledPattern living_grip_pattern;
 	public static BloodCraftingBundledPattern ssc_pattern;
 	public static BloodCraftingBundledPattern tainted_iron_pattern;
+	public static BloodCraftingBundledPattern unstained_pillar_pattern;
+	public static BloodCraftingBundledPattern morphling_polyp_pattern;
 
 	public static void initPatterns() {
 		liber_sanguinum_pattern = new BloodCraftingBundledPattern(getBookPattern(), bookSymbolList, bookPatternArray);
@@ -63,11 +75,81 @@ public class ModBloodCraftingRecipes {
 		BUNDELDPATTERNS.add(living_grip_pattern);
 		ssc_pattern = new BloodCraftingBundledPattern(getSSCPattern(), sscSymbolList, sscArray);
 		BUNDELDPATTERNS.add(ssc_pattern);
-
-		tainted_iron_pattern = new BloodCraftingBundledPattern(geTaintedBlockPattern(), tIronSymbolList,
+		tainted_iron_pattern = new BloodCraftingBundledPattern(getTaintedBlockPattern(), tIronSymbolList,
 				tIronPatternArray);
 		BUNDELDPATTERNS.add(tainted_iron_pattern);
+		unstained_pillar_pattern = new BloodCraftingBundledPattern(getUnsPillarBlockPattern(), unsPillarSymbolList,
+				unsPillarPatternArray);
+		BUNDELDPATTERNS.add(unstained_pillar_pattern);
+		morphling_polyp_pattern = new BloodCraftingBundledPattern(getMorphIncBlockPattern(), morphIncSymbolList,
+				morphIncPatternArray);
+		BUNDELDPATTERNS.add(morphling_polyp_pattern);
+	}
 
+	// Morphling Incubator Block Pattern
+	@SuppressWarnings("serial")
+	public static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
+		{
+			put('G', BlockInit.sanguine_glass.get());
+			put('T', BlockInit.tainted_iron_block.get());
+			put('I', BlockInit.infested_venous_stone.get());
+			put('A', Blocks.AIR);
+
+		}
+	};
+	public static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
+			{ "TGT", "TGT", "AAA" } };
+
+	public static BlockPattern getMorphIncBlockPattern() {
+		BlockPattern morphIncPattern = null;
+		if (morphIncPattern == null) {
+			// 3x3x3
+			morphIncPattern = BlockPatternBuilder.start()
+
+					.aisle("TGT", "TGT", "AAA").where('T', blockPredFromHash(morphIncSymbolList, 'T'))
+					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
+					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).aisle("GGG", "GIG", "ATA")
+					.where('T', blockPredFromHash(morphIncSymbolList, 'T'))
+					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
+					.where('I', blockPredFromHash(morphIncSymbolList, 'I'))
+					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).aisle("TGT", "TGT", "AAA")
+					.where('T', blockPredFromHash(morphIncSymbolList, 'T'))
+					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
+					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).build();
+		}
+		return morphIncPattern;
+	}
+
+	// Unstained Pillar Block Pattern
+	@SuppressWarnings("serial")
+	public static HashMap<Character, Block> unsPillarSymbolList = new HashMap<Character, Block>() {
+		{
+			put('P', Blocks.QUARTZ_PILLAR);
+			put('S', Blocks.QUARTZ_BLOCK);
+			put('T', BlockInit.tainted_iron_block.get());
+			put('A', Blocks.AIR);
+
+		}
+	};
+	public static String[][] unsPillarPatternArray = { { "AAA", "AAA", "SSS" }, { "ATA", "APA", "SPS" },
+			{ "AAA", "AAA", "SSS" } };
+
+	public static BlockPattern getUnsPillarBlockPattern() {
+		BlockPattern unsPillarPattern = null;
+		if (unsPillarPattern == null) {
+			// 3x3x3
+			unsPillarPattern = BlockPatternBuilder.start()
+
+					.aisle("AAA", "AAA", "SSS").where('S', blockPredFromHash(unsPillarSymbolList, 'S'))
+					.where('A', blockPredFromHash(unsPillarSymbolList, 'A')).aisle("ATA", "APA", "SPS")
+					.where('T', blockPredFromHash(unsPillarSymbolList, 'T'))
+					.where('A', blockPredFromHash(unsPillarSymbolList, 'A'))
+					.where('P', blockPredFromHash(unsPillarSymbolList, 'P'))
+					.where('S', blockPredFromHash(unsPillarSymbolList, 'S')).aisle("AAA", "AAA", "SSS")
+					.where('S', blockPredFromHash(unsPillarSymbolList, 'S'))
+					.where('A', blockPredFromHash(unsPillarSymbolList, 'A')).build();
+		}
+		return unsPillarPattern;
 	}
 
 	// Tainted Iron Block Pattern
@@ -81,7 +163,7 @@ public class ModBloodCraftingRecipes {
 	};
 	public static String[][] tIronPatternArray = { { "AAA", "BBB" }, { "ABA", "BIB" }, { "AAA", "BBB" } };
 
-	public static BlockPattern geTaintedBlockPattern() {
+	public static BlockPattern getTaintedBlockPattern() {
 		BlockPattern tIronPattern = null;
 		if (tIronPattern == null) {
 			// 3x2x3
@@ -96,7 +178,6 @@ public class ModBloodCraftingRecipes {
 		}
 		return tIronPattern;
 	}
-
 
 	// SSC Pattern
 	@SuppressWarnings("serial")

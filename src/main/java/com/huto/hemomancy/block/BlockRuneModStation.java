@@ -2,6 +2,8 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
@@ -10,8 +12,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -61,11 +65,23 @@ public class BlockRuneModStation extends Block implements ITileEntityProvider {
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult result) {
-		if (worldIn.isRemote) {
-			PacketHandler.INSTANCE.sendToServer(new OpenRunesInvPacket());
+		if (!player.isSneaking()) {
+			if (worldIn.isRemote) {
+				PacketHandler.INSTANCE.sendToServer(new OpenRunesInvPacket());
+			}
+		} else {
+			if (!worldIn.isRemote) {
+				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+						new ItemStack(ItemInit.sanguine_conduit.get(), 1));
+				worldIn.destroyBlock(pos, false);
+				worldIn.addEntity(spawn);
+				worldIn.setBlockState(pos, BlockInit.unstained_podium.get().getDefaultState());
+			}
 		}
+		if (worldIn.getTileEntity(pos) instanceof TileEntityRuneModStation) {
+			((TileEntityRuneModStation) worldIn.getTileEntity(pos)).onActivated(player, player.getHeldItemMainhand());
 
-		((TileEntityRuneModStation) worldIn.getTileEntity(pos)).onActivated(player, player.getHeldItemMainhand());
+		}
 		return ActionResultType.SUCCESS;
 
 	}

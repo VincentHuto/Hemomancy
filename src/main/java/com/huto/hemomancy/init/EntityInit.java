@@ -5,6 +5,9 @@ import com.huto.hemomancy.entity.EntityIronPillar;
 import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
+import com.huto.hemomancy.entity.mob.EntityDrudge;
+import com.huto.hemomancy.entity.mob.EntityFargone;
+import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
@@ -31,6 +34,16 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<EntityLeech>create(EntityLeech::new, EntityClassification.CREATURE)
 					.size(0.4F, 0.1F).build(new ResourceLocation(Hemomancy.MOD_ID, "leech").toString()));
+	public static final RegistryObject<EntityType<EntityFargone>> fargone = ENTITY_TYPES.register("fargone",
+			() -> EntityType.Builder.<EntityFargone>create(EntityFargone::new, EntityClassification.MONSTER)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "fargone").toString()));
+	public static final RegistryObject<EntityType<EntityThirster>> thirster = ENTITY_TYPES.register("thirster",
+			() -> EntityType.Builder.<EntityThirster>create(EntityThirster::new, EntityClassification.MONSTER)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
+	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
+			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.MONSTER).size(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
+
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
 			"directed_blood_orb",
@@ -66,13 +79,18 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
 					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
 
-	public static final RegistryObject<EntityType<EntityMorphlingPolypItem>> morphling_polyp = ENTITY_TYPES.register("morphling_polyp",
-			() -> EntityType.Builder.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
+	public static final RegistryObject<EntityType<EntityMorphlingPolypItem>> morphling_polyp = ENTITY_TYPES.register(
+			"morphling_polyp",
+			() -> EntityType.Builder
+					.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
 					.size(0.25F, 0.25F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
 
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {
 		GlobalEntityTypeAttributes.put(EntityInit.leech.get(), EntityLeech.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.fargone.get(), EntityFargone.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.thirster.get(), EntityThirster.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
 

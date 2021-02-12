@@ -2,7 +2,8 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.tile.TileEntityUnstainedPodium;
 
 import net.minecraft.block.Block;
@@ -10,6 +11,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -55,11 +57,15 @@ public class BlockUnstainedPodium extends Block {
 			Hand handIn, BlockRayTraceResult result) {
 
 		worldIn.playSound(player, pos, SoundEvents.ENTITY_ZOMBIE_AMBIENT, SoundCategory.BLOCKS, 0.25f, 1f);
+		ItemStack stack = player.getHeldItem(handIn);
+		if (!player.isSneaking()) {
+			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
+				worldIn.destroyBlock(pos, false);
+				stack.shrink(1);
+				worldIn.setBlockState(pos, BlockInit.rune_mod_station.get().getDefaultState());
+			}
+		}
 
-		/*
-		 * if (worldIn.isRemote) { PacketHandler.INSTANCE.sendToServer(new
-		 * OpenRunesInvPacket()); }
-		 */
 		return ActionResultType.SUCCESS;
 
 	}

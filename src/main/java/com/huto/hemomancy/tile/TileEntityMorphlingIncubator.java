@@ -109,11 +109,6 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 			return true;
 		case CRAFT_EFFECT_EVENT: {
 			if (world.isRemote) {
-				for (int i = 0; i < 25; i++) {
-					float red = (float) Math.random();
-					float green = (float) Math.random();
-					float blue = (float) Math.random();
-				}
 			}
 			return true;
 		}

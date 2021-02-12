@@ -1,13 +1,12 @@
- package com.huto.hemomancy.entity;
-
-import java.util.Map;
+package com.huto.hemomancy.entity.mob;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.Maps;
-import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.EntityInit;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.morphlings.ItemMorphling;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.entity.AgeableEntity;
@@ -28,19 +27,21 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.DrinkHelper;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
@@ -48,17 +49,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
-public class EntityLeech extends AnimalEntity {
+public class EntityDrudge extends AnimalEntity {
 
-	private static final DataParameter<Integer> SLUG_TYPE = EntityDataManager.createKey(EntityLeech.class,
-			DataSerializers.VARINT);
-	public static final Map<Integer, ResourceLocation> TEXTURE_BY_ID = Util.make(Maps.newHashMap(), (p_213410_0_) -> {
-		p_213410_0_.put(0, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_grey.png"));
-		p_213410_0_.put(1, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_grey.png"));
-		p_213410_0_.put(2, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_brown.png"));
-	});
-
-	public EntityLeech(EntityType<? extends EntityLeech> type, World worldIn) {
+	public EntityDrudge(EntityType<? extends EntityDrudge> type, World worldIn) {
 		super(type, worldIn);
 	}
 
@@ -67,6 +60,34 @@ public class EntityLeech extends AnimalEntity {
 		return true;
 	}
 
+	@Override
+	public ActionResultType applyPlayerInteraction(PlayerEntity player, Vector3d vec, Hand hand) {
+		System.out.println("Interacted With");
+		return super.applyPlayerInteraction(player, vec, hand);
+	}
+
+	@Override
+	public boolean canBreed() {
+		return false;
+	}
+
+	@Override
+	public boolean canPickUpItem(ItemStack itemstackIn) {
+		if(itemstackIn.getItem() instanceof ItemMorphling){
+		 return true;
+		}else {
+			return false;
+		}
+	}
+
+	
+	@Override
+	public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
+		return false;
+	}
+	
+	
+	
 	int timer = 0;
 
 	@Override
@@ -143,80 +164,55 @@ public class EntityLeech extends AnimalEntity {
 		return 0.2F;
 	}
 
-	/*public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
+	public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
 		ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
 		if (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
 			p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
 			ItemStack itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
-					ItemInit.bucket_leech.get().getDefaultInstance());
+					ItemInit.living_will.get().getDefaultInstance());
 			p_230254_1_.setHeldItem(p_230254_2_, itemstack1);
 			this.remove();
 			float f = (this.rand.nextFloat() - 0.5F) * 2.0F;
 			float f1 = -1;
 			float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
-			this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-					this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
+			this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f,
+					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
 
 			return ActionResultType.func_233537_a_(this.world.isRemote);
 		} else {
 			return super.func_230254_b_(p_230254_1_, p_230254_2_);
 		}
 	}
-*/
-	@Override
-	public EntityLeech func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
-		EntityLeech catentity = EntityInit.leech.get().create(p_241840_1_);
-		if (p_241840_2_ instanceof EntityLeech) {
-			if (this.rand.nextBoolean()) {
-				catentity.setLeechType(this.getLeechType());
-			} else {
-				catentity.setLeechType(((EntityLeech) p_241840_2_).getLeechType());
-			}
-
-		}
-		return catentity;
-
-	}
-
-	public ResourceLocation getLeechTypeName() {
-		return TEXTURE_BY_ID.getOrDefault(this.getLeechType(), TEXTURE_BY_ID.get(0));
-	}
-
-	public int getLeechType() {
-		return this.dataManager.get(SLUG_TYPE);
-	}
-
-	public void setLeechType(int type) {
-		if (type <= 0 || type >= 3) {
-			type = this.rand.nextInt(4);
-		}
-
-		this.dataManager.set(SLUG_TYPE, type);
-	}
 
 	@Override
 	protected void registerData() {
 		super.registerData();
-		this.dataManager.register(SLUG_TYPE, rand.nextInt(3));
 	}
 
 	@Nullable
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			@Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setLeechType(this.rand.nextInt(4));
+		this.setEquipmentBasedOnDifficulty(difficultyIn);
 		World world = worldIn.getWorld();
 		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
-			this.setLeechType(1);
 			this.enablePersistence();
-
 		}
+
 		return spawnDataIn;
 
 	}
 
 	protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
 		return this.isChild() ? sizeIn.height * 0.1F : 1F;
+	}
+
+	@Override
+	public EntityDrudge func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+		EntityDrudge catentity = EntityInit.drudge.get().create(p_241840_1_);
+
+		return catentity;
+
 	}
 }

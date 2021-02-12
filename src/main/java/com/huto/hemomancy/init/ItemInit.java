@@ -122,7 +122,7 @@ public class ItemInit {
 	// Iron Rod
 	public static final RegistryObject<Item> rod_of_exhortation = SPECIALITEMS.register("rod_of_exhortation",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	
+
 	public static final RegistryObject<Item> rod_of_exhortation_pillar = SPECIALITEMS.register(
 			"rod_of_exhortation_pillar",
 			() -> new ItemIronRod(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -161,8 +161,7 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	
+
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -334,9 +333,22 @@ public class ItemInit {
 			() -> new ModSpawnEggItem(EntityInit.leech, 7761777, 4206080,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+			() -> new ModSpawnEggItem(EntityInit.fargone, 7352833, 7958646,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
+			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
-		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech);
+		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
+				ItemInit.spawn_egg_thirster,ItemInit.spawn_egg_drudge);
 	}
 
 	// Item Property Override

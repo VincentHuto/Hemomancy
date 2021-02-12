@@ -65,13 +65,11 @@ public class PacketBloodCraftingKeyPress {
 					.orElseThrow(NullPointerException::new);
 
 			BaseBloodCraftingRecipe targetPattern = getMatchingRecipe(message.heldStack);
-
 			ServerWorld sWorld = (ServerWorld) ctx.get().getSender().world;
 			if (player.getHeldItemMainhand().getItem() == targetPattern.getHeldItem()) {
 				if (bloodVolume.getBloodVolume() > targetPattern.getCost()) {
 					RayTraceResult rayTrace = player.pick(3, 102, false);
 					if (rayTrace.getType() == RayTraceResult.Type.BLOCK) {
-
 						BlockRayTraceResult blockResult = (BlockRayTraceResult) rayTrace;
 						BlockPos hitPos = blockResult.getPos();
 						Block hitBlock = sWorld.getBlockState(hitPos).getBlock();
