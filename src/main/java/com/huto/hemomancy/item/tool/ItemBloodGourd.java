@@ -24,21 +24,13 @@ import net.minecraft.world.World;
 
 public class ItemBloodGourd extends Item {
 
-	public static boolean state;
 	public static String TAG_STATE = "state";
 	public float currentBlood;
 	EnumBloodGourdTiers tier;
-	public ItemBloodGourd(Properties prop,EnumBloodGourdTiers tierIn) {
+
+	public ItemBloodGourd(Properties prop, EnumBloodGourdTiers tierIn) {
 		super(prop);
 		this.tier = tierIn;
-	}
-
-	public boolean getState() {
-		return state;
-	}
-
-	public void setState(boolean stateIn) {
-		state = stateIn;
 	}
 
 	@Override
@@ -104,7 +96,8 @@ public class ItemBloodGourd extends Item {
 		if (bloodPresent) {
 			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-			tooltip.add(new TranslationTextComponent("Max Blood Volume: " + tier.getMaxVolume()).mergeStyle(TextFormatting.GOLD));
+			tooltip.add(new TranslationTextComponent("Max Blood Volume: " + tier.getMaxVolume())
+					.mergeStyle(TextFormatting.GOLD));
 
 			if (stack.hasTag()) {
 				tooltip.add(new TranslationTextComponent("Blood Volume: " + bloodVolume.getBloodVolume())

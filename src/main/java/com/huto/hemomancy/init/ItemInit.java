@@ -42,6 +42,7 @@ import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
 import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
+import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemIronRod;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.ItemLivingGrasp;
@@ -182,6 +183,10 @@ public class ItemInit {
 			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.FEET,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
 	// Old Iron
+
+	public static final RegistryObject<Item> drudge_electrode = SPECIALITEMS.register("drudge_electrode",
+			() -> new ItemDrudgeElectrode(new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	public static final RegistryObject<Item> tainted_iron_sword = HANDHELDITEMS.register("tainted_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.TAINTED_IRON, 3, -2.4F,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -340,7 +345,7 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
 			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
-	
+
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
 			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
@@ -348,13 +353,29 @@ public class ItemInit {
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
-				ItemInit.spawn_egg_thirster,ItemInit.spawn_egg_drudge);
+				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge);
 	}
 
 	// Item Property Override
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
+
+		ItemModelsProperties.registerProperty(drudge_electrode.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("mode")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
 		ItemModelsProperties.registerProperty(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new IItemPropertyGetter() {
 					@Override
