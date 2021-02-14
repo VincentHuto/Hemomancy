@@ -1,6 +1,8 @@
 package com.huto.hemomancy.entity.mob;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -14,23 +16,26 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.ai.goal.RandomWalkingGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.TargetGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -104,7 +109,7 @@ public class EntityDrudge extends CreatureEntity {
 			if (player.getHeldItem(hand).getItem() instanceof ItemDrudgeElectrode) {
 				player.sendStatusMessage(new StringTextComponent("Switching Roles").mergeStyle(TextFormatting.RED),
 						true);
-				this.setDrudgeRole(this.rand.nextInt(5));
+				this.setDrudgeRole(this.rand.nextInt(7));
 			}
 		}
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -132,18 +137,20 @@ public class EntityDrudge extends CreatureEntity {
 
 		if (!world.isRemote) {
 			if (this.getDrudgeRole() == 3) {
-				// System.out.println(world.getBlockState(this.getPosition().add(0, 1,
-				// 0)).getBlock());
 				if (world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock() instanceof CropsBlock) {
 					// Block crop = world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock();
-					if (timer <= 150) {
+					if (timer <= 100) {
 						timer++;
 						if (timer % 15 == 0) {
 							this.playSound(SoundEvents.BLOCK_CHORUS_FLOWER_DEATH, 1, 1);
+							System.out.println("e");
+
 						}
 					}
 
-					if (timer > 150) {
+					if (timer > 100) {
+						System.out.println("t");
+
 						ItemEntity item = new ItemEntity(getEntityWorld(), getPosX(), getPosY(), getPosZ(),
 								new ItemStack(
 										world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock().asItem()));
@@ -174,26 +181,22 @@ public class EntityDrudge extends CreatureEntity {
 						} else {
 							return false;
 						}
-					} else {
-						return false;
 					}
-				} else {
-					return false;
-
 				}
+				return false;
 			}
 		});
-		this.goalSelector.addGoal(3,
-				new TemptGoal(this, 1.25D, Ingredient.fromItems(ItemInit.drudge_electrode.get()), false));
-		this.goalSelector.addGoal(2, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		this.goalSelector.addGoal(3, new LookRandomlyGoal(this));
-		this.goalSelector.addGoal(4, new RandomWalkingGoal(this, 0.75D));
+
+		this.targetSelector.addGoal(1, new DrudgeNearestAttackableTargetGoal<>(this, MonsterEntity.class, true));
+		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 1.0D, true));
 
 	}
 
 	public static AttributeModifierMap.MutableAttribute setAttributes() {
 		return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 2.0D)
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.15F);
+				.createMutableAttribute(Attributes.MOVEMENT_SPEED, (double) 0.15F)
+				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D);
+
 	}
 
 	protected SoundEvent getAmbientSound() {
@@ -218,7 +221,7 @@ public class EntityDrudge extends CreatureEntity {
 	// This is on right click with a certain item not neccisairly by player
 	public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
 		ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
-		if (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
+		if (itemstack.getItem() == Items.WOODEN_SWORD) {
 			p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
 			ItemStack itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
 					ItemInit.living_will.get().getDefaultInstance());
@@ -247,10 +250,7 @@ public class EntityDrudge extends CreatureEntity {
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			@Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-
-		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setDrudgeRole(this.rand.nextInt(7));
-
 		World world = worldIn.getWorld();
 		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
@@ -264,6 +264,88 @@ public class EntityDrudge extends CreatureEntity {
 
 	protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
 		return this.isChild() ? sizeIn.height * 0.1F : 1F;
+	}
+
+	public class DrudgeNearestAttackableTargetGoal<T extends LivingEntity> extends TargetGoal {
+		protected final Class<T> targetClass;
+		protected final int targetChance;
+		protected LivingEntity nearestTarget;
+		/**
+		 * This filter is applied to the Entity search. Only matching entities will be
+		 * targeted.
+		 */
+		protected EntityPredicate targetEntitySelector;
+
+		public DrudgeNearestAttackableTargetGoal(MobEntity goalOwnerIn, Class<T> targetClassIn, boolean checkSight) {
+			this(goalOwnerIn, targetClassIn, checkSight, false);
+		}
+
+		public DrudgeNearestAttackableTargetGoal(MobEntity goalOwnerIn, Class<T> targetClassIn, boolean checkSight,
+				boolean nearbyOnlyIn) {
+			this(goalOwnerIn, targetClassIn, 10, checkSight, nearbyOnlyIn, (Predicate<LivingEntity>) null);
+		}
+
+		public DrudgeNearestAttackableTargetGoal(MobEntity goalOwnerIn, Class<T> targetClassIn, int targetChanceIn,
+				boolean checkSight, boolean nearbyOnlyIn, @Nullable Predicate<LivingEntity> targetPredicate) {
+			super(goalOwnerIn, checkSight, nearbyOnlyIn);
+			this.targetClass = targetClassIn;
+			this.targetChance = targetChanceIn;
+			this.setMutexFlags(EnumSet.of(Goal.Flag.TARGET));
+			this.targetEntitySelector = (new EntityPredicate()).setDistance(this.getTargetDistance())
+					.setCustomPredicate(targetPredicate);
+		}
+
+		/**
+		 * Returns whether execution should begin. You can also read and cache any state
+		 * necessary for execution in this method as well.
+		 */
+		public boolean shouldExecute() {
+
+			if (this.goalOwner instanceof EntityDrudge) {
+				EntityDrudge drudge = (EntityDrudge) goalOwner;
+				if (drudge.getDrudgeRole() == 1) {
+					if (this.targetChance > 0 && this.goalOwner.getRNG().nextInt(this.targetChance) != 0) {
+						return false;
+					} else {
+						this.findNearestTarget();
+						return this.nearestTarget != null;
+					}
+				} else {
+					return false;
+				}
+			}
+
+			return false;
+
+		}
+
+		protected AxisAlignedBB getTargetableArea(double targetDistance) {
+			return this.goalOwner.getBoundingBox().grow(targetDistance, 4.0D, targetDistance);
+		}
+
+		protected void findNearestTarget() {
+			if (this.targetClass != PlayerEntity.class && this.targetClass != ServerPlayerEntity.class) {
+				this.nearestTarget = this.goalOwner.world.func_225318_b(this.targetClass, this.targetEntitySelector,
+						this.goalOwner, this.goalOwner.getPosX(), this.goalOwner.getPosYEye(), this.goalOwner.getPosZ(),
+						this.getTargetableArea(this.getTargetDistance()));
+			} else {
+				this.nearestTarget = this.goalOwner.world.getClosestPlayer(this.targetEntitySelector, this.goalOwner,
+						this.goalOwner.getPosX(), this.goalOwner.getPosYEye(), this.goalOwner.getPosZ());
+			}
+
+		}
+
+		/**
+		 * Execute a one shot task or start executing a continuous task
+		 */
+		public void startExecuting() {
+			this.goalOwner.setAttackTarget(this.nearestTarget);
+			super.startExecuting();
+		}
+
+		public void setNearestTarget(@Nullable LivingEntity target) {
+			this.nearestTarget = target;
+		}
 	}
 
 }

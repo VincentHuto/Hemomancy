@@ -185,7 +185,7 @@ public class ItemInit {
 	// Old Iron
 
 	public static final RegistryObject<Item> drudge_electrode = SPECIALITEMS.register("drudge_electrode",
-			() -> new ItemDrudgeElectrode(new Item.Properties().group(HemomancyItemGroup.instance)));
+			() -> new ItemDrudgeElectrode(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	public static final RegistryObject<Item> tainted_iron_sword = HANDHELDITEMS.register("tainted_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.TAINTED_IRON, 3, -2.4F,

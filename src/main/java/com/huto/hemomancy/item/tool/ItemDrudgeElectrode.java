@@ -19,6 +19,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -28,7 +30,6 @@ public class ItemDrudgeElectrode extends Item {
 
 	public ItemDrudgeElectrode(Properties properties) {
 		super(properties);
-		properties.maxStackSize(1);
 	}
 
 	@Override
@@ -72,7 +73,15 @@ public class ItemDrudgeElectrode extends Item {
 
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		super.addInformation(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new StringTextComponent("Used to give and reflect commands to drudges"));
+		if (stack.hasTag()) {
+			if (stack.getTag().getBoolean(TAG_MODE)) {
+				tooltip.add(new TranslationTextComponent("State: On").mergeStyle(TextFormatting.RED));
+			} else {
+				tooltip.add(new TranslationTextComponent("State: Off").mergeStyle(TextFormatting.GRAY));
+			}
+		}
+		super.addInformation(stack, worldIn, tooltip, flagIn);
+
 	}
 }
