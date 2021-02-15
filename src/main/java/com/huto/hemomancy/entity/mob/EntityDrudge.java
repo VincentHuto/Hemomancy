@@ -2,12 +2,14 @@ package com.huto.hemomancy.entity.mob;
 
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.morphlings.ItemMorphling;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
@@ -15,7 +17,7 @@ import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
-import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -27,26 +29,22 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.entity.ai.goal.TargetGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.DrinkHelper;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -64,7 +62,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
-public class EntityDrudge extends CreatureEntity {
+public class EntityDrudge extends TameableEntity {
 
 	private static final DataParameter<Integer> ROLE = EntityDataManager.createKey(EntityDrudge.class,
 			DataSerializers.VARINT);
@@ -79,6 +77,18 @@ public class EntityDrudge extends CreatureEntity {
 
 	public EntityDrudge(EntityType<? extends EntityDrudge> type, World worldIn) {
 		super(type, worldIn);
+	}
+
+	@Override
+	public EntityDrudge func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+		EntityDrudge wolfentity = EntityInit.drudge.get().create(p_241840_1_);
+		UUID uuid = this.getOwnerId();
+		if (uuid != null) {
+			wolfentity.setOwnerId(uuid);
+			wolfentity.setTamed(true);
+		}
+
+		return wolfentity;
 	}
 
 	// Defaults if the textures arnt found
@@ -135,31 +145,37 @@ public class EntityDrudge extends CreatureEntity {
 	public void tick() {
 		super.tick();
 
+		Iterable<BlockPos> radiusPositions = BlockPos.getAllInBoxMutable(this.getPosition().add(3.0f, 1.0f, 3.0f),
+				this.getPosition().add(-3.0f, -1, -3.0f));
+
 		if (!world.isRemote) {
 			if (this.getDrudgeRole() == 3) {
-				if (world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock() instanceof CropsBlock) {
-					// Block crop = world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock();
-					if (timer <= 100) {
-						timer++;
-						if (timer % 15 == 0) {
-							this.playSound(SoundEvents.BLOCK_CHORUS_FLOWER_DEATH, 1, 1);
-							System.out.println("e");
 
+				for (BlockPos currentPos : radiusPositions) {
+					if (world.getBlockState(currentPos).getBlock() instanceof CropsBlock) {
+						// Block crop = world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock();
+						if (timer <= 100) {
+							timer++;
+							if (timer % 15 == 0) {
+
+								this.playSound(SoundEvents.BLOCK_CHORUS_FLOWER_DEATH, 1, 1);
+							}
+						}
+
+						if (timer > 100) {
+
+							ItemEntity item = new ItemEntity(getEntityWorld(), getPosX(), getPosY(), getPosZ(),
+									new ItemStack(world.getBlockState(currentPos).getBlock().asItem()));
+							world.addEntity(item);
+							world.setBlockState(currentPos, Blocks.AIR.getDefaultState(), 2);
+							this.playSound(SoundEvents.ENTITY_PLAYER_BURP, 1, 1);
+							System.out.println("t");
+
+							timer = 0;
 						}
 					}
-
-					if (timer > 100) {
-						System.out.println("t");
-
-						ItemEntity item = new ItemEntity(getEntityWorld(), getPosX(), getPosY(), getPosZ(),
-								new ItemStack(
-										world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock().asItem()));
-						world.addEntity(item);
-						world.setBlockState(this.getPosition().add(0, 1, 0), Blocks.AIR.getDefaultState(), 2);
-						this.playSound(SoundEvents.ENTITY_PLAYER_BURP, 1, 1);
-						timer = 0;
-					}
 				}
+
 			}
 		}
 	}
@@ -170,7 +186,7 @@ public class EntityDrudge extends CreatureEntity {
 	}
 
 	protected void registerGoals() {
-		this.goalSelector.addGoal(0, new MoveToBlockGoal(this, 1.5f, 10) {
+		this.goalSelector.addGoal(0, new MoveToBlockGoal(this, 2.5f, 10) {
 			@Override
 			protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
 				if (this.creature instanceof EntityDrudge) {
@@ -219,24 +235,27 @@ public class EntityDrudge extends CreatureEntity {
 	}
 
 	// This is on right click with a certain item not neccisairly by player
+	@Override
 	public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
 		ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
-		if (itemstack.getItem() == Items.WOODEN_SWORD) {
-			p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
-			ItemStack itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
-					ItemInit.living_will.get().getDefaultInstance());
-			p_230254_1_.setHeldItem(p_230254_2_, itemstack1);
-			this.remove();
-			float f = (this.rand.nextFloat() - 0.5F) * 2.0F;
-			float f1 = -1;
-			float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
-			this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f,
-					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
+		Item item = itemstack.getItem();
+		if (item == ItemInit.drudge_electrode.get() && !this.isTamed()) {
 
-			return ActionResultType.func_233537_a_(this.world.isRemote);
-		} else {
-			return super.func_230254_b_(p_230254_1_, p_230254_2_);
+			if (this.rand.nextInt(3) == 0
+					&& !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_230254_1_)) {
+				this.setTamedBy(p_230254_1_);
+				this.navigator.clearPath();
+				this.setAttackTarget((LivingEntity) null);
+				this.func_233687_w_(true);
+				this.world.setEntityState(this, (byte) 7);
+			} else {
+				this.world.setEntityState(this, (byte) 6);
+			}
+
+			return ActionResultType.SUCCESS;
 		}
+
+		return super.func_230254_b_(p_230254_1_, p_230254_2_);
 	}
 
 	@Override
