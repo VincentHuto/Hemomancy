@@ -1,6 +1,7 @@
 package com.huto.hemomancy.network;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.model.animation.AnimationPacket;
 import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 import com.huto.hemomancy.network.binder.PacketOpenRuneBinder;
 import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
@@ -18,6 +19,7 @@ import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
@@ -38,9 +40,16 @@ public class PacketHandler {
 			.named(new ResourceLocation(Hemomancy.MOD_ID + ("main_channel")))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
+	public static final SimpleChannel ANIMATIONS = NetworkRegistry.ChannelBuilder
+			.named(new ResourceLocation(Hemomancy.MOD_ID, "animchannel"))
+			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
+			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
 
 	public static void registerChannels() {
 
+		ANIMATIONS.messageBuilder(AnimationPacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
+		.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
+		
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketClient.class,
 				BloodTendencyPacketClient::encode, BloodTendencyPacketClient::decode,
 				BloodTendencyPacketClient::handle);

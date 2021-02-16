@@ -16,6 +16,7 @@ import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.capabilities.vascularsystem.IVascularSystem;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystem;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemStorage;
+import com.huto.hemomancy.model.animation.IAnimatable;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +32,8 @@ public class CapabilityInit {
 		CapabilityManager.INSTANCE.register(IRune.class, new IRuneStorage(), new IRuneFactory());
 		CapabilityManager.INSTANCE.register(IRunesItemHandler.class, new IRunesItemHandlerStorage(),
 				new IRunesItemHandlerFactory());
+		IAnimatable.registerCapability();
+
 	}
 
 }

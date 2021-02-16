@@ -14,6 +14,7 @@ import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJar;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
+import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.render.entity.RenderIronPillar;
 import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
@@ -36,6 +37,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -128,4 +130,14 @@ public class ClientEventSubscriber {
 		return getClient().getRenderPartialTicks();
 	}
 
+	public static boolean handleAnimationPacket(int entityID, int animationIndex) {
+		World world = ClientEventSubscriber.getWorld();
+		IAnimatable entity = (IAnimatable) world.getEntityByID(entityID);
+
+		if (animationIndex < 0)
+			entity.setAnimation(IAnimatable.NO_ANIMATION);
+		else
+			entity.setAnimation(entity.getAnimations()[animationIndex]);
+		return true;
+	}
 }

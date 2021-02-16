@@ -41,7 +41,7 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityThirster>create(EntityThirster::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
 	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
-			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.MONSTER).size(1F, 1F)
+			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.MONSTER).size(0.5f, 0.5f)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
 
 	// Projectiles
