@@ -1,12 +1,13 @@
 package com.huto.hemomancy.render.entity.mob;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.entity.mob.EntityDrudge;
+import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.model.entity.mob.ModelDrudge;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -15,6 +16,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 
 public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge> {
@@ -31,6 +33,24 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge> {
 	public void render(EntityDrudge entityIn, float entityYaw, float partialTicks, MatrixStack ms,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 		super.render(entityIn, entityYaw, partialTicks, ms, bufferIn, packedLightIn);
+
+		int rank = entityIn.getDrudgeRank();
+		Minecraft mc = Minecraft.getInstance();
+		FontRenderer fontR = mc.fontRenderer;
+		ms.scale(0.05f, 0.05f, 0.05f);
+		ms.translate(0, 21, 0);
+		ms.push();
+		ms.rotate(new Quaternion(Vector3f.XP, 180, true));
+		ms.rotate(new Quaternion(Vector3f.YP, entityIn.ticksExisted * 0.13f, false));
+		fontR.drawString(ms, String.valueOf(rank), 0, -10, 0);
+		fontR.drawString(ms, entityIn.getRoleTitle().name(), 0, -20, 0);
+		ms.pop();
+		ms.push();
+		ms.rotate(new Quaternion(Vector3f.XP, 180, true));
+		ms.rotate(new Quaternion(Vector3f.YN, entityIn.ticksExisted * 0.13f, false));
+		fontR.drawString(ms, String.valueOf(rank), 0, -10, 0);
+		fontR.drawString(ms, entityIn.getRoleTitle().name(), 0, -20, 0);
+		ms.pop();
 
 		if (entityIn.getDrudgeInventory() != null) {
 			ms.push();
@@ -62,7 +82,6 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge> {
 				ms.rotate(Vector3f.YP.rotationDegrees(90F));
 				ms.translate(0D, 0.075 * Math.sin((time + i * 10) / 5D), 0F);
 				ItemStack stack = inv.getStackInSlot(i);
-				Minecraft mc = Minecraft.getInstance();
 				if (!stack.isEmpty()) {
 					mc.getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, packedLightIn,
 							OverlayTexture.NO_OVERLAY, ms, bufferIn);

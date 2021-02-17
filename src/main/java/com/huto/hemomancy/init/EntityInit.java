@@ -5,7 +5,7 @@ import com.huto.hemomancy.entity.EntityIronPillar;
 import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
-import com.huto.hemomancy.entity.mob.EntityDrudge;
+import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;

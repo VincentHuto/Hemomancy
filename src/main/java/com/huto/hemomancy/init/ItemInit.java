@@ -5,6 +5,7 @@ import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
+import com.huto.hemomancy.item.ItemDSD;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
@@ -162,6 +163,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
+			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",

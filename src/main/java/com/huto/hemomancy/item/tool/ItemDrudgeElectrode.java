@@ -2,7 +2,7 @@ package com.huto.hemomancy.item.tool;
 
 import java.util.List;
 
-import com.huto.hemomancy.entity.mob.EntityDrudge;
+import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleUtil;
 
