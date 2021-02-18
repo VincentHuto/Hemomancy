@@ -1,6 +1,7 @@
 package com.huto.hemomancy.entity.drudge;
 
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -39,15 +40,20 @@ public class DrudgeEmptyToChestGoal extends MoveToBlockGoal {
 						ChestTileEntity chest = (ChestTileEntity) creature.world.getTileEntity(destinationBlock);
 						IItemHandler handler = chest.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 								.orElseThrow(NullPointerException::new);
-						for (int i = 0; i < handler.getSlots(); i++) {
-							if (handler.getStackInSlot(i).getItem() == Items.AIR) {
-								for (int j = 0; j < creature.getDrudgeInventory().getSizeInventory(); j++) {
-									if (creature.getDrudgeInventory().getStackInSlot(j).getItem() != Items.AIR) {
-										if (handler.isItemValid(i, creature.getDrudgeInventory().getStackInSlot(j))) {
-											handler.insertItem(i, creature.getDrudgeInventory().getStackInSlot(j),
-													false);
-										}
+						for (int j = 0; j < creature.getDrudgeInventory().getSizeInventory(); j++) {
+							for (int i = 0; i < handler.getSlots(); i++) {
+								if (creature.getDrudgeInventory().getStackInSlot(j).getItem() != Items.AIR) {
+									ItemStack insertStack = creature.getDrudgeInventory().getStackInSlot(j).copy();
+									if (handler.getStackInSlot(i).getItem() == insertStack.getItem()) {
+										handler.getStackInSlot(i).grow(insertStack.getCount());
+										creature.getDrudgeInventory().setInventorySlotContents(j, ItemStack.EMPTY);
+
+									} else if (handler.getStackInSlot(i).getItem() == Items.AIR) {
+										handler.insertItem(i, insertStack, false);
+										creature.getDrudgeInventory().setInventorySlotContents(j, ItemStack.EMPTY);
+
 									}
+
 								}
 
 							}
@@ -66,14 +72,9 @@ public class DrudgeEmptyToChestGoal extends MoveToBlockGoal {
 		if (creature instanceof EntityDrudge) {
 			EntityDrudge drudge = (EntityDrudge) creature;
 			if (drudge.getRoleTitle() == EnumDrudgeRoles.COLLECTOR) {
-				if (this.runDelay > 0) {
-					--this.runDelay;
-					return false;
-				} else if (this.func_220729_m()) {
-					this.runDelay = 5;
+				if (this.func_220729_m()) {
 					return true;
 				} else {
-					this.runDelay = this.getRunDelay(this.creature);
 					return false;
 				}
 			}

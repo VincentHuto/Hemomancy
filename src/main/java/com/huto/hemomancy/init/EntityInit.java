@@ -7,6 +7,7 @@ import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.entity.mob.EntityFargone;
+import com.huto.hemomancy.entity.mob.EntityFungling;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
@@ -41,9 +42,11 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityThirster>create(EntityThirster::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
 	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
-			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.MONSTER).size(0.5f, 0.5f)
-					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
-
+			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.CREATURE)
+					.size(1f, 0.5f).build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
+	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
+			() -> EntityType.Builder.<EntityFungling>create(EntityFungling::new, EntityClassification.CREATURE)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
 			"directed_blood_orb",
@@ -90,6 +93,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.leech.get(), EntityLeech.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.fargone.get(), EntityFargone.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.fungling.get(), EntityFungling.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.thirster.get(), EntityThirster.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());

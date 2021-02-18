@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class DrudgeCollectItemGoal extends Goal {
@@ -26,28 +27,30 @@ public class DrudgeCollectItemGoal extends Goal {
 	@Override
 	public boolean shouldExecute() {
 		if (creature.getRoleTitle() == EnumDrudgeRoles.COLLECTOR) {
-			List<ItemEntity> list = creature.world.getEntitiesWithinAABB(ItemEntity.class,
-					creature.getBoundingBox().grow(maxTargetDistance));
-			for (ItemEntity ent : list) {
-				this.targetEntity = ent;
-				if (this.targetEntity == null) {
-					return false;
-				} else if (this.targetEntity
-						.getDistanceSq(this.creature) > (double) (this.maxTargetDistance * this.maxTargetDistance)) {
-					return false;
-				} else {
-					Vector3d vector3d = this.targetEntity.getPositionVec();
-					if (vector3d == null) {
+			if (creature.getDrudgeInventory().getStackInSlot(0) == ItemStack.EMPTY) {
+				List<ItemEntity> list = creature.world.getEntitiesWithinAABB(ItemEntity.class,
+						creature.getBoundingBox().grow(maxTargetDistance));
+				for (ItemEntity ent : list) {
+					this.targetEntity = ent;
+					if (this.targetEntity == null) {
+						return false;
+					} else if (this.targetEntity.getDistanceSq(
+							this.creature) > (double) (this.maxTargetDistance * this.maxTargetDistance)) {
 						return false;
 					} else {
-						this.movePosX = vector3d.x + 0.5;
-						this.movePosY = vector3d.y;
-						this.movePosZ = vector3d.z + 0.5;
-						return true;
+						Vector3d vector3d = this.targetEntity.getPositionVec();
+						if (vector3d == null) {
+							return false;
+						} else {
+							this.movePosX = vector3d.x + 0.5;
+							this.movePosY = vector3d.y;
+							this.movePosZ = vector3d.z + 0.5;
+							return true;
+						}
 					}
 				}
+				return false;
 			}
-			return false;
 		}
 		return false;
 	}

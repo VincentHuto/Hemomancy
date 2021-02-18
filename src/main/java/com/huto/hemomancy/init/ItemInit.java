@@ -353,10 +353,14 @@ public class ItemInit {
 			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+			() -> new ModSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
-				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge);
+				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling);
 	}
 
 	// Item Property Override
