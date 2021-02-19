@@ -67,6 +67,8 @@ public class EntityDrudge extends TameableEntity {
 		p_213410_0_.put(3, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/drudge/model_drudge_green.png"));
 		p_213410_0_.put(4, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/drudge/model_drudge_yellow.png"));
 		p_213410_0_.put(5, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/drudge/model_drudge_grey.png"));
+		p_213410_0_.put(6, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/drudge/model_drudge_brown.png"));
+
 	});
 
 	public EntityDrudge(EntityType<? extends EntityDrudge> type, World worldIn) {
@@ -87,6 +89,8 @@ public class EntityDrudge extends TameableEntity {
 			return EnumDrudgeRoles.COLLECTOR;
 		case 5:
 			return EnumDrudgeRoles.BASE;
+		case 6:
+			return EnumDrudgeRoles.PLACER;
 		default:
 			return EnumDrudgeRoles.NOROLE;
 		}
@@ -161,8 +165,8 @@ public class EntityDrudge extends TameableEntity {
 	}
 
 	public void setDrudgeRole(int type) {
-		if (type <= 0 || type >= 6) {
-			type = this.rand.nextInt(7);
+		if (type <= 0 || type >= 7) {
+			type = this.rand.nextInt(8);
 		}
 
 		this.dataManager.set(ROLE, type);
@@ -179,7 +183,7 @@ public class EntityDrudge extends TameableEntity {
 			if (player.getHeldItem(hand).getItem() instanceof ItemDrudgeElectrode) {
 				player.sendStatusMessage(new StringTextComponent("Switching Roles").mergeStyle(TextFormatting.RED),
 						true);
-				this.setDrudgeRole(this.rand.nextInt(7));
+				this.setDrudgeRole(this.rand.nextInt(8));
 			}
 		}
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -296,7 +300,7 @@ public class EntityDrudge extends TameableEntity {
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
 			@Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setDrudgeRole(this.rand.nextInt(7));
+		this.setDrudgeRole(this.rand.nextInt(8));
 		World world = worldIn.getWorld();
 		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
