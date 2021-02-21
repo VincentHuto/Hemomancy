@@ -28,6 +28,7 @@ import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.item.RenderMorphlingPolypItem;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
+import com.huto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
@@ -72,6 +73,8 @@ public class ClientEventSubscriber {
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.morphling_incubator.get(), RenderMorphlingIncubator::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.unstained_podium.get(), RenderUnstainedPodium::new);
+		ClientRegistry.bindTileEntityRenderer(TileEntityInit.dendritic_distributor.get(),
+				RenderDendriticDistributor::new);
 
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);

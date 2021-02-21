@@ -2,6 +2,7 @@ package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
+import com.huto.hemomancy.tile.TileEntityDendriticDistributor;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
@@ -30,5 +31,7 @@ public class TileEntityInit {
 	public static final RegistryObject<TileEntityType<TileEntityUnstainedPodium>> unstained_podium = TILES
 			.register("unstained_podium", () -> TileEntityType.Builder
 					.create(TileEntityUnstainedPodium::new, BlockInit.unstained_podium.get()).build(null));
-	
+	public static final RegistryObject<TileEntityType<TileEntityDendriticDistributor>> dendritic_distributor = TILES
+			.register("dendritic_distributor", () -> TileEntityType.Builder
+					.create(TileEntityDendriticDistributor::new, BlockInit.dendritic_distributor.get()).build(null));
 }

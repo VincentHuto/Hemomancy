@@ -13,6 +13,9 @@ public class TileEntitySemiSentientConstruct extends TileEntity implements ITick
 
 	@Override
 	public void tick() {
+	
+		
+		
 		if (world.isRemote) {
 		/*		double randX = pos.getX() + Math.sin(world.getGameTime() * 0.2f) * 0.3f + 0.4f;
 				double randY = pos.getY();

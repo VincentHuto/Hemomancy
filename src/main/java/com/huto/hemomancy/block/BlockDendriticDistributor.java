@@ -1,17 +1,17 @@
 package com.huto.hemomancy.block;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.entity.drudge.EntityDrudge;
-import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
+import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.tile.TileEntityDendriticDistributor;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -28,23 +28,26 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public class BlockSemiSentientConstruct extends Block {
+public class BlockDendriticDistributor extends Block {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.makeCuboidShape(2.1999999999999993, 0.2999999999999998, 2.1999999999999993, 13.8, 6.2, 13.8),
-					Block.makeCuboidShape(4, 6, 4, 12, 12, 12),
-					Block.makeCuboidShape(2.0999999999999996, 5.800000000000001, 2.0999999999999996, 13.9, 15.8, 13.9),
-					Block.makeCuboidShape(1.6999999999999993, 0, 1.6999999999999993, 14.3, 5.8, 14.3))
+			.of(Block.makeCuboidShape(5, 0, 5, 11, 2, 11), Block.makeCuboidShape(7, 2, 7, 9, 15, 9),
+					Block.makeCuboidShape(8.5, 4, 7, 9.5, 12, 9), Block.makeCuboidShape(6.5, 4, 7, 7.5, 12, 9),
+					Block.makeCuboidShape(7, 4, 8.5, 9, 12, 9.5), Block.makeCuboidShape(7, 4, 6.5, 9, 12, 7.5),
+					Block.makeCuboidShape(10.5, 0.4, 5.5, 11.5, 1.400, 10.5),
+					Block.makeCuboidShape(4.5, 0.4, 5.5, 5.5, 1.400, 10.5),
+					Block.makeCuboidShape(5.5, 0.4, 4.5, 10.5, 1.400, 5.5),
+					Block.makeCuboidShape(5.5, 0.4, 10.5, 10.5, 1.400, 11.5),
+					Block.makeCuboidShape(6, 12.70, 6, 10, 14.8, 10), Block.makeCuboidShape(6, 0.700, 6, 10, 2.80, 10))
 			.reduce((v1, v2) -> {
 				return VoxelShapes.combineAndSimplify(v1, v2, IBooleanFunction.OR);
 			}).get();
 
-	public BlockSemiSentientConstruct(Properties properties) {
+	public BlockDendriticDistributor(Properties properties) {
 		super(properties);
 		this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.SOUTH));
 
@@ -55,13 +58,12 @@ public class BlockSemiSentientConstruct extends Block {
 			Hand handIn, BlockRayTraceResult result) {
 
 		worldIn.playSound(player, pos, SoundEvents.ENTITY_ZOMBIE_AMBIENT, SoundCategory.BLOCKS, 0.25f, 1f);
-
-		List<LivingEntity> entities = worldIn.getEntitiesWithinAABB(LivingEntity.class,
-				player.getBoundingBox().grow(10));
-		for (LivingEntity ent : entities) {
-			if (ent instanceof EntityDrudge) {
-				EntityDrudge drudge = (EntityDrudge) ent;
-				player.sendStatusMessage(new StringTextComponent(drudge.getRoleTitle().name()), false);
+		ItemStack stack = player.getHeldItem(handIn);
+		if (!player.isSneaking()) {
+			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
+				worldIn.destroyBlock(pos, false);
+				stack.shrink(1);
+				worldIn.setBlockState(pos, BlockInit.rune_mod_station.get().getDefaultState());
 			}
 		}
 
@@ -117,7 +119,7 @@ public class BlockSemiSentientConstruct extends Block {
 
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new TileEntitySemiSentientConstruct();
+		return new TileEntityDendriticDistributor();
 	}
 
 }

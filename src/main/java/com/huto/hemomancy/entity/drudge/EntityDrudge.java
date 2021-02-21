@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.EntityInit;
@@ -22,15 +23,14 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -103,7 +103,6 @@ public class EntityDrudge extends TameableEntity {
 
 	@Override
 	public boolean canPickUpItem(ItemStack itemstackIn) {
-		// TODO Auto-generated method stub
 		return getRoleTitle() == EnumDrudgeRoles.COLLECTOR;
 	}
 
@@ -197,14 +196,20 @@ public class EntityDrudge extends TameableEntity {
 	@Override
 	public void tick() {
 		super.tick();
+		if (this.isTamed()) {
+
+		}
 	}
 
+	@Override
 	protected void registerGoals() {
+/*		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, VillagerEntity.class, false));
+		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.5D, true));*/
+		this.goalSelector.addGoal(0, new DrudgeExtractFromChestGoal(this, 2.5D,10));
+/*		this.goalSelector.addGoal(0, new DrudgeCollectItemGoal(this, 2.5D, 25));
 		this.goalSelector.addGoal(0, new DrudgeEmptyToChestGoal(this, 2.5D, 25));
-		this.goalSelector.addGoal(0, new DrudgeCollectItemGoal(this, 2.5D, 25));
-		this.goalSelector.addGoal(0, new DrudgeHarvestCropGoal(this, 2.5D, 25));
-		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, VillagerEntity.class, false));
-		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.5D, true));
+		this.goalSelector.addGoal(0, new DrudgeHarvestCropGoal(this, 2.5D, 25));*/
+		this.goalSelector.addGoal(0, new DrudgeReplantCropGoal(this, 2.5D, 10));
 
 	}
 
@@ -222,7 +227,8 @@ public class EntityDrudge extends TameableEntity {
 
 	@Override
 	public boolean canAttack(EntityType<?> typeIn) {
-		return !(typeIn == EntityInit.drudge.get() || typeIn == EntityType.PLAYER);
+		return (this.getRoleTitle() == EnumDrudgeRoles.ATTACK)
+				&& !(typeIn == EntityInit.drudge.get() || typeIn == EntityType.PLAYER);
 	}
 
 	protected SoundEvent getAmbientSound() {
@@ -314,6 +320,11 @@ public class EntityDrudge extends TameableEntity {
 
 	protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
 		return this.isChild() ? sizeIn.height * 0.1F : 1F;
+	}
+
+	public boolean isFarmItemInInventory() {
+		return this.getDrudgeInventory()
+				.hasAny(ImmutableSet.of(Items.WHEAT_SEEDS, Items.POTATO, Items.CARROT, Items.BEETROOT_SEEDS));
 	}
 
 }

@@ -3,6 +3,7 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.block.BlockBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockChiselStation;
+import com.huto.hemomancy.block.BlockDendriticDistributor;
 import com.huto.hemomancy.block.BlockMorphlingIncubator;
 import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
@@ -96,6 +97,9 @@ public class BlockInit {
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
 			() -> new BlockUnstainedPodium(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
+			() -> new BlockDendriticDistributor(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 
 	@SubscribeEvent

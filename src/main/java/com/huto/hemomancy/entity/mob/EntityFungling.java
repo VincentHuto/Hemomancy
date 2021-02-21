@@ -14,7 +14,6 @@ import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.GlowParticleData;
 
-import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -34,7 +33,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
