@@ -23,7 +23,9 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -203,12 +205,12 @@ public class EntityDrudge extends TameableEntity {
 
 	@Override
 	protected void registerGoals() {
-/*		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, VillagerEntity.class, false));
-		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.5D, true));*/
-		this.goalSelector.addGoal(0, new DrudgeExtractFromChestGoal(this, 2.5D,10));
-/*		this.goalSelector.addGoal(0, new DrudgeCollectItemGoal(this, 2.5D, 25));
+		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, VillagerEntity.class, false));
+		this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.5D, true));
+		this.goalSelector.addGoal(0, new DrudgeExtractFromChestGoal(this, 2.5D, 10));
+		this.goalSelector.addGoal(0, new DrudgeCollectItemGoal(this, 2.5D, 25));
 		this.goalSelector.addGoal(0, new DrudgeEmptyToChestGoal(this, 2.5D, 25));
-		this.goalSelector.addGoal(0, new DrudgeHarvestCropGoal(this, 2.5D, 25));*/
+		this.goalSelector.addGoal(0, new DrudgeHarvestCropGoal(this, 2.5D, 25));
 		this.goalSelector.addGoal(0, new DrudgeReplantCropGoal(this, 2.5D, 10));
 
 	}

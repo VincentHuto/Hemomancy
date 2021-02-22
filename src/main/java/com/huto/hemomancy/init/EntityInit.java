@@ -6,6 +6,7 @@ import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
+import com.huto.hemomancy.entity.mob.EntityChitinite;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityFungling;
 import com.huto.hemomancy.entity.mob.EntityThirster;
@@ -47,6 +48,11 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
 			() -> EntityType.Builder.<EntityFungling>create(EntityFungling::new, EntityClassification.CREATURE)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
+	
+	public static final RegistryObject<EntityType<EntityChitinite>> chitinite = ENTITY_TYPES.register("chitinite",
+			() -> EntityType.Builder.<EntityChitinite>create(EntityChitinite::new, EntityClassification.CREATURE)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chitinite").toString()));
+	
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
 			"directed_blood_orb",
@@ -97,6 +103,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.thirster.get(), EntityThirster.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().create());
 
 	}
 

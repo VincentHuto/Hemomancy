@@ -2,9 +2,14 @@ package com.huto.hemomancy.capabilities.bloodvolume;
 
 import java.util.List;
 
+import com.huto.hemomancy.event.HandParticleLayer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -15,6 +20,17 @@ public class RenderBloodLaserEvent {
 		for (PlayerEntity player : players) {
 			RenderBloodLaser.renderLaser(evt, player, Minecraft.getInstance().getRenderPartialTicks());
 
+		}
+	}
+
+	private static boolean addedSpellLayer = false;
+
+	@SubscribeEvent
+    @OnlyIn(value=Dist.CLIENT)
+	public static void onPlayerRenderPre(RenderPlayerEvent.Pre event) {
+		if (!addedSpellLayer) {
+			event.getRenderer().addLayer(new HandParticleLayer(event.getRenderer()));
+			addedSpellLayer = true;
 		}
 	}
 

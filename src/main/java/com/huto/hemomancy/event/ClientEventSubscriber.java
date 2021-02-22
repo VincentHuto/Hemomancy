@@ -18,6 +18,7 @@ import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.render.entity.RenderIronPillar;
 import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
+import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
@@ -41,6 +42,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -91,6 +93,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.thirster.get(), RenderThirster::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.drudge.get(), RenderDrudge::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.fungling.get(), RenderFungling::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chitinite.get(), RenderChitinite::new);
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
@@ -117,6 +120,8 @@ public class ClientEventSubscriber {
 		ClientRegistry.registerKeyBinding(keyBinds.get(5));
 
 	}
+
+
 
 	// for class loading issues
 	public static Minecraft getClient() {

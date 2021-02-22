@@ -2,6 +2,8 @@ package com.huto.hemomancy.item;
 
 import java.util.List;
 
+import com.huto.hemomancy.render.item.RenderDSD;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -19,7 +21,7 @@ public class ItemDSD extends Item {
 	public String text;
 
 	public ItemDSD(Properties prop) {
-		super(prop);
+		super(prop.setISTER(() -> RenderDSD::new));
 		prop.maxStackSize(1);
 	}
 

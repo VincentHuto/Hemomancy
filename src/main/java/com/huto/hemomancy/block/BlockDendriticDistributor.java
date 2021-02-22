@@ -1,17 +1,20 @@
 package com.huto.hemomancy.block;
 
+import java.util.List;
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.init.BlockInit;
-import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.tile.TileEntityDendriticDistributor;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +31,7 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -56,14 +60,21 @@ public class BlockDendriticDistributor extends Block {
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult result) {
-
+		if (worldIn.isRemote)
+			return ActionResultType.PASS;
 		worldIn.playSound(player, pos, SoundEvents.ENTITY_ZOMBIE_AMBIENT, SoundCategory.BLOCKS, 0.25f, 1f);
-		ItemStack stack = player.getHeldItem(handIn);
-		if (!player.isSneaking()) {
-			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
-				worldIn.destroyBlock(pos, false);
-				stack.shrink(1);
-				worldIn.setBlockState(pos, BlockInit.rune_mod_station.get().getDefaultState());
+		List<LivingEntity> ents = worldIn.getEntitiesWithinAABB(LivingEntity.class,
+				worldIn.getTileEntity(pos).getRenderBoundingBox().grow(5));
+		if (!ents.isEmpty()) {
+			for (LivingEntity ent : ents) {
+				if (ent instanceof EntityDrudge) {
+					EntityDrudge drudge = (EntityDrudge) ent;
+					ServerPlayerEntity sPlay = (ServerPlayerEntity) player;
+					player.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 100, 100));
+					sPlay.setSpectatingEntity(drudge);
+					player.sendStatusMessage(new StringTextComponent(drudge.getRoleTitle().name()), false);
+
+				}
 			}
 		}
 
