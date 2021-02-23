@@ -2,7 +2,7 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.containers.InventoryHelper;
+import com.huto.hemomancy.container.InventoryHelper;
 import com.huto.hemomancy.network.VanillaPacketDispatcher;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
 

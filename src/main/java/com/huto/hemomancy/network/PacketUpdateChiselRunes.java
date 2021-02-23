@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.containers.ContainerChiselStation;
+import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 
 import net.minecraft.inventory.container.Container;

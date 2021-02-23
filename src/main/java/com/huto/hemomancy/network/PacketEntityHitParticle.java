@@ -2,7 +2,7 @@ package com.huto.hemomancy.network;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.HitGlowParticleData;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,8 +41,8 @@ public class PacketEntityHitParticle {
 				return;
 			if (!player.world.isRemote) {
 				ServerWorld sWorld = (ServerWorld) player.world;
-				sWorld.spawnParticle(HitGlowParticleData.createData(new ParticleColor(255,255,255)), message.x,
-						message.y, message.z, 4, 0, 0, 0, 0.001f);
+				sWorld.spawnParticle(HitGlowParticleData.createData(ParticleUtil.WHITE), message.x, message.y,
+						message.z, 4, 0, 0, 0, 0.001f);
 			}
 
 		});

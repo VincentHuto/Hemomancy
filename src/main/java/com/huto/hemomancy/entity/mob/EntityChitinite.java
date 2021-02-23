@@ -115,6 +115,7 @@ public class EntityChitinite extends CreatureEntity implements IAnimatable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void livingTick() {
 		super.livingTick();

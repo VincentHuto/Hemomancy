@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.item.runes.ItemRuneBinder;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;

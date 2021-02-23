@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerChiselStation;
+import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePattern;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.network.PacketChiselCraftingEvent;
 import com.huto.hemomancy.network.PacketHandler;

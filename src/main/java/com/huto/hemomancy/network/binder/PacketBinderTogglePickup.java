@@ -2,7 +2,7 @@ package com.huto.hemomancy.network.binder;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.item.runes.ItemRuneBinder;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

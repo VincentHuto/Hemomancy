@@ -5,11 +5,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicates;
-import com.huto.hemomancy.entity.utils.Vector3;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BushBlock;

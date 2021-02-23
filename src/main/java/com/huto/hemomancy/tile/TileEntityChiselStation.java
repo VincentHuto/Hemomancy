@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.block.BlockChiselStation;
-import com.huto.hemomancy.containers.ContainerChiselStation;
+import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.network.VanillaPacketDispatcher;

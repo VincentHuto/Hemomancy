@@ -1,8 +1,8 @@
 package com.huto.hemomancy.event;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerRuneBinder;
-import com.huto.hemomancy.item.runes.ItemRuneBinder;
+import com.huto.hemomancy.container.ContainerRuneBinder;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 

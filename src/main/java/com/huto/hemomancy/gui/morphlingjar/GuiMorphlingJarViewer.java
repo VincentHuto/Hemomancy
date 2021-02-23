@@ -202,6 +202,8 @@ public class GuiMorphlingJarViewer extends Screen {
 							}
 
 						}
+						closeScreen();
+
 					}
 				}));
 

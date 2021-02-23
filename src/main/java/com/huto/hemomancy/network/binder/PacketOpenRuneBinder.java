@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerRuneBinder;
+import com.huto.hemomancy.container.ContainerRuneBinder;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

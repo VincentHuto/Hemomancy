@@ -1,8 +1,8 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
-import com.huto.hemomancy.entity.utils.Vector3;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.RenderTypeInit;
+import com.huto.hemomancy.util.Vector3;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

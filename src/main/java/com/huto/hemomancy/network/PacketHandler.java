@@ -17,10 +17,15 @@ import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
 import com.huto.hemomancy.network.jar.PacketOpenJar;
 import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
+import com.huto.hemomancy.particle.ParticleColor;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
@@ -48,8 +53,8 @@ public class PacketHandler {
 	public static void registerChannels() {
 
 		ANIMATIONS.messageBuilder(AnimationPacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-		.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
-		
+				.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
+
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketClient.class,
 				BloodTendencyPacketClient::encode, BloodTendencyPacketClient::decode,
 				BloodTendencyPacketClient::handle);
@@ -82,6 +87,10 @@ public class PacketHandler {
 				.consumer(PacketEntityHitParticle::handle).add();
 		CHANNELBLOODVOLUME.messageBuilder(PacketAirBloodDraw.class, networkID++).decoder(PacketAirBloodDraw::decode)
 				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningSimple.class, PacketSpawnLightningSimple::encode,
+				PacketSpawnLightningSimple::decode, PacketSpawnLightningSimple::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningComplex.class, PacketSpawnLightningComplex::encode,
+				PacketSpawnLightningComplex::decode, PacketSpawnLightningComplex::handle);
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
@@ -131,5 +140,20 @@ public class PacketHandler {
 		MORPHLINGJAR.messageBuilder(PacketOpenStaff.class, networkID++).decoder(PacketOpenStaff::decode)
 				.encoder(PacketOpenStaff::encode).consumer(PacketOpenStaff::handle).add();
 		return MORPHLINGJAR;
+	}
+
+	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, ParticleColor color,
+			RegistryKey<World> dimension) {
+		PacketSpawnLightningSimple msg = new PacketSpawnLightningSimple(vec,speedVec, color);
+		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, (double) radius, dimension)), msg);
+
+	}
+	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, ParticleColor color,int speed,int maxAge,
+			RegistryKey<World> dimension) {
+		PacketSpawnLightningComplex msg = new PacketSpawnLightningComplex(vec,speedVec, color,speed,maxAge);
+		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, (double) radius, dimension)), msg);
+
 	}
 }

@@ -3,7 +3,7 @@ package com.huto.hemomancy.data;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePattern;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;

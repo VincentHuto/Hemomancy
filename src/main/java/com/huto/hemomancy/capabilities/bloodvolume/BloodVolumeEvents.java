@@ -1,13 +1,13 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.entity.utils.Vector3;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
+import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

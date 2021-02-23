@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerChiselStation;
-import com.huto.hemomancy.containers.ContainerLivingStaff;
-import com.huto.hemomancy.containers.ContainerMorphlingJar;
-import com.huto.hemomancy.containers.ContainerRuneBinder;
-import com.huto.hemomancy.containers.PlayerExpandedContainer;
+import com.huto.hemomancy.container.ContainerChiselStation;
+import com.huto.hemomancy.container.ContainerLivingStaff;
+import com.huto.hemomancy.container.ContainerMorphlingJar;
+import com.huto.hemomancy.container.ContainerRuneBinder;
+import com.huto.hemomancy.container.PlayerExpandedContainer;
 import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
 

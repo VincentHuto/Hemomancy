@@ -18,8 +18,20 @@ public enum EnumModArmorTiers implements IArmorMaterial {
 	TAINTED_IRON(Hemomancy.MOD_ID + ":tainted_iron", 37, new int[] { 3, 6, 8, 3 }, 15,
 			SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
 				return Ingredient.fromItems(ItemInit.tainted_iron_scrap.get());
-			});
-	
+			}),
+	CHITINITE(Hemomancy.MOD_ID + ":chitinite", 37, new int[] { 3, 6, 8, 3 }, 15,
+			SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
+				return Ingredient.fromItems(ItemInit.chitinous_husk.get());
+			}),
+	CHITINITECHEST(Hemomancy.MOD_ID + ":chitinite_chest", 37, new int[] { 3, 6, 8, 3 }, 15,
+			SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
+				return Ingredient.fromItems(ItemInit.chitinous_husk.get());
+			}),
+	CHITINITEHELMET(Hemomancy.MOD_ID + ":chitinite_helmet", 37, new int[] { 3, 6, 8, 3 }, 15,
+			SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
+				return Ingredient.fromItems(ItemInit.chitinous_husk.get());
+			});;
+
 	private static final int[] MAX_DAMAGE_ARRAY = new int[] { 13, 15, 16, 11 };
 	private final String name;
 	private final int maxDamageFactor;

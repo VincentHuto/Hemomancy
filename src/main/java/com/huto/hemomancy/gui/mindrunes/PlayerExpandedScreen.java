@@ -1,7 +1,7 @@
 package com.huto.hemomancy.gui.mindrunes;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.PlayerExpandedContainer;
+import com.huto.hemomancy.container.PlayerExpandedContainer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 

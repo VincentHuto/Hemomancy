@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerMorphlingJar;
+import com.huto.hemomancy.container.ContainerMorphlingJar;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;

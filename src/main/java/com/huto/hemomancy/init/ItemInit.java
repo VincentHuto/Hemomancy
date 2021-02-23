@@ -6,9 +6,12 @@ import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemDSD;
+import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
+import com.huto.hemomancy.item.armor.ItemChitiniteChest;
+import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
@@ -16,30 +19,30 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSymbiote;
-import com.huto.hemomancy.item.runes.ItemContractRune;
-import com.huto.hemomancy.item.runes.ItemGuidanceRune;
-import com.huto.hemomancy.item.runes.ItemMilkweedRune;
-import com.huto.hemomancy.item.runes.ItemRune;
-import com.huto.hemomancy.item.runes.ItemRuneBinder;
-import com.huto.hemomancy.item.runes.ItemSelfReflectionMirror;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternBeast;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternBeastContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternClawmark;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternCommunion;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternCorruptionContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternEye;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternGuidance;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternHeir;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternHunterContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternImpurityContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternLake;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMetamorphosis;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMetamorphosisCW;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMilkWeedContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternMoon;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternOedon;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRadianceContract;
-import com.huto.hemomancy.item.runes.patterns.ItemRunePatternRapture;
+import com.huto.hemomancy.item.rune.ItemContractRune;
+import com.huto.hemomancy.item.rune.ItemGuidanceRune;
+import com.huto.hemomancy.item.rune.ItemMilkweedRune;
+import com.huto.hemomancy.item.rune.ItemRune;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
+import com.huto.hemomancy.item.rune.ItemSelfReflectionMirror;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternBeast;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternBeastContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternClawmark;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternCommunion;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternCorruptionContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternEye;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternGuidance;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternHeir;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternHunterContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternImpurityContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternLake;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternMetamorphosis;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternMetamorphosisCW;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternMilkWeedContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternMoon;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternOedon;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternRadianceContract;
+import com.huto.hemomancy.item.rune.pattern.ItemRunePatternRapture;
 import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
@@ -165,6 +168,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
 			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
+			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
@@ -172,7 +177,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
 			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-	// Armor
+	// Equipment
+	// Tainted
 	public static final RegistryObject<Item> tainted_iron_helm = BASEITEMS.register("tainted_iron_helm",
 			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.HEAD,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
@@ -185,7 +191,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> tainted_iron_boots = BASEITEMS.register("tainted_iron_boots",
 			() -> new ArmorItem(EnumModArmorTiers.TAINTED_IRON, EquipmentSlotType.FEET,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
-	// Old Iron
 
 	public static final RegistryObject<Item> drudge_electrode = SPECIALITEMS.register("drudge_electrode",
 			() -> new ItemDrudgeElectrode(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -194,12 +199,24 @@ public class ItemInit {
 			() -> new SwordItem(EnumModToolTiers.TAINTED_IRON, 3, -2.4F,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
 
-	// Runes
+	// Chitinite
+	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
+			() -> new ItemChitiniteHelmet(EnumModArmorTiers.CHITINITEHELMET, EquipmentSlotType.HEAD,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
+			() -> new ItemChitiniteChest(EnumModArmorTiers.CHITINITECHEST, EquipmentSlotType.CHEST,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
+			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlotType.LEGS,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
+	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
+			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlotType.FEET,
+					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
 
+	// Runes
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
 			() -> new ItemSelfReflectionMirror(
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1).rarity(Rarity.UNCOMMON)));
-
 	public static final RegistryObject<Item> mind_spike = BASEITEMS.register("mind_spike",
 			() -> new ItemRune(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
 					EnumBloodTendency.DUCTILIS, 1));
@@ -360,12 +377,15 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
 			() -> new ModSpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
+			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
 				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
-				ItemInit.spawn_egg_chitinite);
+				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian);
 	}
 
 	// Item Property Override

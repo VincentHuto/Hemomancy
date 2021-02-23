@@ -3,9 +3,9 @@ package com.huto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerLivingStaff;
-import com.huto.hemomancy.containers.ContainerMorphlingJar;
-import com.huto.hemomancy.containers.ContainerRuneBinder;
+import com.huto.hemomancy.container.ContainerLivingStaff;
+import com.huto.hemomancy.container.ContainerMorphlingJar;
+import com.huto.hemomancy.container.ContainerRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
@@ -19,6 +19,7 @@ import com.huto.hemomancy.render.entity.RenderIronPillar;
 import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
+import com.huto.hemomancy.render.entity.mob.RenderChthonian;
 import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
@@ -42,7 +43,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -94,6 +94,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.drudge.get(), RenderDrudge::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.fungling.get(), RenderFungling::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chitinite.get(), RenderChitinite::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian.get(), RenderChthonian::new);
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);

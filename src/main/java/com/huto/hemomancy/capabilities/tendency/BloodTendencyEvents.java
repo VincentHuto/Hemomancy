@@ -5,8 +5,8 @@ import java.awt.Point;
 import java.util.Map;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.capabilities.mindrunes.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrunes.RunesCapabilities;
+import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
+import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketEntityHitParticle;
@@ -19,6 +19,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -70,11 +71,11 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
-	/*	// Causes particles when the air is hit
-		if (e.getWorld().isRemote) {
-			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
-		}*/
+		/*
+		 * // Causes particles when the air is hit if (e.getWorld().isRemote) {
+		 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
+		 * PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks())); }
+		 */
 	}
 
 	@SubscribeEvent
@@ -90,16 +91,16 @@ public class BloodTendencyEvents {
 				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
 						new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
 			}
+			if (player.inventory.armorInventory.get(EquipmentSlotType.CHEST.getIndex())
+					.getItem() == ItemInit.chitinite_chestplate.get()) {
+				e.setAmount((float) (e.getAmount() * 0.25));
+				double dist = e.getEntityLiving().getDistance(player);
+				RayTraceResult trace = e.getEntityLiving().pick(dist, 0, false);
+				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+						new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
+			}
+
 		}
-		// Makes it so everytime a player hits an entity, cause particles
-		/*
-		 * if (e.getSource().getTrueSource() instanceof PlayerEntity) { PlayerEntity
-		 * player = (PlayerEntity) e.getSource().getTrueSource(); double dist =
-		 * player.getDistance(e.getEntityLiving()); RayTraceResult trace =
-		 * player.pick(dist, 0, false); PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-		 * new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y,
-		 * trace.getHitVec().z)); }
-		 */
 	}
 
 	@SubscribeEvent

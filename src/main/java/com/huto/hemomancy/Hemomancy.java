@@ -23,7 +23,7 @@ import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
-import com.huto.hemomancy.item.runes.ItemRuneBinder;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.item.tool.ItemLivingStaff;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;

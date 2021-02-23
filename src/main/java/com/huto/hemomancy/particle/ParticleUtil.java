@@ -11,7 +11,14 @@ import net.minecraft.world.server.ServerWorld;
 
 public class ParticleUtil {
 	public static Random r = new Random();
-
+	public static ParticleColor RED = new ParticleColor(255, 0, 0);
+	public static ParticleColor GREEN = new ParticleColor(0, 255, 0);
+	public static ParticleColor BLUE = new ParticleColor(0, 0, 255);
+	public static ParticleColor ORANGE = new ParticleColor(255, 200, 0);
+	public static ParticleColor PURPLE = new ParticleColor(255, 0, 255);
+	public static ParticleColor YELLOW = new ParticleColor(255, 255, 0);
+	public static ParticleColor CYAN = new ParticleColor(0, 255, 255);
+	public static ParticleColor WHITE = new ParticleColor(255, 255, 255);
 	public static double inRange(double min, double max) {
 		return ThreadLocalRandom.current().nextDouble(min, max);
 	}
@@ -428,5 +435,6 @@ public class ParticleUtil {
 					(world.rand.nextFloat() * 1 - 0.5) / 3, (world.rand.nextFloat() * 1 - 0.5) / 3, 0.1f);
 		}
 	}
+	
 
 }

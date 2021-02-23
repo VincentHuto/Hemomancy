@@ -2,7 +2,7 @@ package com.huto.hemomancy.gui.mindrunes;
 
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.containers.PlayerExpandedContainer;
+import com.huto.hemomancy.container.PlayerExpandedContainer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

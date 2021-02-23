@@ -1,7 +1,7 @@
 package com.huto.hemomancy.gui.morphlingjar;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.containers.ContainerMorphlingJar;
+import com.huto.hemomancy.container.ContainerMorphlingJar;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
