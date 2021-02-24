@@ -380,12 +380,14 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
 			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
-
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS.register("spawn_egg_chthonian_queen",
+			() -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
 				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
-				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian);
+				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen);
 	}
 
 	// Item Property Override

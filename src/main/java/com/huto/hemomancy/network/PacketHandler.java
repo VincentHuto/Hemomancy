@@ -87,10 +87,9 @@ public class PacketHandler {
 				.consumer(PacketEntityHitParticle::handle).add();
 		CHANNELBLOODVOLUME.messageBuilder(PacketAirBloodDraw.class, networkID++).decoder(PacketAirBloodDraw::decode)
 				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningSimple.class, PacketSpawnLightningSimple::encode,
-				PacketSpawnLightningSimple::decode, PacketSpawnLightningSimple::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningComplex.class, PacketSpawnLightningComplex::encode,
-				PacketSpawnLightningComplex::decode, PacketSpawnLightningComplex::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningParticle.class,
+				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
+				PacketSpawnLightningParticle::handle);
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
@@ -142,18 +141,13 @@ public class PacketHandler {
 		return MORPHLINGJAR;
 	}
 
-	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, ParticleColor color,
-			RegistryKey<World> dimension) {
-		PacketSpawnLightningSimple msg = new PacketSpawnLightningSimple(vec,speedVec, color);
+	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius,  RegistryKey<World> dimension,ParticleColor color, int speed,
+			int maxAge, int fract, float maxOff) {
+		PacketSpawnLightningParticle msg = new PacketSpawnLightningParticle(vec, speedVec, color, speed, maxAge, fract,
+				maxOff);
 		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, (double) radius, dimension)), msg);
 
 	}
-	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, ParticleColor color,int speed,int maxAge,
-			RegistryKey<World> dimension) {
-		PacketSpawnLightningComplex msg = new PacketSpawnLightningComplex(vec,speedVec, color,speed,maxAge);
-		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR
-				.with(() -> new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, (double) radius, dimension)), msg);
 
-	}
 }

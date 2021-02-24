@@ -1,13 +1,13 @@
 package com.huto.hemomancy.model.entity.mob;
 
-import com.huto.hemomancy.entity.mob.EntityChthonian;
+import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.huto.hemomancy.model.animation.AnimatedEntityModel;
 import com.huto.hemomancy.model.animation.AnimatedModelRenderer;
 import com.huto.hemomancy.model.animation.ModelAnimator;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-public class ModelChthonianQueen extends AnimatedEntityModel<EntityChthonian> {
+public class ModelChthonianQueen extends AnimatedEntityModel<EntityChthonianQueen> {
 	private final AnimatedModelRenderer whole;
 	private final AnimatedModelRenderer abdomen;
 	private final AnimatedModelRenderer bone3;
@@ -276,7 +276,7 @@ public class ModelChthonianQueen extends AnimatedEntityModel<EntityChthonian> {
 	}
 
 	@Override
-	public void setRotationAngles(EntityChthonian entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+	public void setRotationAngles(EntityChthonianQueen entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch) {
 	}
 

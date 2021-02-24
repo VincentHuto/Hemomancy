@@ -20,6 +20,7 @@ import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderChthonian;
+import com.huto.hemomancy.render.entity.mob.RenderChthonianQueen;
 import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
@@ -95,6 +96,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.fungling.get(), RenderFungling::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chitinite.get(), RenderChitinite::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian.get(), RenderChthonian::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
@@ -121,8 +123,6 @@ public class ClientEventSubscriber {
 		ClientRegistry.registerKeyBinding(keyBinds.get(5));
 
 	}
-
-
 
 	// for class loading issues
 	public static Minecraft getClient() {

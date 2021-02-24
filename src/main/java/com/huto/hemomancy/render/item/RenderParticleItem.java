@@ -29,8 +29,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 public class RenderParticleItem extends ItemStackTileEntityRenderer {
 
 	private IBakedModel defaultSpellModel;
-	private final ResourceLocation location = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/item/drudge_submission_device_texture");
+	public ResourceLocation location = new ResourceLocation(Hemomancy.MOD_ID, "item/spell_texture");
 
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
@@ -57,7 +56,11 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 				ForgeHooksClient.drawItemLayered((ItemRenderer) Minecraft.getInstance().getItemRenderer(),
 						(IBakedModel) this.defaultSpellModel, (ItemStack) stack, (MatrixStack) matrixStack,
 						(IRenderTypeBuffer) buffer, (int) combinedLight, (int) combinedOverlay, (boolean) true);
+				this.defaultSpellModel = Minecraft.getInstance().getModelManager().getModel(this.location);
+
 			} else {
+				this.defaultSpellModel = Minecraft.getInstance().getModelManager().getModel(this.location);
+
 				matrixStack.pop();
 				matrixStack.push();
 				Minecraft.getInstance().getItemRenderer().renderItem(stack, transformType,

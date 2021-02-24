@@ -19,6 +19,8 @@ public class ParticleUtil {
 	public static ParticleColor YELLOW = new ParticleColor(255, 255, 0);
 	public static ParticleColor CYAN = new ParticleColor(0, 255, 255);
 	public static ParticleColor WHITE = new ParticleColor(255, 255, 255);
+	public static ParticleColor BlACK = new ParticleColor(0, 0, 0);
+
 	public static double inRange(double min, double max) {
 		return ThreadLocalRandom.current().nextDouble(min, max);
 	}

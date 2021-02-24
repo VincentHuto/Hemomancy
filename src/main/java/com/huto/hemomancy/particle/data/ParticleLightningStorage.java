@@ -18,8 +18,8 @@ public class ParticleLightningStorage {
 	private Random rand;
 	private int age;
 	private int maxAge;
-	private float maxOffset = 0.5f;
-
+	private float maxOffset = 0.22f;
+	private int fract;
 	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed) {
 		this.start = start;
 		this.end = end;
@@ -29,9 +29,10 @@ public class ParticleLightningStorage {
 		this.maxAge = 10;
 		this.age = 0;
 		this.segments.add(new Segment(this.start, this.end));
+		this.fract = 9;
 	}
-	
-	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed,int bPerTick,int maxAge) {
+
+	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed, int bPerTick, int maxAge) {
 		this.start = start;
 		this.end = end;
 		this.rand = new Random(seed);
@@ -40,8 +41,22 @@ public class ParticleLightningStorage {
 		this.maxAge = maxAge;
 		this.age = 0;
 		this.segments.add(new Segment(this.start, this.end));
+		this.fract = 9;
+
 	}
 	
+	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed, int speed, int maxAge,int fract,float maxOff) {
+		this.start = start;
+		this.end = end;
+		this.rand = new Random(seed);
+		this.speed = speed;
+		this.length = this.end.subtract(this.start).length();
+		this.maxAge = maxAge;
+		this.age = 0;
+		this.segments.add(new Segment(this.start, this.end));
+		this.fract = fract;
+
+	}
 
 	public void setMaxOffset(float offset) {
 		this.maxOffset = offset;
@@ -71,7 +86,7 @@ public class ParticleLightningStorage {
 	}
 
 	public void fractalize() {
-		this.fractalize(9);
+		this.fractalize(fract);
 	}
 
 	public void fractalize(int count) {

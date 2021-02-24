@@ -1,0 +1,7 @@
+{
+
+  "parent": "builtin/entity",
+   "textures": {
+       "layer0": "hemomancy:items/particle_item"
+   }
+}

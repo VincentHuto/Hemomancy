@@ -99,6 +99,35 @@ public class ParticleLightning extends SpriteTexturedParticle {
 		}
 	}
 
+	public ParticleLightning(ClientWorld worldIn, double startX, double startY, double startZ, double endX, double endY,
+			double endZ, IAnimatedSprite sprite, float r, float g, float b, int speed, int maxAge, int fract,
+			float off) {
+		super(worldIn, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+		this.sprite = sprite.get(this.rand);
+		this.data = new ParticleLightningStorage(new Vector3(startX, startY, startZ), new Vector3(endX, endY, endZ),
+				worldIn.rand.nextLong(), speed, maxAge, fract, off);
+		this.maxAge = maxAge + 5;
+		this.setPosition(startX, startY, startZ);
+		this.motionX = 0.0;
+		this.motionY = 0.0;
+		this.motionZ = 0.0;
+		
+		this.data.fractalize();
+		this.data.finalize();
+		this.colorR = r;
+		this.colorG = g;
+		this.colorB = b;
+		if (this.colorR > 1.0) {
+			this.colorR = this.colorR / 255.0f;
+		}
+		if (this.colorG > 1.0) {
+			this.colorG = this.colorG / 255.0f;
+		}
+		if (this.colorB > 1.0) {
+			this.colorB = this.colorB / 255.0f;
+		}
+	}
+
 	@SuppressWarnings("unused")
 	public void tick() {
 		super.tick();
@@ -165,6 +194,7 @@ public class ParticleLightning extends SpriteTexturedParticle {
 					.color(this.colorR, this.colorG, this.colorB, this.particleAlpha).lightmap(j).endVertex();
 			buffer.pos((double) avector3f[1].x, (double) avector3f[1].y, (double) avector3f[1].z).tex(minU, maxV)
 					.color(this.colorR, this.colorG, this.colorB, this.particleAlpha).lightmap(j).endVertex();
+
 			++count;
 		}
 	}

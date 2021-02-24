@@ -1,24 +1,21 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.particle.data.ColorLightningTypeData;
 import com.huto.hemomancy.particle.data.ColorParticleTypeData;
 import com.huto.hemomancy.particle.data.ColoredDynamicTypeData;
 import com.huto.hemomancy.particle.data.GlowParticleData;
 import com.huto.hemomancy.particle.data.HitColorParticleTypeData;
 import com.huto.hemomancy.particle.data.HitGlowParticleData;
-import com.huto.hemomancy.particle.data.ParticleComplexLightningData;
 import com.huto.hemomancy.particle.data.ParticleLightningData;
 import com.huto.hemomancy.particle.data.ParticleLineData;
-import com.huto.hemomancy.particle.data.ParticleSparkleData;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
 import com.huto.hemomancy.particle.data.SerpentParticleTypeData;
-import com.huto.hemomancy.particle.type.ComplexLightningParticleType;
 import com.huto.hemomancy.particle.type.GlowParticleType;
 import com.huto.hemomancy.particle.type.HitGlowParticleType;
 import com.huto.hemomancy.particle.type.LightningParticleType;
 import com.huto.hemomancy.particle.type.LineParticleType;
 import com.huto.hemomancy.particle.type.SerpentParticleType;
-import com.huto.hemomancy.particle.type.SparkleParticleType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.ParticleType;
@@ -45,14 +42,9 @@ public class ParticleInit {
 
 	public static final RegistryObject<ParticleType<ColoredDynamicTypeData>> line = PARTICLE_TYPES.register("line",
 			() -> new LineParticleType());
-	public static final RegistryObject<ParticleType<ColoredDynamicTypeData>> sparkle = PARTICLE_TYPES
-			.register("sparkle", () -> new SparkleParticleType());
 
-	public static RegistryObject<ParticleType<ColorParticleTypeData>> lightning_bolt = PARTICLE_TYPES.register("lightning_bolt",
-			() -> new LightningParticleType());
-	
-	public static RegistryObject<ParticleType<ColorParticleTypeData>> complex_lightning_bolt = PARTICLE_TYPES.register("complex_lightning_bolt",
-			() -> new ComplexLightningParticleType());
+	public static RegistryObject<ParticleType<ColorLightningTypeData>> lightning_bolt = PARTICLE_TYPES
+			.register("lightning_bolt", () -> new LightningParticleType());
 
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {
@@ -60,9 +52,7 @@ public class ParticleInit {
 		Minecraft.getInstance().particles.registerFactory(hit_glow.get(), HitGlowParticleData::new);
 		Minecraft.getInstance().particles.registerFactory(line.get(), ParticleLineData::new);
 		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleData::new);
-		Minecraft.getInstance().particles.registerFactory(sparkle.get(), ParticleSparkleData::new);
 		Minecraft.getInstance().particles.registerFactory(lightning_bolt.get(), ParticleLightningData::new);
-		Minecraft.getInstance().particles.registerFactory(complex_lightning_bolt.get(), ParticleComplexLightningData::new);
 
 	}
 }

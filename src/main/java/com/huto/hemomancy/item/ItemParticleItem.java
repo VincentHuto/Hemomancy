@@ -43,19 +43,14 @@ public class ItemParticleItem extends Item {
 		if (targets.size() <= 0) {
 			return new ActionResult<>(ActionResultType.PASS, stack);
 		}
-		for (int i = 0; i < 3; ++i) {
-			MobEntity target = (MobEntity) targets.get((int) Math.floor(Math.random() * (double) targets.size()));
+		for (int i = 0; i < targets.size(); ++i) {
+			MobEntity target = targets.get(i);
 			Vector3d translation = new Vector3d(0.0, 1, 0);
 			Vector3d speedVec = new Vector3d(target.getPosition().getX(),
 					(float) target.getPosition().getY() + target.getHeight() / 2.0f, target.getPosition().getZ());
 			PacketHandler.sendLightningSpawn(playerIn.getPositionVec().add(translation), speedVec, 64.0f,
-					ParticleUtil.BLUE, (RegistryKey<World>) playerIn.world.getDimensionKey());
-			PacketHandler.sendLightningSpawn(playerIn.getPositionVec().add(translation), speedVec, 64.0f,
-					ParticleUtil.RED, 2, 2, (RegistryKey<World>) playerIn.world.getDimensionKey());
-			PacketHandler.sendLightningSpawn(playerIn.getPositionVec().add(translation), speedVec, 64.0f,
-					ParticleUtil.RED, 2, 2, (RegistryKey<World>) playerIn.world.getDimensionKey());
-			PacketHandler.sendLightningSpawn(playerIn.getPositionVec().add(translation), speedVec, 64.0f,
-					ParticleUtil.RED, 2, 2, (RegistryKey<World>) playerIn.world.getDimensionKey());
+					(RegistryKey<World>) playerIn.world.getDimensionKey(), ParticleUtil.RED, 2, 10, 9, 0.2f);
+
 			target.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) playerIn), 5.0f);
 
 		}

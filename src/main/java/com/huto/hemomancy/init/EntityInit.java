@@ -8,6 +8,7 @@ import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.entity.mob.EntityChitinite;
 import com.huto.hemomancy.entity.mob.EntityChthonian;
+import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityFungling;
 import com.huto.hemomancy.entity.mob.EntityThirster;
@@ -55,7 +56,9 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityChthonian>> chthonian = ENTITY_TYPES.register("chthonian",
 			() -> EntityType.Builder.<EntityChthonian>create(EntityChthonian::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
-	
+	public static final RegistryObject<EntityType<EntityChthonianQueen>> chthonian_queen = ENTITY_TYPES.register("chthonian_queen",
+			() -> EntityType.Builder.<EntityChthonianQueen>create(EntityChthonianQueen::new, EntityClassification.MONSTER)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
 	
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
@@ -109,6 +112,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().create());
 
 	}
 
