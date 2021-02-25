@@ -30,6 +30,7 @@ import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.item.RenderMorphlingPolypItem;
+import com.huto.hemomancy.render.layer.RenderBloodLayer;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
@@ -44,6 +45,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -71,6 +74,10 @@ public class ClientEventSubscriber {
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
 
+		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+		forgeBus.addListener(RenderBloodLayer::renderWorld);
+		forgeBus.addListener(RenderBloodLayer::renderEntities);
+		
 		// Tiles
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);

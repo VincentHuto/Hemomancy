@@ -91,8 +91,8 @@ public class BloodTendencyEvents {
 				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
 						new PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
 			}
-			if (player.inventory.armorInventory.get(EquipmentSlotType.CHEST.getIndex())
-					.getItem() == ItemInit.chitinite_chestplate.get()) {
+			if (player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem().getItem() == ItemInit.chitinite_chestplate
+					.get()) {
 				e.setAmount((float) (e.getAmount() * 0.25));
 				double dist = e.getEntityLiving().getDistance(player);
 				RayTraceResult trace = e.getEntityLiving().pick(dist, 0, false);

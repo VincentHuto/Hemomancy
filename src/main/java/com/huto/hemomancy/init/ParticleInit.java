@@ -1,6 +1,8 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.particle.data.BloodCellParticleData;
+import com.huto.hemomancy.particle.data.BloodCellTypeData;
 import com.huto.hemomancy.particle.data.ColorLightningTypeData;
 import com.huto.hemomancy.particle.data.ColorParticleTypeData;
 import com.huto.hemomancy.particle.data.ColoredDynamicTypeData;
@@ -11,6 +13,7 @@ import com.huto.hemomancy.particle.data.ParticleLightningData;
 import com.huto.hemomancy.particle.data.ParticleLineData;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
 import com.huto.hemomancy.particle.data.SerpentParticleTypeData;
+import com.huto.hemomancy.particle.type.BloodCellParticleType;
 import com.huto.hemomancy.particle.type.GlowParticleType;
 import com.huto.hemomancy.particle.type.HitGlowParticleType;
 import com.huto.hemomancy.particle.type.LightningParticleType;
@@ -45,6 +48,9 @@ public class ParticleInit {
 
 	public static RegistryObject<ParticleType<ColorLightningTypeData>> lightning_bolt = PARTICLE_TYPES
 			.register("lightning_bolt", () -> new LightningParticleType());
+	
+	public static final RegistryObject<ParticleType<BloodCellTypeData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
+			() -> new BloodCellParticleType());
 
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {
@@ -53,6 +59,7 @@ public class ParticleInit {
 		Minecraft.getInstance().particles.registerFactory(line.get(), ParticleLineData::new);
 		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleData::new);
 		Minecraft.getInstance().particles.registerFactory(lightning_bolt.get(), ParticleLightningData::new);
+		Minecraft.getInstance().particles.registerFactory(blood_cell.get(), BloodCellParticleData::new);
 
 	}
 }

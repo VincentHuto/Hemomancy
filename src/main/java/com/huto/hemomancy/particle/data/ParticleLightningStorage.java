@@ -20,6 +20,7 @@ public class ParticleLightningStorage {
 	private int maxAge;
 	private float maxOffset = 0.22f;
 	private int fract;
+
 	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed) {
 		this.start = start;
 		this.end = end;
@@ -44,8 +45,9 @@ public class ParticleLightningStorage {
 		this.fract = 9;
 
 	}
-	
-	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed, int speed, int maxAge,int fract,float maxOff) {
+
+	public ParticleLightningStorage(Vector3 start, Vector3 end, long seed, int speed, int maxAge, int fract,
+			float maxOff) {
 		this.start = start;
 		this.end = end;
 		this.rand = new Random(seed);
@@ -75,7 +77,7 @@ public class ParticleLightningStorage {
 			newPoints[2] = segment.getEnd();
 			Vector3 offset = Vector3.getPerpendicular(segment.getDiff())
 					.rotate(this.rand.nextFloat() * 360.0f, segment.getDiff()).normalize();
-			float offsetScale = -this.maxOffset + this.rand.nextFloat() * this.maxOffset * 1.0f;
+			float offsetScale = -this.maxOffset + this.rand.nextFloat() * this.maxOffset * 0.2f;
 			offset = offset.scale(offsetScale * segment.getDiff().length());
 			newPoints[1] = offset = offset.add(segment.getDiff().scale(0.5f)).add(segment.getStart());
 			for (int i = 0; i < newPoints.length - 1; ++i) {

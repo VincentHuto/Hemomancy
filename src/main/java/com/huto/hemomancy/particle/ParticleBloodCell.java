@@ -12,14 +12,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleGlow extends SpriteTexturedParticle {
+public class ParticleBloodCell extends SpriteTexturedParticle {
 	public float colorR = 0;
 	public float colorG = 0;
 	public float colorB = 0;
 	public float initScale = 0;
 	public float initAlpha = 0;
 
-	public ParticleGlow(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz, float r,
+	public ParticleBloodCell(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz, float r,
 			float g, float b, float a, float scale, int lifetime, IAnimatedSprite sprite) {
 		super(worldIn, x, y, z, 0, 0, 0);
 		this.colorR = r;
@@ -66,7 +66,7 @@ public class ParticleGlow extends SpriteTexturedParticle {
 		this.particleScale = initScale - initScale * lifeCoeff;
 		this.particleAlpha = initAlpha * (1.0f - lifeCoeff);
 		this.prevParticleAngle = particleAngle;
-		particleAngle += 1.0f;
+		//particleAngle += 1.0f;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleUtil;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.data.BloodCellParticleData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
@@ -127,7 +127,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 					false);
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (inversedSphere[i].y * 255), 0, 0)),
+						BloodCellParticleData.createData(new ParticleColor((int) (inversedSphere[i].y * 255), 0, 0)),
 						origin.getX() + inversedSphere[i].x, origin.getY() + inversedSphere[i].y,
 						origin.getZ() + inversedSphere[i].z, 0, 0.00, 0);
 
