@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.data.BloodCellParticleData;
 import com.huto.hemomancy.particle.data.GlowParticleData;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
 
@@ -68,9 +69,9 @@ public class PacketAirBloodDraw {
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 2, 0, 0, 0,
 									0.0015f);
 						} else {
-							sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 5, 0, 0, 0,
-									0.015f);
+							sWorld.spawnParticle(BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
+									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 15, 0, 0, 0,
+									0.005f);
 						}
 					}
 

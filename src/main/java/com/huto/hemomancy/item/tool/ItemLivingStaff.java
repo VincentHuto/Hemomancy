@@ -9,8 +9,10 @@ import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
+import com.huto.hemomancy.network.PacketAirBloodDraw;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
 
@@ -49,6 +51,15 @@ public class ItemLivingStaff extends Item {
 
 	public ItemLivingStaff(Properties properties) {
 		super(properties);
+	}
+
+	@Override
+	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
+		super.onUsingTick(stack, player, count);
+		if (player.world.isRemote) {
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+		}
 	}
 
 	@Override
@@ -103,9 +114,6 @@ public class ItemLivingStaff extends Item {
 		}
 	}
 
-	
-	
-	
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof PlayerEntity) {

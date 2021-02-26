@@ -20,14 +20,15 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
 
-	
 	private final static ResourceLocation laserBeam = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/misc/laser.png");
 	private final static ResourceLocation laserBeam2 = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/misc/laser2.png");
 	private final static ResourceLocation laserBeamGlow = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/misc/laser_glow.png");
-	
+	private final static ResourceLocation end_trans = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/block/end_portal.png");
+
 	public RenderTypeInit(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn,
 			boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
 		super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
@@ -45,14 +46,16 @@ public class RenderTypeInit extends RenderType {
 					.transparency(TRANSLUCENT_TRANSPARENCY).depthTest(DEPTH_ALWAYS).writeMask(COLOR_DEPTH_WRITE)
 					.build(false));
 
-	public static final RenderType LASER_MAIN_CORE = makeType("LaserCoreBeam",
-			DefaultVertexFormats.POSITION_COLOR_TEX, GL11.GL_QUADS, 256,
+	public static final RenderType LASER_MAIN_CORE = makeType("LaserCoreBeam", DefaultVertexFormats.POSITION_COLOR_TEX,
+			GL11.GL_QUADS, 256,
 			RenderType.State.getBuilder().texture(new TextureState(laserBeam, false, false))
 					.transparency(TRANSLUCENT_TRANSPARENCY).depthTest(DEPTH_ALWAYS).writeMask(COLOR_DEPTH_WRITE)
 					.build(false));
 
-	
-	
+	public static final RenderType ENDTRANS = makeType("end_trans", DefaultVertexFormats.POSITION_COLOR_TEX, 7, 256,
+			false, true, State.getBuilder().texture(new TextureState(end_trans, false, false))
+					.transparency(CRUMBLING_TRANSPARENCY).writeMask(COLOR_DEPTH_WRITE).build(false));
+
 	@SuppressWarnings("unused")
 	private static final LineState THICK_LINES = new LineState(OptionalDouble.of(3.0D));
 	public static final IParticleRenderType EMBER_RENDER = new IParticleRenderType() {

@@ -22,7 +22,7 @@ public class BloodCellParticleData implements IParticleFactory<BloodCellTypeData
 	public Particle makeParticle(BloodCellTypeData data, ClientWorld worldIn, double x, double y, double z,
 			double xSpeed, double ySpeed, double zSpeed) {
 		return new ParticleBloodCell(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
-				data.color.getGreen(), data.color.getBlue(), 1.0f, .025f, 32, this.spriteSet);
+				data.color.getGreen(), data.color.getBlue(), 1.0f, .025f, 20, this.spriteSet);
 
 	}
 

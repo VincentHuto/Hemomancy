@@ -2,19 +2,24 @@ package com.huto.hemomancy.render.item;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.ItemParticleItem;
+import com.huto.hemomancy.model.entity.armor.ModelBloodRightArm;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.BloodCellParticleData;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
@@ -29,7 +34,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 public class RenderParticleItem extends ItemStackTileEntityRenderer {
 
 	private IBakedModel defaultSpellModel;
-	public ResourceLocation location = new ResourceLocation(Hemomancy.MOD_ID, "item/spell_texture");
+	public ResourceLocation location = new ResourceLocation(Hemomancy.MOD_ID, "item/obsidian_knapper");
 
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
@@ -73,27 +78,80 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		}
 	}
 
+	ModelBloodRightArm model = new ModelBloodRightArm(1.0f);
+
 	private void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, HandSide side) {
 		Minecraft mc = Minecraft.getInstance();
 		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
-		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+		// PlayerRenderer playerrenderer = (PlayerRenderer)
+		// mc.getRenderManager().getRenderer(mc.player);
 		matrixStackIn.push();
 		if (side == HandSide.RIGHT) {
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(12.0f));
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-35.0f));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(5.0f));
 			matrixStackIn.translate(1.0, -0.4, 0.8);
-			playerrenderer.renderRightArm(matrixStackIn, bufferIn, combinedLightIn,
-					(AbstractClientPlayerEntity) mc.player);
+			/*
+			 * IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model .getRenderType(new
+			 * ResourceLocation(Hemomancy.MOD_ID +
+			 * ":textures/block/sanguine_tran_pane.png"))); model.render(matrixStackIn,
+			 * ivertexbuilder, combinedLightIn, combinedLightIn, 100, 100, 100, 100);
+			 */
+			renderRightArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player);
+
 		} else {
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-12.0f));
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-35.0f));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(5.0f));
 			matrixStackIn.translate(0.0, -0.3, 0.6);
-			playerrenderer.renderLeftArm(matrixStackIn, bufferIn, combinedLightIn,
-					(AbstractClientPlayerEntity) mc.player);
+			/*
+			 * IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model .getRenderType(new
+			 * ResourceLocation(Hemomancy.MOD_ID +
+			 * ":textures/block/sanguine_tran_pane.png"))); model.render(matrixStackIn,
+			 * ivertexbuilder, combinedLightIn, combinedLightIn, 100, 100, 100, 100);
+			 */
+			renderLeftArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player);
 		}
 		matrixStackIn.pop();
+	}
+
+	public void renderLeftArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
+			AbstractClientPlayerEntity playerIn) {
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+		this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn,
+				(playerrenderer.getEntityModel()).bipedLeftArm, (playerrenderer.getEntityModel()).bipedLeftArmwear);
+	}
+
+	public void renderRightArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
+			AbstractClientPlayerEntity playerIn) {
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+		renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getEntityModel()).bipedRightArm,
+				(playerrenderer.getEntityModel()).bipedRightArmwear);
+	}
+
+	private void renderItem(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
+			AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn) {
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+		PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
+		// playerrenderer.setModelVisibilities(playerIn);
+		playermodel.swingProgress = 0.0F;
+		playermodel.isSneak = false;
+		playermodel.swimAnimation = 0.0F;
+		playermodel.setRotationAngles(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+		rendererArmIn.rotateAngleX = 0.0F;
+		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
+				model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/block/venous_stone.png")));
+		rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY);
+		rendererArmwearIn.rotateAngleX = 0.0F;
+		rendererArmwearIn.render(matrixStackIn,
+				bufferIn.getBuffer(RenderType.getEntityTranslucent(playerIn.getLocationSkin())), combinedLightIn,
+				OverlayTexture.NO_OVERLAY);
 	}
 
 	@SuppressWarnings("unused")

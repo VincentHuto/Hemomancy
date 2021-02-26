@@ -1,7 +1,7 @@
 {
     "parent": "builtin/entity",
 	"textures": {
-       "layer0": "hemomancy:items/liber_inclinatio_hidden"
+       "layer0": "hemomancy:item/liber_inclinatio_hidden"
 	},
 	"gui_light":"front",
 	 "display": {
