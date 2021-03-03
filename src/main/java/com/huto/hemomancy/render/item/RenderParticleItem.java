@@ -146,7 +146,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		playermodel.setRotationAngles(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		rendererArmIn.rotateAngleX = 0.0F;
 		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
-				model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/block/venous_stone.png")));
+				model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
 		rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY);
 		rendererArmwearIn.rotateAngleX = 0.0F;
 		rendererArmwearIn.render(matrixStackIn,

@@ -68,9 +68,9 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 				model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
 				model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
 
-			//	model.leftArm.showModel = false;
-				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model
-						.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/block/venous_stone.png")));
+				// model.leftArm.showModel = false;
+				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
+						model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
 				model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
 				PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
 				this.renderHandParticle((LivingEntity) entitylivingbaseIn, leftHandItem,
@@ -82,7 +82,7 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 				model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
 				model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
 				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model
-						.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/block/venous_stone.png")));
+						.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
 				model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
 				PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
 				this.renderHandParticle((LivingEntity) entitylivingbaseIn, rightHandItem,

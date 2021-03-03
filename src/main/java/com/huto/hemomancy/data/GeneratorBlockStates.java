@@ -26,7 +26,6 @@ public class GeneratorBlockStates extends BlockStateProvider {
 			if (b == BlockInit.sanguine_pane) {
 				String path = BlockInit.sanguine_pane.get().getRegistryName().getPath();
 				paneBlock((PaneBlock) b.get(), b.get().getRegistryName().getPath(),modLoc("block/" + path), modLoc("block/" + path + "_top"));
-				
 			} else {
 
 			}
