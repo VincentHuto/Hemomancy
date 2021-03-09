@@ -32,7 +32,7 @@ public class ModBloodCraftingRecipes {
 		liber_sanguinum_recipe = new BaseBloodCraftingRecipe(ItemInit.liber_sanguinum.get(), 100,
 				ItemInit.sanguine_formation.get(), Blocks.BOOKSHELF, liber_sanguinum_pattern);
 		RECIPES.add(liber_sanguinum_recipe);
-		living_staff_recipe = new BaseBloodCraftingRecipe(ItemInit.living_staff.get(), 150, Items.STICK,
+		living_staff_recipe = new BaseBloodCraftingRecipe(ItemInit.living_staff.get(), 150,	ItemInit.sanguine_formation.get(),
 				Blocks.IRON_BARS, living_staff_pattern);
 		RECIPES.add(living_staff_recipe);
 		living_grip_recipe = new BaseBloodCraftingRecipe(ItemInit.living_grasp.get(), 150, Items.BUCKET,

@@ -2,6 +2,8 @@
 package com.huto.hemomancy.render.layer;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.model.entity.armor.ModelBloodRightArm;
 import com.huto.hemomancy.particle.ParticleColor;
@@ -27,6 +29,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
@@ -43,54 +46,65 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 			float headPitch) {
 		ModelBloodRightArm model = new ModelBloodRightArm(0.25f);
 
-		ItemStack leftHandItem;
 		if (entitylivingbaseIn.getActivePotionEffect(Effects.INVISIBILITY) != null) {
 			return;
 		}
 		boolean playerIsRightHanded = entitylivingbaseIn.getPrimaryHand() == HandSide.RIGHT;
 		boolean itemIsInUse = entitylivingbaseIn.getItemInUseCount() > 0;
 		Hand activeHand = entitylivingbaseIn.getActiveHand();
-		ItemStack rightHandItem = playerIsRightHanded ? entitylivingbaseIn.getHeldItemOffhand()
-				: entitylivingbaseIn.getHeldItemMainhand();
-		ItemStack itemStack = leftHandItem = playerIsRightHanded ? entitylivingbaseIn.getHeldItemMainhand()
+		ItemStack rightHandItem = playerIsRightHanded ? entitylivingbaseIn.getHeldItemMainhand()
 				: entitylivingbaseIn.getHeldItemOffhand();
-		if (!rightHandItem.isEmpty() || !leftHandItem.isEmpty()) {
-			matrixStackIn.push();
-			if (this.getEntityModel().isChild) {
-				matrixStackIn.translate(0.0, 0.75, 0.0);
-				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			}
-			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
-			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
-			if (!itemIsInUse || playerIsRightHanded && activeHand == Hand.OFF_HAND
-					|| !playerIsRightHanded && activeHand == Hand.MAIN_HAND) {
-				model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
-				model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
-
-				// model.leftArm.showModel = false;
-				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
-						model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
-				model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
-				PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
-				this.renderHandParticle((LivingEntity) entitylivingbaseIn, leftHandItem,
-						ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HandSide.RIGHT, matrixStackIn,
-						bufferIn, packedLightIn);
-			}
-			if (!itemIsInUse || !playerIsRightHanded && activeHand == Hand.OFF_HAND
-					|| playerIsRightHanded && activeHand == Hand.MAIN_HAND) {
-				model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
-				model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
-				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model
-						.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
-				model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
-				PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
-				this.renderHandParticle((LivingEntity) entitylivingbaseIn, rightHandItem,
-						ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HandSide.LEFT, matrixStackIn,
-						bufferIn, packedLightIn);
-			}
-			matrixStackIn.pop();
+		ItemStack leftHandItem = playerIsRightHanded ? entitylivingbaseIn.getHeldItemOffhand()
+				: entitylivingbaseIn.getHeldItemMainhand();
+		matrixStackIn.push();
+		if (this.getEntityModel().isChild) {
+			matrixStackIn.translate(0.0, 0.75, 0.0);
+			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 		}
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+		if (rightHandItem.getItem() == ItemInit.particle_item.get()
+				&& leftHandItem.getItem() != ItemInit.particle_item.get()) {
+			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
+			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
+			model.leftArm.showModel = false;
+			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
+					model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
+			model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
+			PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
+			this.renderHandParticle((LivingEntity) entitylivingbaseIn, rightHandItem,
+					ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HandSide.RIGHT, matrixStackIn, bufferIn,
+					packedLightIn);
+		} else if (leftHandItem.getItem() == ItemInit.particle_item.get()
+				&& rightHandItem.getItem() != ItemInit.particle_item.get()) {
+			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
+			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
+			model.rightArm.showModel = false;
+			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
+					model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
+			model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
+			PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
+			this.renderHandParticle((LivingEntity) entitylivingbaseIn, leftHandItem,
+					ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HandSide.LEFT, matrixStackIn, bufferIn,
+					packedLightIn);
+		} else if (leftHandItem.getItem() == ItemInit.particle_item.get()
+				&& rightHandItem.getItem() == ItemInit.particle_item.get()) {
+			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
+			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
+			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
+					model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
+			model.render(matrixStackIn, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, 255, 0, 0, 100);
+			PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();
+			this.renderHandParticle((LivingEntity) entitylivingbaseIn, rightHandItem,
+					ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HandSide.LEFT, matrixStackIn, bufferIn,
+					packedLightIn);
+			this.renderHandParticle((LivingEntity) entitylivingbaseIn, leftHandItem,
+					ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HandSide.RIGHT, matrixStackIn, bufferIn,
+					packedLightIn);
+
+		}
+		matrixStackIn.pop();
 	}
 
 	@SuppressWarnings("unused")
@@ -128,10 +142,11 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		World world = player.world;
 		Matrix4f curMatrix = matrixStackIn.getLast().getMatrix();
 		Vector3d particlePos = playerPos
-
 				.add(new Vector3d((double) curMatrix.m03, (double) curMatrix.m13, (double) curMatrix.m23));
 		Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
 		int globalPartCount = 128;
+	//	RayTraceResult trace = player.pick(2, ClientEventSubscriber.getPartialTicks(), true);
+		//System.out.println(trace);
 		Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 		Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 		Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,

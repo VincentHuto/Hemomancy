@@ -9,6 +9,7 @@ import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockUnstainedPodium;
+import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -79,6 +80,11 @@ public class BlockInit {
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap", () -> new Block(
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
+
+	// Idols
+	public static final RegistryObject<Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
+			() -> new BlockSerpentineIdol(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 
 	// Tiles
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",

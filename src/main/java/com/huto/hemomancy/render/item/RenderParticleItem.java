@@ -41,9 +41,15 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		if (transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
 				&& transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
 			if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
+				if (!(stack.getItem() instanceof ItemParticleItem)) {
+					return;
+				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.RIGHT);
 				this.spawnFirstPersonParticlesForStack(stack, HandSide.RIGHT);
 			} else if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
+				if (!(stack.getItem() instanceof ItemParticleItem)) {
+					return;
+				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.LEFT);
 				this.spawnFirstPersonParticlesForStack(stack, HandSide.LEFT);
 			} else {
@@ -87,6 +93,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		// mc.getRenderManager().getRenderer(mc.player);
 		matrixStackIn.push();
 		if (side == HandSide.RIGHT) {
+			
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(12.0f));
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-35.0f));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(5.0f));
@@ -136,6 +143,8 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 	private void renderItem(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
 			AbstractClientPlayerEntity playerIn, ModelRenderer rendererArmIn, ModelRenderer rendererArmwearIn) {
 		Minecraft mc = Minecraft.getInstance();
+		
+		
 		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
 		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
 		PlayerModel<AbstractClientPlayerEntity> playermodel = playerrenderer.getEntityModel();

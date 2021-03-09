@@ -12,6 +12,7 @@ import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityFungling;
 import com.huto.hemomancy.entity.mob.EntityThirster;
+import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
@@ -100,6 +101,13 @@ public class EntityInit {
 			() -> EntityType.Builder
 					.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
 					.size(0.25F, 0.25F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
+	
+	public static final RegistryObject<EntityType<EntityBloodBolt>> blood_bolt = ENTITY_TYPES.register(
+			"blood_bolt",
+			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
+					.size(0.5F, 0.5F).trackingRange(4).func_233608_b_(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
+	
 
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {

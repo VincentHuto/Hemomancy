@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/serpentine_idol"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/serpentine_idol",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/serpentine_idol",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/serpentine_idol",
+			"y": 90
+		}
+	}
+}

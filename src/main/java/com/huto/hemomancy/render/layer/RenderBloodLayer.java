@@ -61,7 +61,7 @@ public class RenderBloodLayer extends RenderType {
 		if (player.isAlive()) {
 			IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalArgumentException::new);
-			if (player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() != ItemInit.chitinite_helm.get()) {
+			if (player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem() == ItemInit.chitinite_helm.get()) {
 				if (blood != null && blood.getBloodVolume() > 3000) {
 					if (player != null) {
 						renderEntityOutline(player, 255, 0, 0,
