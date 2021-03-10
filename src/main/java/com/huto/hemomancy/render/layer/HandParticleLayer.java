@@ -2,7 +2,6 @@
 package com.huto.hemomancy.render.layer;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.model.entity.armor.ModelBloodRightArm;
@@ -29,7 +28,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;

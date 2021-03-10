@@ -1,5 +1,7 @@
 package com.huto.hemomancy.block.idol;
 
+import com.huto.hemomancy.tile.TileEntitySerpentineIdol;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -7,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -88,14 +91,13 @@ public class BlockSerpentineIdol extends Block {
 		super.onBlockClicked(state, worldIn, pos, player);
 	}
 
-/*	@Override
+	@Override
 	public boolean hasTileEntity(BlockState state) {
 		return true;
 	}
 
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new TileEntityUnstainedPodium();
+		return new TileEntitySerpentineIdol();
 	}
-*/
 }

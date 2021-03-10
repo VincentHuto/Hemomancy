@@ -27,19 +27,19 @@ public class BloodTendency implements IBloodTendency {
 		this.tendency = tendency;
 	}
 
-	public void setTendencyTendency(EnumBloodTendency tendencyIn, float value) {
+	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
 				Map<EnumBloodTendency, Float> newDevo = tendency;
-				newDevo.put(tendencyIn, getTendencyByTendency(tendencyIn) + value);
+				newDevo.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
 				newDevo.put(getOpposingTendency(tendencyIn),
-						getTendencyByTendency(getOpposingTendency(tendencyIn)) - value);
+						getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
 				setTendency(newDevo);
 			}
 		}
 	}
 
-	public float getTendencyByTendency(EnumBloodTendency tendencyIn) {
+	public float getAlignmentByTendency(EnumBloodTendency tendencyIn) {
 		if (tendency != null && tendency.get(tendencyIn) != null) {
 			return tendency.get(tendencyIn);
 		} else {

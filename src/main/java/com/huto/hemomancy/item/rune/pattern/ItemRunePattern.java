@@ -16,12 +16,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemRunePattern extends Item {
-	public String text;
 
-	public ItemRunePattern(Properties prop, String textIn) {
+	String text;
+
+	public ItemRunePattern(Properties prop, String text) {
 		super(prop);
-		this.text = textIn;
 		prop.maxStackSize(1);
+		this.text = text;
 	}
 
 	@Override

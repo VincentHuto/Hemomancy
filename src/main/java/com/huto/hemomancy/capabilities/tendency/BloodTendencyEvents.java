@@ -159,7 +159,7 @@ public class BloodTendencyEvents {
 								ModTextFormatting.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
-								String.valueOf(tendency.getTendencyByTendency(selectedCoven)), point.x, point.y + 30,
+								String.valueOf(tendency.getAlignmentByTendency(selectedCoven)), point.x, point.y + 30,
 								new Color(255, 0, 0, 255).getRGB());
 						GlStateManager.popMatrix();
 						/*
@@ -203,9 +203,9 @@ public class BloodTendencyEvents {
 				 * .containsKey(EnchantmentInit.influence_suppression.get()))) {}
 				 */
 				for (EnumBloodTendency tendencys : tendency.getTendency().keySet()) {
-					if (tendency.getTendencyByTendency(tendencys) >= 10) {
-						float devoMult = (tendency.getTendencyByTendency(tendencys) / 3) < 250
-								? (tendency.getTendencyByTendency(tendencys) / 3)
+					if (tendency.getAlignmentByTendency(tendencys) >= 10) {
+						float devoMult = (tendency.getAlignmentByTendency(tendencys) / 3) < 250
+								? (tendency.getAlignmentByTendency(tendencys) / 3)
 								: 250;
 						switch (tendencys) {
 						/*

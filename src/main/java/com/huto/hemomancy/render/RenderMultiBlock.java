@@ -17,6 +17,9 @@ public class RenderMultiBlock {
 		GlStateManager.pushMatrix();
 		ms.push();
 		RenderHelper.enableStandardItemLighting();
+		GlStateManager.pushMatrix();
+		GlStateManager.enableAlphaTest();
+		GlStateManager.enableBlend();
 		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
 		GlStateManager.rotatef(45, 0, 0, 0);
 		GlStateManager.scaled(0.5, 0.5, 0.5);
@@ -27,6 +30,9 @@ public class RenderMultiBlock {
 			mc.getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(pair.getBlock()), pair.getPos().getX() * -16,
 					pair.getPos().getY() * -16);
 		}
+		GlStateManager.disableBlend();
+		GlStateManager.disableAlphaTest();
+		GlStateManager.popMatrix();
 		ms.pop();
 		GlStateManager.popMatrix();
 

@@ -19,6 +19,7 @@ import com.huto.hemomancy.init.CapabilityInit;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
@@ -148,10 +149,13 @@ public class Hemomancy {
 			registry.register(blockItem);
 		});
 		BlockInit.SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
-			final BlockItem blockItem = new BlockItem(block, properties);
-			blockItem.setRegistryName(block.getRegistryName());
-			registry.register(blockItem);
+			if (block != BlockInit.active_befouling_ash_trail.get()
+					&& block != BlockInit.active_smouldering_ash_trail.get()) {
+				final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+				final BlockItem blockItem = new BlockItem(block, properties);
+				blockItem.setRegistryName(block.getRegistryName());
+				registry.register(blockItem);
+			}
 		});
 	}
 
@@ -177,6 +181,7 @@ public class Hemomancy {
 		ModBloodCraftingRecipes.initRecipes();
 		ModChiselRecipes.init();
 		PolypRecipes.initRecipes();
+		ManipulationInit.init();
 		PacketHandler.registerChannels();
 		PacketHandler.registerRuneBinderChannels();
 		PacketHandler.registerMorphlingJarChannels();

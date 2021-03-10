@@ -22,19 +22,19 @@ public class TileEntityDendriticDistributor extends TileEntity implements ITicka
 			double time = -world.getGameTime() * 0.21;
 			Vector3d[] fibboSphere = ParticleUtil.randomSphere(globalPartCount, time, 0.5);
 			double sizeMod = 2;
-			double sinX = Math.abs(Math.pow(Math.sin(time),9))*sizeMod;
-			double sinZ = Math.cos(time)*sizeMod;
+			double sinX = Math.abs(Math.pow(Math.sin(time), 9)) * sizeMod;
+			double sinZ = Math.cos(time) * sizeMod;
 
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(
 						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 						pos.getX() + .5 + sinZ, pos.getY() + 1 + sinX, pos.getZ() + .5, 0, 0, 0);
-				
+
 				world.addParticle(
 						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-						pos.getX() + .5 , pos.getY() + 1 + sinX, pos.getZ() + .5+ sinZ, 0, 0, 0);
+						pos.getX() + .5, pos.getY() + 1 + sinX, pos.getZ() + .5 + sinZ, 0, 0, 0);
 
 			}
 		}

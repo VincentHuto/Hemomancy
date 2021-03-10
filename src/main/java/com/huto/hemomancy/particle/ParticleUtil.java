@@ -318,7 +318,7 @@ public class ParticleUtil {
 			double x = Math.cos(theta) * radius;
 			double z = Math.sin(theta) * radius;
 			double rotThing = rotMod * radius;
-			points[i] = new Vector3d(x +Math.cos(rotThing) * radMod, y *Math.pow(Math.sin(radius),3),
+			points[i] = new Vector3d(x + Math.cos(rotThing) * radMod, y * Math.pow(Math.sin(radius), 3),
 					z + Math.sin(rotThing) * radMod);
 
 		}
@@ -365,6 +365,27 @@ public class ParticleUtil {
 		}
 		return points;
 	}
+/*
+	public static Vector3d[] test(BlockPos pos, int radMod) {
+		Vector3d[] points = new Vector3d[radMod * radMod * radMod];
+		double count = 0;
+		double values[][][] = new double[radMod][radMod][radMod];
+		for (int i = 0; i < values.length; i++) {
+			for (int j = 0; j < values.length; j++) {
+				for (int k = 0; k < values.length; k++) {
+					values[i][j][k] = count / 100;
+					count++;
+				}
+			}
+		}
+		Arrays.fill(points, new Vector3d(0, 0, 0));
+		
+		 * for (int x = 0; x < radMod; x++) { for (int y = 0; y < radMod; y++) { for
+		 * (int z = 0; z < radMod; z++) { points[(x + 1) * (y + 1) * (z + 1)] = new
+		 * Vector3d(pos.getX() + x, pos.getY() + y, pos.getZ() + z); } } }
+		 
+		return points;
+	}*/
 
 	// https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/
 	public static Vector3d pointInSphere() {
@@ -437,6 +458,5 @@ public class ParticleUtil {
 					(world.rand.nextFloat() * 1 - 0.5) / 3, (world.rand.nextFloat() * 1 - 0.5) / 3, 0.1f);
 		}
 	}
-	
 
 }

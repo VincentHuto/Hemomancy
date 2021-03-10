@@ -156,7 +156,7 @@ public class ModBloodCraftingRecipes {
 	@SuppressWarnings("serial")
 	public static HashMap<Character, Block> tIronSymbolList = new HashMap<Character, Block>() {
 		{
-			put('B', BlockInit.befouling_ash_trail.get());
+			put('B', BlockInit.active_befouling_ash_trail.get());
 			put('I', Blocks.IRON_BLOCK);
 			put('A', Blocks.AIR);
 		}
@@ -186,8 +186,8 @@ public class ModBloodCraftingRecipes {
 			put('V', BlockInit.venous_stone.get());
 			put('A', Blocks.AIR);
 			put('T', BlockInit.tainted_iron_block.get());
-			put('B', BlockInit.befouling_ash_trail.get());
-			put('S', BlockInit.smouldering_ash_trail.get());
+			put('B', BlockInit.active_befouling_ash_trail.get());
+			put('S', BlockInit.active_smouldering_ash_trail.get());
 			put('C', BlockInit.conscious_mass.get());
 
 		}
@@ -223,7 +223,7 @@ public class ModBloodCraftingRecipes {
 	@SuppressWarnings("serial")
 	public static HashMap<Character, Block> gripSymbolList = new HashMap<Character, Block>() {
 		{
-			put('R', Blocks.REDSTONE_WIRE);
+			put('R', BlockInit.active_befouling_ash_trail.get());
 			put('V', BlockInit.venous_stone.get());
 			put('A', Blocks.AIR);
 		}

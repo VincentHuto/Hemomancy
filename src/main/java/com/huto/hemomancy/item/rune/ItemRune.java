@@ -42,7 +42,7 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyTendency(getAssignedTendency(), getDeepenAmount());
+					coven.setTendencyAlignment(getAssignedTendency(), getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
@@ -59,7 +59,7 @@ public class ItemRune extends Item implements IRune {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
-					coven.setTendencyTendency(getAssignedTendency(), -getDeepenAmount());
+					coven.setTendencyAlignment(getAssignedTendency(), -getDeepenAmount());
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),

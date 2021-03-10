@@ -151,10 +151,17 @@ public class ItemInit {
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
+	
+	
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
 			() -> new BlockNamedItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
 			() -> new BlockNamedItem(BlockInit.befouling_ash_trail.get(), (new Item.Properties())));
+	public static final RegistryObject<Item> active_smouldering_ash = SPECIALITEMS.register("active_smouldering_ash",
+			() -> new BlockNamedItem(BlockInit.active_smouldering_ash_trail.get(), (new Item.Properties())));
+	public static final RegistryObject<Item> active_befouling_ash = SPECIALITEMS.register("active_befouling_ash",
+			() -> new BlockNamedItem(BlockInit.active_befouling_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> tainted_iron_scrap = BASEITEMS.register("tainted_iron_scrap",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_will = BASEITEMS.register("living_will",
@@ -299,7 +306,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_metamorphosis_cw = BASEITEMS.register("rune_metamorphosis_cw",
 			() -> new ItemRune(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
 					EnumBloodTendency.DUCTILIS, 1));
-
 	public static final RegistryObject<Item> rune_pattern_metamorphosis_cw = BASEITEMS.register(
 			"rune_pattern_metamorphosis_cw",
 			() -> new ItemRunePatternMetamorphosisCW(

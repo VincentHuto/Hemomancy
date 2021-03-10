@@ -1,6 +1,8 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.block.BlockActiveBefoulingAshTrail;
+import com.huto.hemomancy.block.BlockActiveSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockChiselStation;
 import com.huto.hemomancy.block.BlockDendriticDistributor;
@@ -9,6 +11,7 @@ import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockUnstainedPodium;
+import com.huto.hemomancy.block.idol.BlockHumaneIdol;
 import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
 
 import net.minecraft.block.AbstractBlock;
@@ -53,6 +56,15 @@ public class BlockInit {
 	public static final RegistryObject<Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
 			() -> new BlockBefoulingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
 					.doesNotBlockMovement().zeroHardnessAndResistance()));
+	
+	public static final RegistryObject<Block> active_smouldering_ash_trail = SPECIALBLOCKS.register("active_smouldering_ash_trail",
+			() -> new BlockActiveSmoulderingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
+					.doesNotBlockMovement().zeroHardnessAndResistance()));
+	public static final RegistryObject<Block> active_befouling_ash_trail = SPECIALBLOCKS.register("active_befouling_ash_trail",
+			() -> new BlockActiveBefoulingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
+					.doesNotBlockMovement().zeroHardnessAndResistance()));
+	
+	
 	// Blocks
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
@@ -82,6 +94,9 @@ public class BlockInit {
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
 
 	// Idols
+	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
+			() -> new BlockHumaneIdol(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
 			() -> new BlockSerpentineIdol(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
@@ -115,6 +130,8 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.getCutoutMipped());
 			RenderTypeLookup.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(), RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.getCutoutMipped());
 			RenderTypeLookup.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());

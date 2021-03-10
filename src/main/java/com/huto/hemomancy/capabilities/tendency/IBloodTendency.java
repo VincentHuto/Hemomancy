@@ -8,9 +8,9 @@ public interface IBloodTendency {
 
 	public void setTendency(Map<EnumBloodTendency, Float> Tendency);
 
-	public void setTendencyTendency(EnumBloodTendency tendencyIn, float value);
+	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value);
 
-	public float getTendencyByTendency(EnumBloodTendency tendencyIn);
+	public float getAlignmentByTendency(EnumBloodTendency tendencyIn);
 
 	public EnumBloodTendency getOpposingTendency(EnumBloodTendency tendencyIn);
 }

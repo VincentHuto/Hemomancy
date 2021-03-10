@@ -1,12 +1,16 @@
 package com.huto.hemomancy.network;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
+import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
+import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.data.GlowParticleData;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -46,6 +50,7 @@ public class PacketGroundBloodDraw {
 			if (!player.world.isRemote) {
 				float pTic = message.parTick;
 				if (player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
+					IBloodVolume bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
 					ServerWorld sWorld = (ServerWorld) player.world;
 					RayTraceResult trace = player.pick(6, pTic, false);
 
@@ -86,6 +91,21 @@ public class PacketGroundBloodDraw {
 								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
+								sWorld.setBlockState(bHit.getPos(),
+										BlockInit.active_smouldering_ash_trail.get().getDefaultState());
+								bloodVol.subtractBloodVolume(25);
+
+
+							}
+							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.active_smouldering_ash_trail
+									.get()) {
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 100, 0)),
+										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
+										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
+										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
+
 							}
 
 							if (player.getHeldItemOffhand().getItem() == BlockInit.befouling_ash_trail.get().asItem()) {
@@ -112,11 +132,24 @@ public class PacketGroundBloodDraw {
 								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
+								sWorld.setBlockState(bHit.getPos(),
+										BlockInit.active_befouling_ash_trail.get().getDefaultState());
+								bloodVol.subtractBloodVolume(25);
+							}
+							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.active_befouling_ash_trail
+									.get()) {
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 255, 0)),
+										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
+										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
+								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
+										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 							}
 
-							if (sWorld.getBlockState(bHit.getPos()).getBlock() != BlockInit.befouling_ash_trail.get()
-									&& sWorld.getBlockState(bHit.getPos()).getBlock() != BlockInit.smouldering_ash_trail
-											.get()) {
+							Block[] bannedBlocks = { BlockInit.befouling_ash_trail.get(),
+									BlockInit.smouldering_ash_trail.get(), BlockInit.active_befouling_ash_trail.get(),
+									BlockInit.active_smouldering_ash_trail.get() };
+							if (!Arrays.asList(bannedBlocks).contains(sWorld.getBlockState(bHit.getPos()).getBlock())) {
 								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
@@ -135,7 +168,6 @@ public class PacketGroundBloodDraw {
 								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 255, 255)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								
 								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 15, 0, 0, 0, 0.015f);
