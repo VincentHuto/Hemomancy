@@ -5,7 +5,7 @@ import java.util.Random;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleLine;
-import com.huto.hemomancy.particle.ParticleUtil;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;

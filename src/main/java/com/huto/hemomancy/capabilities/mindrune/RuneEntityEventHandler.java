@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.SyncPacket;
+import com.huto.hemomancy.network.PacketRuneSync;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
@@ -83,7 +83,7 @@ public class RuneEntityEventHandler {
     }
 
     public static void syncSlot(PlayerEntity player, byte slot, ItemStack stack, Collection<? extends PlayerEntity> receivers) {
-        SyncPacket pkt = new SyncPacket(player.getEntityId(), slot, stack);
+        PacketRuneSync pkt = new PacketRuneSync(player.getEntityId(), slot, stack);
         for (PlayerEntity receiver : receivers) {
             PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) receiver), pkt);
         }

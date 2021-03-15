@@ -1,27 +1,27 @@
 package com.huto.hemomancy.item;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
+import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
+import com.huto.hemomancy.init.ManipulationInit;
+import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.particle.ParticleUtil;
+import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
 import com.huto.hemomancy.render.item.RenderParticleItem;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemParticleItem extends Item {
 
@@ -33,27 +33,27 @@ public class ItemParticleItem extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if (playerIn.world.isRemote) {
-			return new ActionResult<>(ActionResultType.SUCCESS, stack);
+		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(NullPointerException::new);
+		List<BloodManipulation> knownList = known.getKnownManips();
+
+		if (!worldIn.isRemote) {
+			if (!playerIn.isSneaking()) {
+				knownList.add(ManipulationInit.blood_rush);
+				PacketHandler.CHANNELKNOWNMANIPS.send(
+						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+						new PacketKnownManipulationServer(knownList));
+				System.out.println(knownList.toString());
+
+			} else {
+				knownList.add(ManipulationInit.blood_shot);
+				 //knownList.clear();
+				PacketHandler.CHANNELKNOWNMANIPS.send(
+						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+						new PacketKnownManipulationServer(knownList));
+			}
 		}
 
-		List<MobEntity> targets = playerIn.world
-				.getEntitiesWithinAABB(MobEntity.class, playerIn.getBoundingBox().grow(5.0)).stream()
-				.filter(e -> e.canEntityBeSeen((Entity) playerIn)).collect(Collectors.toList());
-		if (targets.size() <= 0) {
-			return new ActionResult<>(ActionResultType.PASS, stack);
-		}
-		for (int i = 0; i < targets.size(); ++i) {
-			MobEntity target = targets.get(i);
-			Vector3d translation = new Vector3d(0.0, 1, 0);
-			Vector3d speedVec = new Vector3d(target.getPosition().getX(),
-					(float) target.getPosition().getY() + target.getHeight() / 2.0f, target.getPosition().getZ());
-			PacketHandler.sendLightningSpawn(playerIn.getPositionVec().add(translation), speedVec, 64.0f,
-					(RegistryKey<World>) playerIn.world.getDimensionKey(), ParticleUtil.RED, 2, 10, 9, 0.2f);
-
-			target.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) playerIn), 5.0f);
-
-		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
 

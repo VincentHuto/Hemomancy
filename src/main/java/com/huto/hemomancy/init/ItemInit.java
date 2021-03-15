@@ -45,14 +45,15 @@ import com.huto.hemomancy.item.rune.pattern.ItemRunePatternRadianceContract;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePatternRapture;
 import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
-import com.huto.hemomancy.item.tool.ItemBloodBolt;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemIronRod;
 import com.huto.hemomancy.item.tool.ItemKnapper;
-import com.huto.hemomancy.item.tool.ItemLivingCrossbow;
-import com.huto.hemomancy.item.tool.ItemLivingGrasp;
-import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemBaghnakh;
+import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
+import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
+import com.huto.hemomancy.item.tool.living.ItemLivingGrasp;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -109,6 +110,16 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
+	// Baghnakh
+	public static final RegistryObject<Item> living_baghnakh = HANDHELDITEMS.register("living_baghnakh",
+			() -> new ItemBaghnakh(25f, 1, 0, ItemTier.NETHERITE, new Item.Properties().group(HemomancyItemGroup.instance)));
+	// Crossbow
+	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
+			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance)));
+
+	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
+			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
 			() -> new ItemMorphlingPolyp(new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -151,9 +162,7 @@ public class ItemInit {
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	
-	
+
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
 			() -> new BlockNamedItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
@@ -224,14 +233,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
 			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlotType.FEET,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
-	
-	
-	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
-			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
-	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
-			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
 
 	// Runes
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
@@ -239,7 +240,7 @@ public class ItemInit {
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> mind_spike = BASEITEMS.register("mind_spike",
 			() -> new ItemRune(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
-					EnumBloodTendency.DUCTILIS, 1)); 
+					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_blank = BASEITEMS.register("rune_blank",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
@@ -399,9 +400,9 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
 			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
 					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS.register("spawn_egg_chthonian_queen",
-			() -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
-					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
+			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841,
+					12235264, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
@@ -437,10 +438,10 @@ public class ItemInit {
 		ItemModelsProperties.registerProperty(ItemInit.living_crossbow.get(), new ResourceLocation("firework"),
 				(p_239424_0_, p_239424_1_, p_239424_2_) -> {
 					return p_239424_2_ != null && ItemLivingCrossbow.isCharged(p_239424_0_)
-							&& ItemLivingCrossbow.hasChargedProjectile(p_239424_0_, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
+							&& ItemLivingCrossbow.hasChargedProjectile(p_239424_0_, Items.FIREWORK_ROCKET) ? 1.0F
+									: 0.0F;
 				});
-		
-		
+
 		ItemModelsProperties.registerProperty(drudge_electrode.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
 				new IItemPropertyGetter() {
 					@Override

@@ -2,8 +2,8 @@ package com.huto.hemomancy.network;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.HitGlowParticleData;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;

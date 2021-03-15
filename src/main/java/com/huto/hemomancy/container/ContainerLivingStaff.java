@@ -1,7 +1,7 @@
 package com.huto.hemomancy.container;
 
 import com.huto.hemomancy.containers.slot.SlotMorphlingJar;
-import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 
 import net.minecraft.entity.player.PlayerEntity;

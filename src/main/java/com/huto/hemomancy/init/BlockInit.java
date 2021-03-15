@@ -5,6 +5,7 @@ import com.huto.hemomancy.block.BlockActiveBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockActiveSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockChiselStation;
+import com.huto.hemomancy.block.BlockCrimsonFlame;
 import com.huto.hemomancy.block.BlockDendriticDistributor;
 import com.huto.hemomancy.block.BlockMorphlingIncubator;
 import com.huto.hemomancy.block.BlockRuneModStation;
@@ -16,6 +17,7 @@ import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.GlassBlock;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.block.SoundType;
@@ -92,6 +94,8 @@ public class BlockInit {
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap", () -> new Block(
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
+	public static final RegistryObject<Block> crimson_flames = MODELEDBLOCKS.register("crimson_flames",
+			() -> new BlockCrimsonFlame(Block.Properties.from(Blocks.FIRE), 1.5f));
 
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
@@ -135,6 +139,7 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());
+			RenderTypeLookup.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.getTranslucent());
 
 		}
 	}

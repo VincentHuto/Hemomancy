@@ -4,6 +4,9 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolume;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeStorage;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
+import com.huto.hemomancy.capabilities.manipulation.KnownManipulationStorage;
+import com.huto.hemomancy.capabilities.manipulation.KnownManipulations;
 import com.huto.hemomancy.capabilities.mindrune.IRune;
 import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
 import com.huto.hemomancy.capabilities.mindrune.RuneCap.IRuneFactory;
@@ -29,6 +32,8 @@ public class CapabilityInit {
 		CapabilityManager.INSTANCE.register(IBloodTendency.class, new BloodTendencyStorage(), BloodTendency::new);
 		CapabilityManager.INSTANCE.register(IVascularSystem.class, new VascularSystemStorage(), VascularSystem::new);
 		CapabilityManager.INSTANCE.register(IBloodVolume.class, new BloodVolumeStorage(), BloodVolume::new);
+		CapabilityManager.INSTANCE.register(IKnownManipulations.class, new KnownManipulationStorage(),
+				KnownManipulations::new);
 		CapabilityManager.INSTANCE.register(IRune.class, new IRuneStorage(), new IRuneFactory());
 		CapabilityManager.INSTANCE.register(IRunesItemHandler.class, new IRunesItemHandlerStorage(),
 				new IRunesItemHandlerFactory());

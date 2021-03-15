@@ -6,7 +6,7 @@ import com.huto.hemomancy.entity.EntityIronPillar;
 import com.huto.hemomancy.entity.EntityIronSpike;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -57,7 +57,7 @@ public class ItemIronRod extends Item {
 							playerVolume.subtractBloodVolume(50f);
 							PacketHandler.CHANNELBLOODVOLUME.send(
 									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-									new BloodVolumePacketServer(playerVolume.getBloodVolume()));
+									new PacketBloodVolumeServer(playerVolume.getBloodVolume()));
 							playerentity.sendStatusMessage(
 									new StringTextComponent(
 											TextFormatting.YELLOW + "Abuse of Power does not come without consequence"),

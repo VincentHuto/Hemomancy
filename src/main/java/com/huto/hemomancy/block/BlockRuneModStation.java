@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
+import com.huto.hemomancy.network.capa.PacketOpenRunesInv;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 
 import net.minecraft.block.Block;
@@ -67,7 +67,7 @@ public class BlockRuneModStation extends Block implements ITileEntityProvider {
 			Hand handIn, BlockRayTraceResult result) {
 		if (!player.isSneaking()) {
 			if (worldIn.isRemote) {
-				PacketHandler.INSTANCE.sendToServer(new OpenRunesInvPacket());
+				PacketHandler.INSTANCE.sendToServer(new PacketOpenRunesInv());
 			}
 		} else {
 			if (!worldIn.isRemote) {

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 
+import com.huto.hemomancy.particle.util.Segment;
 import com.huto.hemomancy.util.Vector3;
 
 public class ParticleLightningStorage {

@@ -3,8 +3,8 @@ package com.huto.hemomancy.tile;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -57,7 +57,7 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 			Vector3d[] earth = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.1);
 			Vector3d[] mars = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.08);
 
-			Vector3d[] randomSwim = ParticleUtil.randomSwimming(globalPartCount, -world.getGameTime() * 0.005, 0.25,
+			Vector3d[] randomSwim = ParticleUtil.randomSwimming(globalPartCount, -world.getGameTime() * 0.005, 0,
 					false);
 
 			for (int i = 0; i < globalPartCount; i++) {

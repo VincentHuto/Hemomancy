@@ -70,6 +70,8 @@ public class ClientEventSubscriber {
 			GLFW.GLFW_KEY_LEFT_CONTROL, "key.Hemomancy.category");
 	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.Hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
 			"key.Hemomancy.category");
+	public static KeyBinding displayKnownManips = new KeyBinding("key.Hemomancy.displaymanips.desc", GLFW.GLFW_KEY_M,
+			"key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -78,7 +80,7 @@ public class ClientEventSubscriber {
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		forgeBus.addListener(RenderBloodLayer::renderWorld);
 		forgeBus.addListener(RenderBloodLayer::renderEntities);
-		
+
 		// Tiles
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.rune_mod_station.get(), RenderRuneModStation::new);
@@ -123,13 +125,12 @@ public class ClientEventSubscriber {
 		keyBinds.add(3, bloodDraw);
 		keyBinds.add(4, toggleMorphlingJarPickup);
 		keyBinds.add(5, toggleMorphlingOpenJar);
+		keyBinds.add(6, displayKnownManips);
 
-		ClientRegistry.registerKeyBinding(keyBinds.get(0));
-		ClientRegistry.registerKeyBinding(keyBinds.get(1));
-		ClientRegistry.registerKeyBinding(keyBinds.get(2));
-		ClientRegistry.registerKeyBinding(keyBinds.get(3));
-		ClientRegistry.registerKeyBinding(keyBinds.get(4));
-		ClientRegistry.registerKeyBinding(keyBinds.get(5));
+		for (KeyBinding bind : keyBinds) {
+			ClientRegistry.registerKeyBinding(bind);
+
+		}
 
 	}
 

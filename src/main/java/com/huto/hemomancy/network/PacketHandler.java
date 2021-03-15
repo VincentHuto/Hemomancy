@@ -5,18 +5,26 @@ import com.huto.hemomancy.model.animation.AnimationPacket;
 import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 import com.huto.hemomancy.network.binder.PacketOpenRuneBinder;
 import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
-import com.huto.hemomancy.network.capa.BloodTendencyPacketClient;
-import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
-import com.huto.hemomancy.network.capa.BloodVolumePacketClient;
-import com.huto.hemomancy.network.capa.BloodVolumePacketServer;
-import com.huto.hemomancy.network.capa.OpenNormalInvPacket;
-import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
-import com.huto.hemomancy.network.crafting.PacketBloodCraftingKeyPress;
-import com.huto.hemomancy.network.crafting.PacketBloodFormationKeyPress;
+import com.huto.hemomancy.network.capa.PacketBloodTendencyClient;
+import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeClient;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.huto.hemomancy.network.capa.PacketKnownManipulationClient;
+import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.huto.hemomancy.network.capa.PacketOpenNormalInv;
+import com.huto.hemomancy.network.capa.PacketOpenRunesInv;
+import com.huto.hemomancy.network.capa.PacketVascularSystemClient;
+import com.huto.hemomancy.network.capa.PacketVascularSystemServer;
 import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
 import com.huto.hemomancy.network.jar.PacketOpenJar;
 import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
+import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
+import com.huto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
+import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
+import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
+import com.huto.hemomancy.network.keybind.PacketDisplayKnownManips;
+import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.particle.ParticleColor;
 
 import net.minecraft.util.RegistryKey;
@@ -49,30 +57,45 @@ public class PacketHandler {
 			.named(new ResourceLocation(Hemomancy.MOD_ID, "animchannel"))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
+	
+	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
 
 		ANIMATIONS.messageBuilder(AnimationPacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
 				.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
 
-		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketClient.class,
-				BloodTendencyPacketClient::encode, BloodTendencyPacketClient::decode,
-				BloodTendencyPacketClient::handle);
-		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyPacketServer.class,
-				BloodTendencyPacketServer::encode, BloodTendencyPacketServer::decode,
-				BloodTendencyPacketServer::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
+				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,
+				PacketBloodTendencyClient::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyServer.class,
+				PacketBloodTendencyServer::encode, PacketBloodTendencyServer::decode,
+				PacketBloodTendencyServer::handle);
 
-		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemPacketClient.class,
-				VascularSystemPacketClient::encode, VascularSystemPacketClient::decode,
-				VascularSystemPacketClient::handle);
-		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemPacketServer.class,
-				VascularSystemPacketServer::encode, VascularSystemPacketServer::decode,
-				VascularSystemPacketServer::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketKnownManipulationClient.class,
+				PacketKnownManipulationClient::encode, PacketKnownManipulationClient::decode,
+				PacketKnownManipulationClient::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketKnownManipulationServer.class,
+				PacketKnownManipulationServer::encode, PacketKnownManipulationServer::decode,
+				PacketKnownManipulationServer::handle);
 
-		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketClient.class, BloodVolumePacketClient::encode,
-				BloodVolumePacketClient::decode, BloodVolumePacketClient::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumePacketServer.class, BloodVolumePacketServer::encode,
-				BloodVolumePacketServer::decode, BloodVolumePacketServer::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketDisplayKnownManips.class,
+				PacketDisplayKnownManips::encode, PacketDisplayKnownManips::decode,
+				PacketDisplayKnownManips::handle);
+		
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
+				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
+				PacketVascularSystemClient::handle);
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemServer.class,
+				PacketVascularSystemServer::encode, PacketVascularSystemServer::decode,
+				PacketVascularSystemServer::handle);
+
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodVolumeClient.class, PacketBloodVolumeClient::encode,
+				PacketBloodVolumeClient::decode, PacketBloodVolumeClient::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodVolumeServer.class, PacketBloodVolumeServer::encode,
+				PacketBloodVolumeServer::decode, PacketBloodVolumeServer::handle);
 		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodFormationKeyPress.class,
 				PacketBloodFormationKeyPress::encode, PacketBloodFormationKeyPress::decode,
 				PacketBloodFormationKeyPress::handle);
@@ -100,12 +123,12 @@ public class PacketHandler {
 				PacketUpdateLivingStaffMorph::decode, PacketUpdateLivingStaffMorph.Handler::handle);
 		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"),
 				() -> PROTOCOL_VERSION, s -> true, s -> true);
-		INSTANCE.registerMessage(networkID++, OpenRunesInvPacket.class, OpenRunesInvPacket::toBytes,
-				OpenRunesInvPacket::new, OpenRunesInvPacket::handle);
-		INSTANCE.registerMessage(networkID++, OpenNormalInvPacket.class, OpenNormalInvPacket::toBytes,
-				OpenNormalInvPacket::new, OpenNormalInvPacket::handle);
-		INSTANCE.registerMessage(networkID++, SyncPacket.class, SyncPacket::toBytes, SyncPacket::new,
-				SyncPacket::handle);
+		INSTANCE.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::toBytes,
+				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
+		INSTANCE.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::toBytes,
+				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
+		INSTANCE.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
+				PacketRuneSync::handle);
 
 	}
 
@@ -141,8 +164,8 @@ public class PacketHandler {
 		return MORPHLINGJAR;
 	}
 
-	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius,  RegistryKey<World> dimension,ParticleColor color, int speed,
-			int maxAge, int fract, float maxOff) {
+	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, RegistryKey<World> dimension,
+			ParticleColor color, int speed, int maxAge, int fract, float maxOff) {
 		PacketSpawnLightningParticle msg = new PacketSpawnLightningParticle(vec, speedVec, color, speed, maxAge, fract,
 				maxOff);
 		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR

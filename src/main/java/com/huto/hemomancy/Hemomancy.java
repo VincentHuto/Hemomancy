@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeEvents;
 import com.huto.hemomancy.capabilities.bloodvolume.RenderBloodLaserEvent;
+import com.huto.hemomancy.capabilities.manipulation.KnownManipulationEvents;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
 import com.huto.hemomancy.event.KeyBindEvents;
@@ -25,7 +26,7 @@ import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
-import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
@@ -111,6 +112,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
+		MinecraftForge.EVENT_BUS.register(KnownManipulationEvents.class);
 
 	}
 

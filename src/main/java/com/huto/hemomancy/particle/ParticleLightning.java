@@ -2,7 +2,7 @@
 package com.huto.hemomancy.particle;
 
 import com.huto.hemomancy.particle.data.ParticleLightningStorage;
-import com.huto.hemomancy.particle.data.Segment;
+import com.huto.hemomancy.particle.util.Segment;
 import com.huto.hemomancy.util.Vector3;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

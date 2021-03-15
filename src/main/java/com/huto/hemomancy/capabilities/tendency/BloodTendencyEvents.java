@@ -11,7 +11,7 @@ import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketEntityHitParticle;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
+import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
@@ -52,7 +52,7 @@ public class BloodTendencyEvents {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyPacketServer(BloodTendency));
+				new PacketBloodTendencyServer(BloodTendency));
 		player.sendStatusMessage(
 				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
@@ -63,7 +63,7 @@ public class BloodTendencyEvents {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyPacketServer(BloodTendency));
+				new PacketBloodTendencyServer(BloodTendency));
 		player.sendStatusMessage(
 				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
@@ -121,7 +121,7 @@ public class BloodTendencyEvents {
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-						new BloodTendencyPacketServer(tendency.getTendency()));
+						new PacketBloodTendencyServer(tendency.getTendency()));
 			}
 		}
 	}

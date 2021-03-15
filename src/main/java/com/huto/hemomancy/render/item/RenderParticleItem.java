@@ -2,10 +2,10 @@ package com.huto.hemomancy.render.item;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.ItemParticleItem;
-import com.huto.hemomancy.model.entity.armor.ModelBloodRightArm;
+import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.BloodCellParticleData;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -84,7 +84,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		}
 	}
 
-	ModelBloodRightArm model = new ModelBloodRightArm(1.0f);
+	ModelBloodArm model = new ModelBloodArm(1.0f);
 
 	private void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, HandSide side) {
 		Minecraft mc = Minecraft.getInstance();

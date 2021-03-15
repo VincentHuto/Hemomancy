@@ -4,10 +4,10 @@ package com.huto.hemomancy.render.layer;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemParticleItem;
-import com.huto.hemomancy.model.entity.armor.ModelBloodRightArm;
+import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.ParticleUtil;
 import com.huto.hemomancy.particle.data.BloodCellParticleData;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -42,7 +42,7 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entitylivingbaseIn,
 			float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-		ModelBloodRightArm model = new ModelBloodRightArm(0.25f);
+		ModelBloodArm model = new ModelBloodArm(0.25f);
 
 		if (entitylivingbaseIn.getActivePotionEffect(Effects.INVISIBILITY) != null) {
 			return;

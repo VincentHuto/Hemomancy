@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.ItemTome;
-import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.network.VanillaPacketDispatcher;
 
 import net.minecraft.entity.item.ItemEntity;

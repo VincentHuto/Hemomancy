@@ -6,6 +6,7 @@ import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
+import com.huto.hemomancy.font.ModTextFormatting;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -50,13 +51,19 @@ public class BloodManipulation {
 	/*
 	 * Reads a NBT tag and converts it to a manipulation
 	 */
-	public BloodManipulation deserialize(CompoundNBT nbt) {
+	public static BloodManipulation deserialize(CompoundNBT nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("tendency")) {
-				return new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"), nbt.getFloat("level"),
-						EnumManipulationRank.valueOf(nbt.getString("rank")),
+			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("tendency")
+					&& nbt.contains("rank") && nbt.contains("section")) {
+
+				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
+						nbt.getFloat("level"), EnumManipulationRank.valueOf(nbt.getString("rank")),
 						EnumBloodTendency.valueOf(nbt.getString("tendency")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
+
+				System.out.println(manip.getRank());
+
+				return manip;
 			}
 		}
 		return null;
@@ -79,6 +86,10 @@ public class BloodManipulation {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getProperName() {
+		return ModTextFormatting.convertInitToLang(name);
 	}
 
 	public void setName(String name) {
@@ -112,17 +123,17 @@ public class BloodManipulation {
 	public EnumManipulationRank getRank() {
 		return rank;
 	}
-	
+
 	public void setRank(EnumManipulationRank rank) {
 		this.rank = rank;
 	}
-	
+
 	public EnumVeinSections getSection() {
 		return section;
 	}
-	
+
 	public void setSection(EnumVeinSections section) {
 		this.section = section;
 	}
-	
+
 }

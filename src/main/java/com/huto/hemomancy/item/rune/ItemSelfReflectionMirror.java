@@ -1,7 +1,7 @@
 package com.huto.hemomancy.item.rune;
 
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.OpenRunesInvPacket;
+import com.huto.hemomancy.network.capa.PacketOpenRunesInv;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -19,7 +19,7 @@ public class ItemSelfReflectionMirror extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		if (worldIn.isRemote) {
-			PacketHandler.INSTANCE.sendToServer(new OpenRunesInvPacket());
+			PacketHandler.INSTANCE.sendToServer(new PacketOpenRunesInv());
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}

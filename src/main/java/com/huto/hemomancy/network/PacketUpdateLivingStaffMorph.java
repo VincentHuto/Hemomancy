@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
-import com.huto.hemomancy.item.tool.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
 

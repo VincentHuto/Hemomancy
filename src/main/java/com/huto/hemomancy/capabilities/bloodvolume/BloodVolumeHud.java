@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import org.lwjgl.opengl.GL11;
 
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.BloodVolumePacketClient;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeClient;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
@@ -44,7 +44,7 @@ public class BloodVolumeHud extends Screen {
 			IBloodVolume bloodCap = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalArgumentException::new);
 			if (bloodCap != null) {
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumePacketClient());
+				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodVolumeClient());
 				bloodVolume = bloodCap.getBloodVolume();
 				String m = String.valueOf(bloodVolume);
 				DecimalFormat d = new DecimalFormat("0.0");

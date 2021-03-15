@@ -9,7 +9,7 @@ import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.BloodTendencyPacketServer;
+import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -46,7 +46,7 @@ public class ItemRune extends Item implements IRune {
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
-							new BloodTendencyPacketServer(coven.getTendency()));
+							new PacketBloodTendencyServer(coven.getTendency()));
 				}
 			}
 		}
@@ -63,7 +63,7 @@ public class ItemRune extends Item implements IRune {
 					PlayerEntity playerEnt = (PlayerEntity) player;
 					PacketHandler.CHANNELBLOODTENDENCY.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEnt),
-							new BloodTendencyPacketServer(coven.getTendency()));
+							new PacketBloodTendencyServer(coven.getTendency()));
 				}
 			}
 		}
