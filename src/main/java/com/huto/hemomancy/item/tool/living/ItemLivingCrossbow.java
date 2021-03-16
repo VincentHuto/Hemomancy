@@ -52,7 +52,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 	private boolean isLoadingMiddle = false;
 
 	public ItemLivingCrossbow(Item.Properties propertiesIn) {
-		super(propertiesIn.maxStackSize(1));
+		super(propertiesIn.maxStackSize(1).maxDamage(2048));
 	}
 
 	public Predicate<ItemStack> getAmmoPredicate() {

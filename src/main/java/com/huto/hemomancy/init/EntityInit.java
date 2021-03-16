@@ -3,6 +3,7 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.EntityIronPillar;
 import com.huto.hemomancy.entity.EntityIronSpike;
+import com.huto.hemomancy.entity.EntityIronWall;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
@@ -57,10 +58,12 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityChthonian>> chthonian = ENTITY_TYPES.register("chthonian",
 			() -> EntityType.Builder.<EntityChthonian>create(EntityChthonian::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
-	public static final RegistryObject<EntityType<EntityChthonianQueen>> chthonian_queen = ENTITY_TYPES.register("chthonian_queen",
-			() -> EntityType.Builder.<EntityChthonianQueen>create(EntityChthonianQueen::new, EntityClassification.MONSTER)
-					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
-	
+	public static final RegistryObject<EntityType<EntityChthonianQueen>> chthonian_queen = ENTITY_TYPES.register(
+			"chthonian_queen",
+			() -> EntityType.Builder
+					.<EntityChthonianQueen>create(EntityChthonianQueen::new, EntityClassification.MONSTER).size(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
+
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
 			"directed_blood_orb",
@@ -92,6 +95,10 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityIronPillar>create(EntityIronPillar::new, EntityClassification.MISC)
 					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
 
+	public static final RegistryObject<EntityType<EntityIronWall>> iron_wall = ENTITY_TYPES.register("iron_wall",
+			() -> EntityType.Builder.<EntityIronWall>create(EntityIronWall::new, EntityClassification.MISC)
+					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_wall").toString()));
+
 	public static final RegistryObject<EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register("iron_spike",
 			() -> EntityType.Builder.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
 					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
@@ -101,13 +108,11 @@ public class EntityInit {
 			() -> EntityType.Builder
 					.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
 					.size(0.25F, 0.25F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
-	
-	public static final RegistryObject<EntityType<EntityBloodBolt>> blood_bolt = ENTITY_TYPES.register(
-			"blood_bolt",
+
+	public static final RegistryObject<EntityType<EntityBloodBolt>> blood_bolt = ENTITY_TYPES.register("blood_bolt",
 			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).func_233608_b_(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
-	
 
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {
@@ -117,6 +122,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.fungling.get(), EntityFungling.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.thirster.get(), EntityThirster.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().create());

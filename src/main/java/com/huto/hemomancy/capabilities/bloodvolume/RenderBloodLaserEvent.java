@@ -3,6 +3,7 @@ package com.huto.hemomancy.capabilities.bloodvolume;
 import java.util.List;
 
 import com.huto.hemomancy.render.layer.HandParticleLayer;
+import com.huto.hemomancy.render.layer.LivingBladeRenderLayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
@@ -22,6 +23,7 @@ public class RenderBloodLaserEvent {
 	}
 
 	private static boolean addedSpellLayer = false;
+	private static boolean addedSwordLayer = false;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@SubscribeEvent
@@ -30,6 +32,11 @@ public class RenderBloodLaserEvent {
 			event.getRenderer().addLayer(new HandParticleLayer(event.getRenderer()));
 			addedSpellLayer = true;
 		}
+		if (!addedSwordLayer) {
+			event.getRenderer().addLayer(new LivingBladeRenderLayer(event.getRenderer()));
+			addedSwordLayer = true;
+		}
+
 	}
 
 }

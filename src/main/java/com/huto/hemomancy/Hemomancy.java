@@ -26,6 +26,7 @@ import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
+import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
@@ -193,6 +194,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
+		
 		this.addLayers();
 
 	}
@@ -213,12 +215,28 @@ public class Hemomancy {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@OnlyIn(Dist.CLIENT)
 	private void addLayers() {
+		
 		Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
 		PlayerRenderer render;
 		render = skinMap.get("default");
 		render.addLayer(new RunesRenderLayer(render));
 		render = skinMap.get("slim");
 		render.addLayer(new RunesRenderLayer(render));
+
+	}
+
+	public static ItemStack findLivingBlade(PlayerEntity player) {
+		if (player.getHeldItemMainhand().getItem() instanceof ItemLivingBlade)
+			return player.getHeldItemMainhand();
+		if (player.getHeldItemOffhand().getItem() instanceof ItemLivingBlade)
+			return player.getHeldItemOffhand();
+		PlayerInventory inventory = player.inventory;
+		for (int i = 0; i <= 35; i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
+			if (stack.getItem() instanceof ItemLivingBlade)
+				return stack;
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public static ItemStack findRuneBinder(PlayerEntity player) {

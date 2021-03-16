@@ -16,13 +16,13 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 
-public class ItemBaghnakh extends ToolItem implements IVanishable {
+public class ItemLivingBlade extends ToolItem implements IVanishable {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private float speed;
 
-	public ItemBaghnakh(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
+	public ItemLivingBlade(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
 			Properties builderIn) {
-		super(attackDamageIn, -2.0f, tier, EFFECTIVE_ON, builderIn);
+		super(attackDamageIn, -2.3f, tier, EFFECTIVE_ON, builderIn);
 	}
 
 	@Override

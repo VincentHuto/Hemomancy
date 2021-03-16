@@ -20,18 +20,24 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
-public class EntityIronSpike extends CreatureEntity implements IBloodConstruct  {
+public class EntityIronWall extends CreatureEntity implements IBloodConstruct {
 	public float deathTicks = 1;
 
-	public EntityIronSpike(EntityType<? extends EntityIronSpike> type, World worldIn) {
+	public EntityIronWall(EntityType<? extends EntityIronWall> type, World worldIn) {
 		super(type, worldIn);
 
+	}
+
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
 	}
 
 	@Override
@@ -95,7 +101,6 @@ public class EntityIronSpike extends CreatureEntity implements IBloodConstruct  
 			this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) f,
 					this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
 		}
-
 		if (this.ticksExisted > 2 && this.ticksExisted < 120) {
 			for (int i = 0; i < 2; i++) {
 				this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosX() + (double) f * 0.5,
@@ -139,20 +144,30 @@ public class EntityIronSpike extends CreatureEntity implements IBloodConstruct  
 
 	@Override
 	public void onCollideWithPlayer(PlayerEntity entityIn) {
-		entityIn.attackEntityFrom(DamageSource.GENERIC, 3.5f);
+		super.onCollideWithPlayer(entityIn);
+		Vector3d p = new Vector3d(getPosX() + 0.5, getPosY(), getPosZ() + 0.5);
+		Vector3d t = new Vector3d(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
+		double distance = p.distanceTo(t) + 0.1D;
+		Vector3d r = new Vector3d(t.x - p.x, t.y - p.y, t.z - p.z);
+		entityIn.setMotion(r.x * 2 / distance, r.y * 2 / distance, r.z * 2 / distance);
+	}
+
+	@Override
+	protected void collideWithEntity(Entity entityIn) {
+		super.collideWithEntity(entityIn);
+		if (!(entityIn instanceof EntityIronWall) && !(entityIn instanceof PlayerEntity)) {
+			Vector3d p = new Vector3d(getPosX() + 0.5, getPosY(), getPosZ() + 0.5);
+			Vector3d t = new Vector3d(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
+			double distance = p.distanceTo(t) + 0.1D;
+			Vector3d r = new Vector3d(t.x - p.x, t.y - p.y, t.z - p.z);
+			entityIn.setMotion(r.x * 2 / distance, r.y * 2 / distance, r.z * 2 / distance);
+		}
 
 	}
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource source) {
 		return true;
-	}
-
-
-	@Override
-	protected void collideWithEntity(Entity entityIn) {
-		entityIn.attackEntityFrom(DamageSource.GENERIC, 3.5f);
-
 	}
 
 	@Override
@@ -165,7 +180,7 @@ public class EntityIronSpike extends CreatureEntity implements IBloodConstruct  
 		return LivingEntity.registerAttributes().createMutableAttribute(Attributes.FOLLOW_RANGE, 16.0D)
 				.createMutableAttribute(Attributes.ATTACK_KNOCKBACK)
 				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0f)
-				.createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 0);
+				.createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1000);
 	}
 
 	@Override

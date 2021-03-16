@@ -179,7 +179,6 @@ public class BlockCrimsonFlame extends Block {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
 		if (!entityIn.isImmuneToFire()) {

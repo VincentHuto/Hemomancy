@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
-public class EntityIronPillar extends CreatureEntity {
+public class EntityIronPillar extends CreatureEntity implements IBloodConstruct {
 	public float deathTicks = 1;
 
 	public EntityIronPillar(EntityType<? extends EntityIronPillar> type, World worldIn) {
@@ -47,12 +47,17 @@ public class EntityIronPillar extends CreatureEntity {
 	// Later implement a potion of dispelling that will remove them
 	@Override
 	public boolean canBeHitWithPotion() {
-		return super.canBeHitWithPotion();
+		return false;
 	}
 
 	@Override
 	public boolean canBeLeashedTo(PlayerEntity player) {
 		return false;
+	}
+
+	@Override
+	public boolean isInvulnerableTo(DamageSource source) {
+		return true;
 	}
 
 	@Override

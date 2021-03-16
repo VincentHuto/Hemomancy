@@ -17,6 +17,7 @@ import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.render.entity.RenderIronPillar;
 import com.huto.hemomancy.render.entity.RenderIronSpike;
+import com.huto.hemomancy.render.entity.RenderIronWall;
 import com.huto.hemomancy.render.entity.RenderLeech;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderChthonian;
@@ -100,6 +101,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.leech.get(), RenderLeech::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.iron_pillar.get(), RenderIronPillar::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.iron_spike.get(), RenderIronSpike::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.iron_wall.get(), RenderIronWall::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.fargone.get(), RenderFargone::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.thirster.get(), RenderThirster::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.drudge.get(), RenderDrudge::new);
