@@ -57,7 +57,7 @@ public class RenderRuneModStation extends TileEntityRenderer<TileEntityRuneModSt
 			matrixStackIn.translate(0.025F, -0.3F, 0.025F);
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90f));
 			// Edit Radius Movement
-			matrixStackIn.translate(0D, 0.175D +  0* 0.55, 0F);
+			matrixStackIn.translate(0D, 0.175D + 0 * 0.55, 0F);
 			// Block/Item Scale
 			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 			matrixStackIn.scale(0.25f, 0.25f, 0.25f);

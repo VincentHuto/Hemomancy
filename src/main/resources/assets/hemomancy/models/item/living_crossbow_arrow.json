@@ -1,7 +1,7 @@
 {
   "credit" : "Made with Blockbench",
   "textures" : {
-    "5" : "hemomancy:block/bold_chiseled_tainted_iron_block",
+    "5" : "hemomancy:block/bold_chiseled_hematic_iron_block",
     "8" : "hemomancy:entity/blood_bolt/model_blood_bolt",
     "11" : "hemomancy:block/sanguine_pane",
     "12" : "hemomancy:block/sanguine_tran_pane",

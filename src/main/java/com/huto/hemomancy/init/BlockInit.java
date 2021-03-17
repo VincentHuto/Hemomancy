@@ -58,15 +58,14 @@ public class BlockInit {
 	public static final RegistryObject<Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
 			() -> new BlockBefoulingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
 					.doesNotBlockMovement().zeroHardnessAndResistance()));
-	
-	public static final RegistryObject<Block> active_smouldering_ash_trail = SPECIALBLOCKS.register("active_smouldering_ash_trail",
-			() -> new BlockActiveSmoulderingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
-					.doesNotBlockMovement().zeroHardnessAndResistance()));
-	public static final RegistryObject<Block> active_befouling_ash_trail = SPECIALBLOCKS.register("active_befouling_ash_trail",
-			() -> new BlockActiveBefoulingAshTrail(AbstractBlock.Properties.create(Material.MISCELLANEOUS)
-					.doesNotBlockMovement().zeroHardnessAndResistance()));
-	
-	
+
+	public static final RegistryObject<Block> active_smouldering_ash_trail = SPECIALBLOCKS
+			.register("active_smouldering_ash_trail", () -> new BlockActiveSmoulderingAshTrail(AbstractBlock.Properties
+					.create(Material.MISCELLANEOUS).doesNotBlockMovement().zeroHardnessAndResistance()));
+	public static final RegistryObject<Block> active_befouling_ash_trail = SPECIALBLOCKS
+			.register("active_befouling_ash_trail", () -> new BlockActiveBefoulingAshTrail(AbstractBlock.Properties
+					.create(Material.MISCELLANEOUS).doesNotBlockMovement().zeroHardnessAndResistance()));
+
 	// Blocks
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
@@ -83,11 +82,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> conscious_mass = BASEBLOCKS.register("conscious_mass",
 			() -> new Block(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.PINK)
 					.sound(SoundType.WART).hardnessAndResistance(0.2F, 1.0F)));
-	public static final RegistryObject<Block> tainted_iron_block = BASEBLOCKS.register("tainted_iron_block",
+	public static final RegistryObject<Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
-	public static final RegistryObject<Block> chiseled_tainted_iron_block = BASEBLOCKS.register(
-			"chiseled_tainted_iron_block",
+	public static final RegistryObject<Block> chiseled_hematic_iron_block = BASEBLOCKS.register(
+			"chiseled_hematic_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem", () -> new Block(

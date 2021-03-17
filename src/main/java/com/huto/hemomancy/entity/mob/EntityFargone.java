@@ -32,7 +32,6 @@ public class EntityFargone extends MonsterEntity {
 
 	}
 
-
 	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
@@ -43,7 +42,6 @@ public class EntityFargone extends MonsterEntity {
 		super.registerData();
 
 	}
-
 
 	@Nullable
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
@@ -94,20 +92,21 @@ public class EntityFargone extends MonsterEntity {
 	@Override
 	public void onCollideWithPlayer(PlayerEntity entityIn) {
 		super.onCollideWithPlayer(entityIn);
-	//	entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
 
 	}
 
 	@Override
 	protected void collideWithEntity(Entity entityIn) {
 		super.collideWithEntity(entityIn);
-		/*if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof EntityBeastFromBeyond)) {
-			entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-		}
-*/
+		/*
+		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
+		 * EntityBeastFromBeyond)) {
+		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
+		 */
 	}
 
-	@Override  
+	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(10, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 		this.goalSelector.addGoal(10, new LookRandomlyGoal(this));

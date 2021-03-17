@@ -32,7 +32,6 @@ public class EntityThirster extends MonsterEntity {
 
 	}
 
-
 	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
@@ -43,7 +42,6 @@ public class EntityThirster extends MonsterEntity {
 		super.registerData();
 
 	}
-
 
 	@Nullable
 	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason,
@@ -94,17 +92,18 @@ public class EntityThirster extends MonsterEntity {
 	@Override
 	public void onCollideWithPlayer(PlayerEntity entityIn) {
 		super.onCollideWithPlayer(entityIn);
-	//	entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
 
 	}
 
 	@Override
 	protected void collideWithEntity(Entity entityIn) {
 		super.collideWithEntity(entityIn);
-		/*if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof EntityBeastFromBeyond)) {
-			entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-		}
-*/
+		/*
+		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
+		 * EntityBeastFromBeyond)) {
+		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
+		 */
 	}
 
 	@Override

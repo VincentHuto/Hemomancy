@@ -51,7 +51,8 @@ public class PacketGroundBloodDraw {
 			if (!player.world.isRemote) {
 				float pTic = message.parTick;
 				if (player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
-					IBloodVolume bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
+					IBloodVolume bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+							.orElseThrow(NullPointerException::new);
 					ServerWorld sWorld = (ServerWorld) player.world;
 					RayTraceResult trace = player.pick(6, pTic, false);
 
@@ -95,7 +96,6 @@ public class PacketGroundBloodDraw {
 								sWorld.setBlockState(bHit.getPos(),
 										BlockInit.active_smouldering_ash_trail.get().getDefaultState());
 								bloodVol.subtractBloodVolume(25);
-
 
 							}
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.active_smouldering_ash_trail

@@ -8,13 +8,11 @@ import com.huto.hemomancy.recipes.RecipeChiselStation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 
-public class ItemRunePatternCorruptionContract extends ItemRunePattern  {
-
+public class ItemRunePatternCorruptionContract extends ItemRunePattern {
 
 	public ItemRunePatternCorruptionContract(Properties prop, String textIn) {
 		super(prop, textIn);
 	}
-
 
 	@Override
 	public Rarity getRarity(ItemStack par1ItemStack) {
@@ -25,6 +23,7 @@ public class ItemRunePatternCorruptionContract extends ItemRunePattern  {
 	public RecipeChiselStation getRecipe() {
 		return ModChiselRecipes.recipeCorruptionContract;
 	}
+
 	@Override
 
 	public GuiRunePattern getPatternGui() {

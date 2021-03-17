@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3i;
 
-
 //From Chisel and Bits
 public class BitLocation {
 	private static final double One32nd = 0.5 / 16;

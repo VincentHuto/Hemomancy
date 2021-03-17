@@ -79,21 +79,18 @@ public class ContainerChiselStation extends Container {
 		super.detectAndSendChanges();
 	}
 
-	
 	@Override
 	public void putStackInSlot(int slotID, ItemStack stack) {
 		te.sendUpdates();
 		super.putStackInSlot(slotID, stack);
 	}
-	
+
 	@Override
 	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
 		te.sendUpdates();
 		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}
 
-	
-	
 	@Override
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
 		ItemStack stack = ItemStack.EMPTY;

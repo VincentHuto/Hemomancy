@@ -60,7 +60,8 @@ public class PlayerExpandedContainer extends Container {
 
 		for (int k = 0; k < 4; ++k) {
 			final EquipmentSlotType equipmentslottype = VALID_EQUIPMENT_SLOTS[k];
-			this.addSlot(new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, equipmentslottype, this.player));
+			this.addSlot(
+					new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, equipmentslottype, this.player));
 		}
 
 		this.addSlot(new SlotContractRune(player, runes, 0, 78, 8));

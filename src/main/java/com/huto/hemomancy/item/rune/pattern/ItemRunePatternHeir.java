@@ -8,7 +8,7 @@ import com.huto.hemomancy.recipes.RecipeChiselStation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 
-public class ItemRunePatternHeir extends ItemRunePattern  {
+public class ItemRunePatternHeir extends ItemRunePattern {
 
 	public ItemRunePatternHeir(Properties prop, String textIn) {
 		super(prop, textIn);

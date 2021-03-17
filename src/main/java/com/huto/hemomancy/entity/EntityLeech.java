@@ -1,4 +1,4 @@
- package com.huto.hemomancy.entity;
+package com.huto.hemomancy.entity;
 
 import java.util.Map;
 
@@ -143,26 +143,23 @@ public class EntityLeech extends AnimalEntity {
 		return 0.2F;
 	}
 
-	/*public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
-		ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
-		if (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
-			p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
-			ItemStack itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
-					ItemInit.bucket_leech.get().getDefaultInstance());
-			p_230254_1_.setHeldItem(p_230254_2_, itemstack1);
-			this.remove();
-			float f = (this.rand.nextFloat() - 0.5F) * 2.0F;
-			float f1 = -1;
-			float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
-			this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-					this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D);
-
-			return ActionResultType.func_233537_a_(this.world.isRemote);
-		} else {
-			return super.func_230254_b_(p_230254_1_, p_230254_2_);
-		}
-	}
-*/
+	/*
+	 * public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand
+	 * p_230254_2_) { ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_); if
+	 * (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
+	 * p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F); ItemStack
+	 * itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
+	 * ItemInit.bucket_leech.get().getDefaultInstance());
+	 * p_230254_1_.setHeldItem(p_230254_2_, itemstack1); this.remove(); float f =
+	 * (this.rand.nextFloat() - 0.5F) * 2.0F; float f1 = -1; float f2 =
+	 * (this.rand.nextFloat() - 0.5F) * 2.0F;
+	 * this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f,
+	 * this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
+	 * 0.0D, 0.0D);
+	 * 
+	 * return ActionResultType.func_233537_a_(this.world.isRemote); } else { return
+	 * super.func_230254_b_(p_230254_1_, p_230254_2_); } }
+	 */
 	@Override
 	public EntityLeech func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		EntityLeech catentity = EntityInit.leech.get().create(p_241840_1_);

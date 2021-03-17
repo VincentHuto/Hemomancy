@@ -26,12 +26,15 @@ public class BloodCraftingBundledPattern {
 		this.symbolList = symbolList;
 		this.patternArray = patternArray;
 	}
+
 	public BlockPattern getBlockPattern() {
 		return pattern;
 	}
+
 	public void setPattern(BlockPattern pattern) {
 		this.pattern = pattern;
 	}
+
 	public HashMap<Character, Block> getSymbolList() {
 		return symbolList;
 	}
@@ -39,6 +42,7 @@ public class BloodCraftingBundledPattern {
 	public String[][] getPatternArray() {
 		return patternArray;
 	}
+
 	public List<BlockPos> getRelativeBlockPosList() {
 		List<BlockPos> blockList = new ArrayList<>();
 		for (int T = 0; T < patternArray.length; T++) {
@@ -93,13 +97,11 @@ public class BloodCraftingBundledPattern {
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < currentAisle[i].toCharArray().length; j++) {
 					String coords = "(X:" + j + ",Y:" + (height - i - 1) + ",Z:" + T + ")";
-				System.out.print(coords + ": " + symbolList.get(currentAisle[i].toCharArray()[j]) + "\t");
+					System.out.print(coords + ": " + symbolList.get(currentAisle[i].toCharArray()[j]) + "\t");
 				}
 				System.out.println("");
 			}
 		}
 	}
-
-	
 
 }

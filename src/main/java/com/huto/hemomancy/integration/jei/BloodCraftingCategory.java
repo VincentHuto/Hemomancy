@@ -101,9 +101,9 @@ public class BloodCraftingCategory implements IRecipeCategory<BaseBloodCraftingR
 		GlStateManager.translatef((guiWidth / 2) + 130, (guiHeight / 2) + 45, 10);
 		RenderMultiBlock.renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern());
 		Minecraft.getInstance().fontRenderer.func_238418_a_(new StringTextComponent("Held Item"), -50,
-				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT)-22, 150, 0);
+				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT) - 22, 150, 0);
 		Minecraft.getInstance().fontRenderer.func_238418_a_(new StringTextComponent("Hit Block"), -50,
-				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT)+25, 150, 0);
+				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT) + 25, 150, 0);
 		GlStateManager.popMatrix();
 
 	}
@@ -111,8 +111,11 @@ public class BloodCraftingCategory implements IRecipeCategory<BaseBloodCraftingR
 	@Override
 	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BaseBloodCraftingRecipe recipe,
 			@Nonnull IIngredients ingredients) {
-	/*	recipeLayout.getItemStacks().init(0, true, 22, 0);
-		recipeLayout.getItemStacks().set(0, new ItemStack(ItemInit.sanguine_formation.get()));*/
+		/*
+		 * recipeLayout.getItemStacks().init(0, true, 22, 0);
+		 * recipeLayout.getItemStacks().set(0, new
+		 * ItemStack(ItemInit.sanguine_formation.get()));
+		 */
 		if (ingredients.getInputs(VanillaTypes.ITEM).size() > 1) {
 			recipeLayout.getItemStacks().init(1, true, 4, 30);
 			recipeLayout.getItemStacks().set(1, ingredients.getInputs(VanillaTypes.ITEM).get(0));

@@ -143,8 +143,9 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 				.add(new Vector3d((double) curMatrix.m03, (double) curMatrix.m13, (double) curMatrix.m23));
 		Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
 		int globalPartCount = 128;
-	//	RayTraceResult trace = player.pick(2, ClientEventSubscriber.getPartialTicks(), true);
-		//System.out.println(trace);
+		// RayTraceResult trace = player.pick(2,
+		// ClientEventSubscriber.getPartialTicks(), true);
+		// System.out.println(trace);
 		Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 		Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 		Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,

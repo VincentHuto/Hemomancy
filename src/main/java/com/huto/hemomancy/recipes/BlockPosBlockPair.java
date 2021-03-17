@@ -19,6 +19,7 @@ public class BlockPosBlockPair {
 	public BlockPos getPos() {
 		return pos;
 	}
+
 	@Override
 	public String toString() {
 		return block.toString() + "," + pos.toString();

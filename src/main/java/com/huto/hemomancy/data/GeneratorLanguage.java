@@ -20,10 +20,9 @@ public class GeneratorLanguage extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-		
-		
+
 		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
-		
+
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			addBlock(b, ModTextFormatting
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
@@ -64,13 +63,11 @@ public class GeneratorLanguage extends LanguageProvider {
 			addItem(i, ModTextFormatting
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
-		
+
 		for (RegistryObject<Effect> i : PotionInit.EFFECTS.getEntries()) {
-			
-			addEffect(() -> i.get(), "Blood Binding");
+
+			addEffect(() -> i.get(), ModTextFormatting.convertInitToLang(i.getId().getPath()));
 		}
-		
-		
-		
+
 	}
 }

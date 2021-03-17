@@ -23,21 +23,20 @@ public class GuiButtonTextured extends Button {
 	public static ITextComponent text;
 	public Button.IPressable action;
 
-	
 	/***
 	 * 
-	 * @param texIn Texture Location
-	 * @param idIn	Button Id
-	 * @param posXIn Screen X
-	 * @param posYIn Screen Y
-	 * @param buttonWidthIn Button Size Width
+	 * @param texIn          Texture Location
+	 * @param idIn           Button Id
+	 * @param posXIn         Screen X
+	 * @param posYIn         Screen Y
+	 * @param buttonWidthIn  Button Size Width
 	 * @param buttonHeightIn Button Size Height
-	 * @param uIn Texture X Loc
-	 * @param vIn Texture Y Loc
-	 * @param tooltip Hover Tooltip
-	 * @param actionIn On Pressed Action
+	 * @param uIn            Texture X Loc
+	 * @param vIn            Texture Y Loc
+	 * @param tooltip        Hover Tooltip
+	 * @param actionIn       On Pressed Action
 	 */
-	
+
 	public GuiButtonTextured(ResourceLocation texIn, int idIn, int posXIn, int posYIn, int buttonWidthIn,
 			int buttonHeightIn, int uIn, int vIn, Button.ITooltip tooltip, Button.IPressable actionIn) {
 		super(posXIn, posYIn, buttonHeightIn, buttonWidthIn, text, actionIn, tooltip);

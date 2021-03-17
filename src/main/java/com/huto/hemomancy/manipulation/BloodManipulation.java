@@ -61,8 +61,6 @@ public class BloodManipulation {
 						EnumBloodTendency.valueOf(nbt.getString("tendency")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
 
-				System.out.println(manip.getRank());
-
 				return manip;
 			}
 		}
@@ -80,7 +78,6 @@ public class BloodManipulation {
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
 		nbt.putString("section", section.name());
-
 		return nbt;
 	}
 

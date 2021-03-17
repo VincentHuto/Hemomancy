@@ -1,6 +1,6 @@
 package com.huto.hemomancy.model.entity;
 
-import com.huto.hemomancy.entity.EntityIronSpike;
+import com.huto.hemomancy.entity.iron.EntityIronSpike;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -45,12 +45,14 @@ public class ModelIronSpike extends EntityModel<EntityIronSpike> {
 	}
 
 	@Override
-	public void setRotationAngles(EntityIronSpike entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
+	public void setRotationAngles(EntityIronSpike entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+			float netHeadYaw, float headPitch) {
+		// previously the render function, render code was moved to a method below
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red,
+			float green, float blue, float alpha) {
 		pillar.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 

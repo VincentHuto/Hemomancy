@@ -188,39 +188,39 @@ public class TendencyBookLib {
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(FERRIC_PAGE_6)));
 		FerricPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.FERRIC, "Vital Essence", "The Power of Vitals",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(FERRIC_PAGE_7)));
-		
+
 		// Lux
-		LuxPageList
-				.add(new GuiTendencyPage(1, EnumTendencyCatagories.LUX, "In the Begining", "It Started Somewhere",
-						new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_1)));
-		LuxPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.LUX, "Duality of Nature",
-				"Yin and Yang", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_2)));
+		LuxPageList.add(new GuiTendencyPage(1, EnumTendencyCatagories.LUX, "In the Begining", "It Started Somewhere",
+				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_1)));
+		LuxPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.LUX, "Duality of Nature", "Yin and Yang",
+				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_2)));
 		LuxPageList.add(new GuiTendencyPage(3, EnumTendencyCatagories.LUX, "Vibes", "Cosmic Vibrations",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_3)));
-		LuxPageList.add(new GuiTendencyPage(4, EnumTendencyCatagories.LUX, "A World of Essence",
-				"Only the Essentials", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_4)));
-		LuxPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.LUX, "Channeling Basics",
-				"Use the Force", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_5)));
+		LuxPageList.add(new GuiTendencyPage(4, EnumTendencyCatagories.LUX, "A World of Essence", "Only the Essentials",
+				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_4)));
+		LuxPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.LUX, "Channeling Basics", "Use the Force",
+				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_5)));
 		LuxPageList.add(new GuiTendencyPage(6, EnumTendencyCatagories.LUX, "Nullification", "Counter Attack",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_6)));
-		LuxPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.LUX, "Vital Essence",
-				"The Power of Vitals", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_7)));
+		LuxPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.LUX, "Vital Essence", "The Power of Vitals",
+				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(LUX_PAGE_7)));
 		// Tenebris
-		TenebrisPageList.add(new GuiTendencyPage(1, EnumTendencyCatagories.TENEBRIS, "In the Begining",
-				"It Started Somewhere", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_1)));
-		TenebrisPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.TENEBRIS, "Duality of Nature", "Yin and Yang",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_2)));
+		TenebrisPageList
+				.add(new GuiTendencyPage(1, EnumTendencyCatagories.TENEBRIS, "In the Begining", "It Started Somewhere",
+						new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_1)));
+		TenebrisPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.TENEBRIS, "Duality of Nature",
+				"Yin and Yang", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_2)));
 		TenebrisPageList.add(new GuiTendencyPage(3, EnumTendencyCatagories.TENEBRIS, "Vibes", "Cosmic Vibrations",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_3)));
 		TenebrisPageList.add(new GuiTendencyPage(4, EnumTendencyCatagories.TENEBRIS, "A World of Essence",
 				"Only the Essentials", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_4)));
-		TenebrisPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.TENEBRIS, "Channeling Basics", "Use the Force",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_5)));
+		TenebrisPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.TENEBRIS, "Channeling Basics",
+				"Use the Force", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_5)));
 		TenebrisPageList.add(new GuiTendencyPage(6, EnumTendencyCatagories.TENEBRIS, "Nullification", "Counter Attack",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_6)));
-		TenebrisPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.TENEBRIS, "Vital Essence", "The Power of Vitals",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_7)));
-		
+		TenebrisPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.TENEBRIS, "Vital Essence",
+				"The Power of Vitals", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(TENEBRIS_PAGE_7)));
+
 		// Flammeus
 		FlammeusPageList
 				.add(new GuiTendencyPage(1, EnumTendencyCatagories.FLAMMEUS, "In the Begining", "It Started Somewhere",
@@ -238,42 +238,23 @@ public class TendencyBookLib {
 		FlammeusPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.FLAMMEUS, "Vital Essence",
 				"The Power of Vitals", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(FLAMMEUS_PAGE_7)));
 		// Congeatio
-		CongeatioPageList.add(new GuiTendencyPage(1, EnumTendencyCatagories.CONGEATIO, "In the Begining",
-				"It Started Somewhere", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_1)));
-		CongeatioPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.CONGEATIO, "Duality of Nature", "Yin and Yang",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_2)));
+		CongeatioPageList
+				.add(new GuiTendencyPage(1, EnumTendencyCatagories.CONGEATIO, "In the Begining", "It Started Somewhere",
+						new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_1)));
+		CongeatioPageList.add(new GuiTendencyPage(2, EnumTendencyCatagories.CONGEATIO, "Duality of Nature",
+				"Yin and Yang", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_2)));
 		CongeatioPageList.add(new GuiTendencyPage(3, EnumTendencyCatagories.CONGEATIO, "Vibes", "Cosmic Vibrations",
 				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_3)));
-		CongeatioPageList.add(new GuiTendencyPage(4, EnumTendencyCatagories.CONGEATIO, "A World of Essence",
-				"Only the Essentials", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_4)));
-		CongeatioPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.CONGEATIO, "Channeling Basics", "Use the Force",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_5)));
-		CongeatioPageList.add(new GuiTendencyPage(6, EnumTendencyCatagories.CONGEATIO, "Nullification", "Counter Attack",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_6)));
-		CongeatioPageList.add(new GuiTendencyPage(7, EnumTendencyCatagories.CONGEATIO, "Vital Essence", "The Power of Vitals",
-				new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_7)));
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		CongeatioPageList.add(
+				new GuiTendencyPage(4, EnumTendencyCatagories.CONGEATIO, "A World of Essence", "Only the Essentials",
+						new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_4)));
+		CongeatioPageList.add(new GuiTendencyPage(5, EnumTendencyCatagories.CONGEATIO, "Channeling Basics",
+				"Use the Force", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_5)));
+		CongeatioPageList.add(new GuiTendencyPage(6, EnumTendencyCatagories.CONGEATIO, "Nullification",
+				"Counter Attack", new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_6)));
+		CongeatioPageList
+				.add(new GuiTendencyPage(7, EnumTendencyCatagories.CONGEATIO, "Vital Essence", "The Power of Vitals",
+						new ItemStack(ItemInit.sanguine_formation.get()), I18n.format(CONGEATIO_PAGE_7)));
 
 		// Hidden
 		HiddenPageList.add(new GuiTendencyPage(1, EnumTendencyCatagories.HIDDEN, "In the Begining",

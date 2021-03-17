@@ -1,9 +1,10 @@
 package com.huto.hemomancy.model.entity;
 // Made with Blockbench 3.7.4
+
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
-import com.huto.hemomancy.entity.EntityIronPillar;
+import com.huto.hemomancy.entity.iron.EntityIronPillar;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -41,12 +42,14 @@ public class ModelIronPillar extends EntityModel<EntityIronPillar> {
 	}
 
 	@Override
-	public void setRotationAngles(EntityIronPillar entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		//previously the render function, render code was moved to a method below
+	public void setRotationAngles(EntityIronPillar entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+			float netHeadYaw, float headPitch) {
+		// previously the render function, render code was moved to a method below
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red,
+			float green, float blue, float alpha) {
 		pillar.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 

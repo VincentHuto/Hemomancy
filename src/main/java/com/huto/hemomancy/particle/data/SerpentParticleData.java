@@ -21,7 +21,7 @@ public class SerpentParticleData implements IParticleFactory<SerpentParticleType
 	@Override
 	public Particle makeParticle(SerpentParticleTypeData data, ClientWorld worldIn, double x, double y, double z,
 			double xSpeed, double ySpeed, double zSpeed) {
-		return new ParticleSerpent(worldIn, x, y, z, xSpeed, ySpeed , zSpeed, data.color.getRed(), data.color.getGreen(),
+		return new ParticleSerpent(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(),
 				data.color.getBlue(), 3.0f, .15f, 106, this.spriteSet);
 	}
 

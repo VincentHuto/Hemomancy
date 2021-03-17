@@ -251,7 +251,7 @@ public class GuiTendencyPageTOC extends GuiTendencyPage {
 			break;
 		case CONGEATIO:
 			chapterPages = TendencyBookLib.getCongeatioPageList();
-			break;	
+			break;
 		case HIDDEN:
 			chapterPages = TendencyBookLib.getHiddenPageList();
 			break;

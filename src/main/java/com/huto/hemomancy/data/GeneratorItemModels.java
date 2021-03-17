@@ -28,7 +28,7 @@ public class GeneratorItemModels extends ItemModelProvider {
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			registerBasicItem(b.get().asItem());
 		}
-		
+
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
 			registerBasicItem(item.get());
 		}
@@ -55,16 +55,15 @@ public class GeneratorItemModels extends ItemModelProvider {
 		}
 
 	}
-	
 
 	private void registerHandheldItem(Item item) {
 		String path = item.getRegistryName().getPath();
 		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
 	}
-	
+
 	private void registerSpawnEggItem(Item item) {
 		String path = item.getRegistryName().getPath();
-		withExistingParent(path,  mcLoc("item/template_spawn_egg"));
+		withExistingParent(path, mcLoc("item/template_spawn_egg"));
 	}
 
 	@Override

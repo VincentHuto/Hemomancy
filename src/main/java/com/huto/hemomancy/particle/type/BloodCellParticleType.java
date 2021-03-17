@@ -6,12 +6,12 @@ import com.mojang.serialization.Codec;
 import net.minecraft.particles.ParticleType;
 
 public class BloodCellParticleType extends ParticleType<BloodCellTypeData> {
-    public BloodCellParticleType() {
-        super(false, BloodCellTypeData.DESERIALIZER);
-    }
+	public BloodCellParticleType() {
+		super(false, BloodCellTypeData.DESERIALIZER);
+	}
 
-    @Override
-    public Codec<BloodCellTypeData> func_230522_e_() {
-        return BloodCellTypeData.CODEC;
-    }
+	@Override
+	public Codec<BloodCellTypeData> func_230522_e_() {
+		return BloodCellTypeData.CODEC;
+	}
 }

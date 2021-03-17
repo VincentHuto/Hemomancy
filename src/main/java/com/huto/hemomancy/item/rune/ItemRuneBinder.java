@@ -62,7 +62,6 @@ public class ItemRuneBinder extends Item {
 		return rarity;
 	}
 
-	
 	public ItemRuneBinder setName() {
 		setRegistryName(Hemomancy.MOD_ID, name);
 		return this;
@@ -106,8 +105,6 @@ public class ItemRuneBinder extends Item {
 
 	}
 
-	
-	
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
@@ -158,8 +155,10 @@ public class ItemRuneBinder extends Item {
 			PacketHandler.RUNEBINDER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
 					new PacketToggleBinderMessage(Pickup));
 		else
-			playerEntity.sendStatusMessage(new StringTextComponent(
-					I18n.format(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
+			playerEntity.sendStatusMessage(
+					new StringTextComponent(
+							I18n.format(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")),
+					true);
 
 	}
 

@@ -39,8 +39,7 @@ public class TileEntityInit {
 	public static final RegistryObject<TileEntityType<TileEntitySerpentineIdol>> serpentine_idol = TILES
 			.register("serpentine_idol", () -> TileEntityType.Builder
 					.create(TileEntitySerpentineIdol::new, BlockInit.serpentine_idol.get()).build(null));
-	public static final RegistryObject<TileEntityType<TileEntityHumaneIdol>> humane_idol = TILES
-			.register("humane_idol", () -> TileEntityType.Builder
-					.create(TileEntityHumaneIdol::new, BlockInit.humane_idol.get()).build(null));
+	public static final RegistryObject<TileEntityType<TileEntityHumaneIdol>> humane_idol = TILES.register("humane_idol",
+			() -> TileEntityType.Builder.create(TileEntityHumaneIdol::new, BlockInit.humane_idol.get()).build(null));
 
 }

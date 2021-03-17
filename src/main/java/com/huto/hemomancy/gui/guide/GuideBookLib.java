@@ -63,7 +63,6 @@ public class GuideBookLib {
 	public static String MANIPULATION_PAGE_7 = "Due to the nature of life itself, being inherently organized, living beings are naturally enriched with essence, almost completely filled with positive vibrations in fact. This is not to say that ALL creatures are positive, there are some exceptions that have net negative vibrations(withers and end creatures), and some that have none at all(skeletons and other inorganic life)! Because of this, the essence can be farmed quite readily through the process of death, with the correct tools, of course, ones that nullified vibrations maybe?";
 	public static String MANIPULATION_PAGE_8 = "title.somnolenttome.intro.page.8.text";
 
-
 	public static void registerPages() {
 
 		IntroPageList.clear();
@@ -213,7 +212,6 @@ public class GuideBookLib {
 	public static List<GuiGuidePage> getTendencyPageList() {
 		return TendencyPageList;
 	}
-
 
 	public static List<List<GuiGuidePage>> getChapterList() {
 		return ChapterList;

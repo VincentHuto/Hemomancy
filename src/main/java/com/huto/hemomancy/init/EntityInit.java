@@ -1,12 +1,12 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.entity.EntityIronPillar;
-import com.huto.hemomancy.entity.EntityIronSpike;
-import com.huto.hemomancy.entity.EntityIronWall;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
+import com.huto.hemomancy.entity.iron.EntityIronPillar;
+import com.huto.hemomancy.entity.iron.EntityIronSpike;
+import com.huto.hemomancy.entity.iron.EntityIronWall;
 import com.huto.hemomancy.entity.mob.EntityChitinite;
 import com.huto.hemomancy.entity.mob.EntityChthonian;
 import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
@@ -93,11 +93,11 @@ public class EntityInit {
 
 	public static final RegistryObject<EntityType<EntityIronPillar>> iron_pillar = ENTITY_TYPES.register("iron_pillar",
 			() -> EntityType.Builder.<EntityIronPillar>create(EntityIronPillar::new, EntityClassification.MISC)
-					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
+					.size(0.75F, 2.8F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar").toString()));
 
 	public static final RegistryObject<EntityType<EntityIronWall>> iron_wall = ENTITY_TYPES.register("iron_wall",
 			() -> EntityType.Builder.<EntityIronWall>create(EntityIronWall::new, EntityClassification.MISC)
-					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_wall").toString()));
+					.size(1.6F, 2.8F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_wall").toString()));
 
 	public static final RegistryObject<EntityType<EntityIronSpike>> iron_spike = ENTITY_TYPES.register("iron_spike",
 			() -> EntityType.Builder.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)

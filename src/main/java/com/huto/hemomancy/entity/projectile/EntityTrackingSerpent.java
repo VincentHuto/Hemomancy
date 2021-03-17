@@ -214,7 +214,7 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 			Block block = world.getBlockState(((BlockRayTraceResult) pos).getPos()).getBlock();
 			if (!(block instanceof BushBlock) && !(block instanceof LeavesBlock))
 				remove();
-				break;
+			break;
 		}
 		case ENTITY: {
 			if (!(pos instanceof BlockRayTraceResult)) {

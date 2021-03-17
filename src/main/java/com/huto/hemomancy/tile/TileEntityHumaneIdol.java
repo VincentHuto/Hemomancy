@@ -19,11 +19,10 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 	@Override
 	public void tick() {
 		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, 0, 0);
-		double time = world.getGameTime()*0.01*Math.random();
+		double time = world.getGameTime() * 0.01 * Math.random();
 		if (world.isRemote) {
 			int globalPartCount = 128;
-			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -time, 0.5,
-					false);
+			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -time, 0.5, false);
 			for (int i = 0; i < globalPartCount; i++) {
 
 				world.addParticle(

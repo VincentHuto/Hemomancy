@@ -73,7 +73,7 @@ public class ModTextFormatting {
 	public static String stringToBloody(String parString) {
 
 		String outputString = "";
-		TextFormatting[] karmicColors = { TextFormatting.RED, TextFormatting.DARK_RED};
+		TextFormatting[] karmicColors = { TextFormatting.RED, TextFormatting.DARK_RED };
 		for (int i = 0; i < parString.length(); i++) {
 			outputString = TextFormatting.ITALIC + outputString + karmicColors[i % 2] + parString.substring(i, i + 1);
 		}

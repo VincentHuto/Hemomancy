@@ -1,6 +1,5 @@
 package com.huto.hemomancy.containers.slot;
 
-
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 

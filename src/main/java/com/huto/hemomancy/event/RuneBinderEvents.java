@@ -36,7 +36,5 @@ public class RuneBinderEvents {
 		if (ClientEventSubscriber.keyBinds.get(0).isPressed())
 			PacketHandler.RUNEBINDER.sendToServer(new PacketBinderTogglePickup());
 	}
-	
-	
 
 }

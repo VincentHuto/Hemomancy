@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemRunePatternRadianceContract extends ItemRunePattern  {
+public class ItemRunePatternRadianceContract extends ItemRunePattern {
 
 	public ItemRunePatternRadianceContract(Properties prop, String textIn) {
 		super(prop, textIn);

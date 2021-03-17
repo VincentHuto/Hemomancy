@@ -2,11 +2,11 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "hemomancy:block/blood_wood_log",
-		"1": "hemomancy:block/tainted_iron_block",
+		"1": "hemomancy:block/hematic_iron_block",
 		"2": "hemomancy:block/jar_bottom_side",
 		"3": "hemomancy:block/venous_stone",
-		"5": "hemomancy:block/bold_chiseled_tainted_iron_block",
-		"6": "hemomancy:block/tainted_iron_blade",
+		"5": "hemomancy:block/bold_chiseled_hematic_iron_block",
+		"6": "hemomancy:block/hematic_iron_blade",
 		"7": "hemomancy:block/venous_stone_trans",
 		"particle": "hemomancy:block/blood_wood_log"
 	},

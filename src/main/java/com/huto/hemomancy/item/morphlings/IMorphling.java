@@ -13,7 +13,7 @@ public interface IMorphling {
 
 //	int getAllegianceChance();
 
-	//public boolean canUseModule(int rarity);
+	// public boolean canUseModule(int rarity);
 
 	public void use(PlayerEntity playerIn, Hand handIn, ItemStack itemStack, World worldIn);
 

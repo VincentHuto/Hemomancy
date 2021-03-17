@@ -23,8 +23,6 @@ public class MorphlingJarItemHandler extends ItemStackHandler {
 	private boolean dirty = false;
 	private boolean loaded = false;
 
-	
-	
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {

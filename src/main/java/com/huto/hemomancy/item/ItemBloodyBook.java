@@ -27,7 +27,6 @@ public class ItemBloodyBook extends ItemTome {
 		super(prop.setISTER(() -> RenderItemTome::new));
 	}
 
-
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
@@ -39,12 +38,13 @@ public class ItemBloodyBook extends ItemTome {
 		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
+
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new StringTextComponent(TextFormatting.GOLD + "A guide to your blood and its power."));
 	}
-	
+
 	@Override
 	public Rarity getRarity(ItemStack par1ItemStack) {
 		return Rarity.UNCOMMON;

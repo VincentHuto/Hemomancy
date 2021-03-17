@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import com.google.common.collect.Sets;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.init.PotionInit;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -23,7 +24,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.potion.Potions;
@@ -119,8 +119,11 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		super.tick();
 		if (this.world.isRemote) {
 			for (int i = 0; i < 2; i++) {
-			/*	this.world.addParticle(RedstoneParticleData.REDSTONE_DUST, this.getPosXRandom(0.5D),
-						this.getPosYRandom(), this.getPosZRandom(0.5D), 0, 0, 0);*/
+				/*
+				 * this.world.addParticle(RedstoneParticleData.REDSTONE_DUST,
+				 * this.getPosXRandom(0.5D), this.getPosYRandom(), this.getPosZRandom(0.5D), 0,
+				 * 0, 0);
+				 */
 			}
 			if (this.inGround) {
 				if (this.timeInGround % 5 == 0) {
@@ -163,7 +166,6 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		this.dataManager.set(COLOR, p_191507_1_);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void writeAdditional(CompoundNBT compound) {
 		super.writeAdditional(compound);
 		if (this.potion != Potions.EMPTY && this.potion != null) {
@@ -207,13 +209,12 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void onEntityHit(EntityRayTraceResult p_213868_1_) {
 		super.onEntityHit(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 1000, 2));
+			((LivingEntity) entity).addPotionEffect(new EffectInstance(PotionInit.blood_loss.get(), 1000, 2));
 
 		}
 
@@ -221,7 +222,6 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 
 	protected void arrowHit(LivingEntity living) {
 		super.arrowHit(living);
-
 		for (EffectInstance effectinstance : this.potion.getEffects()) {
 			living.addPotionEffect(new EffectInstance(effectinstance.getPotion(),
 					Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(),

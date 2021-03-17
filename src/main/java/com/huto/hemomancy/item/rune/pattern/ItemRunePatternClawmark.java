@@ -8,12 +8,11 @@ import com.huto.hemomancy.recipes.RecipeChiselStation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 
-public class ItemRunePatternClawmark extends ItemRunePattern  {
+public class ItemRunePatternClawmark extends ItemRunePattern {
 
 	public ItemRunePatternClawmark(Properties prop, String textIn) {
 		super(prop, textIn);
 	}
-
 
 	@Override
 	public Rarity getRarity(ItemStack par1ItemStack) {

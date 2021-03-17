@@ -105,7 +105,7 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 		}
 		matrixStackIn.pop();
 
-		//Blank Rune
+		// Blank Rune
 		matrixStackIn.push();
 		if (te.chestContents.get(0) != ItemStack.EMPTY) {
 			ItemStack stack = te.chestContents.get(0);
@@ -132,14 +132,14 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
 				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-45));
-				matrixStackIn.translate(1f, 0.35f,1.75f);
+				matrixStackIn.translate(1f, 0.35f, 1.75f);
 			}
 			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn);
 		}
 		matrixStackIn.pop();
-		
-		//Aux Slot
+
+		// Aux Slot
 		matrixStackIn.push();
 		if (te.chestContents.get(1) != ItemStack.EMPTY) {
 			ItemStack stack = te.chestContents.get(1);
@@ -166,7 +166,7 @@ public class RenderChiselStation extends TileEntityRenderer<TileEntityChiselStat
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.rotate(Vector3f.YP.rotationDegrees(0));
 				matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-45));
-				matrixStackIn.translate(1f, 0.35f,1.75f);
+				matrixStackIn.translate(1f, 0.35f, 1.75f);
 			}
 			mc.getItemRenderer().renderItem(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn);

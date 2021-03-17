@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "hemomancy:block/venous_stone",
-		"1": "hemomancy:block/chiseled_tainted_iron_block",
+		"1": "hemomancy:block/chiseled_hematic_iron_block",
 		"2": "hemomancy:block/venous_stone_trans",
 		"4": "hemomancy:block/infested_venous_stone",
 		"5": "hemomancy:block/infected_stem",

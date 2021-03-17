@@ -48,9 +48,9 @@ public class ParticleInit {
 
 	public static RegistryObject<ParticleType<ColorLightningTypeData>> lightning_bolt = PARTICLE_TYPES
 			.register("lightning_bolt", () -> new LightningParticleType());
-	
-	public static final RegistryObject<ParticleType<BloodCellTypeData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
-			() -> new BloodCellParticleType());
+
+	public static final RegistryObject<ParticleType<BloodCellTypeData>> blood_cell = PARTICLE_TYPES
+			.register("blood_cell", () -> new BloodCellParticleType());
 
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {

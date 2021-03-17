@@ -32,7 +32,7 @@ public class GuiMorphlingJar extends ContainerScreen<ContainerMorphlingJar> {
 			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_max.png");
 			xSize = 176;
 			ySize = 184;
-			break;	
+			break;
 		default:
 			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar.png");
 			xSize = 212;

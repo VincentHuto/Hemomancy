@@ -25,6 +25,7 @@ import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.huto.hemomancy.network.keybind.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
+import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.particle.ParticleColor;
 
 import net.minecraft.util.RegistryKey;
@@ -57,7 +58,7 @@ public class PacketHandler {
 			.named(new ResourceLocation(Hemomancy.MOD_ID, "animchannel"))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
-	
+
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -80,11 +81,12 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketKnownManipulationServer.class,
 				PacketKnownManipulationServer::encode, PacketKnownManipulationServer::decode,
 				PacketKnownManipulationServer::handle);
-
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketDisplayKnownManips.class,
-				PacketDisplayKnownManips::encode, PacketDisplayKnownManips::decode,
-				PacketDisplayKnownManips::handle);
-		
+				PacketDisplayKnownManips::encode, PacketDisplayKnownManips::decode, PacketDisplayKnownManips::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketChangeSelectedManip.class,
+				PacketChangeSelectedManip::encode, PacketChangeSelectedManip::decode,
+				PacketChangeSelectedManip::handle);
+
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
 				PacketVascularSystemClient::handle);

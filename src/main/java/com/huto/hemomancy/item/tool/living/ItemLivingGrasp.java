@@ -132,5 +132,5 @@ public class ItemLivingGrasp extends Item {
 			}
 		}
 	}
-	
+
 }

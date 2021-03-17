@@ -1,6 +1,6 @@
 package com.huto.hemomancy.model.entity;
 
-import com.huto.hemomancy.entity.EntityIronWall;
+import com.huto.hemomancy.entity.iron.EntityIronWall;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

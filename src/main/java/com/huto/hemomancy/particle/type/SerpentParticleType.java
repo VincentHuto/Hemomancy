@@ -6,12 +6,12 @@ import com.mojang.serialization.Codec;
 import net.minecraft.particles.ParticleType;
 
 public class SerpentParticleType extends ParticleType<SerpentParticleTypeData> {
-    public SerpentParticleType() {
-        super(false, SerpentParticleTypeData.DESERIALIZER);
-    }
+	public SerpentParticleType() {
+		super(false, SerpentParticleTypeData.DESERIALIZER);
+	}
 
-    @Override
-    public Codec<SerpentParticleTypeData> func_230522_e_() {
-        return SerpentParticleTypeData.CODEC;
-    }
+	@Override
+	public Codec<SerpentParticleTypeData> func_230522_e_() {
+		return SerpentParticleTypeData.CODEC;
+	}
 }

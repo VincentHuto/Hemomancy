@@ -96,7 +96,7 @@ public class GuiGuideTitlePage extends Screen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translatef(3, -5, 0);
 			GlStateManager.scalef(0.5f, 0.5f, 0.5f);
-			RenderMultiBlock.renderPatternInGUI(matrixStack, minecraft, ModBloodCraftingRecipes.tainted_iron_pattern);
+			RenderMultiBlock.renderPatternInGUI(matrixStack, minecraft, ModBloodCraftingRecipes.hematic_iron_pattern);
 
 			// mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.FIRE_CHARGE), 0,
 			// -9);

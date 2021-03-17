@@ -5,11 +5,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public interface IRunesItemHandler extends IItemHandlerModifiable {
 
-    boolean isItemValidForSlot(int slot, ItemStack stack);
+	boolean isItemValidForSlot(int slot, ItemStack stack);
 
-    boolean isEventBlocked();
+	boolean isEventBlocked();
 
-    void setEventBlock(boolean blockEvents);
+	void setEventBlock(boolean blockEvents);
 
-    void tick();
+	void tick();
 }

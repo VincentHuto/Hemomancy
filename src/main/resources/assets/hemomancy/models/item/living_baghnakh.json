@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "hemomancy:block/tainted_iron_block",
+		"0": "hemomancy:block/hematic_iron_block",
 		"1": "hemomancy:block/venous_stone",
 		"2": "hemomancy:block/venous_stone_trans",
-		"particle": "hemomancy:block/tainted_iron_block"
+		"particle": "hemomancy:block/hematic_iron_block"
 	},
 	"elements": [
 		{

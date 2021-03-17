@@ -1,7 +1,7 @@
 package com.huto.hemomancy.render.entity;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.entity.EntityIronWall;
+import com.huto.hemomancy.entity.iron.EntityIronWall;
 import com.huto.hemomancy.model.entity.ModelIronWall;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -12,13 +12,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderIronWall extends MobRenderer<EntityIronWall, ModelIronWall> {
 
-	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/iron_wall/model_iron_wall.png");
+	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/iron_wall/model_iron_wall.png");
 
 	public RenderIronWall(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn, new ModelIronWall(), 0f);
 
 	}
-	
+
 	@Override
 	public void render(EntityIronWall entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
@@ -41,11 +42,11 @@ public class RenderIronWall extends MobRenderer<EntityIronWall, ModelIronWall> {
 			f = 0.75f;
 		}
 		if (entitylivingbaseIn.deathTicks == 1) {
-			matrixStackIn.scale(1 , f, 1);
+			matrixStackIn.scale(1, f, 1);
 		}
 
 		if (entitylivingbaseIn.deathTicks > 0) {
-			float d = entitylivingbaseIn.deathTicks* 2;
+			float d = entitylivingbaseIn.deathTicks * 2;
 			matrixStackIn.scale(1, d, 1);
 
 		}

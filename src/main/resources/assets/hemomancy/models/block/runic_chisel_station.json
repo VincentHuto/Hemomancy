@@ -2,13 +2,13 @@
 	"credit": "Made with Blockbench",
 		"parent": "block/block",
 	"textures": {
-		"0": "hemomancy:block/tainted_iron_block",
+		"0": "hemomancy:block/hematic_iron_block",
 		"1": "hemomancy:block/venous_stone",
 		"2": "hemomancy:block/dark_oak_log",
 		"3": "hemomancy:block/dark_oak_log_top",
 		"4": "hemomancy:block/dark_oak_planks",
-		"5": "hemomancy:block/chiseled_tainted_iron_block",
-		"particle": "hemomancy:block/tainted_iron_block"
+		"5": "hemomancy:block/chiseled_hematic_iron_block",
+		"particle": "hemomancy:block/hematic_iron_block"
 	},
 	"elements": [
 		{

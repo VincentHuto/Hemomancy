@@ -26,13 +26,13 @@ public class ModelBloodArm extends BipedModel<PlayerEntity> implements IHasArm {
 
 		head = new ModelRenderer(this, 0, 0);
 		head.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSizeIn);
-		head.setRotationPoint(0.0F, 0.0F , 0.0F);
+		head.setRotationPoint(0.0F, 0.0F, 0.0F);
 		headwear = new ModelRenderer(this, 32, 0);
 		headwear.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, modelSizeIn + 0.5F);
-		headwear.setRotationPoint(0.0F, 0.0F , 0.0F);
+		headwear.setRotationPoint(0.0F, 0.0F, 0.0F);
 		body = new ModelRenderer(this, 16, 16);
 		body.addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, modelSizeIn);
-		body.setRotationPoint(0.0F, 0.0F , 0.0F);
+		body.setRotationPoint(0.0F, 0.0F, 0.0F);
 		rightArm = new ModelRenderer(this, 40, 16);
 		rightArm.addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
 		rightArm.setRotationPoint(-5.0F, 2.0F, 0.0F);
@@ -42,12 +42,11 @@ public class ModelBloodArm extends BipedModel<PlayerEntity> implements IHasArm {
 		leftArm.setRotationPoint(5.0F, 2.0F, 0.0F);
 		rightLeg = new ModelRenderer(this, 0, 16);
 		rightLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
-		rightLeg.setRotationPoint(-1.9F, 12.0F , 0.0F);
+		rightLeg.setRotationPoint(-1.9F, 12.0F, 0.0F);
 		leftLeg = new ModelRenderer(this, 0, 16);
 		leftLeg.mirror = true;
 		leftLeg.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, modelSizeIn);
-		leftLeg.setRotationPoint(1.9F, 12.0F , 0.0F);
-		
+		leftLeg.setRotationPoint(1.9F, 12.0F, 0.0F);
 
 		bipedLeftArm.addChild(leftArm);
 		bipedLeftLeg.addChild(leftLeg);

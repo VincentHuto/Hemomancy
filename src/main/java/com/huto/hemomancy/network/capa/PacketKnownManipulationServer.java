@@ -14,9 +14,11 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 public class PacketKnownManipulationServer {
 	private List<BloodManipulation> known = new ArrayList<>();
+	BloodManipulation selected;
 
-	public PacketKnownManipulationServer(List<BloodManipulation> list) {
+	public PacketKnownManipulationServer(List<BloodManipulation> list, BloodManipulation selected) {
 		this.known = list;
+		this.selected = selected;
 	}
 
 	// This code only runs on the client
@@ -31,6 +33,9 @@ public class PacketKnownManipulationServer {
 	}
 
 	public static void encode(final PacketKnownManipulationServer msg, final PacketBuffer buf) {
+		if (msg.selected != null) {
+			buf.writeCompoundTag(msg.selected.serialize());
+		}
 		buf.writeInt(msg.known.size());
 		for (int i = 0; i < msg.known.size(); ++i) {
 			if (msg.known.get(i) != null) {
@@ -40,11 +45,13 @@ public class PacketKnownManipulationServer {
 	}
 
 	public static PacketKnownManipulationServer decode(final PacketBuffer buf) {
+		BloodManipulation sel = BloodManipulation.deserialize(buf.readCompoundTag());
 		int count = buf.readInt();
 		List<BloodManipulation> manips = new ArrayList<BloodManipulation>();
 		for (int i = 0; i < count; ++i) {
 			manips.add(BloodManipulation.deserialize(buf.readCompoundTag()));
 		}
-		return new PacketKnownManipulationServer(manips);
+
+		return new PacketKnownManipulationServer(manips, sel);
 	}
 }

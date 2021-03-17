@@ -54,6 +54,13 @@ public class PacketBloodFormationKeyPress {
 								pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
 								pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
 					}
+
+					/*
+					 * PacketHandler.CHANNELBLOODVOLUME.send(
+					 * PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new
+					 * PacketBloodFormationKeyPress());
+					 */
+
 					player.dropItem(new ItemStack(ItemInit.sanguine_formation.get(), random.nextInt(4)), false);
 				} else {
 					player.sendStatusMessage(new StringTextComponent("Not enough blood can be drawn for formation"),

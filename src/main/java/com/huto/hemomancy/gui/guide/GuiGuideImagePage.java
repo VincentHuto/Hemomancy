@@ -142,8 +142,8 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		GlStateManager.popMatrix();
 		// ToolTips
 		textBox.render(matrixStack, mouseX, mouseY, partialTicks);
-		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2)+20
-				&& mouseY <= (16 * 2)+20 + height)) {
+		if (!(mouseX >= (16 * 2) + 16 && mouseX <= (16 * 2) + 16 + width && mouseY >= (16 * 2) + 20
+				&& mouseY <= (16 * 2) + 20 + height)) {
 			List<ITextComponent> text = new ArrayList<ITextComponent>();
 			text.add(new StringTextComponent(I18n.format(icon.getDisplayName().getString())));
 			func_243308_b(matrixStack, text, centerX, centerY);
@@ -193,7 +193,7 @@ public class GuiGuideImagePage extends GuiGuidePage {
 		}
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-						mc.displayGuiScreen(new GuiGuideTitlePage());
+					mc.displayGuiScreen(new GuiGuideTitlePage());
 				}));
 		this.addButton(buttonCloseTab = new GuiButtonTextured(texture, CLOSEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 193, 24, 16, 174, 64, null, (press) -> {

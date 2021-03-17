@@ -54,7 +54,7 @@ public class BlockChiselStation extends Block {
 			Hand handIn, BlockRayTraceResult result) {
 		if (!worldIn.isRemote) {
 			TileEntity tile = worldIn.getTileEntity(pos);
-	
+
 			if (tile instanceof TileEntityChiselStation) {
 				TileEntityChiselStation te = (TileEntityChiselStation) tile;
 				te.sendUpdates();

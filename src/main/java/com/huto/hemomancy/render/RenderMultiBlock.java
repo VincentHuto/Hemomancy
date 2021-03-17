@@ -23,10 +23,10 @@ public class RenderMultiBlock {
 		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
 		GlStateManager.rotatef(45, 0, 0, 0);
 		GlStateManager.scaled(0.5, 0.5, 0.5);
-		
+
 		GlStateManager.translatef(0, 2, 0);
 		for (BlockPosBlockPair pair : patternList) {
-			GlStateManager.translatef(1, 1, pair.getPos().getZ() );
+			GlStateManager.translatef(1, 1, pair.getPos().getZ());
 			mc.getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(pair.getBlock()), pair.getPos().getX() * -16,
 					pair.getPos().getY() * -16);
 		}

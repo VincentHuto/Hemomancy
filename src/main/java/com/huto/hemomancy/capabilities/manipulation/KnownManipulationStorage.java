@@ -18,6 +18,10 @@ public class KnownManipulationStorage implements IStorage<IKnownManipulations> {
 	public INBT writeNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side) {
 
 		ListNBT list = new ListNBT();
+
+		CompoundNBT selectedManip = new CompoundNBT();
+		selectedManip.put("Selected", instance.getSelectedManip().serialize());
+
 		for (int i = 0; i < instance.getKnownManips().size(); i++) {
 			BloodManipulation manip = instance.getKnownManips().get(i);
 			if (manip != null) {
@@ -38,7 +42,14 @@ public class KnownManipulationStorage implements IStorage<IKnownManipulations> {
 			ListNBT listNbt = (ListNBT) nbt;
 			for (int i = 0; i < listNbt.size(); i++) {
 				CompoundNBT parsedNbt = (CompoundNBT) listNbt.get(i);
+
 				if (parsedNbt != null && !parsedNbt.isEmpty()) {
+					if (parsedNbt.contains("Selected")) {
+						CompoundNBT selectedNbt = parsedNbt.getCompound("Selected");
+						BloodManipulation selectedManip = BloodManipulation.deserialize(selectedNbt);
+						instance.setSelectedManip(selectedManip);
+					}
+
 					if (parsedNbt.contains("Manip" + i)) {
 						CompoundNBT finalNbt = parsedNbt.getCompound("Manip" + i);
 						BloodManipulation bloodManip = BloodManipulation.deserialize(finalNbt);

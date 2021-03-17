@@ -42,15 +42,15 @@ public class ItemParticleItem extends Item {
 				knownList.add(ManipulationInit.blood_rush);
 				PacketHandler.CHANNELKNOWNMANIPS.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketKnownManipulationServer(knownList));
+						new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
 				System.out.println(knownList.toString());
 
 			} else {
 				knownList.add(ManipulationInit.blood_shot);
-				 //knownList.clear();
+				// knownList.clear();
 				PacketHandler.CHANNELKNOWNMANIPS.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketKnownManipulationServer(knownList));
+						new PacketKnownManipulationServer(knownList,known.getSelectedManip()));
 			}
 		}
 

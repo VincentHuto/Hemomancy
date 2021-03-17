@@ -194,7 +194,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
-		
+
 		this.addLayers();
 
 	}
@@ -215,7 +215,7 @@ public class Hemomancy {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@OnlyIn(Dist.CLIENT)
 	private void addLayers() {
-		
+
 		Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
 		PlayerRenderer render;
 		render = skinMap.get("default");

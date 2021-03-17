@@ -12,27 +12,27 @@ import javax.annotation.Nonnull;
 
 public class RunesContainerProvider implements INBTSerializable<CompoundNBT>, ICapabilityProvider {
 
-    private RunesContainer inner;
-    private LazyOptional<IRunesItemHandler> opt;
+	private RunesContainer inner;
+	private LazyOptional<IRunesItemHandler> opt;
 
-    public RunesContainerProvider(PlayerEntity player) {
-        this.inner = new RunesContainer(player);
-        this.opt = LazyOptional.of(() -> inner);
-    }
+	public RunesContainerProvider(PlayerEntity player) {
+		this.inner = new RunesContainer(player);
+		this.opt = LazyOptional.of(() -> inner);
+	}
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
-        return RunesCapabilities.RUNES.orEmpty(capability, opt);
-    }
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
+		return RunesCapabilities.RUNES.orEmpty(capability, opt);
+	}
 
-    @Override
-    public CompoundNBT serializeNBT() {
-        return this.inner.serializeNBT();
-    }
+	@Override
+	public CompoundNBT serializeNBT() {
+		return this.inner.serializeNBT();
+	}
 
-    @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        this.inner.deserializeNBT(nbt);
-    }
+	@Override
+	public void deserializeNBT(CompoundNBT nbt) {
+		this.inner.deserializeNBT(nbt);
+	}
 }

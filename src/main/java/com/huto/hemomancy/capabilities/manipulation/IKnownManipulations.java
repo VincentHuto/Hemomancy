@@ -9,5 +9,8 @@ public interface IKnownManipulations {
 
 	public void setKnownManips(List<BloodManipulation> knownManips);
 
+	public BloodManipulation getSelectedManip();
+
+	public void setSelectedManip(BloodManipulation selectedManip);
 
 }

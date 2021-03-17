@@ -10,24 +10,22 @@ import net.minecraft.item.ItemStack;
 
 public class ClientProxy implements IProxy {
 
-
-
 	@Override
 	public void openBinderGui() {
 		Minecraft.getInstance().displayGuiScreen(new GuiRuneBinderViewer(new ItemStack(ItemInit.rune_binder.get()),
 				ClientEventSubscriber.getClientPlayer()));
 	}
-	
+
 	@Override
 	public void openJarGui() {
 		Minecraft.getInstance().displayGuiScreen(new GuiMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
 				ClientEventSubscriber.getClientPlayer()));
 	}
-	
+
 	@Override
 	public void openStaffGui() {
 		Minecraft.getInstance().displayGuiScreen(new GuiMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
 				ClientEventSubscriber.getClientPlayer()));
 	}
-	
+
 }

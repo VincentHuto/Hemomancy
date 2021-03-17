@@ -19,10 +19,14 @@ import net.minecraft.util.math.vector.Vector3f;
 
 public class RenderItemTome extends ItemStackTileEntityRenderer {
 	public final BookModel model = new BookModel();
-	public static ResourceLocation liber_sanguinum = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_sanguinum.png");
-	public static ResourceLocation liber_inclinatio= new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio.png");
-	public static ResourceLocation liber_inclinatio_hidden = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio_hidden.png");
-	public static ResourceLocation glowing_page = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/glow_page.png");
+	public static ResourceLocation liber_sanguinum = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/liber_sanguinum.png");
+	public static ResourceLocation liber_inclinatio = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/liber_inclinatio.png");
+	public static ResourceLocation liber_inclinatio_hidden = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/liber_inclinatio_hidden.png");
+	public static ResourceLocation glowing_page = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/glow_page.png");
 
 	public int ticks;
 	public float field_195523_f;
@@ -72,17 +76,20 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 					.getImpl(Tessellator.getInstance().getBuffer());
 			ResourceLocation location = stack.getItem() == ItemInit.liber_sanguinum.get() ? liber_sanguinum
 					: stack.getItem() == ItemInit.liber_inclinatio.get() ? liber_inclinatio
-							: stack.getItem() == ItemInit.liber_inclinatio_hidden.get() ? liber_inclinatio_hidden : liber_sanguinum;
+							: stack.getItem() == ItemInit.liber_inclinatio_hidden.get() ? liber_inclinatio_hidden
+									: liber_sanguinum;
 			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(model.getRenderType(location));
 			ms.scale(0.75f, 0.75f, 0.75f);
-			
-		//	IVertexBuilder secondBuilder = irendertypebuffer$impl.getBuffer(model.getRenderType(glowing_page));
+
+			// IVertexBuilder secondBuilder =
+			// irendertypebuffer$impl.getBuffer(model.getRenderType(glowing_page));
 
 			model.render(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-		/*	ms.scale(1f, 1f, 1f);
-			model.render(ms, secondBuilder, light,OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);*/
+			/*
+			 * ms.scale(1f, 1f, 1f); model.render(ms, secondBuilder,
+			 * light,OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			 */
 
-			
 			irendertypebuffer$impl.finish();
 			ms.pop();
 		}

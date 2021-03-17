@@ -27,7 +27,6 @@ public class ItemTendencyHiddenBook extends ItemTome {
 		super(prop.setISTER(() -> RenderItemTome::new));
 	}
 
-
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
@@ -39,6 +38,7 @@ public class ItemTendencyHiddenBook extends ItemTome {
 		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
+
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
@@ -47,6 +47,7 @@ public class ItemTendencyHiddenBook extends ItemTome {
 		tooltip.add(new StringTextComponent(TextFormatting.GOLD + "all known blood types."));
 
 	}
+
 	@Override
 	public Rarity getRarity(ItemStack par1ItemStack) {
 		return Rarity.UNCOMMON;

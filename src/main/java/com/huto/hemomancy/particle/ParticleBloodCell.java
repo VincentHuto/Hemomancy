@@ -19,8 +19,8 @@ public class ParticleBloodCell extends SpriteTexturedParticle {
 	public float initScale = 0;
 	public float initAlpha = 0;
 
-	public ParticleBloodCell(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz, float r,
-			float g, float b, float a, float scale, int lifetime, IAnimatedSprite sprite) {
+	public ParticleBloodCell(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz,
+			float r, float g, float b, float a, float scale, int lifetime, IAnimatedSprite sprite) {
 		super(worldIn, x, y, z, 0, 0, 0);
 		this.colorR = r;
 		this.colorG = g;
@@ -66,7 +66,7 @@ public class ParticleBloodCell extends SpriteTexturedParticle {
 		this.particleScale = initScale - initScale * lifeCoeff;
 		this.particleAlpha = initAlpha * (1.0f - lifeCoeff);
 		this.prevParticleAngle = particleAngle;
-		//particleAngle += 1.0f;
+		// particleAngle += 1.0f;
 	}
 
 	@Override

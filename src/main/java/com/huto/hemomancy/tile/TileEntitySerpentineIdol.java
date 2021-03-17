@@ -23,19 +23,19 @@ public class TileEntitySerpentineIdol extends TileEntity implements ITickableTil
 			ServerWorld sWorld = (ServerWorld) world;
 			sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(50, 50, 50)),
 					centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
-					centerVec.y + Math.sin(time * 0.1)*0.25f,
+					centerVec.y + Math.sin(time * 0.1) * 0.25f,
 					centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 2, 0f, 0.0f, 0f, 0);
 			sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(100, 0, 0)),
 					centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
-					centerVec.y + Math.sin(time * 0.1)*0.25f,
+					centerVec.y + Math.sin(time * 0.1) * 0.25f,
 					centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 4, 0f, 0.0f, 0f, 0.0005f);
 			sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
 					centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
-					centerVec.y + Math.sin(time * 0.1)*0.25f,
+					centerVec.y + Math.sin(time * 0.1) * 0.25f,
 					centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 8, 0f, 0.0f, 0f, 0.0015f);
 			sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
 					centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
-					centerVec.y + Math.sin(time * 0.1)*0.25f,
+					centerVec.y + Math.sin(time * 0.1) * 0.25f,
 					centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 1, 0f, 0.0f, 0f, 0.0035f);
 
 		}

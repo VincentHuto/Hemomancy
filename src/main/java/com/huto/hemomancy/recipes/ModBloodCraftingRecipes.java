@@ -24,35 +24,25 @@ public class ModBloodCraftingRecipes {
 	public static BaseBloodCraftingRecipe living_staff_recipe;
 	public static BaseBloodCraftingRecipe living_grip_recipe;
 	public static BaseBloodCraftingRecipe ssc_recipe;
-	public static BaseBloodCraftingRecipe tainted_iron_recipe;
+	public static BaseBloodCraftingRecipe hematic_iron_recipe;
 	public static BaseBloodCraftingRecipe unstained_pillar_recipe;
 	public static BaseBloodCraftingRecipe morphling_incubator_recipe;
 
 	public static void initRecipes() {
-		liber_sanguinum_recipe = new BaseBloodCraftingRecipe(ItemInit.liber_sanguinum.get(), 100,
-				ItemInit.sanguine_formation.get(), Blocks.BOOKSHELF, liber_sanguinum_pattern);
-		RECIPES.add(liber_sanguinum_recipe);
-		living_staff_recipe = new BaseBloodCraftingRecipe(ItemInit.living_staff.get(), 150,	ItemInit.sanguine_formation.get(),
-				Blocks.IRON_BARS, living_staff_pattern);
-		RECIPES.add(living_staff_recipe);
-		living_grip_recipe = new BaseBloodCraftingRecipe(ItemInit.living_grasp.get(), 150, Items.BUCKET,
-				BlockInit.venous_stone.get(), living_grip_pattern);
-		RECIPES.add(living_grip_recipe);
-		ssc_recipe = new BaseBloodCraftingRecipe(BlockInit.semi_sentient_construct.get(), 250,
-				BlockInit.befouling_ash_trail.get().asItem(), BlockInit.conscious_mass.get(), ssc_pattern);
-		RECIPES.add(ssc_recipe);
-
-		tainted_iron_recipe = new BaseBloodCraftingRecipe(BlockInit.tainted_iron_block.get(), 50, Items.INK_SAC,
-				Blocks.IRON_BLOCK, tainted_iron_pattern);
-		RECIPES.add(tainted_iron_recipe);
-
-		unstained_pillar_recipe = new BaseBloodCraftingRecipe(BlockInit.unstained_podium.get(), 50,
-				Items.GLOWSTONE_DUST, BlockInit.tainted_iron_block.get(), unstained_pillar_pattern);
-		RECIPES.add(unstained_pillar_recipe);
-
-		morphling_incubator_recipe = new BaseBloodCraftingRecipe(BlockInit.morphling_incubator.get(), 50,
-				ItemInit.morphling_polyp.get(), BlockInit.tainted_iron_block.get(), morphling_polyp_pattern);
-		RECIPES.add(morphling_incubator_recipe);
+		liber_sanguinum_recipe = registerRecipe(new BaseBloodCraftingRecipe(ItemInit.liber_sanguinum.get(), 100,
+				ItemInit.sanguine_formation.get(), Blocks.BOOKSHELF, liber_sanguinum_pattern));
+		living_staff_recipe = registerRecipe(new BaseBloodCraftingRecipe(ItemInit.living_staff.get(), 150,
+				ItemInit.sanguine_formation.get(), Blocks.IRON_BARS, living_staff_pattern));
+		living_grip_recipe = registerRecipe(new BaseBloodCraftingRecipe(ItemInit.living_grasp.get(), 150, Items.BUCKET,
+				BlockInit.venous_stone.get(), living_grip_pattern));
+		ssc_recipe = registerRecipe(new BaseBloodCraftingRecipe(BlockInit.semi_sentient_construct.get(), 250,
+				BlockInit.befouling_ash_trail.get().asItem(), BlockInit.conscious_mass.get(), ssc_pattern));
+		hematic_iron_recipe = registerRecipe(new BaseBloodCraftingRecipe(BlockInit.hematic_iron_block.get(), 50,
+				Items.INK_SAC, Blocks.IRON_BLOCK, hematic_iron_pattern));
+		unstained_pillar_recipe = registerRecipe(new BaseBloodCraftingRecipe(BlockInit.unstained_podium.get(), 50,
+				Items.GLOWSTONE_DUST, BlockInit.hematic_iron_block.get(), unstained_pillar_pattern));
+		morphling_incubator_recipe = registerRecipe(new BaseBloodCraftingRecipe(BlockInit.morphling_incubator.get(), 50,
+				ItemInit.morphling_polyp.get(), BlockInit.hematic_iron_block.get(), morphling_polyp_pattern));
 
 	}
 
@@ -61,29 +51,24 @@ public class ModBloodCraftingRecipes {
 	public static BloodCraftingBundledPattern living_staff_pattern;
 	public static BloodCraftingBundledPattern living_grip_pattern;
 	public static BloodCraftingBundledPattern ssc_pattern;
-	public static BloodCraftingBundledPattern tainted_iron_pattern;
+	public static BloodCraftingBundledPattern hematic_iron_pattern;
 	public static BloodCraftingBundledPattern unstained_pillar_pattern;
 	public static BloodCraftingBundledPattern morphling_polyp_pattern;
 
 	public static void initPatterns() {
-		liber_sanguinum_pattern = new BloodCraftingBundledPattern(getBookPattern(), bookSymbolList, bookPatternArray);
-		BUNDELDPATTERNS.add(liber_sanguinum_pattern);
-		living_staff_pattern = new BloodCraftingBundledPattern(getLivingStaffPattern(), staffSymbolList,
-				staffPatternArray);
-		BUNDELDPATTERNS.add(living_staff_pattern);
-		living_grip_pattern = new BloodCraftingBundledPattern(getGripPattern(), gripSymbolList, gripPatternArray);
-		BUNDELDPATTERNS.add(living_grip_pattern);
-		ssc_pattern = new BloodCraftingBundledPattern(getSSCPattern(), sscSymbolList, sscArray);
-		BUNDELDPATTERNS.add(ssc_pattern);
-		tainted_iron_pattern = new BloodCraftingBundledPattern(getTaintedBlockPattern(), tIronSymbolList,
-				tIronPatternArray);
-		BUNDELDPATTERNS.add(tainted_iron_pattern);
-		unstained_pillar_pattern = new BloodCraftingBundledPattern(getUnsPillarBlockPattern(), unsPillarSymbolList,
-				unsPillarPatternArray);
-		BUNDELDPATTERNS.add(unstained_pillar_pattern);
-		morphling_polyp_pattern = new BloodCraftingBundledPattern(getMorphIncBlockPattern(), morphIncSymbolList,
-				morphIncPatternArray);
-		BUNDELDPATTERNS.add(morphling_polyp_pattern);
+		liber_sanguinum_pattern = registerPattern(
+				new BloodCraftingBundledPattern(getBookPattern(), bookSymbolList, bookPatternArray));
+		living_staff_pattern = registerPattern(
+				new BloodCraftingBundledPattern(getLivingStaffPattern(), staffSymbolList, staffPatternArray));
+		living_grip_pattern = registerPattern(
+				new BloodCraftingBundledPattern(getGripPattern(), gripSymbolList, gripPatternArray));
+		ssc_pattern = registerPattern(new BloodCraftingBundledPattern(getSSCPattern(), sscSymbolList, sscArray));
+		hematic_iron_pattern = registerPattern(
+				new BloodCraftingBundledPattern(getTaintedBlockPattern(), tIronSymbolList, tIronPatternArray));
+		unstained_pillar_pattern = registerPattern(new BloodCraftingBundledPattern(getUnsPillarBlockPattern(),
+				unsPillarSymbolList, unsPillarPatternArray));
+		morphling_polyp_pattern = registerPattern(
+				new BloodCraftingBundledPattern(getMorphIncBlockPattern(), morphIncSymbolList, morphIncPatternArray));
 	}
 
 	// Morphling Incubator Block Pattern
@@ -91,7 +76,7 @@ public class ModBloodCraftingRecipes {
 	public static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
 		{
 			put('G', BlockInit.sanguine_glass.get());
-			put('T', BlockInit.tainted_iron_block.get());
+			put('T', BlockInit.hematic_iron_block.get());
 			put('I', BlockInit.infested_venous_stone.get());
 			put('A', Blocks.AIR);
 
@@ -126,7 +111,7 @@ public class ModBloodCraftingRecipes {
 		{
 			put('P', Blocks.QUARTZ_PILLAR);
 			put('S', Blocks.QUARTZ_BLOCK);
-			put('T', BlockInit.tainted_iron_block.get());
+			put('T', BlockInit.hematic_iron_block.get());
 			put('A', Blocks.AIR);
 
 		}
@@ -185,7 +170,7 @@ public class ModBloodCraftingRecipes {
 		{
 			put('V', BlockInit.venous_stone.get());
 			put('A', Blocks.AIR);
-			put('T', BlockInit.tainted_iron_block.get());
+			put('T', BlockInit.hematic_iron_block.get());
 			put('B', BlockInit.active_befouling_ash_trail.get());
 			put('S', BlockInit.active_smouldering_ash_trail.get());
 			put('C', BlockInit.conscious_mass.get());
@@ -299,4 +284,13 @@ public class ModBloodCraftingRecipes {
 		return (CachedBlockInfo.hasState(BlockStateMatcher.forBlock(hash.get(c))));
 	}
 
+	public static BaseBloodCraftingRecipe registerRecipe(BaseBloodCraftingRecipe recipe) {
+		RECIPES.add(recipe);
+		return recipe;
+	}
+
+	public static BloodCraftingBundledPattern registerPattern(BloodCraftingBundledPattern pattern) {
+		BUNDELDPATTERNS.add(pattern);
+		return pattern;
+	}
 }

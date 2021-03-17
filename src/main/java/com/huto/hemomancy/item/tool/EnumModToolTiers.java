@@ -10,8 +10,8 @@ import net.minecraft.util.LazyValue;
 
 public enum EnumModToolTiers implements IItemTier {
 
-	TAINTED_IRON(5, 1024, 3.0F, 7.0F, 10, () -> {
-		return Ingredient.fromItems(ItemInit.tainted_iron_scrap.get());
+	HEMATIC_IRON(5, 1024, 3.0F, 7.0F, 10, () -> {
+		return Ingredient.fromItems(ItemInit.hematic_iron_scrap.get());
 	});
 
 	private final int harvestLevel;

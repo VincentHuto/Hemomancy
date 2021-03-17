@@ -29,8 +29,8 @@ public class PacketToggleJarMessage {
 			ctx.get().enqueueWork(() -> {
 				boolean Pickup = message.enabled;
 				Minecraft.getInstance().player.sendStatusMessage(
-						new StringTextComponent(I18n.format(
-								Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")),
+						new StringTextComponent(
+								I18n.format(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")),
 						true);
 			});
 		ctx.get().setPacketHandled(true);

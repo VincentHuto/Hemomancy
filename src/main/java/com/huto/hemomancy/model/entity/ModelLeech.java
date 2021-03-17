@@ -33,12 +33,10 @@ public class ModelLeech extends EntityModel<EntityLeech> {
 		LeftEye = new ModelRenderer(this);
 		LeftEye.setRotationPoint(0.5F, 0.0F, 2.0F);
 		Head.addChild(LeftEye);
-		
 
 		RightEye = new ModelRenderer(this);
 		RightEye.setRotationPoint(0.0F, 0.0F, 3.0F);
 		Head.addChild(RightEye);
-		
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(-0.5F, 24.0F, 0.0F);
@@ -54,8 +52,8 @@ public class ModelLeech extends EntityModel<EntityLeech> {
 	@Override
 	public void setRotationAngles(EntityLeech entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch) {
-		this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F)* .5F;
-		this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F)* .5F;
+		this.Head.rotateAngleX = headPitch * ((float) Math.PI / 180F) * .5F;
+		this.Head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F) * .5F;
 		this.Tail.rotateAngleY = MathHelper.sin(limbSwing * 7.6662F) * .5F * limbSwingAmount;
 		this.Body.rotateAngleY = MathHelper.cos(limbSwing * 7.6662F + (float) Math.PI) * .5F * limbSwingAmount;
 	}

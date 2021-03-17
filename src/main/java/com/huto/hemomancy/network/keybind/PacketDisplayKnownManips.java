@@ -46,9 +46,11 @@ public class PacketDisplayKnownManips {
 				return;
 			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
+			player.sendStatusMessage(new StringTextComponent(
+					"Selected: " + known.getSelectedManip().getName()), false);
 			for (int i = 0; i < known.getKnownManips().size(); i++) {
-				player.sendStatusMessage(
-						new StringTextComponent("Manipulation " + i + ": "+ known.getKnownManips().get(i).getProperName()), false);
+				player.sendStatusMessage(new StringTextComponent(
+						"Manipulation " + i + ": " + known.getKnownManips().get(i).getProperName()), false);
 			}
 		});
 		ctx.get().setPacketHandled(true);

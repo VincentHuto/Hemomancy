@@ -111,7 +111,7 @@ public class ParticleLightning extends SpriteTexturedParticle {
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
-		
+
 		this.data.fractalize();
 		this.data.finalize();
 		this.colorR = r;

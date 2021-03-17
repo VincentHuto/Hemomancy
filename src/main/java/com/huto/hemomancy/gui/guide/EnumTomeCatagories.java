@@ -1,5 +1,5 @@
 package com.huto.hemomancy.gui.guide;
 
 public enum EnumTomeCatagories {
-	INTRO,VASCULARSYSTEM,TENDENCY,MANIPULATION
-}	
+	INTRO, VASCULARSYSTEM, TENDENCY, MANIPULATION
+}

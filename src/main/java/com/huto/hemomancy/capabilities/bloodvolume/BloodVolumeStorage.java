@@ -15,8 +15,9 @@ public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 
 	@Override
 	public void readNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side, INBT nbt) {
-		   if (!(instance instanceof BloodVolume))
-	            throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-	        instance.setBloodVolume(((FloatNBT)nbt).getFloat());
-	    }
+		if (!(instance instanceof BloodVolume))
+			throw new IllegalArgumentException(
+					"Can not deserialize to an instance that isn't the default implementation");
+		instance.setBloodVolume(((FloatNBT) nbt).getFloat());
+	}
 }

@@ -76,8 +76,8 @@ public class BlockSmoulderingAshTrail extends Block {
 
 	public BlockSmoulderingAshTrail(AbstractBlock.Properties properties) {
 		super(properties.setLightLevel((state) -> {
-		      return 4;
-		   }));
+			return 4;
+		}));
 		this.setDefaultState(
 				this.stateContainer.getBaseState().with(NORTH, RedstoneSide.NONE).with(EAST, RedstoneSide.NONE)
 						.with(SOUTH, RedstoneSide.NONE).with(WEST, RedstoneSide.NONE).with(POWER, Integer.valueOf(0)));

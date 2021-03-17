@@ -31,8 +31,10 @@ public class KnownManipulationEvents {
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		List<BloodManipulation> known = KnownManipulationProvider.getPlayerManips(player);
+		BloodManipulation selected = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new PacketKnownManipulationServer(known, selected));
 		for (BloodManipulation s : known) {
 			if (s != null)
 				player.sendStatusMessage(new StringTextComponent(s.getName()), false);
@@ -43,10 +45,11 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-
 		List<BloodManipulation> known = KnownManipulationProvider.getPlayerManips(player);
+		BloodManipulation selected = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new PacketKnownManipulationServer(known, selected));
 		for (BloodManipulation s : known) {
 			if (s != null)
 				player.sendStatusMessage(new StringTextComponent(s.getName()), false);

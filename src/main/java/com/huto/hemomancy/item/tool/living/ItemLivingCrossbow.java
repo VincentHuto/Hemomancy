@@ -270,7 +270,6 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 		return abstractarrowentity;
 	}
 
-	
 	public static void fireProjectiles(World worldIn, LivingEntity shooter, Hand handIn, ItemStack stack,
 			float velocityIn, float inaccuracyIn) {
 		List<ItemStack> list = getChargedProjectiles(stack);
@@ -301,7 +300,6 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 		return new float[] { 1.0F, getRandomSoundPitch(flag), getRandomSoundPitch(!flag) };
 	}
 
-	
 	private static float getRandomSoundPitch(boolean flagIn) {
 		float f = flagIn ? 0.63F : 0.43F;
 		return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f;
@@ -311,7 +309,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 	 * Called after {@plainlink #fireProjectiles} to clear the charged projectile
 	 * and to update the player advancements.
 	 */
-	
+
 	private static void fireProjectilesAfter(World worldIn, LivingEntity shooter, ItemStack stack) {
 		if (shooter instanceof ServerPlayerEntity) {
 			ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) shooter;
@@ -366,7 +364,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 	/**
 	 * The time the crossbow must be used to reload it
 	 */
-	
+
 	public static int getChargeTime(ItemStack stack) {
 		int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
 		return i == 0 ? 25 : 25 - 5 * i;
@@ -386,6 +384,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 	public UseAction getUseAction(ItemStack stack) {
 		return UseAction.BOW;
 	}
+
 	private SoundEvent getSoundEvent(int enchantmentLevel) {
 		switch (enchantmentLevel) {
 		case 1:
@@ -398,6 +397,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 			return SoundEvents.ITEM_CROSSBOW_LOADING_START;
 		}
 	}
+
 	private static float getCharge(int useTime, ItemStack stack) {
 		float f = (float) useTime / (float) getChargeTime(stack);
 		if (f > 1.0F) {
@@ -440,6 +440,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 				? 1.6F
 				: 3.15F;
 	}
+
 	@Override
 	public int func_230305_d_() {
 		return 8;

@@ -36,7 +36,5 @@ public class MorphlingJarEvents {
 		if (ClientEventSubscriber.keyBinds.get(4).isPressed())
 			PacketHandler.MORPHLINGJAR.sendToServer(new PacketJarTogglePickup());
 	}
-	
-	
 
 }

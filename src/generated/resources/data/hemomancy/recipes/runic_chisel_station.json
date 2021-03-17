@@ -7,10 +7,10 @@
   ],
   "key": {
     "C": {
-      "item": "hemomancy:chiseled_tainted_iron_block"
+      "item": "hemomancy:chiseled_hematic_iron_block"
     },
     "T": {
-      "item": "hemomancy:tainted_iron_block"
+      "item": "hemomancy:hematic_iron_block"
     },
     "V": {
       "item": "hemomancy:venous_stone"

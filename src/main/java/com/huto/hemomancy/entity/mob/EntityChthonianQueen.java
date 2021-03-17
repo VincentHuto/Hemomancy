@@ -161,8 +161,9 @@ public class EntityChthonianQueen extends CreatureEntity implements IAnimatable 
 			rotationYaw = (float) Mafs.getAngle(EntityChthonianQueen.this, target) + 90f;
 		}
 		if (noActiveAnimation()) {
-			if (isClose && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(EntityChthonianQueen.this, target) + 90,
-					rotationYaw) < 30) {
+			if (isClose
+					&& MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(EntityChthonianQueen.this, target) + 90,
+							rotationYaw) < 30) {
 				AnimationPacket.send(EntityChthonianQueen.this, ROLLUP_ANIMATION);
 			}
 		}

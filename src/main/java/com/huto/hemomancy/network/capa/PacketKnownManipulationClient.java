@@ -24,7 +24,7 @@ public class PacketKnownManipulationClient {
 				IKnownManipulations manips = sender.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> sender),
-						new PacketKnownManipulationServer(manips.getKnownManips()));
+						new PacketKnownManipulationServer(manips.getKnownManips(), manips.getSelectedManip()));
 			}
 		});
 		ctx.get().setPacketHandled(true);

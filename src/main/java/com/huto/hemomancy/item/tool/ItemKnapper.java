@@ -15,7 +15,7 @@ public class ItemKnapper extends ToolItem {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.OBSIDIAN);
 	private float speed;
 
-	public ItemKnapper(float speedIn ,float attackDamageIn, float attackSpeedIn, IItemTier tier, Properties builderIn) {
+	public ItemKnapper(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier, Properties builderIn) {
 		super(attackDamageIn, -2.8f, tier, EFFECTIVE_ON, builderIn);
 		this.speed = speedIn;
 	}
@@ -37,6 +37,5 @@ public class ItemKnapper extends ToolItem {
 			return 0.5f;
 		}
 	}
-	
 
 }

@@ -7,16 +7,18 @@ import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.huto.hemomancy.network.keybind.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
+import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class KeyBindEvents {
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
+	public static void onClientTick(ClientTickEvent event) {
+
 		if (ClientEventSubscriber.bloodFormation.isPressed()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodFormationKeyPress());
 		}
@@ -34,14 +36,15 @@ public class KeyBindEvents {
 					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.toggleMorphlingOpenJar.isPressed()) {
-			PacketHandler.HANDLER
-					.sendToServer(new PacketChangeMorphKey());
+			PacketHandler.HANDLER.sendToServer(new PacketChangeMorphKey());
 
 		}
 		if (ClientEventSubscriber.displayKnownManips.isPressed()) {
 			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
 		}
-
+		if (ClientEventSubscriber.cycleSelectedManip.isPressed()) {
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketChangeSelectedManip(ClientEventSubscriber.getPartialTicks()));
+		}
 
 	}
 

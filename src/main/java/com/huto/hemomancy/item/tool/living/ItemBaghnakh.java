@@ -14,7 +14,6 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 
 public class ItemBaghnakh extends ToolItem implements IVanishable {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
@@ -28,7 +27,7 @@ public class ItemBaghnakh extends ToolItem implements IVanishable {
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target.world.rand.nextDouble() > 0.75) {
-			attacker.addPotionEffect(new EffectInstance(Effects.SPEED, 50, 2));
+			attacker.addPotionEffect(new EffectInstance(PotionInit.blood_rush.get(), 50, 2));
 			target.addPotionEffect(new EffectInstance(PotionInit.blood_loss.get(), 50, 2));
 		}
 		return super.hitEntity(stack, target, attacker);

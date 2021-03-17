@@ -21,7 +21,8 @@ public class PacketBloodVolumeClient {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity sender = ctx.get().getSender(); // the client that sent this packet
 			if (sender != null) {
-				IBloodVolume volume = sender.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+				IBloodVolume volume = sender.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
 						new PacketBloodVolumeServer(volume.getBloodVolume()));

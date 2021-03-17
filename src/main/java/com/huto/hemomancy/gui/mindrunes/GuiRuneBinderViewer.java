@@ -104,7 +104,6 @@ public class GuiRuneBinderViewer extends Screen {
 		}
 		GlStateManager.popMatrix();
 
-
 		GlStateManager.pushMatrix();
 		{
 			GlStateManager.translatef(centerX, centerY, 0);

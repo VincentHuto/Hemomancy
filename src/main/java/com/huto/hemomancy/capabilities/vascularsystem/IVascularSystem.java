@@ -11,6 +11,7 @@ public interface IVascularSystem {
 	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value);
 
 	public float getHealthBySection(EnumVeinSections sectionIn);
+
 	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn);
 
 }

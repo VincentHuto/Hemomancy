@@ -65,7 +65,6 @@ public class PacketUpdateLivingStaffMorph {
 													@SuppressWarnings("static-access")
 													ItemStack selectedStaffStack = staff
 															.read(((ListNBT) staffItems.get("Items")).getCompound(0));
-
 													castedJar.setDirty();
 													castedStaff.setDirty();
 													castedJar.setStackInSlot(msg.selected, selectedStaffStack);

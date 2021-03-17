@@ -73,6 +73,8 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding displayKnownManips = new KeyBinding("key.Hemomancy.displaymanips.desc", GLFW.GLFW_KEY_M,
 			"key.Hemomancy.category");
+	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_RIGHT_ALT,
+			"key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -128,6 +130,7 @@ public class ClientEventSubscriber {
 		keyBinds.add(4, toggleMorphlingJarPickup);
 		keyBinds.add(5, toggleMorphlingOpenJar);
 		keyBinds.add(6, displayKnownManips);
+		keyBinds.add(7, cycleSelectedManip);
 
 		for (KeyBinding bind : keyBinds) {
 			ClientRegistry.registerKeyBinding(bind);

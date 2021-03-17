@@ -3,7 +3,7 @@
 			"parent": "block/block",
 	"textures": {
 		"0": "hemomancy:block/conscious_mass",
-		"2": "hemomancy:block/tainted_iron_block",
+		"2": "hemomancy:block/hematic_iron_block",
 		"5": "hemomancy:block/venous_stone",
 		"6": "hemomancy:block/jar_side",
 		"7": "hemomancy:block/jar_bottom_side",

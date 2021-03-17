@@ -33,10 +33,9 @@ public class BloodVolumeHudEventHandler {
 			BloodVolumeHud BloodVolumeHud = new BloodVolumeHud(entityPlayerSP, mc);
 			if (entityPlayerSP.isAlive()) {
 				BloodVolumeHud.renderStatusBar(event.getMatrixStack(), event.getWindow().getScaledWidth(),
-						event.getWindow().getScaledHeight(), entityPlayerSP.world,
-						entityPlayerSP);
+						event.getWindow().getScaledHeight(), entityPlayerSP.world, entityPlayerSP);
 			}
-		default: 
+		default:
 			break;
 		}
 	}

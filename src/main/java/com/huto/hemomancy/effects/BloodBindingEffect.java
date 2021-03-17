@@ -76,8 +76,8 @@ public class BloodBindingEffect extends Effect {
 					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
-							centerVec.y + Math.sin(entity.ticksExisted * 0.1), centerVec.z + Math.cos(
-									entity.ticksExisted * 0.3)
+							centerVec.y + Math.sin(entity.ticksExisted * 0.1),
+							centerVec.z + Math.cos(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							1, 0f, 0.0f, 0f, 0.0035f);
 				}

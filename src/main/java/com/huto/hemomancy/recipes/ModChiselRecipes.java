@@ -203,7 +203,8 @@ public class ModChiselRecipes {
 						add(63);
 
 					}
-				}, Ingredient.fromItems(ItemInit.rune_blank.get()), Ingredient.fromItems(ItemInit.sanguine_formation.get()));
+				}, Ingredient.fromItems(ItemInit.rune_blank.get()),
+				Ingredient.fromItems(ItemInit.sanguine_formation.get()));
 
 		recipeCommunion = registerChiselRecipe(new ResourceLocation("recipecommunion"),
 				new ItemStack(ItemInit.rune_communion.get(), 1), new ArrayList<Integer>() {

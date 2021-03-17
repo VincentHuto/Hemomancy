@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
-	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>(){
+	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>() {
 		{
 			put(EnumBloodTendency.ANIMUS, 0f);
 			put(EnumBloodTendency.MORTEM, 0f);

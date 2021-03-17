@@ -2,8 +2,8 @@ package com.huto.hemomancy.item.tool;
 
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
-import com.huto.hemomancy.entity.EntityIronPillar;
-import com.huto.hemomancy.entity.EntityIronSpike;
+import com.huto.hemomancy.entity.iron.EntityIronPillar;
+import com.huto.hemomancy.entity.iron.EntityIronSpike;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -63,13 +63,15 @@ public class ItemIronRod extends Item {
 											TextFormatting.YELLOW + "Abuse of Power does not come without consequence"),
 									true);
 						}
-						if(!player.isSneaking()) {
-						this.summonIronSpike(worldIn.rand.nextInt(10), worldIn, (PlayerEntity) entityLiving, hitVec);
-						}else {
-							this.summonIronPillar(worldIn.rand.nextInt(10), worldIn, (PlayerEntity) entityLiving, hitVec);
+						if (!player.isSneaking()) {
+							this.summonIronSpike(worldIn.rand.nextInt(10), worldIn, (PlayerEntity) entityLiving,
+									hitVec);
+						} else {
+							this.summonIronPillar(worldIn.rand.nextInt(10), worldIn, (PlayerEntity) entityLiving,
+									hitVec);
 
 						}
-						
+
 					}
 				} else {
 					playerentity.sendStatusMessage(new StringTextComponent("Lord Hastur does not grant you his power"),
@@ -110,6 +112,7 @@ public class ItemIronRod extends Item {
 			}
 		}
 	}
+
 	public void summonIronPillar(int numTent, World world, PlayerEntity player, Vector3d hitVec) {
 		EntityIronPillar[] tentArray = new EntityIronPillar[numTent];
 		for (int i = 0; i < numTent; i++) {

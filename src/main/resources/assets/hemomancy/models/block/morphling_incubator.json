@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"3": "hemomancy:block/tainted_iron_block",
+		"3": "hemomancy:block/hematic_iron_block",
 		"4": "hemomancy:block/venous_stone",
 		"5": "hemomancy:block/vat_port",
 		"6": "hemomancy:block/infested_venous_stone",

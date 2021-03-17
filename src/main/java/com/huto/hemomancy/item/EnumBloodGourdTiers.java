@@ -3,6 +3,7 @@ package com.huto.hemomancy.item;
 public enum EnumBloodGourdTiers {
 
 	SIMPLE(1, 500, 8), CRIMSON(2, 1500, 12), ASHEN(3, 2500, 20);
+
 	private final int tierLevel;
 	private final float maxVolume;
 	private final int enchantability;
