@@ -6,6 +6,7 @@ import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -23,6 +24,9 @@ public class GeneratorRecipes extends RecipeProvider {
 
 	@Override
 	protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+
+		CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(ItemInit.raw_clay_flask.get()),
+				ItemInit.cured_clay_flask.get(), 1f, 200);
 
 		ShapelessRecipeBuilder.shapelessRecipe(ItemInit.hematic_iron_scrap.get(), 4)
 				.addIngredient(BlockInit.hematic_iron_block.get())
@@ -161,6 +165,12 @@ public class GeneratorRecipes extends RecipeProvider {
 		ShapedRecipeBuilder.shapedRecipe(ItemInit.hematic_iron_sword.get()).key('R', ItemInit.hematic_iron_scrap.get())
 				.key('N', Items.STICK).patternLine("R").patternLine("R").patternLine("N")
 				.addCriterion("has_hematic_iron_scrap", hasItem(ItemInit.hematic_iron_scrap.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.raw_clay_flask.get()).key('C', Items.CLAY_BALL)
+				.patternLine(" C ")
+				.patternLine("C C")
+				.patternLine("CCC")
+				.addCriterion("has_clay_ball", hasItem(Items.CLAY_BALL)).build(consumer);
 
 	}
 }

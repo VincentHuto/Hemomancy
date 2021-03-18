@@ -4,14 +4,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.FloatNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class BloodVolumeProvider implements ICapabilitySerializable<FloatNBT> {
+public class BloodVolumeProvider implements ICapabilitySerializable<INBT> {
 	@CapabilityInject(IBloodVolume.class)
 	public static final Capability<IBloodVolume> VOLUME_CAPA = null;
 	private LazyOptional<IBloodVolume> instance = LazyOptional.of(VOLUME_CAPA::getDefaultInstance);
@@ -24,19 +24,19 @@ public class BloodVolumeProvider implements ICapabilitySerializable<FloatNBT> {
 	}
 
 	@Override
-	public FloatNBT serializeNBT() {
-		return (FloatNBT) VOLUME_CAPA.getStorage().writeNBT(VOLUME_CAPA,
+	public INBT serializeNBT() {
+		return (INBT) VOLUME_CAPA.getStorage().writeNBT(VOLUME_CAPA,
 				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
 	}
 
 	@Override
-	public void deserializeNBT(FloatNBT nbt) {
+	public void deserializeNBT(INBT nbt) {
 		VOLUME_CAPA.getStorage().readNBT(VOLUME_CAPA,
 				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null, nbt);
 
 	}
 
-	public static float getPlayerbloodVolumeS(PlayerEntity player) {
+	public static float getPlayerbloodVolume(PlayerEntity player) {
 		return player.getCapability(VOLUME_CAPA).orElseThrow(IllegalStateException::new).getBloodVolume();
 	}
 

@@ -37,22 +37,26 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		float amount = BloodVolumeProvider.getPlayerbloodVolumeS(player);
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(amount));
+				new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 		player.sendStatusMessage(
-				new StringTextComponent("Welcome! Current Blood Volume: " + TextFormatting.GOLD + amount + "ml"),
+				new StringTextComponent(
+						"Welcome! Current Blood Volume: " + TextFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		float amount = BloodVolumeProvider.getPlayerbloodVolumeS(player);
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(amount));
+				new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 		player.sendStatusMessage(
-				new StringTextComponent("Welcome! Current Blood Volume: " + TextFormatting.GOLD + amount + "ml"),
+				new StringTextComponent(
+						"Welcome! Current Blood Volume: " + TextFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
 	}
 

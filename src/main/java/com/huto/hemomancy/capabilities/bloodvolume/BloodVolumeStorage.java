@@ -1,6 +1,6 @@
 package com.huto.hemomancy.capabilities.bloodvolume;
 
-import net.minecraft.nbt.FloatNBT;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -9,8 +9,11 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 
 	@Override
-	public INBT writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
-		return FloatNBT.valueOf(instance.getBloodVolume());
+	public CompoundNBT writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
+		CompoundNBT entry = new CompoundNBT();
+		entry.putFloat("Max", instance.getMaxBloodVolume());
+		entry.putFloat("Volume", instance.getBloodVolume());
+		return entry;
 	}
 
 	@Override
@@ -18,6 +21,13 @@ public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 		if (!(instance instanceof BloodVolume))
 			throw new IllegalArgumentException(
 					"Can not deserialize to an instance that isn't the default implementation");
-		instance.setBloodVolume(((FloatNBT) nbt).getFloat());
+		if (nbt instanceof CompoundNBT) {
+			CompoundNBT entry = (CompoundNBT) nbt;
+			if (entry.contains("Max") && entry.contains("Volume")) {
+				instance.setMaxBloodVolume(entry.getFloat("Max"));
+				instance.setBloodVolume(entry.getFloat("Volume"));
+			}
+		}
+
 	}
 }

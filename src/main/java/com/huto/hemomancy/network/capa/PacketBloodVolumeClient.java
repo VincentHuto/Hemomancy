@@ -25,7 +25,7 @@ public class PacketBloodVolumeClient {
 						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
-						new PacketBloodVolumeServer(volume.getBloodVolume()));
+						new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 			}
 		});
 		ctx.get().setPacketHandled(true);

@@ -12,6 +12,7 @@ import com.huto.hemomancy.entity.mob.EntityChthonian;
 import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityFungling;
+import com.huto.hemomancy.entity.mob.EntityLumpOfThought;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
@@ -46,6 +47,9 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityThirster>> thirster = ENTITY_TYPES.register("thirster",
 			() -> EntityType.Builder.<EntityThirster>create(EntityThirster::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
+	public static final RegistryObject<EntityType<EntityLumpOfThought>> lump_of_thought = ENTITY_TYPES.register("lump_of_thought",
+			() -> EntityType.Builder.<EntityLumpOfThought>create(EntityLumpOfThought::new, EntityClassification.MONSTER)
+					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "lump_of_thought").toString()));
 	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
 			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.CREATURE)
 					.size(1f, 0.5f).build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
@@ -127,6 +131,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().create());
 
 	}
 

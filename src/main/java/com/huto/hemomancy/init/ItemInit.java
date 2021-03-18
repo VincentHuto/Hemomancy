@@ -5,6 +5,7 @@ import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
+import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.item.ItemTendencyBook;
@@ -186,6 +187,12 @@ public class ItemInit {
 			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
 			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> raw_clay_flask = BASEITEMS.register("raw_clay_flask",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
+			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
@@ -398,12 +405,16 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
 			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841,
 					12235264, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
+			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848,
+					11315361, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
 				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
-				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen);
+				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen,
+				ItemInit.spawn_egg_lump_of_thought);
 	}
 
 	// Item Property Override

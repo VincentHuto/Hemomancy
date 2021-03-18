@@ -25,6 +25,7 @@ import com.huto.hemomancy.render.entity.mob.RenderChthonianQueen;
 import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
+import com.huto.hemomancy.render.entity.mob.RenderLumpOfThought;
 import com.huto.hemomancy.render.entity.mob.RenderThirster;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
@@ -73,8 +74,8 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding displayKnownManips = new KeyBinding("key.Hemomancy.displaymanips.desc", GLFW.GLFW_KEY_M,
 			"key.Hemomancy.category");
-	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_RIGHT_ALT,
-			"key.Hemomancy.category");
+	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc",
+			GLFW.GLFW_KEY_RIGHT_ALT, "key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -110,8 +111,8 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.fungling.get(), RenderFungling::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chitinite.get(), RenderChitinite::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian.get(), RenderChthonian::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.lump_of_thought.get(), RenderLumpOfThought::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
-
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),

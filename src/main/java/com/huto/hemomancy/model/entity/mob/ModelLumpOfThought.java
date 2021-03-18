@@ -1,0 +1,397 @@
+package com.huto.hemomancy.model.entity.mob;
+
+import com.huto.hemomancy.entity.mob.EntityLumpOfThought;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
+
+public class ModelLumpOfThought extends EntityModel<EntityLumpOfThought> {
+	private final ModelRenderer bone;
+	private final ModelRenderer arm;
+	private final ModelRenderer arm2;
+	private final ModelRenderer arm3;
+	private final ModelRenderer arm4;
+	private final ModelRenderer arm5;
+	private final ModelRenderer arm6;
+	private final ModelRenderer arm7;
+	private final ModelRenderer arm8;
+	private final ModelRenderer arm9;
+	private final ModelRenderer arm10;
+	private final ModelRenderer arm21;
+	private final ModelRenderer arm22;
+	private final ModelRenderer arm23;
+	private final ModelRenderer arm24;
+	private final ModelRenderer arm25;
+	private final ModelRenderer arm11;
+	private final ModelRenderer arm12;
+	private final ModelRenderer arm13;
+	private final ModelRenderer arm14;
+	private final ModelRenderer arm15;
+	private final ModelRenderer arm16;
+	private final ModelRenderer arm17;
+	private final ModelRenderer arm18;
+	private final ModelRenderer arm19;
+	private final ModelRenderer arm20;
+	private final ModelRenderer bone2;
+	private final ModelRenderer bone3;
+	private final ModelRenderer bone4;
+	private final ModelRenderer bone5;
+	private final ModelRenderer bone6;
+	private final ModelRenderer bone7;
+	private final ModelRenderer bone8;
+	private final ModelRenderer bone9;
+	private final ModelRenderer bone10;
+	private final ModelRenderer bone11;
+	private final ModelRenderer bone12;
+	private final ModelRenderer bone13;
+	private final ModelRenderer bone16;
+	private final ModelRenderer bone15;
+	private final ModelRenderer eye;
+	private final ModelRenderer eye2;
+	private final ModelRenderer eye3;
+	private final ModelRenderer eye7;
+	private final ModelRenderer eye12;
+	private final ModelRenderer eye8;
+	private final ModelRenderer eye9;
+	private final ModelRenderer eye13;
+	private final ModelRenderer eye10;
+	private final ModelRenderer eye11;
+	private final ModelRenderer eye4;
+	private final ModelRenderer eye5;
+	private final ModelRenderer eye6;
+
+	public ModelLumpOfThought() {
+		textureWidth = 128;
+		textureHeight = 128;
+
+		bone = new ModelRenderer(this);
+		bone.setRotationPoint(0.0F, 24.0F, 0.0F);
+		
+
+		arm = new ModelRenderer(this);
+		arm.setRotationPoint(-7.5F, -10.0F, -0.5F);
+		bone.addChild(arm);
+		setRotationAngle(arm, 0.0F, 0.0F, -0.6109F);
+		arm.setTextureOffset(44, 20).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		arm2 = new ModelRenderer(this);
+		arm2.setRotationPoint(0.0F, -1.5F, 0.0F);
+		arm.addChild(arm2);
+		arm2.setTextureOffset(0, 7).addBox(-0.5F, 1.0F, -0.5F, 1.0F, 1.0F, 0.0F, 0.0F, false);
+		arm2.setTextureOffset(0, 55).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 5.0F, 2.0F, 0.0F, false);
+		arm2.setTextureOffset(60, 41).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, false);
+
+		arm3 = new ModelRenderer(this);
+		arm3.setRotationPoint(-0.025F, -3.975F, 0.575F);
+		arm2.addChild(arm3);
+		arm3.setTextureOffset(90, 0).addBox(-0.975F, -4.025F, -1.575F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm3.setTextureOffset(30, 55).addBox(-0.475F, -0.025F, -1.075F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm3.setTextureOffset(50, 94).addBox(-1.475F, -3.775F, -0.575F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm4 = new ModelRenderer(this);
+		arm4.setRotationPoint(0.025F, -4.025F, -0.575F);
+		arm3.addChild(arm4);
+		arm4.setTextureOffset(65, 88).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm4.setTextureOffset(55, 25).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm5 = new ModelRenderer(this);
+		arm5.setRotationPoint(0.0F, -4.0F, 0.0F);
+		arm4.addChild(arm5);
+		arm5.setTextureOffset(93, 71).addBox(-2.0F, -4.75F, 0.0F, 4.0F, 5.0F, 0.0F, 0.0F, false);
+		arm5.setTextureOffset(24, 97).addBox(-1.0F, -5.75F, 0.0F, 2.0F, 1.0F, 0.0F, 0.0F, false);
+		arm5.setTextureOffset(16, 93).addBox(-1.5F, -4.0F, -0.5F, 3.0F, 4.0F, 1.0F, 0.0F, false);
+		arm5.setTextureOffset(56, 21).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm6 = new ModelRenderer(this);
+		arm6.setRotationPoint(-0.5F, -10.0F, 7.5F);
+		bone.addChild(arm6);
+		setRotationAngle(arm6, -0.6981F, 0.0F, 0.5672F);
+		arm6.setTextureOffset(35, 23).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		arm7 = new ModelRenderer(this);
+		arm7.setRotationPoint(0.0F, -1.5F, 0.0F);
+		arm6.addChild(arm7);
+		arm7.setTextureOffset(0, 6).addBox(-0.5F, 1.0F, -0.5F, 1.0F, 1.0F, 0.0F, 0.0F, false);
+		arm7.setTextureOffset(54, 0).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 5.0F, 2.0F, 0.0F, false);
+		arm7.setTextureOffset(60, 36).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, false);
+
+		arm8 = new ModelRenderer(this);
+		arm8.setRotationPoint(-0.025F, -3.975F, 0.575F);
+		arm7.addChild(arm8);
+		arm8.setTextureOffset(57, 88).addBox(-0.975F, -4.025F, -1.575F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm8.setTextureOffset(54, 16).addBox(-0.475F, -0.025F, -1.075F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm8.setTextureOffset(44, 94).addBox(-1.475F, -3.775F, -0.575F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm9 = new ModelRenderer(this);
+		arm9.setRotationPoint(0.025F, -4.025F, -0.575F);
+		arm8.addChild(arm9);
+		arm9.setTextureOffset(49, 88).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm9.setTextureOffset(53, 20).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm9.setTextureOffset(73, 92).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm10 = new ModelRenderer(this);
+		arm10.setRotationPoint(0.0F, -4.0F, 0.0F);
+		arm9.addChild(arm10);
+		arm10.setTextureOffset(8, 93).addBox(-2.0F, -4.75F, 0.0F, 4.0F, 5.0F, 0.0F, 0.0F, false);
+		arm10.setTextureOffset(24, 97).addBox(-1.0F, -5.75F, 0.0F, 2.0F, 1.0F, 0.0F, 0.0F, false);
+		arm10.setTextureOffset(0, 93).addBox(-1.5F, -4.0F, -0.5F, 3.0F, 4.0F, 1.0F, 0.0F, false);
+		arm10.setTextureOffset(51, 26).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm21 = new ModelRenderer(this);
+		arm21.setRotationPoint(-0.5F, -11.0F, -0.5F);
+		bone.addChild(arm21);
+		setRotationAngle(arm21, -0.7854F, 0.0F, -0.5236F);
+		arm21.setTextureOffset(0, 6).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		arm22 = new ModelRenderer(this);
+		arm22.setRotationPoint(0.0F, -1.5F, 0.0F);
+		arm21.addChild(arm22);
+		arm22.setTextureOffset(0, 0).addBox(-0.5F, 1.0F, -0.5F, 1.0F, 1.0F, 0.0F, 0.0F, false);
+		arm22.setTextureOffset(0, 20).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 5.0F, 2.0F, 0.0F, false);
+		arm22.setTextureOffset(12, 12).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, false);
+
+		arm23 = new ModelRenderer(this);
+		arm23.setRotationPoint(-0.025F, -3.975F, 0.575F);
+		arm22.addChild(arm23);
+		arm23.setTextureOffset(48, 62).addBox(-0.975F, -4.025F, -1.575F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm23.setTextureOffset(30, 26).addBox(-0.475F, -0.025F, -1.075F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm23.setTextureOffset(66, 54).addBox(-1.475F, -3.775F, -0.575F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm24 = new ModelRenderer(this);
+		arm24.setRotationPoint(0.025F, -4.025F, -0.575F);
+		arm23.addChild(arm24);
+		arm24.setTextureOffset(24, 55).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm24.setTextureOffset(26, 26).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm25 = new ModelRenderer(this);
+		arm25.setRotationPoint(0.0F, -4.0F, 0.0F);
+		arm24.addChild(arm25);
+		arm25.setTextureOffset(90, 66).addBox(-2.0F, -4.75F, 0.0F, 4.0F, 5.0F, 0.0F, 0.0F, false);
+		arm25.setTextureOffset(24, 97).addBox(-1.0F, -5.75F, 0.0F, 2.0F, 1.0F, 0.0F, 0.0F, false);
+		arm25.setTextureOffset(90, 45).addBox(-1.5F, -4.0F, -0.5F, 3.0F, 4.0F, 1.0F, 0.0F, false);
+		arm25.setTextureOffset(12, 10).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm11 = new ModelRenderer(this);
+		arm11.setRotationPoint(3.5F, -9.0F, -7.5F);
+		bone.addChild(arm11);
+		setRotationAngle(arm11, 1.1345F, 0.0F, -0.48F);
+		arm11.setTextureOffset(26, 20).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		arm12 = new ModelRenderer(this);
+		arm12.setRotationPoint(0.0F, -1.5F, 0.0F);
+		arm11.addChild(arm12);
+		arm12.setTextureOffset(0, 2).addBox(-0.5F, 1.0F, -0.5F, 1.0F, 1.0F, 0.0F, 0.0F, false);
+		arm12.setTextureOffset(34, 46).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 5.0F, 2.0F, 0.0F, false);
+		arm12.setTextureOffset(12, 5).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, false);
+
+		arm13 = new ModelRenderer(this);
+		arm13.setRotationPoint(-0.025F, -3.975F, 0.575F);
+		arm12.addChild(arm13);
+		arm13.setTextureOffset(20, 87).addBox(-0.975F, -4.025F, -1.575F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm13.setTextureOffset(47, 26).addBox(-0.475F, -0.025F, -1.075F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm13.setTextureOffset(73, 88).addBox(-1.475F, -3.775F, -0.575F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm14 = new ModelRenderer(this);
+		arm14.setRotationPoint(0.025F, -4.025F, -0.575F);
+		arm13.addChild(arm14);
+		arm14.setTextureOffset(12, 87).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm14.setTextureOffset(4, 44).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm15 = new ModelRenderer(this);
+		arm15.setRotationPoint(0.0F, -4.0F, 0.0F);
+		arm14.addChild(arm15);
+		arm15.setTextureOffset(36, 92).addBox(-2.0F, -4.75F, 0.0F, 4.0F, 5.0F, 0.0F, 0.0F, false);
+		arm15.setTextureOffset(24, 97).addBox(-1.0F, -5.75F, 0.0F, 2.0F, 1.0F, 0.0F, 0.0F, false);
+		arm15.setTextureOffset(91, 50).addBox(-1.5F, -4.0F, -0.5F, 3.0F, 4.0F, 1.0F, 0.0F, false);
+		arm15.setTextureOffset(0, 44).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm16 = new ModelRenderer(this);
+		arm16.setRotationPoint(6.5F, -9.0F, -0.5F);
+		bone.addChild(arm16);
+		setRotationAngle(arm16, 0.3054F, 0.0F, 0.5672F);
+		arm16.setTextureOffset(0, 12).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		arm17 = new ModelRenderer(this);
+		arm17.setRotationPoint(0.0F, -1.5F, 0.0F);
+		arm16.addChild(arm17);
+		arm17.setTextureOffset(0, 1).addBox(-0.5F, 1.0F, -0.5F, 1.0F, 1.0F, 0.0F, 0.0F, false);
+		arm17.setTextureOffset(0, 37).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 5.0F, 2.0F, 0.0F, false);
+		arm17.setTextureOffset(12, 0).addBox(-1.5F, -3.75F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, false);
+
+		arm18 = new ModelRenderer(this);
+		arm18.setRotationPoint(-0.025F, -3.975F, 0.575F);
+		arm17.addChild(arm18);
+		arm18.setTextureOffset(41, 86).addBox(-0.975F, -4.025F, -1.575F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm18.setTextureOffset(41, 20).addBox(-0.475F, -0.025F, -1.075F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		arm18.setTextureOffset(72, 54).addBox(-1.475F, -3.775F, -0.575F, 3.0F, 4.0F, 0.0F, 0.0F, false);
+
+		arm19 = new ModelRenderer(this);
+		arm19.setRotationPoint(0.025F, -4.025F, -0.575F);
+		arm18.addChild(arm19);
+		arm19.setTextureOffset(0, 71).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, 0.0F, false);
+		arm19.setTextureOffset(38, 21).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		arm20 = new ModelRenderer(this);
+		arm20.setRotationPoint(0.0F, -4.0F, 0.0F);
+		arm19.addChild(arm20);
+		arm20.setTextureOffset(91, 31).addBox(-2.0F, -4.75F, 0.0F, 4.0F, 5.0F, 0.0F, 0.0F, false);
+		arm20.setTextureOffset(24, 97).addBox(-1.0F, -5.75F, 0.0F, 2.0F, 1.0F, 0.0F, 0.0F, false);
+		arm20.setTextureOffset(28, 91).addBox(-1.5F, -4.0F, -0.5F, 3.0F, 4.0F, 1.0F, 0.0F, false);
+		arm20.setTextureOffset(35, 20).addBox(-0.5F, 0.0F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+
+		bone2 = new ModelRenderer(this);
+		bone2.setRotationPoint(0.0F, -1.25F, -0.25F);
+		bone.addChild(bone2);
+		bone2.setTextureOffset(0, 0).addBox(-9.0F, -1.0F, -9.0F, 18.0F, 2.0F, 18.0F, 0.0F, false);
+
+		bone3 = new ModelRenderer(this);
+		bone3.setRotationPoint(1.9F, -6.0F, -2.15F);
+		bone.addChild(bone3);
+		bone3.setTextureOffset(0, 71).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone4 = new ModelRenderer(this);
+		bone4.setRotationPoint(2.9F, -8.0F, -3.4F);
+		bone.addChild(bone4);
+		bone4.setTextureOffset(34, 46).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone5 = new ModelRenderer(this);
+		bone5.setRotationPoint(1.15F, -8.0F, 4.4F);
+		bone.addChild(bone5);
+		bone5.setTextureOffset(80, 80).addBox(-3.0F, -4.0F, -3.0F, 6.0F, 8.0F, 6.0F, 0.0F, false);
+
+		bone6 = new ModelRenderer(this);
+		bone6.setRotationPoint(3.4F, -6.0F, 5.35F);
+		bone.addChild(bone6);
+		bone6.setTextureOffset(0, 38).addBox(-4.5F, -4.5F, -4.0F, 9.0F, 9.0F, 8.0F, 0.0F, false);
+
+		bone7 = new ModelRenderer(this);
+		bone7.setRotationPoint(-4.1F, -6.0F, 4.6F);
+		bone.addChild(bone7);
+		bone7.setTextureOffset(24, 63).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone8 = new ModelRenderer(this);
+		bone8.setRotationPoint(-2.6F, -6.5F, -1.75F);
+		bone.addChild(bone8);
+		bone8.setTextureOffset(26, 29).addBox(-4.5F, -4.5F, -4.0F, 9.0F, 9.0F, 8.0F, 0.0F, false);
+
+		bone9 = new ModelRenderer(this);
+		bone9.setRotationPoint(-2.1F, -5.25F, -4.15F);
+		bone.addChild(bone9);
+		bone9.setTextureOffset(58, 38).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone10 = new ModelRenderer(this);
+		bone10.setRotationPoint(-6.1F, -5.75F, 2.55F);
+		bone.addChild(bone10);
+		bone10.setTextureOffset(58, 58).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone11 = new ModelRenderer(this);
+		bone11.setRotationPoint(3.9F, -5.0F, -4.35F);
+		bone.addChild(bone11);
+		bone11.setTextureOffset(0, 55).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone12 = new ModelRenderer(this);
+		bone12.setRotationPoint(5.4F, -5.0F, 3.35F);
+		bone.addChild(bone12);
+		bone12.setTextureOffset(0, 20).addBox(-4.5F, -4.5F, -4.0F, 9.0F, 9.0F, 8.0F, 0.0F, false);
+
+		bone13 = new ModelRenderer(this);
+		bone13.setRotationPoint(-0.1F, -4.35F, -6.15F);
+		bone.addChild(bone13);
+		bone13.setTextureOffset(54, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		bone16 = new ModelRenderer(this);
+		bone16.setRotationPoint(-5.85F, -4.5F, -5.4F);
+		bone.addChild(bone16);
+		bone16.setTextureOffset(48, 74).addBox(-4.0F, -3.0F, -4.0F, 8.0F, 6.0F, 8.0F, 0.0F, false);
+
+		bone15 = new ModelRenderer(this);
+		bone15.setRotationPoint(-4.9F, -5.5F, 6.6F);
+		bone.addChild(bone15);
+		bone15.setTextureOffset(52, 20).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
+
+		eye = new ModelRenderer(this);
+		eye.setRotationPoint(-3.0F, -10.0F, -5.5F);
+		bone.addChild(eye);
+		eye.setTextureOffset(0, 87).addBox(2.5F, -3.5F, 2.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye2 = new ModelRenderer(this);
+		eye2.setRotationPoint(-7.5F, -10.0F, 4.5F);
+		bone.addChild(eye2);
+		eye2.setTextureOffset(85, 25).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye3 = new ModelRenderer(this);
+		eye3.setRotationPoint(-0.75F, -11.0F, 4.5F);
+		bone.addChild(eye3);
+		eye3.setTextureOffset(29, 85).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye7 = new ModelRenderer(this);
+		eye7.setRotationPoint(2.25F, -7.0F, 9.5F);
+		bone.addChild(eye7);
+		eye7.setTextureOffset(76, 22).addBox(-8.5F, 0.5F, -0.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye12 = new ModelRenderer(this);
+		eye12.setRotationPoint(12.25F, -10.25F, 8.5F);
+		bone.addChild(eye12);
+		eye12.setTextureOffset(72, 74).addBox(-8.5F, 0.5F, -0.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye8 = new ModelRenderer(this);
+		eye8.setRotationPoint(-0.75F, -3.0F, -10.5F);
+		bone.addChild(eye8);
+		eye8.setTextureOffset(82, 39).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye9 = new ModelRenderer(this);
+		eye9.setRotationPoint(8.0F, -3.0F, -6.5F);
+		bone.addChild(eye9);
+		eye9.setTextureOffset(82, 33).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye13 = new ModelRenderer(this);
+		eye13.setRotationPoint(10.0F, -5.0F, 5.5F);
+		bone.addChild(eye13);
+		eye13.setTextureOffset(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye10 = new ModelRenderer(this);
+		eye10.setRotationPoint(-9.75F, -5.0F, -5.5F);
+		bone.addChild(eye10);
+		eye10.setTextureOffset(32, 79).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye11 = new ModelRenderer(this);
+		eye11.setRotationPoint(-9.75F, -3.0F, 8.5F);
+		bone.addChild(eye11);
+		eye11.setTextureOffset(78, 0).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye4 = new ModelRenderer(this);
+		eye4.setRotationPoint(7.25F, -10.0F, 4.5F);
+		bone.addChild(eye4);
+		eye4.setTextureOffset(84, 74).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye5 = new ModelRenderer(this);
+		eye5.setRotationPoint(7.25F, -10.0F, -4.5F);
+		bone.addChild(eye5);
+		eye5.setTextureOffset(82, 60).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+
+		eye6 = new ModelRenderer(this);
+		eye6.setRotationPoint(-3.75F, -10.0F, -7.5F);
+		bone.addChild(eye6);
+		eye6.setTextureOffset(82, 54).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, 0.0F, false);
+	}
+
+	@Override
+	public void setRotationAngles(EntityLumpOfThought entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+			float netHeadYaw, float headPitch) {
+		// previously the render function, render code was moved to a method below
+	}
+
+	@Override
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red,
+			float green, float blue, float alpha) {
+		bone.render(matrixStack, buffer, packedLight, packedOverlay);
+	}
+
+	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+		modelRenderer.rotateAngleX = x;
+		modelRenderer.rotateAngleY = y;
+		modelRenderer.rotateAngleZ = z;
+	}
+}

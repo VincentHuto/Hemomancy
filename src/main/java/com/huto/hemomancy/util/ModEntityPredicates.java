@@ -79,6 +79,19 @@ public class ModEntityPredicates {
 		}
 	};
 
+	public static Predicate<Entity> NOBLOOD = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity e) {
+			if (e instanceof SkeletonEntity || e instanceof WitherSkeletonEntity || e instanceof IronGolemEntity
+					|| e instanceof WitherEntity || e instanceof SnowGolemEntity || e instanceof BlazeEntity
+					|| e instanceof EndermanEntity || e instanceof ShulkerEntity || e instanceof SlimeEntity) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
 	public static Predicate<Entity> UNDEAD = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity e) {

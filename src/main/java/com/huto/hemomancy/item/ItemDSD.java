@@ -16,7 +16,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemDSD extends Item {
-	public String text;
 
 	public ItemDSD(Properties prop) {
 		super(prop);

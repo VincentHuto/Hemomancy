@@ -10,9 +10,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public class PacketBloodVolumeServer {
+	private float max;
 	private float volume;
 
-	public PacketBloodVolumeServer(float volumeIn) {
+	public PacketBloodVolumeServer(float maxIn, float volumeIn) {
+		this.max = maxIn;
 		this.volume = volumeIn;
 	}
 
@@ -22,16 +24,20 @@ public class PacketBloodVolumeServer {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity sender = ctx.get().getSender(); // the client that sent this packet
 			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+			.orElseThrow(IllegalStateException::new).setMaxBloodVolume(msg.max);
+			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalStateException::new).setBloodVolume(msg.volume);
+			
 		});
 		ctx.get().setPacketHandled(true);
 	}
 
 	public static void encode(final PacketBloodVolumeServer msg, final PacketBuffer packetBuffer) {
+		packetBuffer.writeFloat(msg.max);
 		packetBuffer.writeFloat(msg.volume);
 	}
 
 	public static PacketBloodVolumeServer decode(final PacketBuffer packetBuffer) {
-		return new PacketBloodVolumeServer(packetBuffer.readFloat());
+		return new PacketBloodVolumeServer(packetBuffer.readFloat(), packetBuffer.readFloat());
 	}
 }

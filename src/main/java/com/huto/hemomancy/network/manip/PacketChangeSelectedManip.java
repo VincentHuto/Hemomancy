@@ -53,7 +53,6 @@ public class PacketChangeSelectedManip {
 					}
 				} else {
 					int foundIndex = known.getKnownManips().indexOf(known.getSelectedManip());
-					System.out.println(foundIndex);
 					if (foundIndex < known.getKnownManips().size() - 1) {
 						known.setSelectedManip(known.getKnownManips().get(foundIndex + 1));
 					} else {

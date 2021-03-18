@@ -10,4 +10,12 @@ public interface IBloodVolume {
 
 	public float getBloodVolume();
 
+	public float getMaxBloodVolume();
+
+	public void setMaxBloodVolume(float points);
+
+	public void subtractMaxBloodVolume(float points);
+
+	public void addMaxBloodVolume(float points);
+
 }
