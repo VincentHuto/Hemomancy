@@ -9,6 +9,9 @@ import com.google.common.collect.Sets;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -119,11 +122,10 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		super.tick();
 		if (this.world.isRemote) {
 			for (int i = 0; i < 2; i++) {
-				/*
-				 * this.world.addParticle(RedstoneParticleData.REDSTONE_DUST,
-				 * this.getPosXRandom(0.5D), this.getPosYRandom(), this.getPosZRandom(0.5D), 0,
-				 * 0, 0);
-				 */
+				world.addParticle(GlowParticleData.createData(new ParticleColor(255 * world.rand.nextFloat(), 0, 0)),
+						getPosX() + ParticleUtil.inRange(-0.1, 0.1), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
+						getPosZ() + ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
+
 			}
 			if (this.inGround) {
 				if (this.timeInGround % 5 == 0) {
@@ -227,7 +229,6 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 					Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(),
 					effectinstance.isAmbient(), effectinstance.doesShowParticles()));
 		}
-
 		if (!this.customPotionEffects.isEmpty()) {
 			for (EffectInstance effectinstance1 : this.customPotionEffects) {
 				living.addPotionEffect(effectinstance1);
@@ -251,9 +252,6 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		}
 	}
 
-	/**
-	 * Handler for {@link World#setEntityState}
-	 */
 	@OnlyIn(Dist.CLIENT)
 	public void handleStatusUpdate(byte id) {
 		if (id == 0) {

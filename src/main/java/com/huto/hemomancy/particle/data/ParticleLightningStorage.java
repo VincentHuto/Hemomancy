@@ -95,6 +95,7 @@ public class ParticleLightningStorage {
 	public void fractalize(int count) {
 		for (int i = 0; i < count; ++i) {
 			this.split();
+
 		}
 	}
 

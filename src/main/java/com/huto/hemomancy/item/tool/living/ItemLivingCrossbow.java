@@ -7,12 +7,16 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
+import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
+import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.IVanishable;
 import net.minecraft.entity.ICrossbowUser;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,33 +48,26 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
-	/** Set to {@code true} w.hen the crossbow is 20% charged. */
+public class ItemLivingCrossbow extends CrossbowItem {
 	private boolean isLoadingStart = false;
-	/** Set to {@code true} when the crossbow is 50% charged. */
 	private boolean isLoadingMiddle = false;
 
 	public ItemLivingCrossbow(Item.Properties propertiesIn) {
 		super(propertiesIn.maxStackSize(1).maxDamage(2048));
 	}
 
+	@Override
 	public Predicate<ItemStack> getAmmoPredicate() {
 		return ARROWS_OR_FIREWORKS;
 	}
 
-	/**
-	 * Get the predicate to match ammunition when searching the player's inventory,
-	 * not their main/offhand
-	 */
+	@Override
 	public Predicate<ItemStack> getInventoryAmmoPredicate() {
 		return ARROWS;
 	}
 
-	/**
-	 * Called to trigger the item's "innate" right click behavior. To handle when
-	 * this item is used on a Block, see {@link #onItemUse}.
-	 */
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
@@ -84,22 +81,33 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 				this.isLoadingMiddle = false;
 				playerIn.setActiveHand(handIn);
 			}
-
 			return ActionResult.resultConsume(itemstack);
 		} else {
-			return ActionResult.resultFail(itemstack);
+			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+			float vol = volume.getBloodVolume();
+			if (vol >= 50) {
+				if (!isCharged(itemstack)) {
+					this.isLoadingStart = false;
+					this.isLoadingMiddle = false;
+					playerIn.setActiveHand(handIn);
+				}
+				return ActionResult.resultConsume(itemstack);
+
+			} else {
+				return ActionResult.resultFail(itemstack);
+
+			}
 		}
 	}
 
-	/**
-	 * Called when the player stops using an Item (stops holding the right mouse
-	 * button).
-	 */
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
 		int i = this.getUseDuration(stack) - timeLeft;
 		float f = getCharge(i, stack);
+
 		if (f >= 1.0F && !isCharged(stack) && hasAmmo(entityLiving, stack)) {
+
 			setCharged(stack, true);
 			SoundCategory soundcategory = entityLiving instanceof PlayerEntity ? SoundCategory.PLAYERS
 					: SoundCategory.HOSTILE;
@@ -121,12 +129,20 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 			if (k > 0) {
 				itemstack = itemstack1.copy();
 			}
-
-			if (itemstack.isEmpty() && flag) {
-				itemstack = new ItemStack(Items.ARROW);
-				itemstack1 = itemstack.copy();
+			if (itemstack.isEmpty()) {
+				if (flag) {
+					itemstack = new ItemStack(Items.ARROW);
+					itemstack1 = itemstack.copy();
+				} else {
+					PlayerEntity playerIn = (PlayerEntity) entityIn;
+					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+							.orElseThrow(NullPointerException::new);
+					if (playerVolume.getBloodVolume() >= 50) {
+						itemstack = new ItemStack(ItemInit.blood_bolt.get());
+						itemstack1 = itemstack.copy();
+					}
+				}
 			}
-
 			if (!func_220023_a(entityIn, stack, itemstack, k > 0, flag)) {
 				return false;
 			}
@@ -150,7 +166,6 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 			} else {
 				itemstack = p_220023_2_.copy();
 			}
-
 			addChargedProjectile(stack, itemstack);
 			return true;
 		}
@@ -242,7 +257,29 @@ public class ItemLivingCrossbow extends CrossbowItem implements IVanishable {
 				projectileentity.shoot((double) vector3f.getX(), (double) vector3f.getY(), (double) vector3f.getZ(),
 						velocity, inaccuracy);
 			}
+			if (projectile.getItem() == ItemInit.blood_bolt.get()) {
+				if (shooter.world.rand.nextBoolean()) {
+					if (shooter instanceof PlayerEntity) {
+						PlayerEntity playerIn = (PlayerEntity) shooter;
+						IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+								.orElseThrow(NullPointerException::new);
+						float damageMod = 50f;
+						if (playerVolume.getBloodVolume() > damageMod) {
+							playerVolume.subtractBloodVolume(damageMod);
+							PacketHandler.CHANNELBLOODVOLUME.send(
+									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+									new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
+											playerVolume.getBloodVolume()));
+						} else {
+							playerVolume.subtractBloodVolume(damageMod);
+							crossbow.damageItem(2050, shooter, (p_220017_1_) -> {
+								p_220017_1_.sendBreakAnimation(shooter.getActiveHand());
+							});
+						}
 
+					}
+				}
+			}
 			crossbow.damageItem(flag ? 3 : 1, shooter, (p_220017_1_) -> {
 				p_220017_1_.sendBreakAnimation(handIn);
 			});

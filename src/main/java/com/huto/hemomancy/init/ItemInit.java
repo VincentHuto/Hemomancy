@@ -49,7 +49,7 @@ import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemKnapper;
-import com.huto.hemomancy.item.tool.living.ItemBaghnakh;
+import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
@@ -109,16 +109,14 @@ public class ItemInit {
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-
 	// Blade
 	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-			() -> new ItemLivingBlade(25f, 1, 0, ItemTier.NETHERITE,
+			() -> new ItemLivingBlade(25f, 1, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-
 	// Baghnakh
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
-			() -> new ItemBaghnakh(25f, 1, 0, ItemTier.NETHERITE,
-					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+			() -> new ItemLivingBaghnakh(25f, 1, ItemTier.NETHERITE,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
 	// Crossbow
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));

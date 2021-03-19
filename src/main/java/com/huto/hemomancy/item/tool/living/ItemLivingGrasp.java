@@ -64,6 +64,7 @@ public class ItemLivingGrasp extends Item {
 					player.playSound(SoundEvents.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,
 							0.8F + (float) Math.random() * 0.2F);
 				}
+				
 				stack.damageItem(1, player, (p_220009_1_) -> {
 					p_220009_1_.sendBreakAnimation(player.getActiveHand());
 				});

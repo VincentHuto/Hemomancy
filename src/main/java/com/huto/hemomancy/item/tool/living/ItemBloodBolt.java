@@ -12,7 +12,7 @@ public class ItemBloodBolt extends ArrowItem {
 	public ItemBloodBolt(Properties builder) {
 		super(builder);
 	}
-
+	
 	@Override
 	public EntityBloodBolt createArrow(World worldIn, ItemStack stack, LivingEntity shooter) {
 		EntityBloodBolt arrowentity = new EntityBloodBolt(worldIn, shooter);
