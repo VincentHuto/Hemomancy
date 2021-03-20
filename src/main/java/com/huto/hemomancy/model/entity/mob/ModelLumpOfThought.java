@@ -68,7 +68,6 @@ public class ModelLumpOfThought extends EntityModel<EntityLumpOfThought> {
 
 		bone = new ModelRenderer(this);
 		bone.setRotationPoint(0.0F, 24.0F, 0.0F);
-		
 
 		arm = new ModelRenderer(this);
 		arm.setRotationPoint(-7.5F, -10.0F, -0.5F);
@@ -378,9 +377,75 @@ public class ModelLumpOfThought extends EntityModel<EntityLumpOfThought> {
 	}
 
 	@Override
+	public void setLivingAnimations(EntityLumpOfThought entityIn, float limbSwing, float limbSwingAmount,
+			float partialTick) {
+		super.setLivingAnimations(entityIn, limbSwing, limbSwingAmount, partialTick);
+		float frame = entityIn.ticksExisted + partialTick;
+
+		// Tentacles
+		this.arm.rotateAngleX = (float) Math.sin((frame) * 0.3f) * 0.05f;
+		this.arm2.rotateAngleX = (float) Math.sin((frame) * 0.5f) * 0.1f;
+		this.arm3.rotateAngleX = (float) Math.cos((frame) * 0.6f) * 0.15f;
+		this.arm4.rotateAngleX = (float) Math.cos((frame) * 0.7f) * 0.25f;
+		this.arm5.rotateAngleX = (float) Math.cos((frame) * 0.8f) * 0.35f;
+
+		this.arm6.rotateAngleX = (float) Math.cos((frame) * 0.3f) * 0.05f;
+		this.arm7.rotateAngleX = (float) Math.cos((frame) * 0.5f) * 0.1f;
+		this.arm8.rotateAngleX = (float) Math.sin((frame) * 0.6f) * 0.15f;
+		this.arm9.rotateAngleX = (float) Math.sin((frame) * 0.7f) * 0.25f;
+		this.arm10.rotateAngleX = (float) Math.sin((frame) * 0.8f) * 0.35f;
+
+		this.arm11.rotateAngleX = (float) Math.cos((frame) * 0.3f) * 0.05f;
+		this.arm12.rotateAngleX = (float) Math.cos((frame) * 0.5f) * 0.1f;
+		this.arm13.rotateAngleX = (float) Math.cos((frame) * 0.6f) * 0.15f;
+		this.arm14.rotateAngleX = (float) Math.cos((frame) * 0.7f) * 0.25f;
+		this.arm15.rotateAngleX = (float) Math.cos((frame) * 0.8f) * 0.35f;
+
+		this.arm16.rotateAngleX = (float) Math.cos((frame) * 0.3f) * 0.05f;
+		this.arm17.rotateAngleX = (float) Math.sin((frame) * 0.5f) * 0.1f;
+		this.arm18.rotateAngleX = (float) Math.cos((frame) * 0.6f) * 0.15f;
+		this.arm19.rotateAngleX = (float) Math.sin((frame) * 0.7f) * 0.25f;
+		this.arm20.rotateAngleX = (float) Math.cos((frame) * 0.8f) * 0.35f;
+
+		this.arm21.rotateAngleX = (float) Math.sin((frame) * 0.3f) * 0.05f;
+		this.arm22.rotateAngleX = (float) Math.sin((frame) * 0.5f) * 0.1f;
+		this.arm23.rotateAngleX = (float) Math.sin((frame) * 0.6f) * 0.15f;
+		this.arm24.rotateAngleX = (float) Math.sin((frame) * 0.7f) * 0.25f;
+		this.arm25.rotateAngleX = (float) Math.sin((frame) * 0.8f) * 0.35f;
+
+		// Eyes
+		this.eye.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye2.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye2.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye3.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye3.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye4.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye4.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye5.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye5.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye6.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye6.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye7.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye7.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye8.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye8.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye9.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye9.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye10.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye10.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye11.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye11.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye12.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye12.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+		this.eye13.rotateAngleZ = (float) (Math.sin((frame)) * 0.0325);
+		this.eye13.rotateAngleY = (float) (Math.cos((frame)) * 0.0325);
+	}
+
+	@Override
 	public void setRotationAngles(EntityLumpOfThought entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch) {
-		// previously the render function, render code was moved to a method below
+
 	}
 
 	@Override

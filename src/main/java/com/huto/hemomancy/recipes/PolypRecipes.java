@@ -11,7 +11,7 @@ import net.minecraft.item.Items;
 public class PolypRecipes {
 
 	public static List<PolypRecipe> POLYPRECIPES = new ArrayList<>();
-	static PolypRecipe fungalPolyp, pestPolyp, serpentPolyp, leechPolyp, symbiotePolyp;
+	static PolypRecipe fungalPolyp, pestPolyp, serpentPolyp, leechPolyp, chitinitePolyp;
 
 	public static void initRecipes() {
 		fungalPolyp = registerRecipe(
@@ -25,9 +25,9 @@ public class PolypRecipes {
 		leechPolyp = registerRecipe(
 				new PolypRecipe(Arrays.asList(ItemInit.swollen_leech.get(), ItemInit.living_will.get()),
 						ItemInit.morphling_leeches.get()));
-		symbiotePolyp = registerRecipe(new PolypRecipe(
+		chitinitePolyp = registerRecipe(new PolypRecipe(
 				Arrays.asList(Items.SPIDER_EYE, ItemInit.chitinous_husk.get(), ItemInit.living_will.get()),
-				ItemInit.morphling_symbiote.get()));
+				ItemInit.morphling_chitinite.get()));
 
 	}
 

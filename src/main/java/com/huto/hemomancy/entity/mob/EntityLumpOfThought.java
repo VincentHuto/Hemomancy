@@ -61,32 +61,6 @@ public class EntityLumpOfThought extends MonsterEntity {
 	@Override
 	public void tick() {
 		super.tick();
-
-		/*
-		 * // Particle Effects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float f1
-		 * = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if (this.ticksExisted
-		 * < 2) { this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D); }
-		 * 
-		 * if (this.ticksExisted > 2 && this.ticksExisted < 20) {
-		 * 
-		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D); }
-		 * 
-		 * if (this.ticksExisted > 180 && this.ticksExisted < 220) {
-		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D);
-		 * 
-		 * } if (this.ticksExisted == 220) { this.world.addParticle(ParticleTypes.POOF,
-		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.world.isRemote) {
-		 * this.setHealth(0); } else { if (!world.isRemote) {
-		 * world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
-		 * SoundEvents.BLOCK_SNOW_BREAK, SoundCategory.HOSTILE, 3f, 1.2f, false); } } }
-		 */
 	}
 
 	@Override

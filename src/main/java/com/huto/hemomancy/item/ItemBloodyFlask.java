@@ -57,10 +57,8 @@ public class ItemBloodyFlask extends Item {
 						new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 				stack.shrink(1);
 			}
-
 		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
-
 	}
 
 	@Override

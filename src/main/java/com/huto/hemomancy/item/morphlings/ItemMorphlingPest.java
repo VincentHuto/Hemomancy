@@ -12,10 +12,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemMorphlingPest extends ItemMorphling implements IMorphling {
-	public String text;
 
-	public ItemMorphlingPest(Properties prop, String textIn) {
-		super(prop, textIn);
+	public ItemMorphlingPest(Properties prop) {
+		super(prop);
 	}
 
 	@Override

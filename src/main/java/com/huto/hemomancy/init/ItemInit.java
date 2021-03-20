@@ -19,7 +19,7 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
-import com.huto.hemomancy.item.morphlings.ItemMorphlingSymbiote;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 import com.huto.hemomancy.item.rune.ItemGuidanceRune;
 import com.huto.hemomancy.item.rune.ItemMilkweedRune;
@@ -49,8 +49,8 @@ import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemKnapper;
-import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
+import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
 import com.huto.hemomancy.item.tool.living.ItemLivingGrasp;
@@ -130,18 +130,15 @@ public class ItemInit {
 	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-			() -> new ItemMorphlingFungal(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
-					""));
+			() -> new ItemMorphlingFungal(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
-			() -> new ItemMorphlingLeech(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
-	public static final RegistryObject<Item> morphling_symbiote = BASEITEMS.register("morphling_symbiote",
-			() -> new ItemMorphlingSymbiote(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
-					""));
+			() -> new ItemMorphlingLeech(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> morphling_chitinite = BASEITEMS.register("morphling_chitinite",
+			() -> new ItemMorphlingChitinite(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-			() -> new ItemMorphlingSerpent(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
-					""));
+			() -> new ItemMorphlingSerpent(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
-			() -> new ItemMorphlingPest(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1), ""));
+			() -> new ItemMorphlingPest(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
@@ -212,10 +209,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
 			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlotType.FEET,
 					(new Item.Properties()).group(HemomancyItemGroup.instance).isImmuneToFire()));
-
 	public static final RegistryObject<Item> drudge_electrode = SPECIALITEMS.register("drudge_electrode",
 			() -> new ItemDrudgeElectrode(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -541,7 +536,7 @@ public class ItemInit {
 									} else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
 										return 4;
 
-									} else if (selectedStack.getItem() == ItemInit.morphling_symbiote.get()) {
+									} else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
 										return 5;
 
 									} else {

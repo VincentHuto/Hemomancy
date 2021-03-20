@@ -11,11 +11,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemMorphling extends Item implements IMorphling {
-	public String text;
 
-	public ItemMorphling(Properties prop, String textIn) {
+	public ItemMorphling(Properties prop) {
 		super(prop);
-		this.text = textIn;
 		prop.maxStackSize(1);
 	}
 

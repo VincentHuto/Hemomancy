@@ -13,10 +13,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemMorphlingLeech extends ItemMorphling implements IMorphling {
-	public String text;
 
-	public ItemMorphlingLeech(Properties prop, String textIn) {
-		super(prop, textIn);
+	public ItemMorphlingLeech(Properties prop) {
+		super(prop);
 	}
 
 	@Override

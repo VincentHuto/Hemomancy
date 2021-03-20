@@ -10,10 +10,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemMorphlingFungal extends ItemMorphling implements IMorphling {
-	public String text;
 
-	public ItemMorphlingFungal(Properties prop, String textIn) {
-		super(prop, textIn);
+	public ItemMorphlingFungal(Properties prop) {
+		super(prop);
 	}
 
 	@Override

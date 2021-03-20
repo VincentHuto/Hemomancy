@@ -579,7 +579,7 @@
 			"predicate": {
 				"hemomancy:morph": 5
 			},
-			"model": "hemomancy:item/living_staff_symbiote"
+			"model": "hemomancy:item/living_staff_chitinite"
 		}
 	]
 }
