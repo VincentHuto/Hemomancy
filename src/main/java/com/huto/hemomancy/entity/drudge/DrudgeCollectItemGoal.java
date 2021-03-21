@@ -70,6 +70,6 @@ public class DrudgeCollectItemGoal extends Goal {
 	@Override
 	public void startExecuting() {
 		this.creature.getNavigator().setPath(
-				this.creature.getNavigator().getPathToPos(this.movePosX, this.movePosY, this.movePosZ, 0), this.speed);
+				this.creature.getNavigator().pathfind(this.movePosX, this.movePosY, this.movePosZ, 0), this.speed);
 	}
 }

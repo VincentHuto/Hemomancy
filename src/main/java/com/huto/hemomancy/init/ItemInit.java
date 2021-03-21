@@ -120,7 +120,6 @@ public class ItemInit {
 	// Crossbow
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
 			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
 
@@ -401,13 +400,16 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
 			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848,
 					11315361, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
+			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
+					4259840, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
 				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
 				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen,
-				ItemInit.spawn_egg_lump_of_thought);
+				ItemInit.spawn_egg_lump_of_thought, ItemInit.spawn_egg_abhorent_thought);
 	}
 
 	// Item Property Override
@@ -456,6 +458,25 @@ public class ItemInit {
 					}
 				});
 
+		ItemModelsProperties.registerProperty(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+		
+		
+		
+		
+		
 		ItemModelsProperties.registerProperty(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new IItemPropertyGetter() {
 					@Override

@@ -382,7 +382,7 @@ public class BlockCrimsonFlame extends Block {
 			boolean flag = false;
 
 			for (Direction direction : Direction.values()) {
-				if (world.getBlockState(blockpos$mutable.setPos(pos).move(direction)).isIn(Blocks.OBSIDIAN)) {
+				if (world.getBlockState(blockpos$mutable.setPos(pos).move(direction)).matchesBlock(Blocks.OBSIDIAN)) {
 					flag = true;
 					break;
 				}
@@ -394,7 +394,7 @@ public class BlockCrimsonFlame extends Block {
 
 	private BlockState getFireWithAge(IWorld world, BlockPos pos, int age) {
 		BlockState blockstate = getFireForPlacement(world, pos);
-		return blockstate.isIn(BlockInit.crimson_flames.get()) ? blockstate.with(AGE, Integer.valueOf(age))
+		return blockstate.matchesBlock(BlockInit.crimson_flames.get()) ? blockstate.with(AGE, Integer.valueOf(age))
 				: blockstate;
 	}
 

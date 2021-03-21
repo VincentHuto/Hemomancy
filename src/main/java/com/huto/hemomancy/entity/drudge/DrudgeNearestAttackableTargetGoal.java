@@ -71,7 +71,7 @@ public class DrudgeNearestAttackableTargetGoal<T extends LivingEntity> extends T
 
 	protected void findNearestTarget() {
 		if (this.targetClass != PlayerEntity.class && this.targetClass != ServerPlayerEntity.class) {
-			this.nearestTarget = this.goalOwner.world.func_225318_b(this.targetClass, this.targetEntitySelector,
+			this.nearestTarget = this.goalOwner.world.getClosestEntity(this.targetClass, this.targetEntitySelector,
 					this.goalOwner, this.goalOwner.getPosX(), this.goalOwner.getPosYEye(), this.goalOwner.getPosZ(),
 					this.getTargetableArea(this.getTargetDistance()));
 		} else {

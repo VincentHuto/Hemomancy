@@ -48,8 +48,7 @@ public class RenderBloodLaser {
 		Vector3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
 		matrixStackIn.push();
 		matrixStackIn.translate(-view.getX(), -view.getY(), -view.getZ());
-		IVertexBuilder builder;
-		builder = buffer.getBuffer(RenderTypeInit.LASER_MAIN_ADDITIVE);
+		IVertexBuilder builder = buffer.getBuffer(RenderTypeInit.LASER_MAIN_ADDITIVE);
 		matrixStackIn.push();
 		matrixStackIn.translate(from.getX(), from.getY(), from.getZ());
 		float diffX = (float) (to.getX() - from.getX());

@@ -19,6 +19,7 @@ import com.huto.hemomancy.render.entity.RenderIronPillar;
 import com.huto.hemomancy.render.entity.RenderIronSpike;
 import com.huto.hemomancy.render.entity.RenderIronWall;
 import com.huto.hemomancy.render.entity.RenderLeech;
+import com.huto.hemomancy.render.entity.mob.RenderAbhorentThought;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderChthonian;
 import com.huto.hemomancy.render.entity.mob.RenderChthonianQueen;
@@ -113,6 +114,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian.get(), RenderChthonian::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.lump_of_thought.get(), RenderLumpOfThought::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.abhorent_thought.get(), RenderAbhorentThought::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),

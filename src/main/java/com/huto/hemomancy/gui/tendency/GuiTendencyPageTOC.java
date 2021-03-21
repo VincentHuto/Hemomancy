@@ -83,11 +83,11 @@ public class GuiTendencyPageTOC extends GuiTendencyPage {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 
-			buttonTitle.renderButton(matrixStack, mouseX, mouseY, 311);
-			buttonCloseTab.renderButton(matrixStack, mouseX, mouseY, 411);
+			buttonTitle.renderWidget(matrixStack, mouseX, mouseY, 311);
+			buttonCloseTab.renderWidget(matrixStack, mouseX, mouseY, 411);
 
 			for (int i = 1; i < buttonList.size(); i++) {
-				buttonList.get(i).renderButton(matrixStack, mouseX, mouseY, 511);
+				buttonList.get(i).renderWidget(matrixStack, mouseX, mouseY, 511);
 				GlStateManager.translatef(0, 0, 10);
 				drawString(matrixStack, font, "Pg." + i, (buttonList.get(i).posX + 2), buttonList.get(i).posY + 2,
 						8060954);
@@ -97,8 +97,8 @@ public class GuiTendencyPageTOC extends GuiTendencyPage {
 
 			}
 
-			arrowF.renderButton(matrixStack, mouseX, mouseY, 511);
-			arrowB.renderButton(matrixStack, mouseX, mouseY, 511);
+			arrowF.renderWidget(matrixStack, mouseX, mouseY, 511);
+			arrowB.renderWidget(matrixStack, mouseX, mouseY, 511);
 
 		}
 		GlStateManager.popMatrix();

@@ -2,6 +2,9 @@ package com.huto.hemomancy.entity.mob;
 
 import javax.annotation.Nullable;
 
+import com.huto.hemomancy.model.animation.Animation;
+import com.huto.hemomancy.model.animation.IAnimatable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -25,9 +28,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
-public class EntityFargone extends MonsterEntity {
+public class EntityAbhorentThought extends MonsterEntity implements IAnimatable {
 
-	public EntityFargone(EntityType<? extends EntityFargone> type, World worldIn) {
+	private Animation animation = NO_ANIMATION;
+	public static final Animation HEADBUTT_ANIMATION = new Animation(17);
+	public static final Animation SPOREPUFF_ANIMATION = new Animation(17);
+	public int puffCooldown = 0;
+	private int animationTick;
+
+	public EntityAbhorentThought(EntityType<? extends EntityAbhorentThought> type, World worldIn) {
 		super(type, worldIn);
 
 	}
@@ -141,4 +150,34 @@ public class EntityFargone extends MonsterEntity {
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.ENTITY_WOLF_HURT;
 	}
+
+	@Override
+	public int getAnimationTick() {
+		return animationTick;
+	}
+
+	@Override
+	public void setAnimationTick(int tick) {
+		animationTick = tick;
+
+	}
+
+	@Override
+	public Animation getAnimation() {
+		return animation;
+	}
+
+	@Override
+	public void setAnimation(Animation animation) {
+		if (animation == null)
+			animation = NO_ANIMATION;
+		setAnimationTick(0);
+		this.animation = animation;
+	}
+
+	@Override
+	public Animation[] getAnimations() {
+		return new Animation[] { HEADBUTT_ANIMATION, SPOREPUFF_ANIMATION };
+	}
+
 }

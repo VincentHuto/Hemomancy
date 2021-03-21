@@ -1,6 +1,6 @@
 {
    "parent": "item/generated",
    "textures": {
-       "layer0": "hemomancy:items/raw_clay_flask"
+       "layer0": "hemomancy:item/raw_clay_flask"
    }
 }

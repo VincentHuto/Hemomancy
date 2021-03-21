@@ -58,7 +58,7 @@ public class DrudgeHarvestCropGoal extends BreakBlockGoal {
 
 		for (BlockPos blockpos : ablockpos) {
 			for (Block harv : harvestableBlocks) {
-				if (worldIn.getBlockState(blockpos).isIn(harv)) {
+				if (worldIn.getBlockState(blockpos).matchesBlock(harv)) {
 					return blockpos;
 				}
 			}

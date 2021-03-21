@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -59,7 +60,6 @@ public class RenderTypeInit extends RenderType {
 	@SuppressWarnings("unused")
 	private static final LineState THICK_LINES = new LineState(OptionalDouble.of(3.0D));
 	public static final IParticleRenderType EMBER_RENDER = new IParticleRenderType() {
-		@SuppressWarnings("deprecation")
 		@Override
 		public void beginRender(BufferBuilder buffer, TextureManager textureManager) {
 
@@ -73,7 +73,6 @@ public class RenderTypeInit extends RenderType {
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
 		public void finishRender(Tessellator tessellator) {
 			tessellator.draw();
@@ -88,8 +87,20 @@ public class RenderTypeInit extends RenderType {
 
 		@Override
 		public String toString() {
-			return "forcesofreality:em_rend";
+			return "hemomancy:em_rend";
 		}
 	};
+
+	public static RenderType getCrimsonGlint() {
+		return CRIMSON_GLINT;
+	}
+
+	private static RenderType CRIMSON_GLINT = makeType("crimson_glint", DefaultVertexFormats.POSITION_TEX, 7, 256,
+			RenderType.State.getBuilder()
+					.texture(new RenderState.TextureState(
+							new ResourceLocation(Hemomancy.MOD_ID, "textures/item/crimson_item_glint.png"), true,
+							false))
+					.writeMask(COLOR_WRITE).cull(CULL_DISABLED).depthTest(DEPTH_EQUAL).transparency(GLINT_TRANSPARENCY)
+					.texturing(GLINT_TEXTURING).build(false));
 
 }

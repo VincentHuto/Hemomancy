@@ -78,7 +78,7 @@ public class EntityBloodConstruct extends CreatureEntity implements IBloodConstr
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setEquipmentBasedOnDifficulty(difficultyIn);
 		World world = worldIn.getWorld();
-		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
+		if (world instanceof ServerWorld && ((ServerWorld) world).getStructureManager()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
 			this.enablePersistence();
 		}

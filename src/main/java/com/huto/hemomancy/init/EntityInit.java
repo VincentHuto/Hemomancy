@@ -7,6 +7,7 @@ import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.entity.iron.EntityIronPillar;
 import com.huto.hemomancy.entity.iron.EntityIronSpike;
 import com.huto.hemomancy.entity.iron.EntityIronWall;
+import com.huto.hemomancy.entity.mob.EntityAbhorentThought;
 import com.huto.hemomancy.entity.mob.EntityChitinite;
 import com.huto.hemomancy.entity.mob.EntityChthonian;
 import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
@@ -47,6 +48,11 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityThirster>> thirster = ENTITY_TYPES.register("thirster",
 			() -> EntityType.Builder.<EntityThirster>create(EntityThirster::new, EntityClassification.MONSTER)
 					.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
+	public static final RegistryObject<EntityType<EntityAbhorentThought>> abhorent_thought = ENTITY_TYPES.register(
+			"abhorent_thought",
+			() -> EntityType.Builder
+					.<EntityAbhorentThought>create(EntityAbhorentThought::new, EntityClassification.MONSTER)
+					.size(1.5f, 3F).build(new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought").toString()));
 	public static final RegistryObject<EntityType<EntityLumpOfThought>> lump_of_thought = ENTITY_TYPES
 			.register("lump_of_thought",
 					() -> EntityType.Builder
@@ -117,7 +123,7 @@ public class EntityInit {
 
 	public static final RegistryObject<EntityType<EntityBloodBolt>> blood_bolt = ENTITY_TYPES.register("blood_bolt",
 			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
-					.size(0.5F, 0.5F).trackingRange(4).func_233608_b_(20)
+					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
 
 	@SubscribeEvent
@@ -134,6 +140,8 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.abhorent_thought.get(),
+				EntityAbhorentThought.setAttributes().create());
 
 	}
 

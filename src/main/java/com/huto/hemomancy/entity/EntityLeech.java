@@ -161,7 +161,7 @@ public class EntityLeech extends AnimalEntity {
 	 * super.func_230254_b_(p_230254_1_, p_230254_2_); } }
 	 */
 	@Override
-	public EntityLeech func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+	public EntityLeech createChild(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		EntityLeech catentity = EntityInit.leech.get().create(p_241840_1_);
 		if (p_241840_2_ instanceof EntityLeech) {
 			if (this.rand.nextBoolean()) {
@@ -203,7 +203,7 @@ public class EntityLeech extends AnimalEntity {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setLeechType(this.rand.nextInt(4));
 		World world = worldIn.getWorld();
-		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
+		if (world instanceof ServerWorld && ((ServerWorld) world).getStructureManager()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
 			this.setLeechType(1);
 			this.enablePersistence();

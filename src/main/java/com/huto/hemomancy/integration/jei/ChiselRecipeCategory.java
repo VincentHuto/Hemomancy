@@ -89,14 +89,13 @@ public class ChiselRecipeCategory implements IRecipeCategory<RecipeChiselStation
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(RecipeChiselStation recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
 		overlay.draw(matrixStack);
 		GlStateManager.pushMatrix();
 		GlStateManager.translatef(guiWidth / 2 + 70, guiHeight / 2, 10);
 		for (int i = 0; i < buttonList.size(); i++) {
-			buttonList.get(i).renderButton(matrixStack, (int) mouseX, (int) mouseY, 10);
+			buttonList.get(i).renderWidget(matrixStack, (int) mouseX, (int) mouseY, 10);
 		}
 		GlStateManager.popMatrix();
 

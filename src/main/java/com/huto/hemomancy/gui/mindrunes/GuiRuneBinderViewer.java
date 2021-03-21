@@ -64,7 +64,7 @@ public class GuiRuneBinderViewer extends Screen {
 
 		GlStateManager.pushMatrix();
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).renderButton(matrixStack, mouseX, mouseY, 511);
+			buttons.get(i).renderWidget(matrixStack, mouseX, mouseY, 511);
 			if (buttons.get(i).isHovered()) {
 				ItemStack stack = Hemomancy.findRuneBinder(player);
 				IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)

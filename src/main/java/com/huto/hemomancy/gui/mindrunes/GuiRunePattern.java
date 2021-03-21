@@ -67,7 +67,7 @@ public class GuiRunePattern extends Screen {
 
 		GlStateManager.pushMatrix();
 		for (int i = 0; i < buttonList.size(); i++) {
-			buttonList.get(i).renderButton(matrixStack, 0, 0, 10);
+			buttonList.get(i).renderWidget(matrixStack, 0, 0, 10);
 		}
 		GlStateManager.popMatrix();
 

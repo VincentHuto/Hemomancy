@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -19,6 +20,9 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemLivingWeapon extends ToolItem {
@@ -28,6 +32,12 @@ public class ItemLivingWeapon extends ToolItem {
 	public ItemLivingWeapon(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
 			Properties builderIn) {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
+	}
+
+	@Override
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new StringTextComponent(ModTextFormatting
+				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath()))).mergeStyle(TextFormatting.DARK_RED);
 	}
 
 	@Override

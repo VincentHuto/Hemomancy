@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -66,6 +67,13 @@ public class ItemLivingCrossbow extends CrossbowItem {
 	@Override
 	public Predicate<ItemStack> getInventoryAmmoPredicate() {
 		return ARROWS;
+	}
+
+	@Override
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new StringTextComponent(ModTextFormatting
+				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+						.mergeStyle(TextFormatting.DARK_RED);
 	}
 
 	@Override
@@ -246,7 +254,7 @@ public class ItemLivingCrossbow extends CrossbowItem {
 
 			if (shooter instanceof ICrossbowUser) {
 				ICrossbowUser icrossbowuser = (ICrossbowUser) shooter;
-				icrossbowuser.func_230284_a_(icrossbowuser.getAttackTarget(), crossbow, projectileentity,
+				icrossbowuser.fireProjectile(icrossbowuser.getAttackTarget(), crossbow, projectileentity,
 						projectileAngle);
 			} else {
 				Vector3d vector3d1 = shooter.getUpVector(1.0F);
@@ -455,14 +463,14 @@ public class ItemLivingCrossbow extends CrossbowItem {
 		if (isCharged(stack) && !list.isEmpty()) {
 			ItemStack itemstack = list.get(0);
 			tooltip.add((new TranslationTextComponent("item.minecraft.crossbow.projectile")).appendString(" ")
-					.append(itemstack.getTextComponent()));
+					.appendSibling(itemstack.getTextComponent()));
 			if (flagIn.isAdvanced() && itemstack.getItem() == Items.FIREWORK_ROCKET) {
 				List<ITextComponent> list1 = Lists.newArrayList();
 				Items.FIREWORK_ROCKET.addInformation(itemstack, worldIn, list1, flagIn);
 				if (!list1.isEmpty()) {
 					for (int i = 0; i < list1.size(); ++i) {
-						list1.set(i,
-								(new StringTextComponent("  ")).append(list1.get(i)).mergeStyle(TextFormatting.GRAY));
+						list1.set(i, (new StringTextComponent("  ")).appendSibling(list1.get(i))
+								.mergeStyle(TextFormatting.GRAY));
 					}
 
 					tooltip.addAll(list1);

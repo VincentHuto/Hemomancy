@@ -76,7 +76,7 @@ public class GuiChiselStation extends ContainerScreen<ContainerChiselStation> {
 		}
 		GlStateManager.popMatrix();
 		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).renderButton(matrixStack, mouseX, mouseY, 10);
+			buttons.get(i).renderWidget(matrixStack, mouseX, mouseY, 10);
 		}
 
 		super.render(matrixStack, mouseX, mouseY, partialTicks);

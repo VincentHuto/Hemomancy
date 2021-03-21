@@ -55,7 +55,6 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 	public static final Animation HEADBUTT_ANIMATION = new Animation(17);
 	public static final Animation SPOREPUFF_ANIMATION = new Animation(17);
 	public int puffCooldown = 0;
-
 	private int animationTick;
 
 	public EntityFungling(EntityType<? extends EntityFungling> type, World worldIn) {
@@ -85,7 +84,7 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setEquipmentBasedOnDifficulty(difficultyIn);
 		World world = worldIn.getWorld();
-		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
+		if (world instanceof ServerWorld && ((ServerWorld) world).getStructureManager()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
 			this.enablePersistence();
 		}

@@ -10,6 +10,7 @@ import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
@@ -96,8 +97,9 @@ public class ItemLivingStaff extends Item {
 
 	@Override
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent("Living Staff").mergeStyle(TextFormatting.DARK_RED)
-				.mergeStyle(TextFormatting.ITALIC);
+		return new StringTextComponent(ModTextFormatting
+				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+						.mergeStyle(TextFormatting.DARK_RED);
 	}
 
 	@Override

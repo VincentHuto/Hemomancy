@@ -121,10 +121,10 @@ public class BlockSmoulderingAshTrail extends Block {
 		if (flag && areAllSidesInvalid(state)) {
 			return state;
 		} else {
-			boolean flag1 = state.get(NORTH).func_235921_b_();
-			boolean flag2 = state.get(SOUTH).func_235921_b_();
-			boolean flag3 = state.get(EAST).func_235921_b_();
-			boolean flag4 = state.get(WEST).func_235921_b_();
+			boolean flag1 = state.get(NORTH).isValidSide();
+			boolean flag2 = state.get(SOUTH).isValidSide();
+			boolean flag3 = state.get(EAST).isValidSide();
+			boolean flag4 = state.get(WEST).isValidSide();
 			boolean flag5 = !flag1 && !flag2;
 			boolean flag6 = !flag3 && !flag4;
 			if (!flag4 && flag5) {
@@ -151,7 +151,7 @@ public class BlockSmoulderingAshTrail extends Block {
 		boolean flag = !reader.getBlockState(pos.up()).isNormalCube(reader, pos);
 
 		for (Direction direction : Direction.Plane.HORIZONTAL) {
-			if (!state.get(FACING_PROPERTY_MAP.get(direction)).func_235921_b_()) {
+			if (!state.get(FACING_PROPERTY_MAP.get(direction)).isValidSide()) {
 				RedstoneSide redstoneside = this.recalculateSide(reader, pos, direction, flag);
 				state = state.with(FACING_PROPERTY_MAP.get(direction), redstoneside);
 			}
@@ -175,7 +175,7 @@ public class BlockSmoulderingAshTrail extends Block {
 			return this.getUpdatedState(worldIn, stateIn, currentPos);
 		} else {
 			RedstoneSide redstoneside = this.getSide(worldIn, currentPos, facing);
-			return redstoneside.func_235921_b_() == stateIn.get(FACING_PROPERTY_MAP.get(facing)).func_235921_b_()
+			return redstoneside.isValidSide() == stateIn.get(FACING_PROPERTY_MAP.get(facing)).isValidSide()
 					&& !areAllSidesValid(stateIn) ? stateIn.with(FACING_PROPERTY_MAP.get(facing), redstoneside)
 							: this.getUpdatedState(worldIn, this.sideBaseState.with(POWER, stateIn.get(POWER))
 									.with(FACING_PROPERTY_MAP.get(facing), redstoneside), currentPos);
@@ -183,13 +183,13 @@ public class BlockSmoulderingAshTrail extends Block {
 	}
 
 	private static boolean areAllSidesValid(BlockState state) {
-		return state.get(NORTH).func_235921_b_() && state.get(SOUTH).func_235921_b_()
-				&& state.get(EAST).func_235921_b_() && state.get(WEST).func_235921_b_();
+		return state.get(NORTH).isValidSide() && state.get(SOUTH).isValidSide() && state.get(EAST).isValidSide()
+				&& state.get(WEST).isValidSide();
 	}
 
 	private static boolean areAllSidesInvalid(BlockState state) {
-		return !state.get(NORTH).func_235921_b_() && !state.get(SOUTH).func_235921_b_()
-				&& !state.get(EAST).func_235921_b_() && !state.get(WEST).func_235921_b_();
+		return !state.get(NORTH).isValidSide() && !state.get(SOUTH).isValidSide() && !state.get(EAST).isValidSide()
+				&& !state.get(WEST).isValidSide();
 	}
 
 	/**
@@ -203,10 +203,10 @@ public class BlockSmoulderingAshTrail extends Block {
 		for (Direction direction : Direction.Plane.HORIZONTAL) {
 			RedstoneSide redstoneside = state.get(FACING_PROPERTY_MAP.get(direction));
 			if (redstoneside != RedstoneSide.NONE
-					&& !worldIn.getBlockState(blockpos$mutable.setAndMove(pos, direction)).isIn(this)) {
+					&& !worldIn.getBlockState(blockpos$mutable.setAndMove(pos, direction)).matchesBlock(this)) {
 				blockpos$mutable.move(Direction.DOWN);
 				BlockState blockstate = worldIn.getBlockState(blockpos$mutable);
-				if (!blockstate.isIn(Blocks.OBSERVER)) {
+				if (!blockstate.matchesBlock(Blocks.OBSERVER)) {
 					BlockPos blockpos = blockpos$mutable.offset(direction.getOpposite());
 					BlockState blockstate1 = blockstate.updatePostPlacement(direction.getOpposite(),
 							worldIn.getBlockState(blockpos), worldIn, blockpos$mutable, blockpos);
@@ -215,7 +215,7 @@ public class BlockSmoulderingAshTrail extends Block {
 
 				blockpos$mutable.setAndMove(pos, direction).move(Direction.UP);
 				BlockState blockstate3 = worldIn.getBlockState(blockpos$mutable);
-				if (!blockstate3.isIn(Blocks.OBSERVER)) {
+				if (!blockstate3.matchesBlock(Blocks.OBSERVER)) {
 					BlockPos blockpos1 = blockpos$mutable.offset(direction.getOpposite());
 					BlockState blockstate2 = blockstate3.updatePostPlacement(direction.getOpposite(),
 							worldIn.getBlockState(blockpos1), worldIn, blockpos$mutable, blockpos1);
@@ -258,7 +258,7 @@ public class BlockSmoulderingAshTrail extends Block {
 	}
 
 	private boolean canPlaceOnTopOf(IBlockReader reader, BlockPos pos, BlockState state) {
-		return state.isSolidSide(reader, pos, Direction.UP) || state.isIn(Blocks.HOPPER);
+		return state.isSolidSide(reader, pos, Direction.UP) || state.matchesBlock(Blocks.HOPPER);
 	}
 
 	private void updatePower(World world, BlockPos pos, BlockState state) {
@@ -306,7 +306,7 @@ public class BlockSmoulderingAshTrail extends Block {
 	}
 
 	private int getPower(BlockState state) {
-		return state.isIn(this) ? state.get(POWER) : 0;
+		return state.matchesBlock(this) ? state.get(POWER) : 0;
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class BlockSmoulderingAshTrail extends Block {
 	 * only if the given block is a redstone wire.
 	 */
 	private void notifyWireNeighborsOfStateChange(World worldIn, BlockPos pos) {
-		if (worldIn.getBlockState(pos).isIn(this)) {
+		if (worldIn.getBlockState(pos).matchesBlock(this)) {
 			worldIn.notifyNeighborsOfStateChange(pos, this);
 
 			for (Direction direction : Direction.values()) {
@@ -325,7 +325,7 @@ public class BlockSmoulderingAshTrail extends Block {
 	}
 
 	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (!oldState.isIn(state.getBlock()) && !worldIn.isRemote) {
+		if (!oldState.matchesBlock(state.getBlock()) && !worldIn.isRemote) {
 			this.updatePower(worldIn, pos, state);
 
 			for (Direction direction : Direction.Plane.VERTICAL) {
@@ -337,7 +337,7 @@ public class BlockSmoulderingAshTrail extends Block {
 	}
 
 	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!isMoving && !state.isIn(newState.getBlock())) {
+		if (!isMoving && !state.matchesBlock(newState.getBlock())) {
 			if (!worldIn.isRemote) {
 				for (Direction direction : Direction.values()) {
 					worldIn.notifyNeighborsOfStateChange(pos.offset(direction), this);
@@ -399,7 +399,7 @@ public class BlockSmoulderingAshTrail extends Block {
 				return 0;
 			} else {
 				return side != Direction.UP && !this.getUpdatedState(blockAccess, blockState, pos)
-						.get(FACING_PROPERTY_MAP.get(side.getOpposite())).func_235921_b_() ? 0 : i;
+						.get(FACING_PROPERTY_MAP.get(side.getOpposite())).isValidSide() ? 0 : i;
 			}
 		} else {
 			return 0;
@@ -544,8 +544,8 @@ public class BlockSmoulderingAshTrail extends Block {
 	private void updateChangedConnections(World world, BlockPos pos, BlockState prevState, BlockState newState) {
 		for (Direction direction : Direction.Plane.HORIZONTAL) {
 			BlockPos blockpos = pos.offset(direction);
-			if (prevState.get(FACING_PROPERTY_MAP.get(direction)).func_235921_b_() != newState
-					.get(FACING_PROPERTY_MAP.get(direction)).func_235921_b_()
+			if (prevState.get(FACING_PROPERTY_MAP.get(direction)).isValidSide() != newState
+					.get(FACING_PROPERTY_MAP.get(direction)).isValidSide()
 					&& world.getBlockState(blockpos).isNormalCube(world, blockpos)) {
 				world.notifyNeighborsOfStateExcept(blockpos, newState.getBlock(), direction.getOpposite());
 			}

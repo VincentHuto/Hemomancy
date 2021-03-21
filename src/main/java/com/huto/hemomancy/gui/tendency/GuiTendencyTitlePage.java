@@ -82,7 +82,7 @@ public class GuiTendencyTitlePage extends Screen {
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			if (isElder) {
-				hiddenButton.renderButton(matrixStack, mouseX, mouseY, 16);
+				hiddenButton.renderWidget(matrixStack, mouseX, mouseY, 16);
 			}
 
 		}

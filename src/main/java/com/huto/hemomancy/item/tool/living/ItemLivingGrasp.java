@@ -4,6 +4,7 @@ import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
+import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 
@@ -18,6 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -39,6 +41,13 @@ public class ItemLivingGrasp extends Item {
 	}
 
 	@Override
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new StringTextComponent(ModTextFormatting
+				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+						.mergeStyle(TextFormatting.DARK_RED);
+	}
+
+	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
 		if (entityLiving instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) entityLiving;
@@ -49,7 +58,8 @@ public class ItemLivingGrasp extends Item {
 					playerVolume.subtractBloodVolume(50f);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-							new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),playerVolume.getBloodVolume()));
+							new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
+									playerVolume.getBloodVolume()));
 					if (worldIn.rand.nextInt(10) == 6) {
 
 						player.sendStatusMessage(new StringTextComponent(
@@ -64,7 +74,7 @@ public class ItemLivingGrasp extends Item {
 					player.playSound(SoundEvents.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,
 							0.8F + (float) Math.random() * 0.2F);
 				}
-				
+
 				stack.damageItem(1, player, (p_220009_1_) -> {
 					p_220009_1_.sendBreakAnimation(player.getActiveHand());
 				});

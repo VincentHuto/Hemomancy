@@ -109,7 +109,7 @@ public class EntityDrudge extends TameableEntity {
 	}
 
 	@Override
-	public EntityDrudge func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+	public EntityDrudge createChild(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		EntityDrudge wolfentity = EntityInit.drudge.get().create(p_241840_1_);
 		UUID uuid = this.getOwnerId();
 		if (uuid != null) {
@@ -276,7 +276,7 @@ public class EntityDrudge extends TameableEntity {
 
 	// This is on right click with a certain item not neccisairly by player
 	@Override
-	public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
+	public ActionResultType getEntityInteractionResult(PlayerEntity p_230254_1_, Hand p_230254_2_) {
 		ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_);
 		Item item = itemstack.getItem();
 		if (item == ItemInit.drudge_submission_device.get() && !this.isTamed()) {
@@ -284,7 +284,7 @@ public class EntityDrudge extends TameableEntity {
 				this.setTamedBy(p_230254_1_);
 				this.navigator.clearPath();
 				this.setAttackTarget((LivingEntity) null);
-				this.func_233687_w_(true);
+				this.setSitting(true);
 				this.world.setEntityState(this, (byte) 7);
 			} else {
 				this.world.setEntityState(this, (byte) 6);
@@ -293,7 +293,7 @@ public class EntityDrudge extends TameableEntity {
 			return ActionResultType.SUCCESS;
 		}
 
-		return super.func_230254_b_(p_230254_1_, p_230254_2_);
+		return super.getEntityInteractionResult(p_230254_1_, p_230254_2_);
 	}
 
 	@Override
@@ -310,7 +310,7 @@ public class EntityDrudge extends TameableEntity {
 		spawnDataIn = super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.setDrudgeRole(this.rand.nextInt(8));
 		World world = worldIn.getWorld();
-		if (world instanceof ServerWorld && ((ServerWorld) world).func_241112_a_()
+		if (world instanceof ServerWorld && ((ServerWorld) world).getStructureManager()
 				.getStructureStart(this.getPosition(), true, Structure.SWAMP_HUT).isValid()) {
 			this.setDrudgeRole(1);
 			this.enablePersistence();

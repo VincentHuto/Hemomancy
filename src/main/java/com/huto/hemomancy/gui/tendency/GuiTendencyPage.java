@@ -101,15 +101,15 @@ public class GuiTendencyPage extends Screen {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 			if (pageNum != (getMatchingChapter().size() - 1)) {
-				arrowF.renderButton(matrixStack, mouseX, mouseY, 111);
+				arrowF.renderWidget(matrixStack, mouseX, mouseY, 111);
 			}
 
 			if (pageNum > 0) {
 
-				arrowB.renderButton(matrixStack, mouseX, mouseY, 211);
+				arrowB.renderWidget(matrixStack, mouseX, mouseY, 211);
 			}
-			buttonTitle.renderButton(matrixStack, mouseX, mouseY, 311);
-			buttonCloseTab.renderButton(matrixStack, mouseX, mouseY, 411);
+			buttonTitle.renderWidget(matrixStack, mouseX, mouseY, 311);
+			buttonCloseTab.renderWidget(matrixStack, mouseX, mouseY, 411);
 			GlStateManager.popMatrix();
 
 		}

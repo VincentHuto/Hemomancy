@@ -74,9 +74,8 @@ public class GuiButtonTextured extends Button {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void renderButton(MatrixStack matrix, int mouseX, int mouseY, float particks) {
+	public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float particks) {
 		if (visible) {
 			GlStateManager.enableAlphaTest();
 			GlStateManager.enableBlend();
