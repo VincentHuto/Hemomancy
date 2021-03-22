@@ -16,10 +16,10 @@ public class RecipeChiselStation implements IModRecipe {
 	private final ResourceLocation id;
 	private final ItemStack output;
 	private final ImmutableList<Ingredient> inputs;
-	public ArrayList<Integer> activatedRunes;
+	public List<Integer> activatedRunes;
 	GuiChiselStation station;
 
-	public RecipeChiselStation(ResourceLocation id, ItemStack output, ArrayList<Integer> runesIn,
+	public RecipeChiselStation(ResourceLocation id, ItemStack output, List<Integer> runesIn,
 			Ingredient... inputs) {
 		this.id = id;
 		ImmutableList.Builder<Ingredient> inputsToSet = ImmutableList.builder();
@@ -72,7 +72,7 @@ public class RecipeChiselStation implements IModRecipe {
 		return output;
 	}
 
-	public ArrayList<Integer> getActivatedRunes() {
+	public List<Integer> getActivatedRunes() {
 		return activatedRunes;
 	}
 

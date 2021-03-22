@@ -1,6 +1,7 @@
 package com.huto.hemomancy.particle;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ParticleColor {
 
@@ -18,6 +19,36 @@ public class ParticleColor {
 
 	public ParticleColor(float r, float g, float b) {
 		this((int) r, (int) g, (int) b);
+	}
+
+	public static ParticleColor averageFromList(List<ParticleColor> list) {
+		float runningR = 0, runningG = 0, runningB = 0, count = 0;
+
+		for (ParticleColor color : list) {
+			count++;
+			runningR += color.getRed();
+			runningG += color.getGreen();
+			runningB += color.getBlue();
+		}
+		float avgR = runningR / count;
+		float avgG = runningG / count;
+		float avgB = runningB / count;
+		return new ParticleColor(avgR, avgG, avgB);
+	}
+
+	public static ParticleColor averageColors(ParticleColor... colors) {
+		float runningR = 0, runningG = 0, runningB = 0, count = 0;
+		for (ParticleColor color : colors) {
+			count++;
+			runningR += color.getRed();
+			runningG += color.getGreen();
+			runningB += color.getBlue();
+		}
+		float avgR = runningR / count;
+		float avgG = runningG / count;
+		float avgB = runningB / count;
+		return new ParticleColor(avgR, avgG, avgB);
+
 	}
 
 	public float getRed() {
@@ -38,6 +69,12 @@ public class ParticleColor {
 
 	public String serialize() {
 		return "" + this.r + "," + this.g + "," + this.b;
+	}
+
+	@Override
+	public String toString() {
+		return this.r + "," + this.g + "," + this.b;
+
 	}
 
 	public static ParticleColor deserialize(String string) {

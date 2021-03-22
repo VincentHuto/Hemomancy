@@ -137,6 +137,7 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 	private void spawnParticleFromMatrix(MatrixStack matrixStackIn, LivingEntity player,
 			ItemCameraTransforms.TransformType type) {
 		Vector3d playerPos = player.getPositionVec();
+		System.out.println(player.getName());
 		World world = player.world;
 		Matrix4f curMatrix = matrixStackIn.getLast().getMatrix();
 		Vector3d particlePos = playerPos

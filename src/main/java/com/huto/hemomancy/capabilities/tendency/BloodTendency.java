@@ -1,10 +1,15 @@
 package com.huto.hemomancy.capabilities.tendency;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.huto.hemomancy.particle.ParticleColor;
 
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
+
 	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>() {
 		{
 			put(EnumBloodTendency.ANIMUS, 0f);
@@ -19,14 +24,17 @@ public class BloodTendency implements IBloodTendency {
 		}
 	};
 
+	@Override
 	public Map<EnumBloodTendency, Float> getTendency() {
 		return tendency;
 	}
 
+	@Override
 	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
 		this.tendency = tendency;
 	}
 
+	@Override
 	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
@@ -39,12 +47,43 @@ public class BloodTendency implements IBloodTendency {
 		}
 	}
 
+	@Override
 	public float getAlignmentByTendency(EnumBloodTendency tendencyIn) {
 		if (tendency != null && tendency.get(tendencyIn) != null) {
 			return tendency.get(tendencyIn);
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public float getPercentByTendency(EnumBloodTendency tendencyIn) {
+		float total = getTotalAlignment();
+		float current = getAlignmentByTendency(tendencyIn);
+		float per = (current / total);
+		return per;
+	}
+
+	@Override
+	public float getTotalAlignment() {
+		float runningTotal = 0;
+		for (EnumBloodTendency key : EnumBloodTendency.values()) {
+			runningTotal += tendency.get(key);
+		}
+		return runningTotal;
+
+	}
+
+	@Override
+	public ParticleColor getAvgBloodColor() {
+		List<ParticleColor> colors = new ArrayList<ParticleColor>();
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			float percent = getPercentByTendency(tend);
+			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getRed() * percent,
+					tend.getColor().getGreen() * percent));
+		}
+		return ParticleColor.averageFromList(colors);
+
 	}
 
 	@Override
