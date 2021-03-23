@@ -36,6 +36,8 @@ import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 import com.huto.hemomancy.recipes.PolypRecipes;
+import com.huto.hemomancy.render.layer.HandParticleLayer;
+import com.huto.hemomancy.render.layer.LivingBladeRenderLayer;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 
 import net.minecraft.client.Minecraft;
@@ -194,7 +196,6 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
-
 		this.addLayers();
 
 	}
@@ -211,17 +212,37 @@ public class Hemomancy {
 	public void onServerStarting(FMLServerStartingEvent event) {
 	}
 
+	private static boolean addedSpellLayerDefault = false;
+	private static boolean addedSwordLayerDefault = false;
+	private static boolean addedSpellLayeSlim = false;
+	private static boolean addedSwordLayerSlim = false;
+
 	// Rune Layers
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@OnlyIn(Dist.CLIENT)
 	private void addLayers() {
-
 		Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
 		PlayerRenderer render;
 		render = skinMap.get("default");
 		render.addLayer(new RunesRenderLayer(render));
+		if (!addedSpellLayerDefault) {
+			render.addLayer(new HandParticleLayer(render));
+			addedSpellLayerDefault = true;
+		}
+		if (!addedSwordLayerDefault) {
+			render.addLayer(new LivingBladeRenderLayer(render));
+			addedSwordLayerDefault = true;
+		}
 		render = skinMap.get("slim");
 		render.addLayer(new RunesRenderLayer(render));
+		if (!addedSwordLayerSlim) {
+			render.addLayer(new LivingBladeRenderLayer(render));
+			addedSwordLayerSlim = true;
+		}
+		if (!addedSpellLayeSlim) {
+			render.addLayer(new HandParticleLayer(render));
+			addedSpellLayeSlim = true;
+		}
 
 	}
 

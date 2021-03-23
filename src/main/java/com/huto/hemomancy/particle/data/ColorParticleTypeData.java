@@ -27,7 +27,6 @@ public class ColorParticleTypeData implements IParticleData {
 
 	public ParticleColor color;
 
-	@SuppressWarnings("deprecation")
 	public static final IParticleData.IDeserializer<ColorParticleTypeData> DESERIALIZER = new IParticleData.IDeserializer<ColorParticleTypeData>() {
 		@Override
 		public ColorParticleTypeData deserialize(ParticleType<ColorParticleTypeData> type, StringReader reader)

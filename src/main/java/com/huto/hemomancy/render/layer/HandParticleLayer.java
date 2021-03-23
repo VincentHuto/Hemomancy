@@ -137,13 +137,13 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 	private void spawnParticleFromMatrix(MatrixStack matrixStackIn, LivingEntity player,
 			ItemCameraTransforms.TransformType type) {
 		Vector3d playerPos = player.getPositionVec();
-		System.out.println(player.getName());
+		// System.out.println(player.getName());
 		World world = player.world;
 		Matrix4f curMatrix = matrixStackIn.getLast().getMatrix();
 		Vector3d particlePos = playerPos
 				.add(new Vector3d((double) curMatrix.m03, (double) curMatrix.m13, (double) curMatrix.m23));
 		Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
-		int globalPartCount = 128;
+		int globalPartCount = 60;
 		// RayTraceResult trace = player.pick(2,
 		// ClientEventSubscriber.getPartialTicks(), true);
 		// System.out.println(trace);
@@ -152,11 +152,9 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
 				false);
 		for (int i = 0; i < globalPartCount; i++) {
-			world.addParticle(
-					BloodCellParticleData.createData(new ParticleColor(
-							Math.max((int) (inversedSphere[i].x * 255), (int) (inversedSphere[i].z * 255)), 0, 0)),
-					origin.getX() + inversedSphere[i].x, origin.getY() + inversedSphere[i].y,
-					origin.getZ() + inversedSphere[i].z, 0, 0.00, 0);
+			world.addParticle(BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
+					particlePos.getX() + inversedSphere[i].x, particlePos.getY() + inversedSphere[i].y,
+					particlePos.getZ() + inversedSphere[i].z, 0, 0.00, 0);
 
 		}
 

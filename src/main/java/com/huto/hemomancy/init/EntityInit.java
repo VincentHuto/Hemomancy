@@ -18,6 +18,7 @@ import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
+import com.huto.hemomancy.entity.projectile.EntityBloodShot;
 import com.huto.hemomancy.entity.projectile.EntityTrackingPests;
 import com.huto.hemomancy.entity.projectile.EntityTrackingSerpent;
 
@@ -125,6 +126,11 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
+	
+	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
+			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)
+					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_shot").toString()));
 
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {

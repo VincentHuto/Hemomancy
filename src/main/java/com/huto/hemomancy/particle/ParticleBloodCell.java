@@ -47,7 +47,7 @@ public class ParticleBloodCell extends SpriteTexturedParticle {
 
 	@Override
 	public IParticleRenderType getRenderType() {
-		return RenderTypeInit.EMBER_RENDER;
+		return RenderTypeInit.DARK_GLOW_RENDER;
 	}
 
 	@Override

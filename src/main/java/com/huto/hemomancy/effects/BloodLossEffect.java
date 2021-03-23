@@ -54,9 +54,7 @@ public class BloodLossEffect extends Effect {
 		// Entities without blood cant lose any...
 
 		if (!ModEntityPredicates.NOBLOOD.test(entity)) {
-
 			if (entity instanceof PlayerEntity) {
-				System.out.println(entity);
 				if (!entity.world.isRemote) {
 					PlayerEntity playerIn = (PlayerEntity) entity;
 					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)

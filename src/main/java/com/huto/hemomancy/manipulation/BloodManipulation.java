@@ -1,17 +1,28 @@
 package com.huto.hemomancy.manipulation;
 
+import java.util.Random;
+
 import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
 import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
 import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
+import com.huto.hemomancy.entity.projectile.EntityBloodShot;
 import com.huto.hemomancy.font.ModTextFormatting;
+import com.huto.hemomancy.init.ManipulationInit;
+import com.huto.hemomancy.init.PotionInit;
+import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.data.GlowParticleData;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.server.ServerWorld;
 
 public class BloodManipulation {
@@ -32,20 +43,66 @@ public class BloodManipulation {
 		this.section = section;
 	}
 
-	public void use(PlayerEntity player) {
+	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
 		if (!player.world.isRemote) {
-			if (volume.getBloodVolume() > cost && tendency.getAlignmentByTendency(tend) > alignLevel) {
-				performAction(player, (ServerWorld) player.world, player.getHeldItemMainhand(), player.getPosition());
+			if (volume.getBloodVolume() > cost && tendency.getAlignmentByTendency(tend) >= alignLevel) {
+				volume.subtractBloodVolume((float) cost);
+				getActionByName(name, player, world, heldItemMainhand, position);
 			}
 		}
 	}
 
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
-		System.out.println("Performing Base Manipulation, Someone forgot to override...cough vince cough");
+	public void getActionByName(String nameIn, PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand,
+			BlockPos position) {
+		if (nameIn.equals(ManipulationInit.blood_shot.getName())) {
+			Vector3d vector3d1 = player.getUpVector(1.0F);
+			Quaternion quaternion = new Quaternion(new Vector3f(vector3d1), 0.0f, true);
+			Vector3d vector3d = player.getLook(1.0F);
+			Vector3f vector3f = new Vector3f(vector3d);
+			vector3f.transform(quaternion);
+			EntityBloodShot shot = new EntityBloodShot(world, player);
+			shot.shoot((double) vector3f.getX(), (double) vector3f.getY(), (double) vector3f.getZ(), 6.15F, 1.0f);
+			world.addEntity(shot);
+			
+			/*
+			 * EntityBloodShot shot1 = new EntityBloodShot(world, player);
+			 * shot1.shoot((double) vector3f.getX(), (double) vector3f.getY()+0.025,
+			 * (double) vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot1);
+			 * 
+			 * 
+			 * EntityBloodShot shot2 = new EntityBloodShot(world, player);
+			 * shot2.shoot((double) vector3f.getX(), (double) vector3f.getY()-0.025,
+			 * (double) vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot2);
+			 * 
+			 * EntityBloodShot shot3 = new EntityBloodShot(world, player);
+			 * shot3.shoot((double) vector3f.getX(), (double) vector3f.getY()+0.05, (double)
+			 * vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot3);
+			 * 
+			 * 
+			 * EntityBloodShot shot4 = new EntityBloodShot(world, player);
+			 * shot4.shoot((double) vector3f.getX(), (double) vector3f.getY()-0.05, (double)
+			 * vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot4);
+			 */			
+			
+			
+		}
+		if (nameIn.equals(ManipulationInit.blood_rush.getName())) {
+			player.addPotionEffect(new EffectInstance(PotionInit.blood_rush.get(), 250, 1));
+		}
+		if (nameIn.equals(ManipulationInit.aneurysm.getName())) {
+			ServerWorld sWorld = (ServerWorld) world;
+			BlockPos pos = player.getPosition();
+			Random random = player.world.rand;
+			for (int i = 0; i < 30; i++) {
+				sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
+						pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
+						pos.getZ() + random.nextDouble(), 3, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
+			}
+		}
 	}
 
 	/*

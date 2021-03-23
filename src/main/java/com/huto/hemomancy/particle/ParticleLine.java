@@ -75,7 +75,7 @@ public class ParticleLine extends SpriteTexturedParticle {
 
 	@Override
 	public IParticleRenderType getRenderType() {
-		return RenderTypeInit.EMBER_RENDER;
+		return RenderTypeInit.GLOW_RENDER;
 	}
 
 	@Override

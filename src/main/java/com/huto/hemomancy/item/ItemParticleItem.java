@@ -4,9 +4,13 @@ import java.util.List;
 
 import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
 import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
+import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
 import com.huto.hemomancy.render.item.RenderParticleItem;
 
@@ -35,26 +39,28 @@ public class ItemParticleItem extends Item {
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
+		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				.orElseThrow(NullPointerException::new);
 		List<BloodManipulation> knownList = known.getKnownManips();
 
 		if (!worldIn.isRemote) {
 			if (!playerIn.isSneaking()) {
-				knownList.add(ManipulationInit.blood_rush);
-				PacketHandler.CHANNELKNOWNMANIPS.send(
+			//	knownList.add(ManipulationInit.blood_shot);
+
+				tendency.setTendencyAlignment(EnumBloodTendency.CONGEATIO,0);
+
+				PacketHandler.CHANNELBLOODTENDENCY.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
-				System.out.println(knownList.toString());
+						new PacketBloodTendencyServer(tendency.getTendency()));
 
 			} else {
-				knownList.add(ManipulationInit.blood_shot);
+					knownList.add(ManipulationInit.blood_shot);
 				// knownList.clear();
 				PacketHandler.CHANNELKNOWNMANIPS.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketKnownManipulationServer(knownList,known.getSelectedManip()));
+						new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
 			}
 		}
-		
-		
 
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}

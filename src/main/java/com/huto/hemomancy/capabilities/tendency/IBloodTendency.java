@@ -21,4 +21,6 @@ public interface IBloodTendency {
 	float getTotalAlignment();
 
 	float getPercentByTendency(EnumBloodTendency tendencyIn);
+
+	void addTendencyAlignment(EnumBloodTendency tendencyIn, float value);
 }

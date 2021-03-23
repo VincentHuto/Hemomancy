@@ -31,6 +31,7 @@ import com.huto.hemomancy.render.entity.mob.RenderThirster;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
+import com.huto.hemomancy.render.entity.projectile.RenderBloodShot;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.item.RenderMorphlingPolypItem;
@@ -77,6 +78,8 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc",
 			GLFW.GLFW_KEY_RIGHT_ALT, "key.Hemomancy.category");
+	public static KeyBinding useManip = new KeyBinding("key.Hemomancy.usemanip.desc",
+			GLFW.GLFW_KEY_L, "key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -122,6 +125,8 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_shot.get(), RenderBloodShot::new);
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp.get(),
 				RenderMorphlingPolypItem::new);
 
@@ -134,6 +139,7 @@ public class ClientEventSubscriber {
 		keyBinds.add(5, toggleMorphlingOpenJar);
 		keyBinds.add(6, displayKnownManips);
 		keyBinds.add(7, cycleSelectedManip);
+		keyBinds.add(8, useManip);
 
 		for (KeyBinding bind : keyBinds) {
 			ClientRegistry.registerKeyBinding(bind);

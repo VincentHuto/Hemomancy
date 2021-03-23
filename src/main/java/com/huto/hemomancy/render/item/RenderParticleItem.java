@@ -186,14 +186,14 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 			particlePos = particlePos.add(look).add(perp);
 
 			Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
-			int globalPartCount = 1428;
+			int globalPartCount = 125;
 			Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15,
 					false);
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(
-						BloodCellParticleData.createData(new ParticleColor((int) (inversedSphere[i].y * 255), 0, 0)),
+						BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
 						origin.getX() + inversedSphere[i].x, origin.getY() + inversedSphere[i].y,
 						origin.getZ() + inversedSphere[i].z, 0, 0.00, 0);
 

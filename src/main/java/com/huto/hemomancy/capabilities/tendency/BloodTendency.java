@@ -39,9 +39,26 @@ public class BloodTendency implements IBloodTendency {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
 				Map<EnumBloodTendency, Float> newDevo = tendency;
+				newDevo.put(tendencyIn,value);
+				/*
+				 * newDevo.put(getOpposingTendency(tendencyIn),
+				 * getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
+				 */
+				setTendency(newDevo);
+			}
+		}
+	}
+
+	@Override
+	public void addTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
+		if (tendency != null) {
+			if (getOpposingTendency(tendencyIn) != null) {
+				Map<EnumBloodTendency, Float> newDevo = tendency;
 				newDevo.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
-				newDevo.put(getOpposingTendency(tendencyIn),
-						getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
+				/*
+				 * newDevo.put(getOpposingTendency(tendencyIn),
+				 * getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
+				 */
 				setTendency(newDevo);
 			}
 		}
@@ -60,7 +77,7 @@ public class BloodTendency implements IBloodTendency {
 	public float getPercentByTendency(EnumBloodTendency tendencyIn) {
 		float total = getTotalAlignment();
 		float current = getAlignmentByTendency(tendencyIn);
-		float per = (current / total);
+		float per = (current / total) * 100;
 		return per;
 	}
 
@@ -79,9 +96,10 @@ public class BloodTendency implements IBloodTendency {
 		List<ParticleColor> colors = new ArrayList<ParticleColor>();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			float percent = getPercentByTendency(tend);
-			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getRed() * percent,
+			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getBlue() * percent,
 					tend.getColor().getGreen() * percent));
 		}
+		// System.out.println(ParticleColor.averageFromList(colors).toString());
 		return ParticleColor.averageFromList(colors);
 
 	}

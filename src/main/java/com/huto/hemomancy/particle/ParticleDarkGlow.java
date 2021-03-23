@@ -12,14 +12,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleHitGlow extends SpriteTexturedParticle {
+public class ParticleDarkGlow extends SpriteTexturedParticle {
 	public float colorR = 0;
 	public float colorG = 0;
 	public float colorB = 0;
 	public float initScale = 0;
 	public float initAlpha = 0;
 
-	public ParticleHitGlow(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz, float r,
+	public ParticleDarkGlow(ClientWorld worldIn, double x, double y, double z, double vx, double vy, double vz, float r,
 			float g, float b, float a, float scale, int lifetime, IAnimatedSprite sprite) {
 		super(worldIn, x, y, z, 0, 0, 0);
 		this.colorR = r;
@@ -36,7 +36,7 @@ public class ParticleHitGlow extends SpriteTexturedParticle {
 		}
 		this.setColor(colorR, colorG, colorB);
 		this.maxAge = (int) ((float) lifetime * 0.5f);
-		this.particleScale = scale * 2;
+		this.particleScale = scale / 8;
 		this.initScale = scale;
 		this.motionX = vx * 2.0f;
 		this.motionY = vy * 2.0f;
@@ -47,7 +47,7 @@ public class ParticleHitGlow extends SpriteTexturedParticle {
 
 	@Override
 	public IParticleRenderType getRenderType() {
-		return RenderTypeInit.GLOW_RENDER;
+		return RenderTypeInit.DARK_GLOW_RENDER;
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ParticleHitGlow extends SpriteTexturedParticle {
 		}
 		float lifeCoeff = (float) this.age / (float) this.maxAge;
 		this.particleScale = initScale - initScale * lifeCoeff;
-		this.particleAlpha = 1;
+		this.particleAlpha = initAlpha * (1.0f - lifeCoeff);
 		this.prevParticleAngle = particleAngle;
 		particleAngle += 1.0f;
 	}

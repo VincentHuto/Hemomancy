@@ -94,7 +94,7 @@ public class ItemLivingCrossbow extends CrossbowItem {
 			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
 			float vol = volume.getBloodVolume();
-			if (vol >= 50) {
+			if (vol >= 0) {
 				if (!isCharged(itemstack)) {
 					this.isLoadingStart = false;
 					this.isLoadingMiddle = false;
@@ -145,7 +145,7 @@ public class ItemLivingCrossbow extends CrossbowItem {
 					PlayerEntity playerIn = (PlayerEntity) entityIn;
 					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
-					if (playerVolume.getBloodVolume() >= 50) {
+					if (playerVolume.getBloodVolume() >=0) {
 						itemstack = new ItemStack(ItemInit.blood_bolt.get());
 						itemstack1 = itemstack.copy();
 					}
