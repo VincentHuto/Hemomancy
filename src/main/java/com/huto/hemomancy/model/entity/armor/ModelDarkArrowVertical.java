@@ -7,10 +7,10 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 
-public class ModelTestArrow extends EntityModel<EntityBloodShot> {
+public class ModelDarkArrowVertical extends EntityModel<EntityBloodShot> {
 	private final ModelRenderer bone;
 
-	public ModelTestArrow() {
+	public ModelDarkArrowVertical() {
 		textureWidth = 16;
 		textureHeight = 16;
 

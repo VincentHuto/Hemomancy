@@ -186,7 +186,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 			particlePos = particlePos.add(look).add(perp);
 
 			Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
-			int globalPartCount = 125;
+			int globalPartCount = 60;
 			Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15,

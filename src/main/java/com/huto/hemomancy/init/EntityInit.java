@@ -131,6 +131,11 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_shot").toString()));
+	
+	public static final RegistryObject<EntityType<EntityBloodShot>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
+			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)
+					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "dark_arrow").toString()));
 
 	@SubscribeEvent
 	public static void registerAttributes(final FMLCommonSetupEvent event) {

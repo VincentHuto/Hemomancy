@@ -65,29 +65,8 @@ public class BloodManipulation {
 			Vector3f vector3f = new Vector3f(vector3d);
 			vector3f.transform(quaternion);
 			EntityBloodShot shot = new EntityBloodShot(world, player);
-			shot.shoot((double) vector3f.getX(), (double) vector3f.getY(), (double) vector3f.getZ(), 6.15F, 1.0f);
+			shot.shoot((double) vector3f.getX(), (double) vector3f.getY(), (double) vector3f.getZ(), 4.5F, 1.0f);
 			world.addEntity(shot);
-			
-			/*
-			 * EntityBloodShot shot1 = new EntityBloodShot(world, player);
-			 * shot1.shoot((double) vector3f.getX(), (double) vector3f.getY()+0.025,
-			 * (double) vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot1);
-			 * 
-			 * 
-			 * EntityBloodShot shot2 = new EntityBloodShot(world, player);
-			 * shot2.shoot((double) vector3f.getX(), (double) vector3f.getY()-0.025,
-			 * (double) vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot2);
-			 * 
-			 * EntityBloodShot shot3 = new EntityBloodShot(world, player);
-			 * shot3.shoot((double) vector3f.getX(), (double) vector3f.getY()+0.05, (double)
-			 * vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot3);
-			 * 
-			 * 
-			 * EntityBloodShot shot4 = new EntityBloodShot(world, player);
-			 * shot4.shoot((double) vector3f.getX(), (double) vector3f.getY()-0.05, (double)
-			 * vector3f.getZ(), 6.15F, 1.0f); world.addEntity(shot4);
-			 */			
-			
 			
 		}
 		if (nameIn.equals(ManipulationInit.blood_rush.getName())) {

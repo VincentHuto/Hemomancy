@@ -32,6 +32,7 @@ import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodShot;
+import com.huto.hemomancy.render.entity.projectile.RenderDarkArrow;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.huto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.huto.hemomancy.render.item.RenderMorphlingPolypItem;
@@ -126,7 +127,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_shot.get(), RenderBloodShot::new);
-
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.dark_arrow.get(), RenderDarkArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp.get(),
 				RenderMorphlingPolypItem::new);
 
