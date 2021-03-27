@@ -3,8 +3,8 @@ package com.huto.hemomancy.item.tool.living;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;

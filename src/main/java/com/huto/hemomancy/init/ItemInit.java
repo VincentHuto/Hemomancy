@@ -2,7 +2,7 @@ package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;

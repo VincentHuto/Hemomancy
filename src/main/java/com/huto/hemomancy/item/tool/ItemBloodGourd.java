@@ -3,8 +3,8 @@ package com.huto.hemomancy.item.tool;
 import java.util.List;
 import java.util.Random;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 
 import net.minecraft.client.util.ITooltipFlag;

@@ -2,7 +2,7 @@ package com.huto.hemomancy.network;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

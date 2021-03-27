@@ -2,12 +2,12 @@ package com.huto.hemomancy.manipulation;
 
 import java.util.Random;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
-import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
-import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
+import com.huto.hemomancy.capa.vascular.EnumVeinSections;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ManipulationInit;
@@ -28,12 +28,12 @@ import net.minecraft.world.server.ServerWorld;
 public class BloodManipulation {
 	String name;
 	double cost;
-	float alignLevel;
+	double alignLevel;
 	EnumBloodTendency tend;
 	EnumManipulationRank rank;
 	EnumVeinSections section;
 
-	public BloodManipulation(String name, double cost, float alignLevel, EnumManipulationRank rank,
+	public BloodManipulation(String name, double cost, double alignLevel, EnumManipulationRank rank,
 			EnumBloodTendency tendency, EnumVeinSections section) {
 		this.name = name;
 		this.cost = cost;
@@ -110,7 +110,7 @@ public class BloodManipulation {
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("name", name);
 		nbt.putDouble("cost", cost);
-		nbt.putFloat("level", alignLevel);
+		nbt.putDouble("level", alignLevel);
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
 		nbt.putString("section", section.name());
@@ -137,7 +137,7 @@ public class BloodManipulation {
 		this.cost = cost;
 	}
 
-	public float getAlignLevel() {
+	public double getAlignLevel() {
 		return alignLevel;
 	}
 

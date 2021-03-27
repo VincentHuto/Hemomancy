@@ -2,8 +2,8 @@ package com.huto.hemomancy.entity.projectile;
 
 import javax.annotation.Nonnull;
 
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.data.DarkGlowParticleData;

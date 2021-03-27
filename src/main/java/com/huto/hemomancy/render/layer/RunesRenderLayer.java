@@ -1,7 +1,7 @@
 package com.huto.hemomancy.render.layer;
 
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;

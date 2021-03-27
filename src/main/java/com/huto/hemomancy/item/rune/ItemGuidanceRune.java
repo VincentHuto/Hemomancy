@@ -2,8 +2,8 @@ package com.huto.hemomancy.item.rune;
 
 import java.util.List;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.rune.IRune;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;

@@ -1,6 +1,6 @@
 package com.huto.hemomancy.render.layer;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
+import com.huto.hemomancy.capa.rune.IRune;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

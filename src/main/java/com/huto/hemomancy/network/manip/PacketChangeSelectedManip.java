@@ -3,8 +3,8 @@ package com.huto.hemomancy.network.manip;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
-import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
+import com.huto.hemomancy.capa.manip.IKnownManipulations;
+import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 
 import net.minecraft.entity.player.PlayerEntity;

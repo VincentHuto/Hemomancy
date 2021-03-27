@@ -1,9 +1,9 @@
 package com.huto.hemomancy.item.rune;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.rune.IRune;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.render.layer.IRenderRunes;

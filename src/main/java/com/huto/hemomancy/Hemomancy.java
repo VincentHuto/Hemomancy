@@ -5,11 +5,11 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeEvents;
-import com.huto.hemomancy.capabilities.bloodvolume.RenderBloodLaserEvent;
-import com.huto.hemomancy.capabilities.manipulation.KnownManipulationEvents;
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyEvents;
-import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemEvents;
+import com.huto.hemomancy.capa.manip.KnownManipulationEvents;
+import com.huto.hemomancy.capa.tendency.BloodTendencyEvents;
+import com.huto.hemomancy.capa.vascular.VascularSystemEvents;
+import com.huto.hemomancy.capa.volume.BloodVolumeEvents;
+import com.huto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.huto.hemomancy.event.KeyBindEvents;
 import com.huto.hemomancy.event.MorphlingJarEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
@@ -23,6 +23,7 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.huto.hemomancy.init.SkillPointInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
@@ -182,6 +183,7 @@ public class Hemomancy {
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		CapabilityInit.init();
+		SkillPointInit.init();
 		ModBloodCraftingRecipes.initPatterns();
 		ModBloodCraftingRecipes.initRecipes();
 		ModChiselRecipes.init();

@@ -1,7 +1,7 @@
 package com.huto.hemomancy.render.layer;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.mojang.blaze3d.matrix.MatrixStack;
 

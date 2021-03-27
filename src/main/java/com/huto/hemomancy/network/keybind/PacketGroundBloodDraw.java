@@ -3,8 +3,8 @@ package com.huto.hemomancy.network.keybind;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleColor;

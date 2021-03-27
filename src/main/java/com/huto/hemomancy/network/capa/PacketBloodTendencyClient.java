@@ -2,8 +2,8 @@ package com.huto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.network.PacketHandler;
 
 import net.minecraft.entity.player.ServerPlayerEntity;

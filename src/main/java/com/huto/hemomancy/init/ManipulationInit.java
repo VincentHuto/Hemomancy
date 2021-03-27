@@ -3,8 +3,8 @@ package com.huto.hemomancy.init;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
-import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 

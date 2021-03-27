@@ -2,9 +2,9 @@ package com.huto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemProvider;
+import com.huto.hemomancy.capa.vascular.IVascularSystem;
+import com.huto.hemomancy.capa.vascular.VascularSystemProvider;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.capabilities.vascularsystem.IVascularSystem;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;

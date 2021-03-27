@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
-import com.huto.hemomancy.capabilities.vascularsystem.VascularSystemProvider;
+import com.huto.hemomancy.capa.vascular.EnumVeinSections;
+import com.huto.hemomancy.capa.vascular.VascularSystemProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;

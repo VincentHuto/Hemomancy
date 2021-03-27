@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;

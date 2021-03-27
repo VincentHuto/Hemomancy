@@ -1,7 +1,7 @@
 package com.huto.hemomancy.render.tile;
 
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
-import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
+import com.huto.hemomancy.capa.manip.IKnownManipulations;
+import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 

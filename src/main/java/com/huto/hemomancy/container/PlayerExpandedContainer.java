@@ -3,8 +3,8 @@ package com.huto.hemomancy.container;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.containers.slot.SlotContractRune;
 import com.huto.hemomancy.containers.slot.SlotRune;
 import com.huto.hemomancy.containers.slot.SlotRuneArmor;

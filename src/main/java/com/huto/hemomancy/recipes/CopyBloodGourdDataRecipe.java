@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 
 import net.minecraft.inventory.CraftingInventory;

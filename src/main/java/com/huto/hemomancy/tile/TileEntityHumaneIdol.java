@@ -14,21 +14,28 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 		super(TileEntityInit.humane_idol.get());
 	}
 
+	float count = 0.5f;
+
 	@Override
 	public void tick() {
-		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, 0, 0);
+		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, -1, 0);
 		double time = world.getGameTime();
-		double timeOsc = Math.cos(world.getGameTime())*0.5;
-		double timeOsc1 = Math.sin(world.getGameTime())*0.5;
-		
 		if (world.isRemote) {
-			
 			int globalPartCount = 90;
-			double cos = Math.cos(time);
-			double sin = Math.sin(time);
+			for (int i = 0; i < 16; i++) {
+				count += 0.0005;
+				if (count > 2) {
+					count =0.5f;
+				}
+			}
+			double cos = Math.cos(time*0.75)*count;
+			double sin = Math.sin(time*0.75)*count;
+		
 			for (int i = 0; i < globalPartCount; i++) {
-				world.addParticle(DarkGlowParticleData.createData(ParticleUtil.BlACK), centerVec.x+cos-timeOsc1, centerVec.y+1,
-						centerVec.z-sin-timeOsc, 0, 0.00, 0);
+				world.addParticle(DarkGlowParticleData.createData(ParticleUtil.BlACK), centerVec.x + cos,
+						centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
+				world.addParticle(DarkGlowParticleData.createData(ParticleUtil.RED), centerVec.x - cos,
+						centerVec.y + 1, centerVec.z + sin, 0, 0.00, 0);
 			}
 		}
 	}

@@ -2,11 +2,11 @@ package com.huto.hemomancy.item.rune;
 
 import java.util.List;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
-import com.huto.hemomancy.capabilities.mindrune.RuneType;
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
-import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
+import com.huto.hemomancy.capa.rune.IRune;
+import com.huto.hemomancy.capa.rune.RuneType;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;

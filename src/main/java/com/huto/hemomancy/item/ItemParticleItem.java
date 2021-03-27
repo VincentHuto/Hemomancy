@@ -2,11 +2,11 @@ package com.huto.hemomancy.item;
 
 import java.util.List;
 
-import com.huto.hemomancy.capabilities.manipulation.IKnownManipulations;
-import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
-import com.huto.hemomancy.capabilities.tendency.BloodTendencyProvider;
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
-import com.huto.hemomancy.capabilities.tendency.IBloodTendency;
+import com.huto.hemomancy.capa.manip.IKnownManipulations;
+import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;

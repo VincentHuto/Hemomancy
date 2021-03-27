@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.capabilities.manipulation.KnownManipulationProvider;
+import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 
 import net.minecraft.client.Minecraft;

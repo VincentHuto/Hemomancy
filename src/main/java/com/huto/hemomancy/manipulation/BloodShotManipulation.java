@@ -1,7 +1,7 @@
 package com.huto.hemomancy.manipulation;
 
-import com.huto.hemomancy.capabilities.tendency.EnumBloodTendency;
-import com.huto.hemomancy.capabilities.vascularsystem.EnumVeinSections;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
 
 import net.minecraft.entity.player.PlayerEntity;

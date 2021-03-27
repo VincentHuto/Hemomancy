@@ -5,8 +5,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.capabilities.bloodvolume.BloodVolumeProvider;
-import com.huto.hemomancy.capabilities.bloodvolume.IBloodVolume;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.event.ClientEventSubscriber;

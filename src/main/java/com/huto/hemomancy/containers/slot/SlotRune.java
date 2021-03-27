@@ -1,8 +1,8 @@
 package com.huto.hemomancy.containers.slot;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.IRune;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 
 import net.minecraft.entity.player.PlayerEntity;

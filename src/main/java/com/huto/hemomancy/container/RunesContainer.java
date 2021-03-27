@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.huto.hemomancy.capabilities.mindrune.IRune;
-import com.huto.hemomancy.capabilities.mindrune.IRunesItemHandler;
-import com.huto.hemomancy.capabilities.mindrune.RuneEntityEventHandler;
-import com.huto.hemomancy.capabilities.mindrune.RunesCapabilities;
+import com.huto.hemomancy.capa.rune.IRune;
+import com.huto.hemomancy.capa.rune.IRunesItemHandler;
+import com.huto.hemomancy.capa.rune.RuneEntityEventHandler;
+import com.huto.hemomancy.capa.rune.RunesCapabilities;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
