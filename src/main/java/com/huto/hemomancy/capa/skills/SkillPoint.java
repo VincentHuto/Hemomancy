@@ -1,5 +1,7 @@
 package com.huto.hemomancy.capa.skills;
 
+import net.minecraft.nbt.CompoundNBT;
+
 public class SkillPoint {
 
 	String name;
@@ -33,6 +35,23 @@ public class SkillPoint {
 		this.cost = cost;
 		this.state = state;
 		this.parent = parent;
+	}
+
+	public static SkillPoint deserialize(CompoundNBT nbt) {
+		if (nbt != null && !nbt.isEmpty()) {
+			if (nbt.contains("name") && nbt.contains("cost")) {
+				SkillPoint manip = new SkillPoint(nbt.getString("name"), nbt.getDouble("cost"));
+				return manip;
+			}
+		}
+		return null;
+	}
+
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString("name", name);
+		nbt.putDouble("cost", cost);
+		return nbt;
 	}
 
 	public SkillPoint getBaseSkill() {
