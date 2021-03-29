@@ -1,61 +1,22 @@
 package com.huto.hemomancy.capa.skills;
 
-import net.minecraft.nbt.CompoundNBT;
+import javax.annotation.Nullable;
 
 public class SkillPoint {
-
+	int id, maxLevels;
 	String name;
 	double cost;
 	EnumSkillStates state;
 	SkillPoint parent;
 
-	public SkillPoint(String name) {
+	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
+			@Nullable SkillPoint parent) {
+		this.id = id;
 		this.name = name;
-		this.cost = 0;
-		this.state = EnumSkillStates.BASE;
-		this.parent = getBaseSkill();
-	}
-
-	public SkillPoint(String name, double cost) {
-		this.name = name;
-		this.cost = cost;
-		this.state = EnumSkillStates.BASE;
-		this.parent = getBaseSkill();
-	}
-
-	public SkillPoint(String name, double cost, EnumSkillStates state) {
-		this.name = name;
-		this.cost = cost;
-		this.state = state;
-		this.parent = getBaseSkill();
-	}
-
-	public SkillPoint(String name, double cost, EnumSkillStates state, SkillPoint parent) {
-		this.name = name;
+		this.maxLevels = maxLevel;
 		this.cost = cost;
 		this.state = state;
 		this.parent = parent;
-	}
-
-	public static SkillPoint deserialize(CompoundNBT nbt) {
-		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("cost")) {
-				SkillPoint manip = new SkillPoint(nbt.getString("name"), nbt.getDouble("cost"));
-				return manip;
-			}
-		}
-		return null;
-	}
-
-	public CompoundNBT serialize() {
-		CompoundNBT nbt = new CompoundNBT();
-		nbt.putString("name", name);
-		nbt.putDouble("cost", cost);
-		return nbt;
-	}
-
-	public SkillPoint getBaseSkill() {
-		return new SkillPoint("base", 0, EnumSkillStates.BASE);
 	}
 
 	public String getName() {
