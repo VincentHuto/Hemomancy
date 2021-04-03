@@ -1,17 +1,17 @@
 package com.huto.hemomancy.particle.type;
 
-import com.huto.hemomancy.particle.data.SerpentParticleTypeData;
+import com.huto.hemomancy.particle.data.SerpentParticleData;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.particles.ParticleType;
 
-public class SerpentParticleType extends ParticleType<SerpentParticleTypeData> {
+public class SerpentParticleType extends ParticleType<SerpentParticleData> {
 	public SerpentParticleType() {
-		super(false, SerpentParticleTypeData.DESERIALIZER);
+		super(false, SerpentParticleData.DESERIALIZER);
 	}
 
 	@Override
-	public Codec<SerpentParticleTypeData> func_230522_e_() {
-		return SerpentParticleTypeData.CODEC;
+	public Codec<SerpentParticleData> func_230522_e_() {
+		return SerpentParticleData.CODEC;
 	}
 }

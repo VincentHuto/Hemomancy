@@ -9,14 +9,17 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -51,7 +54,7 @@ public class PacketBloodFormationKeyPress {
 					Random random = player.world.rand;
 					for (int i = 0; i < 30; i++) {
 						sWorld.spawnParticle(
-								GlowParticleData.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
+								GlowParticleFactory.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
 								pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
 								pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
 					}
@@ -64,4 +67,5 @@ public class PacketBloodFormationKeyPress {
 		});
 		ctx.get().setPacketHandled(true);
 	}
+
 }

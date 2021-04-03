@@ -1,20 +1,23 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.particle.data.BloodCellParticleData;
-import com.huto.hemomancy.particle.data.BloodCellTypeData;
-import com.huto.hemomancy.particle.data.ColorLightningTypeData;
-import com.huto.hemomancy.particle.data.ColorParticleTypeData;
-import com.huto.hemomancy.particle.data.ColoredDynamicTypeData;
-import com.huto.hemomancy.particle.data.DarkColorParticleTypeData;
-import com.huto.hemomancy.particle.data.DarkGlowParticleData;
-import com.huto.hemomancy.particle.data.GlowParticleData;
-import com.huto.hemomancy.particle.data.HitColorParticleTypeData;
-import com.huto.hemomancy.particle.data.HitGlowParticleData;
-import com.huto.hemomancy.particle.data.ParticleLightningData;
-import com.huto.hemomancy.particle.data.ParticleLineData;
+import com.huto.hemomancy.particle.data.AbsorbedBloodCellData;
+import com.huto.hemomancy.particle.data.BloodCellData;
+import com.huto.hemomancy.particle.data.ColorLightningData;
+import com.huto.hemomancy.particle.data.ColorParticleData;
+import com.huto.hemomancy.particle.data.ColoredDynamicData;
+import com.huto.hemomancy.particle.data.DarkColorParticleData;
+import com.huto.hemomancy.particle.data.HitColorParticleData;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
-import com.huto.hemomancy.particle.data.SerpentParticleTypeData;
+import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
+import com.huto.hemomancy.particle.factory.HitGlowParticleFactory;
+import com.huto.hemomancy.particle.factory.ParticleLightningFactory;
+import com.huto.hemomancy.particle.factory.ParticleLineFactory;
+import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
+import com.huto.hemomancy.particle.type.AbsorbedBloodCellParticleType;
 import com.huto.hemomancy.particle.type.BloodCellParticleType;
 import com.huto.hemomancy.particle.type.DarkGlowParticleType;
 import com.huto.hemomancy.particle.type.GlowParticleType;
@@ -37,36 +40,41 @@ public class ParticleInit {
 	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister
 			.create(ForgeRegistries.PARTICLE_TYPES, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<ParticleType<ColorParticleTypeData>> glow = PARTICLE_TYPES.register("glow",
+	public static final RegistryObject<ParticleType<ColorParticleData>> glow = PARTICLE_TYPES.register("glow",
 			() -> new GlowParticleType());
 
-	public static final RegistryObject<ParticleType<DarkColorParticleTypeData>> dark_glow = PARTICLE_TYPES
+	public static final RegistryObject<ParticleType<DarkColorParticleData>> dark_glow = PARTICLE_TYPES
 			.register("dark_glow", () -> new DarkGlowParticleType());
 
-	public static final RegistryObject<ParticleType<SerpentParticleTypeData>> serpent = PARTICLE_TYPES
-			.register("serpent", () -> new SerpentParticleType());
+	public static final RegistryObject<ParticleType<SerpentParticleData>> serpent = PARTICLE_TYPES.register("serpent",
+			() -> new SerpentParticleType());
 
-	public static final RegistryObject<ParticleType<HitColorParticleTypeData>> hit_glow = PARTICLE_TYPES
+	public static final RegistryObject<ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
 			.register("hit_glow", () -> new HitGlowParticleType());
 
-	public static final RegistryObject<ParticleType<ColoredDynamicTypeData>> line = PARTICLE_TYPES.register("line",
+	public static final RegistryObject<ParticleType<ColoredDynamicData>> line = PARTICLE_TYPES.register("line",
 			() -> new LineParticleType());
 
-	public static RegistryObject<ParticleType<ColorLightningTypeData>> lightning_bolt = PARTICLE_TYPES
+	public static RegistryObject<ParticleType<ColorLightningData>> lightning_bolt = PARTICLE_TYPES
 			.register("lightning_bolt", () -> new LightningParticleType());
 
-	public static final RegistryObject<ParticleType<BloodCellTypeData>> blood_cell = PARTICLE_TYPES
-			.register("blood_cell", () -> new BloodCellParticleType());
+	public static final RegistryObject<ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
+			() -> new BloodCellParticleType());
+
+	public static final RegistryObject<ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
+			.register("absorbed_blood_cell", () -> new AbsorbedBloodCellParticleType());
 
 	@SubscribeEvent
 	public static void registerParticleFactories(ParticleFactoryRegisterEvent event) {
-		Minecraft.getInstance().particles.registerFactory(glow.get(), GlowParticleData::new);
-		Minecraft.getInstance().particles.registerFactory(dark_glow.get(), DarkGlowParticleData::new);
-		Minecraft.getInstance().particles.registerFactory(hit_glow.get(), HitGlowParticleData::new);
-		Minecraft.getInstance().particles.registerFactory(line.get(), ParticleLineData::new);
-		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleData::new);
-		Minecraft.getInstance().particles.registerFactory(lightning_bolt.get(), ParticleLightningData::new);
-		Minecraft.getInstance().particles.registerFactory(blood_cell.get(), BloodCellParticleData::new);
+		Minecraft.getInstance().particles.registerFactory(glow.get(), GlowParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(dark_glow.get(), DarkGlowParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(hit_glow.get(), HitGlowParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(line.get(), ParticleLineFactory::new);
+		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(lightning_bolt.get(), ParticleLightningFactory::new);
+		Minecraft.getInstance().particles.registerFactory(blood_cell.get(), BloodCellParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(absorbed_blood_cell.get(),
+				AbsrobedBloodCellParticleFactory::new);
 
 	}
 }

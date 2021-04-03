@@ -1,17 +1,11 @@
 package com.huto.hemomancy.effects;
 
-import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.util.ModEntityPredicates;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
@@ -19,7 +13,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 public class BloodLossEffect extends Effect {
 

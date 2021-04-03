@@ -70,10 +70,49 @@ public class ItemLivingCrossbow extends CrossbowItem {
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
 		return new StringTextComponent(ModTextFormatting
 				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
+	}
+
+	/**
+	 * Called as the item is being used by an entity.
+	 */
+	@Override
+	public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count) {
+		if (!worldIn.isRemote) {
+			int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
+			SoundEvent soundevent = this.getSoundEvent(i);
+			SoundEvent soundevent1 = i == 0 ? SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE : null;
+			float f = (float) (stack.getUseDuration() - count) / (float) getChargeTime(stack);
+			if (f < 0.2F) {
+				this.isLoadingStart = false;
+				this.isLoadingMiddle = false;
+			}
+
+			if (f >= 0.2F && !this.isLoadingStart) {
+				this.isLoadingStart = true;
+				worldIn.playSound((PlayerEntity) null, livingEntityIn.getPosX(), livingEntityIn.getPosY(),
+						livingEntityIn.getPosZ(), soundevent, SoundCategory.PLAYERS, 0.5F, 1.0F);
+			}
+
+			if (f >= 0.5F && soundevent1 != null && !this.isLoadingMiddle) {
+				this.isLoadingMiddle = true;
+				worldIn.playSound((PlayerEntity) null, livingEntityIn.getPosX(), livingEntityIn.getPosY(),
+						livingEntityIn.getPosZ(), soundevent1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+			}
+		}
+
+	}
+
+	/**
+	 * How long it takes to use or consume an item
+	 */
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		return getChargeTime(stack) + 3;
 	}
 
 	@Override
@@ -145,7 +184,7 @@ public class ItemLivingCrossbow extends CrossbowItem {
 					PlayerEntity playerIn = (PlayerEntity) entityIn;
 					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
-					if (playerVolume.getBloodVolume() >=0) {
+					if (playerVolume.getBloodVolume() >= 0) {
 						itemstack = new ItemStack(ItemInit.blood_bolt.get());
 						itemstack1 = itemstack.copy();
 					}
@@ -366,44 +405,6 @@ public class ItemLivingCrossbow extends CrossbowItem {
 		}
 
 		clearProjectiles(stack);
-	}
-
-	/**
-	 * Called as the item is being used by an entity.
-	 */
-	@Override
-	public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count) {
-		if (!worldIn.isRemote) {
-			int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
-			SoundEvent soundevent = this.getSoundEvent(i);
-			SoundEvent soundevent1 = i == 0 ? SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE : null;
-			float f = (float) (stack.getUseDuration() - count) / (float) getChargeTime(stack);
-			if (f < 0.2F) {
-				this.isLoadingStart = false;
-				this.isLoadingMiddle = false;
-			}
-
-			if (f >= 0.2F && !this.isLoadingStart) {
-				this.isLoadingStart = true;
-				worldIn.playSound((PlayerEntity) null, livingEntityIn.getPosX(), livingEntityIn.getPosY(),
-						livingEntityIn.getPosZ(), soundevent, SoundCategory.PLAYERS, 0.5F, 1.0F);
-			}
-
-			if (f >= 0.5F && soundevent1 != null && !this.isLoadingMiddle) {
-				this.isLoadingMiddle = true;
-				worldIn.playSound((PlayerEntity) null, livingEntityIn.getPosX(), livingEntityIn.getPosY(),
-						livingEntityIn.getPosZ(), soundevent1, SoundCategory.PLAYERS, 0.5F, 1.0F);
-			}
-		}
-
-	}
-
-	/**
-	 * How long it takes to use or consume an item
-	 */
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		return getChargeTime(stack) + 3;
 	}
 
 	/**

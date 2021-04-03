@@ -2,7 +2,7 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -27,12 +27,12 @@ public class TileEntityDendriticDistributor extends TileEntity implements ITicka
 
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 						pos.getX() + .5 + sinZ, pos.getY() + 1 + sinX, pos.getZ() + .5, 0, 0, 0);
 
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 						pos.getX() + .5, pos.getY() + 1 + sinX, pos.getZ() + .5 + sinZ, 0, 0, 0);
 

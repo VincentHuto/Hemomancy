@@ -10,7 +10,7 @@ public class SkillPointInit {
 
 	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<List<SkillPoint>>();
 	public static List<SkillPoint> BASE = new ArrayList<SkillPoint>();
-	public static SkillPoint base_skill, skill_capacity, skill_efficiency;
+	public static SkillPoint base_skill, skill_capacity, skill_efficiency,skill_last_wind,skill_dynamic_use;
 
 	public static void init() {
 		initBaseBranch();
@@ -24,6 +24,10 @@ public class SkillPointInit {
 				new SkillPoint(1, "skill_capacity", 3, 100, EnumSkillStates.LOCKED, base_skill));
 		skill_efficiency = registerSkill(BASE,
 				new SkillPoint(2, "skill_efficiency", 3, 100, EnumSkillStates.LOCKED, base_skill));
+		skill_last_wind = registerSkill(BASE,
+				new SkillPoint(3, "skill_last_wind",2, 300, EnumSkillStates.LOCKED, skill_capacity));
+		skill_dynamic_use = registerSkill(BASE,
+				new SkillPoint(4, "skill_dynamic_use", 2, 300, EnumSkillStates.LOCKED, skill_efficiency));
 
 		registerSkillBranch(BASE);
 	}

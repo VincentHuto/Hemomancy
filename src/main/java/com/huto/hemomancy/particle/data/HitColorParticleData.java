@@ -16,43 +16,44 @@ import net.minecraft.particles.ParticleType;
  * https://github.com/Sirttas/ElementalCraft/blob/b91ca42b3d139904d9754d882a595406bad1bd18/src/main/java/sirttas/elementalcraft/particle/ElementTypeParticleData.java
  */
 
-public class DarkColorParticleTypeData implements IParticleData {
+public class HitColorParticleData implements IParticleData {
 
-	private ParticleType<DarkColorParticleTypeData> type;
-	public static final Codec<DarkColorParticleTypeData> CODEC = RecordCodecBuilder.create(instance -> instance
+	private ParticleType<HitColorParticleData> type;
+	public static final Codec<HitColorParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
-			.apply(instance, DarkColorParticleTypeData::new));
+			.apply(instance, HitColorParticleData::new));
 
 	public ParticleColor color;
 
-	public static final IParticleData.IDeserializer<DarkColorParticleTypeData> DESERIALIZER = new IParticleData.IDeserializer<DarkColorParticleTypeData>() {
+	@SuppressWarnings("deprecation")
+	public static final IParticleData.IDeserializer<HitColorParticleData> DESERIALIZER = new IParticleData.IDeserializer<HitColorParticleData>() {
 		@Override
-		public DarkColorParticleTypeData deserialize(ParticleType<DarkColorParticleTypeData> type, StringReader reader)
+		public HitColorParticleData deserialize(ParticleType<HitColorParticleData> type, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect(' ');
-			return new DarkColorParticleTypeData(type, ParticleColor.deserialize(reader.readString()));
+			return new HitColorParticleData(type, ParticleColor.deserialize(reader.readString()));
 		}
 
 		@Override
-		public DarkColorParticleTypeData read(ParticleType<DarkColorParticleTypeData> type, PacketBuffer buffer) {
-			return new DarkColorParticleTypeData(type, ParticleColor.deserialize(buffer.readString()));
+		public HitColorParticleData read(ParticleType<HitColorParticleData> type, PacketBuffer buffer) {
+			return new HitColorParticleData(type, ParticleColor.deserialize(buffer.readString()));
 		}
 	};
 
-	public DarkColorParticleTypeData(float r, float g, float b) {
+	public HitColorParticleData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);
-		this.type = ParticleInit.dark_glow.get();
+		this.type = ParticleInit.hit_glow.get();
 	}
 
-	public DarkColorParticleTypeData(ParticleType<DarkColorParticleTypeData> particleTypeData, ParticleColor color) {
+	public HitColorParticleData(ParticleType<HitColorParticleData> particleTypeData, ParticleColor color) {
 		this.type = particleTypeData;
 		this.color = color;
 	}
 
 	@Override
-	public ParticleType<DarkColorParticleTypeData> getType() {
+	public ParticleType<HitColorParticleData> getType() {
 		return type;
 	}
 

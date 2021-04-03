@@ -1,7 +1,7 @@
 package com.huto.hemomancy.item.morphlings;
 
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ public class ItemMorphlingChitinite extends ItemMorphling implements IMorphling 
 			ServerWorld sWorld = (ServerWorld) worldIn;
 			for (int i = 0; i < 50; i++) {
 				sWorld.spawnParticle(
-						GlowParticleData.createData(new ParticleColor(255 * worldIn.rand.nextFloat(), 0, 0)),
+						GlowParticleFactory.createData(new ParticleColor(255 * worldIn.rand.nextFloat(), 0, 0)),
 						pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
 						pos.getZ() + random.nextDouble(), 10, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
 			}

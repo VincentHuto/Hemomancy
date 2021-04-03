@@ -8,7 +8,7 @@ import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.SerpentParticleData;
+import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.huto.hemomancy.util.Vector3;
 
@@ -96,20 +96,20 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 	public void tick() {
 		super.tick();
 		if (world.isRemote) {
-			world.addParticle(SerpentParticleData.createData(new ParticleColor(100, 100, 0)),
+			world.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 100, 0)),
 					this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 					this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-			world.addParticle(SerpentParticleData.createData(new ParticleColor(100, 100, 0)),
+			world.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 100, 0)),
 					this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 					this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
 			for (int i = 0; i < 10; i++) {
-				world.addParticle(SerpentParticleData.createData(new ParticleColor(255, 50, 50)),
+				world.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
 						this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 						this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-				world.addParticle(SerpentParticleData.createData(new ParticleColor(255, 50, 50)),
+				world.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
 						this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 						this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
-				world.addParticle(SerpentParticleData.createData(new ParticleColor(255, 50, 50)),
+				world.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 50, 50)),
 						this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 						this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
 			}

@@ -16,43 +16,43 @@ import net.minecraft.particles.ParticleType;
  * https://github.com/Sirttas/ElementalCraft/blob/b91ca42b3d139904d9754d882a595406bad1bd18/src/main/java/sirttas/elementalcraft/particle/ElementTypeParticleData.java
  */
 
-public class BloodCellTypeData implements IParticleData {
+public class AbsorbedBloodCellData implements IParticleData {
 
-	private ParticleType<BloodCellTypeData> type;
-	public static final Codec<BloodCellTypeData> CODEC = RecordCodecBuilder.create(instance -> instance
+	private ParticleType<AbsorbedBloodCellData> type;
+	public static final Codec<AbsorbedBloodCellData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
-			.apply(instance, BloodCellTypeData::new));
+			.apply(instance, AbsorbedBloodCellData::new));
 
 	public ParticleColor color;
 
-	public static final IParticleData.IDeserializer<BloodCellTypeData> DESERIALIZER = new IParticleData.IDeserializer<BloodCellTypeData>() {
+	public static final IParticleData.IDeserializer<AbsorbedBloodCellData> DESERIALIZER = new IParticleData.IDeserializer<AbsorbedBloodCellData>() {
 		@Override
-		public BloodCellTypeData deserialize(ParticleType<BloodCellTypeData> type, StringReader reader)
+		public AbsorbedBloodCellData deserialize(ParticleType<AbsorbedBloodCellData> type, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect(' ');
-			return new BloodCellTypeData(type, ParticleColor.deserialize(reader.readString()));
+			return new AbsorbedBloodCellData(type, ParticleColor.deserialize(reader.readString()));
 		}
 
 		@Override
-		public BloodCellTypeData read(ParticleType<BloodCellTypeData> type, PacketBuffer buffer) {
-			return new BloodCellTypeData(type, ParticleColor.deserialize(buffer.readString()));
+		public AbsorbedBloodCellData read(ParticleType<AbsorbedBloodCellData> type, PacketBuffer buffer) {
+			return new AbsorbedBloodCellData(type, ParticleColor.deserialize(buffer.readString()));
 		}
 	};
 
-	public BloodCellTypeData(float r, float g, float b) {
+	public AbsorbedBloodCellData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);
-		this.type = ParticleInit.blood_cell.get();
+		this.type = ParticleInit.absorbed_blood_cell.get();
 	}
 
-	public BloodCellTypeData(ParticleType<BloodCellTypeData> particleTypeData, ParticleColor color) {
+	public AbsorbedBloodCellData(ParticleType<AbsorbedBloodCellData> particleTypeData, ParticleColor color) {
 		this.type = particleTypeData;
 		this.color = color;
 	}
 
 	@Override
-	public ParticleType<BloodCellTypeData> getType() {
+	public ParticleType<AbsorbedBloodCellData> getType() {
 		return type;
 	}
 

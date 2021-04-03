@@ -8,7 +8,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.util.BitLocation;
 
 import net.minecraft.block.Block;
@@ -73,10 +73,10 @@ public class PacketGroundBloodDraw {
 												.getBlock() != BlockInit.smouldering_ash_trail.get()
 										&& sWorld.getBlockState(bHit.getPos())
 												.getBlock() != BlockInit.befouling_ash_trail.get()) {
-									sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 100, 0)),
+									sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 100, 0)),
 											x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 											z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-									sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+									sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 											x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 											z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 									sWorld.setBlockState(bHit.getPos().add(0, 1, 0),
@@ -87,10 +87,10 @@ public class PacketGroundBloodDraw {
 
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.smouldering_ash_trail
 									.get()) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 100, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 100, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 								sWorld.setBlockState(bHit.getPos(),
@@ -100,10 +100,10 @@ public class PacketGroundBloodDraw {
 							}
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.active_smouldering_ash_trail
 									.get()) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 100, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 100, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 
@@ -115,10 +115,10 @@ public class PacketGroundBloodDraw {
 												.getBlock() != BlockInit.befouling_ash_trail.get()
 										&& sWorld.getBlockState(bHit.getPos())
 												.getBlock() != BlockInit.smouldering_ash_trail.get()) {
-									sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 255, 0)),
+									sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 255, 0)),
 											x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 											z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-									sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+									sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 											x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 											z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 									sWorld.setBlockState(bHit.getPos().add(0, 1, 0),
@@ -127,10 +127,10 @@ public class PacketGroundBloodDraw {
 								}
 							}
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.befouling_ash_trail.get()) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 255, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 255, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 								sWorld.setBlockState(bHit.getPos(),
@@ -139,10 +139,10 @@ public class PacketGroundBloodDraw {
 							}
 							if (sWorld.getBlockState(bHit.getPos()).getBlock() == BlockInit.active_befouling_ash_trail
 									.get()) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 255, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 255, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.005f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(100, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y - 1,
 										z + side.getZOffset() + truePos.z, 3, 0, 0, 0, 0.015f);
 							}
@@ -151,25 +151,25 @@ public class PacketGroundBloodDraw {
 									BlockInit.smouldering_ash_trail.get(), BlockInit.active_befouling_ash_trail.get(),
 									BlockInit.active_smouldering_ash_trail.get() };
 							if (!Arrays.asList(bannedBlocks).contains(sWorld.getBlockState(bHit.getPos()).getBlock())) {
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 0, 255)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(0, 0, 255)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 255, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(0, 255, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 0, 255)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 0, 255)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(255, 255, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(255, 255, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 255, 255)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(0, 255, 255)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 1, 0, 0, 0, 0.015f);
-								sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 0, 0)),
+								sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(0, 0, 0)),
 										x + side.getXOffset() + truePos.x, y + side.getYOffset() + truePos.y,
 										z + side.getZOffset() + truePos.z, 15, 0, 0, 0, 0.015f);
 							}

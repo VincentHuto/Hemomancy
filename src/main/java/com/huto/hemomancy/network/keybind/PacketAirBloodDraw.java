@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.BloodCellParticleData;
-import com.huto.hemomancy.particle.data.GlowParticleData;
-import com.huto.hemomancy.particle.data.SerpentParticleData;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
+import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -61,15 +61,15 @@ public class PacketAirBloodDraw {
 					if (items.contains("Items", 9)) {
 						selected = staff.read(((ListNBT) items.get("Items")).getCompound(0));
 						if (selected.getItem() == ItemInit.morphling_pests.get()) {
-							sWorld.spawnParticle(GlowParticleData.createData(new ParticleColor(0, 255, 0)),
+							sWorld.spawnParticle(GlowParticleFactory.createData(new ParticleColor(0, 255, 0)),
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 5, 0, 0, 0,
 									0.015f);
 						} else if (selected.getItem() == ItemInit.morphling_serpent.get()) {
-							sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 20, 0)),
+							sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(255, 20, 0)),
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 2, 0, 0, 0,
 									0.0015f);
 						} else {
-							sWorld.spawnParticle(BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
+							sWorld.spawnParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
 									airTrace.getHitVec().x, airTrace.getHitVec().y, airTrace.getHitVec().z, 15, 0, 0, 0,
 									0.005f);
 						}

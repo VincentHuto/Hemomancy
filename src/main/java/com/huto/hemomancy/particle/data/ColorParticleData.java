@@ -16,44 +16,43 @@ import net.minecraft.particles.ParticleType;
  * https://github.com/Sirttas/ElementalCraft/blob/b91ca42b3d139904d9754d882a595406bad1bd18/src/main/java/sirttas/elementalcraft/particle/ElementTypeParticleData.java
  */
 
-public class SerpentParticleTypeData implements IParticleData {
+public class ColorParticleData implements IParticleData {
 
-	private ParticleType<SerpentParticleTypeData> type;
-	public static final Codec<SerpentParticleTypeData> CODEC = RecordCodecBuilder.create(instance -> instance
+	private ParticleType<ColorParticleData> type;
+	public static final Codec<ColorParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
-			.apply(instance, SerpentParticleTypeData::new));
+			.apply(instance, ColorParticleData::new));
 
 	public ParticleColor color;
 
-	@SuppressWarnings("deprecation")
-	public static final IParticleData.IDeserializer<SerpentParticleTypeData> DESERIALIZER = new IParticleData.IDeserializer<SerpentParticleTypeData>() {
+	public static final IParticleData.IDeserializer<ColorParticleData> DESERIALIZER = new IParticleData.IDeserializer<ColorParticleData>() {
 		@Override
-		public SerpentParticleTypeData deserialize(ParticleType<SerpentParticleTypeData> type, StringReader reader)
+		public ColorParticleData deserialize(ParticleType<ColorParticleData> type, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect(' ');
-			return new SerpentParticleTypeData(type, ParticleColor.deserialize(reader.readString()));
+			return new ColorParticleData(type, ParticleColor.deserialize(reader.readString()));
 		}
 
 		@Override
-		public SerpentParticleTypeData read(ParticleType<SerpentParticleTypeData> type, PacketBuffer buffer) {
-			return new SerpentParticleTypeData(type, ParticleColor.deserialize(buffer.readString()));
+		public ColorParticleData read(ParticleType<ColorParticleData> type, PacketBuffer buffer) {
+			return new ColorParticleData(type, ParticleColor.deserialize(buffer.readString()));
 		}
 	};
 
-	public SerpentParticleTypeData(float r, float g, float b) {
+	public ColorParticleData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);
-		this.type = ParticleInit.serpent.get();
+		this.type = ParticleInit.glow.get();
 	}
 
-	public SerpentParticleTypeData(ParticleType<SerpentParticleTypeData> particleTypeData, ParticleColor color) {
+	public ColorParticleData(ParticleType<ColorParticleData> particleTypeData, ParticleColor color) {
 		this.type = particleTypeData;
 		this.color = color;
 	}
 
 	@Override
-	public ParticleType<SerpentParticleTypeData> getType() {
+	public ParticleType<ColorParticleData> getType() {
 		return type;
 	}
 

@@ -1,17 +1,17 @@
 package com.huto.hemomancy.particle.type;
 
-import com.huto.hemomancy.particle.data.BloodCellTypeData;
+import com.huto.hemomancy.particle.data.BloodCellData;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.particles.ParticleType;
 
-public class BloodCellParticleType extends ParticleType<BloodCellTypeData> {
+public class BloodCellParticleType extends ParticleType<BloodCellData> {
 	public BloodCellParticleType() {
-		super(false, BloodCellTypeData.DESERIALIZER);
+		super(false, BloodCellData.DESERIALIZER);
 	}
 
 	@Override
-	public Codec<BloodCellTypeData> func_230522_e_() {
-		return BloodCellTypeData.CODEC;
+	public Codec<BloodCellData> func_230522_e_() {
+		return BloodCellData.CODEC;
 	}
 }

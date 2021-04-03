@@ -37,15 +37,6 @@ public class BlockHumaneIdol extends Block {
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult result) {
 
-		/*
-		 * worldIn.playSound(player, pos, SoundEvents.ENTITY_ZOMBIE_AMBIENT,
-		 * SoundCategory.BLOCKS, 0.25f, 1f); ItemStack stack =
-		 * player.getHeldItem(handIn); if (!player.isSneaking()) { if (stack.getItem()
-		 * == ItemInit.sanguine_conduit.get()) { worldIn.destroyBlock(pos, false);
-		 * stack.shrink(1); worldIn.setBlockState(pos,
-		 * BlockInit.rune_mod_station.get().getDefaultState()); } }
-		 */
-
 		return ActionResultType.SUCCESS;
 
 	}

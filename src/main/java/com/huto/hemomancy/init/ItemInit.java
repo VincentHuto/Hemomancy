@@ -177,6 +177,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
 			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",

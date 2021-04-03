@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.huto.hemomancy.util.Vector3;
 
@@ -94,11 +94,11 @@ public class EntityTrackingPests extends ThrowableEntity {
 	public void tick() {
 		super.tick();
 		if (world.isRemote) {
-			world.addParticle(GlowParticleData.createData(new ParticleColor(0, 150, 0)),
+			world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
 					getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.25, 0.25),
 					getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
 
-			world.addParticle(GlowParticleData.createData(new ParticleColor(0, 250, 0)),
+			world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
 					getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
 					getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
 

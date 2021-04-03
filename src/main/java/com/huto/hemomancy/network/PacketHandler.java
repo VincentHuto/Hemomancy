@@ -20,6 +20,7 @@ import com.huto.hemomancy.network.jar.PacketOpenJar;
 import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
+import com.huto.hemomancy.network.keybind.PacketBloodAbsorbtionEntity;
 import com.huto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
@@ -88,9 +89,7 @@ public class PacketHandler {
 				PacketChangeSelectedManip::encode, PacketChangeSelectedManip::decode,
 				PacketChangeSelectedManip::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseManipOnKeyPress.class,
-				PacketUseManipOnKeyPress::encode, PacketUseManipOnKeyPress::decode,
-				PacketUseManipOnKeyPress::handle);
-		
+				PacketUseManipOnKeyPress::encode, PacketUseManipOnKeyPress::decode, PacketUseManipOnKeyPress::handle);
 
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
@@ -120,6 +119,9 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
 				PacketSpawnLightningParticle::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodAbsorbtionEntity.class, PacketBloodAbsorbtionEntity::encode,
+				PacketBloodAbsorbtionEntity::decode, PacketBloodAbsorbtionEntity::handle);
+
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,

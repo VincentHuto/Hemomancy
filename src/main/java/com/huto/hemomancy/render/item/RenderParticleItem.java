@@ -4,7 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.BloodCellParticleData;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -193,7 +193,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 					false);
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(
-						BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
+						BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
 						origin.getX() + inversedSphere[i].x, origin.getY() + inversedSphere[i].y,
 						origin.getZ() + inversedSphere[i].z, 0, 0.00, 0);
 

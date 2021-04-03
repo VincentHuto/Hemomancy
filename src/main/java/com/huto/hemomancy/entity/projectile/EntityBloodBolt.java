@@ -10,7 +10,7 @@ import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.Entity;
@@ -122,7 +122,7 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		super.tick();
 		if (this.world.isRemote) {
 			for (int i = 0; i < 2; i++) {
-				world.addParticle(GlowParticleData.createData(new ParticleColor(255 * world.rand.nextFloat(), 0, 0)),
+				world.addParticle(GlowParticleFactory.createData(new ParticleColor(255 * world.rand.nextFloat(), 0, 0)),
 						getPosX() + ParticleUtil.inRange(-0.1, 0.1), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
 						getPosZ() + ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
 

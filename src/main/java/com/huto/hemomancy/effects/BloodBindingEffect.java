@@ -2,7 +2,7 @@ package com.huto.hemomancy.effects;
 
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.SerpentParticleData;
+import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.entity.Entity;
@@ -51,7 +51,7 @@ public class BloodBindingEffect extends Effect {
 				entity.setMotion(0, 0, 0);
 				if (!entity.world.isRemote) {
 					ServerWorld sWorld = (ServerWorld) entity.world;
-					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(50, 50, 50)),
+					sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							centerVec.y + Math.sin(entity.ticksExisted * 0.1),
@@ -59,21 +59,21 @@ public class BloodBindingEffect extends Effect {
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							2, 0f, 0.0f, 0f, 0);
 
-					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(100, 0, 0)),
+					sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							centerVec.y + Math.sin(entity.ticksExisted * 0.1),
 							centerVec.z + Math.cos(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							4, 0f, 0.0f, 0f, 0.0005f);
-					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
+					sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							centerVec.y + Math.sin(entity.ticksExisted * 0.1),
 							centerVec.z + Math.cos(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							8, 0f, 0.0f, 0f, 0.0015f);
-					sWorld.spawnParticle(SerpentParticleData.createData(new ParticleColor(255, 0, 0)),
+					sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)
 									* (0.50 + Math.sin(entity.ticksExisted) * 0.05),
 							centerVec.y + Math.sin(entity.ticksExisted * 0.1),

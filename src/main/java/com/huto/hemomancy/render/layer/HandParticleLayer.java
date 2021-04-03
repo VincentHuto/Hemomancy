@@ -6,7 +6,7 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.BloodCellParticleData;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -152,7 +152,7 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
 				false);
 		for (int i = 0; i < globalPartCount; i++) {
-			world.addParticle(BloodCellParticleData.createData(new ParticleColor(255, 0, 0)),
+			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
 					particlePos.getX() + inversedSphere[i].x, particlePos.getY() + inversedSphere[i].y,
 					particlePos.getZ() + inversedSphere[i].z, 0, 0.00, 0);
 

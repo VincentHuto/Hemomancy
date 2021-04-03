@@ -6,7 +6,7 @@ import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.DarkGlowParticleData;
+import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.Entity;
@@ -59,11 +59,11 @@ public class EntityDarkArrow extends AbstractArrowEntity {
 			ParticleColor color = ParticleUtil.BlACK;
 			ServerWorld sWorld = (ServerWorld) world;
 
-			sWorld.spawnParticle(DarkGlowParticleData.createData(color), getPosX() + ParticleUtil.inRange(-0.05, 0.05),
+			sWorld.spawnParticle(DarkGlowParticleFactory.createData(color), getPosX() + ParticleUtil.inRange(-0.05, 0.05),
 					getPosY() + ParticleUtil.inRange(-0.05, 0.05), getPosZ() + ParticleUtil.inRange(-0.05, 0.05), 20,
 					0.005, 0.3, 0.005, 0.001d);
 
-			sWorld.spawnParticle(DarkGlowParticleData.createData(color), getPosX() + ParticleUtil.inRange(-0.05, 0.05),
+			sWorld.spawnParticle(DarkGlowParticleFactory.createData(color), getPosX() + ParticleUtil.inRange(-0.05, 0.05),
 					getPosY() + ParticleUtil.inRange(-0.05, 0.05), getPosZ() + ParticleUtil.inRange(-0.05, 0.05), 20,
 					0.005, -0.3, 0.0005, 0.001d);
 

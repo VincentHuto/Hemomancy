@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,7 +48,7 @@ public class ItemBloodyFlask extends Item {
 				ServerWorld sWorld = (ServerWorld) worldIn;
 				for (int i = 0; i < 30; i++) {
 					sWorld.spawnParticle(
-							GlowParticleData.createData(new ParticleColor(255 * worldIn.rand.nextFloat(), 0, 0)),
+							GlowParticleFactory.createData(new ParticleColor(255 * worldIn.rand.nextFloat(), 0, 0)),
 							pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
 							pos.getZ() + random.nextDouble(), 1, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
 				}

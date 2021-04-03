@@ -1,7 +1,7 @@
 package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.particle.data.DarkGlowParticleData;
+import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.huto.hemomancy.util.Vector3;
 
@@ -18,6 +18,7 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 
 	@Override
 	public void tick() {
+
 		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, -1, 0);
 		double time = world.getGameTime();
 		if (world.isRemote) {
@@ -25,18 +26,20 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 			for (int i = 0; i < 16; i++) {
 				count += 0.0005;
 				if (count > 2) {
-					count =0.5f;
+					count = 0.5f;
 				}
 			}
-			double cos = Math.cos(time*0.75)*count;
-			double sin = Math.sin(time*0.75)*count;
-		
+			double cos = Math.cos(time * 0.75) * count;
+			double sin = Math.sin(time * 0.75) * count;
+
 			for (int i = 0; i < globalPartCount; i++) {
-				world.addParticle(DarkGlowParticleData.createData(ParticleUtil.BlACK), centerVec.x + cos,
+				world.addParticle(DarkGlowParticleFactory.createData(ParticleUtil.BlACK), centerVec.x + cos,
 						centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
-				world.addParticle(DarkGlowParticleData.createData(ParticleUtil.RED), centerVec.x - cos,
-						centerVec.y + 1, centerVec.z + sin, 0, 0.00, 0);
+				world.addParticle(DarkGlowParticleFactory.createData(ParticleUtil.RED), centerVec.x - cos, centerVec.y + 1,
+						centerVec.z + sin, 0, 0.00, 0);
 			}
 		}
+
 	}
+
 }

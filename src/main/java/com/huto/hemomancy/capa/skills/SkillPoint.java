@@ -2,13 +2,15 @@ package com.huto.hemomancy.capa.skills;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundNBT;
+
 public class SkillPoint {
 	int id, maxLevels;
 	String name;
 	double cost;
 	EnumSkillStates state;
 	SkillPoint parent;
-
+	
 	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
 			@Nullable SkillPoint parent) {
 		this.id = id;
@@ -17,6 +19,20 @@ public class SkillPoint {
 		this.cost = cost;
 		this.state = state;
 		this.parent = parent;
+	}
+
+	/*
+	 * Writes a NBT tag from this manipulation
+	 */
+	public CompoundNBT serialize() {
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString("name", name);
+		
+		
+		nbt.putString("state", state.name());
+
+		
+		return nbt;
 	}
 
 	public String getName() {

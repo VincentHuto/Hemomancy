@@ -23,6 +23,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemLivingWeapon extends ToolItem {
@@ -34,7 +36,9 @@ public class ItemLivingWeapon extends ToolItem {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
 	}
 
+
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
 		return new StringTextComponent(ModTextFormatting
 				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath()))).mergeStyle(TextFormatting.DARK_RED);

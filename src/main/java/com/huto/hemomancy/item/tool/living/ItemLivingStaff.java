@@ -1,6 +1,7 @@
 package com.huto.hemomancy.item.tool.living;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +17,9 @@ import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
+import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -31,15 +35,20 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -58,8 +67,56 @@ public class ItemLivingStaff extends Item {
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 		super.onUsingTick(stack, player, count);
 		if (player.world.isRemote) {
-			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+			Random rand = new Random();
+			World worldIn = player.world;
+
+			BlockPos pos = player.getPosition();
+			for (int i = -2; i <= 2; ++i) {
+				for (int j = -2; j <= 2; ++j) {
+					if (i > -2 && i < 2 && j == -1) {
+						j = 2;
+					}
+					if (rand.nextInt(16) == 0) {
+						for (int k = 0; k <= 1; ++k) {
+							Vector3d vec = player.getPositionVec();
+							BlockPos blockpos = pos.add(i, k, j);
+							if (worldIn.getBlockState(blockpos).getEnchantPowerBonus(worldIn, blockpos) == 0) {
+								if (!worldIn.isAirBlock(pos.add(i / 2, 0, j / 2))) {
+									break;
+								}
+								worldIn.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleUtil.RED),
+										(double) vec.getX(), (double) vec.getY() + 2.0D, (double) vec.getZ(),
+										(double) ((float) i + rand.nextFloat()) - 0.5D,
+										(double) ((float) k - rand.nextFloat() - 1.0F),
+										(double) ((float) j + rand.nextFloat()) - 0.5D);
+							}
+						}
+					}
+				}
+			}
+			// Absorb from Entity?
+			/*
+			 * List<LivingEntity> targets = player.world
+			 * .getEntitiesWithinAABB(LivingEntity.class,
+			 * player.getBoundingBox().grow(5.0)).stream() .filter(e ->
+			 * e.canEntityBeSeen((Entity) player)).collect(Collectors.toList()); if
+			 * (targets.size() > 0) { for (int i = 0; i < targets.size(); ++i) {
+			 * LivingEntity target = targets.get(i); Vector3 vec =
+			 * Vector3.fromEntityCenter(player); Vector3 targetVec =
+			 * Vector3.fromEntityCenter(target); Vector3 finalPos = vec.add(targetVec.x,
+			 * targetVec.y, targetVec.z);
+			 * 
+			 * worldIn.addParticle(BloodCellParticleFactory.createData(ParticleUtil.RED),
+			 * (double) vec.x, (double) vec.y + 2.0D, (double) vec.z, (double) ((float)
+			 * finalPos.x + rand.nextFloat()) - 0.5D, (double) ((float) finalPos.y -
+			 * rand.nextFloat() - 1.0F), (double) ((float) finalPos.z + rand.nextFloat()) -
+			 * 0.5D); } }
+			 */
+			// draw
+			/*
+			 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
+			 * PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+			 */
 		}
 	}
 
@@ -96,6 +153,7 @@ public class ItemLivingStaff extends Item {
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
 		return new StringTextComponent(ModTextFormatting
 				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))

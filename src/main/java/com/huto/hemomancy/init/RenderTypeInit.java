@@ -98,6 +98,8 @@ public class RenderTypeInit extends RenderType {
 			RenderSystem.depthMask(true);
 			textureManager.bindTexture(AtlasTexture.LOCATION_PARTICLES_TEXTURE);
 			RenderSystem.enableBlend();
+			RenderSystem.enableCull();
+			RenderSystem.depthMask(false);
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -107,6 +109,9 @@ public class RenderTypeInit extends RenderType {
 
 		@Override
 		public void finishRender(Tessellator tessellator) {
+			RenderSystem.disableCull();
+			RenderSystem.depthMask(true);
+
 			tessellator.draw();
 
 		}

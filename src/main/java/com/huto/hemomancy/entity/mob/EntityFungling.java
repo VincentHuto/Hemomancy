@@ -10,7 +10,7 @@ import com.huto.hemomancy.model.animation.AnimationPacket;
 import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.model.animation.Mafs;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 import com.huto.hemomancy.util.Vector3;
 
@@ -100,11 +100,11 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 				LivingEntity liv = (LivingEntity) ent;
 				liv.addPotionEffect(new EffectInstance(Effects.POISON, 200, 200));
 				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
-					world.addParticle(GlowParticleData.createData(new ParticleColor(0, 150, 0)),
+					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
 							getPosX() + ParticleUtil.inRange(-0.25, 0.25),
 							getPosY() + ParticleUtil.inRange(-0.25, 0.25),
 							getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
-					world.addParticle(GlowParticleData.createData(new ParticleColor(0, 250, 0)),
+					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
 							getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
 							getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
 				}

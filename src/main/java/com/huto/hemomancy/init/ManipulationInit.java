@@ -12,6 +12,8 @@ public class ManipulationInit {
 
 	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<BloodManipulation>();
 	public static BloodManipulation blood_shot, blood_rush, aneurysm;
+	public static BloodManipulation ferric_transmutation;
+	public static BloodManipulation activation_potential;
 
 	public static void init() {
 		blood_shot = register(new BloodManipulation("blood_shot", 100, 0, EnumManipulationRank.HUMILIS,
@@ -20,6 +22,12 @@ public class ManipulationInit {
 				EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
 		aneurysm = register(new BloodManipulation("aneurysm", 100, 0, EnumManipulationRank.HUMILIS,
 				EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
+
+		ferric_transmutation = register(new BloodManipulation("ferric_transmutation", 1000, 0,
+				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY));
+
+		activation_potential = register(new BloodManipulation("activation_potential", 250, 0,
+				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
 	}
 
 	public static BloodManipulation register(BloodManipulation manip) {

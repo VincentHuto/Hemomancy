@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.ParticleLightningData;
+import com.huto.hemomancy.particle.factory.ParticleLightningFactory;
 import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.client.world.ClientWorld;
@@ -107,7 +107,7 @@ public class PacketSpawnLightningParticle {
 		}
 
 		((ClientWorld) clientWorld.get()).addParticle(
-				ParticleLightningData.createData(msg.color, msg.getSpeed(), msg.maxAge, msg.fract, msg.getMaxOffset()),
+				ParticleLightningFactory.createData(msg.color, msg.getSpeed(), msg.maxAge, msg.fract, msg.getMaxOffset()),
 				(double) msg.getPosition().x, (double) msg.getPosition().y, (double) msg.getPosition().z,
 				(double) msg.getSpeedVec().x, (double) msg.getSpeedVec().y, (double) msg.getSpeedVec().z);
 		ctxSupplier.get().setPacketHandled(true);

@@ -3,7 +3,7 @@ package com.huto.hemomancy.tile;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.ParticleColor;
-import com.huto.hemomancy.particle.data.GlowParticleData;
+import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,7 +32,7 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 		case CRAFT_EFFECT_EVENT: {
 			if (world.isRemote) {
 				for (int i = 0; i < 25; i++) {
-					IParticleData data = GlowParticleData.createData(new ParticleColor(255, 0, 0));
+					IParticleData data = GlowParticleFactory.createData(new ParticleColor(255, 0, 0));
 					world.addParticle(data, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1,
 							pos.getZ() + 0.5 + Math.random() * 0.4 - 0.2, 0, 0, 0);
 				}
@@ -63,19 +63,19 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 			for (int i = 0; i < globalPartCount; i++) {
 
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
 						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
 
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
+						GlowParticleFactory.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
 								(int) (inversedSphere[i].y * 255), (int) (inversedSphere[i].z * 255))),
 						pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
 						pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
 
 				world.addParticle(
-						GlowParticleData.createData(new ParticleColor((int) (randomSwim[i].x * 255),
+						GlowParticleFactory.createData(new ParticleColor((int) (randomSwim[i].x * 255),
 								(int) (randomSwim[i].y * 255), (int) (randomSwim[i].z * 255))),
 						pos.getX() + randomSwim[i].x + .5, pos.getY() + 1.1 + randomSwim[i].y,
 						pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
@@ -118,12 +118,12 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 				Vector3d[] selectedParticle = fibboSphere;
 				for (int i = 0; i < partCount; i++) {
 					world.addParticle(
-							GlowParticleData.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+							GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 									(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
 							pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
 							pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
 					world.addParticle(
-							GlowParticleData.createData(new ParticleColor((int) (expandingSphere[i].x * 255),
+							GlowParticleFactory.createData(new ParticleColor((int) (expandingSphere[i].x * 255),
 									(int) (expandingSphere[i].y * 255), (int) (expandingSphere[i].z * 255))),
 							pos.getX() + expandingSphere[i].x + .5, pos.getY() + 1.5 + expandingSphere[i].y,
 							pos.getZ() + expandingSphere[i].z + .5, 0, 0.00, 0);

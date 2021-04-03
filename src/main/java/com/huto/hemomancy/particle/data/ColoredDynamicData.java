@@ -11,21 +11,21 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
 
-public class ColoredDynamicTypeData implements IParticleData {
+public class ColoredDynamicData implements IParticleData {
 
-	public ParticleType<ColoredDynamicTypeData> type;
+	public ParticleType<ColoredDynamicData> type;
 	public ParticleColor color;
-	float scale;
+	public float scale;
 	public int age;
 
-	public static final Codec<ColoredDynamicTypeData> CODEC = RecordCodecBuilder
+	public static final Codec<ColoredDynamicData> CODEC = RecordCodecBuilder
 			.create(instance -> instance
 					.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 							Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 							Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()),
 							Codec.FLOAT.fieldOf("scale").forGetter(d -> d.scale),
 							Codec.INT.fieldOf("age").forGetter(d -> d.age))
-					.apply(instance, ColoredDynamicTypeData::new));
+					.apply(instance, ColoredDynamicData::new));
 
 	@Override
 	public ParticleType<?> getType() {
@@ -33,30 +33,30 @@ public class ColoredDynamicTypeData implements IParticleData {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static final IDeserializer<ColoredDynamicTypeData> DESERIALIZER = new IDeserializer<ColoredDynamicTypeData>() {
+	public static final IDeserializer<ColoredDynamicData> DESERIALIZER = new IDeserializer<ColoredDynamicData>() {
 		@Override
-		public ColoredDynamicTypeData deserialize(ParticleType<ColoredDynamicTypeData> type, StringReader reader)
+		public ColoredDynamicData deserialize(ParticleType<ColoredDynamicData> type, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect(' ');
-			return new ColoredDynamicTypeData(type, ParticleColor.deserialize(reader.readString()), reader.readFloat(),
+			return new ColoredDynamicData(type, ParticleColor.deserialize(reader.readString()), reader.readFloat(),
 					reader.readInt());
 		}
 
 		@Override
-		public ColoredDynamicTypeData read(ParticleType<ColoredDynamicTypeData> type, PacketBuffer buffer) {
-			return new ColoredDynamicTypeData(type, ParticleColor.deserialize(buffer.readString()), buffer.readFloat(),
+		public ColoredDynamicData read(ParticleType<ColoredDynamicData> type, PacketBuffer buffer) {
+			return new ColoredDynamicData(type, ParticleColor.deserialize(buffer.readString()), buffer.readFloat(),
 					buffer.readInt());
 		}
 	};
 
-	public ColoredDynamicTypeData(float r, float g, float b, float scale, int age) {
+	public ColoredDynamicData(float r, float g, float b, float scale, int age) {
 		this.type = ParticleInit.line.get();
 		this.color = new ParticleColor(r, g, b);
 		this.scale = scale;
 		this.age = age;
 	}
 
-	public ColoredDynamicTypeData(ParticleType<ColoredDynamicTypeData> particleTypeData, ParticleColor color,
+	public ColoredDynamicData(ParticleType<ColoredDynamicData> particleTypeData, ParticleColor color,
 			float scale, int age) {
 		this.type = particleTypeData;
 		this.color = color;

@@ -11,39 +11,39 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
 
-public class ColorLightningTypeData implements IParticleData {
+public class ColorLightningData implements IParticleData {
 
-	private ParticleType<ColorLightningTypeData> type;
-	public static final Codec<ColorLightningTypeData> CODEC = RecordCodecBuilder
+	private ParticleType<ColorLightningData> type;
+	public static final Codec<ColorLightningData> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()),
 					Codec.INT.fieldOf("s").forGetter(d -> d.speed), Codec.INT.fieldOf("a").forGetter(d -> d.maxAge),
 					Codec.INT.fieldOf("f").forGetter(d -> d.fract),
-					Codec.FLOAT.fieldOf("o").forGetter(d -> d.maxOffset)).apply(instance, ColorLightningTypeData::new));
+					Codec.FLOAT.fieldOf("o").forGetter(d -> d.maxOffset)).apply(instance, ColorLightningData::new));
 
 	public ParticleColor color;
 	public int speed, maxAge, fract;
 	public float maxOffset;
 
 	@SuppressWarnings("deprecation")
-	public static final IParticleData.IDeserializer<ColorLightningTypeData> DESERIALIZER = new IParticleData.IDeserializer<ColorLightningTypeData>() {
+	public static final IParticleData.IDeserializer<ColorLightningData> DESERIALIZER = new IParticleData.IDeserializer<ColorLightningData>() {
 		@Override
-		public ColorLightningTypeData deserialize(ParticleType<ColorLightningTypeData> type, StringReader reader)
+		public ColorLightningData deserialize(ParticleType<ColorLightningData> type, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect(' ');
-			return new ColorLightningTypeData(type, ParticleColor.deserialize(reader.readString()), reader.readInt(),
+			return new ColorLightningData(type, ParticleColor.deserialize(reader.readString()), reader.readInt(),
 					reader.readInt(), reader.readInt(), reader.readFloat());
 		}
 
 		@Override
-		public ColorLightningTypeData read(ParticleType<ColorLightningTypeData> type, PacketBuffer buffer) {
-			return new ColorLightningTypeData(type, ParticleColor.deserialize(buffer.readString()), buffer.readInt(),
+		public ColorLightningData read(ParticleType<ColorLightningData> type, PacketBuffer buffer) {
+			return new ColorLightningData(type, ParticleColor.deserialize(buffer.readString()), buffer.readInt(),
 					buffer.readInt(), buffer.readInt(), buffer.readFloat());
 		}
 	};
 
-	public ColorLightningTypeData(float r, float g, float b, int s, int a, int f, float o) {
+	public ColorLightningData(float r, float g, float b, int s, int a, int f, float o) {
 		this.color = new ParticleColor(r, g, b);
 		this.type = ParticleInit.lightning_bolt.get();
 		this.speed = s;
@@ -52,7 +52,7 @@ public class ColorLightningTypeData implements IParticleData {
 		this.maxOffset = o;
 	}
 
-	public ColorLightningTypeData(ParticleType<ColorLightningTypeData> particleTypeData, ParticleColor color, int s,
+	public ColorLightningData(ParticleType<ColorLightningData> particleTypeData, ParticleColor color, int s,
 			int a, int f, float o) {
 		this.type = particleTypeData;
 		this.color = color;
@@ -63,7 +63,7 @@ public class ColorLightningTypeData implements IParticleData {
 	}
 
 	@Override
-	public ParticleType<ColorLightningTypeData> getType() {
+	public ParticleType<ColorLightningData> getType() {
 		return type;
 	}
 
