@@ -6,7 +6,14 @@ import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJarViewer;
 import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy implements IProxy {
 
@@ -26,6 +33,27 @@ public class ClientProxy implements IProxy {
 	public void openStaffGui() {
 		Minecraft.getInstance().displayGuiScreen(new GuiMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
 				ClientEventSubscriber.getClientPlayer()));
+	}
+
+	@Override
+	public void registerHandlers() {
+		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+		modBus.addListener(this::onModelRegister);
+		modBus.addListener(this::onModelBake);
+	}
+
+	public static IBakedModel particleItemModel;
+
+	public void onModelRegister(ModelRegistryEvent evt) {
+		ModelLoader.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/particle_item_texture"));
+
+	}
+
+	public void onModelBake(ModelBakeEvent evt) {
+		particleItemModel = evt.getModelRegistry()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/particle_item_texture"));
+
 	}
 
 }

@@ -3,8 +3,6 @@ package com.huto.hemomancy.particle.util;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.huto.hemomancy.particle.ParticleColor;
-
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
@@ -13,15 +11,6 @@ import net.minecraft.world.server.ServerWorld;
 
 public class ParticleUtil {
 	public static Random r = new Random();
-	public static ParticleColor RED = new ParticleColor(255, 0, 0);
-	public static ParticleColor GREEN = new ParticleColor(0, 255, 0);
-	public static ParticleColor BLUE = new ParticleColor(0, 0, 255);
-	public static ParticleColor ORANGE = new ParticleColor(255, 200, 0);
-	public static ParticleColor PURPLE = new ParticleColor(255, 0, 255);
-	public static ParticleColor YELLOW = new ParticleColor(255, 255, 0);
-	public static ParticleColor CYAN = new ParticleColor(0, 255, 255);
-	public static ParticleColor WHITE = new ParticleColor(255, 255, 255);
-	public static ParticleColor BlACK = new ParticleColor(0, 0, 0);
 
 	public static double inRange(double min, double max) {
 		return ThreadLocalRandom.current().nextDouble(min, max);

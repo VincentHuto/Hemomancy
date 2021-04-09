@@ -2,7 +2,7 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleUtil;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -33,9 +33,9 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 			double sin = Math.sin(time * 0.75) * count;
 
 			for (int i = 0; i < globalPartCount; i++) {
-				world.addParticle(DarkGlowParticleFactory.createData(ParticleUtil.BlACK), centerVec.x + cos,
+				world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.BLACK), centerVec.x + cos,
 						centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
-				world.addParticle(DarkGlowParticleFactory.createData(ParticleUtil.RED), centerVec.x - cos, centerVec.y + 1,
+				world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.RED), centerVec.x - cos, centerVec.y + 1,
 						centerVec.z + sin, 0, 0.00, 0);
 			}
 		}

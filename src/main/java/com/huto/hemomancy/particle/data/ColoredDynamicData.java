@@ -1,7 +1,7 @@
 package com.huto.hemomancy.particle.data;
 
 import com.huto.hemomancy.init.ParticleInit;
-import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;

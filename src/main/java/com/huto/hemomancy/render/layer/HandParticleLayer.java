@@ -1,13 +1,19 @@
 
 package com.huto.hemomancy.render.layer;
 
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
+
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.ItemParticleItem;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
-import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.particle.util.ParticleUtil;
+import com.huto.hemomancy.util.Vector3;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -22,6 +28,7 @@ import net.minecraft.client.renderer.entity.model.IHasArm;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effects;
@@ -143,20 +150,48 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		Vector3d particlePos = playerPos
 				.add(new Vector3d((double) curMatrix.m03, (double) curMatrix.m13, (double) curMatrix.m23));
 		Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
-		int globalPartCount = 60;
+		int globalPartCount = 20;
 		// RayTraceResult trace = player.pick(2,
 		// ClientEventSubscriber.getPartialTicks(), true);
 		// System.out.println(trace);
-		Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-		Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-		Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
-				false);
-		for (int i = 0; i < globalPartCount; i++) {
-			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
-					particlePos.getX() + inversedSphere[i].x, particlePos.getY() + inversedSphere[i].y,
-					particlePos.getZ() + inversedSphere[i].z, 0, 0.00, 0);
+		boolean playerIsRightHanded = player.getPrimaryHand() == HandSide.RIGHT;
+		boolean itemIsInUse = player.getItemInUseCount() > 0;
+		Hand activeHand = player.getActiveHand();
+		Random rand = new Random();
+		Vector3d vec = particlePos;
+		if (itemIsInUse) {
+			List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
+					player.getBoundingBox().grow(5.0));
+			if (targets.size() > 0) {
+				for (int i = 0; i < targets.size(); ++i) {
+					Entity target = targets.get(i);
+					if (target instanceof LivingEntity) {
+						LivingEntity livingTarget = (LivingEntity) target;
+						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+						Vector3d finalPos = vec.subtract(targetVec.x, targetVec.y, targetVec.z).inverse();
+						Predicate<Entity> targetPred = ParticleColor.getEntityPredicate(target);
+						ParticleColor targetColor = ParticleColor.getColorFromPredicate(targetPred);
+						world.addParticle(AbsrobedBloodCellParticleFactory.createData(targetColor), (double) vec.x,
+								(double) vec.y + 1.05D, (double) vec.z,
+								(double) ((float) finalPos.x + rand.nextFloat()) - 0.5D,
+								(double) ((float) finalPos.y - rand.nextFloat() - 0F),
+								(double) ((float) finalPos.z + rand.nextFloat()) - 0.5D);
+					}
+				}
+			}
+
+			Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+			Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
+					false);
+
+			for (int i = 0; i < globalPartCount; i++) {
+				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
+						particlePos.getX() + inversedSphere[i].x, particlePos.getY() + inversedSphere[i].y,
+						particlePos.getZ() + inversedSphere[i].z, 0, 0.00, 0);
+
+			}
 
 		}
-
 	}
 }

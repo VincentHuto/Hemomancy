@@ -4,10 +4,10 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

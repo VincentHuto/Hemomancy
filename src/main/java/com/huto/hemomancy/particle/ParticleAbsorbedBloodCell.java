@@ -57,6 +57,12 @@ public class ParticleAbsorbedBloodCell extends SpriteTexturedParticle {
 	}
 
 	@Override
+	public boolean shouldCull() {
+		return false;
+	}
+
+	
+	@Override
 	public IParticleRenderType getRenderType() {
 		return RenderTypeInit.DARK_GLOW_RENDER;
 	}

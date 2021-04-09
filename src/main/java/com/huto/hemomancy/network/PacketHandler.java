@@ -28,7 +28,7 @@ import com.huto.hemomancy.network.keybind.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.network.manip.PacketUseManipOnKeyPress;
-import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;

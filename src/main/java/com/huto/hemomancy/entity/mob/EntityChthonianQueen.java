@@ -9,8 +9,8 @@ import com.huto.hemomancy.model.animation.Animation;
 import com.huto.hemomancy.model.animation.AnimationPacket;
 import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.model.animation.Mafs;
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.block.Blocks;

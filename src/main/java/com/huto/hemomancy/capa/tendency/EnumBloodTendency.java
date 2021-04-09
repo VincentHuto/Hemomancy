@@ -1,6 +1,6 @@
 package com.huto.hemomancy.capa.tendency;
 
-import com.huto.hemomancy.particle.ParticleColor;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 public enum EnumBloodTendency {
 	TENEBRIS(new ParticleColor(70, 0, 110)), LUX(new ParticleColor(255, 255, 255)),

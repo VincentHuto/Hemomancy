@@ -2,8 +2,8 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.entity.player.PlayerEntity;

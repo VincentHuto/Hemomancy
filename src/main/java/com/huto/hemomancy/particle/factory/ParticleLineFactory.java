@@ -3,9 +3,9 @@ package com.huto.hemomancy.particle.factory;
 import java.util.Random;
 
 import com.huto.hemomancy.init.ParticleInit;
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.ParticleLine;
 import com.huto.hemomancy.particle.data.ColoredDynamicData;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.particle.util.ParticleUtil;
 
 import net.minecraft.client.particle.IAnimatedSprite;

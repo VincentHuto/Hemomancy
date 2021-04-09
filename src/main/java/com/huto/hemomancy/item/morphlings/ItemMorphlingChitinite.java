@@ -1,7 +1,7 @@
 package com.huto.hemomancy.item.morphlings;
 
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

@@ -4,8 +4,8 @@ package com.huto.hemomancy.network;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.ParticleLightningFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.client.world.ClientWorld;

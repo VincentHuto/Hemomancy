@@ -46,6 +46,7 @@ public class BloodVolumeHud extends Screen {
 			if (bloodCap != null) {
 				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodVolumeClient());
 				bloodVolume = bloodCap.getBloodVolume();
+				bloodVolume = 0.01f*(float) Math.floor(bloodVolume * 100.0);
 				String m = String.valueOf(bloodVolume);
 				DecimalFormat d = new DecimalFormat("0.0");
 

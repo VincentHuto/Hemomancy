@@ -1,5 +1,7 @@
 package com.huto.hemomancy.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import com.huto.hemomancy.entity.mob.EntityChitinite;
@@ -42,6 +44,28 @@ import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class ModEntityPredicates {
+	public static List<Predicate<Entity>> PREDICATES = new ArrayList<Predicate<Entity>>();
+	public static List<Predicate<Entity>> BLOODTYPES = new ArrayList<Predicate<Entity>>();
+
+	public static void init() {
+		PREDICATES.add(COLDBLOODED);
+		PREDICATES.add(ENDERBLOOD);
+		PREDICATES.add(WARMBLOODED);
+		PREDICATES.add(VORPAL);
+		PREDICATES.add(NOBLOOD);
+		PREDICATES.add(UNDEAD);
+		PREDICATES.add(INFERNALBLOOD);
+		PREDICATES.add(PLANTBLOOD);
+		
+		BLOODTYPES.add(COLDBLOODED);
+		BLOODTYPES.add(ENDERBLOOD);
+		BLOODTYPES.add(WARMBLOODED);
+		BLOODTYPES.add(NOBLOOD);
+		BLOODTYPES.add(UNDEAD);
+		BLOODTYPES.add(INFERNALBLOOD);
+		BLOODTYPES.add(PLANTBLOOD);
+	}
+
 	public static Predicate<Entity> WARMBLOODED = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity e) {

@@ -96,6 +96,10 @@ public class ItemInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
+	
+	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
+			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
+	
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -181,8 +185,6 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
 			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
-			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> raw_clay_flask = BASEITEMS.register("raw_clay_flask",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",

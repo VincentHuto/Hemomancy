@@ -7,11 +7,9 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.keybind.PacketBloodAbsorbtionEntity;
-import com.huto.hemomancy.util.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -41,13 +39,13 @@ public class ItemDSD extends Item {
 				final Minecraft mc = Minecraft.getInstance();
 				final RayTraceResult result = mc.objectMouseOver;
 				mc.gameRenderer.getMouseOver(ClientEventSubscriber.getPartialTicks());
-				PlayerEntity player = (PlayerEntity) livingEntityIn;
+				//PlayerEntity player = (PlayerEntity) livingEntityIn;
 
 				if (result.getType() == Type.ENTITY) {
 					EntityRayTraceResult entityRes = (EntityRayTraceResult) result;
-					Entity hitEnt = entityRes.getEntity();
-					Vector3 playerVec = Vector3.fromEntityCenter(player);
-					Vector3 entityVec = Vector3.fromEntityCenter(hitEnt);
+					//Entity hitEnt = entityRes.getEntity();
+				//	Vector3 playerVec = Vector3.fromEntityCenter(player);
+				//	Vector3 entityVec = Vector3.fromEntityCenter(hitEnt);
 					System.out.println(entityRes.getEntity());
 					PacketHandler.CHANNELBLOODVOLUME
 							.sendToServer(new PacketBloodAbsorbtionEntity(entityRes.getEntity().getUniqueID()));

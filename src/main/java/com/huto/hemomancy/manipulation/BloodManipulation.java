@@ -15,9 +15,8 @@ import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.particle.ParticleColor;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleUtil;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
@@ -27,8 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -123,7 +120,7 @@ public class BloodManipulation {
 							(float) target.getPosition().getY() + target.getHeight() / 2.0f,
 							target.getPosition().getZ());
 					PacketHandler.sendLightningSpawn(player.getPositionVec().add(translation), speedVec, 64.0f,
-							(RegistryKey<World>) player.world.getDimensionKey(), ParticleUtil.RED, 2, 10, 9, 0.2f);
+							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 2, 10, 9, 0.2f);
 					target.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) player), 5.0f);
 				}
 			}

@@ -40,6 +40,7 @@ import com.huto.hemomancy.recipes.PolypRecipes;
 import com.huto.hemomancy.render.layer.HandParticleLayer;
 import com.huto.hemomancy.render.layer.LivingBladeRenderLayer;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
+import com.huto.hemomancy.util.ModEntityPredicates;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
@@ -182,6 +183,7 @@ public class Hemomancy {
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
+		ModEntityPredicates.init();
 		CapabilityInit.init();
 		SkillPointInit.init();
 		ModBloodCraftingRecipes.initPatterns();

@@ -18,8 +18,7 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleUtil;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -35,7 +34,6 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
@@ -67,56 +65,64 @@ public class ItemLivingStaff extends Item {
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 		super.onUsingTick(stack, player, count);
 		if (player.world.isRemote) {
-			Random rand = new Random();
-			World worldIn = player.world;
+			if (player.isSneaking()) {
+				Random rand = new Random();
+				World worldIn = player.world;
+				int radius = 2;
+				BlockPos pos = player.getPosition();
+				// Absorbs from ground
+				for (int i = -radius; i <= radius; ++i) {
+					for (int j = -radius; j <= radius; ++j) {
+						if (i > -radius && i < radius && j == -1) {
+							j = radius;
+						}
+						if (rand.nextInt(3) == 0) {
+							for (int k = 0; k <= 1; ++k) {
+								Vector3d vec = player.getPositionVec();
+								BlockPos blockpos = pos.add(i, k, j);
+								if (worldIn.getBlockState(blockpos).getEnchantPowerBonus(worldIn, blockpos) == 0) {
+									if (!worldIn.isAirBlock(pos.add(i / radius, 0, j / radius))) {
+										break;
+									}
 
-			BlockPos pos = player.getPosition();
-			for (int i = -2; i <= 2; ++i) {
-				for (int j = -2; j <= 2; ++j) {
-					if (i > -2 && i < 2 && j == -1) {
-						j = 2;
-					}
-					if (rand.nextInt(16) == 0) {
-						for (int k = 0; k <= 1; ++k) {
-							Vector3d vec = player.getPositionVec();
-							BlockPos blockpos = pos.add(i, k, j);
-							if (worldIn.getBlockState(blockpos).getEnchantPowerBonus(worldIn, blockpos) == 0) {
-								if (!worldIn.isAirBlock(pos.add(i / 2, 0, j / 2))) {
-									break;
+									worldIn.addParticle(
+											AbsrobedBloodCellParticleFactory.createData(ParticleColor.genRandomColor()),
+											(double) vec.getX(), (double) vec.getY() + 2D, (double) vec.getZ(),
+											(double) ((float) i + rand.nextFloat()) - 0.5D,
+											(double) ((float) k - rand.nextFloat() - 1.0F),
+											(double) ((float) j + rand.nextFloat()) - 0.5D);
+
 								}
-								worldIn.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleUtil.RED),
-										(double) vec.getX(), (double) vec.getY() + 2.0D, (double) vec.getZ(),
-										(double) ((float) i + rand.nextFloat()) - 0.5D,
-										(double) ((float) k - rand.nextFloat() - 1.0F),
-										(double) ((float) j + rand.nextFloat()) - 0.5D);
 							}
 						}
 					}
 				}
 			}
-			// Absorb from Entity?
+
 			/*
-			 * List<LivingEntity> targets = player.world
-			 * .getEntitiesWithinAABB(LivingEntity.class,
-			 * player.getBoundingBox().grow(5.0)).stream() .filter(e ->
-			 * e.canEntityBeSeen((Entity) player)).collect(Collectors.toList()); if
-			 * (targets.size() > 0) { for (int i = 0; i < targets.size(); ++i) {
-			 * LivingEntity target = targets.get(i); Vector3 vec =
-			 * Vector3.fromEntityCenter(player); Vector3 targetVec =
-			 * Vector3.fromEntityCenter(target); Vector3 finalPos = vec.add(targetVec.x,
-			 * targetVec.y, targetVec.z);
+			 * // Absorb from Entity Vector3 vec = Vector3.fromEntityCenter(player);
+			 * List<Entity> targets = player.world
+			 * .getEntitiesWithinAABBExcludingEntity(player,
+			 * player.getBoundingBox().grow(5.0)).stream() .filter(e -> ((LivingEntity)
+			 * e).canEntityBeSeen((Entity) player)).collect(Collectors.toList()); if
+			 * (targets.size() > 0) { for (int i = 0; i < targets.size(); ++i) { Entity
+			 * target = targets.get(i); Vector3 targetVec =
+			 * Vector3.fromEntityCenter(target); Vector3 finalPos =
+			 * vec.subtract(targetVec).multiply(-1);
 			 * 
-			 * worldIn.addParticle(BloodCellParticleFactory.createData(ParticleUtil.RED),
-			 * (double) vec.x, (double) vec.y + 2.0D, (double) vec.z, (double) ((float)
-			 * finalPos.x + rand.nextFloat()) - 0.5D, (double) ((float) finalPos.y -
-			 * rand.nextFloat() - 1.0F), (double) ((float) finalPos.z + rand.nextFloat()) -
-			 * 0.5D); } }
+			 * worldIn.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor
+			 * .RED), (double) vec.x, (double) vec.y + 1.05D, (double) vec.z, (double)
+			 * ((float) finalPos.x + rand.nextFloat()) - 0.5D, (double) ((float) finalPos.y
+			 * - rand.nextFloat() - 0F), (double) ((float) finalPos.z + rand.nextFloat()) -
+			 * 0.5D);
+			 * 
+			 * } }
 			 */
 			// draw
-			/*
-			 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
-			 * PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
-			 */
+
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+
 		}
 	}
 
