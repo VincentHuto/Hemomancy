@@ -13,13 +13,13 @@ import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
 import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
-import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 import com.huto.hemomancy.item.rune.ItemGuidanceRune;
 import com.huto.hemomancy.item.rune.ItemMilkweedRune;
@@ -50,6 +50,7 @@ import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
+import com.huto.hemomancy.item.tool.living.ItemLivingAxe;
 import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
@@ -96,10 +97,10 @@ public class ItemInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
-	
+
 	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
 			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
-	
+
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -116,6 +117,9 @@ public class ItemInit {
 	// Blade
 	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
 			() -> new ItemLivingBlade(25f, 1, ItemTier.NETHERITE,
+					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
+			() -> new ItemLivingAxe(25f, 1, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	// Baghnakh
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
@@ -476,11 +480,22 @@ public class ItemInit {
 						return 0;
 					}
 				});
-		
-		
-		
-		
-		
+
+		ItemModelsProperties.registerProperty(living_axe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
 		ItemModelsProperties.registerProperty(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new IItemPropertyGetter() {
 					@Override

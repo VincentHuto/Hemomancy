@@ -38,7 +38,7 @@ import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipes.ModChiselRecipes;
 import com.huto.hemomancy.recipes.PolypRecipes;
 import com.huto.hemomancy.render.layer.HandParticleLayer;
-import com.huto.hemomancy.render.layer.LivingBladeRenderLayer;
+import com.huto.hemomancy.render.layer.LivingBladeHipRenderLayer;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
 import com.huto.hemomancy.util.ModEntityPredicates;
 
@@ -216,9 +216,9 @@ public class Hemomancy {
 	public void onServerStarting(FMLServerStartingEvent event) {
 	}
 
-	private static boolean addedSpellLayerDefault = false;
+	private static boolean addedAbsorbLayerDefault = false;
 	private static boolean addedSwordLayerDefault = false;
-	private static boolean addedSpellLayeSlim = false;
+	private static boolean addedAbsorbLayeSlim = false;
 	private static boolean addedSwordLayerSlim = false;
 
 	// Rune Layers
@@ -229,23 +229,23 @@ public class Hemomancy {
 		PlayerRenderer render;
 		render = skinMap.get("default");
 		render.addLayer(new RunesRenderLayer(render));
-		if (!addedSpellLayerDefault) {
+		if (!addedAbsorbLayerDefault) {
 			render.addLayer(new HandParticleLayer(render));
-			addedSpellLayerDefault = true;
+			addedAbsorbLayerDefault = true;
 		}
 		if (!addedSwordLayerDefault) {
-			render.addLayer(new LivingBladeRenderLayer(render));
+			render.addLayer(new LivingBladeHipRenderLayer(render));
 			addedSwordLayerDefault = true;
 		}
 		render = skinMap.get("slim");
 		render.addLayer(new RunesRenderLayer(render));
 		if (!addedSwordLayerSlim) {
-			render.addLayer(new LivingBladeRenderLayer(render));
+			render.addLayer(new LivingBladeHipRenderLayer(render));
 			addedSwordLayerSlim = true;
 		}
-		if (!addedSpellLayeSlim) {
+		if (!addedAbsorbLayeSlim) {
 			render.addLayer(new HandParticleLayer(render));
-			addedSpellLayeSlim = true;
+			addedAbsorbLayeSlim = true;
 		}
 
 	}

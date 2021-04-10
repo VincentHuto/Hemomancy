@@ -43,6 +43,8 @@ public class ItemParticleItem extends Item {
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
 		List<BloodManipulation> knownList = known.getKnownManips();
 		/*
 		 * if (!worldIn.isRemote) { if (!playerIn.isSneaking()) { //
@@ -59,35 +61,39 @@ public class ItemParticleItem extends Item {
 		 * (ServerPlayerEntity) playerIn), new PacketKnownManipulationServer(knownList,
 		 * known.getSelectedManip())); } }
 		 */
+		if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
 		playerIn.setActiveHand(handIn);
+		new ActionResult<>(ActionResultType.SUCCESS, stack);
+		}
 
-		return new ActionResult<>(ActionResultType.SUCCESS, stack);
+		return new ActionResult<>(ActionResultType.FAIL, stack);
 	}
+
+	DamageSource bloodLoss = new DamageSource("bloodloss");
 
 	@Override
 	public void onUse(World worldIn, LivingEntity player, ItemStack stack, int count) {
-		List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
-				player.getBoundingBox().grow(5.0));
-		if (targets.size() > 0) {
-			for (int i = 0; i < targets.size(); ++i) {
-				Entity target = targets.get(i);
-				if (target instanceof LivingEntity) {
-					LivingEntity livingTarget = (LivingEntity) target;
-					float dam = 12f / targets.size();
-					livingTarget.attackEntityFrom(DamageSource.GENERIC, dam);
-					if (!worldIn.isRemote) {
-						IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-								.orElseThrow(NullPointerException::new);
-						volume.addBloodVolume(dam);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-								new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+			List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
+					player.getBoundingBox().grow(5.0));
+			if (targets.size() > 0) {
+				for (int i = 0; i < targets.size(); ++i) {
+					Entity target = targets.get(i);
+					if (target instanceof LivingEntity) {
+						LivingEntity livingTarget = (LivingEntity) target;
+						float dam = 3f / targets.size();
+						livingTarget.attackEntityFrom(bloodLoss, dam);
+						if (!worldIn.isRemote) {
+							volume.addBloodVolume(dam);
+							PacketHandler.CHANNELBLOODVOLUME.send(
+									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+									new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+						}
 					}
 				}
 			}
 		}
-
-	}
 
 	@Override
 	public int getUseDuration(ItemStack stack) {
