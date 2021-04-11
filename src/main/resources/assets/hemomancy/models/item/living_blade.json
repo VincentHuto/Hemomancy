@@ -1,7 +1,9 @@
 {
   "parent" : "builtin/entity",
   "textures" : {
-    "layer0" : "hemomancy:items/liber_sanguinum"
+    "layer0" : "hemomancy:items/liber_sanguinum",
+    "particle": "hemomancy:block/venous_stone"
+    
   },
   "gui_light" : "front",
   "display" : {

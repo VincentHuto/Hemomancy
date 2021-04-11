@@ -194,8 +194,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		Hand activeHand = player.getActiveHand();
 		World world = player.world;
 
-		if (itemIsInUse || playerIsRightHanded && activeHand == Hand.MAIN_HAND && hand == HandSide.LEFT
-				|| !playerIsRightHanded && activeHand == Hand.MAIN_HAND && hand == HandSide.RIGHT) {
+		if (itemIsInUse) {
 			Vector3d particlePos = player.getPositionVec().add(0.0, (double) (player.getEyeHeight() - 0.2f), 0.0);
 			Vector3d look = player.getLookVec().normalize().scale(0.5);
 			Vector3d perp = look.crossProduct(new Vector3d(0.0, 1.0, 0.0)).normalize()

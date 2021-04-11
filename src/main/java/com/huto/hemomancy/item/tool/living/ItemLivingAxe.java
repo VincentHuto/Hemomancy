@@ -9,6 +9,7 @@ import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.render.item.RenderItemLivingAxe;
 
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -16,6 +17,7 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
@@ -30,6 +32,36 @@ public class ItemLivingAxe extends ItemLivingWeapon {
 
 	public ItemLivingAxe(float speedIn, float attackDamageIn, IItemTier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, tier, builderIn.setISTER(() -> RenderItemLivingAxe::new));
+	}
+
+	@Override
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
+			if (stack.getItem() instanceof ItemLivingAxe) {
+				CompoundNBT compound = stack.getOrCreateTag();
+				if (compound.getBoolean(TAG_STATE)) {
+					if (player.isOnGround()) {
+						player.setVelocity(0, .85, 0);
+						List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
+								player.getBoundingBox().grow(5.0));
+						if (targets.size() > 0) {
+							for (int i = 0; i < targets.size(); ++i) {
+								Entity target = targets.get(i);
+								if (target instanceof LivingEntity) {
+									LivingEntity livingTarget = (LivingEntity) target;
+									float dam = 3f / targets.size();
+									DamageSource bloodLoss = new DamageSource("bloodloss");
+									livingTarget.attackEntityFrom(bloodLoss, dam);
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+		return super.onEntitySwing(stack, entity);
 	}
 
 	@Override

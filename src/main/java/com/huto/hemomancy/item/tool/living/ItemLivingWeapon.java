@@ -9,6 +9,8 @@ import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,9 +22,11 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -36,12 +40,17 @@ public class ItemLivingWeapon extends ToolItem {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
 	}
 
-
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
 		return new StringTextComponent(ModTextFormatting
-				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath()))).mergeStyle(TextFormatting.DARK_RED);
+				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+						.mergeStyle(TextFormatting.DARK_RED);
+	}
+
+	@Override
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+		return super.onEntitySwing(stack, entity);
 	}
 
 	@Override
@@ -65,9 +74,19 @@ public class ItemLivingWeapon extends ToolItem {
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
 								new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 										playerVolume.getBloodVolume()));
+
 						stack.damageItem(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
 							p_220017_1_.sendBreakAnimation(attacker.getActiveHand());
 						});
+						Vector3d pos = playerIn.getPositionVec();
+						ServerWorld sWorld = (ServerWorld) playerIn.world;
+						for (int i = 0; i < 50; i++) {
+							sWorld.spawnParticle(BloodCellParticleFactory.createData(ParticleColor.RED),
+									pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
+									pos.getZ() + random.nextDouble(), 10, 0f, 0.2f, 0f,
+									sWorld.rand.nextInt(3) * 0.015f);
+
+						}
 					}
 
 				}
