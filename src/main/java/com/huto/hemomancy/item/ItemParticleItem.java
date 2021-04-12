@@ -36,6 +36,7 @@ public class ItemParticleItem extends Item {
 		super(prop.maxStackSize(1).setISTER(() -> RenderParticleItem::new));
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);

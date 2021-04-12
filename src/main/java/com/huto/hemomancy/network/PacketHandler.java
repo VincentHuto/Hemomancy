@@ -20,7 +20,6 @@ import com.huto.hemomancy.network.jar.PacketOpenJar;
 import com.huto.hemomancy.network.jar.PacketOpenStaff;
 import com.huto.hemomancy.network.jar.PacketToggleJarMessage;
 import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
-import com.huto.hemomancy.network.keybind.PacketBloodAbsorbtionEntity;
 import com.huto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
@@ -119,8 +118,6 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
 				PacketSpawnLightningParticle::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodAbsorbtionEntity.class, PacketBloodAbsorbtionEntity::encode,
-				PacketBloodAbsorbtionEntity::decode, PacketBloodAbsorbtionEntity::handle);
 
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);

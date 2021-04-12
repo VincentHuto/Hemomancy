@@ -56,7 +56,7 @@ public class ModEntityPredicates {
 		PREDICATES.add(UNDEAD);
 		PREDICATES.add(INFERNALBLOOD);
 		PREDICATES.add(PLANTBLOOD);
-		
+
 		BLOODTYPES.add(COLDBLOODED);
 		BLOODTYPES.add(ENDERBLOOD);
 		BLOODTYPES.add(WARMBLOODED);
@@ -95,7 +95,7 @@ public class ModEntityPredicates {
 		@Override
 		public boolean test(Entity e) {
 			if (e instanceof AbstractRaiderEntity || e instanceof ZombieEntity || e instanceof WaterMobEntity
-					|| e instanceof SnowGolemEntity || e instanceof SlimeEntity) {
+					|| e instanceof SnowGolemEntity) {
 				return true;
 			} else {
 				return false;
@@ -108,7 +108,7 @@ public class ModEntityPredicates {
 		public boolean test(Entity e) {
 			if (e instanceof SkeletonEntity || e instanceof WitherSkeletonEntity || e instanceof IronGolemEntity
 					|| e instanceof WitherEntity || e instanceof SnowGolemEntity || e instanceof BlazeEntity
-					|| e instanceof EndermanEntity || e instanceof ShulkerEntity || e instanceof SlimeEntity) {
+					|| e instanceof EndermanEntity || e instanceof ShulkerEntity) {
 				return true;
 			} else {
 				return false;

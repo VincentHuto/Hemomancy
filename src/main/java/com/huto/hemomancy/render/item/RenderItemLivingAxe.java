@@ -41,6 +41,10 @@ public class RenderItemLivingAxe extends ItemStackTileEntityRenderer {
 			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(axeModel.getRenderType(TEXTURE));
 			ms.scale(0.65f, 0.65f, 0.65f);
 			ms.translate(-0.75, -1.25, 0.75);
+			if (p_239207_2_ == ItemCameraTransforms.TransformType.GUI) {
+				ms.translate(-0, 0.15, 0);
+			}
+			
 			boolean state = stack.getTag().getBoolean("state");
 			if (state) {
 				IVertexBuilder glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());

@@ -55,6 +55,7 @@ import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
 import com.huto.hemomancy.item.tool.living.ItemLivingGrasp;
+import com.huto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 
 import net.minecraft.client.renderer.color.IItemColor;
@@ -120,6 +121,9 @@ public class ItemInit {
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
 			() -> new ItemLivingAxe(25f, 1, ItemTier.NETHERITE,
+					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
+			() -> new ItemLivingSpear(25f, 1, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	// Baghnakh
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
@@ -482,6 +486,21 @@ public class ItemInit {
 				});
 
 		ItemModelsProperties.registerProperty(living_axe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
+		ItemModelsProperties.registerProperty(living_spear.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new IItemPropertyGetter() {
 					@Override
 					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {

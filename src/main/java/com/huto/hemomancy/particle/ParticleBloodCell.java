@@ -51,6 +51,11 @@ public class ParticleBloodCell extends SpriteTexturedParticle {
 	}
 
 	@Override
+	public boolean shouldCull() {
+		return false;
+	}
+	
+	@Override
 	public int getBrightnessForRender(float pTicks) {
 		return 255;
 	}

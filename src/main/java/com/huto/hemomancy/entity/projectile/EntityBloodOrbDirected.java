@@ -114,7 +114,7 @@ public class EntityBloodOrbDirected extends ThrowableEntity {
 		this.prevRotationPitch = this.rotationPitch;
 	}
 
-	public void setDirectionMotion(Entity shooter, float p_234612_2_, float p_234612_3_, float p_234612_4_,
+	public void setDirectionAndMovement(Entity p_234612_1_, float p_234612_2_, float p_234612_3_, float p_234612_4_,
 			float p_234612_5_, float p_234612_6_) {
 		float f = -MathHelper.sin(p_234612_3_ * ((float) Math.PI / 180F))
 				* MathHelper.cos(p_234612_2_ * ((float) Math.PI / 180F));
@@ -122,8 +122,8 @@ public class EntityBloodOrbDirected extends ThrowableEntity {
 		float f2 = MathHelper.cos(p_234612_3_ * ((float) Math.PI / 180F))
 				* MathHelper.cos(p_234612_2_ * ((float) Math.PI / 180F));
 		this.shoot((double) f, (double) f1, (double) f2, p_234612_5_, p_234612_6_);
-		Vector3d vector3d = shooter.getMotion();
-		this.setMotion(this.getMotion().add(vector3d.x, shooter.isOnGround() ? 0.0D : vector3d.y, vector3d.z));
+		Vector3d vector3d = p_234612_1_.getMotion();
+		this.setMotion(this.getMotion().add(vector3d.x, p_234612_1_.isOnGround() ? 0.0D : vector3d.y, vector3d.z));
 	}
 
 	@Override
