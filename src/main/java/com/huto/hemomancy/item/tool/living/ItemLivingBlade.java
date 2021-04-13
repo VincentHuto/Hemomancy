@@ -16,6 +16,7 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
@@ -54,6 +55,7 @@ public class ItemLivingBlade extends ItemLivingWeapon {
 		super.hitEntity(stack, target, attacker);
 		if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getAttackDamage() / 2);
+			target.attackEntityFrom(new DamageSource("Living Blade"), 20);
 			if (!attacker.world.isRemote) {
 				PlayerEntity playerIn = (PlayerEntity) attacker;
 				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -77,6 +79,9 @@ public class ItemLivingBlade extends ItemLivingWeapon {
 				}
 
 			}
+		} else {
+			target.attackEntityFrom(new DamageSource("Living Blade"), 5);
+
 		}
 		return super.hitEntity(stack, target, attacker);
 	}
@@ -87,8 +92,12 @@ public class ItemLivingBlade extends ItemLivingWeapon {
 		if (stack.hasTag()) {
 			if (stack.getTag().getBoolean(TAG_STATE)) {
 				tooltip.add(new TranslationTextComponent("State: Unleashed").mergeStyle(TextFormatting.RED));
+				tooltip.add(new TranslationTextComponent("+20 Blood Damage").mergeStyle(TextFormatting.RED));
+
 			} else {
 				tooltip.add(new TranslationTextComponent("State: Tame").mergeStyle(TextFormatting.GRAY));
+				tooltip.add(new TranslationTextComponent("+5 Blood Damage").mergeStyle(TextFormatting.RED));
+
 			}
 		}
 	}

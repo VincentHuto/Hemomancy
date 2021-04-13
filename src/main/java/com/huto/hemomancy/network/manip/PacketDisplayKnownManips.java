@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybind;
+package com.huto.hemomancy.network.manip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class PacketDisplayKnownManips {
 			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
 			player.sendStatusMessage(new StringTextComponent(
-					"Selected: " + known.getSelectedManip().getName()), false);
+					"Selected: " + known.getSelectedManip().getProperName()), false);
 			for (int i = 0; i < known.getKnownManips().size(); i++) {
 				player.sendStatusMessage(new StringTextComponent(
 						"Manipulation " + i + ": " + known.getKnownManips().get(i).getProperName()), false);

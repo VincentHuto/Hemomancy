@@ -34,6 +34,11 @@ public class ItemLivingGrasp extends Item {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack itemStack, World world) {
+		return 0;
+	}
+
+	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
 

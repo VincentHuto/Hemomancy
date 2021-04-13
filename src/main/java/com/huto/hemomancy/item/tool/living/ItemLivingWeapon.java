@@ -26,6 +26,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,6 +39,11 @@ public class ItemLivingWeapon extends ToolItem {
 	public ItemLivingWeapon(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
 			Properties builderIn) {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
+	}
+
+	@Override
+	public int getEntityLifespan(ItemStack itemStack, World world) {
+		return 0;
 	}
 
 	@Override

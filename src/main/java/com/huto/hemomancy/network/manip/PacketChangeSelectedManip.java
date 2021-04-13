@@ -49,14 +49,23 @@ public class PacketChangeSelectedManip {
 					if (!known.getKnownManips().isEmpty()) {
 						known.setSelectedManip(manips.get(0));
 					} else {
-						player.sendStatusMessage(new StringTextComponent("No Known Manipulations to select"), false);
+						player.sendStatusMessage(new StringTextComponent("No Known Manipulations to select"), true);
 					}
 				} else {
 					int foundIndex = known.getKnownManips().indexOf(known.getSelectedManip());
 					if (foundIndex < known.getKnownManips().size() - 1) {
 						known.setSelectedManip(known.getKnownManips().get(foundIndex + 1));
+						player.sendStatusMessage(
+								new StringTextComponent(
+										"Selected:" + known.getKnownManips().get(foundIndex + 1).getProperName()),
+								true);
+
 					} else {
 						known.setSelectedManip(known.getKnownManips().get(0));
+						player.sendStatusMessage(
+								new StringTextComponent("Selected:" + known.getKnownManips().get(0).getProperName()),
+								true);
+
 					}
 				}
 			}

@@ -60,6 +60,11 @@ public class ItemLivingCrossbow extends CrossbowItem {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack itemStack, World world) {
+		return 0;
+	}
+
+	@Override
 	public Predicate<ItemStack> getAmmoPredicate() {
 		return ARROWS_OR_FIREWORKS;
 	}

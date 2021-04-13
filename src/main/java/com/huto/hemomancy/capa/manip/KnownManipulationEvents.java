@@ -37,9 +37,19 @@ public class KnownManipulationEvents {
 				new PacketKnownManipulationServer(known, selected));
 		for (BloodManipulation s : known) {
 			if (s != null)
-				player.sendStatusMessage(new StringTextComponent(s.getName()), false);
+				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
 		}
 
+	}
+
+	@SubscribeEvent
+	public static void playerDeath(PlayerEvent.Clone event) {
+		IKnownManipulations bloodVolumeOld = event.getOriginal().getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		IKnownManipulations bloodVolumeNew = event.getEntity().getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		bloodVolumeNew.setKnownManips(bloodVolumeOld.getKnownManips());
+		bloodVolumeNew.setSelectedManip(bloodVolumeOld.getSelectedManip());
 	}
 
 	@SubscribeEvent
@@ -52,7 +62,7 @@ public class KnownManipulationEvents {
 				new PacketKnownManipulationServer(known, selected));
 		for (BloodManipulation s : known) {
 			if (s != null)
-				player.sendStatusMessage(new StringTextComponent(s.getName()), false);
+				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
 		}
 
 	}

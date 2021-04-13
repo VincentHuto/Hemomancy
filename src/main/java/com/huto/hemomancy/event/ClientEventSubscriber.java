@@ -27,6 +27,7 @@ import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
 import com.huto.hemomancy.render.entity.mob.RenderLumpOfThought;
+import com.huto.hemomancy.render.entity.mob.RenderMorphlingPolyp;
 import com.huto.hemomancy.render.entity.mob.RenderThirster;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
@@ -119,6 +120,8 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.lump_of_thought.get(), RenderLumpOfThought::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.abhorent_thought.get(), RenderAbhorentThought::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp.get(), RenderMorphlingPolyp::new);
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),
@@ -128,7 +131,7 @@ public class ClientEventSubscriber {
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_shot.get(), RenderBloodShot::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.dark_arrow.get(), RenderDarkArrow::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp.get(),
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp_item.get(),
 				RenderMorphlingPolypItem::new);
 
 		// Keybinds

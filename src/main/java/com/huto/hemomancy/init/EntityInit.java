@@ -14,6 +14,7 @@ import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.huto.hemomancy.entity.mob.EntityFargone;
 import com.huto.hemomancy.entity.mob.EntityFungling;
 import com.huto.hemomancy.entity.mob.EntityLumpOfThought;
+import com.huto.hemomancy.entity.mob.EntityMorphlingPolyp;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
@@ -59,6 +60,12 @@ public class EntityInit {
 					() -> EntityType.Builder
 							.<EntityLumpOfThought>create(EntityLumpOfThought::new, EntityClassification.MONSTER)
 							.size(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "lump_of_thought").toString()));
+	public static final RegistryObject<EntityType<EntityMorphlingPolyp>> morphling_polyp = ENTITY_TYPES.register(
+			"morphling_polyp",
+			() -> EntityType.Builder
+					.<EntityMorphlingPolyp>create(EntityMorphlingPolyp::new, EntityClassification.MONSTER).size(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
+
 	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
 			() -> EntityType.Builder.<EntityDrudge>create(EntityDrudge::new, EntityClassification.CREATURE)
 					.size(1f, 0.5f).build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
@@ -116,22 +123,23 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityIronSpike>create(EntityIronSpike::new, EntityClassification.MISC)
 					.size(1.4F, 1.5F).build(new ResourceLocation(Hemomancy.MOD_ID, "iron_spike").toString()));
 
-	public static final RegistryObject<EntityType<EntityMorphlingPolypItem>> morphling_polyp = ENTITY_TYPES.register(
-			"morphling_polyp",
-			() -> EntityType.Builder
-					.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
-					.size(0.25F, 0.25F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
+	public static final RegistryObject<EntityType<EntityMorphlingPolypItem>> morphling_polyp_item = ENTITY_TYPES
+			.register("morphling_polyp_item",
+					() -> EntityType.Builder
+							.<EntityMorphlingPolypItem>create(EntityMorphlingPolypItem::new, EntityClassification.MISC)
+							.size(0.25F, 0.25F)
+							.build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp_item").toString()));
 
 	public static final RegistryObject<EntityType<EntityBloodBolt>> blood_bolt = ENTITY_TYPES.register("blood_bolt",
 			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
-	
+
 	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
 			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_shot").toString()));
-	
+
 	public static final RegistryObject<EntityType<EntityBloodShot>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
 			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
@@ -153,6 +161,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.abhorent_thought.get(),
 				EntityAbhorentThought.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().create());
 
 	}
 

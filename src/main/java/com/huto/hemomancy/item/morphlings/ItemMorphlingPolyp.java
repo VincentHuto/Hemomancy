@@ -22,7 +22,7 @@ public class ItemMorphlingPolyp extends Item {
 
 	@Override
 	public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-		EntityMorphlingPolypItem itementity = new EntityMorphlingPolypItem(EntityInit.morphling_polyp.get(), world,
+		EntityMorphlingPolypItem itementity = new EntityMorphlingPolypItem(EntityInit.morphling_polyp_item.get(), world,
 				location.getPosX(), location.getPosY(), location.getPosZ(), itemstack);
 		itementity.setPickupDelay(40);
 		itementity.setMotion(location.getMotion());

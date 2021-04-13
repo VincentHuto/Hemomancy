@@ -62,6 +62,11 @@ public class ItemLivingStaff extends Item {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack itemStack, World world) {
+		return 0;
+	}
+
+	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 		super.onUsingTick(stack, player, count);
 		if (player.world.isRemote) {

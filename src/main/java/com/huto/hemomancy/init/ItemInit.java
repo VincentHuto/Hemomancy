@@ -13,6 +13,11 @@ import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
 import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureAxe;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureBlade;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureClaws;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureCrossbow;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureSpear;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
@@ -109,15 +114,13 @@ public class ItemInit {
 			() -> new ItemTendencyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-
-	// Living tools
+	// Living
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	// Blade
 	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-			() -> new ItemLivingBlade(25f, 1, ItemTier.NETHERITE,
+			() -> new ItemLivingBlade(25f, 3, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
 			() -> new ItemLivingAxe(25f, 1, ItemTier.NETHERITE,
@@ -125,16 +128,25 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
 			() -> new ItemLivingSpear(25f, 1, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	// Baghnakh
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
 			() -> new ItemLivingBaghnakh(25f, 1, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-	// Crossbow
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
 			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
 
+	// Blood Memories
+	public static final RegistryObject<Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
+			() -> new ItemBloodMemoryConjureBlade(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_living_axe = BASEITEMS.register("memory_living_axe",
+			() -> new ItemBloodMemoryConjureAxe(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_living_spear = BASEITEMS.register("memory_living_spear",
+			() -> new ItemBloodMemoryConjureSpear(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_living_claws = BASEITEMS.register("memory_living_claws",
+			() -> new ItemBloodMemoryConjureClaws(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
+			() -> new ItemBloodMemoryConjureCrossbow(new Item.Properties().group(HemomancyItemGroup.instance)));
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
 			() -> new ItemMorphlingPolyp(new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -415,6 +427,9 @@ public class ItemInit {
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
 			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
 					4259840, new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
+			.register("spawn_egg_morphling_polyp", () -> new ModSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
+					new Item.Properties().group(ItemGroup.MISC).group(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {

@@ -66,11 +66,16 @@ public class BloodVolumeEvents {
 				.orElseThrow(IllegalStateException::new);
 		IBloodVolume bloodVolumeNew = event.getEntity().getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(IllegalStateException::new);
-		bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume() - 20f);
-		((PlayerEntity) event.getEntity()).sendStatusMessage(
-				new StringTextComponent(TextFormatting.ITALIC + "Upon death, your blood volume has decreased to: "
-						+ TextFormatting.RED + TextFormatting.ITALIC + bloodVolumeNew.getBloodVolume() + "ml"),
-				false);
+		if (bloodVolumeOld.getBloodVolume() > 20) {
+			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume() - 20f);
+			((PlayerEntity) event.getEntity()).sendStatusMessage(
+					new StringTextComponent(TextFormatting.ITALIC + "Upon death, your blood volume has decreased to: "
+							+ TextFormatting.RED + TextFormatting.ITALIC + bloodVolumeNew.getBloodVolume() + "ml"),
+					false);
+		} else {
+			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
+
+		}
 	}
 
 	@SubscribeEvent

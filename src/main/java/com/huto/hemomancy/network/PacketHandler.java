@@ -23,9 +23,9 @@ import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
 import com.huto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
-import com.huto.hemomancy.network.keybind.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
+import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.manip.PacketUseManipOnKeyPress;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
