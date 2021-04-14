@@ -11,7 +11,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.render.item.RenderParticleItem;
+import com.huto.hemomancy.render.item.RenderBloodAbsorption;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -26,14 +26,18 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemParticleItem extends Item {
+public class ItemBloodAbsorption extends Item {
 
-	public ItemParticleItem(Properties prop) {
-		super(prop.maxStackSize(1).setISTER(() -> RenderParticleItem::new));
+	public ItemBloodAbsorption(Properties prop) {
+		super(prop.maxStackSize(1).setISTER(() -> RenderBloodAbsorption::new));
+	}
+
+	@Override
+	public int getEntityLifespan(ItemStack itemStack, World world) {
+		return 0;
 	}
 
 	@SuppressWarnings("unused")
@@ -63,8 +67,8 @@ public class ItemParticleItem extends Item {
 		 * known.getSelectedManip())); } }
 		 */
 		if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
-		playerIn.setActiveHand(handIn);
-		new ActionResult<>(ActionResultType.SUCCESS, stack);
+			playerIn.setActiveHand(handIn);
+			new ActionResult<>(ActionResultType.SUCCESS, stack);
 		}
 
 		return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -76,25 +80,25 @@ public class ItemParticleItem extends Item {
 	public void onUse(World worldIn, LivingEntity player, ItemStack stack, int count) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
-			List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
-					player.getBoundingBox().grow(5.0));
-			if (targets.size() > 0) {
-				for (int i = 0; i < targets.size(); ++i) {
-					Entity target = targets.get(i);
-					if (target instanceof LivingEntity) {
-						LivingEntity livingTarget = (LivingEntity) target;
-						float dam = 3f / targets.size();
-						livingTarget.attackEntityFrom(bloodLoss, dam);
-						if (!worldIn.isRemote) {
-							volume.addBloodVolume(dam);
-							PacketHandler.CHANNELBLOODVOLUME.send(
-									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-									new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
-						}
+		List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
+				player.getBoundingBox().grow(5.0));
+		if (targets.size() > 0) {
+			for (int i = 0; i < targets.size(); ++i) {
+				Entity target = targets.get(i);
+				if (target instanceof LivingEntity) {
+					LivingEntity livingTarget = (LivingEntity) target;
+					float dam = 3f / targets.size();
+					livingTarget.attackEntityFrom(bloodLoss, dam);
+					if (!worldIn.isRemote) {
+						volume.addBloodVolume(dam);
+						PacketHandler.CHANNELBLOODVOLUME.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+								new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 					}
 				}
 			}
 		}
+	}
 
 	@Override
 	public int getUseDuration(ItemStack stack) {
@@ -119,7 +123,6 @@ public class ItemParticleItem extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-		tooltip.add(new StringTextComponent("Flashy"));
 	}
 
 }

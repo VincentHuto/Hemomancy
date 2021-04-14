@@ -7,7 +7,7 @@ import com.huto.hemomancy.item.EnumBloodGourdTiers;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
-import com.huto.hemomancy.item.ItemParticleItem;
+import com.huto.hemomancy.item.ItemBloodAbsorption;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
@@ -104,8 +104,8 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
-	public static final RegistryObject<Item> particle_item = BASEITEMS.register("particle_item",
-			() -> new ItemParticleItem(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> blood_absorption = BASEITEMS.register("blood_absorption",
+			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",

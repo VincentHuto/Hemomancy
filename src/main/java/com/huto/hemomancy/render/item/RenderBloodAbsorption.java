@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import com.huto.hemomancy.ClientProxy;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.item.ItemParticleItem;
+import com.huto.hemomancy.item.ItemBloodAbsorption;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
@@ -41,36 +41,37 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 
-public class RenderParticleItem extends ItemStackTileEntityRenderer {
+public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 
-	public IBakedModel location = ClientProxy.particleItemModel;
+	public IBakedModel location = ClientProxy.bloodAbsorptionModel;
 
+	@Override
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
 		if (transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
 				&& transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
 			if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
-				if (!(stack.getItem() instanceof ItemParticleItem)) {
+				if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.RIGHT);
 				this.spawnFirstPersonParticlesForStack(stack, HandSide.RIGHT);
 			} else if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
-				if (!(stack.getItem() instanceof ItemParticleItem)) {
+				if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.LEFT);
 				this.spawnFirstPersonParticlesForStack(stack, HandSide.LEFT);
 			} else {
-				this.renderDefaultSpellItem(stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+				this.renderDefaultItem(stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
 			}
 		}
 	}
 
-	private void renderDefaultSpellItem(ItemStack stack, ItemCameraTransforms.TransformType transformType,
+	private void renderDefaultItem(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
 		IVertexBuilder buffers = buffer.getBuffer(Atlases.getCutoutBlockType());
-		IBakedModel bakedModel = ClientProxy.particleItemModel;
+		IBakedModel bakedModel = ClientProxy.bloodAbsorptionModel;
 		int color = Minecraft.getInstance().getItemColors().getColor(stack, 1);
 		if (this.location == null) {
 			float r = (color >> 16 & 0xFF) / 255F;
@@ -106,55 +107,42 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 	private void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, HandSide side) {
 		Minecraft mc = Minecraft.getInstance();
 		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
-		// PlayerRenderer playerrenderer = (PlayerRenderer)
-		// mc.getRenderManager().getRenderer(mc.player);
+
 		matrixStackIn.push();
 		if (side == HandSide.RIGHT) {
-
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(12.0f));
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-35.0f));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(5.0f));
 			matrixStackIn.translate(1.0, -0.4, 0.8);
-			/*
-			 * IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model .getRenderType(new
-			 * ResourceLocation(Hemomancy.MOD_ID +
-			 * ":textures/block/sanguine_tran_pane.png"))); model.render(matrixStackIn,
-			 * ivertexbuilder, combinedLightIn, combinedLightIn, 100, 100, 100, 100);
-			 */
-			renderRightArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player, side);
 
 		} else {
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-12.0f));
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-35.0f));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(5.0f));
 			matrixStackIn.translate(0.0, -0.3, 0.6);
-			/*
-			 * IVertexBuilder ivertexbuilder = bufferIn.getBuffer(model .getRenderType(new
-			 * ResourceLocation(Hemomancy.MOD_ID +
-			 * ":textures/block/sanguine_tran_pane.png"))); model.render(matrixStackIn,
-			 * ivertexbuilder, combinedLightIn, combinedLightIn, 100, 100, 100, 100);
-			 */
-			renderLeftArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, (AbstractClientPlayerEntity) mc.player, side);
 		}
 		matrixStackIn.pop();
 	}
 
-	public void renderLeftArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
-			AbstractClientPlayerEntity playerIn) {
-		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
-		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
-		this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn,
-				(playerrenderer.getEntityModel()).bipedLeftArm, (playerrenderer.getEntityModel()).bipedLeftArmwear);
-	}
+	public void renderArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
+			AbstractClientPlayerEntity playerIn, HandSide side) {
+		if (side == HandSide.RIGHT) {
+			Minecraft mc = Minecraft.getInstance();
+			mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+			renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn,
+					(playerrenderer.getEntityModel()).bipedRightArm,
+					(playerrenderer.getEntityModel()).bipedRightArmwear);
+		} else {
+			Minecraft mc = Minecraft.getInstance();
+			mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
+			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
+			this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn,
+					(playerrenderer.getEntityModel()).bipedLeftArm, (playerrenderer.getEntityModel()).bipedLeftArmwear);
+		}
 
-	public void renderRightArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
-			AbstractClientPlayerEntity playerIn) {
-		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
-		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
-		renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getEntityModel()).bipedRightArm,
-				(playerrenderer.getEntityModel()).bipedRightArmwear);
 	}
 
 	private void renderItem(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
@@ -184,7 +172,7 @@ public class RenderParticleItem extends ItemStackTileEntityRenderer {
 		if (Minecraft.getInstance().isGamePaused()) {
 			return;
 		}
-		if (!(stack.getItem() instanceof ItemParticleItem)) {
+		if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();

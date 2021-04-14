@@ -48,27 +48,32 @@ public class PacketUseManipOnKeyPress {
 						.orElseThrow(NullPointerException::new);
 				if (known.getSelectedManip() != null) {
 					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
-					if (selectedManip instanceof ManipBaseConjuration) {
-						ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
-						if (!player.getHeldItemMainhand().isEmpty()) {
-							if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
-								System.out.println(conjure.getItem());
-								player.getHeldItemMainhand().shrink(1);
-								player.sendStatusMessage(new StringTextComponent("Dispelled: " + conjure.getProperName())
-										.mergeStyle(TextFormatting.RED), true);
+					if (selectedManip != null) {
+						if (selectedManip instanceof ManipBaseConjuration) {
+							ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
+							if (!player.getHeldItemMainhand().isEmpty()) {
+								if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
+									System.out.println(conjure.getItem());
+									player.getHeldItemMainhand().shrink(1);
+									player.sendStatusMessage(
+											new StringTextComponent("Dispelled: " + conjure.getProperName())
+													.mergeStyle(TextFormatting.RED),
+											true);
+								} else {
+									player.sendStatusMessage(
+											new StringTextComponent("Conjuration requires an empty hand!")
+													.mergeStyle(TextFormatting.RED),
+											true);
+								}
 							} else {
-								player.sendStatusMessage(new StringTextComponent("Conjuration requires an empty hand!")
-										.mergeStyle(TextFormatting.RED), true);
+								selectedManip.performAction(player, (ServerWorld) player.world,
+										player.getHeldItemMainhand(), player.getPosition());
 							}
 						} else {
 							selectedManip.performAction(player, (ServerWorld) player.world,
 									player.getHeldItemMainhand(), player.getPosition());
 						}
-					} else {
-						selectedManip.performAction(player, (ServerWorld) player.world, player.getHeldItemMainhand(),
-								player.getPosition());
 					}
-
 				}
 			}
 		});

@@ -38,22 +38,24 @@ public class ClientProxy implements IProxy {
 	@Override
 	public void registerHandlers() {
 		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-
 		modBus.addListener(this::onModelRegister);
 		modBus.addListener(this::onModelBake);
 	}
 
-	public static IBakedModel particleItemModel;
+	public static IBakedModel bloodAbsorptionModel;
 
 	public void onModelRegister(ModelRegistryEvent evt) {
-		ModelLoader.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/particle_item_texture"));
+		ModelLoader.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
 
 	}
 
 	public void onModelBake(ModelBakeEvent evt) {
-		particleItemModel = evt.getModelRegistry()
-				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/particle_item_texture"));
+		bloodAbsorptionModel = evt.getModelRegistry()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
 
 	}
+	
+	
+	
 
 }

@@ -11,6 +11,8 @@ import com.huto.hemomancy.manipulation.ManipBloodAneurysm;
 import com.huto.hemomancy.manipulation.ManipBloodRush;
 import com.huto.hemomancy.manipulation.ManipBloodShot;
 import com.huto.hemomancy.manipulation.ManipFerricTransmutation;
+import com.huto.hemomancy.manipulation.conjuration.ManipBloodAbsorbtion;
+import com.huto.hemomancy.manipulation.conjuration.ManipConjureAxe;
 import com.huto.hemomancy.manipulation.conjuration.ManipConjureBlade;
 import com.huto.hemomancy.manipulation.conjuration.ManipConjureClaws;
 import com.huto.hemomancy.manipulation.conjuration.ManipConjureCrossbow;
@@ -21,7 +23,7 @@ public class ManipulationInit {
 	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<BloodManipulation>();
 	public static BloodManipulation blood_shot, blood_rush, aneurysm;
 	public static BloodManipulation ferric_transmutation, conjure_blade, conjure_axe, conjure_crossbow, conjure_claw,
-			conjure_spear;
+			conjure_spear, conjure_blood_absorbtion;
 	public static BloodManipulation activation_potential;
 
 	// This will be an example for when I eventually switch this over to a deffered
@@ -51,7 +53,7 @@ public class ManipulationInit {
 				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY));
 		conjure_blade = register(new ManipConjureBlade("conjure_blade", 1000, 0, EnumManipulationRank.MEDIOCRITAS,
 				EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
-		conjure_axe = register(new ManipConjureSpear("conjure_axe", 1000, 0, EnumManipulationRank.MEDIOCRITAS,
+		conjure_axe = register(new ManipConjureAxe("conjure_axe", 1000, 0, EnumManipulationRank.MEDIOCRITAS,
 				EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 		conjure_spear = register(new ManipConjureSpear("conjure_spear", 1000, 0, EnumManipulationRank.MEDIOCRITAS,
 				EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
@@ -59,6 +61,8 @@ public class ManipulationInit {
 				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 		conjure_claw = register(new ManipConjureClaws("conjure_claw", 1000, 0, EnumManipulationRank.MEDIOCRITAS,
 				EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
+		conjure_blood_absorbtion = register(new ManipBloodAbsorbtion("conjure_blood_absorbtion", 1000, 0,
+				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 
 		activation_potential = register(new BloodManipulation("activation_potential", 250, 0,
 				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));

@@ -13,7 +13,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
-public class ManipBaseConjuration extends BloodManipulation {
+public class ManipBaseConjuration extends BloodManipulation{
 
 	public ManipBaseConjuration(String name, double cost, double alignLevel, EnumManipulationRank rank,
 			EnumBloodTendency tendency, EnumVeinSections section) {

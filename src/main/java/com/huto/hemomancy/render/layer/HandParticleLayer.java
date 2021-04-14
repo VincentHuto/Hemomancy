@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.item.ItemParticleItem;
+import com.huto.hemomancy.item.ItemBloodAbsorption;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
@@ -69,8 +69,8 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		Minecraft mc = Minecraft.getInstance();
 		mc.getTextureManager().bindTexture(mc.player.getLocationSkin());
 		PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
-		if (rightHandItem.getItem() == ItemInit.particle_item.get()
-				&& leftHandItem.getItem() != ItemInit.particle_item.get()) {
+		if (rightHandItem.getItem() == ItemInit.blood_absorption.get()
+				&& leftHandItem.getItem() != ItemInit.blood_absorption.get()) {
 			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
 			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
 			model.leftArm.showModel = false;
@@ -81,8 +81,8 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 			this.renderHandParticle((LivingEntity) entitylivingbaseIn, rightHandItem,
 					ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HandSide.RIGHT, matrixStackIn, bufferIn,
 					packedLightIn);
-		} else if (leftHandItem.getItem() == ItemInit.particle_item.get()
-				&& rightHandItem.getItem() != ItemInit.particle_item.get()) {
+		} else if (leftHandItem.getItem() == ItemInit.blood_absorption.get()
+				&& rightHandItem.getItem() != ItemInit.blood_absorption.get()) {
 			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
 			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
 			model.rightArm.showModel = false;
@@ -93,8 +93,8 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 			this.renderHandParticle((LivingEntity) entitylivingbaseIn, leftHandItem,
 					ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HandSide.LEFT, matrixStackIn, bufferIn,
 					packedLightIn);
-		} else if (leftHandItem.getItem() == ItemInit.particle_item.get()
-				&& rightHandItem.getItem() == ItemInit.particle_item.get()) {
+		} else if (leftHandItem.getItem() == ItemInit.blood_absorption.get()
+				&& rightHandItem.getItem() == ItemInit.blood_absorption.get()) {
 			model.rightArm = playerrenderer.getEntityModel().bipedRightArm;
 			model.leftArm = playerrenderer.getEntityModel().bipedLeftArm;
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
@@ -119,7 +119,7 @@ public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>>
 		if (Minecraft.getInstance().isGamePaused()) {
 			return;
 		}
-		if (!stack.isEmpty() && stack.getItem() instanceof ItemParticleItem) {
+		if (!stack.isEmpty() && stack.getItem() instanceof ItemBloodAbsorption) {
 			boolean leftHand;
 			matrixStack.push();
 			Matrix4f curMatrix = matrixStack.getLast().getMatrix();
