@@ -7,12 +7,13 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 
 public class KnownManipulations implements IKnownManipulations {
 
 	List<BloodManipulation> knownManips = new ArrayList<BloodManipulation>();
-	BloodManipulation selectedManip = new BloodManipulation("No Selected", 0, 0, EnumManipulationRank.HUMILIS,
-			EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
+	BloodManipulation selectedManip = new BloodManipulation("No Selected", 0, 0, EnumManipulationType.QUICK,
+			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 
 	public KnownManipulations() {
 	}

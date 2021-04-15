@@ -11,7 +11,6 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.event.ClientEventSubscriber;
-import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
@@ -28,7 +27,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
@@ -43,10 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -55,15 +50,10 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ItemLivingStaff extends Item {
+public class ItemLivingStaff extends ItemLivingItem {
 
 	public ItemLivingStaff(Properties properties) {
 		super(properties);
-	}
-
-	@Override
-	public int getEntityLifespan(ItemStack itemStack, World world) {
-		return 0;
 	}
 
 	@Override
@@ -161,14 +151,6 @@ public class ItemLivingStaff extends Item {
 		}
 		return ActionResult.resultSuccess(playerIn.getHeldItem(handIn));
 
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(ModTextFormatting
-				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
-						.mergeStyle(TextFormatting.DARK_RED);
 	}
 
 	@Override

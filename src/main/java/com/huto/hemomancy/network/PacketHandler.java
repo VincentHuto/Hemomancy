@@ -26,7 +26,7 @@ import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
-import com.huto.hemomancy.network.manip.PacketUseManipOnKeyPress;
+import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
 import net.minecraft.util.RegistryKey;
@@ -87,8 +87,8 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketChangeSelectedManip.class,
 				PacketChangeSelectedManip::encode, PacketChangeSelectedManip::decode,
 				PacketChangeSelectedManip::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseManipOnKeyPress.class,
-				PacketUseManipOnKeyPress::encode, PacketUseManipOnKeyPress::decode, PacketUseManipOnKeyPress::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseQuickManipKey.class, PacketUseQuickManipKey::encode,
+				PacketUseQuickManipKey::decode, PacketUseQuickManipKey::handle);
 
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,

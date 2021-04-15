@@ -32,11 +32,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingWeapon extends ToolItem {
+public class ItemLivingTool extends ToolItem {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private float speed;
 
-	public ItemLivingWeapon(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
+	public ItemLivingTool(float speedIn, float attackDamageIn, float attackSpeedIn, IItemTier tier,
 			Properties builderIn) {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
 	}

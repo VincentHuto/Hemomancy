@@ -31,7 +31,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-public class ItemLivingSpear extends ItemLivingWeapon {
+public class ItemLivingSpear extends ItemLivingTool {
 
 	public static String TAG_STATE = "state";
 

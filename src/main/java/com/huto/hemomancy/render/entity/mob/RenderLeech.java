@@ -1,4 +1,4 @@
-package com.huto.hemomancy.render.entity;
+package com.huto.hemomancy.render.entity.mob;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.EntityLeech;

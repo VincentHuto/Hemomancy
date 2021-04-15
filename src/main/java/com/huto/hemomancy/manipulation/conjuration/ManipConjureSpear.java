@@ -13,7 +13,6 @@ public class ManipConjureSpear extends ManipBaseConjuration {
 			EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, rank, tendency, section);
 	}
-
 	@Override
 	public Item getItem() {
 		return ItemInit.living_spear.get();

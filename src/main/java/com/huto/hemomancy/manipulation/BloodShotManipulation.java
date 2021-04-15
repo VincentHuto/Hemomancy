@@ -14,14 +14,14 @@ import net.minecraft.world.server.ServerWorld;
 
 public class BloodShotManipulation extends BloodManipulation {
 
-	public BloodShotManipulation(String name, double cost, float alignLevel, EnumManipulationRank rank,
-			EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, rank, tendency, section);
+	public BloodShotManipulation(String name, double cost, double alignLevel, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 
 	@Override
 	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
-	//	super.performAction(player, world, heldItemMainhand, position);
+		// super.performAction(player, world, heldItemMainhand, position);
 		EntityBloodShot shot = new EntityBloodShot(world, player);
 		Vector3d vector3d1 = player.getUpVector(1.0F);
 		Quaternion quaternion = new Quaternion(new Vector3f(vector3d1), 0.0f, true);

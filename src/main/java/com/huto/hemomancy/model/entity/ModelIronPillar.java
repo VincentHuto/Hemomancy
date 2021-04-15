@@ -1,10 +1,7 @@
 package com.huto.hemomancy.model.entity;
 // Made with Blockbench 3.7.4
 
-// Exported for Minecraft version 1.15
-// Paste this class into your mod and generate all required imports
-
-import com.huto.hemomancy.entity.iron.EntityIronPillar;
+import com.huto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

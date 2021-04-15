@@ -15,10 +15,9 @@ import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.model.animation.IAnimatable;
-import com.huto.hemomancy.render.entity.RenderIronPillar;
-import com.huto.hemomancy.render.entity.RenderIronSpike;
-import com.huto.hemomancy.render.entity.RenderIronWall;
-import com.huto.hemomancy.render.entity.RenderLeech;
+import com.huto.hemomancy.render.entity.constructs.RenderIronPillar;
+import com.huto.hemomancy.render.entity.constructs.RenderIronSpike;
+import com.huto.hemomancy.render.entity.constructs.RenderIronWall;
 import com.huto.hemomancy.render.entity.mob.RenderAbhorentThought;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderChthonian;
@@ -26,10 +25,13 @@ import com.huto.hemomancy.render.entity.mob.RenderChthonianQueen;
 import com.huto.hemomancy.render.entity.mob.RenderDrudge;
 import com.huto.hemomancy.render.entity.mob.RenderFargone;
 import com.huto.hemomancy.render.entity.mob.RenderFungling;
+import com.huto.hemomancy.render.entity.mob.RenderLeech;
 import com.huto.hemomancy.render.entity.mob.RenderLumpOfThought;
 import com.huto.hemomancy.render.entity.mob.RenderMorphlingPolyp;
 import com.huto.hemomancy.render.entity.mob.RenderThirster;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
+import com.huto.hemomancy.render.entity.projectile.RenderBloodCloud;
+import com.huto.hemomancy.render.entity.projectile.RenderBloodCloudCarrier;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodShot;
@@ -80,8 +82,8 @@ public class ClientEventSubscriber {
 			"key.Hemomancy.category");
 	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc",
 			GLFW.GLFW_KEY_RIGHT_ALT, "key.Hemomancy.category");
-	public static KeyBinding useManip = new KeyBinding("key.Hemomancy.usemanip.desc",
-			GLFW.GLFW_KEY_L, "key.Hemomancy.category");
+	public static KeyBinding useManip = new KeyBinding("key.Hemomancy.usemanip.desc", GLFW.GLFW_KEY_L,
+			"key.Hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -124,6 +126,8 @@ public class ClientEventSubscriber {
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_cloud_carrier.get(), RenderBloodCloudCarrier::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_cloud.get(), RenderBloodCloud::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),
 				RenderBloodOrbTracking::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);

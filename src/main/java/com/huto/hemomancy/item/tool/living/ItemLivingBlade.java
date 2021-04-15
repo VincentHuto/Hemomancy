@@ -25,7 +25,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingBlade extends ItemLivingWeapon {
+public class ItemLivingBlade extends ItemLivingTool {
 
 	public static String TAG_STATE = "state";
 

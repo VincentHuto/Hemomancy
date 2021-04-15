@@ -16,10 +16,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
-public class BakedParticleItemModel implements IBakedModel {
+public class BakedBloodAbsorptionItemModel implements IBakedModel {
 	private final IBakedModel original;
 
-	public BakedParticleItemModel(IBakedModel original) {
+	public BakedBloodAbsorptionItemModel(IBakedModel original) {
 		this.original = original;
 	}
 

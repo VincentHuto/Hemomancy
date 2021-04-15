@@ -15,29 +15,29 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-public class PacketUseManipOnKeyPress {
+public class PacketUseQuickManipKey {
 
 	float parTick;
 
-	public PacketUseManipOnKeyPress() {
+	public PacketUseQuickManipKey() {
 	}
 
-	public PacketUseManipOnKeyPress(float par) {
+	public PacketUseQuickManipKey(float par) {
 		this.parTick = par;
 	}
 
-	public static PacketUseManipOnKeyPress decode(final PacketBuffer buffer) {
+	public static PacketUseQuickManipKey decode(final PacketBuffer buffer) {
 		buffer.readByte();
-		return new PacketUseManipOnKeyPress(buffer.readFloat());
+		return new PacketUseQuickManipKey(buffer.readFloat());
 	}
 
-	public static void encode(final PacketUseManipOnKeyPress message, final PacketBuffer buffer) {
+	public static void encode(final PacketUseQuickManipKey message, final PacketBuffer buffer) {
 		buffer.writeByte(0);
 		buffer.writeFloat(message.parTick);
 	}
 
 	@SuppressWarnings("unused")
-	public static void handle(final PacketUseManipOnKeyPress message, final Supplier<NetworkEvent.Context> ctx) {
+	public static void handle(final PacketUseQuickManipKey message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			PlayerEntity player = ctx.get().getSender();
 			if (player == null)
@@ -53,7 +53,6 @@ public class PacketUseManipOnKeyPress {
 							ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
 							if (!player.getHeldItemMainhand().isEmpty()) {
 								if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
-									System.out.println(conjure.getItem());
 									player.getHeldItemMainhand().shrink(1);
 									player.sendStatusMessage(
 											new StringTextComponent("Dispelled: " + conjure.getProperName())
@@ -73,6 +72,11 @@ public class PacketUseManipOnKeyPress {
 							selectedManip.performAction(player, (ServerWorld) player.world,
 									player.getHeldItemMainhand(), player.getPosition());
 						}
+					} else {
+						player.sendStatusMessage(
+								new StringTextComponent("Selected Manipulation is not a Quick or Passive Effect")
+										.mergeStyle(TextFormatting.RED),
+								true);
 					}
 				}
 			}

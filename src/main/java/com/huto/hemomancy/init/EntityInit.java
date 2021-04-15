@@ -3,10 +3,11 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.EntityLeech;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
+import com.huto.hemomancy.entity.blood.EntityBloodCloud;
+import com.huto.hemomancy.entity.blood.iron.EntityIronPillar;
+import com.huto.hemomancy.entity.blood.iron.EntityIronSpike;
+import com.huto.hemomancy.entity.blood.iron.EntityIronWall;
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
-import com.huto.hemomancy.entity.iron.EntityIronPillar;
-import com.huto.hemomancy.entity.iron.EntityIronSpike;
-import com.huto.hemomancy.entity.iron.EntityIronWall;
 import com.huto.hemomancy.entity.mob.EntityAbhorentThought;
 import com.huto.hemomancy.entity.mob.EntityChitinite;
 import com.huto.hemomancy.entity.mob.EntityChthonian;
@@ -17,6 +18,7 @@ import com.huto.hemomancy.entity.mob.EntityLumpOfThought;
 import com.huto.hemomancy.entity.mob.EntityMorphlingPolyp;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
+import com.huto.hemomancy.entity.projectile.EntityBloodCloudCarrier;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
@@ -98,6 +100,16 @@ public class EntityInit {
 					.<EntityBloodOrbTracking>create(EntityBloodOrbTracking::new, EntityClassification.MISC)
 					.setTrackingRange(64).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "tracking_blood_orb").toString()));
+	public static final RegistryObject<EntityType<EntityBloodCloudCarrier>> blood_cloud_carrier = ENTITY_TYPES.register(
+			"blood_cloud_carrier",
+			() -> EntityType.Builder
+					.<EntityBloodCloudCarrier>create(EntityBloodCloudCarrier::new, EntityClassification.MISC)
+					.setTrackingRange(150).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_cloud_carrier").toString()));
+	public static final RegistryObject<EntityType<EntityBloodCloud>> blood_cloud = ENTITY_TYPES.register("blood_cloud",
+			() -> EntityType.Builder.<EntityBloodCloud>create(EntityBloodCloud::new, EntityClassification.MISC)
+					.setTrackingRange(150).setUpdateInterval(12).setShouldReceiveVelocityUpdates(true).size(0.5F, 0.5F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_cloud").toString()));
 
 	public static final RegistryObject<EntityType<EntityTrackingSerpent>> tracking_snake = ENTITY_TYPES.register(
 			"tracking_snake",
@@ -155,6 +167,7 @@ public class EntityInit {
 		GlobalEntityTypeAttributes.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().create());
+		GlobalEntityTypeAttributes.put(EntityInit.blood_cloud.get(), EntityBloodCloud.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().create());
 		GlobalEntityTypeAttributes.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().create());

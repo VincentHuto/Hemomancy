@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingAxe extends ItemLivingWeapon {
+public class ItemLivingAxe extends ItemLivingTool {
 
 	public static String TAG_STATE = "state";
 

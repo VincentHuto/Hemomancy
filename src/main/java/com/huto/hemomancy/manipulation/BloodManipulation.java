@@ -24,12 +24,14 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 	EnumBloodTendency tend;
 	EnumManipulationRank rank;
 	EnumVeinSections section;
+	EnumManipulationType type;
 
-	public BloodManipulation(String name, double cost, double alignLevel, EnumManipulationRank rank,
-			EnumBloodTendency tendency, EnumVeinSections section) {
+	public BloodManipulation(String name, double cost, double alignLevel, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		this.name = name;
 		this.cost = cost;
 		this.alignLevel = alignLevel;
+		this.type = type;
 		this.tend = tendency;
 		this.rank = rank;
 		this.section = section;
@@ -40,7 +42,9 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
+		
 		if (!player.world.isRemote) {
+
 			if (volume.getBloodVolume() > cost) {
 				if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 					volume.subtractBloodVolume((float) cost);
@@ -65,11 +69,12 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 	 */
 	public static BloodManipulation deserialize(CompoundNBT nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("tendency")
-					&& nbt.contains("rank") && nbt.contains("section")) {
+			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
+					&& nbt.contains("tendency") && nbt.contains("rank") && nbt.contains("section")) {
 
 				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
-						nbt.getFloat("level"), EnumManipulationRank.valueOf(nbt.getString("rank")),
+						nbt.getFloat("level"), EnumManipulationType.valueOf(nbt.getString("type")),
+						EnumManipulationRank.valueOf(nbt.getString("rank")),
 						EnumBloodTendency.valueOf(nbt.getString("tendency")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
 
@@ -87,6 +92,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		nbt.putString("name", name);
 		nbt.putDouble("cost", cost);
 		nbt.putDouble("level", alignLevel);
+		nbt.putString("type", type.name());
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
 		nbt.putString("section", section.name());
@@ -119,6 +125,14 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 
 	public void setAlignLevel(float alignLevel) {
 		this.alignLevel = alignLevel;
+	}
+
+	public EnumManipulationType getType() {
+		return type;
+	}
+
+	public void setType(EnumManipulationType type) {
+		this.type = type;
 	}
 
 	public EnumBloodTendency getTend() {

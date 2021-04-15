@@ -1,6 +1,8 @@
-package com.huto.hemomancy.entity.iron;
+package com.huto.hemomancy.entity.blood;
 
 import javax.annotation.Nullable;
+
+import com.huto.hemomancy.entity.blood.iron.IBloodConstruct;
 
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
@@ -26,7 +28,7 @@ import net.minecraft.world.server.ServerWorld;
 public class EntityBloodConstruct extends CreatureEntity implements IBloodConstruct {
 
 	public float deathTicks = 1;
-	LivingEntity creator;
+	public LivingEntity creator;
 
 	protected EntityBloodConstruct(EntityType<? extends CreatureEntity> type, World worldIn) {
 		super(type, worldIn);
@@ -42,9 +44,6 @@ public class EntityBloodConstruct extends CreatureEntity implements IBloodConstr
 		return false;
 	}
 
-	
-	
-	
 	@Override
 	public boolean canBePushed() {
 		return false;

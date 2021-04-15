@@ -1,4 +1,6 @@
-package com.huto.hemomancy.entity.iron;
+package com.huto.hemomancy.entity.blood.iron;
+
+import com.huto.hemomancy.entity.blood.EntityBloodConstruct;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

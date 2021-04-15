@@ -1,7 +1,7 @@
-package com.huto.hemomancy.render.entity;
+package com.huto.hemomancy.render.entity.constructs;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.entity.iron.EntityIronPillar;
+import com.huto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.huto.hemomancy.model.entity.ModelIronPillar;
 import com.mojang.blaze3d.matrix.MatrixStack;
 

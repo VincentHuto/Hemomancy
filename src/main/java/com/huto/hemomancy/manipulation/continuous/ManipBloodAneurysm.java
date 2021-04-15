@@ -1,9 +1,12 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.continuous;
 
 import java.util.Random;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
@@ -14,12 +17,12 @@ import net.minecraft.world.server.ServerWorld;
 
 public class ManipBloodAneurysm extends BloodManipulation {
 
-	public ManipBloodAneurysm(String name, double cost, double alignLevel, EnumManipulationRank rank,
-			EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, rank, tendency, section);
+	public ManipBloodAneurysm(String name, double cost, double alignLevel, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerWorld sWorld = (ServerWorld) world;
 		BlockPos pos = player.getPosition();
 		Random random = player.world.rand;

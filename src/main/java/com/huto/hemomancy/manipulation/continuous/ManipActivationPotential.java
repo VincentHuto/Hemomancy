@@ -1,10 +1,13 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.continuous;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
@@ -21,9 +24,9 @@ import net.minecraft.world.server.ServerWorld;
 
 public class ManipActivationPotential extends BloodManipulation {
 
-	public ManipActivationPotential(String name, double cost, double alignLevel, EnumManipulationRank rank,
-			EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, rank, tendency, section);
+	public ManipActivationPotential(String name, double cost, double alignLevel, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 
 	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
@@ -36,7 +39,7 @@ public class ManipActivationPotential extends BloodManipulation {
 				Vector3d speedVec = new Vector3d(target.getPosition().getX(),
 						(float) target.getPosition().getY() + target.getHeight() / 2.0f, target.getPosition().getZ());
 				PacketHandler.sendLightningSpawn(player.getPositionVec().add(translation), speedVec, 64.0f,
-						(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 2, 10, 9, 0.2f);
+						(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
 				target.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) player), 5.0f);
 			}
 		}

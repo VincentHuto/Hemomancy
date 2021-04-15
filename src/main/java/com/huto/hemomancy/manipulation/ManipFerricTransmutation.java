@@ -16,12 +16,12 @@ import net.minecraft.world.server.ServerWorld;
 
 public class ManipFerricTransmutation extends BloodManipulation {
 
-	public ManipFerricTransmutation(String name, double cost, double alignLevel, EnumManipulationRank rank,
-			EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, rank, tendency, section);
+	public ManipFerricTransmutation(String name, double cost, double alignLevel, EnumManipulationType type,
+			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerWorld sWorld = (ServerWorld) world;
 		BlockPos pos = player.getPosition();
 		Random random = player.world.rand;
