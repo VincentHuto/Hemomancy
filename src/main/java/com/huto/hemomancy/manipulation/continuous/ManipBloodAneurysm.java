@@ -22,7 +22,7 @@ public class ManipBloodAneurysm extends BloodManipulation {
 		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerWorld sWorld = (ServerWorld) world;
 		BlockPos pos = player.getPosition();
 		Random random = player.world.rand;

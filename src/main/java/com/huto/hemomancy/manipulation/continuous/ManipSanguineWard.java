@@ -19,28 +19,8 @@ public class ManipSanguineWard extends BloodManipulation {
 	}
 
 	@Override
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
-		/*
-		 * if (e.getEntityLiving() instanceof PlayerEntity) { PlayerEntity player =
-		 * (PlayerEntity) e.getEntityLiving(); IRunesItemHandler itemHandler =
-		 * player.getCapability(RunesCapabilities.RUNES)
-		 * .orElseThrow(NullPointerException::new); if
-		 * (itemHandler.getStackInSlot(0).getItem() == ItemInit.rune_radiance_c.get()) {
-		 * double dist = e.getEntityLiving().getDistance(player); RayTraceResult trace =
-		 * e.getEntityLiving().pick(dist, 0, false);
-		 * PacketHandler.CHANNELBLOODVOLUME.sendToServer( new
-		 * PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y,
-		 * trace.getHitVec().z)); } if
-		 * (player.getItemStackFromSlot(EquipmentSlotType.HEAD).getItem().getItem() ==
-		 * ItemInit.chitinite_chestplate .get()) { e.setAmount((float) (e.getAmount() *
-		 * 0.25)); double dist = e.getEntityLiving().getDistance(player); RayTraceResult
-		 * trace = e.getEntityLiving().pick(dist, 0, false);
-		 * PacketHandler.CHANNELBLOODVOLUME.sendToServer( new
-		 * PacketEntityHitParticle(trace.getHitVec().x, trace.getHitVec().y,
-		 * trace.getHitVec().z)); }
-		 * 
-		 * }
-		 */
+	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+		//Moved to Manip Events for acsess to on player damage
 	}
 
 }

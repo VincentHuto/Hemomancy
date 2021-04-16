@@ -1,8 +1,11 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.quick;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.entity.projectile.EntityBloodCloudCarrier;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

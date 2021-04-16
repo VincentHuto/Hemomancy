@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/memory_sanguine_ward"
+    "layer0": "hemomancy:item/bloody_jug"
   }
 }

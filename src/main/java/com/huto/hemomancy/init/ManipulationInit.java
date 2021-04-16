@@ -8,24 +8,25 @@ import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
-import com.huto.hemomancy.manipulation.ManipBloodCloud;
-import com.huto.hemomancy.manipulation.ManipBloodRush;
-import com.huto.hemomancy.manipulation.ManipBloodShot;
-import com.huto.hemomancy.manipulation.ManipFerricTransmutation;
-import com.huto.hemomancy.manipulation.conjuration.ManipBloodAbsorbtion;
-import com.huto.hemomancy.manipulation.conjuration.ManipConjureAxe;
-import com.huto.hemomancy.manipulation.conjuration.ManipConjureBlade;
-import com.huto.hemomancy.manipulation.conjuration.ManipConjureClaws;
-import com.huto.hemomancy.manipulation.conjuration.ManipConjureCrossbow;
-import com.huto.hemomancy.manipulation.conjuration.ManipConjureSpear;
 import com.huto.hemomancy.manipulation.continuous.ManipActivationPotential;
 import com.huto.hemomancy.manipulation.continuous.ManipBloodAneurysm;
 import com.huto.hemomancy.manipulation.continuous.ManipSanguineWard;
+import com.huto.hemomancy.manipulation.quick.ManipBloodCloud;
+import com.huto.hemomancy.manipulation.quick.ManipBloodNeedle;
+import com.huto.hemomancy.manipulation.quick.ManipBloodRush;
+import com.huto.hemomancy.manipulation.quick.ManipBloodShot;
+import com.huto.hemomancy.manipulation.quick.ManipFerricTransmutation;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipBloodAbsorbtion;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipConjureAxe;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipConjureBlade;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipConjureClaws;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipConjureCrossbow;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipConjureSpear;
 
 public class ManipulationInit {
 
 	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<BloodManipulation>();
-	public static BloodManipulation blood_shot, blood_cloud, blood_rush, aneurysm;
+	public static BloodManipulation blood_shot, blood_needle, blood_cloud, blood_rush, aneurysm;
 	public static BloodManipulation ferric_transmutation, conjure_blade, conjure_axe, conjure_crossbow, conjure_claw,
 			conjure_spear, conjure_blood_absorbtion, sanguine_ward;
 	public static BloodManipulation activation_potential;
@@ -48,6 +49,8 @@ public class ManipulationInit {
 
 	public static void init() {
 		blood_shot = register(new ManipBloodShot("blood_shot", 100, 0, EnumManipulationType.QUICK,
+				EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
+		blood_needle = register(new ManipBloodNeedle("blood_needle", 100, 0, EnumManipulationType.QUICK,
 				EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
 		blood_cloud = register(new ManipBloodCloud("blood_cloud", 100, 0, EnumManipulationType.QUICK,
 				EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
@@ -73,7 +76,7 @@ public class ManipulationInit {
 		activation_potential = register(
 				new ManipActivationPotential("activation_potential", 100, 0, EnumManipulationType.CONTINUOUS,
 						EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
-		sanguine_ward = register(new ManipSanguineWard("sanguine_ward", 25, 0, EnumManipulationType.CONTINUOUS,
+		sanguine_ward = register(new ManipSanguineWard("sanguine_ward", 5, 0, EnumManipulationType.CONTINUOUS,
 				EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
 	}
 

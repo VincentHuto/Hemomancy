@@ -221,18 +221,13 @@ public class EntityBloodBolt extends AbstractArrowEntity {
 		}
 
 	}
-
+	@Override
 	protected void arrowHit(LivingEntity living) {
 		super.arrowHit(living);
-		for (EffectInstance effectinstance : this.potion.getEffects()) {
-			living.addPotionEffect(new EffectInstance(effectinstance.getPotion(),
-					Math.max(effectinstance.getDuration() / 8, 1), effectinstance.getAmplifier(),
-					effectinstance.isAmbient(), effectinstance.doesShowParticles()));
-		}
-		if (!this.customPotionEffects.isEmpty()) {
-			for (EffectInstance effectinstance1 : this.customPotionEffects) {
-				living.addPotionEffect(effectinstance1);
-			}
+		Entity entity = living.getEntity();
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).addPotionEffect(new EffectInstance(PotionInit.blood_loss.get(), 1000, 2));
+
 		}
 
 	}

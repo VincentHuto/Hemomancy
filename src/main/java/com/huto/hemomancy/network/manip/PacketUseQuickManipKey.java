@@ -6,7 +6,8 @@ import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.manipulation.BloodManipulation;
-import com.huto.hemomancy.manipulation.conjuration.ManipBaseConjuration;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
+import com.huto.hemomancy.manipulation.quick.conjure.ManipBaseConjuration;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -49,36 +50,41 @@ public class PacketUseQuickManipKey {
 				if (known.getSelectedManip() != null) {
 					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
 					if (selectedManip != null) {
-						if (selectedManip instanceof ManipBaseConjuration) {
-							ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
-							if (!player.getHeldItemMainhand().isEmpty()) {
-								if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
-									player.getHeldItemMainhand().shrink(1);
-									player.sendStatusMessage(
-											new StringTextComponent("Dispelled: " + conjure.getProperName())
-													.mergeStyle(TextFormatting.RED),
-											true);
+						//Quick and Passives
+						if (selectedManip.getType() == EnumManipulationType.QUICK
+								|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
+							if (selectedManip instanceof ManipBaseConjuration) {
+								ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
+								if (!player.getHeldItemMainhand().isEmpty()) {
+									if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
+										player.getHeldItemMainhand().shrink(1);
+										player.sendStatusMessage(
+												new StringTextComponent("Dispelled: " + conjure.getProperName())
+														.mergeStyle(TextFormatting.RED),
+												true);
+									} else {
+										player.sendStatusMessage(
+												new StringTextComponent("Conjuration requires an empty hand!")
+														.mergeStyle(TextFormatting.RED),
+												true);
+									}
 								} else {
-									player.sendStatusMessage(
-											new StringTextComponent("Conjuration requires an empty hand!")
-													.mergeStyle(TextFormatting.RED),
-											true);
+									selectedManip.performAction(player, (ServerWorld) player.world,
+											player.getHeldItemMainhand(), player.getPosition());
 								}
 							} else {
 								selectedManip.performAction(player, (ServerWorld) player.world,
 										player.getHeldItemMainhand(), player.getPosition());
 							}
 						} else {
-							selectedManip.performAction(player, (ServerWorld) player.world,
-									player.getHeldItemMainhand(), player.getPosition());
+							player.sendStatusMessage(
+									new StringTextComponent("Selected Manipulation is not a Quick or Passive Effect")
+											.mergeStyle(TextFormatting.RED),
+									true);
 						}
-					} else {
-						player.sendStatusMessage(
-								new StringTextComponent("Selected Manipulation is not a Quick or Passive Effect")
-										.mergeStyle(TextFormatting.RED),
-								true);
 					}
 				}
+
 			}
 		});
 		ctx.get().setPacketHandled(true);

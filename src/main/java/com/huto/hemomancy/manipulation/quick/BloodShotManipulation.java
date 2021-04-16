@@ -1,8 +1,11 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.quick;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,7 +23,7 @@ public class BloodShotManipulation extends BloodManipulation {
 	}
 
 	@Override
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		// super.performAction(player, world, heldItemMainhand, position);
 		EntityBloodShot shot = new EntityBloodShot(world, player);
 		Vector3d vector3d1 = player.getUpVector(1.0F);

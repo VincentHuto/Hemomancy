@@ -19,6 +19,7 @@ import com.huto.hemomancy.entity.mob.EntityMorphlingPolyp;
 import com.huto.hemomancy.entity.mob.EntityThirster;
 import com.huto.hemomancy.entity.projectile.EntityBloodBolt;
 import com.huto.hemomancy.entity.projectile.EntityBloodCloudCarrier;
+import com.huto.hemomancy.entity.projectile.EntityBloodNeedle;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
@@ -146,6 +147,12 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityBloodBolt>create(EntityBloodBolt::new, EntityClassification.MISC)
 					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bolt").toString()));
+
+	public static final RegistryObject<EntityType<EntityBloodNeedle>> blood_needle = ENTITY_TYPES.register(
+			"blood_needle",
+			() -> EntityType.Builder.<EntityBloodNeedle>create(EntityBloodNeedle::new, EntityClassification.MISC)
+					.size(0.5F, 0.5F).trackingRange(4).setUpdateInterval(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_needle").toString()));
 
 	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
 			() -> EntityType.Builder.<EntityBloodShot>create(EntityBloodShot::new, EntityClassification.MISC)

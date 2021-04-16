@@ -1,8 +1,11 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.quick;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.init.PotionInit;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +20,7 @@ public class ManipBloodRush extends BloodManipulation {
 		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		player.addPotionEffect(new EffectInstance(PotionInit.blood_rush.get(), 250, 1));
 	}
 

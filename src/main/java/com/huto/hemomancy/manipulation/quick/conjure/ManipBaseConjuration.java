@@ -1,4 +1,4 @@
-package com.huto.hemomancy.manipulation.conjuration;
+package com.huto.hemomancy.manipulation.quick.conjure;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;

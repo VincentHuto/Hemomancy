@@ -46,7 +46,7 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 	public RenderItemTome() {
 	}
 
-	float close = 0f;
+	float close = 1f;
 
 	@Override
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transform, MatrixStack ms,
@@ -80,13 +80,13 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 			float f5 = MathHelper.frac(f3 + 0.75F) * 1.6F - 0.3F;
 			if (player.getHeldItemMainhand() == stack || player.getHeldItemOffhand() == stack) {
 				if (close < 1) {
-					close += 0.005f;
+					close += 0.03f;
 					this.model.setBookState(f, MathHelper.clamp(f4, 0.0F, 1.0F), MathHelper.clamp(f5, 0.0F, 1.0F),
 							close);
 				}
 			} else {
 				if (close > 0) {
-					close -= 0.005f;
+					close -= 0.03f;
 					this.model.setBookState(f, MathHelper.clamp(f4, 0.0F, 1.0F), MathHelper.clamp(f5, 0.0F, 1.0F),
 							close);
 				}

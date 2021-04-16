@@ -61,11 +61,19 @@ public class ItemBloodMemory extends Item {
 				List<BloodManipulation> knownList = known.getKnownManips();
 				if (!worldIn.isRemote) {
 					if (!playerIn.isSneaking()) {
-						knownList.add(memory.getManip());
-						PacketHandler.CHANNELKNOWNMANIPS.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-								new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
-						stack.shrink(1);
+						if (!knownList.contains(memory.getManip())) {
+							knownList.add(memory.getManip());
+							PacketHandler.CHANNELKNOWNMANIPS.send(
+									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
+							stack.shrink(1);
+						} else {
+							playerIn.sendStatusMessage(
+									new StringTextComponent("Player Already Knowns This Manipulation!")
+											.mergeStyle(TextFormatting.RED),
+									true);
+						}
+
 					}
 				}
 			}

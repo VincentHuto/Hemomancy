@@ -1,9 +1,12 @@
-package com.huto.hemomancy.manipulation;
+package com.huto.hemomancy.manipulation.quick;
 
 import java.util.Random;
 
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.manipulation.EnumManipulationRank;
+import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
@@ -21,7 +24,7 @@ public class ManipFerricTransmutation extends BloodManipulation {
 		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerWorld sWorld = (ServerWorld) world;
 		BlockPos pos = player.getPosition();
 		Random random = player.world.rand;

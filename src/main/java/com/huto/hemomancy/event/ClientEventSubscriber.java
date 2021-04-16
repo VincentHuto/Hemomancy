@@ -32,6 +32,7 @@ import com.huto.hemomancy.render.entity.mob.RenderThirster;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodBolt;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodCloud;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodCloudCarrier;
+import com.huto.hemomancy.render.entity.projectile.RenderBloodNeedle;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbDirected;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodOrbTracking;
 import com.huto.hemomancy.render.entity.projectile.RenderBloodShot;
@@ -49,6 +50,7 @@ import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
@@ -66,24 +68,26 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientEventSubscriber {
 	public static NonNullList<KeyBinding> keyBinds = NonNullList.create();
-	public static KeyBinding toggleRuneBinderPickup = new KeyBinding("key.Hemomancy.runebinderpickup.desc",
-			GLFW.GLFW_KEY_B, "key.Hemomancy.category");
-	public static KeyBinding bloodFormation = new KeyBinding("key.Hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
-			"key.Hemomancy.category");
-	public static KeyBinding bloodCrafting = new KeyBinding("key.Hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
-			"key.Hemomancy.category");
-	public static KeyBinding bloodDraw = new KeyBinding("key.Hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
-			"key.Hemomancy.category");
-	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.Hemomancy.morphjarpickup.desc",
-			GLFW.GLFW_KEY_LEFT_CONTROL, "key.Hemomancy.category");
-	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.Hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
-			"key.Hemomancy.category");
-	public static KeyBinding displayKnownManips = new KeyBinding("key.Hemomancy.displaymanips.desc", GLFW.GLFW_KEY_M,
-			"key.Hemomancy.category");
-	public static KeyBinding cycleSelectedManip = new KeyBinding("key.Hemomancy.cyclemanip.desc",
-			GLFW.GLFW_KEY_RIGHT_ALT, "key.Hemomancy.category");
-	public static KeyBinding useManip = new KeyBinding("key.Hemomancy.usemanip.desc", GLFW.GLFW_KEY_L,
-			"key.Hemomancy.category");
+	public static KeyBinding toggleRuneBinderPickup = new KeyBinding("key.hemomancy.runebinderpickup.desc",
+			GLFW.GLFW_KEY_B, "key.hemomancy.category");
+	public static KeyBinding bloodFormation = new KeyBinding("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
+			"key.hemomancy.category");
+	public static KeyBinding bloodCrafting = new KeyBinding("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
+			"key.hemomancy.category");
+	public static KeyBinding bloodDraw = new KeyBinding("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
+			"key.hemomancy.category");
+	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.hemomancy.morphjarpickup.desc",
+			GLFW.GLFW_KEY_LEFT_CONTROL, "key.hemomancy.category");
+	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
+			"key.hemomancy.category");
+	public static KeyBinding displayKnownManips = new KeyBinding("key.hemomancy.displaymanips.desc", GLFW.GLFW_KEY_V,
+			"key.hemomancy.category");
+	public static KeyBinding cycleSelectedManip = new KeyBinding("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
+			"key.hemomancy.category");
+	public static KeyBinding useQuickManip = new KeyBinding("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
+			"key.hemomancy.category");
+	public static KeyBinding useContManip = new KeyBinding("key.hemomancy.contusemanip.desc", InputMappings.Type.MOUSE,
+			2, "key.hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -126,13 +130,15 @@ public class ClientEventSubscriber {
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.directed_blood_orb.get(),
 				RenderBloodOrbDirected::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_cloud_carrier.get(), RenderBloodCloudCarrier::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_cloud_carrier.get(),
+				RenderBloodCloudCarrier::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_cloud.get(), RenderBloodCloud::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_blood_orb.get(),
 				RenderBloodOrbTracking::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_needle.get(), RenderBloodNeedle::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.blood_shot.get(), RenderBloodShot::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.dark_arrow.get(), RenderDarkArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityInit.morphling_polyp_item.get(),
@@ -147,8 +153,8 @@ public class ClientEventSubscriber {
 		keyBinds.add(5, toggleMorphlingOpenJar);
 		keyBinds.add(6, displayKnownManips);
 		keyBinds.add(7, cycleSelectedManip);
-		keyBinds.add(8, useManip);
-
+		keyBinds.add(8, useQuickManip);
+		keyBinds.add(9, useContManip);
 		for (KeyBinding bind : keyBinds) {
 			ClientRegistry.registerKeyBinding(bind);
 

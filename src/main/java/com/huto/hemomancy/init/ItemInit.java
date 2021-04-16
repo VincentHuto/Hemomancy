@@ -15,12 +15,14 @@ import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryActivationPotential;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryBloodCloud;
+import com.huto.hemomancy.item.memories.ItemBloodMemoryBloodNeedle;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryBloodShot;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureAxe;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureBlade;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureClaws;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureCrossbow;
 import com.huto.hemomancy.item.memories.ItemBloodMemoryConjureSpear;
+import com.huto.hemomancy.item.memories.ItemBloodMemorySanguineWard;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
@@ -143,14 +145,15 @@ public class ItemInit {
 			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemoryBloodShot(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_blood_needle = BASEITEMS.register("memory_blood_needle",
+			() -> new ItemBloodMemoryBloodNeedle(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_cloud = BASEITEMS.register("memory_blood_cloud",
 			() -> new ItemBloodMemoryBloodCloud(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_activation_potential = BASEITEMS.register(
 			"memory_activation_potential",
 			() -> new ItemBloodMemoryActivationPotential(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> memory_sanguine_ward = BASEITEMS.register(
-			"memory_sanguine_ward",
-			() -> new ItemBloodMemoryActivationPotential(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_sanguine_ward = BASEITEMS.register("memory_sanguine_ward",
+			() -> new ItemBloodMemorySanguineWard(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
 			() -> new ItemBloodMemoryConjureBlade(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_living_axe = BASEITEMS.register("memory_living_axe",
@@ -224,8 +227,12 @@ public class ItemInit {
 	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
-			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance)));
-
+			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 250));
+	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",
+			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 2500));
+	public static final RegistryObject<Item> stabilized_sanguine_formation = BASEITEMS.register(
+			"stabilized_sanguine_formation",
+			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 5000));
 	// Tools
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));

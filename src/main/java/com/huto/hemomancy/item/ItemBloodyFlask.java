@@ -28,8 +28,11 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemBloodyFlask extends Item {
 
-	public ItemBloodyFlask(Properties prop) {
+	float amount;
+
+	public ItemBloodyFlask(Properties prop, float amount) {
 		super(prop.maxStackSize(16));
+		this.amount = amount;
 	}
 
 	@Override
@@ -44,7 +47,7 @@ public class ItemBloodyFlask extends Item {
 			if (curr >= volume.getMaxBloodVolume()) {
 				playerIn.sendStatusMessage(new StringTextComponent("Blood Volume Full"), true);
 			} else {
-				volume.addBloodVolume(250);
+				volume.addBloodVolume(amount);
 				ServerWorld sWorld = (ServerWorld) worldIn;
 				for (int i = 0; i < 30; i++) {
 					sWorld.spawnParticle(
@@ -56,6 +59,7 @@ public class ItemBloodyFlask extends Item {
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
 						new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
 				stack.shrink(1);
+				playerIn.sendBreakAnimation(handIn);
 			}
 		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -64,7 +68,7 @@ public class ItemBloodyFlask extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-		tooltip.add(new StringTextComponent("Used to Quickly Gain a Small Amount of Blood"));
+		tooltip.add(new StringTextComponent("Used to Quickly Gain " + amount + "ml of Blood"));
 
 	}
 
