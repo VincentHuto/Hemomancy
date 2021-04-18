@@ -1,17 +1,31 @@
 package com.huto.hemomancy.capa.volume;
 
+import java.awt.Color;
+import java.awt.Point;
+
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.font.ModTextFormatting;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.mojang.blaze3d.platform.GlStateManager;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -88,4 +102,39 @@ public class BloodVolumeEvents {
 		 */
 	}
 
+	private static FontRenderer fontRenderer;
+
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent(receiveCanceled = true)
+	public static void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
+
+		if (fontRenderer == null) {
+			fontRenderer = Minecraft.getInstance().fontRenderer;
+		}
+		PlayerEntity player = Minecraft.getInstance().player;
+		if (player != null) {
+			if (player.isAlive()) {
+				// Redraws Icons so they dont get overwrote
+				Minecraft.getInstance().textureManager
+						.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+				// Coven color Overlay
+				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+				if (volume.getBloodVolume() < 2000) {
+					Minecraft.getInstance().textureManager
+							.bindTexture(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
+					event.getMatrixStack().push();
+					event.getMatrixStack().scale(0.25f, 0.25f, 0.25f);
+					AbstractGui.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getWidth(),
+							event.getWindow().getHeight(), 1920, 1080);
+					AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
+							event.getWindow().getHeight(), new Color(40, 0, 0, 26).getRGB());
+					fontRenderer.drawString(event.getMatrixStack(), "Blood Shot", event.getWindow().getWidth() / 2, 15,
+							new Color(0, 0, 0, 0).getRGB());
+					event.getMatrixStack().pop();
+					Minecraft.getInstance().textureManager
+							.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+				}
+			}
+		}
+	}
 }

@@ -81,7 +81,6 @@ public class Hemomancy {
 	};
 	public static boolean forcesLoaded = false;
 
-	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();

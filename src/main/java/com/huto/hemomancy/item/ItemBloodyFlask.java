@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -68,6 +70,7 @@ public class ItemBloodyFlask extends Item {
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
+
 		tooltip.add(new StringTextComponent("Used to Quickly Gain " + amount + "ml of Blood"));
 
 	}

@@ -624,19 +624,14 @@ public class ItemInit {
 
 									} else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
 										return 2;
-
 									} else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {
 										return 3;
-
 									} else if (selectedStack.getItem() == ItemInit.morphling_pests.get()) {
 										return 4;
-
 									} else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
 										return 5;
-
 									} else {
 										return 0;
-
 									}
 								}
 							} else {

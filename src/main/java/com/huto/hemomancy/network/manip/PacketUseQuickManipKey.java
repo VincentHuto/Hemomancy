@@ -50,7 +50,7 @@ public class PacketUseQuickManipKey {
 				if (known.getSelectedManip() != null) {
 					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
 					if (selectedManip != null) {
-						//Quick and Passives
+						// Quick and Passives
 						if (selectedManip.getType() == EnumManipulationType.QUICK
 								|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
 							if (selectedManip instanceof ManipBaseConjuration) {
