@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
-import com.huto.hemomancy.render.RenderMultiBlock;
+import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
+import com.huto.hemomancy.render.RenderMultiBlockInGui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -99,7 +99,7 @@ public class BloodCraftingCategory implements IRecipeCategory<BaseBloodCraftingR
 		overlay.draw(matrixStack);
 		GlStateManager.pushMatrix();
 		GlStateManager.translatef((guiWidth / 2) + 130, (guiHeight / 2) + 45, 10);
-		RenderMultiBlock.renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern());
+		RenderMultiBlockInGui.renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern());
 		Minecraft.getInstance().fontRenderer.func_238418_a_(new StringTextComponent("Held Item"), -50,
 				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT) - 22, 150, 0);
 		Minecraft.getInstance().fontRenderer.func_238418_a_(new StringTextComponent("Hit Block"), -50,

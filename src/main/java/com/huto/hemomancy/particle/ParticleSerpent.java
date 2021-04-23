@@ -47,7 +47,7 @@ public class ParticleSerpent extends SpriteTexturedParticle {
 
 	@Override
 	public IParticleRenderType getRenderType() {
-		return RenderTypeInit.DARK_GLOW_RENDER;
+		return RenderTypeInit.GLOW_RENDER;
 	}
 
 	@Override

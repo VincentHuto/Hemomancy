@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.util.ParticleColor;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -18,8 +20,6 @@ import net.minecraft.block.PortalSize;
 import net.minecraft.block.SixWayBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
@@ -113,56 +113,66 @@ public class BlockCrimsonFlame extends Block {
 		BlockState blockstate = worldIn.getBlockState(blockpos);
 		if (!this.canBurn(blockstate) && !blockstate.isSolidSide(worldIn, blockpos, Direction.UP)) {
 			if (this.canBurn(worldIn.getBlockState(pos.west()))) {
-				for (int j = 0; j < 2; ++j) {
+				for (int j = 0; j < 5; ++j) {
 					double d3 = (double) pos.getX() + rand.nextDouble() * (double) 0.1F;
 					double d8 = (double) pos.getY() + rand.nextDouble();
 					double d13 = (double) pos.getZ() + rand.nextDouble();
-					worldIn.addParticle(ParticleTypes.ASH, d3, d8, d13, 0.0D, 0.0D, 0.0D);
-					worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d3, d8, d13, 0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d3, d8, d13,
+							0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d3, d8, d13, 0.0D, 0.0D,
+							0.0D);
 
 				}
 			}
 
 			if (this.canBurn(worldIn.getBlockState(pos.east()))) {
-				for (int k = 0; k < 2; ++k) {
+				for (int k = 0; k < 5; ++k) {
 					double d4 = (double) (pos.getX() + 1) - rand.nextDouble() * (double) 0.1F;
 					double d9 = (double) pos.getY() + rand.nextDouble();
 					double d14 = (double) pos.getZ() + rand.nextDouble();
-					worldIn.addParticle(ParticleTypes.ASH, d4, d9, d14, 0.0D, 0.0D, 0.0D);
-					worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d4, d9, d14, 0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d4, d9, d14,
+							0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d4, d9, d14, 0.0D, 0.0D,
+							0.0D);
 
 				}
 			}
 
 			if (this.canBurn(worldIn.getBlockState(pos.north()))) {
-				for (int l = 0; l < 2; ++l) {
+				for (int l = 0; l < 5; ++l) {
 					double d5 = (double) pos.getX() + rand.nextDouble();
 					double d10 = (double) pos.getY() + rand.nextDouble();
 					double d15 = (double) pos.getZ() + rand.nextDouble() * (double) 0.1F;
-					worldIn.addParticle(ParticleTypes.ASH, d5, d10, d15, 0.0D, 0.0D, 0.0D);
-					worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d5, d10, d15, 0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d5, d10, d15,
+							0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d5, d10, d15, 0.0D,
+							0.0D, 0.0D);
 
 				}
 			}
 
 			if (this.canBurn(worldIn.getBlockState(pos.south()))) {
-				for (int i1 = 0; i1 < 2; ++i1) {
+				for (int i1 = 0; i1 < 5; ++i1) {
 					double d6 = (double) pos.getX() + rand.nextDouble();
 					double d11 = (double) pos.getY() + rand.nextDouble();
 					double d16 = (double) (pos.getZ() + 1) - rand.nextDouble() * (double) 0.1F;
-					worldIn.addParticle(ParticleTypes.ASH, d6, d11, d16, 0.0D, 0.0D, 0.0D);
-					worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d6, d11, d16, 0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d6, d11, d16,
+							0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d6, d11, d16, 0.0D,
+							0.0D, 0.0D);
 
 				}
 			}
 
 			if (this.canBurn(worldIn.getBlockState(pos.up()))) {
-				for (int j1 = 0; j1 < 2; ++j1) {
+				for (int j1 = 0; j1 < 5; ++j1) {
 					double d7 = (double) pos.getX() + rand.nextDouble();
 					double d12 = (double) (pos.getY() + 1) - rand.nextDouble() * (double) 0.1F;
 					double d17 = (double) pos.getZ() + rand.nextDouble();
-					worldIn.addParticle(ParticleTypes.ASH, d7, d12, d17, 0.0D, 0.0D, 0.0D);
-					worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d7, d12, d17, 0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d7, d12, d17,
+							0.0D, 0.0D, 0.0D);
+					worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d7, d12, d17, 0.0D,
+							0.0D, 0.0D);
 
 				}
 			}
@@ -171,8 +181,10 @@ public class BlockCrimsonFlame extends Block {
 				double d0 = (double) pos.getX() + rand.nextDouble();
 				double d1 = (double) pos.getY() + rand.nextDouble() * 0.5D + 0.5D;
 				double d2 = (double) pos.getZ() + rand.nextDouble();
-				worldIn.addParticle(ParticleTypes.ASH, d0, d1, d2, 0.0D, 0.0D, 0.0D);
-				worldIn.addParticle(RedstoneParticleData.REDSTONE_DUST, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+				worldIn.addParticle(BloodCellParticleFactory.createData(new ParticleColor(100, 0, 0)), d0, d1, d2, 0.0D,
+						0.0D, 0.0D);
+				worldIn.addParticle(BloodCellParticleFactory.createData(ParticleColor.RED), d0, d1, d2, 0.0D, 0.0D,
+						0.0D);
 
 			}
 		}
@@ -355,7 +367,6 @@ public class BlockCrimsonFlame extends Block {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean canLightBlock(World world, BlockPos pos, Direction direction) {
 		BlockState blockstate = world.getBlockState(pos);
 		if (!blockstate.isAir()) {
@@ -428,7 +439,6 @@ public class BlockCrimsonFlame extends Block {
 		return this.getFireSpreadSpeed(state) > 0;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
 		super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
 		worldIn.getPendingBlockTicks().scheduleTick(pos, this, getTickCooldown(worldIn.rand));

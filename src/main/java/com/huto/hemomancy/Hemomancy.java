@@ -1,5 +1,6 @@
 package com.huto.hemomancy;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import com.huto.hemomancy.gui.guide.GuideBookLib;
 import com.huto.hemomancy.gui.tendency.TendencyBookLib;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.CapabilityInit;
+import com.huto.hemomancy.init.ConfiguredStructureInit;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
@@ -24,19 +26,16 @@ import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.SkillPointInit;
+import com.huto.hemomancy.init.StructureInit;
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
-import com.huto.hemomancy.item.rune.ItemRuneBinder;
-import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
-import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.recipes.CopyBloodGourdDataRecipe;
-import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
-import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
-import com.huto.hemomancy.recipes.FillBloodGourdDataRecipe;
-import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
-import com.huto.hemomancy.recipes.ModChiselRecipes;
-import com.huto.hemomancy.recipes.PolypRecipes;
+import com.huto.hemomancy.recipe.CopyBloodGourdDataRecipe;
+import com.huto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
+import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
+import com.huto.hemomancy.recipe.FillBloodGourdDataRecipe;
+import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.huto.hemomancy.recipe.ModChiselRecipes;
+import com.huto.hemomancy.recipe.PolypRecipes;
 import com.huto.hemomancy.render.layer.HandParticleLayer;
 import com.huto.hemomancy.render.layer.LivingBladeHipRenderLayer;
 import com.huto.hemomancy.render.layer.RunesRenderLayer;
@@ -52,10 +51,19 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.FlatChunkGenerator;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.settings.DimensionStructuresSettings;
+import net.minecraft.world.gen.settings.StructureSeparationSettings;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -87,6 +95,9 @@ public class Hemomancy {
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
+		ManipulationInit.MANIPS.register(modEventBus);
+		StructureInit.STRUCTURES.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
 		PotionInit.POTION_TYPES.register(modEventBus);
@@ -117,6 +128,9 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
 		MinecraftForge.EVENT_BUS.register(KnownManipulationEvents.class);
+		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+		forgeBus.addListener(EventPriority.NORMAL, this::addDimensionalSpacing);
+		forgeBus.addListener(EventPriority.HIGH, this::biomeModification);
 
 	}
 
@@ -174,7 +188,6 @@ public class Hemomancy {
 		}
 
 		@Override
-
 		public ItemStack createIcon() {
 			return new ItemStack(ItemInit.sanguine_formation.get());
 		}
@@ -187,9 +200,7 @@ public class Hemomancy {
 		SkillPointInit.init();
 		ModBloodCraftingRecipes.initPatterns();
 		ModBloodCraftingRecipes.initRecipes();
-		ModChiselRecipes.init();
 		PolypRecipes.initRecipes();
-		ManipulationInit.init();
 		PacketHandler.registerChannels();
 		PacketHandler.registerRuneBinderChannels();
 		PacketHandler.registerMorphlingJarChannels();
@@ -249,60 +260,20 @@ public class Hemomancy {
 
 	}
 
-	public static ItemStack findLivingBlade(PlayerEntity player) {
-		if (player.getHeldItemMainhand().getItem() instanceof ItemLivingBlade)
+	// Combined a few methods into one more generic one
+	public static ItemStack findItemInPlayerInv(PlayerEntity player, Class<? extends Item> item) {
+		if (item.isInstance(player.getHeldItemOffhand().getItem()))
 			return player.getHeldItemMainhand();
-		if (player.getHeldItemOffhand().getItem() instanceof ItemLivingBlade)
+		if (item.isInstance(player.getHeldItemOffhand().getItem()))
 			return player.getHeldItemOffhand();
 		PlayerInventory inventory = player.inventory;
 		for (int i = 0; i <= 35; i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemLivingBlade)
+			if (item.isInstance(stack.getItem()))
 				return stack;
 		}
 		return ItemStack.EMPTY;
-	}
 
-	public static ItemStack findRuneBinder(PlayerEntity player) {
-		if (player.getHeldItemMainhand().getItem() instanceof ItemRuneBinder)
-			return player.getHeldItemMainhand();
-		if (player.getHeldItemOffhand().getItem() instanceof ItemRuneBinder)
-			return player.getHeldItemOffhand();
-		PlayerInventory inventory = player.inventory;
-		for (int i = 0; i <= 35; i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemRuneBinder)
-				return stack;
-		}
-		return ItemStack.EMPTY;
-	}
-
-	public static ItemStack findMorphlingJar(PlayerEntity player) {
-		if (player.getHeldItemMainhand().getItem() instanceof ItemMorphlingJar)
-			return player.getHeldItemMainhand();
-		if (player.getHeldItemOffhand().getItem() instanceof ItemMorphlingJar)
-			return player.getHeldItemOffhand();
-		PlayerInventory inventory = player.inventory;
-		for (int i = 0; i <= 35; i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemMorphlingJar)
-				return stack;
-		}
-		return ItemStack.EMPTY;
-	}
-
-	public static ItemStack findLivingStaff(PlayerEntity player) {
-		if (player.getHeldItemMainhand().getItem() instanceof ItemLivingStaff)
-			return player.getHeldItemMainhand();
-		if (player.getHeldItemOffhand().getItem() instanceof ItemLivingStaff)
-			return player.getHeldItemOffhand();
-		PlayerInventory inventory = player.inventory;
-		for (int i = 0; i <= 35; i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemLivingStaff)
-				return stack;
-		}
-		return ItemStack.EMPTY;
 	}
 
 	@SubscribeEvent
@@ -316,4 +287,43 @@ public class Hemomancy {
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
 	}
+
+	// Structure Jazz
+	@SubscribeEvent
+	public static void onRegisterStructures(final RegistryEvent.Register<Structure<?>> event) {
+		StructureInit.registerStructures(event);
+		ConfiguredStructureInit.registerConfiguredStructures();
+	}
+
+	public void biomeModification(final BiomeLoadingEvent event) {
+		// Add our structure to all biomes including other modded biomes
+		// You can filter to certain biomes based on stuff like temperature, scale,
+		// precipitation, mod id
+		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
+		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
+	}
+
+	/**
+	 * Use this for dimension blacklists for your structure.
+	 */
+	public void addDimensionalSpacing(final WorldEvent.Load event) {
+		if (event.getWorld() instanceof ServerWorld) {
+			ServerWorld serverWorld = (ServerWorld) event.getWorld();
+			// Prevent spawning our structure in Vanilla's superflat world
+			if (serverWorld.getChunkProvider().getChunkGenerator() instanceof FlatChunkGenerator
+					&& serverWorld.getDimensionKey().equals(World.OVERWORLD)) {
+				return;
+			}
+			Map<Structure<?>, StructureSeparationSettings> tempMap = new HashMap<>(
+					serverWorld.getChunkProvider().generator.func_235957_b_().func_236195_a_());
+			tempMap.put(StructureInit.RUN_DOWN_HOUSE.get(),
+					DimensionStructuresSettings.field_236191_b_.get(StructureInit.RUN_DOWN_HOUSE.get()));
+			if (serverWorld.getDimensionKey().equals(World.THE_NETHER)) {
+				tempMap.put(StructureInit.blood_temple.get(),
+						DimensionStructuresSettings.field_236191_b_.get(StructureInit.blood_temple.get()));
+			}
+			serverWorld.getChunkProvider().generator.func_235957_b_().field_236193_d_ = tempMap;
+		}
+	}
+
 }

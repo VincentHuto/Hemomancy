@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
-import com.huto.hemomancy.recipes.RecipeChiselStation;
+import com.huto.hemomancy.recipe.RecipeChiselStation;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -15,12 +15,14 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiRunePattern extends Screen {
@@ -34,14 +36,14 @@ public class GuiRunePattern extends Screen {
 	String text;
 
 	static StringTextComponent titleComponent = new StringTextComponent("");
-	ItemStack icon;
+	RegistryObject<Item> icon;
 	Minecraft mc = Minecraft.getInstance();
-	RecipeChiselStation recipe;
+	RegistryObject<RecipeChiselStation> recipe;
 	public GuiButtonTextured[][] runeButtonArray = new GuiButtonTextured[8][8];
 	protected List<Button> buttonList = Lists.<Button>newArrayList();
 
 	@OnlyIn(Dist.CLIENT)
-	public GuiRunePattern(ItemStack iconIn, RecipeChiselStation recipeIn, String textIn) {
+	public GuiRunePattern(RegistryObject<Item> iconIn, RegistryObject<RecipeChiselStation> recipeIn, String textIn) {
 		super(titleComponent);
 		this.icon = iconIn;
 		this.recipe = recipeIn;
@@ -89,8 +91,8 @@ public class GuiRunePattern extends Screen {
 		{
 			// The 10 for the z translate draws the text ON the book
 			GlStateManager.translatef(((width / 2) - font.getStringWidth(title) / 2) - 75, centerY + 50, 10);
-			drawString(matrixStack, font, TextFormatting.GOLD + I18n.format(recipe.getOutput().getTranslationKey()), 0,
-					0, 8060954);
+			drawString(matrixStack, font,
+					TextFormatting.GOLD + I18n.format(recipe.get().getOutput().getTranslationKey()), 0, 0, 8060954);
 
 		}
 		GlStateManager.popMatrix();
@@ -101,15 +103,15 @@ public class GuiRunePattern extends Screen {
 			GlStateManager.translatef(3, 3, 0);
 			GlStateManager.scalef(1.9f, 1.7f, 1.9f);
 			RenderHelper.enableStandardItemLighting();
-			Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(icon, 36, 6);
-			if (recipe.getInputs().size() == 1) {
+			Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(new ItemStack(icon.get()), 36, 6);
+			if (recipe.get().getInputs().size() == 1) {
 				Minecraft.getInstance().getItemRenderer()
-						.renderItemAndEffectIntoGUI(recipe.getInputs().get(0).getMatchingStacks()[0], 36, 6);
-			} else if (recipe.getInputs().size() == 2) {
+						.renderItemAndEffectIntoGUI(recipe.get().getInputs().get(0).getMatchingStacks()[0], 36, 6);
+			} else if (recipe.get().getInputs().size() == 2) {
 				Minecraft.getInstance().getItemRenderer()
-						.renderItemAndEffectIntoGUI(recipe.getInputs().get(0).getMatchingStacks()[0], 10, 36);
+						.renderItemAndEffectIntoGUI(recipe.get().getInputs().get(0).getMatchingStacks()[0], 10, 36);
 				Minecraft.getInstance().getItemRenderer()
-						.renderItemAndEffectIntoGUI(recipe.getInputs().get(1).getMatchingStacks()[0], 10, 60);
+						.renderItemAndEffectIntoGUI(recipe.get().getInputs().get(1).getMatchingStacks()[0], 10, 60);
 
 			}
 
@@ -134,8 +136,8 @@ public class GuiRunePattern extends Screen {
 		}
 		for (int l = 0; l < runeButtonArray.length; l++) {
 			for (int m = 0; m < runeButtonArray.length; m++) {
-				for (int k = 0; k < recipe.getActivatedRunes().size(); k++) {
-					if (runeButtonArray[l][m].getId() == recipe.getActivatedRunes().get(k)) {
+				for (int k = 0; k < recipe.get().getActivatedRunes().size(); k++) {
+					if (runeButtonArray[l][m].getId() == recipe.get().getActivatedRunes().get(k)) {
 						runeButtonArray[l][m].setState(true);
 					}
 				}

@@ -9,8 +9,8 @@ import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.container.ContainerMorphlingJar;
 import com.huto.hemomancy.container.ContainerRuneBinder;
 import com.huto.hemomancy.container.PlayerExpandedContainer;
-import com.huto.hemomancy.recipes.CopyMorphlingJarDataRecipe;
-import com.huto.hemomancy.recipes.CopyRuneBinderDataRecipe;
+import com.huto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
+import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
 
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;

@@ -6,6 +6,7 @@ import java.util.List;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.gui.GuiUtil;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -66,7 +67,7 @@ public class GuiRuneBinderViewer extends Screen {
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).renderWidget(matrixStack, mouseX, mouseY, 511);
 			if (buttons.get(i).isHovered()) {
-				ItemStack stack = Hemomancy.findRuneBinder(player);
+				ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
 				IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 						.orElseThrow(NullPointerException::new);
 				if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
@@ -82,7 +83,7 @@ public class GuiRuneBinderViewer extends Screen {
 
 		GlStateManager.pushMatrix();
 		{
-			ItemStack stack = Hemomancy.findRuneBinder(player);
+			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
 			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 					.orElseThrow(NullPointerException::new);
 
@@ -127,7 +128,7 @@ public class GuiRuneBinderViewer extends Screen {
 		int sideLoc = left + guiWidth;
 		int verticalLoc = top + guiHeight;
 		buttons.clear();
-		ItemStack stack = Hemomancy.findRuneBinder(player);
+		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
 		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 				.orElseThrow(NullPointerException::new);
 

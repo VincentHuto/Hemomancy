@@ -12,7 +12,7 @@ import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.network.PacketChiselCraftingEvent;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.PacketUpdateChiselRunes;
-import com.huto.hemomancy.recipes.RecipeChiselStation;
+import com.huto.hemomancy.recipe.RecipeChiselStation;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;

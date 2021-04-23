@@ -22,16 +22,20 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemBloodMemory extends Item {
 
-	public ItemBloodMemory(Properties properties) {
+	RegistryObject<BloodManipulation> manip;
+
+	public ItemBloodMemory(Properties properties, RegistryObject<BloodManipulation> manip) {
 		super(properties.maxStackSize(1));
+		this.manip = manip;
 	}
 
 	public BloodManipulation getManip() {
-		return null;
+		return manip.get();
 	}
 
 	@Override

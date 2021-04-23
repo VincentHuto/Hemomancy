@@ -86,7 +86,7 @@ public class KnownManipulationEvents {
 						BloodManipulation selectedManip = ManipulationInit
 								.getByName(known.getSelectedManip().getName());
 						if (selectedManip != null) {
-							if (selectedManip.getName() == ManipulationInit.sanguine_ward.getName()) {
+							if (selectedManip.getName() == ManipulationInit.sanguine_ward.get().getName()) {
 								double dist = e.getEntityLiving().getDistance(player);
 								RayTraceResult trace = e.getEntityLiving().pick(dist, 0, false);
 								PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(

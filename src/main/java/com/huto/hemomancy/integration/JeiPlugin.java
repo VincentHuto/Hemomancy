@@ -8,8 +8,8 @@ import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.integration.jei.BloodCraftingCategory;
 import com.huto.hemomancy.integration.jei.ChiselRecipeCategory;
-import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
-import com.huto.hemomancy.recipes.ModChiselRecipes;
+import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.huto.hemomancy.recipe.ModChiselRecipes;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;

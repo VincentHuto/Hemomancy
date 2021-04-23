@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerRuneBinder;
+import com.huto.hemomancy.item.rune.ItemRuneBinder;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,11 +30,11 @@ public class PacketOpenRuneBinder {
 	public static void handle(final PacketOpenRuneBinder message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity player = ctx.get().getSender();
-			if (!Hemomancy.findRuneBinder(player).isEmpty()) {
+			if (!Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class).isEmpty()) {
 				player.openContainer(new INamedContainerProvider() {
 					@Override
 					public ITextComponent getDisplayName() {
-						return Hemomancy.findRuneBinder(player).getDisplayName();
+						return Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class).getDisplayName();
 					}
 
 					@Nullable

@@ -11,8 +11,8 @@ import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.network.VanillaPacketDispatcher;
-import com.huto.hemomancy.recipes.ModChiselRecipes;
-import com.huto.hemomancy.recipes.RecipeChiselStation;
+import com.huto.hemomancy.recipe.ModChiselRecipes;
+import com.huto.hemomancy.recipe.RecipeChiselStation;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

@@ -15,9 +15,9 @@ import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.model.animation.IAnimatable;
-import com.huto.hemomancy.render.entity.constructs.RenderIronPillar;
-import com.huto.hemomancy.render.entity.constructs.RenderIronSpike;
-import com.huto.hemomancy.render.entity.constructs.RenderIronWall;
+import com.huto.hemomancy.render.entity.construct.RenderIronPillar;
+import com.huto.hemomancy.render.entity.construct.RenderIronSpike;
+import com.huto.hemomancy.render.entity.construct.RenderIronWall;
 import com.huto.hemomancy.render.entity.mob.RenderAbhorentThought;
 import com.huto.hemomancy.render.entity.mob.RenderChitinite;
 import com.huto.hemomancy.render.entity.mob.RenderChthonian;
@@ -44,6 +44,7 @@ import com.huto.hemomancy.render.layer.RenderBloodLayer;
 import com.huto.hemomancy.render.tile.RenderChiselStation;
 import com.huto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
+import com.huto.hemomancy.render.tile.RenderMortalDisplay;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 
@@ -104,6 +105,7 @@ public class ClientEventSubscriber {
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.unstained_podium.get(), RenderUnstainedPodium::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.dendritic_distributor.get(),
 				RenderDendriticDistributor::new);
+		ClientRegistry.bindTileEntityRenderer(TileEntityInit.mortal_display.get(), RenderMortalDisplay::new);
 
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);

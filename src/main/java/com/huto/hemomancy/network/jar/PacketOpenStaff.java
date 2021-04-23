@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,11 +30,11 @@ public class PacketOpenStaff {
 	public static void handle(final PacketOpenStaff message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity player = ctx.get().getSender();
-			if (!Hemomancy.findLivingStaff(player).isEmpty()) {
+			if (!Hemomancy.findItemInPlayerInv(player, ItemLivingStaff.class).isEmpty()) {
 				player.openContainer(new INamedContainerProvider() {
 					@Override
 					public ITextComponent getDisplayName() {
-						return Hemomancy.findLivingStaff(player).getDisplayName();
+						return Hemomancy.findItemInPlayerInv(player, ItemLivingStaff.class).getDisplayName();
 					}
 
 					@Nullable

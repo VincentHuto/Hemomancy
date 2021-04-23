@@ -10,8 +10,8 @@ import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
-import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
-import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
+import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
+import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.Mod;

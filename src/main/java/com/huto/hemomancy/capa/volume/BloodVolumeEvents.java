@@ -1,15 +1,11 @@
 package com.huto.hemomancy.capa.volume;
 
 import java.awt.Color;
-import java.awt.Point;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.font.ModTextFormatting;
-import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -17,9 +13,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -123,11 +117,15 @@ public class BloodVolumeEvents {
 					Minecraft.getInstance().textureManager
 							.bindTexture(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 					event.getMatrixStack().push();
-					event.getMatrixStack().scale(0.25f, 0.25f, 0.25f);
+					float diffX = 1920 / event.getWindow().getWidth();
+					float diffY = 1080 / event.getWindow().getHeight();
+					event.getMatrixStack().scale((float) Math.pow(diffX, 1 / 3), (float) Math.pow(diffY, 1 / 3), 0.5f);
+					/*
+					 * AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
+					 * event.getWindow().getHeight(), new Color(25, 0, 0, 26).getRGB());
+					 */
 					AbstractGui.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getWidth(),
-							event.getWindow().getHeight(), 1920, 1080);
-					AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
-							event.getWindow().getHeight(), new Color(40, 0, 0, 26).getRGB());
+							event.getWindow().getHeight(), (1920), (1080));
 					fontRenderer.drawString(event.getMatrixStack(), "Blood Shot", event.getWindow().getWidth() / 2, 15,
 							new Color(0, 0, 0, 0).getRGB());
 					event.getMatrixStack().pop();

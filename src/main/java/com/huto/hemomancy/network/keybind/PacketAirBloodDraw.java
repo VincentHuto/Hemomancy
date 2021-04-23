@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
@@ -51,7 +52,7 @@ public class PacketAirBloodDraw {
 				float pTic = message.parTick;
 				ServerWorld sWorld = (ServerWorld) player.world;
 				RayTraceResult airTrace = player.pick(1.5, pTic, false);
-				ItemStack staff = Hemomancy.findLivingStaff(player);
+				ItemStack staff = Hemomancy.findItemInPlayerInv(player, ItemLivingStaff.class);
 				IItemHandler handler = staff.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 						.orElseThrow(NullPointerException::new);
 				ItemStack selected = handler.getStackInSlot(0);

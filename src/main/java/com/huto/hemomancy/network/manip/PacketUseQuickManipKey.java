@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
-import com.huto.hemomancy.manipulation.quick.conjure.ManipBaseConjuration;
+import com.huto.hemomancy.manipulation.quick.ManipConjuration;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -53,10 +53,10 @@ public class PacketUseQuickManipKey {
 						// Quick and Passives
 						if (selectedManip.getType() == EnumManipulationType.QUICK
 								|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
-							if (selectedManip instanceof ManipBaseConjuration) {
-								ManipBaseConjuration conjure = (ManipBaseConjuration) selectedManip;
+							if (selectedManip instanceof ManipConjuration) {
+								ManipConjuration conjure = (ManipConjuration) selectedManip;
 								if (!player.getHeldItemMainhand().isEmpty()) {
-									if (player.getHeldItemMainhand().getItem() == conjure.getItem()) {
+									if (player.getHeldItemMainhand().getItem() == conjure.getItem().get()) {
 										player.getHeldItemMainhand().shrink(1);
 										player.sendStatusMessage(
 												new StringTextComponent("Dispelled: " + conjure.getProperName())

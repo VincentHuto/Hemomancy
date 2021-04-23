@@ -2,6 +2,7 @@ package com.huto.hemomancy.render.layer;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.model.entity.armor.ModelLivingBladeHip;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -32,7 +33,7 @@ public class LivingBladeHipRenderLayer<T extends PlayerEntity, M extends PlayerM
 			PlayerEntity player, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
 			float headPitch, float scale) {
 
-		if (Hemomancy.findLivingBlade(player) != ItemStack.EMPTY) {
+		if (Hemomancy.findItemInPlayerInv(player, ItemLivingBlade.class) != ItemStack.EMPTY) {
 			if (player.getHeldItemMainhand().getItem() != ItemInit.living_blade.get()
 					&& player.getHeldItemOffhand().getItem() != ItemInit.living_blade.get()) {
 				matrixStack.push();

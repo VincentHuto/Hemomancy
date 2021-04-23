@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.huto.hemomancy.recipes.PolypRecipe;
-import com.huto.hemomancy.recipes.PolypRecipes;
+import com.huto.hemomancy.recipe.PolypRecipe;
+import com.huto.hemomancy.recipe.PolypRecipes;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

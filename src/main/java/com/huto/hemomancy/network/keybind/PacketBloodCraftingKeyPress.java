@@ -8,8 +8,8 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
-import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
+import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
+import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

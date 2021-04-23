@@ -6,8 +6,8 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
-import com.huto.hemomancy.recipes.BaseBloodCraftingRecipe;
-import com.huto.hemomancy.recipes.ModBloodCraftingRecipes;
+import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
+import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

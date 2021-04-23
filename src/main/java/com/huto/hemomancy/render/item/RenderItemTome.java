@@ -101,7 +101,7 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(model.getRenderType(location));
 			ms.scale(0.75f, 0.75f, 0.75f);
 			if (transform == TransformType.GUI) {
-				ms.translate(0.15, 0.05, 0);
+				ms.translate(0.15, 0.03, 0);
 				ms.scale(0.8f, 0.8f, 0.8f);
 				ms.rotate(new Quaternion(Vector3f.YP, -125, true));
 				ms.rotate(new Quaternion(Vector3f.XP, 35, true));

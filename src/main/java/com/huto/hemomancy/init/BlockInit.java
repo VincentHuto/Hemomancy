@@ -8,9 +8,11 @@ import com.huto.hemomancy.block.BlockChiselStation;
 import com.huto.hemomancy.block.BlockCrimsonFlame;
 import com.huto.hemomancy.block.BlockDendriticDistributor;
 import com.huto.hemomancy.block.BlockMorphlingIncubator;
+import com.huto.hemomancy.block.BlockMortalDisplay;
 import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
+import com.huto.hemomancy.block.BlockTestSupplier;
 import com.huto.hemomancy.block.BlockUnstainedPodium;
 import com.huto.hemomancy.block.idol.BlockHumaneIdol;
 import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
@@ -37,7 +39,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class BlockInit {
-
 	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> COLUMNBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
@@ -50,6 +51,9 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
+	public static final RegistryObject<Block> test_block = BASEBLOCKS.register("test_block",
+			() -> new BlockTestSupplier(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
+					.sound(SoundType.GLASS).notSolid(), ItemInit.bloody_flask));
 
 	// Ash
 	public static final RegistryObject<Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
@@ -125,6 +129,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new BlockDendriticDistributor(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+	public static final RegistryObject<Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
+			() -> new BlockMortalDisplay(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
@@ -138,7 +145,7 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());
-			RenderTypeLookup.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.getTranslucent());
+			RenderTypeLookup.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.getCutoutMipped());
 
 		}
 	}

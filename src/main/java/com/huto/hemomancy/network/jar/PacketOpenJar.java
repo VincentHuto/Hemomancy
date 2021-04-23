@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerMorphlingJar;
+import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -29,11 +30,11 @@ public class PacketOpenJar {
 	public static void handle(final PacketOpenJar message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity player = ctx.get().getSender();
-			if (!Hemomancy.findMorphlingJar(player).isEmpty()) {
+			if (!Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class).isEmpty()) {
 				player.openContainer(new INamedContainerProvider() {
 					@Override
 					public ITextComponent getDisplayName() {
-						return Hemomancy.findMorphlingJar(player).getDisplayName();
+						return Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class).getDisplayName();
 					}
 
 					@Nullable

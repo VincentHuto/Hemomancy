@@ -38,15 +38,10 @@ import net.minecraft.world.World;
 
 public class BlockDendriticDistributor extends Block {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.makeCuboidShape(5, 0, 5, 11, 2, 11), Block.makeCuboidShape(7, 2, 7, 9, 15, 9),
-					Block.makeCuboidShape(8.5, 4, 7, 9.5, 12, 9), Block.makeCuboidShape(6.5, 4, 7, 7.5, 12, 9),
-					Block.makeCuboidShape(7, 4, 8.5, 9, 12, 9.5), Block.makeCuboidShape(7, 4, 6.5, 9, 12, 7.5),
-					Block.makeCuboidShape(10.5, 0.4, 5.5, 11.5, 1.400, 10.5),
-					Block.makeCuboidShape(4.5, 0.4, 5.5, 5.5, 1.400, 10.5),
-					Block.makeCuboidShape(5.5, 0.4, 4.5, 10.5, 1.400, 5.5),
-					Block.makeCuboidShape(5.5, 0.4, 10.5, 10.5, 1.400, 11.5),
-					Block.makeCuboidShape(6, 12.70, 6, 10, 14.8, 10), Block.makeCuboidShape(6, 0.700, 6, 10, 2.80, 10))
+	private static final VoxelShape SHAPE_N = Stream.of(Block.makeCuboidShape(5, 2, 5, 11, 7, 11),
+			Block.makeCuboidShape(11, 2, 5, 12, 6, 11), Block.makeCuboidShape(5, 2, 4, 11, 6, 5),
+			Block.makeCuboidShape(4, 2, 5, 5, 6, 11), Block.makeCuboidShape(5, 2, 11, 11, 6, 12),
+			Block.makeCuboidShape(4, 0, 4, 12, 2, 12), Block.makeCuboidShape(5.5, 6.75, 5.5, 10.5, 7.75, 10.5))
 			.reduce((v1, v2) -> {
 				return VoxelShapes.combineAndSimplify(v1, v2, IBooleanFunction.OR);
 			}).get();

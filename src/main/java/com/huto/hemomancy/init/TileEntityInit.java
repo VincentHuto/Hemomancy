@@ -5,6 +5,7 @@ import com.huto.hemomancy.tile.TileEntityChiselStation;
 import com.huto.hemomancy.tile.TileEntityDendriticDistributor;
 import com.huto.hemomancy.tile.TileEntityHumaneIdol;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
+import com.huto.hemomancy.tile.TileEntityMortalDisplay;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
 import com.huto.hemomancy.tile.TileEntitySerpentineIdol;
@@ -41,5 +42,8 @@ public class TileEntityInit {
 					.create(TileEntitySerpentineIdol::new, BlockInit.serpentine_idol.get()).build(null));
 	public static final RegistryObject<TileEntityType<TileEntityHumaneIdol>> humane_idol = TILES.register("humane_idol",
 			() -> TileEntityType.Builder.create(TileEntityHumaneIdol::new, BlockInit.humane_idol.get()).build(null));
+	public static final RegistryObject<TileEntityType<TileEntityMortalDisplay>> mortal_display = TILES
+			.register("mortal_display", () -> TileEntityType.Builder
+					.create(TileEntityMortalDisplay::new, BlockInit.mortal_display.get()).build(null));
 
 }

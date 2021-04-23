@@ -1,7 +1,7 @@
 package com.huto.hemomancy.item.rune.pattern;
 
 import com.huto.hemomancy.gui.mindrunes.GuiRunePattern;
-import com.huto.hemomancy.recipes.RecipeChiselStation;
+import com.huto.hemomancy.recipe.RecipeChiselStation;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,14 +14,19 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
 
 public class ItemRunePattern extends Item {
 
 	String text;
+	RegistryObject<RecipeChiselStation> recipe;
+	RegistryObject<Item> rune;
 
-	public ItemRunePattern(Properties prop, String text) {
-		super(prop);
-		prop.maxStackSize(1);
+	public ItemRunePattern(Properties prop, RegistryObject<Item> rune, RegistryObject<RecipeChiselStation> recipe,
+			String text) {
+		super(prop.maxStackSize(1));
+		this.rune = rune;
+		this.recipe = recipe;
 		this.text = text;
 	}
 
@@ -37,10 +42,10 @@ public class ItemRunePattern extends Item {
 	}
 
 	public RecipeChiselStation getRecipe() {
-		return null;
+		return recipe.get();
 	}
 
 	public GuiRunePattern getPatternGui() {
-		return null;
+		return new GuiRunePattern(rune, recipe, text);
 	}
 }

@@ -34,8 +34,8 @@ public class PacketChangeMorphKey {
 	public static class Handler {
 		public static void handle(final PacketChangeMorphKey msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
-				ItemStack staff = Hemomancy.findLivingStaff(ctx.get().getSender());
-				ItemStack jar = Hemomancy.findMorphlingJar(ctx.get().getSender());
+				ItemStack staff = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), ItemLivingStaff.class);
+				ItemStack jar = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), ItemMorphlingJar.class);
 				if (staff.getItem() instanceof ItemLivingStaff) {
 					if (jar.getItem() instanceof ItemMorphlingJar) {
 						IItemHandler staffHandler = staff.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
