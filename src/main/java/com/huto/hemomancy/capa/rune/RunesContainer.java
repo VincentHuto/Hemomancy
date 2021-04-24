@@ -17,7 +17,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class RunesContainer extends ItemStackHandler implements IRunesItemHandler {
 
-	private final static int RUNE_SLOTS = 7;
+	private final static int RUNE_SLOTS =8;
 	private final ItemStack[] previous = new ItemStack[RUNE_SLOTS];
 	private boolean[] changed = new boolean[RUNE_SLOTS];
 	private boolean blockEvents = false;

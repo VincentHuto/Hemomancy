@@ -4,6 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
+import com.huto.hemomancy.item.ItemBloodAbsorption;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
@@ -26,6 +27,7 @@ import com.huto.hemomancy.item.rune.ItemMilkweedRune;
 import com.huto.hemomancy.item.rune.ItemRune;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.item.rune.ItemSelfReflectionMirror;
+import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
@@ -83,6 +85,11 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
+	// Charm
+	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
+			() -> new ItemVasculariumCharm(new Item.Properties().group(HemomancyItemGroup.instance),
+					EnumBloodTendency.ANIMUS, 5));
+
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -117,8 +124,7 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
-			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blood_absorbtion));
+			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));

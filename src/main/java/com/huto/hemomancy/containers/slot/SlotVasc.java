@@ -3,17 +3,17 @@ package com.huto.hemomancy.containers.slot;
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.item.rune.ItemContractRune;
+import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotContractRune extends SlotItemHandler {
+public class SlotVasc extends SlotItemHandler {
 	int mindruneSlot;
 	PlayerEntity player;
 
-	public SlotContractRune(PlayerEntity player, IRunesItemHandler itemHandler, int slot, int par4, int par5) {
+	public SlotVasc(PlayerEntity player, IRunesItemHandler itemHandler, int slot, int par4, int par5) {
 		super(itemHandler, slot, par4, par5);
 		this.mindruneSlot = slot;
 		this.player = player;
@@ -21,7 +21,7 @@ public class SlotContractRune extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		if (stack.getItem() instanceof ItemContractRune) {
+		if (stack.getItem() instanceof ItemVasculariumCharm) {
 			return true;
 		} else {
 			return false;

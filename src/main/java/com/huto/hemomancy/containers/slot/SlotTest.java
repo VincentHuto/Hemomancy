@@ -9,11 +9,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotContractRune extends SlotItemHandler {
+public class SlotTest extends SlotItemHandler {
 	int mindruneSlot;
 	PlayerEntity player;
 
-	public SlotContractRune(PlayerEntity player, IRunesItemHandler itemHandler, int slot, int par4, int par5) {
+	public SlotTest(PlayerEntity player, IRunesItemHandler itemHandler, int slot, int par4, int par5) {
 		super(itemHandler, slot, par4, par5);
 		this.mindruneSlot = slot;
 		this.player = player;

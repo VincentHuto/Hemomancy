@@ -113,7 +113,7 @@ public class BloodVolumeEvents {
 						.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 				// Coven color Overlay
 				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-				if (volume.getBloodVolume() < 2000) {
+				if (volume.getBloodVolume() < 0) {
 					Minecraft.getInstance().textureManager
 							.bindTexture(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 					event.getMatrixStack().push();

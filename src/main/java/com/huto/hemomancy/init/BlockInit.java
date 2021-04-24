@@ -12,7 +12,6 @@ import com.huto.hemomancy.block.BlockMortalDisplay;
 import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
-import com.huto.hemomancy.block.BlockTestSupplier;
 import com.huto.hemomancy.block.BlockUnstainedPodium;
 import com.huto.hemomancy.block.idol.BlockHumaneIdol;
 import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
@@ -51,9 +50,6 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
-	public static final RegistryObject<Block> test_block = BASEBLOCKS.register("test_block",
-			() -> new BlockTestSupplier(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
-					.sound(SoundType.GLASS).notSolid(), ItemInit.bloody_flask));
 
 	// Ash
 	public static final RegistryObject<Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",

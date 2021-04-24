@@ -49,7 +49,7 @@ public class ItemMilkweedRune extends ItemContractRune implements IRune, IRender
 				IRunesItemHandler runes = player.getCapability(RunesCapabilities.RUNES)
 						.orElseThrow(IllegalArgumentException::new);
 				int items = 0;
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < runes.getSlots(); i++) {
 					items++;
 				}
 				float[] angles = new float[runes.getSlots()];

@@ -9,6 +9,7 @@ import com.huto.hemomancy.containers.slot.SlotContractRune;
 import com.huto.hemomancy.containers.slot.SlotRune;
 import com.huto.hemomancy.containers.slot.SlotRuneArmor;
 import com.huto.hemomancy.containers.slot.SlotRuneOffHand;
+import com.huto.hemomancy.containers.slot.SlotVasc;
 import com.huto.hemomancy.init.ContainerInit;
 
 import net.minecraft.entity.MobEntity;
@@ -63,11 +64,11 @@ public class PlayerExpandedContainer extends Container {
 			this.addSlot(
 					new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, equipmentslottype, this.player));
 		}
-
 		this.addSlot(new SlotContractRune(player, runes, 0, 78, 8));
 		this.addSlot(new SlotRune(player, runes, 1, 78 + 1 * 18, 8));
 		this.addSlot(new SlotRune(player, runes, 2, 78 + 2 * 18, 8));
 		this.addSlot(new SlotRune(player, runes, 3, 78 + 3 * 18, 8));
+		this.addSlot(new SlotVasc(player, runes, 4, 78, 26));
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {
@@ -85,6 +86,7 @@ public class PlayerExpandedContainer extends Container {
 	@Override
 	public void onCraftMatrixChanged(IInventory par1IInventory) {
 		try {
+
 			Method onCraftChange = ObfuscationReflectionHelper.findMethod(WorkbenchContainer.class, "func_217066_a",
 					int.class, World.class, PlayerEntity.class, CraftingInventory.class, CraftResultInventory.class);
 			onCraftChange.invoke(null, this.windowId, this.player.world, this.player, this.craftMatrix,
@@ -232,8 +234,4 @@ public class PlayerExpandedContainer extends Container {
 		return slot.inventory != this.craftResult && super.canMergeSlot(stack, slot);
 	}
 
-	@SuppressWarnings("unused")
-	private void addRuneSlots() {
-
-	}
 }

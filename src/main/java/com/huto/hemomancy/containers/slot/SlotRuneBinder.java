@@ -21,7 +21,6 @@ public class SlotRuneBinder extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(@Nonnull ItemStack stack) {
-		// check for shulkers.
 		if (stack.getItem() instanceof ItemRunePattern) {
 			return true;
 		} else {

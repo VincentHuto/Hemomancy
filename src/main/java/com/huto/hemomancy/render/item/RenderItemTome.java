@@ -80,13 +80,13 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 			float f5 = MathHelper.frac(f3 + 0.75F) * 1.6F - 0.3F;
 			if (player.getHeldItemMainhand() == stack || player.getHeldItemOffhand() == stack) {
 				if (close < 1) {
-					close += 0.03f;
+					close += 0.005f;
 					this.model.setBookState(f, MathHelper.clamp(f4, 0.0F, 1.0F), MathHelper.clamp(f5, 0.0F, 1.0F),
 							close);
 				}
 			} else {
 				if (close > 0) {
-					close -= 0.03f;
+					close -= 0.005f;
 					this.model.setBookState(f, MathHelper.clamp(f4, 0.0F, 1.0F), MathHelper.clamp(f5, 0.0F, 1.0F),
 							close);
 				}
