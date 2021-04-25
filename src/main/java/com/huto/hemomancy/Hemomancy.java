@@ -29,6 +29,7 @@ import com.huto.hemomancy.init.SkillPointInit;
 import com.huto.hemomancy.init.StructureInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.recipe.ArmBannerCraftRecipe;
 import com.huto.hemomancy.recipe.CopyBloodGourdDataRecipe;
 import com.huto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
@@ -50,6 +51,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.FlatChunkGenerator;
@@ -286,6 +288,10 @@ public class Hemomancy {
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
+
+		// BANNER TEST DOHICKY
+		event.getRegistry().register(new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new)
+				.setRegistryName(new ResourceLocation(MOD_ID, "arm_banner_craft")));
 	}
 
 	// Structure Jazz
@@ -302,6 +308,7 @@ public class Hemomancy {
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
 	}
+
 
 	/**
 	 * Use this for dimension blacklists for your structure.

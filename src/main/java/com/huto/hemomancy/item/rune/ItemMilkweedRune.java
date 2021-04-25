@@ -26,7 +26,6 @@ public class ItemMilkweedRune extends ItemContractRune implements IRune, IRender
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onPlayerRuneRender(MatrixStack matrix, int packedLightIn, IRenderTypeBuffer buffer, PlayerEntity player,
 			RenderType type, float partialTicks) {

@@ -21,6 +21,7 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
+import com.huto.hemomancy.item.rune.ItemArmBanner;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 import com.huto.hemomancy.item.rune.ItemGuidanceRune;
 import com.huto.hemomancy.item.rune.ItemMilkweedRune;
@@ -86,10 +87,14 @@ public class ItemInit {
 			Hemomancy.MOD_ID);
 
 	// Charm
-	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
-			() -> new ItemVasculariumCharm(new Item.Properties().group(HemomancyItemGroup.instance),
-					EnumBloodTendency.ANIMUS, 5));
+	public static final RegistryObject<Item> arm_banner = BASEITEMS.register("arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance)));
 
+	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
+			() -> new ItemVasculariumCharm(
+					new Item.Properties().group(HemomancyItemGroup.instance),
+					EnumBloodTendency.ANIMUS, 5));
+	
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
