@@ -1,6 +1,5 @@
 package com.huto.hemomancy.recipe;
 
-import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.inventory.CraftingInventory;
@@ -12,6 +11,7 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ArmBannerCraftRecipe extends SpecialRecipe {
 	public ArmBannerCraftRecipe(ResourceLocation idIn) {
@@ -90,8 +90,10 @@ public class ArmBannerCraftRecipe extends SpecialRecipe {
 
 	@Override
 	public IRecipeSerializer<?> getSerializer() {
-		return new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new)
-				.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, "arm_banner_craft"));
+		return SERIALIZER;
 	}
+
+	@ObjectHolder("hemomancy:arm_banner_craft")
+	public static SpecialRecipeSerializer<ArmBannerCraftRecipe> SERIALIZER;
 
 }

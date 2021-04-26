@@ -21,10 +21,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class LivingBladeHipRenderLayer<T extends PlayerEntity, M extends PlayerModel<T>> extends LayerRenderer<T, M> {
+public class RenderLivingBladeHipLayer<T extends PlayerEntity, M extends PlayerModel<T>> extends LayerRenderer<T, M> {
 	ModelLivingBladeHip model = new ModelLivingBladeHip();
 
-	public LivingBladeHipRenderLayer(IEntityRenderer<T, M> entityRendererIn) {
+	public RenderLivingBladeHipLayer(IEntityRenderer<T, M> entityRendererIn) {
 		super(entityRendererIn);
 	}
 

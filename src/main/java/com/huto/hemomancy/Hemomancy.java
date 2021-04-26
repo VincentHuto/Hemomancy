@@ -37,9 +37,10 @@ import com.huto.hemomancy.recipe.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
 import com.huto.hemomancy.recipe.PolypRecipes;
-import com.huto.hemomancy.render.layer.HandParticleLayer;
-import com.huto.hemomancy.render.layer.LivingBladeHipRenderLayer;
-import com.huto.hemomancy.render.layer.RunesRenderLayer;
+import com.huto.hemomancy.render.layer.RenderArmBannerLayer;
+import com.huto.hemomancy.render.layer.RenderBloodAbsorptionLayer;
+import com.huto.hemomancy.render.layer.RenderLivingBladeHipLayer;
+import com.huto.hemomancy.render.layer.RenderRunesLayer;
 import com.huto.hemomancy.util.ModEntityPredicates;
 
 import net.minecraft.client.Minecraft;
@@ -116,10 +117,11 @@ public class Hemomancy {
 		TileEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+		modEventBus.addListener(this::commonSetup);
+		modEventBus.addListener(this::enqueueIMC);
+		modEventBus.addListener(this::processIMC);
+		modEventBus.addListener(this::clientSetup);
+
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::onClientTick);
@@ -240,23 +242,26 @@ public class Hemomancy {
 		Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
 		PlayerRenderer render;
 		render = skinMap.get("default");
-		render.addLayer(new RunesRenderLayer(render));
+		render.addLayer(new RenderRunesLayer(render));
+		render.addLayer(new RenderArmBannerLayer(render));
 		if (!addedAbsorbLayerDefault) {
-			render.addLayer(new HandParticleLayer(render));
+			render.addLayer(new RenderBloodAbsorptionLayer(render));
 			addedAbsorbLayerDefault = true;
 		}
 		if (!addedSwordLayerDefault) {
-			render.addLayer(new LivingBladeHipRenderLayer(render));
+			render.addLayer(new RenderLivingBladeHipLayer(render));
 			addedSwordLayerDefault = true;
 		}
 		render = skinMap.get("slim");
-		render.addLayer(new RunesRenderLayer(render));
+		render.addLayer(new RenderRunesLayer(render));
+		render.addLayer(new RenderArmBannerLayer(render));
+
 		if (!addedSwordLayerSlim) {
-			render.addLayer(new LivingBladeHipRenderLayer(render));
+			render.addLayer(new RenderLivingBladeHipLayer(render));
 			addedSwordLayerSlim = true;
 		}
 		if (!addedAbsorbLayeSlim) {
-			render.addLayer(new HandParticleLayer(render));
+			render.addLayer(new RenderBloodAbsorptionLayer(render));
 			addedAbsorbLayeSlim = true;
 		}
 
@@ -288,10 +293,10 @@ public class Hemomancy {
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
+		new ArmBannerCraftRecipe(new ResourceLocation(MOD_ID, "arm_banner_craft"));
+		event.getRegistry()
+				.register(new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new).setRegistryName("arm_banner_craft"));
 
-		// BANNER TEST DOHICKY
-		event.getRegistry().register(new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new)
-				.setRegistryName(new ResourceLocation(MOD_ID, "arm_banner_craft")));
 	}
 
 	// Structure Jazz
@@ -308,7 +313,6 @@ public class Hemomancy {
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
 	}
-
 
 	/**
 	 * Use this for dimension blacklists for your structure.

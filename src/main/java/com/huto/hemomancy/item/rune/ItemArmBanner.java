@@ -36,7 +36,7 @@ public class ItemArmBanner extends Item {
 	private static final Random random = new Random();
 
 	public ItemArmBanner(Properties prop) {
-		super(prop.setISTER(() -> RenderArmBanner::new));
+		super(prop.maxStackSize(1).setISTER(() -> RenderArmBanner::new));
 	}
 
 	@Override
@@ -153,4 +153,5 @@ public class ItemArmBanner extends Item {
 	public static DyeColor getColor(ItemStack stack) {
 		return DyeColor.byId(stack.getOrCreateChildTag("BlockEntityTag").getInt("Base"));
 	}
+
 }

@@ -138,6 +138,8 @@ public class PacketHandler {
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
 		INSTANCE.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
 				PacketRuneSync::handle);
+		INSTANCE.registerMessage(networkID++, PacketArmBannerSync.class, PacketArmBannerSync::toBytes,
+				PacketArmBannerSync::new, PacketArmBannerSync::handle);
 
 	}
 

@@ -40,8 +40,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
-public class HandParticleLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M> {
-	public HandParticleLayer(IEntityRenderer<T, M> rendererIn) {
+public class RenderBloodAbsorptionLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M> {
+	public RenderBloodAbsorptionLayer(IEntityRenderer<T, M> rendererIn) {
 		super(rendererIn);
 	}
 

@@ -15,9 +15,9 @@ import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
-public class RunesRenderLayer<T extends PlayerEntity, M extends PlayerModel<T>> extends LayerRenderer<T, M> {
+public class RenderRunesLayer<T extends PlayerEntity, M extends PlayerModel<T>> extends LayerRenderer<T, M> {
 
-	public RunesRenderLayer(IEntityRenderer<T, M> entityRendererIn) {
+	public RenderRunesLayer(IEntityRenderer<T, M> entityRendererIn) {
 		super(entityRendererIn);
 	}
 

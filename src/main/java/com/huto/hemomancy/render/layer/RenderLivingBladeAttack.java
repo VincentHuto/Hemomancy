@@ -14,11 +14,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 
-public class LivingBladeAttackRender<T extends LivingEntity> extends LayerRenderer<T, PlayerModel<T>> {
+public class RenderLivingBladeAttack<T extends LivingEntity> extends LayerRenderer<T, PlayerModel<T>> {
 	public static final ResourceLocation field_204836_a = new ResourceLocation("textures/entity/trident_riptide.png");
 	private final ModelRenderer field_229143_b_ = new ModelRenderer(64, 64, 0, 0);
 
-	public LivingBladeAttackRender(IEntityRenderer<T, PlayerModel<T>> p_i50920_1_) {
+	public RenderLivingBladeAttack(IEntityRenderer<T, PlayerModel<T>> p_i50920_1_) {
 		super(p_i50920_1_);
 		this.field_229143_b_.addBox(-8.0F, -16.0F, -8.0F, 16.0F, 32.0F, 16.0F);
 	}
