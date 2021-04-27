@@ -5,12 +5,14 @@ import java.lang.reflect.Method;
 
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.containers.slot.SlotContractRune;
 import com.huto.hemomancy.containers.slot.SlotRune;
 import com.huto.hemomancy.containers.slot.SlotRuneArmor;
 import com.huto.hemomancy.containers.slot.SlotRuneOffHand;
-import com.huto.hemomancy.containers.slot.SlotVasc;
+import com.huto.hemomancy.containers.slot.SlotSelectiveRuneType;
 import com.huto.hemomancy.init.ContainerInit;
+import com.huto.hemomancy.item.rune.ItemArmBanner;
+import com.huto.hemomancy.item.rune.ItemContractRune;
+import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,11 +66,12 @@ public class PlayerExpandedContainer extends Container {
 			this.addSlot(
 					new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, equipmentslottype, this.player));
 		}
-		this.addSlot(new SlotContractRune(player, runes, 0, 78, 8));
-		this.addSlot(new SlotRune(player, runes, 1, 78 + 1 * 18, 8));
-		this.addSlot(new SlotRune(player, runes, 2, 78 + 2 * 18, 8));
-		this.addSlot(new SlotRune(player, runes, 3, 78 + 3 * 18, 8));
-		this.addSlot(new SlotVasc(player, runes, 4, 78, 26));
+		this.addSlot(new SlotSelectiveRuneType(player, ItemContractRune.class, runes, 0, 77, 8));
+		this.addSlot(new SlotRune(player, runes, 1, 77 + 1 * 18, 8));
+		this.addSlot(new SlotRune(player, runes, 2, 77 + 2 * 18, 8));
+		this.addSlot(new SlotRune(player, runes, 3, 77 + 3 * 18, 8));
+		this.addSlot(new SlotSelectiveRuneType(player, ItemVasculariumCharm.class, runes, 4, 77, 26));
+		this.addSlot(new SlotSelectiveRuneType(player, ItemArmBanner.class, runes, 5, 77, 44));
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {

@@ -51,6 +51,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
@@ -86,15 +87,18 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
+	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
+			() -> new BannerPatternItem(BannerTypeInit.heart,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	// Charm
-	public static final RegistryObject<Item> arm_banner = BASEITEMS.register("arm_banner",
+	public static final RegistryObject<Item> arm_banner = SPECIALITEMS.register("arm_banner",
 			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
-			() -> new ItemVasculariumCharm(
-					new Item.Properties().group(HemomancyItemGroup.instance),
+			() -> new ItemVasculariumCharm(new Item.Properties().group(HemomancyItemGroup.instance),
 					EnumBloodTendency.ANIMUS, 5));
-	
+
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new ItemBloodyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));

@@ -12,13 +12,13 @@ public class ModelArmBanner extends Model {
 	private final ModelRenderer handle;
 
 	public ModelArmBanner() {
-		 super(RenderType::getEntitySolid);
-	      this.textureWidth = 64;
-	      this.textureHeight = 64;
-	      this.plate = new ModelRenderer(this, 0, 0);
-	      this.plate.addBox(-6.0F, -11.0F, -2.0F, 12.0F, 22.0F, 1.0F, 0.0F);
-	      this.handle = new ModelRenderer(this, 26, 0);
-	      this.handle.addBox(-1.0F, -3.0F, -1.0F, 2.0F, 6.0F, 6.0F, 0.0F);
+		super(RenderType::getEntitySolid);
+		this.textureWidth = 64;
+		this.textureHeight = 64;
+		this.plate = new ModelRenderer(this, 0, 0);
+		this.plate.addBox(-6.0F, -11.0F, -2.0F, 12.0F, 22.0F, 1.0F, 0.0F);
+		this.handle = new ModelRenderer(this, 26, 0);
+		this.handle.addBox(-1.0F, -3.0F, -1.0F, 2.0F, 6.0F, 6.0F, 0.0F);
 	}
 
 	public ModelRenderer getPlate() {

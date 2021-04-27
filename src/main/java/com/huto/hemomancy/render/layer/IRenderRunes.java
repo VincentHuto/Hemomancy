@@ -72,4 +72,7 @@ public interface IRenderRunes extends IRune {
 
 		HEAD;
 	}
+
+	void onPlayerRuneRender(MatrixStack matrix, ItemStack stack, int packedLight, IRenderTypeBuffer iRenderTypeBuffer,
+			PlayerEntity player, RenderType type, float partialTicks);
 }

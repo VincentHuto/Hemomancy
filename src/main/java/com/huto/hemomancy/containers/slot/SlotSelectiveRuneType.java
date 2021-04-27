@@ -3,26 +3,28 @@ package com.huto.hemomancy.containers.slot;
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.item.rune.ItemArmBanner;
-import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotVasc extends SlotItemHandler {
+public class SlotSelectiveRuneType extends SlotItemHandler {
 	int mindruneSlot;
 	PlayerEntity player;
+	Class<? extends Item> itemType;
 
-	public SlotVasc(PlayerEntity player, IRunesItemHandler itemHandler, int slot, int par4, int par5) {
+	public SlotSelectiveRuneType(PlayerEntity player, Class<? extends Item> itemType, IRunesItemHandler itemHandler,
+			int slot, int par4, int par5) {
 		super(itemHandler, slot, par4, par5);
 		this.mindruneSlot = slot;
 		this.player = player;
+		this.itemType = itemType;
 	}
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		if (stack.getItem() instanceof ItemVasculariumCharm || stack.getItem() instanceof ItemArmBanner) {
+		if (itemType.isInstance(stack.getItem())) {
 			return true;
 		} else {
 			return false;

@@ -77,4 +77,10 @@ public class ItemMilkweedRune extends ItemContractRune implements IRune, IRender
 			}
 		}
 	}
+
+	@Override
+	public void onPlayerRuneRender(MatrixStack matrix, ItemStack stack, int packedLight,
+			IRenderTypeBuffer iRenderTypeBuffer, PlayerEntity player, RenderType type, float partialTicks) {
+
+	}
 }

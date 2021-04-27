@@ -88,6 +88,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void regainBloodVolume(PlayerTickEvent e) {
+
 		/*
 		 * IBloodVolume bloodVolume =
 		 * e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)

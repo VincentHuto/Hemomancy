@@ -2,6 +2,7 @@ package com.huto.hemomancy.render.layer;
 
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
+import com.huto.hemomancy.item.rune.ItemArmBanner;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import net.minecraft.client.Minecraft;
@@ -50,8 +51,16 @@ public class RenderRunesLayer<T extends PlayerEntity, M extends PlayerModel<T>> 
 				stack.getCapability(RunesCapabilities.ITEM_RUNE).ifPresent(rune -> {
 					if (rune instanceof IRenderRunes) {
 						matrix.push();
-						((IRenderRunes) rune).onPlayerRuneRender(matrix, packedLightIn, iRenderTypeBuffer, player, type,
-								partialTicks);
+						if (!(stack.getItem() instanceof ItemArmBanner)) {
+							((IRenderRunes) rune).onPlayerRuneRender(matrix, packedLightIn, iRenderTypeBuffer, player,
+									type, partialTicks);
+						} else {
+							if (type != IRenderRunes.RenderType.HEAD) {
+								ItemArmBanner arm = (ItemArmBanner) stack.getItem();
+								arm.onPlayerRuneRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, type,
+										partialTicks);
+							}
+						}
 						matrix.pop();
 
 					}

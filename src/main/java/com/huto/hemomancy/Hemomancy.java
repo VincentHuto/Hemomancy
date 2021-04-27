@@ -37,7 +37,6 @@ import com.huto.hemomancy.recipe.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
 import com.huto.hemomancy.recipe.PolypRecipes;
-import com.huto.hemomancy.render.layer.RenderArmBannerLayer;
 import com.huto.hemomancy.render.layer.RenderBloodAbsorptionLayer;
 import com.huto.hemomancy.render.layer.RenderLivingBladeHipLayer;
 import com.huto.hemomancy.render.layer.RenderRunesLayer;
@@ -93,6 +92,7 @@ public class Hemomancy {
 	public static boolean forcesLoaded = false;
 
 	public Hemomancy() {
+
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
@@ -243,7 +243,6 @@ public class Hemomancy {
 		PlayerRenderer render;
 		render = skinMap.get("default");
 		render.addLayer(new RenderRunesLayer(render));
-		render.addLayer(new RenderArmBannerLayer(render));
 		if (!addedAbsorbLayerDefault) {
 			render.addLayer(new RenderBloodAbsorptionLayer(render));
 			addedAbsorbLayerDefault = true;
@@ -254,8 +253,6 @@ public class Hemomancy {
 		}
 		render = skinMap.get("slim");
 		render.addLayer(new RenderRunesLayer(render));
-		render.addLayer(new RenderArmBannerLayer(render));
-
 		if (!addedSwordLayerSlim) {
 			render.addLayer(new RenderLivingBladeHipLayer(render));
 			addedSwordLayerSlim = true;
@@ -293,9 +290,8 @@ public class Hemomancy {
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
-		new ArmBannerCraftRecipe(new ResourceLocation(MOD_ID, "arm_banner_craft"));
-		event.getRegistry()
-				.register(new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new).setRegistryName("arm_banner_craft"));
+		event.getRegistry().register(new SpecialRecipeSerializer<>(ArmBannerCraftRecipe::new)
+				.setRegistryName(new ResourceLocation(MOD_ID, "arm_banner_craft")));
 
 	}
 
