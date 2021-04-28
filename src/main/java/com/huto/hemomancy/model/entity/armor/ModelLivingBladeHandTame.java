@@ -49,8 +49,8 @@ public class ModelLivingBladeHandTame extends Model {
 		whole.setTextureOffset(18, 28).addBox(-0.5029F, -6.9441F, -2.0147F, 1.0F, 1.0F, 4.0F, 0.0F, false);
 		whole.setTextureOffset(29, 29).addBox(-0.5029F, -7.9441F, -1.0147F, 1.0F, 1.0F, 3.0F, 0.0F, false);
 		whole.setTextureOffset(0, 0).addBox(-0.5029F, -8.9441F, 1.9853F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-		whole.setTextureOffset(6, 9).addBox(-0.0029F, -19.9441F, -1.0147F, 0.0F, 12.0F, 3.0F, 0.0F, false);
-		whole.setTextureOffset(0, 9).addBox(-0.0029F, -31.9441F, -1.0147F, 0.0F, 12.0F, 3.0F, 0.0F, false);
+		whole.setTextureOffset(6, 9).addBox(-0.0029F, -19.9441F, -1.0147F, 0.001F, 12.0F, 3.0F, 0.0F, false);
+		whole.setTextureOffset(0, 9).addBox(-0.0029F, -31.9441F, -1.0147F, 0.001F, 12.0F, 3.0F, 0.0F, false);
 		whole.setTextureOffset(0, 0).addBox(-0.0029F, -32.9441F, -0.5147F, 0.0F, 1.0F, 2.0F, 0.0F, false);
 		whole.setTextureOffset(12, 21).addBox(-0.0029F, -33.9441F, 0.9853F, 0.0F, 2.0F, 1.0F, 0.0F, false);
 		whole.setTextureOffset(15, 6).addBox(-2.0029F, -4.4441F, -2.0147F, 4.0F, 1.0F, 4.0F, 0.0F, false);

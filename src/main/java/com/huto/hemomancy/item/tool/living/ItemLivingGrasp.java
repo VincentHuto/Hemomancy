@@ -66,8 +66,7 @@ public class ItemLivingGrasp extends Item {
 					playerVolume.subtractBloodVolume(50f);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-							new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-									playerVolume.getBloodVolume()));
+							new PacketBloodVolumeServer(playerVolume));
 					if (worldIn.rand.nextInt(10) == 6) {
 
 						player.sendStatusMessage(new StringTextComponent(

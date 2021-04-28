@@ -60,7 +60,7 @@ public class BloodLossEffect extends Effect {
 				playerVolume.subtractBloodVolume(0.5f * amplifier);
 				PacketHandler.CHANNELBLOODVOLUME.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(), playerVolume.getBloodVolume()));
+						new PacketBloodVolumeServer(playerVolume));
 			}
 		} else if (!ModEntityPredicates.NOBLOOD.test(entity)) {
 			entity.attackEntityFrom(DamageSource.MAGIC, 0.5F);

@@ -10,7 +10,7 @@ import com.huto.hemomancy.containers.slot.SlotRuneArmor;
 import com.huto.hemomancy.containers.slot.SlotRuneOffHand;
 import com.huto.hemomancy.containers.slot.SlotSelectiveRuneType;
 import com.huto.hemomancy.init.ContainerInit;
-import com.huto.hemomancy.item.rune.ItemArmBanner;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 

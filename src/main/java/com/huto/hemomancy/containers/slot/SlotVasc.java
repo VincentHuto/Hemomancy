@@ -3,7 +3,7 @@ package com.huto.hemomancy.containers.slot;
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.item.rune.ItemArmBanner;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.entity.player.PlayerEntity;

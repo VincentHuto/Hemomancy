@@ -3,7 +3,8 @@ package com.huto.hemomancy.render.item;
 import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.item.rune.ItemArmBanner;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.model.entity.armor.ModelArmBanner;
 import com.huto.hemomancy.model.entity.armor.ModelArmBannerNew;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -23,6 +24,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
@@ -33,7 +35,18 @@ import net.minecraft.util.math.vector.Vector3f;
 public class RenderArmBanner extends ItemStackTileEntityRenderer {
 	private final ModelArmBannerNew modelPauldron = new ModelArmBannerNew();
 	private final ModelArmBanner modelShield = new ModelArmBanner();
-	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/arm_banner.png");
+	public static final ResourceLocation fallback = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/arm_banner.png");
+	public static final ResourceLocation leather = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/leather_arm_banner.png");
+	public static final ResourceLocation iron = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/arm_banner.png");
+	public static final ResourceLocation gold = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/gold_arm_banner.png");
+	public static final ResourceLocation diamond = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/diamond_arm_banner.png");
+	public static final ResourceLocation netherite = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/arm_banner/netherite_arm_banner.png");
 	public static final RenderMaterial LOCATION_ROYAL_GUARD_SHIELD_BASE = new RenderMaterial(
 			AtlasTexture.LOCATION_BLOCKS_TEXTURE,
 			new ResourceLocation(Hemomancy.MOD_ID, "entity/royal_guard_shield_base"));
@@ -44,6 +57,13 @@ public class RenderArmBanner extends ItemStackTileEntityRenderer {
 	@Override
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType p_239207_2_, MatrixStack matrixStack,
 			IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+		Item type = stack.getItem();
+		ResourceLocation texture = type == ItemInit.leather_arm_banner.get() ? leather
+				: type == ItemInit.iron_arm_banner.get() ? iron
+						: type == ItemInit.gold_arm_banner.get() ? gold
+								: type == ItemInit.diamond_arm_banner.get() ? diamond
+										: type == ItemInit.netherite_arm_banner.get() ? netherite : fallback;
+
 		if (p_239207_2_ == TransformType.GUI) {
 			matrixStack.scale(0.45f, 0.45f, 0.45f);
 			matrixStack.rotate(new Quaternion(Vector3f.ZP, -73.5f, true));

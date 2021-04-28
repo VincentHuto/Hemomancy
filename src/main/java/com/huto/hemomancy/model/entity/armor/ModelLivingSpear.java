@@ -104,8 +104,8 @@ public class ModelLivingSpear extends Model {
 		blade = new ModelRenderer(this);
 		blade.setRotationPoint(1.4971F, -0.4441F, -13.5147F);
 		whole.addChild(blade);
-		blade.setTextureOffset(9, 29).addBox(-1.5F, -44.0F, 15.0F, 0.0F, 10.0F, 7.0F, 0.0F, false);
-		blade.setTextureOffset(6, 49).addBox(-1.5F, -44.5F, 17.75F, 0.0F, 1.0F, 1.0F, 0.0F, false);
+		blade.setTextureOffset(9, 29).addBox(-1.5F, -44.0F, 15.0F, 0.001F, 10.0F, 7.0F, 0.0F, false);
+		blade.setTextureOffset(6, 49).addBox(-1.5F, -44.5F, 17.75F, 0.001F, 1.0F, 1.0F, 0.0F, false);
 
 		this.parts = ImmutableList.of(whole);
 

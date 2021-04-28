@@ -57,7 +57,7 @@ public class ItemBloodyFlask extends Item {
 				}
 				PacketHandler.CHANNELBLOODVOLUME.send(
 						PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-						new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+						new PacketBloodVolumeServer(volume));
 				stack.shrink(1);
 				playerIn.sendBreakAnimation(handIn);
 			}

@@ -93,7 +93,7 @@ public class ItemBloodAbsorption extends Item {
 						volume.addBloodVolume(dam);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-								new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+								new PacketBloodVolumeServer(volume));
 					}
 				}
 			}

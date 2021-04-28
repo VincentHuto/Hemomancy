@@ -120,16 +120,16 @@ public class ModelLivingAxe extends Model {
 		blade = new ModelRenderer(this);
 		blade.setRotationPoint(1.4971F, 13.5559F, -9.5147F);
 		whole.addChild(blade);
-		blade.setTextureOffset(0, 9).addBox(-1.5F, -45.5F, 6.25F, 0.0F, 10.0F, 3.0F, 0.0F, false);
-		blade.setTextureOffset(0, 19).addBox(-1.5F, -45.5F, 9.25F, 0.0F, 6.0F, 3.0F, 0.0F, false);
-		blade.setTextureOffset(0, 9).addBox(-1.5F, -45.5F, 12.25F, 0.0F, 6.0F, 2.0F, 0.0F, false);
-		blade.setTextureOffset(4, 12).addBox(-1.5F, -39.5F, 9.25F, 0.0F, 3.0F, 2.0F, 0.0F, false);
-		blade.setTextureOffset(0, 31).addBox(-1.5F, -44.5F, 5.25F, 0.0F, 8.0F, 1.0F, 0.0F, false);
-		blade.setTextureOffset(12, 21).addBox(-1.5F, -48.0F, 9.0F, 0.0F, 2.0F, 1.0F, 0.0F, false);
-		blade.setTextureOffset(12, 21).addBox(-1.5F, -35.0F, 9.0F, 0.0F, 2.0F, 1.0F, 0.0F, false);
-		blade.setTextureOffset(12, 21).addBox(-1.5F, -36.5F, 9.5F, 0.0F, 2.0F, 1.0F, 0.0F, false);
-		blade.setTextureOffset(0, 0).addBox(-1.5F, -46.5F, 7.0F, 0.0F, 1.0F, 2.0F, 0.0F, false);
-		blade.setTextureOffset(0, 0).addBox(-1.5F, -35.5F, 7.0F, 0.0F, 1.0F, 2.0F, 0.0F, false);
+		blade.setTextureOffset(0, 9).addBox(-1.5F, -45.5F, 6.25F, 0.001f, 10.0F, 3.0F, 0.0F, false);
+		blade.setTextureOffset(0, 19).addBox(-1.5F, -45.5F, 9.25F, 0.001f, 6.0F, 3.0F, 0.0F, false);
+		blade.setTextureOffset(0, 9).addBox(-1.5F, -45.5F, 12.25F, 0.001f, 6.0F, 2.0F, 0.0F, false);
+		blade.setTextureOffset(4, 12).addBox(-1.5F, -39.5F, 9.25F, 0.001f, 3.0F, 2.0F, 0.0F, false);
+		blade.setTextureOffset(0, 31).addBox(-1.5F, -44.5F, 5.25F, 0.001f, 8.0F, 1.0F, 0.0F, false);
+		blade.setTextureOffset(12, 21).addBox(-1.5F, -48.0F, 9.0F, 0.001f, 2.0F, 1.0F, 0.0F, false);
+		blade.setTextureOffset(12, 21).addBox(-1.5F, -35.0F, 9.0F, 0.001f, 2.0F, 1.0F, 0.0F, false);
+		blade.setTextureOffset(12, 21).addBox(-1.5F, -36.5F, 9.5F, 0.001f, 2.0F, 1.0F, 0.0F, false);
+		blade.setTextureOffset(0, 0).addBox(-1.5F, -46.5F, 7.0F, 0.001f, 1.0F, 2.0F, 0.0F, false);
+		blade.setTextureOffset(0, 0).addBox(-1.5F, -35.5F, 7.0F, 0.001f, 1.0F, 2.0F, 0.0F, false);
 		this.parts = ImmutableList.of(whole);
 	}
 

@@ -194,8 +194,7 @@ public class ItemLivingStaff extends ItemLivingItem {
 									playerVolume.subtractBloodVolume(morphling.getBloodCost());
 									PacketHandler.CHANNELBLOODVOLUME.send(
 											PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-											new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-													playerVolume.getBloodVolume()));
+											new PacketBloodVolumeServer(playerVolume));
 								}
 							}
 						}
@@ -205,8 +204,7 @@ public class ItemLivingStaff extends ItemLivingItem {
 						playerVolume.subtractBloodVolume(50f);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-								new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-										playerVolume.getBloodVolume()));
+								new PacketBloodVolumeServer(playerVolume));
 					}
 				} else {
 					player.playSound(SoundEvents.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.2F,

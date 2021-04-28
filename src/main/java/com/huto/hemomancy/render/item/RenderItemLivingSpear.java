@@ -35,6 +35,8 @@ public class RenderItemLivingSpear extends ItemStackTileEntityRenderer {
 			IRenderTypeBuffer buffers, int light, int overlay) {
 
 		if (stack.getItem() instanceof ItemLivingSpear) {
+			Minecraft mc = Minecraft.getInstance();
+			ClientPlayerEntity player = mc.player;
 			ms.push();
 			ms.rotate(new Quaternion(Vector3f.XP, 180, true));
 			ms.rotate(new Quaternion(Vector3f.YP, 180, true));
@@ -42,8 +44,7 @@ public class RenderItemLivingSpear extends ItemStackTileEntityRenderer {
 			IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer
 					.getImpl(Tessellator.getInstance().getBuffer());
 			IVertexBuilder ivertexbuilder = irendertypebuffer$impl.getBuffer(spearModel.getRenderType(TEXTURE));
-			Minecraft mc = Minecraft.getInstance();
-			ClientPlayerEntity player = mc.player;
+
 			boolean itemIsInUse = player.getItemInUseCount() > 0;
 			Hand activeHand = player.getActiveHand();
 			ms.scale(0.65f, 0.65f, 0.65f);
@@ -83,10 +84,14 @@ public class RenderItemLivingSpear extends ItemStackTileEntityRenderer {
 
 					}
 				}
+				if (player.getActiveItemStack() == stack) {
 
-				IVertexBuilder glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
-				IVertexBuilder buffer = VertexBuilderUtils.newDelegate(glint, ivertexbuilder);
-				spearModel.render(ms, buffer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+					IVertexBuilder glint = buffers.getBuffer(RenderTypeInit.getCrimsonGlint());
+					IVertexBuilder buffer = VertexBuilderUtils.newDelegate(glint, ivertexbuilder);
+					spearModel.render(ms, buffer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				} else {
+					spearModel.render(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				}
 			} else {
 				spearModel.render(ms, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}

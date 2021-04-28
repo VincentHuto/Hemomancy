@@ -46,7 +46,7 @@ public class PacketBloodFormationKeyPress {
 					bloodVolume.subtractBloodVolume(100);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-							new PacketBloodVolumeServer(bloodVolume.getMaxBloodVolume(), bloodVolume.getBloodVolume()));
+							new PacketBloodVolumeServer(bloodVolume));
 					BlockPos pos = player.getPosition();
 					Random random = player.world.rand;
 					for (int i = 0; i < 30; i++) {

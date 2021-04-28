@@ -72,15 +72,12 @@ public class ItemLivingTool extends ToolItem {
 						playerVolume.subtractBloodVolume(damageMod);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-								new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-										playerVolume.getBloodVolume()));
+								new PacketBloodVolumeServer(playerVolume));
 					} else {
 						playerVolume.subtractBloodVolume(damageMod);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-								new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-										playerVolume.getBloodVolume()));
-
+								new PacketBloodVolumeServer(playerVolume));
 						stack.damageItem(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
 							p_220017_1_.sendBreakAnimation(attacker.getActiveHand());
 						});

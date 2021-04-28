@@ -56,10 +56,9 @@ public class ItemLivingAxe extends ItemLivingTool {
 						if (!player.world.isRemote) {
 							BlockPos pos = player.getPosition();
 							ServerWorld sWorld = (ServerWorld) player.world;
-							sWorld.spawnParticle(ParticleTypes.EXPLOSION,
-									pos.getX() + random.nextDouble() * 2, pos.getY() + random.nextDouble() + 2,
-									pos.getZ() + random.nextDouble() * 2, 5, 0f, 0.2f, 0f,
-									sWorld.rand.nextInt(3) * 0.015f);
+							sWorld.spawnParticle(ParticleTypes.EXPLOSION, pos.getX() + random.nextDouble() * 2,
+									pos.getY() + random.nextDouble() + 2, pos.getZ() + random.nextDouble() * 2, 5, 0f,
+									0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
 							for (int i = 0; i < 130; i++) {
 								sWorld.spawnParticle(
 										BloodCellParticleFactory.createData(
@@ -141,14 +140,12 @@ public class ItemLivingAxe extends ItemLivingTool {
 					playerVolume.subtractBloodVolume(damageMod);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-							new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-									playerVolume.getBloodVolume()));
+							new PacketBloodVolumeServer(playerVolume));
 				} else {
 					playerVolume.subtractBloodVolume(damageMod);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-							new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-									playerVolume.getBloodVolume()));
+							new PacketBloodVolumeServer(playerVolume));
 					stack.damageItem(getMaxDamage() + 10, attacker, (p_220017_1_) -> {
 						p_220017_1_.sendBreakAnimation(attacker.getActiveHand());
 					});

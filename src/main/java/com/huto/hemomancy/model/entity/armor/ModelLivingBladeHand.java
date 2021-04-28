@@ -49,8 +49,8 @@ public class ModelLivingBladeHand extends Model {
 		whole.setTextureOffset(18, 28).addBox(-0.5029F, -6.9441F, -2.0147F, 1.0F, 1.0F, 4.0F, 0.0F, false);
 		whole.setTextureOffset(29, 29).addBox(-0.5029F, -7.9441F, -1.0147F, 1.0F, 1.0F, 3.0F, 0.0F, false);
 		whole.setTextureOffset(0, 0).addBox(-0.5029F, -8.9441F, -2.0147F, 1.0F, 1.0F, 1.0F, 0.0F, false);
-		whole.setTextureOffset(6, 9).addBox(-0.0029F, -22.9441F, -1.0147F, 0.0F, 15.0F, 3.0F, 0.0F, false);
-		whole.setTextureOffset(0, 9).addBox(-0.0029F, -38.9441F, -1.5147F, 0.0F, 16.0F, 3.0F, 0.0F, false);
+		whole.setTextureOffset(6, 9).addBox(-0.0029F, -22.9441F, -1.0147F, 0.001F, 15.0F, 3.0F, 0.0F, false);
+		whole.setTextureOffset(0, 9).addBox(-0.0029F, -38.9441F, -1.5147F, 0.001F, 16.0F, 3.0F, 0.0F, false);
 		whole.setTextureOffset(0, 0).addBox(-0.0029F, -39.9441F, -0.5147F, 0.0F, 1.0F, 2.0F, 0.0F, false);
 		whole.setTextureOffset(0, 0).addBox(-0.0029F, -39.9441F, -0.5147F, 0.0F, 1.0F, 2.0F, 0.0F, false);
 		whole.setTextureOffset(12, 21).addBox(-0.0029F, -40.9441F, 1.4853F, 0.0F, 2.0F, 1.0F, 0.0F, false);

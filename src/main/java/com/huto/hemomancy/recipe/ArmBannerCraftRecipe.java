@@ -1,6 +1,6 @@
 package com.huto.hemomancy.recipe;
 
-import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.BannerItem;
@@ -33,7 +33,7 @@ public class ArmBannerCraftRecipe extends SpecialRecipe {
 
 					itemstack1 = itemstack2;
 				} else {
-					if (itemstack2.getItem() != ItemInit.arm_banner.get()) {
+					if (!(itemstack2.getItem() instanceof ItemArmBanner)) {
 						return false;
 					}
 
@@ -63,7 +63,7 @@ public class ArmBannerCraftRecipe extends SpecialRecipe {
 			if (!itemstack2.isEmpty()) {
 				if (itemstack2.getItem() instanceof BannerItem) {
 					itemstack = itemstack2;
-				} else if (itemstack2.getItem() == ItemInit.arm_banner.get()) {
+				} else if (itemstack2.getItem() instanceof ItemArmBanner) {
 					itemstack1 = itemstack2.copy();
 				}
 			}

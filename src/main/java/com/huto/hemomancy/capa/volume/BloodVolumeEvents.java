@@ -48,7 +48,7 @@ public class BloodVolumeEvents {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+				new PacketBloodVolumeServer(volume));
 		player.sendStatusMessage(
 				new StringTextComponent(
 						"Welcome! Current Blood Volume: " + TextFormatting.GOLD + volume.getBloodVolume() + "ml"),
@@ -61,7 +61,7 @@ public class BloodVolumeEvents {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume.getMaxBloodVolume(), volume.getBloodVolume()));
+				new PacketBloodVolumeServer(volume));
 		player.sendStatusMessage(
 				new StringTextComponent(
 						"Welcome! Current Blood Volume: " + TextFormatting.GOLD + volume.getBloodVolume() + "ml"),

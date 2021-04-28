@@ -108,7 +108,7 @@ public class PacketBloodCraftingKeyPress {
 											bloodVolume.subtractBloodVolume(targetPattern.getCost());
 											PacketHandler.CHANNELBLOODVOLUME.send(
 													PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-													new PacketBloodVolumeServer(bloodVolume.getMaxBloodVolume(),bloodVolume.getBloodVolume()));
+													new PacketBloodVolumeServer(bloodVolume));
 										}
 									}
 								}

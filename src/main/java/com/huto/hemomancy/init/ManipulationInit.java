@@ -61,7 +61,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY)));
 
 	public static final RegistryObject<BloodManipulation> activation_potential = MANIPS.register("activation_potential",
-			() -> register(new ManipActivationPotential("activation_potential", 100, 0, EnumManipulationType.CONTINUOUS,
+			() -> register(new ManipActivationPotential("activation_potential", 100, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)));
 
 	public static final RegistryObject<BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",

@@ -320,8 +320,7 @@ public class ItemLivingCrossbow extends CrossbowItem {
 							playerVolume.subtractBloodVolume(damageMod);
 							PacketHandler.CHANNELBLOODVOLUME.send(
 									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-									new PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-											playerVolume.getBloodVolume()));
+									new PacketBloodVolumeServer(playerVolume));
 						} else {
 							playerVolume.subtractBloodVolume(damageMod);
 							crossbow.damageItem(2050, shooter, (p_220017_1_) -> {

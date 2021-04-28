@@ -16,6 +16,8 @@ public class ModelTextureEvents {
 	public static void onStitch(TextureStitchEvent.Pre event) {
 		if (event.getMap().getTextureLocation().equals(AtlasTexture.LOCATION_BLOCKS_TEXTURE)) {
 			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/royal_guard_shield_base"));
+			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/spiked_shield/model_spiked_shield"));
+
 		}
 	}
 

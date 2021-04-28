@@ -11,8 +11,10 @@ import com.huto.hemomancy.item.ItemDSD;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.ModSpawnEggItem;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
+import com.huto.hemomancy.item.armor.ItemSpikedShield;
 import com.huto.hemomancy.item.memories.ItemBloodMemory;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
@@ -21,7 +23,6 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingSerpent;
-import com.huto.hemomancy.item.rune.ItemArmBanner;
 import com.huto.hemomancy.item.rune.ItemContractRune;
 import com.huto.hemomancy.item.rune.ItemGuidanceRune;
 import com.huto.hemomancy.item.rune.ItemMilkweedRune;
@@ -51,6 +52,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.BannerPatternItem;
 import net.minecraft.item.BlockNamedItem;
 import net.minecraft.item.IItemPropertyGetter;
@@ -87,14 +89,30 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
+	// Banners and Patterns
+
+	public static final RegistryObject<Item> leather_arm_banner = SPECIALITEMS.register("leather_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance), ArmorMaterial.LEATHER));
+	public static final RegistryObject<Item> iron_arm_banner = SPECIALITEMS.register("iron_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance), ArmorMaterial.IRON));
+	public static final RegistryObject<Item> gold_arm_banner = SPECIALITEMS.register("gold_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance), ArmorMaterial.GOLD));
+	public static final RegistryObject<Item> diamond_arm_banner = SPECIALITEMS.register("diamond_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance), ArmorMaterial.DIAMOND));
+	public static final RegistryObject<Item> netherite_arm_banner = SPECIALITEMS.register("netherite_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance), ArmorMaterial.NETHERITE));
+	public static final RegistryObject<Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
+			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance),
+					EnumModArmorTiers.CHITINITE));
+
 	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
 			() -> new BannerPatternItem(BannerTypeInit.heart,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> veins_pattern = BASEITEMS.register("veins_pattern",
+			() -> new BannerPatternItem(BannerTypeInit.veins,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Charm
-	public static final RegistryObject<Item> arm_banner = SPECIALITEMS.register("arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().group(HemomancyItemGroup.instance)));
-
 	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
 			() -> new ItemVasculariumCharm(new Item.Properties().group(HemomancyItemGroup.instance),
 					EnumBloodTendency.ANIMUS, 5));
@@ -137,6 +155,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
+	public static final RegistryObject<Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
+			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
+					ManipulationInit.blood_rush));
 	public static final RegistryObject<Item> memory_blood_needle = BASEITEMS.register("memory_blood_needle",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_needle));
@@ -240,6 +261,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
 			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	// Equipment
 	// Tainted
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
@@ -259,7 +281,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
-
+	// Shield
+	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
+			() -> new ItemSpikedShield(new Item.Properties().group(HemomancyItemGroup.instance)));
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
 			() -> new ItemChitiniteHelmet(EnumModArmorTiers.CHITINITEHELMET, EquipmentSlotType.HEAD,
@@ -477,6 +501,13 @@ public class ItemInit {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
+
+		ItemModelsProperties.registerProperty(spiked_shield.get(), new ResourceLocation("blocking"),
+				(p_239421_0_, p_239421_1_, p_239421_2_) -> {
+					return p_239421_2_ != null && p_239421_2_.isHandActive()
+							&& p_239421_2_.getActiveItemStack() == p_239421_0_ ? 1.0F : 0.0F;
+				});
+
 		ItemModelsProperties.registerProperty(ItemInit.living_crossbow.get(), new ResourceLocation("pull"),
 				(p_239427_0_, p_239427_1_, p_239427_2_) -> {
 					if (p_239427_2_ == null) {

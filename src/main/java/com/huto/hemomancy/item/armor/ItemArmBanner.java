@@ -1,4 +1,4 @@
-package com.huto.hemomancy.item.rune;
+package com.huto.hemomancy.item.armor;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.RuneType;
-import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.render.item.RenderArmBanner;
 import com.huto.hemomancy.render.layer.IRenderRunes;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -24,6 +23,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
@@ -34,9 +34,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
 public class ItemArmBanner extends Item implements IRune, IRenderRunes {
+	public IArmorMaterial material;
 
-	public ItemArmBanner(Properties prop) {
+	public ItemArmBanner(Properties prop, IArmorMaterial materialIn) {
 		super(prop.maxStackSize(1).setISTER(() -> RenderArmBanner::new));
+		this.material = materialIn;
 	}
 
 	@Override
@@ -74,7 +76,7 @@ public class ItemArmBanner extends Item implements IRune, IRenderRunes {
 	public void onPlayerRuneRender(MatrixStack matrix, ItemStack stack, int packedLight,
 			IRenderTypeBuffer iRenderTypeBuffer, PlayerEntity player, RenderType type, float partialTicks) {
 		matrix.push();
-		if (stack.getItem() == ItemInit.arm_banner.get()) {
+		if (stack.getItem() instanceof ItemArmBanner) {
 			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(player);
 			EntityModel<?> model = ((IEntityRenderer<?, ?>) renderer).getEntityModel();
 			if (model instanceof BipedModel<?>) {
