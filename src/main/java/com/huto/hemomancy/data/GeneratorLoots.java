@@ -53,6 +53,8 @@ public class GeneratorLoots extends LootTableProvider {
 			 * this.registerLootTable(ModBlocks.GOO_BLOCK_TERRAIN.get(),
 			 * LootTable.builder().addLootPool(builder2));
 			 */
+			
+			
 
 			for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 				this.registerDropSelfLootTable(b.get());

@@ -51,7 +51,6 @@ import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
@@ -79,16 +78,14 @@ public class ClientEventSubscriber {
 			"key.hemomancy.category");
 	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.hemomancy.morphjarpickup.desc",
 			GLFW.GLFW_KEY_LEFT_CONTROL, "key.hemomancy.category");
-	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.hemomancy.openJar.desc", GLFW.GLFW_KEY_F,
-			"key.hemomancy.category");
-	public static KeyBinding displayKnownManips = new KeyBinding("key.hemomancy.displaymanips.desc", GLFW.GLFW_KEY_V,
+	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.hemomancy.openjar.desc", GLFW.GLFW_KEY_F,
 			"key.hemomancy.category");
 	public static KeyBinding cycleSelectedManip = new KeyBinding("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
 			"key.hemomancy.category");
 	public static KeyBinding useQuickManip = new KeyBinding("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
 			"key.hemomancy.category");
-	public static KeyBinding useContManip = new KeyBinding("key.hemomancy.contusemanip.desc", InputMappings.Type.MOUSE,
-			2, "key.hemomancy.category");
+	public static KeyBinding useContManip = new KeyBinding("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
+			"key.hemomancy.category");
 
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
@@ -153,10 +150,9 @@ public class ClientEventSubscriber {
 		keyBinds.add(3, bloodDraw);
 		keyBinds.add(4, toggleMorphlingJarPickup);
 		keyBinds.add(5, toggleMorphlingOpenJar);
-		keyBinds.add(6, displayKnownManips);
-		keyBinds.add(7, cycleSelectedManip);
-		keyBinds.add(8, useQuickManip);
-		keyBinds.add(9, useContManip);
+		keyBinds.add(6, cycleSelectedManip);
+		keyBinds.add(7, useQuickManip);
+		keyBinds.add(8, useContManip);
 		for (KeyBinding bind : keyBinds) {
 			ClientRegistry.registerKeyBinding(bind);
 

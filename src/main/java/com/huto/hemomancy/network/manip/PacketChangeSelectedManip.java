@@ -45,25 +45,25 @@ public class PacketChangeSelectedManip {
 						.orElseThrow(NullPointerException::new);
 				List<BloodManipulation> manips = known.getKnownManips();
 
-				if (!known.getKnownManips().contains(known.getSelectedManip())) {
-					if (!known.getKnownManips().isEmpty()) {
+				if (!manips.contains(known.getSelectedManip())) {
+					if (!manips.isEmpty()) {
 						known.setSelectedManip(manips.get(0));
 					} else {
 						player.sendStatusMessage(new StringTextComponent("No Known Manipulations to select"), true);
 					}
 				} else {
-					int foundIndex = known.getKnownManips().indexOf(known.getSelectedManip());
-					if (foundIndex < known.getKnownManips().size() - 1) {
-						known.setSelectedManip(known.getKnownManips().get(foundIndex + 1));
+					int foundIndex = manips.indexOf(known.getSelectedManip());
+					if (foundIndex < manips.size() - 1) {
+						known.setSelectedManip(manips.get(foundIndex + 1));
 						player.sendStatusMessage(
 								new StringTextComponent(
-										"Selected:" + known.getKnownManips().get(foundIndex + 1).getProperName()),
+										"Selected:" + manips.get(foundIndex + 1).getProperName()),
 								true);
 
 					} else {
-						known.setSelectedManip(known.getKnownManips().get(0));
+						known.setSelectedManip(manips.get(0));
 						player.sendStatusMessage(
-								new StringTextComponent("Selected:" + known.getKnownManips().get(0).getProperName()),
+								new StringTextComponent("Selected:" + manips.get(0).getProperName()),
 								true);
 
 					}

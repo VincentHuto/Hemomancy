@@ -7,7 +7,6 @@ import com.huto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
-import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
@@ -41,9 +40,9 @@ public class KeyBindEvents {
 			PacketHandler.HANDLER.sendToServer(new PacketChangeMorphKey());
 
 		}
-		if (ClientEventSubscriber.displayKnownManips.isPressed()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
-		}
+//		if (ClientEventSubscriber.displayKnownManips.isPressed()) {
+//			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
+//		}
 		if (ClientEventSubscriber.cycleSelectedManip.isPressed()) {
 			PacketHandler.CHANNELKNOWNMANIPS
 					.sendToServer(new PacketChangeSelectedManip(ClientEventSubscriber.getPartialTicks()));

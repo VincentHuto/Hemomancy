@@ -92,13 +92,14 @@ public class BloodCraftingCategory implements IRecipeCategory<BaseBloodCraftingR
 	int left, top;
 	int guiWidth = 176;
 	int guiHeight = 186;
+	int centerX = (Minecraft.getInstance().getMainWindow().getScaledWidth() / 2) - guiWidth / 2;
+	int centerY = (Minecraft.getInstance().getMainWindow().getScaledHeight() / 2) - guiHeight / 2;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(BaseBloodCraftingRecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
 		overlay.draw(matrixStack);
 		GlStateManager.pushMatrix();
-		GlStateManager.translatef((guiWidth / 2) + 130, (guiHeight / 2) + 45, 10);
+		GlStateManager.translatef(centerX + 50, centerY + 100, 10);
 		RenderMultiBlockInGui.renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern());
 		Minecraft.getInstance().fontRenderer.func_238418_a_(new StringTextComponent("Held Item"), -50,
 				(int) (Minecraft.getInstance().fontRenderer.FONT_HEIGHT) - 22, 150, 0);

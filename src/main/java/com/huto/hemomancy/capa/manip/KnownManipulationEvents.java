@@ -15,7 +15,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -40,10 +39,10 @@ public class KnownManipulationEvents {
 				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known, selected));
-		for (BloodManipulation s : known) {
-			if (s != null)
-				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
-		}
+//		for (BloodManipulation s : known) {
+//			if (s != null)
+//				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
+//		}
 
 	}
 
@@ -65,10 +64,10 @@ public class KnownManipulationEvents {
 				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known, selected));
-		for (BloodManipulation s : known) {
-			if (s != null)
-				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
-		}
+//		for (BloodManipulation s : known) {
+//			if (s != null)
+//				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);
+//		}
 
 	}
 

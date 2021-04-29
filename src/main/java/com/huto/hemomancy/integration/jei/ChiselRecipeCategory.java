@@ -21,6 +21,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -88,12 +89,16 @@ public class ChiselRecipeCategory implements IRecipeCategory<RecipeChiselStation
 	int guiHeight = 186;
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
+	int centerX = (Minecraft.getInstance().getMainWindow().getScaledWidth() / 2) - guiWidth + 200 / 2;
+	int centerY = (Minecraft.getInstance().getMainWindow().getScaledHeight() / 2) - guiHeight + 300 / 2;
 
 	@Override
 	public void draw(RecipeChiselStation recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
 		overlay.draw(matrixStack);
 		GlStateManager.pushMatrix();
-		GlStateManager.translatef(guiWidth / 2 + 70, guiHeight / 2, 10);
+
+		GlStateManager.translatef(centerX, centerY, 10);
+
 		for (int i = 0; i < buttonList.size(); i++) {
 			buttonList.get(i).renderWidget(matrixStack, (int) mouseX, (int) mouseY, 10);
 		}

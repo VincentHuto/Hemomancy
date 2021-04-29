@@ -1,4 +1,4 @@
-package com.huto.hemomancy.item;
+package com.huto.hemomancy.item.tool.living;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemBloodAbsorption extends Item {
+public class ItemBloodAbsorption extends Item implements IDispellable {
 
 	public ItemBloodAbsorption(Properties prop) {
 		super(prop.maxStackSize(1).setISTER(() -> RenderBloodAbsorption::new));
@@ -51,21 +51,6 @@ public class ItemBloodAbsorption extends Item {
 		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		List<BloodManipulation> knownList = known.getKnownManips();
-		/*
-		 * if (!worldIn.isRemote) { if (!playerIn.isSneaking()) { //
-		 * knownList.add(ManipulationInit.blood_shot);
-		 * 
-		 * tendency.setTendencyAlignment(EnumBloodTendency.CONGEATIO, 0);
-		 * 
-		 * PacketHandler.CHANNELBLOODTENDENCY.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayerEntity) playerIn), new
-		 * PacketBloodTendencyServer(tendency.getTendency()));
-		 * 
-		 * } else { knownList.add(ManipulationInit.blood_shot); // knownList.clear();
-		 * PacketHandler.CHANNELKNOWNMANIPS.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayerEntity) playerIn), new PacketKnownManipulationServer(knownList,
-		 * known.getSelectedManip())); } }
-		 */
 		if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
 			playerIn.setActiveHand(handIn);
 			new ActionResult<>(ActionResultType.SUCCESS, stack);

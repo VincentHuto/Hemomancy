@@ -76,6 +76,7 @@ public class GuiButtonTextured extends Button {
 
 	@Override
 	public void renderWidget(MatrixStack matrix, int mouseX, int mouseY, float particks) {
+		
 		if (visible) {
 			GlStateManager.enableAlphaTest();
 			GlStateManager.enableBlend();
@@ -92,6 +93,9 @@ public class GuiButtonTextured extends Button {
 				newV = v;
 				GuiUtil.drawTexturedModalRect(posX, posY, u, v, width, height);
 			}
+			GlStateManager.disableBlend();
+
+			GlStateManager.disableAlphaTest();
 		}
 
 	}

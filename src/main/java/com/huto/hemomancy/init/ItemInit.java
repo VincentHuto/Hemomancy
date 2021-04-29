@@ -4,7 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
-import com.huto.hemomancy.item.ItemBloodAbsorption;
+import com.huto.hemomancy.item.ItemBloodVial;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
@@ -36,6 +36,7 @@ import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemKnapper;
+import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
 import com.huto.hemomancy.item.tool.living.ItemLivingAxe;
 import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
@@ -44,6 +45,7 @@ import com.huto.hemomancy.item.tool.living.ItemLivingCrossbow;
 import com.huto.hemomancy.item.tool.living.ItemLivingGrasp;
 import com.huto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
+import com.huto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
 
 import net.minecraft.client.renderer.color.IItemColor;
@@ -125,6 +127,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	// Living
+	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
+			() -> new ItemLivingSyringe(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
 			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
@@ -248,6 +252,10 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+
+	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
+			() -> new ItemBloodVial(new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
 			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 250));
 	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",
@@ -501,6 +509,21 @@ public class ItemInit {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
+
+		ItemModelsProperties.registerProperty(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
+				new IItemPropertyGetter() {
+					@Override
+					public float call(ItemStack stack, ClientWorld world, LivingEntity ent) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
 
 		ItemModelsProperties.registerProperty(spiked_shield.get(), new ResourceLocation("blocking"),
 				(p_239421_0_, p_239421_1_, p_239421_2_) -> {

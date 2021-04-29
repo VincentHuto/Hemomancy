@@ -3,11 +3,13 @@ package com.huto.hemomancy.data;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.BlockInit;
+import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -31,9 +33,14 @@ public class GeneratorLanguage extends LanguageProvider {
 		addBannerTranslation("hemomancy_veins", "Veins");
 		add("item.hemomancy.heart_pattern.desc", "Vascularium Crest");
 		add("item.hemomancy.veins_pattern.desc", "Vein Border");
+		addKeyBindTranslations();
 
 		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
 
+		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
+			addEntityType(e,
+					ModTextFormatting.convertInitToLang(e.get().getTranslationKey().replace("entity.hemomancy.", "")));
+		}
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			addBlock(b, ModTextFormatting
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
@@ -76,9 +83,30 @@ public class GeneratorLanguage extends LanguageProvider {
 		}
 
 		for (RegistryObject<Effect> i : PotionInit.EFFECTS.getEntries()) {
-
+			add("item.minecraft.potion.effect.potion_of_" + i.getId().getPath(),
+					"Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+			add("item.minecraft.splash_potion.effect.potion_of_" + i.getId().getPath(),
+					"Spash Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+			add("item.minecraft.lingering_potion.effect.potion_of_" + i.getId().getPath(),
+					"Lingering Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+			add("item.minecraft.tipped_arrow.effect.potion_of_" + i.getId().getPath(),
+					"Arrow of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
 			addEffect(() -> i.get(), ModTextFormatting.convertInitToLang(i.getId().getPath()));
 		}
+
+	}
+
+	public void addKeyBindTranslations() {
+		add("key.hemomancy.category", "Hemomancy");
+		add("key.hemomancy.bloodcrafting.desc", "Activate Blood Construct");
+		add("key.hemomancy.bloodformation.desc", "Blood Formation");
+		add("key.hemomancy.drawtest.desc", "Blood Draw");
+		add("key.hemomancy.morphjarpickup.desc", "Toggle Morphling Jar Pickup");
+		add("key.hemomancy.openjar.desc", "Open Morphling Jar");
+		add("key.hemomancy.quickusemanip.desc", "Use Quick Manipulation");
+		add("key.hemomancy.runebinderpickup.desc", "Toggle Rune Binder Pickup");
+		add("key.hemomancy.contusemanip.desc", "Use Continous Manipulation");
+		add("key.hemomancy.cyclemanip.desc", "Cycle Known Manipulations");
 
 	}
 

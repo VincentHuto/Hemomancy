@@ -51,7 +51,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingCrossbow extends CrossbowItem {
+public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	private boolean isLoadingStart = false;
 	private boolean isLoadingMiddle = false;
 

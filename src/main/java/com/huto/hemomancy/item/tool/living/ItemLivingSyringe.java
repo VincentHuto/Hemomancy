@@ -10,10 +10,12 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
+import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.util.ParticleColor;
 
@@ -48,9 +50,9 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class ItemLivingStaff extends ItemLivingItem {
+public class ItemLivingSyringe extends ItemLivingItem {
 
-	public ItemLivingStaff(Properties properties) {
+	public ItemLivingSyringe(Properties properties) {
 		super(properties);
 	}
 
@@ -92,6 +94,30 @@ public class ItemLivingStaff extends ItemLivingItem {
 				}
 			}
 
+			/*
+			 * // Absorb from Entity Vector3 vec = Vector3.fromEntityCenter(player);
+			 * List<Entity> targets = player.world
+			 * .getEntitiesWithinAABBExcludingEntity(player,
+			 * player.getBoundingBox().grow(5.0)).stream() .filter(e -> ((LivingEntity)
+			 * e).canEntityBeSeen((Entity) player)).collect(Collectors.toList()); if
+			 * (targets.size() > 0) { for (int i = 0; i < targets.size(); ++i) { Entity
+			 * target = targets.get(i); Vector3 targetVec =
+			 * Vector3.fromEntityCenter(target); Vector3 finalPos =
+			 * vec.subtract(targetVec).multiply(-1);
+			 * 
+			 * worldIn.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor
+			 * .RED), (double) vec.x, (double) vec.y + 1.05D, (double) vec.z, (double)
+			 * ((float) finalPos.x + rand.nextFloat()) - 0.5D, (double) ((float) finalPos.y
+			 * - rand.nextFloat() - 0F), (double) ((float) finalPos.z + rand.nextFloat()) -
+			 * 0.5D);
+			 * 
+			 * } }
+			 */
+			// draw
+
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+
 		}
 	}
 
@@ -130,15 +156,6 @@ public class ItemLivingStaff extends ItemLivingItem {
 	@Override
 	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		CompoundNBT staffnbt = stack.getOrCreateTag();
-		if (!staffnbt.contains("Inventory")) {
-			IItemHandler handler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-					.orElseThrow(NullPointerException::new);
-			if (handler instanceof LivingStaffItemHandler) {
-				LivingStaffItemHandler staffHandler = (LivingStaffItemHandler) handler;
-				staffHandler.setDirty();
-			}
-		}
 	}
 
 	@Override

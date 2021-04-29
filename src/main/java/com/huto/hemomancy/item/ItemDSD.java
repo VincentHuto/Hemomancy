@@ -2,9 +2,9 @@ package com.huto.hemomancy.item;
 
 import java.util.List;
 
-import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.gui.manips.GuiChooseManip;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,11 +28,10 @@ public class ItemDSD extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
-		float vol = volume.getBloodVolume();
-		if (vol >= 0) {
-			playerIn.setActiveHand(handIn);
+		if (worldIn.isRemote) {
+			Minecraft.getInstance().displayGuiScreen(new GuiChooseManip(playerIn));
+			playerIn.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, 0.40f, 1F);
+
 		}
 		return ActionResult.resultConsume(stack);
 

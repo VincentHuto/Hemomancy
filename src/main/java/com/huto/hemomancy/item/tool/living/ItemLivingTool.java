@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingTool extends ToolItem {
+public class ItemLivingTool extends ToolItem implements IDispellable{
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private float speed;
 
@@ -40,6 +40,8 @@ public class ItemLivingTool extends ToolItem {
 			Properties builderIn) {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
 	}
+	
+	
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, World world) {

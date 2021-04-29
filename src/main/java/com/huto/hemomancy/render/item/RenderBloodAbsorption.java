@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import com.huto.hemomancy.ClientProxy;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.item.ItemBloodAbsorption;
+import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;

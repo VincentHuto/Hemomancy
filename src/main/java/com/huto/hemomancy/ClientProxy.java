@@ -1,6 +1,7 @@
 package com.huto.hemomancy;
 
 import com.huto.hemomancy.event.ClientEventSubscriber;
+import com.huto.hemomancy.gui.manips.GuiChooseManip;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinderViewer;
 import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJarViewer;
 import com.huto.hemomancy.init.ItemInit;
@@ -36,6 +37,11 @@ public class ClientProxy implements IProxy {
 	}
 
 	@Override
+	public void openManipGui() {
+		Minecraft.getInstance().displayGuiScreen(new GuiChooseManip(ClientEventSubscriber.getClientPlayer()));
+	}
+
+	@Override
 	public void registerHandlers() {
 		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modBus.addListener(this::onModelRegister);
@@ -54,8 +60,5 @@ public class ClientProxy implements IProxy {
 				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
 
 	}
-	
-	
-	
 
 }

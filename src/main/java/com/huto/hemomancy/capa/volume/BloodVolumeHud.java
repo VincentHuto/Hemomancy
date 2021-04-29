@@ -65,7 +65,7 @@ public class BloodVolumeHud extends Screen {
 				float textureUShift = (world.getGameTime() * 0.25f % 256);
 				float textureVShift = (world.getGameTime() * 0.25f % 256);
 				float heightShift = (float) Math.cos(world.getGameTime() * 0.1);
-				//float heightShift = 0;
+				// float heightShift = 0;
 
 				// Cap
 				int xOff = (int) ((-screenWidth / 2) + (screenWidth / 2.15));
@@ -88,10 +88,10 @@ public class BloodVolumeHud extends Screen {
 				// "Blood Volume"
 				GL11.glPushMatrix();
 				GL11.glRotatef(90, 0, 0, -1);
-				/*
-				 * fr.drawString(matrix, m, (float) (screenWidth / 2 - (screenWidth / 1.4)),
-				 * screenHeight / 2 - screenHeight/2.12f , 0xFFFFFF);
-				 */
+
+				fr.drawString(matrix, m, (float) (screenWidth / 2 - (screenWidth / 1.4)),
+						screenHeight / 2 - screenHeight / 2.12f, 0xFFFFFF);
+
 				GL11.glPopMatrix();
 
 				GL11.glPopMatrix();

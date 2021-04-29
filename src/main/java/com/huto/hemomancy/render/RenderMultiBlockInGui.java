@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
 public class RenderMultiBlockInGui {
-	@SuppressWarnings("deprecation")
 	public static void renderPatternInGUI(MatrixStack ms, Minecraft mc, BloodCraftingBundledPattern pattern) {
 		GlStateManager.pushMatrix();
 		ms.push();

@@ -12,7 +12,8 @@ public class GuiUtil {
 	/**
 	 * Draws a textured rectangle at the current z-value. Ported From past Versions
 	 */
-	public static void drawTexturedModalRect(float x, float y, float textureX, float textureY, float width, float height) {
+	public static void drawTexturedModalRect(float x, float y, float textureX, float textureY, float width,
+			float height) {
 		/*
 		 * float f = 0.00390625F; float f1 = 0.00390625F;
 		 */

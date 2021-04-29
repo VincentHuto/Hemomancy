@@ -26,6 +26,7 @@ import com.huto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.huto.hemomancy.network.keybind.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
+import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.huto.hemomancy.particle.util.ParticleColor;
@@ -92,7 +93,9 @@ public class PacketHandler {
 				PacketUseQuickManipKey::decode, PacketUseQuickManipKey::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseContManipKey.class, PacketUseContManipKey::encode,
 				PacketUseContManipKey::decode, PacketUseContManipKey::handle);
-
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentManip.class,
+				PacketUpdateCurrentManip::encode, PacketUpdateCurrentManip::decode,
+				PacketUpdateCurrentManip.Handler::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
 				PacketVascularSystemClient::handle);
@@ -130,6 +133,7 @@ public class PacketHandler {
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class, PacketUpdateLivingStaffMorph::encode,
 				PacketUpdateLivingStaffMorph::decode, PacketUpdateLivingStaffMorph.Handler::handle);
+
 		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"),
 				() -> PROTOCOL_VERSION, s -> true, s -> true);
 		INSTANCE.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::toBytes,

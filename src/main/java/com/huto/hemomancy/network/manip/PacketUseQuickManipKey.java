@@ -4,12 +4,16 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ManipulationInit;
+import com.huto.hemomancy.item.tool.living.IDispellable;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.manipulation.quick.ManipConjuration;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -45,36 +49,46 @@ public class PacketUseQuickManipKey {
 				return;
 			if (!player.world.isRemote) {
 				float pTic = message.parTick;
+				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(NullPointerException::new);
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);
 				if (known.getSelectedManip() != null) {
+					ItemStack mainStack = player.getHeldItemMainhand();
 					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
 					if (selectedManip != null) {
-						// Quick and Passives
 						if (selectedManip.getType() == EnumManipulationType.QUICK
 								|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
 							if (selectedManip instanceof ManipConjuration) {
 								ManipConjuration conjure = (ManipConjuration) selectedManip;
-								if (!player.getHeldItemMainhand().isEmpty()) {
-									if (player.getHeldItemMainhand().getItem() == conjure.getItem().get()) {
-										player.getHeldItemMainhand().shrink(1);
+								if (!mainStack.isEmpty()) {
+									if (mainStack.getItem() instanceof IDispellable) {
+										mainStack.shrink(1);
+										float bloodRefund = Math
+												.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamage());
+										if (bloodRefund > 900) {
+											bloodRefund = 900;
+										}
+
+										volume.addBloodVolume(bloodRefund);
+										mainStack.shrink(1);
 										player.sendStatusMessage(
-												new StringTextComponent("Dispelled: " + conjure.getProperName())
+												new StringTextComponent("Dispelled Conjured Item")
 														.mergeStyle(TextFormatting.RED),
 												true);
 									} else {
 										player.sendStatusMessage(
-												new StringTextComponent("Conjuration requires an empty hand!")
+												new StringTextComponent("Conjuration Requires an Empty Hand!")
 														.mergeStyle(TextFormatting.RED),
 												true);
 									}
 								} else {
-									selectedManip.performAction(player, (ServerWorld) player.world,
-											player.getHeldItemMainhand(), player.getPosition());
+									selectedManip.performAction(player, (ServerWorld) player.world, mainStack,
+											player.getPosition());
 								}
 							} else {
-								selectedManip.performAction(player, (ServerWorld) player.world,
-										player.getHeldItemMainhand(), player.getPosition());
+								selectedManip.performAction(player, (ServerWorld) player.world, mainStack,
+										player.getPosition());
 							}
 						} else {
 							player.sendStatusMessage(
