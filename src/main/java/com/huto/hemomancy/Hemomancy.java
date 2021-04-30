@@ -11,6 +11,7 @@ import com.huto.hemomancy.capa.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capa.vascular.VascularSystemEvents;
 import com.huto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.huto.hemomancy.capa.volume.RenderBloodLaserEvent;
+import com.huto.hemomancy.event.CapeEvent;
 import com.huto.hemomancy.event.KeyBindEvents;
 import com.huto.hemomancy.event.MorphlingJarEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
@@ -128,6 +129,8 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.addListener(KeyBindEvents::onClientTick);
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onPlayerRender);
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
@@ -212,6 +215,7 @@ public class Hemomancy {
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
+
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
 		this.addLayers();
@@ -306,7 +310,7 @@ public class Hemomancy {
 		// Add our structure to all biomes including other modded biomes
 		// You can filter to certain biomes based on stuff like temperature, scale,
 		// precipitation, mod id
-		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
+	//	event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
 	}
 
@@ -323,8 +327,8 @@ public class Hemomancy {
 			}
 			Map<Structure<?>, StructureSeparationSettings> tempMap = new HashMap<>(
 					serverWorld.getChunkProvider().generator.func_235957_b_().func_236195_a_());
-			tempMap.put(StructureInit.RUN_DOWN_HOUSE.get(),
-					DimensionStructuresSettings.field_236191_b_.get(StructureInit.RUN_DOWN_HOUSE.get()));
+//			tempMap.put(StructureInit.RUN_DOWN_HOUSE.get(),
+//					DimensionStructuresSettings.field_236191_b_.get(StructureInit.RUN_DOWN_HOUSE.get()));
 			if (serverWorld.getDimensionKey().equals(World.THE_NETHER)) {
 				tempMap.put(StructureInit.blood_temple.get(),
 						DimensionStructuresSettings.field_236191_b_.get(StructureInit.blood_temple.get()));

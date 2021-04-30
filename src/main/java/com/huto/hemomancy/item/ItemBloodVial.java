@@ -35,7 +35,6 @@ public class ItemBloodVial extends Item {
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
 		CompoundNBT tag = stack.getOrCreateTag();
-
 		if (entity != null) {
 			tag.putString(TAG_ENTITY_TYPE, entity.getType().getTranslationKey());
 			tag.putBoolean(TAG_STATE, true);

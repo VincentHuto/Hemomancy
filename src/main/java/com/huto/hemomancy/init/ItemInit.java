@@ -134,16 +134,16 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
 			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-			() -> new ItemLivingBlade(25f, 3, ItemTier.NETHERITE,
+			() -> new ItemLivingBlade(25f, 3, EnumModToolTiers.LIVING,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
-			() -> new ItemLivingAxe(25f, 1, ItemTier.NETHERITE,
+			() -> new ItemLivingAxe(25f, 1, EnumModToolTiers.LIVING,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
-			() -> new ItemLivingSpear(25f, 1, ItemTier.NETHERITE,
+			() -> new ItemLivingSpear(25f, 1, EnumModToolTiers.LIVING,
 					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
-			() -> new ItemLivingBaghnakh(25f, 1, ItemTier.NETHERITE,
+			() -> new ItemLivingBaghnakh(25f, 1, EnumModToolTiers.LIVING,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
@@ -267,7 +267,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
 			() -> new ItemKnapper(25f, 1, 0, ItemTier.IRON, new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
-			() -> new ItemKnapper(50f, 1, 0, ItemTier.NETHERITE,
+			() -> new ItemKnapper(50f, 1, 0, EnumModToolTiers.LIVING,
 					new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	// Equipment

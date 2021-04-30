@@ -12,6 +12,10 @@ public enum EnumModToolTiers implements IItemTier {
 
 	HEMATIC_IRON(5, 1024, 3.0F, 7.0F, 10, () -> {
 		return Ingredient.fromItems(ItemInit.hematic_iron_scrap.get());
+	}), CHITINITE(5, 1024, 10.0F, 5.0F, 25, () -> {
+		return Ingredient.fromItems(ItemInit.chitinous_husk.get());
+	}), LIVING(5, 1024, 10.0F, 5.0F, 25, () -> {
+		return Ingredient.fromItems(ItemInit.shred_of_animus.get());
 	});
 
 	private final int harvestLevel;

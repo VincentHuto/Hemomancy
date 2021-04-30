@@ -32,11 +32,11 @@ public class BloodVolumeHudEventHandler {
 
 		switch (event.getType()) {
 		case ALL:
+			if (entityPlayerSP.isAlive()) {
 			IRunesItemHandler runes = entityPlayerSP.getCapability(RunesCapabilities.RUNES)
 					.orElseThrow(NullPointerException::new);
 			if (!runes.getStackInSlot(4).isEmpty()) {
 				BloodVolumeHud BloodVolumeHud = new BloodVolumeHud(entityPlayerSP, mc);
-				if (entityPlayerSP.isAlive()) {
 					BloodVolumeHud.renderStatusBar(event.getMatrixStack(), event.getWindow().getScaledWidth(),
 							event.getWindow().getScaledHeight(), entityPlayerSP.world, entityPlayerSP);
 				}
