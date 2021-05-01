@@ -17,9 +17,7 @@ import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,9 +27,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.LogicalSide;
@@ -52,23 +49,21 @@ public final class CapeEvent {
 		return Holder.INSTANCE;
 	}
 
-	public static void onPlayerRender(RenderPlayerEvent.Post event) {
-		PlayerEntity player = event.getPlayer();
-		float delta = event.getPartialRenderTick();
-		if (!player.isInvisible() && !player.isElytraFlying() && !player.isSleeping() && delta != 1) {
-			RenderCape cape = getCape(player);
-			if (cape.isPresent(player)) {
-
-				Vector3d locVec = new Vector3d(
-						player.getPosX() - cape.posX
-								- TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().x,
-						player.getPosY() - cape.posY
-								- TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().y,
-						player.getPosZ() - cape.posZ
-								- TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().z);
-				cape.render(event.getMatrixStack(), event.getBuffers(), player, locVec.x, locVec.y, locVec.z, delta);
-			}
-		}
+	public static void renderWorldLast(RenderWorldLastEvent event) {
+		/*
+		 * PlayerEntity player = ClientEventSubscriber.getClientPlayer(); float delta =
+		 * ClientEventSubscriber.getPartialTicks(); if (!player.isInvisible() &&
+		 * !player.isElytraFlying() && !player.isSleeping() && delta != 1) { RenderCape
+		 * cape = getCape(player); if (cape.isPresent(player)) { Vector3d locVec = new
+		 * Vector3d( player.getPosX() - cape.posX -
+		 * TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().x,
+		 * player.getPosY() - cape.posY -
+		 * TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().y,
+		 * player.getPosZ() - cape.posZ -
+		 * TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().z);
+		 * cape.render(event.getMatrixStack(), player, locVec.x, locVec.y, locVec.z,
+		 * delta); } }
+		 */
 	}
 
 	private static RenderCape getCape(PlayerEntity player) {
@@ -76,14 +71,12 @@ public final class CapeEvent {
 	}
 
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if (event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.END) {
-			World world = ClientEventSubscriber.getWorld();
-			if (world != null) {
-				for (PlayerEntity player : world.getPlayers()) {
-					getCape(player).update(player);
-				}
-			}
-		}
+		/*
+		 * if (event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.END) {
+		 * World world = ClientEventSubscriber.getWorld(); if (world != null) { for
+		 * (PlayerEntity player : world.getPlayers()) { getCape(player).update(player);
+		 * } } }
+		 */
 	}
 
 	private static final class Holder {
@@ -105,9 +98,9 @@ public final class CapeEvent {
 
 		private static final float FLUID_FORCE = -100;
 
-		private static final int HEIGHT = 8;
+		private static final int HEIGHT =4;
 
-		private static final int WIDTH = 4;
+		private static final int WIDTH = 8;
 
 		private final ImmutableList<Point> points;
 
@@ -241,10 +234,8 @@ public final class CapeEvent {
 			return state.getBlock() instanceof IFluidBlock;
 		}
 
-		void render(MatrixStack matrixStack, IRenderTypeBuffer buffers, PlayerEntity player, double x, double y,
-				double z, float delta) {
+		void render(MatrixStack matrixStack, PlayerEntity player, double x, double y, double z, float delta) {
 			matrixStack.push();
-			matrixStack.scale(2, 2, 2);
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferbuilder = tessellator.getBuffer();
 			bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX);
@@ -252,12 +243,8 @@ public final class CapeEvent {
 					"textures/item/crimson_item_glint.png");
 			Minecraft.getInstance().getTextureManager().bindTexture(fallBackCape);
 			Matrix4f matrix = matrixStack.getLast().getMatrix();
-			Minecraft mc = Minecraft.getInstance();
-			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getRenderManager().getRenderer(mc.player);
-			playerrenderer.getEntityModel().bipedBody.translateRotate(matrixStack);
 			matrixStack.translate((float) x - player.getLookVec().x, (float) y - player.getLookVec().y,
 					(float) z - player.getLookVec().z);
-
 			for (Quad quad : quads) {
 
 				float a = (float) (0xFF00FF >> 24 & 255) / 255.0F;

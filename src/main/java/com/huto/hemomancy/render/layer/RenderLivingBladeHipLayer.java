@@ -43,6 +43,7 @@ public class RenderLivingBladeHipLayer<T extends PlayerEntity, M extends PlayerM
 				IVertexBuilder ivertexbuilder = impl.getBuffer(model.getRenderType(
 						(new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_glass.png"))));
 				int color = 0xB6B900;
+				@SuppressWarnings("unused")
 				int r = color >> 16 & 255, g = color >> 8 & 255, b = color & 255;
 				int gridSize = 3;
 				float gridSpacing = .25f;

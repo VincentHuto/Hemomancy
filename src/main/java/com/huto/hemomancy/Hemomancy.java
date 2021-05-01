@@ -122,7 +122,6 @@ public class Hemomancy {
 		modEventBus.addListener(this::enqueueIMC);
 		modEventBus.addListener(this::processIMC);
 		modEventBus.addListener(this::clientSetup);
-
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::onClientTick);
@@ -130,7 +129,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.addListener(KeyBindEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onPlayerRender);
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderWorldLast);
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
@@ -236,8 +235,12 @@ public class Hemomancy {
 
 	private static boolean addedAbsorbLayerDefault = false;
 	private static boolean addedSwordLayerDefault = false;
+	@SuppressWarnings("unused")
+	private static boolean addedCapeLayerDefault = false;
 	private static boolean addedAbsorbLayeSlim = false;
 	private static boolean addedSwordLayerSlim = false;
+	@SuppressWarnings("unused")
+	private static boolean addedCapeLayerSlim = false;
 
 	// Rune Layers
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -255,6 +258,10 @@ public class Hemomancy {
 			render.addLayer(new RenderLivingBladeHipLayer(render));
 			addedSwordLayerDefault = true;
 		}
+//		if (!addedCapeLayerDefault) {
+//			render.addLayer(new RenderClothLayer(render));
+//			addedSwordLayerDefault = true;
+//		}
 		render = skinMap.get("slim");
 		render.addLayer(new RenderRunesLayer(render));
 		if (!addedSwordLayerSlim) {
@@ -265,6 +272,10 @@ public class Hemomancy {
 			render.addLayer(new RenderBloodAbsorptionLayer(render));
 			addedAbsorbLayeSlim = true;
 		}
+//		if (!addedCapeLayerSlim) {
+//			render.addLayer(new RenderClothLayer(render));
+//			addedAbsorbLayeSlim = true;
+//		}
 
 	}
 
@@ -310,7 +321,8 @@ public class Hemomancy {
 		// Add our structure to all biomes including other modded biomes
 		// You can filter to certain biomes based on stuff like temperature, scale,
 		// precipitation, mod id
-	//	event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
+		// event.getGeneration().getStructures().add(() ->
+		// ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
 		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
 	}
 
