@@ -58,33 +58,27 @@ public class ItemBloodMemory extends Item {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
+		List<BloodManipulation> knownList = known.getKnownManips();
+
 		if (handIn == Hand.MAIN_HAND) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
-			if (stack.getItem() instanceof ItemBloodMemory) {
-				ItemBloodMemory memory = (ItemBloodMemory) stack.getItem();
-				List<BloodManipulation> knownList = known.getKnownManips();
-				if (!worldIn.isRemote) {
-					if (!playerIn.isSneaking()) {
-						if (!knownList.contains(memory.getManip())) {
-							knownList.add(memory.getManip());
-							PacketHandler.CHANNELKNOWNMANIPS.send(
-									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
-							stack.shrink(1);
-						} else {
-							playerIn.sendStatusMessage(
-									new StringTextComponent("Player Already Knowns This Manipulation!")
-											.mergeStyle(TextFormatting.RED),
-									true);
-						}
-
+			if (!worldIn.isRemote) {
+				if (!playerIn.isSneaking()) {
+					if (!known.doesListContainName(knownList, getManip())) {
+						knownList.add(getManip());
+						PacketHandler.CHANNELKNOWNMANIPS.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+								new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
+						stack.shrink(1);
+					} else {
+						playerIn.sendStatusMessage(new StringTextComponent("Player Already Knowns This Manipulation!")
+								.mergeStyle(TextFormatting.DARK_RED), true);
 					}
 				}
 			}
-		}
 
+		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 
 	}
-
 }

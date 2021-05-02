@@ -13,4 +13,6 @@ public interface IKnownManipulations {
 
 	public void setSelectedManip(BloodManipulation selectedManip);
 
+	public boolean doesListContainName(List<BloodManipulation> knownList, BloodManipulation manip);
+
 }

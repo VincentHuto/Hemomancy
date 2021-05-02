@@ -30,6 +30,10 @@ repositories {
     // location of a maven mirror for JEI files, as a fallback
     url  "https://modmaven.k-4u.nl"
   }
+ maven {
+    // location of hutoslib
+    url  "https://panel.repsy.io/mvn/vincent_huto/hutoslib/"
+  }
 
 }
 minecraft {
@@ -90,9 +94,10 @@ sourceSets.main.resources {
 dependencies {
  
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
-   compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64:api")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64")
-
+    compile fg.deobf("hutoslib:hutoslib:1.0")
+  
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

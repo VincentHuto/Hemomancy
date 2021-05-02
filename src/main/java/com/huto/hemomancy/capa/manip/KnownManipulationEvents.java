@@ -39,6 +39,7 @@ public class KnownManipulationEvents {
 				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known, selected));
+
 //		for (BloodManipulation s : known) {
 //			if (s != null)
 //				player.sendStatusMessage(new StringTextComponent(s.getProperName()), false);

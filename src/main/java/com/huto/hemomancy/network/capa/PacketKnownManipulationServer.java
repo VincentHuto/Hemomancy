@@ -21,13 +21,14 @@ public class PacketKnownManipulationServer {
 		this.selected = selected;
 	}
 
-	// This code only runs on the client
 	@SuppressWarnings("unused")
 	public static void handle(final PacketKnownManipulationServer msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayerEntity sender = ctx.get().getSender();
 			Minecraft.getInstance().player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(IllegalStateException::new).setKnownManips(msg.known);
+			Minecraft.getInstance().player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(IllegalStateException::new).setSelectedManip(msg.selected);
 		});
 		ctx.get().setPacketHandled(true);
 	}

@@ -35,7 +35,7 @@ public class ManipActivationPotential extends BloodManipulation {
 		if (targets.size() > 0) {
 			for (int i = 0; i < targets.size(); ++i) {
 				MobEntity target = targets.get(i);
-				Vector3d translation = new Vector3d(0.0, 1, 0);
+				Vector3d translation = new Vector3d(0, 1, 0);
 				Vector3d speedVec = new Vector3d(target.getPosition().getX(),
 						(float) target.getPosition().getY() + target.getHeight() / 2.0f, target.getPosition().getZ());
 				PacketHandler.sendLightningSpawn(player.getPositionVec().add(translation), speedVec, 64.0f,

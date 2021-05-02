@@ -43,7 +43,7 @@ public class GuiChooseManip extends Screen {
 
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(matrixStack);
+		// this.renderBackground(matrixStack);
 		for (int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
@@ -52,11 +52,17 @@ public class GuiChooseManip extends Screen {
 			for (int j = 0; j < known.size(); j++) {
 				if (i == j) {
 					int xOff = font.getStringWidth(known.get(j).getProperName());
-					font.drawString(matrixStack, known.get(j).getProperName(), buttons.get(i).x - xOff / 2,
-							buttons.get(i).y, 0xffffff);
+					if (buttons.get(i).isHovered()) {
+						font.drawStringWithShadow(matrixStack, known.get(j).getProperName(),
+								buttons.get(i).x - xOff / 2, (float) (buttons.get(i).y - 10
+										+ Math.sin(getMinecraft().world.getGameTime() * 0.15) + partialTicks),
+								0xffffff);
+					} else {
+						font.drawStringWithShadow(matrixStack, known.get(j).getProperName(),
+								buttons.get(i).x - xOff / 2, (float) (buttons.get(i).y - 10), 0xffffff);
+					}
 				}
 			}
-
 		}
 
 	}
@@ -84,8 +90,7 @@ public class GuiChooseManip extends Screen {
 				GlStateManager.enableAlphaTest();
 				GlStateManager.enableBlend();
 				BloodManipulation current = known.get(i);
-				if (current.getName() == selected.getName()) {
-
+				if (current.getProperName().equals(selected.getProperName())) {
 					this.addButton(
 							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, new IPressable() {
 								@Override
@@ -103,17 +108,18 @@ public class GuiChooseManip extends Screen {
 				} else {
 					this.addButton(
 							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 209, 0, null, new IPressable() {
+
 								@Override
 								public void onPress(Button press) {
 									if (press instanceof GuiButtonTextured) {
 										player.playSound(SoundEvents.BLOCK_GLASS_PLACE, 0.40f, 1F);
 										int id = ((GuiButtonTextured) press).getId();
 										manips.setSelectedManip(known.get(id));
-
 										PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUpdateCurrentManip(id));
 									}
 									closeScreen();
 								}
+
 							}));
 				}
 
@@ -122,7 +128,7 @@ public class GuiChooseManip extends Screen {
 				GlStateManager.popMatrix();
 				point = rotatePointAbout(point, center, angleBetweenEach);
 			}
-		}else {
+		} else {
 			closeScreen();
 		}
 

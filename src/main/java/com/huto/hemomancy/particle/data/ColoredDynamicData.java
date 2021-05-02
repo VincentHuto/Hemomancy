@@ -32,7 +32,6 @@ public class ColoredDynamicData implements IParticleData {
 		return type;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static final IDeserializer<ColoredDynamicData> DESERIALIZER = new IDeserializer<ColoredDynamicData>() {
 		@Override
 		public ColoredDynamicData deserialize(ParticleType<ColoredDynamicData> type, StringReader reader)

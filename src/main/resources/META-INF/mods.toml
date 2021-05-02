@@ -65,3 +65,10 @@ After all its just sitting there!
     versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="hutoslib"
+    mandatory=true
+    versionRange="[1.0]"
+    ordering="NONE"
+    side="BOTH"

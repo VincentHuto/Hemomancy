@@ -47,7 +47,6 @@ public class GuiGuideTitlePage extends Screen {
 		super(titleComponent);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;

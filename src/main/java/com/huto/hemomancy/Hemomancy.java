@@ -128,8 +128,6 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::pickupEvent);
 		MinecraftForge.EVENT_BUS.addListener(MorphlingJarEvents::onClientTick);
 		MinecraftForge.EVENT_BUS.addListener(KeyBindEvents::onClientTick);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderWorldLast);
 		MinecraftForge.EVENT_BUS.register(BloodVolumeEvents.class);
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
@@ -214,7 +212,8 @@ public class Hemomancy {
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
-
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderWorldLast);
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
 		GuideBookLib.registerPages();
 		TendencyBookLib.registerPages();
 		this.addLayers();

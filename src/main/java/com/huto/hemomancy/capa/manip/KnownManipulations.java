@@ -34,4 +34,17 @@ public class KnownManipulations implements IKnownManipulations {
 		this.knownManips = knownManips;
 	}
 
+	/*
+	 * Used because saving the manip objects means its not as easy as just comparing
+	 * them 1:1
+	 */
+	public boolean doesListContainName(List<BloodManipulation> list, BloodManipulation manipIn) {
+		for (BloodManipulation current : list) {
+			if (manipIn.getName().equals(current.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

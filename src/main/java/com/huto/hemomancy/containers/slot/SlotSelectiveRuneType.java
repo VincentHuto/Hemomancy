@@ -24,11 +24,7 @@ public class SlotSelectiveRuneType extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		if (itemType.isInstance(stack.getItem())) {
-			return true;
-		} else {
-			return false;
-		}
+		return itemType.isInstance(stack.getItem());
 	}
 
 	@Override

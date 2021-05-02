@@ -101,6 +101,8 @@ public class ManipulationInit {
 		}
 		return null;
 	}
+	
+
 
 	public static BloodManipulation register(BloodManipulation manip) {
 		MANIPULATIONS.add(manip);
