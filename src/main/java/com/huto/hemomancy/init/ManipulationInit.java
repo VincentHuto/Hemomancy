@@ -18,6 +18,7 @@ import com.huto.hemomancy.manipulation.quick.ManipBloodNeedle;
 import com.huto.hemomancy.manipulation.quick.ManipBloodRush;
 import com.huto.hemomancy.manipulation.quick.ManipBloodShot;
 import com.huto.hemomancy.manipulation.quick.ManipConjuration;
+import com.huto.hemomancy.manipulation.quick.ManipDeadlyGaze;
 import com.huto.hemomancy.manipulation.quick.ManipFerricTransmutation;
 
 import net.minecraft.util.ResourceLocation;
@@ -38,6 +39,10 @@ public class ManipulationInit {
 
 	public static final RegistryObject<BloodManipulation> blood_shot = MANIPS.register("blood_shot",
 			() -> register(new ManipBloodShot("blood_shot", 100, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)));
+
+	public static final RegistryObject<BloodManipulation> deadly_gaze = MANIPS.register("deadly_gaze",
+			() -> register(new ManipDeadlyGaze("deadly_gaze", 100, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)));
 
 	public static final RegistryObject<BloodManipulation> blood_needle = MANIPS.register("blood_needle",
@@ -101,8 +106,6 @@ public class ManipulationInit {
 		}
 		return null;
 	}
-	
-
 
 	public static BloodManipulation register(BloodManipulation manip) {
 		MANIPULATIONS.add(manip);

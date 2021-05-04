@@ -162,6 +162,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_rush));
+	public static final RegistryObject<Item> memory_deadly_gaze = BASEITEMS.register("memory_deadly_gaze",
+			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
+					ManipulationInit.deadly_gaze));
 	public static final RegistryObject<Item> memory_blood_needle = BASEITEMS.register("memory_blood_needle",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_needle));

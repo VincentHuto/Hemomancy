@@ -10,7 +10,7 @@ import net.minecraft.item.Rarity;
 public class ItemVasculariumCharm extends ItemRune implements IRune {
 
 	public ItemVasculariumCharm(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
-		super(properties, tendencyIn, deepenAmount);
+		super(properties.maxStackSize(1), tendencyIn, deepenAmount);
 
 	}
 

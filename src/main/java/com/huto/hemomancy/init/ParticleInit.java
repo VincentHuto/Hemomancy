@@ -3,6 +3,7 @@ package com.huto.hemomancy.init;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.particle.data.AbsorbedBloodCellData;
 import com.huto.hemomancy.particle.data.BloodCellData;
+import com.huto.hemomancy.particle.data.BloodClawData;
 import com.huto.hemomancy.particle.data.ColorLightningData;
 import com.huto.hemomancy.particle.data.ColorParticleData;
 import com.huto.hemomancy.particle.data.ColoredDynamicData;
@@ -11,6 +12,7 @@ import com.huto.hemomancy.particle.data.HitColorParticleData;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.particle.factory.BloodClawParticleFactory;
 import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
 import com.huto.hemomancy.particle.factory.GlowParticleFactory;
 import com.huto.hemomancy.particle.factory.HitGlowParticleFactory;
@@ -19,6 +21,7 @@ import com.huto.hemomancy.particle.factory.ParticleLineFactory;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.huto.hemomancy.particle.type.AbsorbedBloodCellParticleType;
 import com.huto.hemomancy.particle.type.BloodCellParticleType;
+import com.huto.hemomancy.particle.type.BloodClawParticleType;
 import com.huto.hemomancy.particle.type.DarkGlowParticleType;
 import com.huto.hemomancy.particle.type.GlowParticleType;
 import com.huto.hemomancy.particle.type.HitGlowParticleType;
@@ -60,6 +63,8 @@ public class ParticleInit {
 
 	public static final RegistryObject<ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
 			() -> new BloodCellParticleType());
+	public static final RegistryObject<ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",
+			() -> new BloodClawParticleType());
 
 	public static final RegistryObject<ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
 			.register("absorbed_blood_cell", () -> new AbsorbedBloodCellParticleType());
@@ -73,6 +78,8 @@ public class ParticleInit {
 		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleFactory::new);
 		Minecraft.getInstance().particles.registerFactory(lightning_bolt.get(), ParticleLightningFactory::new);
 		Minecraft.getInstance().particles.registerFactory(blood_cell.get(), BloodCellParticleFactory::new);
+		Minecraft.getInstance().particles.registerFactory(blood_claw.get(), BloodClawParticleFactory::new);
+
 		Minecraft.getInstance().particles.registerFactory(absorbed_blood_cell.get(),
 				AbsrobedBloodCellParticleFactory::new);
 

@@ -3,7 +3,9 @@ package com.huto.hemomancy.containers.slot;
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
+import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.item.rune.ItemContractRune;
+import com.huto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,7 +23,8 @@ public class SlotRune extends SlotItemHandler {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		if (stack.getItem() instanceof IRune && !(stack.getItem() instanceof ItemContractRune)) {
+		if (stack.getItem() instanceof IRune && !(stack.getItem() instanceof ItemContractRune)
+				&& !(stack.getItem() instanceof ItemVasculariumCharm) && !(stack.getItem() instanceof ItemArmBanner)) {
 			return true;
 		} else {
 			return false;

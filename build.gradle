@@ -14,7 +14,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '1.0'
-group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'com.vincenthuto.hemomancy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'hemomancy'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -31,9 +31,9 @@ repositories {
     url  "https://modmaven.k-4u.nl"
   }
  maven {
-    // location of hutoslib
-    url  "https://panel.repsy.io/mvn/vincent_huto/hutoslib/"
-  }
+        url "https://www.cursemaven.com"
+    }
+
 
 }
 minecraft {
@@ -96,8 +96,8 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64")
-    compile fg.deobf("hutoslib:hutoslib:1.0")
-  
+    implementation fg.deobf("curse.maven:hutoslib-478643:3297776")
+
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

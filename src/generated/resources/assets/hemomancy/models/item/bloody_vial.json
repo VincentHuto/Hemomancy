@@ -1,6 +1,20 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "hemomancy:item/bloody_vial"
-  }
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "hemomancy:item/bloody_vial"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"hemomancy:state": 0
+			},
+			"model": "hemomancy:item/bloody_vial"
+		},
+		{
+			"predicate": {
+				"hemomancy:state": 1
+			},
+			"model": "hemomancy:item/bloody_vial_state"
+		}
+	]
 }

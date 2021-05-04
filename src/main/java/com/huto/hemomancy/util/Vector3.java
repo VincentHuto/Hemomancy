@@ -88,6 +88,10 @@ public class Vector3 {
 		return new Vector3(x - vec.x, y - vec.y, z - vec.z);
 	}
 
+	public Vector3 subtract(double d, double d1, double d2) {
+		return new Vector3(x - d, y - d1, z - d2);
+	}
+
 	public Vector3 multiply(double d) {
 		return multiply(d, d, d);
 	}

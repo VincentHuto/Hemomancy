@@ -194,7 +194,6 @@ public class ParticleLightning extends SpriteTexturedParticle {
 					.color(this.colorR, this.colorG, this.colorB, this.particleAlpha).lightmap(j).endVertex();
 			buffer.pos((double) avector3f[1].x, (double) avector3f[1].y, (double) avector3f[1].z).tex(minU, maxV)
 					.color(this.colorR, this.colorG, this.colorB, this.particleAlpha).lightmap(j).endVertex();
-
 			++count;
 		}
 	}
@@ -203,7 +202,6 @@ public class ParticleLightning extends SpriteTexturedParticle {
 		return LIGHTNING_BOLT_RENDER;
 	}
 
-	@SuppressWarnings("deprecation")
 	private static void beginRenderCommon(BufferBuilder buffer, TextureManager textureManager) {
 		RenderSystem.depthMask((boolean) false);
 		RenderSystem.disableCull();
@@ -217,7 +215,6 @@ public class ParticleLightning extends SpriteTexturedParticle {
 		buffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 	}
 
-	@SuppressWarnings("deprecation")
 	private static void endRenderCommon() {
 		Minecraft.getInstance().textureManager.getTexture(AtlasTexture.LOCATION_PARTICLES_TEXTURE)
 				.restoreLastBlurMipmap();

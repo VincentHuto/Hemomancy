@@ -31,11 +31,6 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
 			}
 		}
-		for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
-			simpleBlock(b.get());
-			cubeAll(b.get());
-			
-		}
 		/*
 		 * for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
 		 * blockTexture(b.get()); }
@@ -48,8 +43,5 @@ public class GeneratorBlockStates extends BlockStateProvider {
 		 * }
 		 */
 	}
-	
-	
-	
-	
+
 }

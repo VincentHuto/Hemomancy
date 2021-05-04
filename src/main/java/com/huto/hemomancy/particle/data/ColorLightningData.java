@@ -26,7 +26,6 @@ public class ColorLightningData implements IParticleData {
 	public int speed, maxAge, fract;
 	public float maxOffset;
 
-	@SuppressWarnings("deprecation")
 	public static final IParticleData.IDeserializer<ColorLightningData> DESERIALIZER = new IParticleData.IDeserializer<ColorLightningData>() {
 		@Override
 		public ColorLightningData deserialize(ParticleType<ColorLightningData> type, StringReader reader)
@@ -52,8 +51,8 @@ public class ColorLightningData implements IParticleData {
 		this.maxOffset = o;
 	}
 
-	public ColorLightningData(ParticleType<ColorLightningData> particleTypeData, ParticleColor color, int s,
-			int a, int f, float o) {
+	public ColorLightningData(ParticleType<ColorLightningData> particleTypeData, ParticleColor color, int s, int a,
+			int f, float o) {
 		this.type = particleTypeData;
 		this.color = color;
 		this.speed = s;
@@ -74,7 +73,6 @@ public class ColorLightningData implements IParticleData {
 		packetBuffer.writeInt(maxAge);
 		packetBuffer.writeInt(fract);
 		packetBuffer.writeFloat(maxOffset);
-
 	}
 
 	@Override
