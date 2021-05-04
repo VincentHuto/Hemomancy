@@ -2,8 +2,8 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.math.Vector3;
 
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;

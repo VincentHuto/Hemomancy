@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
+import com.hutoslib.client.render.LabeledBlockPattern;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -46,29 +47,29 @@ public class ModBloodCraftingRecipes {
 
 	}
 
-	public static List<BloodCraftingBundledPattern> BUNDELDPATTERNS = new ArrayList<>();
-	public static BloodCraftingBundledPattern liber_sanguinum_pattern;
-	public static BloodCraftingBundledPattern living_staff_pattern;
-	public static BloodCraftingBundledPattern living_grip_pattern;
-	public static BloodCraftingBundledPattern ssc_pattern;
-	public static BloodCraftingBundledPattern hematic_iron_pattern;
-	public static BloodCraftingBundledPattern unstained_pillar_pattern;
-	public static BloodCraftingBundledPattern morphling_polyp_pattern;
+	public static List<LabeledBlockPattern> BUNDELDPATTERNS = new ArrayList<>();
+	public static LabeledBlockPattern liber_sanguinum_pattern;
+	public static LabeledBlockPattern living_staff_pattern;
+	public static LabeledBlockPattern living_grip_pattern;
+	public static LabeledBlockPattern ssc_pattern;
+	public static LabeledBlockPattern hematic_iron_pattern;
+	public static LabeledBlockPattern unstained_pillar_pattern;
+	public static LabeledBlockPattern morphling_polyp_pattern;
 
 	public static void initPatterns() {
 		liber_sanguinum_pattern = registerPattern(
-				new BloodCraftingBundledPattern(getBookPattern(), bookSymbolList, bookPatternArray));
+				new LabeledBlockPattern(getBookPattern(), bookSymbolList, bookPatternArray));
 		living_staff_pattern = registerPattern(
-				new BloodCraftingBundledPattern(getLivingStaffPattern(), staffSymbolList, staffPatternArray));
+				new LabeledBlockPattern(getLivingStaffPattern(), staffSymbolList, staffPatternArray));
 		living_grip_pattern = registerPattern(
-				new BloodCraftingBundledPattern(getGripPattern(), gripSymbolList, gripPatternArray));
-		ssc_pattern = registerPattern(new BloodCraftingBundledPattern(getSSCPattern(), sscSymbolList, sscArray));
+				new LabeledBlockPattern(getGripPattern(), gripSymbolList, gripPatternArray));
+		ssc_pattern = registerPattern(new LabeledBlockPattern(getSSCPattern(), sscSymbolList, sscArray));
 		hematic_iron_pattern = registerPattern(
-				new BloodCraftingBundledPattern(getTaintedBlockPattern(), tIronSymbolList, tIronPatternArray));
-		unstained_pillar_pattern = registerPattern(new BloodCraftingBundledPattern(getUnsPillarBlockPattern(),
-				unsPillarSymbolList, unsPillarPatternArray));
+				new LabeledBlockPattern(getTaintedBlockPattern(), tIronSymbolList, tIronPatternArray));
+		unstained_pillar_pattern = registerPattern(
+				new LabeledBlockPattern(getUnsPillarBlockPattern(), unsPillarSymbolList, unsPillarPatternArray));
 		morphling_polyp_pattern = registerPattern(
-				new BloodCraftingBundledPattern(getMorphIncBlockPattern(), morphIncSymbolList, morphIncPatternArray));
+				new LabeledBlockPattern(getMorphIncBlockPattern(), morphIncSymbolList, morphIncPatternArray));
 	}
 
 	// Morphling Incubator Block Pattern
@@ -289,7 +290,7 @@ public class ModBloodCraftingRecipes {
 		return recipe;
 	}
 
-	public static BloodCraftingBundledPattern registerPattern(BloodCraftingBundledPattern pattern) {
+	public static LabeledBlockPattern registerPattern(LabeledBlockPattern pattern) {
 		BUNDELDPATTERNS.add(pattern);
 		return pattern;
 	}

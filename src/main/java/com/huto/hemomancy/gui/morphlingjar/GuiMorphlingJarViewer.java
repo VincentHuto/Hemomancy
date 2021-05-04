@@ -1,13 +1,13 @@
 package com.huto.hemomancy.gui.morphlingjar;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.item.morphlings.ItemMorphling;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.PacketUpdateLivingStaffMorph;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -85,7 +85,7 @@ public class GuiMorphlingJarViewer extends Screen {
 
 		GlStateManager.pushMatrix();
 		{
-			ItemStack stack =  Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 					.orElseThrow(NullPointerException::new);
 
@@ -180,7 +180,7 @@ public class GuiMorphlingJarViewer extends Screen {
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
 		buttons.clear();
-		ItemStack stack =  Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 				.orElseThrow(NullPointerException::new);
 

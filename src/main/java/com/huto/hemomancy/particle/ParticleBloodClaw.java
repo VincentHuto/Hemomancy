@@ -2,8 +2,8 @@ package com.huto.hemomancy.particle;
 
 import java.util.Random;
 
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.init.RenderTypeInit;
+import com.hutoslib.util.ClientUtils;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleRenderType;
@@ -72,7 +72,7 @@ public class ParticleBloodClaw extends SpriteTexturedParticle {
 		this.particleScale = initScale - initScale * lifeCoeff;
 		this.particleAlpha = initAlpha * (1.0f - lifeCoeff);
 		this.prevParticleAngle = particleAngle;
-		particleAngle = (float) Math.sin(ClientEventSubscriber.getWorld().getGameTime() * 0.5f);
+		particleAngle = (float) Math.sin(ClientUtils.getWorld().getGameTime() * 0.5f);
 	}
 
 	@Override

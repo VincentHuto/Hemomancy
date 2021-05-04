@@ -1,7 +1,7 @@
 package com.huto.hemomancy.gui.guide;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

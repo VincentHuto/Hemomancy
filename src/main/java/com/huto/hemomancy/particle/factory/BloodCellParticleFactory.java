@@ -3,7 +3,7 @@ package com.huto.hemomancy.particle.factory;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.particle.ParticleBloodCell;
 import com.huto.hemomancy.particle.data.BloodCellData;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;
@@ -20,8 +20,8 @@ public class BloodCellParticleFactory implements IParticleFactory<BloodCellData>
 	}
 
 	@Override
-	public Particle makeParticle(BloodCellData data, ClientWorld worldIn, double x, double y, double z,
-			double xSpeed, double ySpeed, double zSpeed) {
+	public Particle makeParticle(BloodCellData data, ClientWorld worldIn, double x, double y, double z, double xSpeed,
+			double ySpeed, double zSpeed) {
 		return new ParticleBloodCell(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, .025f, 50, this.spriteSet);
 

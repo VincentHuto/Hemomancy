@@ -10,6 +10,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
+import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
@@ -51,8 +52,8 @@ public final class CapeEvent {
 
 	public static void renderWorldLast(RenderWorldLastEvent event) {
 
-		PlayerEntity player = ClientEventSubscriber.getClientPlayer();
-		float delta = ClientEventSubscriber.getPartialTicks();
+		PlayerEntity player = ClientUtils.getClientPlayer();
+		float delta = ClientUtils.getPartialTicks();
 		if (!player.isInvisible() && !player.isElytraFlying() && !player.isSleeping() && delta != 1) {
 			RenderCape cape = getCape(player);
 			if (cape.isPresent(player)) {
@@ -75,7 +76,7 @@ public final class CapeEvent {
 
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.side == LogicalSide.CLIENT && event.phase == TickEvent.Phase.END) {
-			World world = ClientEventSubscriber.getWorld();
+			World world = ClientUtils.getWorld();
 			if (world != null) {
 				for (PlayerEntity player : world.getPlayers()) {
 					getCape(player).update(player);
@@ -249,7 +250,7 @@ public final class CapeEvent {
 					"textures/item/crimson_item_glint.png");
 			Minecraft.getInstance().getTextureManager().bindTexture(fallBackCape);
 			Matrix4f matrix = matrixStack.getLast().getMatrix();
-			matrixStack.translate((float) x - player.getLookVec().x, (float) y - player.getLookVec().y+0.125,
+			matrixStack.translate((float) x - player.getLookVec().x, (float) y - player.getLookVec().y + 0.125,
 					(float) z - player.getLookVec().z);
 			for (Quad quad : quads) {
 

@@ -6,7 +6,7 @@ import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
-import com.huto.hemomancy.font.ModTextFormatting;
+import com.hutoslib.util.TextFormatingUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -42,7 +42,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
-		
+
 		if (!player.world.isRemote) {
 
 			if (volume.getBloodVolume() > cost) {
@@ -104,7 +104,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 	}
 
 	public String getProperName() {
-		return ModTextFormatting.convertInitToLang(name);
+		return TextFormatingUtil.convertInitToLang(name);
 	}
 
 	public void setName(String name) {

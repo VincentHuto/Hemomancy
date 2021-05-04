@@ -11,9 +11,10 @@ import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.particle.util.ParticleUtil;
-import com.huto.hemomancy.util.Vector3;
+import com.huto.hemomancy.particle.util.EntityParticleUtils;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.math.Vector3;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -169,8 +170,8 @@ public class RenderBloodAbsorptionLayer<T extends LivingEntity, M extends Entity
 						LivingEntity livingTarget = (LivingEntity) target;
 						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
 						Vector3d finalPos = vec.subtract(targetVec.x, targetVec.y, targetVec.z).inverse();
-						Predicate<Entity> targetPred = ParticleColor.getEntityPredicate(target);
-						ParticleColor targetColor = ParticleColor.getColorFromPredicate(targetPred);
+						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(target);
+						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
 						world.addParticle(AbsrobedBloodCellParticleFactory.createData(targetColor), (double) vec.x,
 								(double) vec.y + 1.05D, (double) vec.z,
 								(double) ((float) finalPos.x + rand.nextFloat()) - 0.5D,

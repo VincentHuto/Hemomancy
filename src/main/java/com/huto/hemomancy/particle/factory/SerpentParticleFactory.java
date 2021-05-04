@@ -3,7 +3,7 @@ package com.huto.hemomancy.particle.factory;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.particle.ParticleSerpent;
 import com.huto.hemomancy.particle.data.SerpentParticleData;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;

@@ -1,7 +1,7 @@
 package com.huto.hemomancy.particle.data;
 
 import com.huto.hemomancy.init.ParticleInit;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
@@ -19,11 +19,12 @@ import net.minecraft.particles.ParticleType;
 public class BloodCellData implements IParticleData {
 
 	private ParticleType<BloodCellData> type;
-	public static final Codec<BloodCellData> CODEC = RecordCodecBuilder.create(instance -> instance
-			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
-					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
-					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
-			.apply(instance, BloodCellData::new));
+	public static final Codec<BloodCellData> CODEC = RecordCodecBuilder
+			.create(instance -> instance
+					.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
+							Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
+							Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
+					.apply(instance, BloodCellData::new));
 
 	public ParticleColor color;
 

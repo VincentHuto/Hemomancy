@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.model.animation.Animation;
-import com.huto.hemomancy.model.animation.AnimationPacket;
-import com.huto.hemomancy.model.animation.IAnimatable;
-import com.huto.hemomancy.model.animation.Mafs;
-import com.huto.hemomancy.particle.factory.GlowParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.particle.util.ParticleUtil;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.client.models.Animation;
+import com.hutoslib.client.models.AnimationPacket;
+import com.hutoslib.client.models.IAnimatable;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.math.MathUtil;
+import com.hutoslib.math.Vector3;
 
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -179,7 +179,7 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 		if (getNavigator().noPath())
 			getNavigator().tryMoveToEntityLiving(target, 1.2);
 		if (isClose) {
-			rotationYaw = (float) Mafs.getAngle(EntityFungling.this, target) + 90f;
+			rotationYaw = (float) MathUtil.getAngle(EntityFungling.this, target) + 90f;
 		}
 		if (noActiveAnimation()) {
 			if (distFromTarget > 15 && distFromTarget < 30) {
@@ -195,8 +195,9 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 							this.getPositionVec().getZ() + 0.5);
 				}
 
-			} else if (isClose && MathHelper
-					.degreesDifferenceAbs((float) Mafs.getAngle(EntityFungling.this, target) + 90, rotationYaw) < 30) {
+			} else if (isClose
+					&& MathHelper.degreesDifferenceAbs((float) MathUtil.getAngle(EntityFungling.this, target) + 90,
+							rotationYaw) < 30) {
 				AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
 			}
 		}
@@ -306,10 +307,11 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 				getNavigator().tryMoveToEntityLiving(target, 1);
 
 			if (isClose)
-				rotationYaw = (float) Mafs.getAngle(EntityFungling.this, target) + 90f;
+				rotationYaw = (float) MathUtil.getAngle(EntityFungling.this, target) + 90f;
 			if (noActiveAnimation()) {
-				if (isClose && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(EntityFungling.this, target) + 90,
-						rotationYaw) < 30)
+				if (isClose
+						&& MathHelper.degreesDifferenceAbs((float) MathUtil.getAngle(EntityFungling.this, target) + 90,
+								rotationYaw) < 30)
 					AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
 			}
 
@@ -348,7 +350,7 @@ public class EntityFungling extends CreatureEntity implements IAnimatable {
 				getNavigator().tryMoveToEntityLiving(target, 1.2);
 
 			if (isClose)
-				rotationYaw = (float) Mafs.getAngle(EntityFungling.this, target) + 90f;
+				rotationYaw = (float) MathUtil.getAngle(EntityFungling.this, target) + 90f;
 
 			if (noActiveAnimation()) {
 				if (distFromTarget > 40) {

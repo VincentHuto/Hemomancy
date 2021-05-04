@@ -10,7 +10,6 @@ import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
-import com.huto.hemomancy.item.ModSpawnEggItem;
 import com.huto.hemomancy.item.armor.ItemArmBanner;
 import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
@@ -47,6 +46,7 @@ import com.huto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
+import com.hutoslib.common.item.ModSpawnEggItem;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;

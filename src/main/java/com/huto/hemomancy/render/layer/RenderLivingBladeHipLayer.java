@@ -4,7 +4,6 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.huto.hemomancy.model.entity.armor.ModelLivingBladeHip;
-import com.huto.hemomancy.util.RenderShapes;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -40,32 +39,13 @@ public class RenderLivingBladeHipLayer<T extends PlayerEntity, M extends PlayerM
 				matrixStack.push();
 				matrixStack.push();
 				IRenderTypeBuffer.Impl impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-				IVertexBuilder ivertexbuilder = impl.getBuffer(model.getRenderType(
-						(new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_glass.png"))));
-				int color = 0xB6B900;
-				@SuppressWarnings("unused")
-				int r = color >> 16 & 255, g = color >> 8 & 255, b = color & 255;
-				int gridSize = 3;
-				float gridSpacing = .25f;
-				for (int x = 1; x < gridSize + 1; x++) {
-					for (int z = 1; z <  2; z++) {
-							RenderShapes.renderSizedPanel(matrixStack, iRenderTypeBuffer, packedLight, OverlayTexture.NO_OVERLAY,
-									ivertexbuilder, gridSpacing * (x * 1.001f), 1.1f ,
-									gridSpacing * (z * 1.001f), 0.25f, 0.25f, 0.25f);
-						}
-					}
-
-				// Top
-
-				matrixStack.pop();
-
 				EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(player);
 				EntityModel<?> bimodel = ((IEntityRenderer<?, ?>) renderer).getEntityModel();
 				if (bimodel instanceof BipedModel<?>) {
 					BipedModel<?> biModel = (BipedModel<?>) bimodel;
 					biModel.bipedBody.translateRotate(matrixStack);
 				}
-				ivertexbuilder = impl.getBuffer(model.getRenderType(
+				IVertexBuilder ivertexbuilder = impl.getBuffer(model.getRenderType(
 						(new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/model_living_blade_hip.png"))));
 				matrixStack.translate(0.3, 0.25, 0);
 				matrixStack.scale(0.5f, 0.5f, 0.5f);
@@ -76,4 +56,5 @@ public class RenderLivingBladeHipLayer<T extends PlayerEntity, M extends PlayerM
 			}
 		}
 	}
+
 }

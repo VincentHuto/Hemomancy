@@ -1,7 +1,6 @@
 package com.huto.hemomancy.network;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.model.animation.AnimationPacket;
 import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 import com.huto.hemomancy.network.binder.PacketOpenRuneBinder;
 import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
@@ -29,15 +28,9 @@ import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
-import com.huto.hemomancy.particle.util.ParticleColor;
 
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
@@ -57,19 +50,12 @@ public class PacketHandler {
 			.named(new ResourceLocation(Hemomancy.MOD_ID + ("main_channel")))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
-	public static final SimpleChannel ANIMATIONS = NetworkRegistry.ChannelBuilder
-			.named(new ResourceLocation(Hemomancy.MOD_ID, "animchannel"))
-			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
-			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
 
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
-
-		ANIMATIONS.messageBuilder(AnimationPacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
 
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
 				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,
@@ -121,9 +107,6 @@ public class PacketHandler {
 				.consumer(PacketEntityHitParticle::handle).add();
 		CHANNELBLOODVOLUME.messageBuilder(PacketAirBloodDraw.class, networkID++).decoder(PacketAirBloodDraw::decode)
 				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketSpawnLightningParticle.class,
-				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
-				PacketSpawnLightningParticle::handle);
 
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
@@ -177,15 +160,6 @@ public class PacketHandler {
 		MORPHLINGJAR.messageBuilder(PacketOpenStaff.class, networkID++).decoder(PacketOpenStaff::decode)
 				.encoder(PacketOpenStaff::encode).consumer(PacketOpenStaff::handle).add();
 		return MORPHLINGJAR;
-	}
-
-	public static void sendLightningSpawn(Vector3d vec, Vector3d speedVec, float radius, RegistryKey<World> dimension,
-			ParticleColor color, int speed, int maxAge, int fract, float maxOff) {
-		PacketSpawnLightningParticle msg = new PacketSpawnLightningParticle(vec, speedVec, color, speed, maxAge, fract,
-				maxOff);
-		CHANNELBLOODVOLUME.send(PacketDistributor.NEAR
-				.with(() -> new PacketDistributor.TargetPoint(vec.x, vec.y, vec.z, (double) radius, dimension)), msg);
-
 	}
 
 }

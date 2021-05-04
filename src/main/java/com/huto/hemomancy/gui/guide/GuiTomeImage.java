@@ -3,7 +3,7 @@ package com.huto.hemomancy.gui.guide;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huto.hemomancy.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

@@ -19,7 +19,6 @@ import com.huto.hemomancy.capa.vascular.VascularSystemStorage;
 import com.huto.hemomancy.capa.volume.BloodVolume;
 import com.huto.hemomancy.capa.volume.BloodVolumeStorage;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
-import com.huto.hemomancy.model.animation.IAnimatable;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
@@ -37,7 +36,6 @@ public class CapabilityInit {
 		CapabilityManager.INSTANCE.register(IRune.class, new IRuneStorage(), new IRuneFactory());
 		CapabilityManager.INSTANCE.register(IRunesItemHandler.class, new IRunesItemHandlerStorage(),
 				new IRunesItemHandlerFactory());
-		IAnimatable.registerCapability();
 
 	}
 

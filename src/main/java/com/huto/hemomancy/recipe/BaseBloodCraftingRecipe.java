@@ -1,5 +1,7 @@
 package com.huto.hemomancy.recipe;
 
+import com.hutoslib.client.render.LabeledBlockPattern;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
@@ -9,10 +11,10 @@ public class BaseBloodCraftingRecipe {
 	Item heldItem;
 	Block hitBlock;
 	Item creation;
-	BloodCraftingBundledPattern pattern;
+	LabeledBlockPattern pattern;
 
 	public BaseBloodCraftingRecipe(Item creation, float cost, Item heldItem, Block hitBlock,
-			BloodCraftingBundledPattern pattern) {
+			LabeledBlockPattern pattern) {
 		this.cost = cost;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
@@ -21,7 +23,7 @@ public class BaseBloodCraftingRecipe {
 	}
 
 	public BaseBloodCraftingRecipe(Block creation, float cost, Item heldItem, Block hitBlock,
-			BloodCraftingBundledPattern pattern) {
+			LabeledBlockPattern pattern) {
 		this.cost = cost;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
@@ -41,7 +43,7 @@ public class BaseBloodCraftingRecipe {
 		return hitBlock;
 	}
 
-	public BloodCraftingBundledPattern getBundledPattern() {
+	public LabeledBlockPattern getBundledPattern() {
 		return pattern;
 	}
 

@@ -1,11 +1,11 @@
 package com.huto.hemomancy.gui.tendency;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
-import com.huto.hemomancy.render.RenderMultiBlockInGui;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.render.RenderMultiBlockInGui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

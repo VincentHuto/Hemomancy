@@ -9,10 +9,10 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
-import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.hutoslib.util.TextFormatingUtil;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.util.ITooltipFlag;
@@ -77,8 +77,8 @@ public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(ModTextFormatting
-				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+		return new StringTextComponent(TextFormatingUtil
+				.stringToBloody(TextFormatingUtil.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
 	}
 

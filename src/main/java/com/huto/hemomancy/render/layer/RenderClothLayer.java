@@ -10,8 +10,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.model.entity.armor.ModelLivingBladeHip;
+import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -50,7 +50,7 @@ public class RenderClothLayer<T extends PlayerEntity, M extends PlayerModel<T>> 
 			float headPitch, float scale) {
 		getCape(player).update(player);
 		if (!player.isInvisible() && !player.isElytraFlying() && !player.isSleeping()
-				&& ClientEventSubscriber.getPartialTicks() != 1) {
+				&& ClientUtils.getPartialTicks() != 1) {
 			RenderCape cape = getCape(player);
 			Vector3d locVec = new Vector3d(
 					player.getPosX() - cape.posX
@@ -60,7 +60,7 @@ public class RenderClothLayer<T extends PlayerEntity, M extends PlayerModel<T>> 
 					player.getPosZ() - cape.posZ
 							- TileEntityRendererDispatcher.instance.renderInfo.getProjectedView().z);
 			cape.render(matrixStack, iRenderTypeBuffer, player, locVec.x, locVec.y, locVec.z,
-					ClientEventSubscriber.getPartialTicks());
+					ClientUtils.getPartialTicks());
 		}
 
 	}

@@ -9,9 +9,9 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.recipe.RecipeChiselStation;
+import com.hutoslib.client.gui.GuiButtonTextured;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

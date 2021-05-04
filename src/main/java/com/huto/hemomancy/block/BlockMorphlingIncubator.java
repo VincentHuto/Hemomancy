@@ -2,9 +2,9 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.container.InventoryHelper;
-import com.huto.hemomancy.network.VanillaPacketDispatcher;
 import com.huto.hemomancy.tile.TileEntityMorphlingIncubator;
+import com.hutoslib.common.VanillaPacketDispatcher;
+import com.hutoslib.common.container.InventoryHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

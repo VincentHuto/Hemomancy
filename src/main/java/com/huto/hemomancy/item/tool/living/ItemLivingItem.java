@@ -1,6 +1,6 @@
 package com.huto.hemomancy.item.tool.living;
 
-import com.huto.hemomancy.font.ModTextFormatting;
+import com.hutoslib.util.TextFormatingUtil;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,8 +20,8 @@ public class ItemLivingItem extends Item {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(ModTextFormatting
-				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+		return new StringTextComponent(TextFormatingUtil
+				.stringToBloody(TextFormatingUtil.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
 	}
 

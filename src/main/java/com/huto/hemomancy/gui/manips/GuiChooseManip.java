@@ -6,10 +6,10 @@ import java.util.List;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
-import com.huto.hemomancy.gui.GuiButtonTextured;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
+import com.hutoslib.client.gui.GuiButtonTextured;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;

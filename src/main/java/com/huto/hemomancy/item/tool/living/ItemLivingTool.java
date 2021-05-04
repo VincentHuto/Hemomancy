@@ -5,12 +5,12 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
-import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.util.TextFormatingUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class ItemLivingTool extends ToolItem implements IDispellable{
+public class ItemLivingTool extends ToolItem implements IDispellable {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private float speed;
 
@@ -40,8 +40,6 @@ public class ItemLivingTool extends ToolItem implements IDispellable{
 			Properties builderIn) {
 		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
 	}
-	
-	
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, World world) {
@@ -51,8 +49,8 @@ public class ItemLivingTool extends ToolItem implements IDispellable{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(ModTextFormatting
-				.stringToBloody(ModTextFormatting.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+		return new StringTextComponent(TextFormatingUtil
+				.stringToBloody(TextFormatingUtil.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
 	}
 

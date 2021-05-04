@@ -1,11 +1,11 @@
 package com.huto.hemomancy.data;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.hutoslib.util.TextFormatingUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -39,59 +39,59 @@ public class GeneratorLanguage extends LanguageProvider {
 
 		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
 			addEntityType(e,
-					ModTextFormatting.convertInitToLang(e.get().getTranslationKey().replace("entity.hemomancy.", "")));
+					TextFormatingUtil.convertInitToLang(e.get().getTranslationKey().replace("entity.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.OBJBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
-			addBlock(b, ModTextFormatting
+			addBlock(b, TextFormatingUtil
 					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
-			addItem(i, ModTextFormatting
+			addItem(i, TextFormatingUtil
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPECIALITEMS.getEntries()) {
-			addItem(i, ModTextFormatting
+			addItem(i, TextFormatingUtil
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
-			addItem(i, ModTextFormatting
+			addItem(i, TextFormatingUtil
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
-			addItem(i, ModTextFormatting
+			addItem(i, TextFormatingUtil
 					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 
 		for (RegistryObject<Effect> i : PotionInit.EFFECTS.getEntries()) {
 			add("item.minecraft.potion.effect.potion_of_" + i.getId().getPath(),
-					"Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+					"Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.splash_potion.effect.potion_of_" + i.getId().getPath(),
-					"Spash Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+					"Spash Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.lingering_potion.effect.potion_of_" + i.getId().getPath(),
-					"Lingering Potion of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
+					"Lingering Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.tipped_arrow.effect.potion_of_" + i.getId().getPath(),
-					"Arrow of " + ModTextFormatting.convertInitToLang(i.getId().getPath()));
-			addEffect(() -> i.get(), ModTextFormatting.convertInitToLang(i.getId().getPath()));
+					"Arrow of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
+			addEffect(() -> i.get(), TextFormatingUtil.convertInitToLang(i.getId().getPath()));
 		}
 
 	}
@@ -131,36 +131,36 @@ public class GeneratorLanguage extends LanguageProvider {
 
 	public void addArmBannerTranslation(String prefix) {
 		add("item.hemomancy." + prefix + "_arm_banner.black",
-				"Black " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Black " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.red",
-				"Red " + ModTextFormatting.convertInitToLang("_arm_banner"));
+				"Red " + TextFormatingUtil.convertInitToLang("_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.green",
-				"Green " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Green " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.brown",
-				"Brown " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Brown " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.blue",
-				"Blue " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Blue " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.purple",
-				"Purple " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Purple " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.cyan",
-				"Cyan " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Cyan " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.silver",
-				"Light Gray " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Light Gray " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.gray",
-				"Gray " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Gray " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.pink",
-				"Pink " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Pink " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.lime",
-				"Lime " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Lime " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.yellow",
-				"Yellow " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Yellow " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.lightBlue",
-				"Light " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Light " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.magenta",
-				"Magenta " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Magenta " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.orange",
-				"Orange " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"Orange " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.white",
-				"White " + ModTextFormatting.convertInitToLang(prefix + "_arm_banner"));
+				"White " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
 	}
 }

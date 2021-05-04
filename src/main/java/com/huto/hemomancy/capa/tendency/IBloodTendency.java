@@ -2,7 +2,7 @@ package com.huto.hemomancy.capa.tendency;
 
 import java.util.Map;
 
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
 
 public interface IBloodTendency {
 

@@ -1,9 +1,9 @@
 package com.huto.hemomancy.model.entity.mob;
 
 import com.huto.hemomancy.entity.mob.EntityFungling;
-import com.huto.hemomancy.model.animation.AnimatedEntityModel;
-import com.huto.hemomancy.model.animation.AnimatedModelRenderer;
-import com.huto.hemomancy.model.animation.ModelAnimator;
+import com.hutoslib.client.models.AnimatedEntityModel;
+import com.hutoslib.client.models.AnimatedModelRenderer;
+import com.hutoslib.client.models.ModelAnimator;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

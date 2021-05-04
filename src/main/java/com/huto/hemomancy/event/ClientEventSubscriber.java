@@ -14,7 +14,6 @@ import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJar;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.model.animation.IAnimatable;
 import com.huto.hemomancy.render.entity.construct.RenderIronPillar;
 import com.huto.hemomancy.render.entity.construct.RenderIronSpike;
 import com.huto.hemomancy.render.entity.construct.RenderIronWall;
@@ -48,13 +47,9 @@ import com.huto.hemomancy.render.tile.RenderMortalDisplay;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -157,34 +152,5 @@ public class ClientEventSubscriber {
 			ClientRegistry.registerKeyBinding(bind);
 
 		}
-
-	}
-
-	// for class loading issues
-	public static Minecraft getClient() {
-		return Minecraft.getInstance();
-	}
-
-	public static PlayerEntity getClientPlayer() {
-		return Minecraft.getInstance().player;
-	}
-
-	public static ClientWorld getWorld() {
-		return getClient().world;
-	}
-
-	public static float getPartialTicks() {
-		return getClient().getRenderPartialTicks();
-	}
-
-	public static boolean handleAnimationPacket(int entityID, int animationIndex) {
-		World world = ClientEventSubscriber.getWorld();
-		IAnimatable entity = (IAnimatable) world.getEntityByID(entityID);
-
-		if (animationIndex < 0)
-			entity.setAnimation(IAnimatable.NO_ANIMATION);
-		else
-			entity.setAnimation(entity.getAnimations()[animationIndex]);
-		return true;
 	}
 }

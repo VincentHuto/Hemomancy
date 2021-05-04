@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.event.ClientEventSubscriber;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
 import com.huto.hemomancy.init.ItemInit;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -145,7 +145,7 @@ public class GuiTendencyPageTOC extends GuiTendencyPage {
 		checkChapter();
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-					if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+					if (ClientUtils.getClientPlayer().getHeldItemMainhand()
 							.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
 						mc.displayGuiScreen(new GuiTendencyTitlePage(true));
 					} else {
@@ -186,7 +186,7 @@ public class GuiTendencyPageTOC extends GuiTendencyPage {
 				arrowB = new GuiButtonBookArrow(ARROWB, left, top + guiHeight - 10, 16, 14, 192, 1, new IPressable() {
 					@Override
 					public void onPress(Button p_onPress_1_) {
-						if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+						if (ClientUtils.getClientPlayer().getHeldItemMainhand()
 								.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
 							mc.displayGuiScreen(new GuiTendencyTitlePage(true));
 						} else {

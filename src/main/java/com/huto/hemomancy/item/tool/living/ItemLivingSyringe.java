@@ -10,14 +10,14 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.item.morphlings.IMorphling;
 import com.huto.hemomancy.itemhandler.LivingStaffItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.network.keybind.PacketAirBloodDraw;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.util.ClientUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -116,7 +116,7 @@ public class ItemLivingSyringe extends ItemLivingItem {
 			// draw
 
 			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new PacketAirBloodDraw(ClientEventSubscriber.getPartialTicks()));
+					.sendToServer(new PacketAirBloodDraw(ClientUtils.getPartialTicks()));
 
 		}
 	}

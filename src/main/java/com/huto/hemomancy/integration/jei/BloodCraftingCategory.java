@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
-import com.huto.hemomancy.render.RenderMultiBlockInGui;
+import com.hutoslib.client.render.RenderMultiBlockInGui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

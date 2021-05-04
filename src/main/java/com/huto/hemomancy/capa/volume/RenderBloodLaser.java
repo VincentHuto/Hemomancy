@@ -2,7 +2,7 @@ package com.huto.hemomancy.capa.volume;
 
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.RenderTypeInit;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.math.Vector3;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

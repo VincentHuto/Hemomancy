@@ -2,8 +2,8 @@ package com.huto.hemomancy.effects;
 
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.math.Vector3;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

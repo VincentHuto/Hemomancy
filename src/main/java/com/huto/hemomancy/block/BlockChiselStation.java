@@ -2,8 +2,8 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.network.VanillaPacketDispatcher;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
+import com.hutoslib.common.VanillaPacketDispatcher;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

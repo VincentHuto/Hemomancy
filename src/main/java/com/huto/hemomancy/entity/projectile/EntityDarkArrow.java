@@ -5,9 +5,9 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
-import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.particle.util.ParticleUtil;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particles.factory.DarkGlowParticleFactory;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

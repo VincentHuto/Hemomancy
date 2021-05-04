@@ -7,11 +7,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.event.ClientEventSubscriber;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
 import com.huto.hemomancy.init.ItemInit;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -173,7 +173,7 @@ public class GuiTendencyPage extends Screen {
 		}
 		this.addButton(buttonTitle = new GuiButtonTextured(texture, TITLEBUTTON, left - guiWidth + 150,
 				top + guiHeight - 209, 24, 16, 174, 32, null, (press) -> {
-					if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()
+					if (ClientUtils.getClientPlayer().getHeldItemMainhand()
 							.getItem() == ItemInit.liber_inclinatio_hidden.get()) {
 						mc.displayGuiScreen(new GuiTendencyTitlePage(true));
 					} else {

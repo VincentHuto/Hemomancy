@@ -5,9 +5,9 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.entity.blood.EntityBloodCloud;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.particle.util.ParticleUtil;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.math.Vector3;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

@@ -2,9 +2,9 @@ package com.huto.hemomancy.render.tile;
 
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.event.ClientEventSubscriber;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
+import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -30,7 +30,7 @@ public class RenderRuneModStation extends TileEntityRenderer<TileEntityRuneModSt
 	@Override
 	public void render(TileEntityRuneModStation te, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		PlayerEntity player = ClientEventSubscriber.getClientPlayer();
+		PlayerEntity player = ClientUtils.getClientPlayer();
 		if (player.isAlive()) {
 			GlStateManager.pushMatrix();
 			GlStateManager.color4f(1F, 1F, 1F, 1F);

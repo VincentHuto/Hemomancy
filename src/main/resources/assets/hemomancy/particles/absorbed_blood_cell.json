@@ -1,5 +1,3 @@
 {
-  "textures": [
-    "hemomancy:particle_blood_cell"
-  ]
+  "textures" : [ "hemomancy:particle_blood_cell" ]
 }

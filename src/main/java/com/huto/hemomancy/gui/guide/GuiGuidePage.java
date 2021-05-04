@@ -7,8 +7,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

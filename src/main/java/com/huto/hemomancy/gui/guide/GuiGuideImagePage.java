@@ -9,8 +9,8 @@ import org.lwjgl.glfw.GLFW;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiButtonTextured;
-import com.huto.hemomancy.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

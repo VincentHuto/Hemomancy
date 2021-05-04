@@ -7,11 +7,11 @@ import java.util.Map;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
-import com.huto.hemomancy.font.ModTextFormatting;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketEntityHitParticle;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
+import com.hutoslib.util.TextFormatingUtil;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
@@ -156,7 +156,7 @@ public class BloodTendencyEvents {
 								.toArray()[i];
 						GlStateManager.pushMatrix();
 						fontRenderer.drawString(event.getMatrixStack(),
-								ModTextFormatting.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
+								TextFormatingUtil.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
 								String.valueOf(tendency.getAlignmentByTendency(selectedCoven)), point.x, point.y + 30,

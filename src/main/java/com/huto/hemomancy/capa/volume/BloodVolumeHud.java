@@ -5,9 +5,9 @@ import java.text.DecimalFormat;
 import org.lwjgl.opengl.GL11;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.gui.GuiUtil;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeClient;
+import com.hutoslib.client.gui.GuiUtil;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 

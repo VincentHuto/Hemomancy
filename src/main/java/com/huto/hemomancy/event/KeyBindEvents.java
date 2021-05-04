@@ -11,6 +11,7 @@ import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.hutoslib.util.ClientUtils;
 
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,15 +27,14 @@ public class KeyBindEvents {
 
 		if (ClientEventSubscriber.bloodCrafting.isPressed()) {
 			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.RECIPES) {
-				if (ClientEventSubscriber.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodCraftingKeyPress(
-							ClientEventSubscriber.getClientPlayer().getHeldItemMainhand()));
+				if (ClientUtils.getClientPlayer().getHeldItemMainhand().getItem() == pattern.getHeldItem()) {
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+							new PacketBloodCraftingKeyPress(ClientUtils.getClientPlayer().getHeldItemMainhand()));
 				}
 			}
 		}
 		if (ClientEventSubscriber.bloodDraw.isKeyDown()) {
-			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks()));
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketGroundBloodDraw(ClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.toggleMorphlingOpenJar.isPressed()) {
 			PacketHandler.HANDLER.sendToServer(new PacketChangeMorphKey());
@@ -44,16 +44,13 @@ public class KeyBindEvents {
 //			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
 //		}
 		if (ClientEventSubscriber.cycleSelectedManip.isPressed()) {
-			PacketHandler.CHANNELKNOWNMANIPS
-					.sendToServer(new PacketChangeSelectedManip(ClientEventSubscriber.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketChangeSelectedManip(ClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.useQuickManip.isPressed()) {
-			PacketHandler.CHANNELKNOWNMANIPS
-					.sendToServer(new PacketUseQuickManipKey(ClientEventSubscriber.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseQuickManipKey(ClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.useContManip.isKeyDown()) {
-			PacketHandler.CHANNELKNOWNMANIPS
-					.sendToServer(new PacketUseContManipKey(ClientEventSubscriber.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseContManipKey(ClientUtils.getPartialTicks()));
 		}
 	}
 

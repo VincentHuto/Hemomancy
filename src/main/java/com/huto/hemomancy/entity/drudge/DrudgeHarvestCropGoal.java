@@ -6,7 +6,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.util.BlockUtil;
+import com.hutoslib.util.BlockUtil;
 
 import net.minecraft.block.BeetrootBlock;
 import net.minecraft.block.Block;

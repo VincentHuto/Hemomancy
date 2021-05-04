@@ -1,9 +1,9 @@
 package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.particle.factory.DarkGlowParticleFactory;
-import com.huto.hemomancy.particle.util.ParticleColor;
-import com.huto.hemomancy.util.Vector3;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particles.factory.DarkGlowParticleFactory;
+import com.hutoslib.math.Vector3;
 
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -35,8 +35,8 @@ public class TileEntityHumaneIdol extends TileEntity implements ITickableTileEnt
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.BLACK), centerVec.x + cos,
 						centerVec.y + 1, centerVec.z - sin, 0, 0.00, 0);
-				world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.RED), centerVec.x - cos, centerVec.y + 1,
-						centerVec.z + sin, 0, 0.00, 0);
+				world.addParticle(DarkGlowParticleFactory.createData(ParticleColor.RED), centerVec.x - cos,
+						centerVec.y + 1, centerVec.z + sin, 0, 0.00, 0);
 			}
 		}
 

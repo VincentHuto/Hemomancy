@@ -8,7 +8,8 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.ItemTome;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
-import com.huto.hemomancy.network.VanillaPacketDispatcher;
+import com.hutoslib.common.VanillaPacketDispatcher;
+import com.hutoslib.common.tile.TileSimpleInventory;
 
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
