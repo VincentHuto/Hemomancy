@@ -13,6 +13,7 @@ import com.hutoslib.client.particles.factory.GlowParticleFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 public class ManipBloodAneurysm extends BloodManipulation {
@@ -22,7 +23,7 @@ public class ManipBloodAneurysm extends BloodManipulation {
 		super(name, cost, alignLevel, type, rank, tendency, section);
 	}
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerWorld sWorld = (ServerWorld) world;
 		BlockPos pos = player.getPosition();
 		Random random = player.world.rand;

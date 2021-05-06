@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 
 public class ManipBloodNeedle extends BloodManipulation {
 
@@ -22,7 +22,7 @@ public class ManipBloodNeedle extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		Vector3d vector3d = player.getLookVec();
 		Vector3f vector3f = new Vector3f(vector3d);
 		int randInt = world.rand.nextInt(11) + 10;

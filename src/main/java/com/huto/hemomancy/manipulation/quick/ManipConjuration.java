@@ -11,7 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.RegistryObject;
 
 public class ManipConjuration extends BloodManipulation {
@@ -28,7 +28,7 @@ public class ManipConjuration extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		if (heldItemMainhand.isEmpty()) {
 			player.setHeldItem(Hand.MAIN_HAND, new ItemStack(item.get()));
 		}

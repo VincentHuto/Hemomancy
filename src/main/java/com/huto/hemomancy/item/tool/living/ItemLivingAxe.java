@@ -6,7 +6,6 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.render.item.RenderItemLivingAxe;
 import com.hutoslib.client.particle.ParticleColor;
 
@@ -18,17 +17,16 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemLivingAxe extends ItemLivingTool {
@@ -50,23 +48,13 @@ public class ItemLivingAxe extends ItemLivingTool {
 				if (compound.getBoolean(TAG_STATE)) {
 					if (player.isOnGround()) {
 
-						player.setVelocity(0, .85, 0);
+						player.addVelocity(0, 0.85, 0);
 						List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
 								player.getBoundingBox().grow(3.0));
-						if (!player.world.isRemote) {
-							BlockPos pos = player.getPosition();
-							ServerWorld sWorld = (ServerWorld) player.world;
-							sWorld.spawnParticle(ParticleTypes.EXPLOSION, pos.getX() + random.nextDouble() * 2,
-									pos.getY() + random.nextDouble() + 2, pos.getZ() + random.nextDouble() * 2, 5, 0f,
-									0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
-							for (int i = 0; i < 130; i++) {
-								sWorld.spawnParticle(
-										BloodCellParticleFactory.createData(
-												new ParticleColor(255 * player.world.rand.nextFloat(), 0, 0)),
-										pos.getX() + random.nextDouble() * 2, pos.getY() + random.nextDouble() + 2,
-										pos.getZ() + random.nextDouble() * 2, 1, 0f, 0.2f, 0f,
-										sWorld.rand.nextInt(3) * 0.015f);
-							}
+						if (player.world.isRemote) {
+							Vector3d pos = player.getPositionVec();
+							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
+									(RegistryKey<World>) player.world.getDimensionKey());
 						}
 						if (targets.size() > 0) {
 

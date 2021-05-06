@@ -13,11 +13,12 @@ import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.hutoslib.util.ClientUtils;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class KeyBindEvents {
 	public static void onClientTick(ClientTickEvent event) {
 

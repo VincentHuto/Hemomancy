@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 
 public class ManipBloodCloud extends BloodManipulation {
 
@@ -21,7 +21,7 @@ public class ManipBloodCloud extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		if (!player.isSilent()) {
 			world.playEvent((PlayerEntity) null, 1016, player.getPosition(), 0);
 		}

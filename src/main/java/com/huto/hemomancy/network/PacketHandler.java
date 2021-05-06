@@ -28,9 +28,18 @@ import com.huto.hemomancy.network.manip.PacketDisplayKnownManips;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.huto.hemomancy.network.manip.PacketUseContManipKey;
 import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
+import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
+import com.huto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
+import com.huto.hemomancy.network.particle.PacketSpawnFlaskParticles;
+import com.huto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
+import com.hutoslib.client.particle.ParticleColor;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class PacketHandler {
@@ -54,6 +63,10 @@ public class PacketHandler {
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+
+	public static final SimpleChannel CHANNELPARTICLES = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "particlechannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
+			PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
 
@@ -108,6 +121,16 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketAirBloodDraw.class, networkID++).decoder(PacketAirBloodDraw::decode)
 				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
 
+		CHANNELPARTICLES.messageBuilder(PacketSpawnFlaskParticles.class, networkID++)
+				.decoder(PacketSpawnFlaskParticles::decode).encoder(PacketSpawnFlaskParticles::encode)
+				.consumer(PacketSpawnFlaskParticles::handle).add();
+		CHANNELPARTICLES.messageBuilder(PacketSpawnBloodClawParticles.class, networkID++)
+				.decoder(PacketSpawnBloodClawParticles::decode).encoder(PacketSpawnBloodClawParticles::encode)
+				.consumer(PacketSpawnBloodClawParticles::handle).add();
+		CHANNELPARTICLES.messageBuilder(PacketSpawnLivingToolParticles.class, networkID++)
+				.decoder(PacketSpawnLivingToolParticles::decode).encoder(PacketSpawnLivingToolParticles::encode)
+				.consumer(PacketSpawnLivingToolParticles::handle).add();
+
 		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
@@ -160,6 +183,27 @@ public class PacketHandler {
 		MORPHLINGJAR.messageBuilder(PacketOpenStaff.class, networkID++).decoder(PacketOpenStaff::decode)
 				.encoder(PacketOpenStaff::encode).consumer(PacketOpenStaff::handle).add();
 		return MORPHLINGJAR;
+	}
+
+	public static void sendBloodFlaskParticles(Vector3d pos, ParticleColor color, double radius,
+			RegistryKey<World> dimension) {
+		PacketSpawnFlaskParticles msg = new PacketSpawnFlaskParticles(pos, color);
+		CHANNELPARTICLES.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
+	}
+
+	public static void sendClawParticles(Vector3d pos, ParticleColor color, double radius,
+			RegistryKey<World> dimension) {
+		PacketSpawnBloodClawParticles msg = new PacketSpawnBloodClawParticles(pos, color);
+		CHANNELPARTICLES.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
+	}
+
+	public static void sendLivingToolBreakParticles(Vector3d pos, ParticleColor color, double radius,
+			RegistryKey<World> dimension) {
+		PacketSpawnLivingToolParticles msg = new PacketSpawnLivingToolParticles(pos, color);
+		CHANNELPARTICLES.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
 }

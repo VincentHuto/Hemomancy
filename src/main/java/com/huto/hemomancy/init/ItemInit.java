@@ -222,7 +222,6 @@ public class ItemInit {
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
 			() -> new BlockNamedItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
@@ -254,6 +253,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> raw_clay_flask = BASEITEMS.register("raw_clay_flask",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",

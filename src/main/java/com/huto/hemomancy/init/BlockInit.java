@@ -4,6 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.block.BlockActiveBefoulingAshTrail;
 import com.huto.hemomancy.block.BlockActiveSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockBefoulingAshTrail;
+import com.huto.hemomancy.block.BlockBleedingHeart;
 import com.huto.hemomancy.block.BlockChiselStation;
 import com.huto.hemomancy.block.BlockCrimsonFlame;
 import com.huto.hemomancy.block.BlockDendriticDistributor;
@@ -26,6 +27,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.potion.Effects;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -67,6 +69,10 @@ public class BlockInit {
 					.create(Material.MISCELLANEOUS).doesNotBlockMovement().zeroHardnessAndResistance()));
 
 	// Blocks
+	public static final RegistryObject<Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
+			() -> new BlockBleedingHeart(Effects.ABSORPTION, 12, AbstractBlock.Properties.create(Material.PLANTS)
+					.doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT)));
+
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
 					.sound(SoundType.GLASS).notSolid()));
@@ -142,6 +148,7 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.getCutoutMipped());
 
 		}
 	}

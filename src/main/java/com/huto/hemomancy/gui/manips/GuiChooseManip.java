@@ -129,6 +129,7 @@ public class GuiChooseManip extends Screen {
 				point = rotatePointAbout(point, center, angleBetweenEach);
 			}
 		} else {
+			
 			closeScreen();
 		}
 

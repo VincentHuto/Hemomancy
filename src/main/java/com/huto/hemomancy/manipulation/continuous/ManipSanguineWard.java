@@ -9,7 +9,7 @@ import com.huto.hemomancy.manipulation.EnumManipulationType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 
 public class ManipSanguineWard extends BloodManipulation {
 
@@ -19,7 +19,7 @@ public class ManipSanguineWard extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		//Moved to Manip Events for acsess to on player damage
 	}
 

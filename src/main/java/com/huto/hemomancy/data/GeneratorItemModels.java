@@ -28,6 +28,9 @@ public class GeneratorItemModels extends ItemModelProvider {
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			registerBasicItem(b.get().asItem());
 		}
+		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+			registerBlockModel(b.get());
+		}
 
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
 			registerBasicItem(item.get());

@@ -6,7 +6,6 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -24,11 +23,8 @@ public class PacketBloodVolumeServer {
 		this.volume = volumeIn;
 	}
 
-	// This code only runs on the client
-	@SuppressWarnings("unused")
 	public static void handle(final PacketBloodVolumeServer msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			ServerPlayerEntity sender = ctx.get().getSender(); // the client that sent this packet
 			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalStateException::new).setMaxBloodVolume(msg.max);
 			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)

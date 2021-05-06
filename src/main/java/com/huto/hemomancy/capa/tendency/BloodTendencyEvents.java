@@ -8,9 +8,9 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.init.ItemInit;
-import com.huto.hemomancy.network.PacketEntityHitParticle;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
+import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.hutoslib.util.TextFormatingUtil;
 import com.mojang.blaze3d.platform.GlStateManager;
 

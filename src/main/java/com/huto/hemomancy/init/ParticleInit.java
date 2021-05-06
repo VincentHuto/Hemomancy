@@ -19,6 +19,7 @@ import com.huto.hemomancy.particle.type.SerpentParticleType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.particles.ParticleType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -26,7 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ParticleInit {
 	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister
 			.create(ForgeRegistries.PARTICLE_TYPES, Hemomancy.MOD_ID);
@@ -51,7 +52,6 @@ public class ParticleInit {
 		Minecraft.getInstance().particles.registerFactory(serpent.get(), SerpentParticleFactory::new);
 		Minecraft.getInstance().particles.registerFactory(blood_cell.get(), BloodCellParticleFactory::new);
 		Minecraft.getInstance().particles.registerFactory(blood_claw.get(), BloodClawParticleFactory::new);
-
 		Minecraft.getInstance().particles.registerFactory(absorbed_blood_cell.get(),
 				AbsrobedBloodCellParticleFactory::new);
 

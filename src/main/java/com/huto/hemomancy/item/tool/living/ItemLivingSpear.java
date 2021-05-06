@@ -3,7 +3,7 @@ package com.huto.hemomancy.item.tool.living;
 import java.util.List;
 
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
-import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.render.item.RenderItemLivingSpear;
 import com.hutoslib.client.particle.ParticleColor;
 import com.hutoslib.math.Vector3;
@@ -20,6 +20,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
@@ -29,7 +30,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 
 public class ItemLivingSpear extends ItemLivingTool {
 
@@ -97,15 +97,8 @@ public class ItemLivingSpear extends ItemLivingTool {
 				worldIn.playMovingSound((PlayerEntity) null, player, soundevent, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
 				Vector3d pos = player.getPositionVec();
-				if (!player.world.isRemote) {
-					ServerWorld sWorld = (ServerWorld) player.world;
-					for (int j = 0; j < 50; j++) {
-						sWorld.spawnParticle(BloodCellParticleFactory.createData(ParticleColor.RED),
-								pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
-								pos.getZ() + random.nextDouble(), 10, 0f, 0.2f, 0f, sWorld.rand.nextInt(3) * 0.015f);
-
-					}
-				}
+				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
+						(RegistryKey<World>) player.world.getDimensionKey());
 
 				/*
 				 * IBloodVolume playerVolume =

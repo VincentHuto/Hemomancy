@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 
 public class BloodShotManipulation extends BloodManipulation {
 
@@ -23,7 +23,7 @@ public class BloodShotManipulation extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		// super.performAction(player, world, heldItemMainhand, position);
 		EntityBloodShot shot = new EntityBloodShot(world, player);
 		Vector3d vector3d1 = player.getUpVector(1.0F);

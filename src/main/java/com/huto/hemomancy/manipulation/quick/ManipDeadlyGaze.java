@@ -11,9 +11,8 @@ import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
-import com.huto.hemomancy.particle.factory.BloodClawParticleFactory;
+import com.huto.hemomancy.network.PacketHandler;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.common.PacketHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -26,7 +25,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 
 public class ManipDeadlyGaze extends BloodManipulation {
 
@@ -36,7 +34,7 @@ public class ManipDeadlyGaze extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		RayTraceResult pick = rayTraceEntities(player, 100, (e) -> e instanceof LivingEntity);
 		if (pick != null) {
 			if (pick.getType() == Type.ENTITY) {
@@ -49,10 +47,12 @@ public class ManipDeadlyGaze extends BloodManipulation {
 							rand.nextDouble() - rand.nextDouble());
 					Vector3d endVec = entVec.add(0, hitEntity.getHeight(), 0).add(rand.nextDouble() - rand.nextDouble(),
 							0, rand.nextDouble() - rand.nextDouble());
-					world.spawnParticle(BloodClawParticleFactory.createData(ParticleColor.RED), endVec.x, endVec.y,
-							endVec.z, 1, 0.0f, 0, 0, 0.00f);
-					PacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
+					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f,
+							(RegistryKey<World>) world.getDimensionKey());
+
+					com.hutoslib.common.PacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
 							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 2, 10, 9, 1.2f);
+
 				}
 			}
 		}

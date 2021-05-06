@@ -8,7 +8,6 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
 import com.hutoslib.util.TextFormatingUtil;
 
@@ -22,12 +21,12 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolItem;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -82,14 +81,8 @@ public class ItemLivingTool extends ToolItem implements IDispellable {
 							p_220017_1_.sendBreakAnimation(attacker.getActiveHand());
 						});
 						Vector3d pos = playerIn.getPositionVec();
-						ServerWorld sWorld = (ServerWorld) playerIn.world;
-						for (int i = 0; i < 50; i++) {
-							sWorld.spawnParticle(BloodCellParticleFactory.createData(ParticleColor.RED),
-									pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
-									pos.getZ() + random.nextDouble(), 10, 0f, 0.2f, 0f,
-									sWorld.rand.nextInt(3) * 0.015f);
-
-						}
+						PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
+								(RegistryKey<World>) attacker.world.getDimensionKey());
 					}
 
 				}

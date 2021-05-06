@@ -14,7 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
@@ -37,7 +37,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		this.section = section;
 	}
 
-	public void performAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void performAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
@@ -60,7 +60,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		}
 	}
 
-	public void getAction(PlayerEntity player, ServerWorld world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(PlayerEntity player, World world, ItemStack heldItemMainhand, BlockPos position) {
 
 	}
 

@@ -63,23 +63,23 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientEventSubscriber {
 	public static NonNullList<KeyBinding> keyBinds = NonNullList.create();
-	public static KeyBinding toggleRuneBinderPickup = new KeyBinding("key.hemomancy.runebinderpickup.desc",
+	public static final KeyBinding toggleRuneBinderPickup = new KeyBinding("key.hemomancy.runebinderpickup.desc",
 			GLFW.GLFW_KEY_B, "key.hemomancy.category");
-	public static KeyBinding bloodFormation = new KeyBinding("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
+	public static final KeyBinding bloodFormation = new KeyBinding("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
 			"key.hemomancy.category");
-	public static KeyBinding bloodCrafting = new KeyBinding("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
+	public static final KeyBinding bloodCrafting = new KeyBinding("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
 			"key.hemomancy.category");
-	public static KeyBinding bloodDraw = new KeyBinding("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
+	public static final KeyBinding bloodDraw = new KeyBinding("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.hemomancy.category");
-	public static KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.hemomancy.morphjarpickup.desc",
+	public static final KeyBinding toggleMorphlingJarPickup = new KeyBinding("key.hemomancy.morphjarpickup.desc",
 			GLFW.GLFW_KEY_LEFT_CONTROL, "key.hemomancy.category");
-	public static KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.hemomancy.openjar.desc", GLFW.GLFW_KEY_F,
+	public static final KeyBinding toggleMorphlingOpenJar = new KeyBinding("key.hemomancy.openjar.desc",
+			GLFW.GLFW_KEY_F, "key.hemomancy.category");
+	public static final KeyBinding cycleSelectedManip = new KeyBinding("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
 			"key.hemomancy.category");
-	public static KeyBinding cycleSelectedManip = new KeyBinding("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
+	public static final KeyBinding useQuickManip = new KeyBinding("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
 			"key.hemomancy.category");
-	public static KeyBinding useQuickManip = new KeyBinding("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
-			"key.hemomancy.category");
-	public static KeyBinding useContManip = new KeyBinding("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
+	public static final KeyBinding useContManip = new KeyBinding("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
 			"key.hemomancy.category");
 
 	@SuppressWarnings("unchecked")
