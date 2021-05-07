@@ -46,6 +46,7 @@ import com.huto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.huto.hemomancy.render.tile.RenderMortalDisplay;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
+import com.huto.hemomancy.render.tile.RenderVisceralRecaller;
 
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -98,6 +99,8 @@ public class ClientEventSubscriber {
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.dendritic_distributor.get(),
 				RenderDendriticDistributor::new);
 		ClientRegistry.bindTileEntityRenderer(TileEntityInit.mortal_display.get(), RenderMortalDisplay::new);
+		ClientRegistry.bindTileEntityRenderer(TileEntityInit.visceral_artificial_recaller.get(),
+				RenderVisceralRecaller::new);
 
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);

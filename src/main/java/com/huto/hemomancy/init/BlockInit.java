@@ -14,6 +14,7 @@ import com.huto.hemomancy.block.BlockRuneModStation;
 import com.huto.hemomancy.block.BlockSemiSentientConstruct;
 import com.huto.hemomancy.block.BlockSmoulderingAshTrail;
 import com.huto.hemomancy.block.BlockUnstainedPodium;
+import com.huto.hemomancy.block.BlockVisceralRecaller;
 import com.huto.hemomancy.block.idol.BlockHumaneIdol;
 import com.huto.hemomancy.block.idol.BlockSerpentineIdol;
 
@@ -135,6 +136,10 @@ public class BlockInit {
 			() -> new BlockMortalDisplay(
 					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
 
+	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
+			.register("visceral_artificial_recaller", () -> new BlockVisceralRecaller(
+					Block.Properties.create(Material.ROCK).hardnessAndResistance(50f, 1500f).sound(SoundType.STONE)));
+
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
 		if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -149,6 +154,7 @@ public class BlockInit {
 			RenderTypeLookup.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.getTranslucent());
 			RenderTypeLookup.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.getCutoutMipped());
 			RenderTypeLookup.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.getTranslucent());
 
 		}
 	}

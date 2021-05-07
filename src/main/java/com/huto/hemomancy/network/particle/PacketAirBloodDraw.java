@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybind;
+package com.huto.hemomancy.network.particle;
 
 import java.util.function.Supplier;
 

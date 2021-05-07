@@ -117,7 +117,7 @@ public class ItemInit {
 	// Charm
 	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
 			() -> new ItemVasculariumCharm(new Item.Properties().group(HemomancyItemGroup.instance),
-					EnumBloodTendency.ANIMUS, 5));
+					EnumBloodTendency.ANIMUS, 0));
 
 	// Book
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
@@ -127,6 +127,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	// Living
+	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
+			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
 			() -> new ItemLivingSyringe(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
@@ -153,9 +155,9 @@ public class ItemInit {
 	// Hematic Memories
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
-
-	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
-			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
+			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
+					ManipulationInit.conjure_blood_absorbtion));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
@@ -255,6 +257,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
+			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",

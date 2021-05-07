@@ -10,6 +10,7 @@ import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.huto.hemomancy.tile.TileEntitySemiSentientConstruct;
 import com.huto.hemomancy.tile.TileEntitySerpentineIdol;
 import com.huto.hemomancy.tile.TileEntityUnstainedPodium;
+import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
@@ -45,5 +46,7 @@ public class TileEntityInit {
 	public static final RegistryObject<TileEntityType<TileEntityMortalDisplay>> mortal_display = TILES
 			.register("mortal_display", () -> TileEntityType.Builder
 					.create(TileEntityMortalDisplay::new, BlockInit.mortal_display.get()).build(null));
-
+	public static final RegistryObject<TileEntityType<TileEntityVisceralRecaller>> visceral_artificial_recaller = TILES
+			.register("visceral_artificial_recaller", () -> TileEntityType.Builder
+					.create(TileEntityVisceralRecaller::new, BlockInit.visceral_artificial_recaller.get()).build(null));
 }
