@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.render.item.RenderItemLivingBlade;
@@ -78,7 +79,7 @@ public class ItemLivingBlade extends ItemLivingTool {
 
 			}
 		} else {
-			target.attackEntityFrom(new DamageSource("Living Blade"), 5);
+			target.attackEntityFrom(ItemInit.bloodLoss, 5);
 
 		}
 		return super.hitEntity(stack, target, attacker);

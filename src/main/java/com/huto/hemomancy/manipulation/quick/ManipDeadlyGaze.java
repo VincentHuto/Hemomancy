@@ -51,8 +51,7 @@ public class ManipDeadlyGaze extends BloodManipulation {
 							(RegistryKey<World>) world.getDimensionKey());
 
 					com.hutoslib.common.PacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
-							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 2, 10, 9, 1.2f);
-
+							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 3, 10, 9, 1.2f);
 				}
 			}
 		}

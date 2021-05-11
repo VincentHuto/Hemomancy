@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.render.item.RenderItemLivingAxe;
@@ -18,7 +19,6 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvents;
@@ -64,8 +64,7 @@ public class ItemLivingAxe extends ItemLivingTool {
 								if (target instanceof LivingEntity) {
 									LivingEntity livingTarget = (LivingEntity) target;
 									float dam = 3f / targets.size();
-									DamageSource bloodLoss = new DamageSource("bloodloss");
-									livingTarget.attackEntityFrom(bloodLoss, dam);
+									livingTarget.attackEntityFrom(ItemInit.bloodLoss, dam);
 								}
 							}
 						}

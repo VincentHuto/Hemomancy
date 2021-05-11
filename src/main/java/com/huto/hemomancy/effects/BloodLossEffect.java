@@ -15,7 +15,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectType;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -63,7 +62,7 @@ public class BloodLossEffect extends Effect {
 						new PacketBloodVolumeServer(playerVolume));
 			}
 		} else if (!ModEntityPredicates.NOBLOOD.test(entity)) {
-			entity.attackEntityFrom(DamageSource.MAGIC, 0.5F);
+			entity.attackEntityFrom(ItemInit.bloodLoss, 0.5F);
 			if (entity.world.rand.nextDouble() > 0.999) {
 				if (!entity.world.isRemote) {
 					ServerWorld sWorld = (ServerWorld) entity.world;

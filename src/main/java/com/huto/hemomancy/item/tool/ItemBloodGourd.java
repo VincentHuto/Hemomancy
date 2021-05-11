@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
 
 import net.minecraft.client.util.ITooltipFlag;
@@ -14,7 +15,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
@@ -62,7 +62,7 @@ public class ItemBloodGourd extends Item {
 					if (bloodVolume.getBloodVolume() < tier.getMaxVolume()) {
 						Random rand = worldIn.rand;
 						if (rand.nextInt(200) == 20) {
-							player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
+							player.attackEntityFrom(ItemInit.bloodLoss, 0.5f);
 							bloodVolume.addBloodVolume(50f);
 						}
 					}
