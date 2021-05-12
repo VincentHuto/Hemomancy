@@ -1,7 +1,7 @@
 package com.huto.hemomancy.capa.volume;
 
 public class BloodVolume implements IBloodVolume {
-	private float bloodVolume = 5000.0F;
+	private float bloodVolume = 0.0F;
 	private float maxBloodVolume = 5000.0F;
 
 	public void subtractBloodVolume(float points) {

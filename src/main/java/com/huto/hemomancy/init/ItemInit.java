@@ -15,6 +15,7 @@ import com.huto.hemomancy.item.armor.ItemChitiniteChest;
 import com.huto.hemomancy.item.armor.ItemChitiniteHelmet;
 import com.huto.hemomancy.item.armor.ItemSpikedShield;
 import com.huto.hemomancy.item.memories.ItemBloodMemory;
+import com.huto.hemomancy.item.memories.ItemHematicMemory;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
@@ -158,7 +159,7 @@ public class ItemInit {
 
 	// Hematic Memories
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+			() -> new ItemHematicMemory(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_blood_absorbtion));
@@ -267,7 +268,7 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
 			() -> new ItemBloodVial(new Item.Properties().group(HemomancyItemGroup.instance)));
-
+	//Flasks
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
 			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 250));
 	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",

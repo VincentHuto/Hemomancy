@@ -63,5 +63,9 @@ public class ItemBloodyFlask extends Item {
 		tooltip.add(new StringTextComponent("Used to Quickly Gain " + amount + "ml of Blood"));
 
 	}
+	
+	public float getAmount() {
+		return amount;
+	}
 
 }

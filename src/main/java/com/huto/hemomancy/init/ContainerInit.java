@@ -8,6 +8,7 @@ import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.container.ContainerLivingStaff;
 import com.huto.hemomancy.container.ContainerMorphlingJar;
 import com.huto.hemomancy.container.ContainerRuneBinder;
+import com.huto.hemomancy.container.ContainerVisceralRecaller;
 import com.huto.hemomancy.container.PlayerExpandedContainer;
 import com.huto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
@@ -34,6 +35,9 @@ public class ContainerInit {
 
 	public static final RegistryObject<ContainerType<ContainerChiselStation>> runic_chisel_station = CONTAINERS
 			.register("runic_chisel_station", () -> IForgeContainerType.create(ContainerChiselStation::new));
+
+	public static final RegistryObject<ContainerType<ContainerVisceralRecaller>> visceral_recaller = CONTAINERS
+			.register("visceral_recaller", () -> IForgeContainerType.create(ContainerVisceralRecaller::new));
 
 	@ObjectHolder("hemomancy:playerrunes")
 	public static ContainerType<PlayerExpandedContainer> playerrunes = createRuneContainer("playerrunes",

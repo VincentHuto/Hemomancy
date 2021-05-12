@@ -2,7 +2,7 @@ package com.huto.hemomancy.item;
 
 import java.util.List;
 
-import com.huto.hemomancy.gui.tendency.GuiTendencyTitlePage;
+import com.huto.hemomancy.gui.guide.tendency.GuiTendencyTitlePage;
 import com.huto.hemomancy.render.item.RenderItemTome;
 
 import net.minecraft.client.Minecraft;

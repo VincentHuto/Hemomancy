@@ -6,6 +6,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -14,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -38,6 +40,14 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
 		if (((ItemStack) event.getObject()).getItem() instanceof ItemBloodGourd) {
+			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+
+		}
+	}
+
+	@SubscribeEvent
+	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<TileEntity> event) {
+		if (event.getObject() instanceof TileEntityVisceralRecaller) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}

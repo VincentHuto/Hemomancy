@@ -11,6 +11,7 @@ import com.huto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.huto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
 import com.huto.hemomancy.gui.morphlingjar.GuiLivingStaff;
 import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJar;
+import com.huto.hemomancy.gui.recaller.GuiVisceralRecaller;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.TileEntityInit;
@@ -104,6 +105,7 @@ public class ClientEventSubscriber {
 
 		// Screen
 		ScreenManager.registerFactory(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
+		ScreenManager.registerFactory(ContainerInit.visceral_recaller.get(), GuiVisceralRecaller::new);
 		ScreenManager.registerFactory(ContainerInit.playerrunes, PlayerExpandedScreen::new);
 		ScreenManager.registerFactory(ContainerRuneBinder.type, GuiRuneBinder::new);
 		ScreenManager.registerFactory(ContainerMorphlingJar.type, GuiMorphlingJar::new);

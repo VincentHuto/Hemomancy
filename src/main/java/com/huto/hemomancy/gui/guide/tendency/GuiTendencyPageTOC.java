@@ -1,4 +1,4 @@
-package com.huto.hemomancy.gui.tendency;
+package com.huto.hemomancy.gui.guide.tendency;
 
 import java.util.ArrayList;
 import java.util.List;

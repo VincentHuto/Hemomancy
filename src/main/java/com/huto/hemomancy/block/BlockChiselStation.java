@@ -95,7 +95,6 @@ public class BlockChiselStation extends Block {
 		return state.with(FACING, rot.rotate(state.get(FACING)));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
@@ -116,7 +115,6 @@ public class BlockChiselStation extends Block {
 		return new TileEntityChiselStation();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
 		super.onBlockClicked(state, worldIn, pos, player);

@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class BloodVolumeHud extends Screen {
 
-	public static float bloodVolume = 0;
+	public float bloodVolume = 0;
 	private Minecraft mc;
 	ClientPlayerEntity player;
 
@@ -66,7 +66,6 @@ public class BloodVolumeHud extends Screen {
 				float textureVShift = (world.getGameTime() * 0.25f % 256);
 				float heightShift = (float) Math.cos(world.getGameTime() * 0.1);
 				// float heightShift = 0;
-
 				// Cap
 				int xOff = (int) ((-screenWidth / 2) + (screenWidth / 2.15));
 				int yOff = (int) ((-screenHeight / 2));
@@ -81,6 +80,7 @@ public class BloodVolumeHud extends Screen {
 				GuiUtil.drawTexturedModalRect(xOff - 1, yOff + 106, 9, 244, 13, 12);
 				// Frame
 				GuiUtil.drawTexturedModalRect(xOff - 1, yOff, 1, 0, 12, 106);
+
 				GL11.glPopMatrix();
 				GL11.glPushMatrix();
 				RenderSystem.disableAlphaTest();
