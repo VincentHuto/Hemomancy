@@ -5,7 +5,8 @@ import java.util.List;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
 
@@ -46,16 +47,16 @@ public class EntityBloodCloud extends EntityBloodConstruct {
 		if (world.isRemote) {
 			double radius = 0.2;
 			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtil.inRange(-radius, radius), pos.y + ParticleUtil.inRange(-radius, radius),
-					pos.z + ParticleUtil.inRange(-radius, radius), 0, 0.005, 0);
+					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
+					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtil.inRange(-radius, radius), pos.y + ParticleUtil.inRange(-radius, radius),
-					pos.z + ParticleUtil.inRange(-radius, radius), 0, 0.005, 0);
+					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
+					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
 			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtil.inRange(-radius, radius), pos.y + ParticleUtil.inRange(-radius, radius),
-					pos.z + ParticleUtil.inRange(-radius, radius), 0, 0.005, 0);
-			world.addParticle(ParticleTypes.FALLING_LAVA, pos.x + ParticleUtil.inRange(-radius, radius),
-					pos.y + ParticleUtil.inRange(-radius, radius), pos.z + ParticleUtil.inRange(-radius, radius), 0,
+					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
+					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
+			world.addParticle(ParticleTypes.FALLING_LAVA, pos.x + ParticleUtils.inRange(-radius, radius),
+					pos.y + ParticleUtils.inRange(-radius, radius), pos.z + ParticleUtils.inRange(-radius, radius), 0,
 					0.005, 0);
 
 		}

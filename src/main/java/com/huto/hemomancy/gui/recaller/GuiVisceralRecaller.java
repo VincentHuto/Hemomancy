@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerVisceralRecaller;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,7 +19,6 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 
 public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecaller> {
 	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
@@ -84,13 +83,13 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		GlStateManager.rotatef(180, 1, 0, 3);
 		// GlStateManager.scaled(1.25, 1, 1.25);
 		// Render anything you want to render here
-		GuiUtil.drawTexturedModalRect(-18.5f, -86, 23 + textureUShift, textureVShift, 6,
+		GuiUtils.drawTexturedModalRect(-18.5f, -86, 23 + textureUShift, textureVShift, 6,
 				(int) newBarWidth + 8 + heightShift);
 		mc.textureManager.bindTexture(texture);
 		// Cap
-		GuiUtil.drawTexturedModalRect(-21.5f, -47, 9, 244, 13, 12);
+		GuiUtils.drawTexturedModalRect(-21.5f, -47, 9, 244, 13, 12);
 		// Frame
-		GuiUtil.drawTexturedModalRect(-21.5f, -97, 1, 0, 12, 51);
+		GuiUtils.drawTexturedModalRect(-21.5f, -97, 1, 0, 12, 51);
 		RenderSystem.disableAlphaTest();
 		GL11.glPopMatrix();
 	}
@@ -100,7 +99,7 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.renderBackground(matrixStack);
 		Minecraft.getInstance().getTextureManager().bindTexture(GUI_RECALLER);
-		GuiUtils.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize, 0f);
+		GuiUtils.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
 	}
 

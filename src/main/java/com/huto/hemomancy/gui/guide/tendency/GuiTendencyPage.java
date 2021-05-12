@@ -10,7 +10,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
 import com.huto.hemomancy.init.ItemInit;
 import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.hutoslib.util.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -70,7 +70,7 @@ public class GuiTendencyPage extends Screen {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindTexture(texture);
-			GuiUtil.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 		}
 		GlStateManager.popMatrix();
 
@@ -93,7 +93,7 @@ public class GuiTendencyPage extends Screen {
 			// drawCenteredString(matrixStack, font, I18n.format(text), 175, 10, 10);
 			// Split String(text,x,y,wrapwidth,color)
 			// Max Character Length ~663
-			font.func_238418_a_(new StringTextComponent(I18n.format(text)), 0, 0, 175, 0);
+			GuiUtils.drawMaxWidthString(font,new StringTextComponent(I18n.format(text)), 0, 0, 175, 0xffffff,true);
 		}
 		GlStateManager.popMatrix();
 

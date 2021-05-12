@@ -3,7 +3,7 @@ package com.huto.hemomancy.tile;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,14 +50,14 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 		double globalTime = cooldown * 0.02;
 		if (world.isRemote) {
 			int globalPartCount = 128;
-			Vector3d[] fibboSphere = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5);
-			Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.55);
-			Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5,
+			Vector3d[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5);
+			Vector3d[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.55);
+			Vector3d[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5,
 					false);
-			Vector3d[] earth = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.1);
-			Vector3d[] mars = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.08);
+			Vector3d[] earth = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.1);
+			Vector3d[] mars = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.08);
 
-			Vector3d[] randomSwim = ParticleUtil.randomSwimming(globalPartCount, -world.getGameTime() * 0.005,1,
+			Vector3d[] randomSwim = ParticleUtils.randomSwimming(globalPartCount, -world.getGameTime() * 0.005, 1,
 					false);
 
 			for (int i = 0; i < globalPartCount; i++) {
@@ -100,20 +100,20 @@ public class TileEntityRuneModStation extends TileEntity implements ITickableTil
 			if (world.isRemote) {
 				int partCount = 128;
 				double time = cooldown * 0.02;
-				Vector3d[] fibboSphere = ParticleUtil.fibboSphere(partCount, time, Math.tan(time));
-				Vector3d[] expandingSphere = ParticleUtil.randomSphere(partCount, time, Math.tan(time * 0.25));
-				Vector3d[] randomSphere = ParticleUtil.randomSphere(partCount, time, 1);
-				Vector3d[] randomSwimming = ParticleUtil.randomSwimming(partCount, time, 1, false);
-				Vector3d[] squashStretch = ParticleUtil.squashAndStretch(partCount, time, 1, false);
-				Vector3d[] funMovement = ParticleUtil.tangentFunnel(partCount, time, 1, false);
-				Vector3d[] inversedSphere = ParticleUtil.inversedSphere(partCount, time, 1, false);
-				Vector3d[] lotusFountain = ParticleUtil.lotusFountain(partCount, time, 1, false);
-				Vector3d[] lotusFountainFlip = ParticleUtil.lotusFountainFlip(partCount, time, 1, false);
-				Vector3d[] cosmicBirthFlip = ParticleUtil.cosmicBirthFlip(partCount, time, 1, false);
-				Vector3d[] bloomingFlower = ParticleUtil.bloomingFlower(partCount, time, 1, false);
-				Vector3d[] bloomingFlowerFlip = ParticleUtil.bloomingFlowerFlip(partCount, time, 1, false);
-				Vector3d[] cosmicBirthInverse = ParticleUtil.cosmicBirthInverse(partCount, time, 1, false);
-				Vector3d[] cosmicBirthInverseFlip = ParticleUtil.cosmicBirthInverseFlip(partCount, time, 1, false);
+				Vector3d[] fibboSphere = ParticleUtils.fibboSphere(partCount, time, Math.tan(time));
+				Vector3d[] expandingSphere = ParticleUtils.randomSphere(partCount, time, Math.tan(time * 0.25));
+				Vector3d[] randomSphere = ParticleUtils.randomSphere(partCount, time, 1);
+				Vector3d[] randomSwimming = ParticleUtils.randomSwimming(partCount, time, 1, false);
+				Vector3d[] squashStretch = ParticleUtils.squashAndStretch(partCount, time, 1, false);
+				Vector3d[] funMovement = ParticleUtils.tangentFunnel(partCount, time, 1, false);
+				Vector3d[] inversedSphere = ParticleUtils.inversedSphere(partCount, time, 1, false);
+				Vector3d[] lotusFountain = ParticleUtils.lotusFountain(partCount, time, 1, false);
+				Vector3d[] lotusFountainFlip = ParticleUtils.lotusFountainFlip(partCount, time, 1, false);
+				Vector3d[] cosmicBirthFlip = ParticleUtils.cosmicBirthFlip(partCount, time, 1, false);
+				Vector3d[] bloomingFlower = ParticleUtils.bloomingFlower(partCount, time, 1, false);
+				Vector3d[] bloomingFlowerFlip = ParticleUtils.bloomingFlowerFlip(partCount, time, 1, false);
+				Vector3d[] cosmicBirthInverse = ParticleUtils.cosmicBirthInverse(partCount, time, 1, false);
+				Vector3d[] cosmicBirthInverseFlip = ParticleUtils.cosmicBirthInverseFlip(partCount, time, 1, false);
 
 				Vector3d[] selectedParticle = fibboSphere;
 				for (int i = 0; i < partCount; i++) {

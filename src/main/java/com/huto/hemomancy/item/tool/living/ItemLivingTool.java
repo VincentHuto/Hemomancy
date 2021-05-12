@@ -9,7 +9,7 @@ import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.util.TextUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,8 +48,8 @@ public class ItemLivingTool extends ToolItem implements IDispellable {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(TextFormatingUtil
-				.stringToBloody(TextFormatingUtil.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+		return new StringTextComponent(TextUtils
+				.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
 	}
 

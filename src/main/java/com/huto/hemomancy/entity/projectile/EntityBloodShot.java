@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -58,8 +58,8 @@ public class EntityBloodShot extends AbstractArrowEntity {
 			ServerWorld sWorld = (ServerWorld) world;
 
 			sWorld.spawnParticle(BloodCellParticleFactory.createData(color),
-					getPosX() + ParticleUtil.inRange(-0.05, 0.05), getPosY() + ParticleUtil.inRange(-0.05, 0.05),
-					getPosZ() + ParticleUtil.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
+					getPosX() + ParticleUtils.inRange(-0.05, 0.05), getPosY() + ParticleUtils.inRange(-0.05, 0.05),
+					getPosZ() + ParticleUtils.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
 
 			if (this.inGround && this.timeInGround != 0 && this.timeInGround >= 100) {
 				this.world.setEntityState(this, (byte) 0);

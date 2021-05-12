@@ -10,6 +10,7 @@ import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.math.MathUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -17,15 +18,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.Button.IPressable;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -72,33 +67,6 @@ public class GuiChooseManip extends Screen {
 			}
 		}
 
-	}
-
-	public void drawMaxWidthString(ITextProperties text, int x, int y, int maxLength, int color) {
-		Matrix4f matrix4f = TransformationMatrix.identity().getMatrix();
-
-		for (IReorderingProcessor ireorderingprocessor : font.trimStringToWidth(text, maxLength)) {
-			drawText(ireorderingprocessor, (float) x, (float) y, color, matrix4f, false);
-			y += 9;
-		}
-
-	}
-
-	private int drawText(IReorderingProcessor reorderingProcessor, float x, float y, int color, Matrix4f matrix,
-			boolean drawShadow) {
-		IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer
-				.getImpl(Tessellator.getInstance().getBuffer());
-		int i = font.drawEntityText(reorderingProcessor, x, y, color, drawShadow, matrix, irendertypebuffer$impl, false,
-				0, 15728880);
-		irendertypebuffer$impl.finish();
-		return i;
-	}
-
-	private static Point rotatePointAbout(Point in, Point about, double degrees) {
-		double rad = degrees * Math.PI / 180.0;
-		double newX = Math.cos(rad) * (in.x - about.x) - Math.sin(rad) * (in.y - about.y) + about.x;
-		double newY = Math.sin(rad) * (in.x - about.x) + Math.cos(rad) * (in.y - about.y) + about.y;
-		return new Point((int) newX, (int) newY);
 	}
 
 	@Override
@@ -153,7 +121,7 @@ public class GuiChooseManip extends Screen {
 				GlStateManager.disableBlend();
 				GlStateManager.disableAlphaTest();
 				GlStateManager.popMatrix();
-				point = rotatePointAbout(point, center, angleBetweenEach);
+				point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
 			}
 		} else {
 

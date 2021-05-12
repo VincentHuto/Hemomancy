@@ -9,7 +9,7 @@ import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.math.Vector3;
 
 import net.minecraft.block.Block;
@@ -136,8 +136,8 @@ public class EntityTrackingSerpent extends ThrowableEntity {
 			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.15 : 0.6);
 			setMotion(motionVec.toVector3d());
 			if (time < 10)
-				setMotion(getMotion().getX() + ParticleUtil.inRange(-0.15, 0.15), Math.abs(getMotion().getY()),
-						getMotion().getZ() + ParticleUtil.inRange(-0.15, 0.15));
+				setMotion(getMotion().getX() + ParticleUtils.inRange(-0.15, 0.15), Math.abs(getMotion().getY()),
+						getMotion().getZ() + ParticleUtils.inRange(-0.15, 0.15));
 			List<LivingEntity> targetList = world.getEntitiesWithinAABB(LivingEntity.class,
 					new AxisAlignedBB(getPosX() - 0.5, getPosY() - 0.5, getPosZ() - 0.5, getPosX() + 0.5,
 							getPosY() + 0.5, getPosZ() + 0.5));

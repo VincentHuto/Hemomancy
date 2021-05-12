@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:lobotomic_distributor"
+          "name": "hemomancy:dendritic_distributor"
         }
       ],
       "conditions": [

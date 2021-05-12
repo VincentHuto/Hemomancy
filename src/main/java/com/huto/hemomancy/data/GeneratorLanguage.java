@@ -5,7 +5,7 @@ import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.util.TextUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -38,60 +38,59 @@ public class GeneratorLanguage extends LanguageProvider {
 		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
 
 		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
-			addEntityType(e,
-					TextFormatingUtil.convertInitToLang(e.get().getTranslationKey().replace("entity.hemomancy.", "")));
+			addEntityType(e, TextUtils.convertInitToLang(e.get().getTranslationKey().replace("entity.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.OBJBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
-			addBlock(b, TextFormatingUtil
-					.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
-			addItem(i, TextFormatingUtil
-					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+			addItem(i,
+					TextUtils.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPECIALITEMS.getEntries()) {
-			addItem(i, TextFormatingUtil
-					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+			addItem(i,
+					TextUtils.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
-			addItem(i, TextFormatingUtil
-					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+			addItem(i,
+					TextUtils.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
-			addItem(i, TextFormatingUtil
-					.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
+			addItem(i,
+					TextUtils.convertInitToLang(i.get().asItem().getTranslationKey().replace("item.hemomancy.", "")));
 		}
 
 		for (RegistryObject<Effect> i : PotionInit.EFFECTS.getEntries()) {
 			add("item.minecraft.potion.effect.potion_of_" + i.getId().getPath(),
-					"Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
+					"Potion of " + TextUtils.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.splash_potion.effect.potion_of_" + i.getId().getPath(),
-					"Spash Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
+					"Spash Potion of " + TextUtils.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.lingering_potion.effect.potion_of_" + i.getId().getPath(),
-					"Lingering Potion of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
+					"Lingering Potion of " + TextUtils.convertInitToLang(i.getId().getPath()));
 			add("item.minecraft.tipped_arrow.effect.potion_of_" + i.getId().getPath(),
-					"Arrow of " + TextFormatingUtil.convertInitToLang(i.getId().getPath()));
-			addEffect(() -> i.get(), TextFormatingUtil.convertInitToLang(i.getId().getPath()));
+					"Arrow of " + TextUtils.convertInitToLang(i.getId().getPath()));
+			addEffect(() -> i.get(), TextUtils.convertInitToLang(i.getId().getPath()));
 		}
 
 	}
@@ -131,36 +130,35 @@ public class GeneratorLanguage extends LanguageProvider {
 
 	public void addArmBannerTranslation(String prefix) {
 		add("item.hemomancy." + prefix + "_arm_banner.black",
-				"Black " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.red",
-				"Red " + TextFormatingUtil.convertInitToLang("_arm_banner"));
+				"Black " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
+		add("item.hemomancy." + prefix + "_arm_banner.red", "Red " + TextUtils.convertInitToLang("_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.green",
-				"Green " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Green " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.brown",
-				"Brown " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Brown " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.blue",
-				"Blue " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Blue " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.purple",
-				"Purple " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Purple " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.cyan",
-				"Cyan " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Cyan " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.silver",
-				"Light Gray " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Light Gray " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.gray",
-				"Gray " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Gray " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.pink",
-				"Pink " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Pink " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.lime",
-				"Lime " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Lime " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.yellow",
-				"Yellow " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Yellow " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.lightBlue",
-				"Light " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Light " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.magenta",
-				"Magenta " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Magenta " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.orange",
-				"Orange " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"Orange " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 		add("item.hemomancy." + prefix + "_arm_banner.white",
-				"White " + TextFormatingUtil.convertInitToLang(prefix + "_arm_banner"));
+				"White " + TextUtils.convertInitToLang(prefix + "_arm_banner"));
 	}
 }

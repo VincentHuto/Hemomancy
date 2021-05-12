@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.util.TextUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,8 +41,8 @@ public class ItemBloodMemory extends Item {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public ITextComponent getDisplayName(ItemStack stack) {
-		return new StringTextComponent(TextFormatingUtil
-				.stringToBloody(TextFormatingUtil.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+		return new StringTextComponent(
+				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.mergeStyle(TextFormatting.DARK_RED);
 	}
 

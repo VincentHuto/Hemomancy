@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.huto.hemomancy.Hemomancy;
 import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -58,7 +58,7 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindTexture(texture);
-			GuiUtil.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 		}
 		GlStateManager.popMatrix();
 

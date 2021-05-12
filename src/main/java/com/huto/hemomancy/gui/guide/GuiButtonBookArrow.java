@@ -1,7 +1,7 @@
 package com.huto.hemomancy.gui.guide;
 
 import com.huto.hemomancy.Hemomancy;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -54,7 +54,7 @@ public class GuiButtonBookArrow extends Button {
 			} else {
 				v = 1;
 			}
-			GuiUtil.drawTexturedModalRect(x, y, u, v, width, height);
+			GuiUtils.drawTexturedModalRect(x, y, u, v, width, height);
 		}
 	}
 

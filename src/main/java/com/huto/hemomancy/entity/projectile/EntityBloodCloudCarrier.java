@@ -6,7 +6,7 @@ import com.huto.hemomancy.entity.blood.EntityBloodCloud;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.math.Vector3;
 
 import net.minecraft.entity.Entity;
@@ -62,9 +62,9 @@ public class EntityBloodCloudCarrier extends DamagingProjectileEntity {
 	 * Called to update the entity's position/logic.
 	 */
 	int globalPartCount = 20;
-	Vector3d[] fibboSphere = ParticleUtil.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-	Vector3d[] corona = ParticleUtil.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-	Vector3d[] inversedSphere = ParticleUtil.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15, false);
+	Vector3d[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+	Vector3d[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+	Vector3d[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15, false);
 
 	@Override
 	public void tick() {

@@ -3,7 +3,7 @@ package com.huto.hemomancy.gui.guide;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -168,7 +168,7 @@ public class GuiTomeImage extends Widget {
 			this.isHovered = false;
 
 		}
-		GuiUtil.drawScaledTexturedModalRect(x + centerXIn, y + centerYIn, u, v, width, height, scale);
+		GuiUtils.drawScaledTexturedModalRect(x + centerXIn, y + centerYIn, u, v, width, height, scale);
 		GlStateManager.disableAlphaTest();
 		GlStateManager.disableBlend();
 
@@ -190,7 +190,7 @@ public class GuiTomeImage extends Widget {
 			this.isHovered = false;
 
 		}
-		GuiUtil.drawScaledTexturedModalRect(x, y, u, v, width, height, scale);
+		GuiUtils.drawScaledTexturedModalRect(x, y, u, v, width, height, scale);
 		GlStateManager.disableAlphaTest();
 		GlStateManager.disableBlend();
 

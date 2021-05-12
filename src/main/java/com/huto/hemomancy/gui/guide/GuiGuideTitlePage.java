@@ -4,7 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.hutoslib.client.render.RenderMultiBlockInGui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -56,7 +56,7 @@ public class GuiGuideTitlePage extends Screen {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindTexture(texture);
-			GuiUtil.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth, guiHeight);
+			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth, guiHeight);
 		}
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();
@@ -95,7 +95,8 @@ public class GuiGuideTitlePage extends Screen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translatef(3, -5, 0);
 			GlStateManager.scalef(0.5f, 0.5f, 0.5f);
-			RenderMultiBlockInGui.renderPatternInGUI(matrixStack, minecraft, ModBloodCraftingRecipes.hematic_iron_pattern);
+			RenderMultiBlockInGui.renderPatternInGUI(matrixStack, minecraft,
+					ModBloodCraftingRecipes.hematic_iron_pattern);
 
 			// mc.getItemRenderer().renderItemIntoGUI(new ItemStack(Items.FIRE_CHARGE), 0,
 			// -9);

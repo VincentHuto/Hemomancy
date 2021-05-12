@@ -11,7 +11,8 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.math.MathUtils;
+import com.hutoslib.util.TextUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
@@ -156,7 +157,7 @@ public class BloodTendencyEvents {
 								.toArray()[i];
 						GlStateManager.pushMatrix();
 						fontRenderer.drawString(event.getMatrixStack(),
-								TextFormatingUtil.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
+								TextUtils.toProperCase(selectedCoven.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
 								String.valueOf(tendency.getAlignmentByTendency(selectedCoven)), point.x, point.y + 30,
@@ -185,7 +186,7 @@ public class BloodTendencyEvents {
 						GlStateManager.disableBlend();
 						GlStateManager.disableAlphaTest();
 						GlStateManager.popMatrix();
-						point = rotatePointAbout(point, center, angleBetweenEach);
+						point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
 					}
 				}
 
@@ -263,13 +264,6 @@ public class BloodTendencyEvents {
 				}
 			}
 		}
-	}
-
-	private static Point rotatePointAbout(Point in, Point about, double degrees) {
-		double rad = degrees * Math.PI / 180.0;
-		double newX = Math.cos(rad) * (in.x - about.x) - Math.sin(rad) * (in.y - about.y) + about.x;
-		double newY = Math.sin(rad) * (in.x - about.x) + Math.cos(rad) * (in.y - about.y) + about.y;
-		return new Point((int) newX, (int) newY);
 	}
 
 }

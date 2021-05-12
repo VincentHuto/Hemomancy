@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
 
@@ -95,12 +95,12 @@ public class EntityTrackingPests extends ThrowableEntity {
 		super.tick();
 		if (world.isRemote) {
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
-					getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.25, 0.25),
-					getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
+					getPosX() + ParticleUtils.inRange(-0.25, 0.25), getPosY() + ParticleUtils.inRange(-0.25, 0.25),
+					getPosZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
-					getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
-					getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
+					getPosX() + ParticleUtils.inRange(-0.25, 0.25), getPosY() + ParticleUtils.inRange(-0.1, 0.1),
+					getPosZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
 		}
 		LivingEntity target = getTargetEntity();

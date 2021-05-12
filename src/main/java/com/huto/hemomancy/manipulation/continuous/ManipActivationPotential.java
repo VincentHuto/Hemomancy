@@ -8,7 +8,7 @@ import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.common.PacketHandler;
+import com.hutoslib.common.HutosLibPacketHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -39,7 +39,7 @@ public class ManipActivationPotential extends BloodManipulation {
 					Vector3d speedVec = new Vector3d(target.getPosition().getX(),
 							(float) target.getPosition().getY() + target.getHeight() / 2.0f,
 							target.getPosition().getZ());
-					PacketHandler.sendLightningSpawn(player.getPositionVec().add(translation), speedVec, 64.0f,
+					HutosLibPacketHandler.sendLightningSpawn(player.getPositionVec().add(translation), speedVec, 64.0f,
 							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
 					target.attackEntityFrom(DamageSource.causePlayerDamage((PlayerEntity) player), 5.0f);
 				}

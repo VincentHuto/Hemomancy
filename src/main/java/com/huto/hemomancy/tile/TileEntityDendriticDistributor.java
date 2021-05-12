@@ -2,7 +2,7 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -20,7 +20,7 @@ public class TileEntityDendriticDistributor extends TileEntity implements ITicka
 		if (world.isRemote) {
 			int globalPartCount = 128;
 			double time = -world.getGameTime() * 0.21;
-			Vector3d[] fibboSphere = ParticleUtil.randomSphere(globalPartCount, time, 0.5);
+			Vector3d[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, time, 0.5);
 			double sizeMod = 2;
 			double sinX = Math.abs(Math.pow(Math.sin(time), 9)) * sizeMod;
 			double sinZ = Math.cos(time) * sizeMod;

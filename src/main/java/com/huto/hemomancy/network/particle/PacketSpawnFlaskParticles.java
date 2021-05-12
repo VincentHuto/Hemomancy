@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 
 import net.minecraft.client.world.ClientWorld;
@@ -65,8 +65,8 @@ public class PacketSpawnFlaskParticles {
 		}
 		ClientWorld world = ((ClientWorld) clientWorld.get());
 		world.addParticle(GlowParticleFactory.createData(msg.getColor()), (double) msg.getPos().x,
-				(double) msg.getPos().y + 1, (double) msg.getPos().z, ParticleUtil.inRange(-3, 3) * 0.015f,
-				ParticleUtil.inRange(-3, 3) * 0.015f, ParticleUtil.inRange(-3, 3) * 0.015f);
+				(double) msg.getPos().y + 1, (double) msg.getPos().z, ParticleUtils.inRange(-3, 3) * 0.015f,
+				ParticleUtils.inRange(-3, 3) * 0.015f, ParticleUtils.inRange(-3, 3) * 0.015f);
 
 		ctxSupplier.get().setPacketHandled(true);
 	}

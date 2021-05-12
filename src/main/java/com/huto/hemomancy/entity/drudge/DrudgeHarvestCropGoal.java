@@ -6,7 +6,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import com.hutoslib.util.BlockUtil;
+import com.hutoslib.util.BlockUtils;
 
 import net.minecraft.block.BeetrootBlock;
 import net.minecraft.block.Block;
@@ -75,10 +75,10 @@ public class DrudgeHarvestCropGoal extends BreakBlockGoal {
 		BlockPos blockpos1 = this.findTarget(blockpos, world);
 		Random random = this.entity.getRNG();
 		if ((blockpos1 != null)) {
-			if (BlockUtil.isCrop(world, blockpos1)) {
+			if (BlockUtils.isCrop(world, blockpos1)) {
 				CropsBlock crop = (CropsBlock) world.getBlockState(blockpos1).getBlock();
 				if (!(crop instanceof BeetrootBlock)) {
-					if (BlockUtil.isCropFullyGrown(world, blockpos1)) {
+					if (BlockUtils.isCropFullyGrown(world, blockpos1)) {
 						if (this.breakingTime > 0) {
 							Vector3d vector3d = this.entity.getMotion();
 							this.entity.setMotion(vector3d.x, 0.3D, vector3d.z);
@@ -122,7 +122,7 @@ public class DrudgeHarvestCropGoal extends BreakBlockGoal {
 						++this.breakingTime;
 					}
 				} else {
-					if (BlockUtil.isBeetFullyGrown(world, blockpos1)) {
+					if (BlockUtils.isBeetFullyGrown(world, blockpos1)) {
 						if (this.breakingTime > 0) {
 							Vector3d vector3d = this.entity.getMotion();
 							this.entity.setMotion(vector3d.x, 0.3D, vector3d.z);
@@ -172,13 +172,13 @@ public class DrudgeHarvestCropGoal extends BreakBlockGoal {
 	protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
 		pos = pos.add(0.5, 0, 0.5);
 		if (this.creature instanceof EntityDrudge) {
-			if (BlockUtil.isCrop(worldIn, pos)) {
+			if (BlockUtils.isCrop(worldIn, pos)) {
 				CropsBlock crop = (CropsBlock) worldIn.getBlockState(pos).getBlock();
 				// This is because APPERENTLY beets have their own growth property
 				if (!(crop instanceof BeetrootBlock)) {
-					return BlockUtil.isCropFullyGrown(worldIn, pos);
+					return BlockUtils.isCropFullyGrown(worldIn, pos);
 				} else {
-					return BlockUtil.isBeetFullyGrown(worldIn, pos);
+					return BlockUtils.isBeetFullyGrown(worldIn, pos);
 				}
 
 			}

@@ -13,6 +13,7 @@ import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.network.PacketHandler;
 import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.common.HutosLibPacketHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -50,7 +51,7 @@ public class ManipDeadlyGaze extends BloodManipulation {
 					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f,
 							(RegistryKey<World>) world.getDimensionKey());
 
-					com.hutoslib.common.PacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
+					HutosLibPacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
 							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 3, 10, 9, 1.2f);
 				}
 			}

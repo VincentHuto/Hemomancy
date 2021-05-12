@@ -9,7 +9,7 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.util.TextUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -96,7 +96,7 @@ public class ItemRune extends Item implements IRune {
 	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new StringTextComponent(
-				TextFormatting.GOLD + "Tendency: " + TextFormatingUtil.toProperCase(assignedTendency.name())));
+				TextFormatting.GOLD + "Tendency: " + TextUtils.toProperCase(assignedTendency.name())));
 		tooltip.add(new StringTextComponent(TextFormatting.GREEN + "Tendency Amount: " + deepenAmount));
 
 	}

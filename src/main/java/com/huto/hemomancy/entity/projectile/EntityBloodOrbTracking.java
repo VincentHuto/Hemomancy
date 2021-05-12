@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
 
@@ -97,8 +97,8 @@ public class EntityBloodOrbTracking extends ThrowableEntity {
 		super.tick();
 		if (world.isRemote) {
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					getPosX() + ParticleUtil.inRange(-0.1, 0.1), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
-					getPosZ() + ParticleUtil.inRange(-0.1, 0.1), 0, 0.005, 0);
+					getPosX() + ParticleUtils.inRange(-0.1, 0.1), getPosY() + ParticleUtils.inRange(-0.1, 0.1),
+					getPosZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 			world.addParticle(ParticleTypes.ASH, this.getPosX() + (Math.random() - 0.5) * 0.4,
 					this.getPosY() + (Math.random() - 0.5) * 0.4, this.getPosZ() + (Math.random() - 0.5) * 0.4, 0, 0,
 					0);

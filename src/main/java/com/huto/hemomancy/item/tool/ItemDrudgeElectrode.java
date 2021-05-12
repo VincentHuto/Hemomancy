@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -36,7 +36,7 @@ public class ItemDrudgeElectrode extends Item {
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target instanceof EntityDrudge) {
 			if (!target.world.isRemote) {
-				ParticleUtil.spawnPoof((ServerWorld) target.world, target.getPosition());
+				ParticleUtils.spawnPoof((ServerWorld) target.world, target.getPosition());
 			}
 			ItemEntity itemEnt = new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(),
 					new ItemStack(ItemInit.living_will.get(), 1));

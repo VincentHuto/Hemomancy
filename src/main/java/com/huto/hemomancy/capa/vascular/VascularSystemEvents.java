@@ -8,7 +8,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketVascularSystemServer;
-import com.hutoslib.util.TextFormatingUtil;
+import com.hutoslib.util.TextUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
@@ -135,7 +135,7 @@ public class VascularSystemEvents {
 								.toArray()[i];
 						GlStateManager.pushMatrix();
 						fontRenderer.drawString(event.getMatrixStack(),
-								TextFormatingUtil.toProperCase(selectedSection.toString()), point.x, point.y + 20,
+								TextUtils.toProperCase(selectedSection.toString()), point.x, point.y + 20,
 								new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.drawString(event.getMatrixStack(),
 								String.valueOf(section.getHealthBySection(selectedSection)), point.x, point.y + 30,

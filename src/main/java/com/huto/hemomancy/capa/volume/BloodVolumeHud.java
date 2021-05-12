@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeClient;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -73,13 +73,13 @@ public class BloodVolumeHud extends Screen {
 				GL11.glPushMatrix();
 				GL11.glRotatef(180, 0, 0, 0);
 				// bar
-				GuiUtil.drawTexturedModalRect(xOff + 2, yOff + 3, 23 + textureUShift, textureVShift, 6,
+				GuiUtils.drawTexturedModalRect(xOff + 2, yOff + 3, 23 + textureUShift, textureVShift, 6,
 						(int) newBarWidth + 8 + heightShift);
 				mc.textureManager.bindTexture(texture);
 				// Cap
-				GuiUtil.drawTexturedModalRect(xOff - 1, yOff + 106, 9, 244, 13, 12);
+				GuiUtils.drawTexturedModalRect(xOff - 1, yOff + 106, 9, 244, 13, 12);
 				// Frame
-				GuiUtil.drawTexturedModalRect(xOff - 1, yOff, 1, 0, 12, 106);
+				GuiUtils.drawTexturedModalRect(xOff - 1, yOff, 1, 0, 12, 106);
 
 				GL11.glPopMatrix();
 				GL11.glPushMatrix();

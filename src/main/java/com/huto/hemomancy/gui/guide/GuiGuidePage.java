@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
 import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtil;
+import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -56,7 +56,6 @@ public class GuiGuidePage extends Screen {
 		this.catagory = catagoryIn;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;
@@ -67,7 +66,7 @@ public class GuiGuidePage extends Screen {
 		{
 			GlStateManager.color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindTexture(texture);
-			GuiUtil.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 		}
 		GlStateManager.popMatrix();
 
@@ -90,7 +89,7 @@ public class GuiGuidePage extends Screen {
 			// drawCenteredString(matrixStack, font, I18n.format(text), 175, 10, 10);
 			// Split String(text,x,y,wrapwidth,color)
 			// Max Character Length ~663
-			font.func_238418_a_(new StringTextComponent(I18n.format(text)), 0, 0, 175, 0);
+			GuiUtils.drawMaxWidthString(font, new StringTextComponent(I18n.format(text)), 0, 0, 175, 0xffffff, true);
 		}
 		GlStateManager.popMatrix();
 

@@ -9,9 +9,9 @@ import com.hutoslib.client.models.Animation;
 import com.hutoslib.client.models.AnimationPacket;
 import com.hutoslib.client.models.IAnimatable;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtil;
+import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
-import com.hutoslib.math.MathUtil;
+import com.hutoslib.math.MathUtils;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
@@ -104,12 +104,13 @@ public class EntityChthonianQueen extends CreatureEntity implements IAnimatable 
 				liv.addPotionEffect(new EffectInstance(Effects.POISON, 200, 200));
 				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
 					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
-							getPosX() + ParticleUtil.inRange(-0.25, 0.25),
-							getPosY() + ParticleUtil.inRange(-0.25, 0.25),
-							getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
+							getPosX() + ParticleUtils.inRange(-0.25, 0.25),
+							getPosY() + ParticleUtils.inRange(-0.25, 0.25),
+							getPosZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
-							getPosX() + ParticleUtil.inRange(-0.25, 0.25), getPosY() + ParticleUtil.inRange(-0.1, 0.1),
-							getPosZ() + ParticleUtil.inRange(-0.25, 0.25), 0, 0.000, 0);
+							getPosX() + ParticleUtils.inRange(-0.25, 0.25),
+							getPosY() + ParticleUtils.inRange(-0.1, 0.1),
+							getPosZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 				}
 			}
 		}
@@ -158,12 +159,11 @@ public class EntityChthonianQueen extends CreatureEntity implements IAnimatable 
 		if (getNavigator().noPath())
 			getNavigator().tryMoveToEntityLiving(target, 1.2);
 		if (isClose) {
-			rotationYaw = (float) MathUtil.getAngle(EntityChthonianQueen.this, target) + 90f;
+			rotationYaw = (float) MathUtils.getAngle(EntityChthonianQueen.this, target) + 90f;
 		}
 		if (noActiveAnimation()) {
-			if (isClose
-					&& MathHelper.degreesDifferenceAbs((float) MathUtil.getAngle(EntityChthonianQueen.this, target) + 90,
-							rotationYaw) < 30) {
+			if (isClose && MathHelper.degreesDifferenceAbs(
+					(float) MathUtils.getAngle(EntityChthonianQueen.this, target) + 90, rotationYaw) < 30) {
 				AnimationPacket.send(EntityChthonianQueen.this, ROLLUP_ANIMATION);
 			}
 		}
