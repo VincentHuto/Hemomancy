@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.huto.hemomancy.containers.slot.SlotOutput;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.item.ItemBloodyFlask;
+import com.huto.hemomancy.item.ItemEnzyme;
 import com.huto.hemomancy.item.memories.ItemHematicMemory;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 import com.hutoslib.common.container.SlotSelectiveType;
@@ -36,9 +37,9 @@ public class ContainerVisceralRecaller extends Container {
 		// te.openInventory(player);
 		// SLOTS
 		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 64, 8, 14));
-		addSlot(new Slot(te, 1, 26, 14));
+		addSlot(new SlotSelectiveType(te, ItemEnzyme.class, 1, 64, 26, 14));
 		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26, 80));
-		addSlot(new Slot(te, 3, 152, 14));
+		addSlot(new SlotOutput(te, 3, 152, 14));
 
 		// output
 		addSlot(new SlotOutput(te, 4, 152, 80));

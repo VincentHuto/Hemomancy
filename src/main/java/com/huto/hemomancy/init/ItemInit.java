@@ -8,6 +8,8 @@ import com.huto.hemomancy.item.ItemBloodVial;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;
 import com.huto.hemomancy.item.ItemDSD;
+import com.huto.hemomancy.item.ItemEnzyme;
+import com.huto.hemomancy.item.ItemRecycledEnzyme;
 import com.huto.hemomancy.item.ItemTendencyBook;
 import com.huto.hemomancy.item.ItemTendencyHiddenBook;
 import com.huto.hemomancy.item.armor.ItemArmBanner;
@@ -93,9 +95,8 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
-	public static final	DamageSource bloodLoss = new DamageSource("bloodloss");
+	public static final DamageSource bloodLoss = new DamageSource("bloodloss");
 
-	
 	// Banners and Patterns
 
 	public static final RegistryObject<Item> leather_arm_banner = SPECIALITEMS.register("leather_arm_banner",
@@ -131,32 +132,26 @@ public class ItemInit {
 			() -> new ItemTendencyBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	// Living
-	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
-			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
-			() -> new ItemLivingSyringe(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
-			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
-			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-			() -> new ItemLivingBlade(25f, 3, EnumModToolTiers.LIVING,
-					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
-			() -> new ItemLivingAxe(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
-			() -> new ItemLivingSpear(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
-			() -> new ItemLivingBaghnakh(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().group(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
-			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
-	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
-			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
 
+	// Enzymes
+	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.ANIMUS, 10));
+	public static final RegistryObject<Item> ruinous_enzyme = BASEITEMS.register("ruinous_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.MORTEM, 10));
+	public static final RegistryObject<Item> neurotic_enzyme = BASEITEMS.register("neurotic_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.DUCTILIS, 10));
+	public static final RegistryObject<Item> ferric_enzyme = BASEITEMS.register("ferric_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.FERRIC, 10));
+	public static final RegistryObject<Item> fervent_enzyme = BASEITEMS.register("fervent_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.FLAMMEUS, 10));
+	public static final RegistryObject<Item> frigid_enzyme = BASEITEMS.register("frigid_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.CONGEATIO, 10));
+	public static final RegistryObject<Item> incandescent_enzyme = BASEITEMS.register("incandescent_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.LUX, 10));
+	public static final RegistryObject<Item> umbral_enzyme = BASEITEMS.register("umbral_enzyme",
+			() -> new ItemEnzyme(EnumBloodTendency.TENEBRIS, 10));
+	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
+			() -> new ItemRecycledEnzyme());
 	// Hematic Memories
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
 			() -> new ItemHematicMemory(new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -200,6 +195,33 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_crossbow));
+
+	// Living
+	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
+			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
+			() -> new ItemLivingSyringe(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
+			() -> new ItemLivingStaff(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
+			() -> new ItemLivingGrasp(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
+			() -> new ItemLivingBlade(25f, 3, EnumModToolTiers.LIVING,
+					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
+			() -> new ItemLivingAxe(25f, 1, EnumModToolTiers.LIVING,
+					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
+			() -> new ItemLivingSpear(25f, 1, EnumModToolTiers.LIVING,
+					new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
+			() -> new ItemLivingBaghnakh(25f, 1, EnumModToolTiers.LIVING,
+					new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
+			() -> new ItemLivingCrossbow(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
+	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
+			() -> new ItemBloodBolt(new Item.Properties().group(HemomancyItemGroup.instance)));
+
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
 			() -> new ItemMorphlingPolyp(new Item.Properties().group(HemomancyItemGroup.instance)));
@@ -268,7 +290,7 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
 			() -> new ItemBloodVial(new Item.Properties().group(HemomancyItemGroup.instance)));
-	//Flasks
+	// Flasks
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
 			() -> new ItemBloodyFlask(new Item.Properties().group(HemomancyItemGroup.instance), 250));
 	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",

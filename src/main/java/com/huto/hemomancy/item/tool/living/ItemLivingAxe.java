@@ -22,6 +22,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -48,7 +49,9 @@ public class ItemLivingAxe extends ItemLivingTool {
 				if (compound.getBoolean(TAG_STATE)) {
 					if (player.isOnGround()) {
 
-						player.addVelocity(0, 0.85, 0);
+						player.applyKnockback(2F,
+								(double) MathHelper.sin(player.rotationPitch * ((float) Math.PI / 180F)),
+								(double) (-MathHelper.cos(player.rotationPitch * ((float) Math.PI / 180F))));
 						List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
 								player.getBoundingBox().grow(3.0));
 						if (player.world.isRemote) {

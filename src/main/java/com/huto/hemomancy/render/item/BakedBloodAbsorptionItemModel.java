@@ -65,7 +65,6 @@ public class BakedBloodAbsorptionItemModel implements IBakedModel {
 		return original.getParticleTexture();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Nonnull
 	@Override
 	public ItemCameraTransforms getItemCameraTransforms() {

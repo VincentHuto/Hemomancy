@@ -2,10 +2,10 @@ package com.huto.hemomancy.entity.blood;
 
 import java.util.List;
 
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particle.ParticleUtils;
 import com.hutoslib.client.particles.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
@@ -15,7 +15,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -69,8 +68,10 @@ public class EntityBloodCloud extends EntityBloodConstruct {
 		for (LivingEntity ent : entList) {
 			if (ent != null) {
 				if (ent != creator && ent != this) {
-					ent.attackEntityFrom(DamageSource.MAGIC, 2);
-					ent.addPotionEffect(new EffectInstance(PotionInit.blood_loss.get(), 20, 1));
+					if (!(ent instanceof EntityBloodConstruct)) {
+						ent.attackEntityFrom(ItemInit.bloodLoss, 2);
+						ent.addPotionEffect(new EffectInstance(PotionInit.blood_loss.get(), 20, 1));
+					}
 				}
 			}
 		}
