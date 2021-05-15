@@ -47,7 +47,6 @@ public class GuiGuidePageTOC extends GuiGuidePage {
 		this.catagory = catagoryIn;
 	}
 
-	@SuppressWarnings({ "deprecation" })
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;

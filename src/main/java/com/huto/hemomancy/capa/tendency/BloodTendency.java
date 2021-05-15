@@ -9,7 +9,6 @@ import com.hutoslib.client.particle.ParticleColor;
 
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
-
 	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>() {
 		{
 			put(EnumBloodTendency.ANIMUS, 0f);
@@ -39,11 +38,7 @@ public class BloodTendency implements IBloodTendency {
 		if (tendency != null) {
 			if (getOpposingTendency(tendencyIn) != null) {
 				Map<EnumBloodTendency, Float> newDevo = tendency;
-				newDevo.put(tendencyIn,value);
-				/*
-				 * newDevo.put(getOpposingTendency(tendencyIn),
-				 * getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
-				 */
+				newDevo.put(tendencyIn, value);
 				setTendency(newDevo);
 			}
 		}
@@ -55,10 +50,6 @@ public class BloodTendency implements IBloodTendency {
 			if (getOpposingTendency(tendencyIn) != null) {
 				Map<EnumBloodTendency, Float> newDevo = tendency;
 				newDevo.put(tendencyIn, getAlignmentByTendency(tendencyIn) + value);
-				/*
-				 * newDevo.put(getOpposingTendency(tendencyIn),
-				 * getAlignmentByTendency(getOpposingTendency(tendencyIn)) - value);
-				 */
 				setTendency(newDevo);
 			}
 		}
@@ -99,7 +90,6 @@ public class BloodTendency implements IBloodTendency {
 			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getBlue() * percent,
 					tend.getColor().getGreen() * percent));
 		}
-		// System.out.println(ParticleColor.averageFromList(colors).toString());
 		return ParticleColor.averageFromList(colors);
 
 	}

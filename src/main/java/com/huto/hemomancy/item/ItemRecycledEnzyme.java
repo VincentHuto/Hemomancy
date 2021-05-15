@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 public class ItemRecycledEnzyme extends Item {
 
 	public ItemRecycledEnzyme() {
-		super(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1));
+		super(new Item.Properties().group(HemomancyItemGroup.instance));
 	}
 
 	@Override

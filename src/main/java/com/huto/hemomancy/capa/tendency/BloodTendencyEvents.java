@@ -11,6 +11,7 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
+import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 import com.hutoslib.math.MathUtils;
 import com.hutoslib.util.TextUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -23,6 +24,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
@@ -57,6 +59,13 @@ public class BloodTendencyEvents {
 		player.sendStatusMessage(
 				new StringTextComponent("Welcome! Current Blood Tendency: " + TextFormatting.GOLD + BloodTendency),
 				false);
+	}
+
+	@SubscribeEvent
+	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<TileEntity> event) {
+		if (event.getObject() instanceof TileEntityVisceralRecaller) {
+			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodtendancy"), new BloodTendencyProvider());
+		}
 	}
 
 	@SubscribeEvent

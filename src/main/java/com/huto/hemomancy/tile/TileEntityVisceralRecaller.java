@@ -1,12 +1,20 @@
 package com.huto.hemomancy.tile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.container.ContainerVisceralRecaller;
+import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
 import com.huto.hemomancy.item.ItemBloodyFlask;
+import com.huto.hemomancy.item.ItemEnzyme;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,11 +38,28 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityVisceralRecaller extends LockableLootTileEntity
 		implements ITickableTileEntity, INamedContainerProvider {
-	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
-	public SimpleItemStackHandler itemHandler = createItemHandler();
-	public static final String TAG_BLOOD_LEVEL = "bloodLevel";
-	public float clientBloodLevel = 0.0f;
-	public IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
+	SimpleItemStackHandler itemHandler = createItemHandler();
+	static final String TAG_BLOOD_LEVEL = "bloodLevel";
+	static final String TAG_BLOOD_TENDENCY = "tendency";
+	float clientBloodLevel = 0.0f;
+	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+			.orElseThrow(IllegalStateException::new);
+	@SuppressWarnings("serial")
+	Map<EnumBloodTendency, Float> clientTendency = new HashMap<EnumBloodTendency, Float>() {
+		{
+			put(EnumBloodTendency.ANIMUS, 0f);
+			put(EnumBloodTendency.MORTEM, 0f);
+			put(EnumBloodTendency.DUCTILIS, 0f);
+			put(EnumBloodTendency.FERRIC, 0f);
+			put(EnumBloodTendency.LUX, 0f);
+			put(EnumBloodTendency.TENEBRIS, 0f);
+			put(EnumBloodTendency.FLAMMEUS, 0f);
+			put(EnumBloodTendency.CONGEATIO, 0f);
+
+		}
+	};
 
 	public TileEntityVisceralRecaller() {
 		super(TileEntityInit.visceral_artificial_recaller.get());
@@ -42,7 +67,8 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 
 	@Override
 	public void tick() {
-
+		if (!world.isRemote) {
+		}
 	}
 
 	@Override
@@ -70,38 +96,58 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 		return volume.getMaxBloodVolume();
 	}
 
+	public IBloodTendency getTendCapability() {
+		return tendency;
+	}
+
+	public Map<EnumBloodTendency, Float> getTendency() {
+		return tendency.getTendency();
+	}
+
 	// NBT
 	@Override
-	public void read(BlockState state, CompoundNBT compound) {
-		super.read(state, compound);
-		readPacketNBT(compound);
+	public void read(BlockState state, CompoundNBT tag) {
+		super.read(state, tag);
+		readPacketNBT(tag);
 		this.contents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
-		if (!this.checkLootAndRead(compound)) {
-			ItemStackHelper.loadAllItems(compound, this.contents);
+		if (!this.checkLootAndRead(tag)) {
+			ItemStackHelper.loadAllItems(tag, this.contents);
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT compound) {
-		super.write(compound);
-		writePacketNBT(compound);
-		if (!this.checkLootAndWrite(compound)) {
-			ItemStackHelper.saveAllItems(compound, this.contents);
+	public CompoundNBT write(CompoundNBT tag) {
+		super.write(tag);
+		writePacketNBT(tag);
+		if (!this.checkLootAndWrite(tag)) {
+			ItemStackHelper.saveAllItems(tag, this.contents);
 		}
-		compound.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		return compound;
+		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+
+		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
+			if (tendency.getTendency().get(key) != null) {
+				tag.putFloat(key.toString(), tendency.getTendency().get(key));
+			} else {
+				tag.putFloat(key.toString(), 0);
+			}
+		}
+
+		return tag;
 	}
 
-	public void readPacketNBT(CompoundNBT par1CompoundNBT) {
+	public void readPacketNBT(CompoundNBT tag) {
 		itemHandler = createItemHandler();
-		itemHandler.deserializeNBT(par1CompoundNBT);
+		itemHandler.deserializeNBT(tag);
 		this.contents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
-		if (!this.checkLootAndRead(par1CompoundNBT)) {
-			ItemStackHelper.loadAllItems(par1CompoundNBT, this.contents);
+		if (!this.checkLootAndRead(tag)) {
+			ItemStackHelper.loadAllItems(tag, this.contents);
 		}
-		volume.setBloodVolume(par1CompoundNBT.getFloat(TAG_BLOOD_LEVEL));
-		clientBloodLevel = par1CompoundNBT.getFloat(TAG_BLOOD_LEVEL);
-
+		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			clientTendency.put(tend, tag.getFloat(tend.toString()));
+		}
 	}
 
 	public void writePacketNBT(CompoundNBT par1CompoundNBT) {
@@ -115,6 +161,10 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 		CompoundNBT tag = pkt.getNbtCompound();
 		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			clientTendency.put(tend, tag.getFloat(tend.toString()));
+		}
 	}
 
 	@Override
@@ -127,6 +177,14 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 		CompoundNBT tag = new CompoundNBT();
 		writePacketNBT(tag);
 		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
+			if (tendency.getTendency().get(key) != null) {
+				tag.putFloat(key.toString(), tendency.getTendency().get(key));
+			} else {
+				tag.putFloat(key.toString(), 0);
+			}
+		}
+
 		return new SUpdateTileEntityPacket(pos, -999, tag);
 	}
 
@@ -139,7 +197,10 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 		}
 		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
-
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			clientTendency.put(tend, tag.getFloat(tend.toString()));
+		}
 	}
 
 	@Override
@@ -168,6 +229,25 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 	@Override
 	public NonNullList<ItemStack> getItems() {
 
+		// Absorb the enzyme
+		if (!contents.get(1).isEmpty()) {
+			ItemStack stack = contents.get(1);
+			if (stack.getItem() instanceof ItemEnzyme) {
+				ItemEnzyme enzyme = (ItemEnzyme) stack.getItem();
+				if (getTendency().get(enzyme.getTend()) < 2.0f) {
+					tendency.addTendencyAlignment(enzyme.getTend(), enzyme.getAmount() / 50);
+					stack.shrink(1);
+				}
+				// Adds a recycled chance
+				if (contents.get(3).isEmpty()) {
+					if (world.rand.nextInt(20) % 7 == 0) {
+						contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+					}
+				}
+			}
+		}
+
+		// Absorbs the flask
 		if (!contents.get(2).isEmpty()) {
 			ItemStack stack = contents.get(2);
 			if (stack.getItem() instanceof ItemBloodyFlask) {

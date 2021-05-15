@@ -37,6 +37,7 @@ import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
 import com.huto.hemomancy.recipe.FillBloodGourdDataRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
+import com.huto.hemomancy.recipe.ModRecallerRecipes;
 import com.huto.hemomancy.recipe.PolypRecipes;
 import com.huto.hemomancy.render.layer.RenderBloodAbsorptionLayer;
 import com.huto.hemomancy.render.layer.RenderLivingBladeHipLayer;
@@ -100,6 +101,7 @@ public class Hemomancy {
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
+		ModRecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);

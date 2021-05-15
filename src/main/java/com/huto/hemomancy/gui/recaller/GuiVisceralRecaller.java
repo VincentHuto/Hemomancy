@@ -3,12 +3,18 @@ package com.huto.hemomancy.gui.recaller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.container.ContainerVisceralRecaller;
+import com.huto.hemomancy.network.PacketClearRecallerState;
+import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
+import com.hutoslib.client.gui.GuiButtonTextured;
 import com.hutoslib.client.gui.GuiUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -17,28 +23,29 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecaller> {
 	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/recaller_gui.png");
 	private static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_bar.png");
-
 	private static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_fill_tiled.png");
-	@SuppressWarnings("unused")
-	private final PlayerInventory playerInv;
-	private final TileEntityVisceralRecaller te;
+	final PlayerInventory playerInv;
+	final TileEntityVisceralRecaller te;
 	int left, top;
 	int guiWidth = 176;
 	int guiHeight = 186;
+	private int zLevel = 10;
+	private Minecraft mc = Minecraft.getInstance();
+	GuiButtonTextured forgetButton;
+	int FORGETBUTTONID = 1;
 
 	public GuiVisceralRecaller(ContainerVisceralRecaller screenContainer, PlayerInventory inv, ITextComponent titleIn) {
 		super(screenContainer, inv, titleIn);
@@ -50,18 +57,18 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		this.te = screenContainer.getTe();
 	}
 
-	private Minecraft mc = Minecraft.getInstance();
-
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-
-		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).renderWidget(matrixStack, mouseX, mouseY, 10);
-		}
-
+		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
-
+		if (forgetButton.isHovered()) {
+			List<ITextComponent> ClosePage = new ArrayList<ITextComponent>();
+			ClosePage.add(new StringTextComponent(I18n.format("Forget Current State")));
+			if (forgetButton.isHovered()) {
+				func_243308_b(matrixStack, ClosePage, mouseX, mouseY);
+			}
+		}
 	}
 
 	@Override
@@ -69,16 +76,15 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		super.renderBackground(matrixStack);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
 		this.font.drawString(matrixStack, "Visceral Recaller", 8, 4, 0);
 		this.font.drawString(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
 		this.font.drawString(matrixStack, "Inventory", 8, this.ySize - 90, 000000);
+		// Draw Volume
 		float bloodVolume = te.getBloodVolume();
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
-
 		mc.textureManager.bindTexture(fill_texture);
 		float textureUShift = (te.getWorld().getGameTime() * 0.25f % 256);
 		float textureVShift = (te.getWorld().getGameTime() * 0.25f % 256);
@@ -122,6 +128,13 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
 		buttons.clear();
+		this.addButton(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, guiLeft + 152, guiTop + 47,
+				16, 16, 176, 0, null, (press) -> {
+					if (press instanceof GuiButtonTextured) {
+						PacketHandler.HANDLER.sendToServer(new PacketClearRecallerState());
+					}
+				}));
+
 	}
 
 	@Override
@@ -145,17 +158,19 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 
 	public static void drawLine(double src_x, double src_y, double dst_x, double dst_y, int zLevel, int color,
 			int displace) {
-		GlStateManager.pushMatrix();
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder bb = tess.getBuffer();
-		bb.begin(1, DefaultVertexFormats.POSITION_COLOR);
-		bb.pos(src_x, src_y, 10).color(255, 0, 255, 100).endVertex();
-		bb.pos(dst_x, dst_y, 10).color(255, 0, 255, 100).endVertex();
-		tess.draw();
-		GlStateManager.popMatrix();
+		GL11.glDisable((int) 3553);
+		GL11.glLineWidth((float) 1.0f);
+		GL11.glColor3f((float) ((float) ((color & 0xFF0000) >> 16) / 255.0f),
+				(float) ((float) ((color & 0xFF00) >> 8) / 255.0f), (float) ((float) (color & 0xFF) / 255.0f));
+		GL11.glBegin((int) 1);
+		GL11.glVertex3f((float) src_x, (float) src_y, (float) zLevel);
+		GL11.glVertex3f((float) dst_x, (float) dst_y, (float) zLevel);
+		GL11.glEnd();
+		GL11.glColor3f((float) 1.0f, (float) 1.0f, (float) 1.0f);
+		GL11.glEnable((int) 3553);
 	}
 
-	public static void fractalLine2d(double src_x, double src_y, double dst_x, double dst_y, int zLevel, int color,
+	public static void fracLine(double src_x, double src_y, double dst_x, double dst_y, int zLevel, int color,
 			int displace, double detail) {
 		if (displace < detail) {
 			drawLine(src_x, src_y, dst_x, dst_y, zLevel, color, displace);
@@ -165,37 +180,26 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 			double mid_y = (dst_y + src_y) / 2;
 			mid_x = ((double) mid_x + ((double) rand.nextFloat() - 0.5) * (double) displace * 0.5);
 			mid_y = ((double) mid_y + ((double) rand.nextFloat() - 0.5) * (double) displace * 0.5);
-			fractalLine2d(src_x, src_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
-			fractalLine2d(dst_x, dst_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
+			fracLine(src_x, src_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
+			fracLine(dst_x, dst_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
 
 		}
 	}
 
-	ArrayList<Float> affs = new ArrayList<Float>();
-	private int zLevel = 10;
-
 	private void drawCenter() {
-		float funOffSet =  (float) ( Math.abs(Math.sin(mc.player.world.getGameTime()*0.082)));
+		Map<EnumBloodTendency, Float> affs = te.getTendency();
 		GlStateManager.pushMatrix();
 		GlStateManager.translated(0, 2, 0);
 		GlStateManager.pushMatrix();
 		GlStateManager.scaled(0.25, 0.25, 0.25);
 		GlStateManager.translated(385, 210, 0);
-		affs.add(0, 0.925f+funOffSet);
-		affs.add(1, 0.125f+funOffSet);
-		affs.add(2,0.125f+funOffSet);
-		affs.add(3, 0.125f+funOffSet);
-		affs.add(4, 0.125f+funOffSet);
-		affs.add(5, 2.125f+funOffSet);
-		affs.add(6, 0.125f+funOffSet);
-		affs.add(7, 0.125f+funOffSet);
 		int centerOffset = 8;
 		int cx = 0, cy = 0;
-		int rotAngle = -90;
+		float rotAngle = -90f;
 		int distance = 85;
 		int diameter = 35;
 		float spikeBaseWidth = 23.5f;
-		for (int i = 0; i < EnumBloodTendency.values().length; i++) {
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			double cx1 = ((double) cx
 					+ Math.cos(Math.toRadians((float) rotAngle + spikeBaseWidth)) * (double) diameter);
 			double cx2 = ((double) cx
@@ -204,19 +208,19 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 					+ Math.sin(Math.toRadians((float) rotAngle + spikeBaseWidth)) * (double) diameter);
 			double cy2 = ((double) cy
 					+ Math.sin(Math.toRadians((float) rotAngle - spikeBaseWidth)) * (double) diameter);
-			double depthDist = ((float) (distance - diameter) * affs.get(i) + (float) diameter);
+			double depthDist = ((float) (distance - diameter) * affs.get(tend) + (float) diameter);
 			int lx = (int) ((double) cx + Math.cos(Math.toRadians(rotAngle)) * (double) depthDist);
 			int ly = (int) ((double) cy + Math.sin(Math.toRadians(rotAngle)) * (double) depthDist);
 			int displace = (int) ((float) (Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2)
 					- Math.min(cy1, cy2)) / 2f);
-			fractalLine2d(lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset, this.zLevel,
-					0xFF0000, displace, 1.1);
-			fractalLine2d(lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset, this.zLevel,
-					0xFF0000, displace, 1.1);
-			fractalLine2d(cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel, 0xFF0000,
-					displace, 0.8);
-			fractalLine2d(cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset, this.zLevel,
-					0xFF0000, displace, 0.8);
+			fracLine(lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset, this.zLevel,
+					tend.getColor().getColor(), displace, 1.1);
+			fracLine(lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset, this.zLevel,
+					tend.getColor().getColor(), displace, 1.1);
+			fracLine(cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
+					tend.getColor().getColor(), displace, 0.8);
+			fracLine(cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset, this.zLevel,
+					tend.getColor().getColor(), displace, 0.8);
 			rotAngle += 45;
 		}
 		GlStateManager.popMatrix();
@@ -226,7 +230,7 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 			int newX = (int) ((double) cx + Math.cos(Math.toRadians(rotAngle)) * (double) distance / 1.75);
 			int newY = (int) ((double) cy + Math.sin(Math.toRadians(rotAngle)) * (double) distance / 1.75);
 			mc.getItemRenderer().renderItemIntoGUI(new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX, newY);
-			rotAngle += 45;
+			rotAngle += 44.5f;
 
 		}
 		GlStateManager.popMatrix();
