@@ -22,6 +22,12 @@ public class GeneratorLanguage extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
+		// Jei
+		add("hemomancy.jei.recaller", "Visceral Recaller");
+		add("hemomancy.jei.chisel_station", "Chisel Station");
+
+		// Banner
+
 		addArmBannerTranslation("leather");
 		addArmBannerTranslation("iron");
 		addArmBannerTranslation("gold");
