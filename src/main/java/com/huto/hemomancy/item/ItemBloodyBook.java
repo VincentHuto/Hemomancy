@@ -7,6 +7,7 @@ import com.huto.hemomancy.render.item.RenderItemTome;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
@@ -37,6 +38,11 @@ public class ItemBloodyBook extends ItemTome {
 
 		}
 		return new ActionResult<>(ActionResultType.SUCCESS, stack);
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	@Override

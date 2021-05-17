@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.logging.log4j.Level;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.huto.hemomancy.Hemomancy;
@@ -73,11 +71,6 @@ public class BloodTempleStructure extends Structure<NoFeatureConfig> {
 	public List<MobSpawnInfo.Spawners> getDefaultCreatureSpawnList() {
 		return STRUCTURE_CREATURES;
 	}
-//    @Override
-//    protected boolean func_230363_a_(ChunkGenerator chunkGenerator, BiomeProvider biomeSource, long seed, SharedSeedRandom chunkRandom, int chunkX, int chunkZ, Biome biome, ChunkPos chunkPos, NoFeatureConfig featureConfig) {
-//        int landHeight = chunkGenerator.getNoiseHeight(chunkX << 4, chunkZ << 4, Heightmap.Type.WORLD_SURFACE_WG);
-//        return landHeight > 100;
-//    }
 
 	public static class Start extends StructureStart<NoFeatureConfig> {
 		public Start(Structure<NoFeatureConfig> structureIn, int chunkX, int chunkZ,
@@ -92,7 +85,7 @@ public class BloodTempleStructure extends Structure<NoFeatureConfig> {
 			int i = chunkpos.getXStart() + this.rand.nextInt(16);
 			int j = chunkpos.getZStart() + this.rand.nextInt(16);
 			int k = generator.getSeaLevel();
-			int l = k + this.rand.nextInt(generator.getMaxBuildHeight()/2 - 2 - k);
+			int l = k + this.rand.nextInt(generator.getMaxBuildHeight() / 2 - 2 - k);
 			IBlockReader iblockreader = generator.func_230348_a_(i, j);
 
 			for (BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable(i, l, j); l > k; --l) {
@@ -112,8 +105,10 @@ public class BloodTempleStructure extends Structure<NoFeatureConfig> {
 			Rotation rotation = Rotation.values()[this.rand.nextInt(Rotation.values().length)];
 			BloodTemplePiece.start(templateManagerIn, blockpos, rotation, this.components, this.rand);
 			this.recalculateStructureSize();
-			Hemomancy.LOGGER.log(Level.DEBUG,
-					"Blood Temple at " + (blockpos.getX()) + " " + blockpos.getY() + " " + (blockpos.getZ()));
+			/*
+			 * Hemomancy.LOGGER.log(Level.DEBUG, "Blood Temple at " + (blockpos.getX()) +
+			 * " " + blockpos.getY() + " " + (blockpos.getZ()));
+			 */
 		}
 
 	}

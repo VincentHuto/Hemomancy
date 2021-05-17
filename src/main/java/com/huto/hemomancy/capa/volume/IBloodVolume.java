@@ -2,11 +2,15 @@ package com.huto.hemomancy.capa.volume;
 
 public interface IBloodVolume {
 
+	public boolean isActive();
+
 	public void subtractBloodVolume(float points);
 
 	public void addBloodVolume(float points);
 
 	public void setBloodVolume(float points);
+
+	public void setActive(boolean set);
 
 	public float getBloodVolume();
 

@@ -92,7 +92,7 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecipeRecaller> {
 	private void drawCenter(Map<EnumBloodTendency, Float> tends) {
 		GlStateManager.pushMatrix();
 		GlStateManager.pushMatrix();
-		GlStateManager.translated(5, 0, 0);
+		GlStateManager.translated(4.5, 5, 0);
 		GlStateManager.scaled(0.25, 0.25, 0.25);
 		int centerOffset = 8;
 		int cx = 0, cy = 0;

@@ -53,52 +53,53 @@ public class PacketUseQuickManipKey {
 						.orElseThrow(NullPointerException::new);
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);
-				if (known.getSelectedManip() != null) {
-					ItemStack mainStack = player.getHeldItemMainhand();
-					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
-					if (selectedManip != null) {
-						if (selectedManip.getType() == EnumManipulationType.QUICK
-								|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
-							if (selectedManip instanceof ManipConjuration) {
-								ManipConjuration conjure = (ManipConjuration) selectedManip;
-								if (!mainStack.isEmpty()) {
-									if (mainStack.getItem() instanceof IDispellable) {
-										mainStack.shrink(1);
-										float bloodRefund = Math
-												.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamage());
-										if (bloodRefund > 900) {
-											bloodRefund = 900;
-										}
+				if (volume.isActive()) {
+					if (known.getSelectedManip() != null) {
+						ItemStack mainStack = player.getHeldItemMainhand();
+						BloodManipulation selectedManip = ManipulationInit
+								.getByName(known.getSelectedManip().getName());
+						if (selectedManip != null) {
+							if (selectedManip.getType() == EnumManipulationType.QUICK
+									|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
+								if (selectedManip instanceof ManipConjuration) {
+									ManipConjuration conjure = (ManipConjuration) selectedManip;
+									if (!mainStack.isEmpty()) {
+										if (mainStack.getItem() instanceof IDispellable) {
+											mainStack.shrink(1);
+											float bloodRefund = Math
+													.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamage());
+											if (bloodRefund > 900) {
+												bloodRefund = 900;
+											}
 
-										volume.addBloodVolume(bloodRefund);
-										mainStack.shrink(1);
-										player.sendStatusMessage(
-												new StringTextComponent("Dispelled Conjured Item")
-														.mergeStyle(TextFormatting.RED),
-												true);
+											volume.addBloodVolume(bloodRefund);
+											mainStack.shrink(1);
+											player.sendStatusMessage(new StringTextComponent("Dispelled Conjured Item")
+													.mergeStyle(TextFormatting.RED), true);
+										} else {
+											player.sendStatusMessage(
+													new StringTextComponent("Conjuration Requires an Empty Hand!")
+															.mergeStyle(TextFormatting.RED),
+													true);
+										}
 									} else {
-										player.sendStatusMessage(
-												new StringTextComponent("Conjuration Requires an Empty Hand!")
-														.mergeStyle(TextFormatting.RED),
-												true);
+										selectedManip.performAction(player, (ServerWorld) player.world, mainStack,
+												player.getPosition());
 									}
 								} else {
 									selectedManip.performAction(player, (ServerWorld) player.world, mainStack,
 											player.getPosition());
 								}
 							} else {
-								selectedManip.performAction(player, (ServerWorld) player.world, mainStack,
-										player.getPosition());
+								player.sendStatusMessage(new StringTextComponent(
+										"Selected Manipulation is not a Quick or Passive Effect")
+												.mergeStyle(TextFormatting.RED),
+										true);
 							}
-						} else {
-							player.sendStatusMessage(
-									new StringTextComponent("Selected Manipulation is not a Quick or Passive Effect")
-											.mergeStyle(TextFormatting.RED),
-									true);
 						}
 					}
-				}
 
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);

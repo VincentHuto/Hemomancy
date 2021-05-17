@@ -50,7 +50,6 @@ public class ManipDeadlyGaze extends BloodManipulation {
 							0, rand.nextDouble() - rand.nextDouble());
 					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f,
 							(RegistryKey<World>) world.getDimensionKey());
-
 					HutosLibPacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
 							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 3, 10, 9, 1.2f);
 				}

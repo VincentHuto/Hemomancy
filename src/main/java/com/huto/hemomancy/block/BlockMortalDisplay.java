@@ -2,13 +2,24 @@ package com.huto.hemomancy.block;
 
 import java.util.stream.Stream;
 
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.init.ItemInit;
+import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.tile.TileEntityMortalDisplay;
+import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.common.HutosLibPacketHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +27,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -23,9 +35,14 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class BlockMortalDisplay extends Block {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
@@ -46,6 +63,37 @@ public class BlockMortalDisplay extends Block {
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 			Hand handIn, BlockRayTraceResult result) {
+		if (!worldIn.isRemote) {
+
+			IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+			if (!volume.isActive()) {
+				volume.setActive(true);
+				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+						new PacketBloodVolumeServer(volume));
+				player.sendStatusMessage(
+						new StringTextComponent("Activated Blood Control!").mergeStyle(TextFormatting.DARK_RED), true);
+
+				for (int i = 0; i < 10; i++) {
+					Vector3d startVec = new Vector3d(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
+					Vector3d endVec = player.getPositionVec().add(0, player.getHeight() - worldIn.rand.nextDouble(), 0)
+							.add(worldIn.rand.nextDouble() - worldIn.rand.nextDouble(), 0,
+									worldIn.rand.nextDouble() - worldIn.rand.nextDouble());
+					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f,
+							(RegistryKey<World>) worldIn.getDimensionKey());
+					HutosLibPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f,
+							(RegistryKey<World>) player.world.getDimensionKey(), ParticleColor.RED, 2, 20, 9, 1.2f);
+				}
+
+			} else {
+				ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
+						new ItemStack(ItemInit.bloody_flask.get(), worldIn.rand.nextInt(4)));
+				worldIn.createExplosion(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.Mode.BREAK);
+				worldIn.addEntity(drops);
+			}
+
+		}
 
 		return ActionResultType.SUCCESS;
 

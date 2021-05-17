@@ -56,14 +56,12 @@ public class PacketChangeSelectedManip {
 					if (foundIndex < manips.size() - 1) {
 						known.setSelectedManip(manips.get(foundIndex + 1));
 						player.sendStatusMessage(
-								new StringTextComponent(
-										"Selected:" + manips.get(foundIndex + 1).getProperName()),
+								new StringTextComponent("Selected:" + manips.get(foundIndex + 1).getProperName()),
 								true);
 
 					} else {
 						known.setSelectedManip(manips.get(0));
-						player.sendStatusMessage(
-								new StringTextComponent("Selected:" + manips.get(0).getProperName()),
+						player.sendStatusMessage(new StringTextComponent("Selected:" + manips.get(0).getProperName()),
 								true);
 
 					}

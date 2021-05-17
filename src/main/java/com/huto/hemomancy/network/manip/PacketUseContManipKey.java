@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
@@ -46,23 +48,28 @@ public class PacketUseContManipKey {
 				float pTic = message.parTick;
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);
-				if (known.getSelectedManip() != null) {
-					BloodManipulation selectedManip = ManipulationInit.getByName(known.getSelectedManip().getName());
-					if (selectedManip != null) {
-						// Continuous and Charged
-						if (selectedManip.getType() == EnumManipulationType.CONTINUOUS
-								|| selectedManip.getType() == EnumManipulationType.CHARGED) {
-							selectedManip.performAction(player, (ServerWorld) player.world,
-									player.getHeldItemMainhand(), player.getPosition());
-						} else {
-							player.sendStatusMessage(new StringTextComponent(
-									"Selected Manipulation is not a Continous or Charged Effect")
-											.mergeStyle(TextFormatting.RED),
-									true);
+				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(NullPointerException::new);
+				if (volume.isActive()) {
+					if (known.getSelectedManip() != null) {
+						BloodManipulation selectedManip = ManipulationInit
+								.getByName(known.getSelectedManip().getName());
+						if (selectedManip != null) {
+							// Continuous and Charged
+							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS
+									|| selectedManip.getType() == EnumManipulationType.CHARGED) {
+								selectedManip.performAction(player, (ServerWorld) player.world,
+										player.getHeldItemMainhand(), player.getPosition());
+							} else {
+								player.sendStatusMessage(new StringTextComponent(
+										"Selected Manipulation is not a Continous or Charged Effect")
+												.mergeStyle(TextFormatting.RED),
+										true);
+							}
 						}
 					}
-				}
 
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);

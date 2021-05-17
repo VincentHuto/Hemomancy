@@ -11,6 +11,7 @@ public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 	@Override
 	public CompoundNBT writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
 		CompoundNBT entry = new CompoundNBT();
+		entry.putBoolean("Active", instance.isActive());
 		entry.putFloat("Max", instance.getMaxBloodVolume());
 		entry.putFloat("Volume", instance.getBloodVolume());
 		return entry;
@@ -24,6 +25,7 @@ public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 		if (nbt instanceof CompoundNBT) {
 			CompoundNBT entry = (CompoundNBT) nbt;
 			if (entry.contains("Max") && entry.contains("Volume")) {
+				instance.setActive(entry.getBoolean("Active"));
 				instance.setMaxBloodVolume(entry.getFloat("Max"));
 				instance.setBloodVolume(entry.getFloat("Volume"));
 			}

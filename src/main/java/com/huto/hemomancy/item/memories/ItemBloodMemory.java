@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
@@ -58,25 +60,35 @@ public class ItemBloodMemory extends Item {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
 		List<BloodManipulation> knownList = known.getKnownManips();
 
 		if (handIn == Hand.MAIN_HAND) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
 			if (!worldIn.isRemote) {
-				if (!playerIn.isSneaking()) {
-					if (!known.doesListContainName(knownList, getManip())) {
-						knownList.add(getManip());
-						PacketHandler.CHANNELKNOWNMANIPS.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
-								new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
-						stack.shrink(1);
-					} else {
-						playerIn.sendStatusMessage(new StringTextComponent("Player Already Knowns This Manipulation!")
-								.mergeStyle(TextFormatting.DARK_RED), true);
+				if (volume.isActive()) {
+					if (!playerIn.isSneaking()) {
+						if (!known.doesListContainName(knownList, getManip())) {
+							knownList.add(getManip());
+							PacketHandler.CHANNELKNOWNMANIPS.send(
+									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
+							stack.shrink(1);
+						} else {
+							playerIn.sendStatusMessage(
+									new StringTextComponent("Player Already Knowns This Manipulation!")
+											.mergeStyle(TextFormatting.OBFUSCATED),
+									true);
+						}
 					}
+				} else {
+					playerIn.sendStatusMessage(
+							new StringTextComponent("You lack understanding of what your even holding...")
+									.mergeStyle(TextFormatting.DARK_RED),
+							true);
 				}
 			}
-
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 

@@ -32,21 +32,10 @@ public class RenderItemTome extends ItemStackTileEntityRenderer {
 	public static ResourceLocation glowing_page = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/glow_page.png");
 
-	public int ticks;
-	public float field_195523_f;
-	public float field_195524_g;
-	public float field_195525_h;
-	public float field_195526_i;
-	public float nextPageTurningSpeed;
-	public float pageTurningSpeed;
-	public float nextPageAngle;
-	public float pageAngle;
-	public float field_195531_n;
+	float close = 1f;
 
 	public RenderItemTome() {
 	}
-
-	float close = 1f;
 
 	@Override
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transform, MatrixStack ms,

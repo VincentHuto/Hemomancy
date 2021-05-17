@@ -59,6 +59,11 @@ public class BloodVolumeEvents {
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketBloodVolumeServer(volume));
+
+		player.sendStatusMessage(
+				new StringTextComponent("Welcome! Blood Active? " + TextFormatting.LIGHT_PURPLE + volume.isActive()),
+				false);
+
 		player.sendStatusMessage(
 				new StringTextComponent(
 						"Welcome! Current Blood Volume: " + TextFormatting.GOLD + volume.getBloodVolume() + "ml"),

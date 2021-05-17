@@ -1,4 +1,4 @@
-package com.huto.hemomancy.manipulation.continuous;
+package com.huto.hemomancy.manipulation.quick;
 
 import java.util.List;
 
