@@ -42,6 +42,7 @@ public class GeneratorBlockStates extends BlockStateProvider {
 
 			}
 		}
+
 		/*
 		 * for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
 		 * blockTexture(b.get()); }

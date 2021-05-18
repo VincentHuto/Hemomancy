@@ -112,6 +112,8 @@ public class Hemomancy {
 		ItemInit.SPECIALITEMS.register(modEventBus);
 		ItemInit.SPAWNEGGS.register(modEventBus);
 		BlockInit.BASEBLOCKS.register(modEventBus);
+		BlockInit.SLABBLOCKS.register(modEventBus);
+		BlockInit.STAIRBLOCKS.register(modEventBus);
 		BlockInit.COLUMNBLOCKS.register(modEventBus);
 		BlockInit.CROSSBLOCKS.register(modEventBus);
 		BlockInit.OBJBLOCKS.register(modEventBus);
@@ -145,6 +147,18 @@ public class Hemomancy {
 	public static void onRegisterItems(final RegistryEvent.Register<Item> event) {
 		final IForgeRegistry<Item> registry = event.getRegistry();
 		BlockInit.BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.SLABBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
+			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
+			final BlockItem blockItem = new BlockItem(block, properties);
+			blockItem.setRegistryName(block.getRegistryName());
+			registry.register(blockItem);
+		});
+		BlockInit.STAIRBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
 			final Item.Properties properties = new Item.Properties().group(HemomancyItemGroup.instance);
 			final BlockItem blockItem = new BlockItem(block, properties);
 			blockItem.setRegistryName(block.getRegistryName());

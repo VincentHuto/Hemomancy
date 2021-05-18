@@ -27,7 +27,6 @@ public class Generator {
 		generator.addProvider(new GeneratorRecipes(generator));
 	}
 
-	@SuppressWarnings("unused")
 	private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 		generator.addProvider(new GeneratorBlockStates(generator, helper));

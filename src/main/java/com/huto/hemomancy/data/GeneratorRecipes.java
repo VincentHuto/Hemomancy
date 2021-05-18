@@ -28,12 +28,20 @@ public class GeneratorRecipes extends RecipeProvider {
 		CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(ItemInit.raw_clay_flask.get()),
 				ItemInit.cured_clay_flask.get(), 1f, 200);
 
+		CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(BlockInit.polished_venous_stone_bricks.get()),
+				BlockInit.cracked_polished_venous_stone_bricks.get(), 1f, 200);
+
 		ShapelessRecipeBuilder.shapelessRecipe(ItemInit.hematic_iron_scrap.get(), 4)
 				.addIngredient(BlockInit.hematic_iron_block.get())
 				.addCriterion("has_hematic_iron_block", hasItem(BlockInit.hematic_iron_block.get())).build(consumer);
 
 		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.befouling_ash_trail.get(), 3).addIngredient(Items.NETHER_WART)
 				.addIngredient(Items.GUNPOWDER).addIngredient(Items.BONE_MEAL)
+				.addCriterion("has_nether_wart", hasItem(Items.NETHER_WART)).build(consumer);
+
+		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.infested_venous_stone.get(), 1)
+				.addIngredient(BlockInit.venous_stone.get()).addIngredient(Items.NETHER_WART)
+				.addIngredient(Items.BROWN_MUSHROOM).addIngredient(Items.BONE_MEAL).addIngredient(Items.RED_MUSHROOM)
 				.addCriterion("has_nether_wart", hasItem(Items.NETHER_WART)).build(consumer);
 
 		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.smouldering_ash_trail.get(), 3)
@@ -166,11 +174,52 @@ public class GeneratorRecipes extends RecipeProvider {
 				.key('N', Items.STICK).patternLine("R").patternLine("R").patternLine("N")
 				.addCriterion("has_hematic_iron_scrap", hasItem(ItemInit.hematic_iron_scrap.get())).build(consumer);
 
-		ShapedRecipeBuilder.shapedRecipe(ItemInit.raw_clay_flask.get()).key('C', Items.CLAY_BALL)
-				.patternLine(" C ")
-				.patternLine("C C")
+		ShapedRecipeBuilder.shapedRecipe(ItemInit.raw_clay_flask.get()).key('C', Items.CLAY_BALL).patternLine(" C ")
+				.patternLine("C C").patternLine("CCC").addCriterion("has_clay_ball", hasItem(Items.CLAY_BALL))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.venous_stone_stairs.get(), 4).key('C', BlockInit.venous_stone.get())
+				.patternLine("C  ").patternLine("CC ").patternLine("CCC")
+				.addCriterion("has_venous_stone", hasItem(BlockInit.venous_stone.get())).build(consumer);
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone_stairs.get(), 4)
+				.key('C', BlockInit.polished_venous_stone.get()).patternLine("C  ").patternLine("CC ")
 				.patternLine("CCC")
-				.addCriterion("has_clay_ball", hasItem(Items.CLAY_BALL)).build(consumer);
+				.addCriterion("has_polished_venous_stone", hasItem(BlockInit.polished_venous_stone.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone_brick_stairs.get(), 4)
+				.key('C', BlockInit.polished_venous_stone_bricks.get()).patternLine("C  ").patternLine("CC ")
+				.patternLine("CCC")
+				.addCriterion("has_polished_venous_stone_bricks", hasItem(BlockInit.polished_venous_stone_bricks.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.venous_stone_slab.get(), 6).key('C', BlockInit.venous_stone.get())
+				.patternLine("CCC").addCriterion("has_venous_stone", hasItem(BlockInit.venous_stone.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone_slab.get(), 6)
+				.key('C', BlockInit.polished_venous_stone.get()).patternLine("CCC")
+				.addCriterion("has_polished_venous_stone", hasItem(BlockInit.polished_venous_stone.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone_brick_slab.get(), 6)
+				.key('C', BlockInit.polished_venous_stone_bricks.get()).patternLine("CCC")
+				.addCriterion("has_polished_venous_stone_bricks", hasItem(BlockInit.polished_venous_stone_bricks.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone.get(), 4)
+				.key('C', BlockInit.venous_stone.get()).patternLine("CC").patternLine("CC")
+				.addCriterion("has_venous_stone", hasItem(BlockInit.venous_stone.get())).build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.chiseled_polished_venous_stone.get(), 1)
+				.key('C', BlockInit.polished_venous_stone_slab.get()).patternLine("C").patternLine("C")
+				.addCriterion("has_polished_venous_stone_slab", hasItem(BlockInit.polished_venous_stone_slab.get()))
+				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.polished_venous_stone_bricks.get(), 4)
+				.key('C', BlockInit.polished_venous_stone.get()).patternLine("CC").patternLine("CC")
+				.addCriterion("has_polished_venous_stone", hasItem(BlockInit.polished_venous_stone.get()))
+				.build(consumer);
 
 	}
 }

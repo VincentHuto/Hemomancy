@@ -54,6 +54,17 @@ public class GeneratorLanguage extends LanguageProvider {
 			addBlock(b,
 					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
 		}
+
+		for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+
+		for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+			addBlock(b,
+					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));
+		}
+
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			addBlock(b,
 					TextUtils.convertInitToLang(b.get().asItem().getTranslationKey().replace("block.hemomancy.", "")));

@@ -23,7 +23,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.GlassBlock;
 import net.minecraft.block.PaneBlock;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.StairsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.renderer.RenderType;
@@ -42,6 +44,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class BlockInit {
 	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+			Hemomancy.MOD_ID);
+	public static final DeferredRegister<Block> SLABBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
+			Hemomancy.MOD_ID);
+	public static final DeferredRegister<Block> STAIRBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> COLUMNBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
@@ -73,16 +79,54 @@ public class BlockInit {
 	public static final RegistryObject<Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
 			() -> new BlockBleedingHeart(Effects.ABSORPTION, 12, AbstractBlock.Properties.create(Material.PLANTS)
 					.doesNotBlockMovement().zeroHardnessAndResistance().sound(SoundType.PLANT)));
-
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
 					.sound(SoundType.GLASS).notSolid()));
 	public static final RegistryObject<Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
 			() -> new PaneBlock(Block.Properties.create(Material.GLASS).hardnessAndResistance(0.1f, 1f)
 					.sound(SoundType.GLASS).notSolid()));
+
 	public static final RegistryObject<Block> venous_stone = BASEBLOCKS.register("venous_stone",
 			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
 					.hardnessAndResistance(1.5F, 6.0F)));
+	public static final RegistryObject<Block> venous_stone_slab = SLABBLOCKS.register("venous_stone_slab",
+			() -> new SlabBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
+					.hardnessAndResistance(1.5f, 6.0F)));
+	public static final RegistryObject<Block> venous_stone_stairs = BASEBLOCKS.register(("venous_stone_stairs"),
+			() -> new StairsBlock(venous_stone.get().getDefaultState(),
+					AbstractBlock.Properties.from(venous_stone.get())));
+
+	public static final RegistryObject<Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
+			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
+					.hardnessAndResistance(1.5F, 6.0F)));
+
+	public static final RegistryObject<Block> polished_venous_stone = BASEBLOCKS.register("polished_venous_stone",
+			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
+					.hardnessAndResistance(1.5F, 6.0F)));
+	public static final RegistryObject<Block> polished_venous_stone_slab = SLABBLOCKS
+			.register("polished_venous_stone_slab", () -> new SlabBlock(AbstractBlock.Properties
+					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5f, 6.0F)));
+	public static final RegistryObject<Block> polished_venous_stone_stairs = STAIRBLOCKS
+			.register(("polished_venous_stone_stairs"), () -> new StairsBlock(venous_stone.get().getDefaultState(),
+					AbstractBlock.Properties.from(venous_stone.get())));
+
+	public static final RegistryObject<Block> chiseled_polished_venous_stone = BASEBLOCKS
+			.register("chiseled_polished_venous_stone", () -> new Block(AbstractBlock.Properties
+					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
+	public static final RegistryObject<Block> polished_venous_stone_bricks = STAIRBLOCKS
+			.register("polished_venous_stone_bricks", () -> new Block(AbstractBlock.Properties
+					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
+
+	public static final RegistryObject<Block> polished_venous_stone_brick_slab = SLABBLOCKS
+			.register("polished_venous_stone_brick_slab", () -> new SlabBlock(AbstractBlock.Properties
+					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5f, 6.0F)));
+	public static final RegistryObject<Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
+			("polished_venous_stone_brick_stairs"), () -> new StairsBlock(venous_stone.get().getDefaultState(),
+					AbstractBlock.Properties.from(venous_stone.get())));
+
+	public static final RegistryObject<Block> cracked_polished_venous_stone_bricks = BASEBLOCKS
+			.register("cracked_polished_venous_stone_bricks", () -> new Block(AbstractBlock.Properties
+					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
 	public static final RegistryObject<Block> infested_venous_stone = BASEBLOCKS.register("infested_venous_stone",
 			() -> new Block(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.STONE).setRequiresTool()
 					.hardnessAndResistance(1.5F, 6.0F)));
