@@ -16,7 +16,7 @@ public class PacketOpenRunesInv {
 	public PacketOpenRunesInv() {
 	}
 
-	public void toBytes(PacketBuffer buf) {
+	public void decode(PacketBuffer buf) {
 	}
 
 	public void handle(Supplier<NetworkEvent.Context> ctx) {

@@ -23,6 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.GlassBlock;
 import net.minecraft.block.PaneBlock;
+import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.StairsBlock;
@@ -109,21 +110,18 @@ public class BlockInit {
 	public static final RegistryObject<Block> polished_venous_stone_stairs = STAIRBLOCKS
 			.register(("polished_venous_stone_stairs"), () -> new StairsBlock(venous_stone.get().getDefaultState(),
 					AbstractBlock.Properties.from(venous_stone.get())));
-
 	public static final RegistryObject<Block> chiseled_polished_venous_stone = BASEBLOCKS
 			.register("chiseled_polished_venous_stone", () -> new Block(AbstractBlock.Properties
 					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
 	public static final RegistryObject<Block> polished_venous_stone_bricks = STAIRBLOCKS
 			.register("polished_venous_stone_bricks", () -> new Block(AbstractBlock.Properties
 					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
-
 	public static final RegistryObject<Block> polished_venous_stone_brick_slab = SLABBLOCKS
 			.register("polished_venous_stone_brick_slab", () -> new SlabBlock(AbstractBlock.Properties
 					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5f, 6.0F)));
 	public static final RegistryObject<Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
 			("polished_venous_stone_brick_stairs"), () -> new StairsBlock(venous_stone.get().getDefaultState(),
 					AbstractBlock.Properties.from(venous_stone.get())));
-
 	public static final RegistryObject<Block> cracked_polished_venous_stone_bricks = BASEBLOCKS
 			.register("cracked_polished_venous_stone_bricks", () -> new Block(AbstractBlock.Properties
 					.create(Material.ROCK, MaterialColor.STONE).setRequiresTool().hardnessAndResistance(1.5F, 6.0F)));
@@ -136,10 +134,25 @@ public class BlockInit {
 	public static final RegistryObject<Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
+	public static final RegistryObject<Block> hematic_iron_pillar = COLUMNBLOCKS.register("hematic_iron_pillar",
+			() -> new RotatedPillarBlock(Block.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
+					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
 	public static final RegistryObject<Block> chiseled_hematic_iron_block = BASEBLOCKS.register(
 			"chiseled_hematic_iron_block",
 			() -> new Block(AbstractBlock.Properties.create(Material.IRON, MaterialColor.IRON).setRequiresTool()
 					.hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL)));
+
+	public static final RegistryObject<Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",
+			() -> new RotatedPillarBlock(Block.Properties.create(Material.WOOD, MaterialColor.BROWN)
+					.hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD)));
+	
+	public static final RegistryObject<Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
+			() -> new Block(AbstractBlock.Properties.create(Material.WOOD, MaterialColor.BROWN)
+					.hardnessAndResistance(2.0F, 3.0F).sound(SoundType.WOOD)));
+
+	
+	
+
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem", () -> new Block(
 			Block.Properties.create(Material.PLANTS).hardnessAndResistance(0.5f, 15f).sound(SoundType.PLANT)));
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap", () -> new Block(

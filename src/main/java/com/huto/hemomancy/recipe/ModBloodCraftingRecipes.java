@@ -242,7 +242,7 @@ public class ModBloodCraftingRecipes {
 	@SuppressWarnings("serial")
 	public static HashMap<Character, Block> bookSymbolList = new HashMap<Character, Block>() {
 		{
-			put('R', Blocks.REDSTONE_WIRE);
+			put('R', BlockInit.befouling_ash_trail.get());
 			put('B', Blocks.BOOKSHELF);
 		}
 	};

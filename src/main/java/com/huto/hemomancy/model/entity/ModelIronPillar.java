@@ -1,5 +1,4 @@
 package com.huto.hemomancy.model.entity;
-// Made with Blockbench 3.7.4
 
 import com.huto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -41,7 +40,6 @@ public class ModelIronPillar extends EntityModel<EntityIronPillar> {
 	@Override
 	public void setRotationAngles(EntityIronPillar entity, float limbSwing, float limbSwingAmount, float ageInTicks,
 			float netHeadYaw, float headPitch) {
-		// previously the render function, render code was moved to a method below
 	}
 
 	@Override

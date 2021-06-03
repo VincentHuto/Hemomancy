@@ -222,8 +222,6 @@ public class Hemomancy {
 		ModBloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-		PacketHandler.registerRuneBinderChannels();
-		PacketHandler.registerMorphlingJarChannels();
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {

@@ -19,7 +19,7 @@ public class ItemSelfReflectionMirror extends Item {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		if (worldIn.isRemote) {
-			PacketHandler.INSTANCE.sendToServer(new PacketOpenRunesInv());
+			PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}

@@ -128,7 +128,7 @@ public class GuiVisceralRecaller extends ContainerScreen<ContainerVisceralRecall
 		this.addButton(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, guiLeft + 152, guiTop + 47,
 				16, 16, 176, 0, null, (press) -> {
 					if (press instanceof GuiButtonTextured) {
-						PacketHandler.HANDLER.sendToServer(new PacketClearRecallerState());
+						PacketHandler.CHANNELMAIN.sendToServer(new PacketClearRecallerState());
 					}
 				}));
 

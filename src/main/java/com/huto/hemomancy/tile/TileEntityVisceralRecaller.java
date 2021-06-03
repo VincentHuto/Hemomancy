@@ -67,8 +67,6 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 
 	@Override
 	public void tick() {
-		if (!world.isRemote) {
-		}
 	}
 
 	@Override
@@ -78,6 +76,7 @@ public class TileEntityVisceralRecaller extends LockableLootTileEntity
 
 	@Override
 	public void onLoad() {
+		volume.setActive(true);
 	}
 
 	protected SimpleItemStackHandler createItemHandler() {

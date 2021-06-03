@@ -152,7 +152,7 @@ public class ItemRuneBinder extends Item {
 		boolean Pickup = !nbt.getBoolean("Pickup");
 		nbt.putBoolean("Pickup", Pickup);
 		if (playerEntity instanceof ServerPlayerEntity)
-			PacketHandler.RUNEBINDER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
+			PacketHandler.CHANNELRUNEBINDER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
 					new PacketToggleBinderMessage(Pickup));
 		else
 			playerEntity.sendStatusMessage(

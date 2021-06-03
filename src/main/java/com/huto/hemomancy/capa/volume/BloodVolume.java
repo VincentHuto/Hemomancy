@@ -19,7 +19,6 @@ public class BloodVolume implements IBloodVolume {
 
 	public void addBloodVolume(float points) {
 		if (isActive()) {
-
 			float curr = this.bloodVolume;
 			if (curr >= this.maxBloodVolume) {
 			}

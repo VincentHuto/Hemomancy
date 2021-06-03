@@ -35,6 +35,10 @@ public class GeneratorRecipes extends RecipeProvider {
 				.addIngredient(BlockInit.hematic_iron_block.get())
 				.addCriterion("has_hematic_iron_block", hasItem(BlockInit.hematic_iron_block.get())).build(consumer);
 
+		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.blood_wood_planks.get(), 4)
+				.addIngredient(BlockInit.blood_wood_log.get())
+				.addCriterion("has_blood_wood_log", hasItem(BlockInit.blood_wood_log.get())).build(consumer);
+
 		ShapelessRecipeBuilder.shapelessRecipe(BlockInit.befouling_ash_trail.get(), 3).addIngredient(Items.NETHER_WART)
 				.addIngredient(Items.GUNPOWDER).addIngredient(Items.BONE_MEAL)
 				.addCriterion("has_nether_wart", hasItem(Items.NETHER_WART)).build(consumer);
@@ -220,6 +224,10 @@ public class GeneratorRecipes extends RecipeProvider {
 				.key('C', BlockInit.polished_venous_stone.get()).patternLine("CC").patternLine("CC")
 				.addCriterion("has_polished_venous_stone", hasItem(BlockInit.polished_venous_stone.get()))
 				.build(consumer);
+
+		ShapedRecipeBuilder.shapedRecipe(BlockInit.hematic_iron_pillar.get(), 2)
+				.key('C', BlockInit.hematic_iron_block.get()).patternLine("C").patternLine("C")
+				.addCriterion("has_hematic_iron_block", hasItem(BlockInit.hematic_iron_block.get())).build(consumer);
 
 	}
 }

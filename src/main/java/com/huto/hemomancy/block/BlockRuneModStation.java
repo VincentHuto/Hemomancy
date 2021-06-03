@@ -67,7 +67,7 @@ public class BlockRuneModStation extends Block implements ITileEntityProvider {
 			Hand handIn, BlockRayTraceResult result) {
 		if (!player.isSneaking()) {
 			if (worldIn.isRemote) {
-				PacketHandler.INSTANCE.sendToServer(new PacketOpenRunesInv());
+				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
 			}
 		} else {
 			if (!worldIn.isRemote) {

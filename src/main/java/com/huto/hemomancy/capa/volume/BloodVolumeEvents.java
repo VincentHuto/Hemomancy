@@ -49,6 +49,7 @@ public class BloodVolumeEvents {
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof TileEntityVisceralRecaller) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+																		
 		}
 	}
 

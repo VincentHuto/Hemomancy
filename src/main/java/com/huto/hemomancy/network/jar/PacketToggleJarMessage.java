@@ -9,11 +9,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public class PacketToggleJarMessage {
+	private boolean enabled;
+
 	public PacketToggleJarMessage(boolean enabled) {
 		this.enabled = enabled;
 	}
-
-	private boolean enabled;
 
 	public static PacketToggleJarMessage decode(final PacketBuffer buffer) {
 		boolean en = buffer.readBoolean();

@@ -88,7 +88,7 @@ public class RuneEntityEventHandler {
 			Collection<? extends PlayerEntity> receivers) {
 		PacketRuneSync pkt = new PacketRuneSync(player.getEntityId(), slot, stack);
 		for (PlayerEntity receiver : receivers) {
-			PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) receiver), pkt);
+			PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) receiver), pkt);
 		}
 	}
 

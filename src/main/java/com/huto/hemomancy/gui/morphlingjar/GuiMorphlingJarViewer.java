@@ -198,7 +198,7 @@ public class GuiMorphlingJarViewer extends Screen {
 							player.playSound(SoundEvents.BLOCK_GLASS_PLACE, 0.40f, 1F);
 							ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
 							if (morphStack.getItem() instanceof ItemMorphling) {
-								PacketHandler.HANDLER.sendToServer(
+								PacketHandler.CHANNELMAIN.sendToServer(
 										new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
 							}
 

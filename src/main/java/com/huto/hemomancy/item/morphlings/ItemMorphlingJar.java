@@ -171,7 +171,7 @@ public class ItemMorphlingJar extends Item {
 		boolean Pickup = !nbt.getBoolean("Pickup");
 		nbt.putBoolean("Pickup", Pickup);
 		if (playerEntity instanceof ServerPlayerEntity)
-			PacketHandler.MORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
+			PacketHandler.CHANNELMORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
 					new PacketToggleJarMessage(Pickup));
 		else
 			playerEntity.sendStatusMessage(

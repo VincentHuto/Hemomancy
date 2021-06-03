@@ -45,7 +45,6 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public class PacketHandler {
 	private static int networkID = 0;
 	private static final String PROTOCOL_VERSION = "1";
-	public static SimpleChannel INSTANCE;
 	public static final SimpleChannel CHANNELBLOODTENDENCY = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "bloodtendencychannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -55,21 +54,40 @@ public class PacketHandler {
 	public static final SimpleChannel CHANNELBLOODVOLUME = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "bloodvolumechannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-	public static final SimpleChannel HANDLER = NetworkRegistry.ChannelBuilder
+	public static final SimpleChannel CHANNELMAIN = NetworkRegistry.ChannelBuilder
 			.named(new ResourceLocation(Hemomancy.MOD_ID + ("main_channel")))
 			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
 			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
-
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-
 	public static final SimpleChannel CHANNELPARTICLES = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "particlechannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
+	public static SimpleChannel CHANNELRUNES = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "runechannel"), () -> PROTOCOL_VERSION, s -> true, s -> true);
+	public static SimpleChannel CHANNELMORPHLINGJAR = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "morphlingjarchannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+	public static SimpleChannel CHANNELRUNEBINDER = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(Hemomancy.MOD_ID, "runebinderchannel"), () -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
 
+		
+		CHANNELMAIN.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
+				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
+		CHANNELMAIN.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
+				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
+		CHANNELMAIN.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
+				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
+		CHANNELMAIN.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class, PacketUpdateLivingStaffMorph::encode,
+				PacketUpdateLivingStaffMorph::decode, PacketUpdateLivingStaffMorph.Handler::handle);
+		CHANNELMAIN.registerMessage(networkID++, PacketClearRecallerState.class, PacketClearRecallerState::encode,
+				PacketClearRecallerState::decode, PacketClearRecallerState.Handler::handle);
+		
+		
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
 				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,
 				PacketBloodTendencyClient::handle);
@@ -131,60 +149,34 @@ public class PacketHandler {
 				.decoder(PacketSpawnLivingToolParticles::decode).encoder(PacketSpawnLivingToolParticles::encode)
 				.consumer(PacketSpawnLivingToolParticles::handle).add();
 
-		HANDLER.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
-				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
-		HANDLER.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
-				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
-		HANDLER.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
-				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
-		HANDLER.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class, PacketUpdateLivingStaffMorph::encode,
-				PacketUpdateLivingStaffMorph::decode, PacketUpdateLivingStaffMorph.Handler::handle);
-		HANDLER.registerMessage(networkID++, PacketClearRecallerState.class, PacketClearRecallerState::encode,
-				PacketClearRecallerState::decode, PacketClearRecallerState.Handler::handle);
 
-		INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Hemomancy.MOD_ID, "runechannel"),
-				() -> PROTOCOL_VERSION, s -> true, s -> true);
-		INSTANCE.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::toBytes,
+
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
-		INSTANCE.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::toBytes,
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
-		INSTANCE.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
+		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
 				PacketRuneSync::handle);
-		INSTANCE.registerMessage(networkID++, PacketArmBannerSync.class, PacketArmBannerSync::toBytes,
+		CHANNELRUNES.registerMessage(networkID++, PacketArmBannerSync.class, PacketArmBannerSync::decode,
 				PacketArmBannerSync::new, PacketArmBannerSync::handle);
 
-	}
+		CHANNELRUNEBINDER.registerMessage(networkID++, PacketBinderTogglePickup.class, PacketBinderTogglePickup::encode,
+				PacketBinderTogglePickup::decode, PacketBinderTogglePickup::handle);
+		CHANNELRUNEBINDER.registerMessage(networkID++, PacketOpenRuneBinder.class, PacketOpenRuneBinder::encode,
+				PacketOpenRuneBinder::decode, PacketOpenRuneBinder::handle);
+		CHANNELRUNEBINDER.registerMessage(networkID++, PacketToggleBinderMessage.class,
+				PacketToggleBinderMessage::encode, PacketToggleBinderMessage::decode,
+				PacketToggleBinderMessage::handle);
 
-	public static SimpleChannel RUNEBINDER = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "runebindernetwork"), () -> PROTOCOL_VERSION,
-			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketJarTogglePickup.class, PacketJarTogglePickup::encode,
+				PacketJarTogglePickup::decode, PacketJarTogglePickup::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenJar.class, PacketOpenJar::encode,
+				PacketOpenJar::decode, PacketOpenJar::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketToggleJarMessage.class, PacketToggleJarMessage::encode,
+				PacketToggleJarMessage::decode, PacketToggleJarMessage::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenStaff.class, PacketOpenStaff::encode,
+				PacketOpenStaff::decode, PacketOpenStaff::handle);
 
-	public static SimpleChannel registerRuneBinderChannels() {
-		RUNEBINDER.messageBuilder(PacketBinderTogglePickup.class, networkID++).decoder(PacketBinderTogglePickup::decode)
-				.encoder(PacketBinderTogglePickup::encode).consumer(PacketBinderTogglePickup::handle).add();
-		RUNEBINDER.messageBuilder(PacketOpenRuneBinder.class, networkID++).decoder(PacketOpenRuneBinder::decode)
-				.encoder(PacketOpenRuneBinder::encode).consumer(PacketOpenRuneBinder::handle).add();
-		RUNEBINDER.messageBuilder(PacketToggleBinderMessage.class, networkID++)
-				.decoder(PacketToggleBinderMessage::decode).encoder(PacketToggleBinderMessage::encode)
-				.consumer(PacketToggleBinderMessage::handle).add();
-		return RUNEBINDER;
-
-	}
-
-	public static SimpleChannel MORPHLINGJAR = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "morphlingjarnetwork"), () -> PROTOCOL_VERSION,
-			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-
-	public static SimpleChannel registerMorphlingJarChannels() {
-		MORPHLINGJAR.messageBuilder(PacketJarTogglePickup.class, networkID++).decoder(PacketJarTogglePickup::decode)
-				.encoder(PacketJarTogglePickup::encode).consumer(PacketJarTogglePickup::handle).add();
-		MORPHLINGJAR.messageBuilder(PacketOpenJar.class, networkID++).decoder(PacketOpenJar::decode)
-				.encoder(PacketOpenJar::encode).consumer(PacketOpenJar::handle).add();
-		MORPHLINGJAR.messageBuilder(PacketToggleJarMessage.class, networkID++).decoder(PacketToggleJarMessage::decode)
-				.encoder(PacketToggleJarMessage::encode).consumer(PacketToggleJarMessage::handle).add();
-		MORPHLINGJAR.messageBuilder(PacketOpenStaff.class, networkID++).decoder(PacketOpenStaff::decode)
-				.encoder(PacketOpenStaff::encode).consumer(PacketOpenStaff::handle).add();
-		return MORPHLINGJAR;
 	}
 
 	public static void sendBloodFlaskParticles(Vector3d pos, ParticleColor color, double radius,

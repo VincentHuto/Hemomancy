@@ -237,12 +237,12 @@ public class GuiChiselStation extends ContainerScreen<ContainerChiselStation> {
 											if (test.getState() == false) {
 												test.setState(true);
 												activatedRuneList.add(test.getId());
-												PacketHandler.HANDLER
+												PacketHandler.CHANNELMAIN
 														.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
 											} else if (test.getState() == true) {
 												test.setState(false);
 												activatedRuneList.remove(Integer.valueOf(test.getId()));
-												PacketHandler.HANDLER
+												PacketHandler.CHANNELMAIN
 														.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
 											}
 
@@ -267,7 +267,7 @@ public class GuiChiselStation extends ContainerScreen<ContainerChiselStation> {
 							if (test.getState() == true) {
 								test.setState(false);
 								activatedRuneList.clear();
-								PacketHandler.HANDLER.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
+								PacketHandler.CHANNELMAIN.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
 							}
 						}
 					}
@@ -275,7 +275,7 @@ public class GuiChiselStation extends ContainerScreen<ContainerChiselStation> {
 		this.addButton(chiselButton = new GuiButtonTextured(GUI_Chisel, CHISELBUTTONID,
 				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, null, (press) -> {
 					if (te.chestContents.get(3).getItem() != Items.AIR) {
-						PacketHandler.HANDLER.sendToServer(new PacketChiselCraftingEvent());
+						PacketHandler.CHANNELMAIN.sendToServer(new PacketChiselCraftingEvent());
 						for (
 
 								int i = 0; i < 64; i++) {
@@ -284,7 +284,8 @@ public class GuiChiselStation extends ContainerScreen<ContainerChiselStation> {
 								if (test.getState() == true) {
 									test.setState(false);
 									activatedRuneList.clear();
-									PacketHandler.HANDLER.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
+									PacketHandler.CHANNELMAIN
+											.sendToServer(new PacketUpdateChiselRunes(activatedRuneList));
 								}
 
 							}

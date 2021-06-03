@@ -27,7 +27,7 @@ public class PacketArmBannerSync {
 		this.armBanner = armBanner;
 	}
 
-	public void toBytes(PacketBuffer buf) {
+	public void decode(PacketBuffer buf) {
 		buf.writeInt(this.playerId);
 		buf.writeInt(this.slot);
 		buf.writeItemStack(this.armBanner);

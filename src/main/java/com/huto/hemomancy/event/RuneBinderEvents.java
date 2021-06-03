@@ -34,7 +34,7 @@ public class RuneBinderEvents {
 
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
 		if (ClientEventSubscriber.keyBinds.get(0).isPressed())
-			PacketHandler.RUNEBINDER.sendToServer(new PacketBinderTogglePickup());
+			PacketHandler.CHANNELRUNEBINDER.sendToServer(new PacketBinderTogglePickup());
 	}
 
 }
