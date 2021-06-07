@@ -2,8 +2,8 @@ package com.huto.hemomancy.particle.factory;
 
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.particle.data.HitColorParticleData;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particles.ParticleGlow;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.ParticleGlow;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleFactory;

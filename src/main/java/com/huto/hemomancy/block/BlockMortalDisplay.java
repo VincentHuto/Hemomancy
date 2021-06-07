@@ -8,7 +8,7 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.tile.TileEntityMortalDisplay;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.common.HutosLibPacketHandler;
 
 import net.minecraft.block.Block;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.particle.ParticleUtils;
+import com.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

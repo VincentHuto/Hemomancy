@@ -4,7 +4,7 @@ import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.tile.TileEntityRuneModStation;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 

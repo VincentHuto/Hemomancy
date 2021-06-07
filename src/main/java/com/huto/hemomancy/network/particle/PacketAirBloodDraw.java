@@ -7,8 +7,8 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

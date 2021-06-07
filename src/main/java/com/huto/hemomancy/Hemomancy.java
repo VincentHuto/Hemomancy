@@ -100,6 +100,7 @@ public class Hemomancy {
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
 		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
 		ModRecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);

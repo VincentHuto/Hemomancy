@@ -5,7 +5,7 @@ import java.util.List;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.render.item.RenderItemLivingSpear;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
 
 import net.minecraft.client.util.ITooltipFlag;

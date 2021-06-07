@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
@@ -87,8 +87,8 @@ public class BloodTendency implements IBloodTendency {
 		List<ParticleColor> colors = new ArrayList<ParticleColor>();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			float percent = getPercentByTendency(tend);
-			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getBlue() * percent,
-					tend.getColor().getGreen() * percent));
+			colors.add(new ParticleColor(tend.getColor().getRed() * percent,
+					tend.getColor().getBlue() * percent, tend.getColor().getGreen() * percent));
 		}
 		return ParticleColor.averageFromList(colors);
 

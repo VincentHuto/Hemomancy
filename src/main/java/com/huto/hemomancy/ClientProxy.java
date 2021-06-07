@@ -4,7 +4,7 @@ import com.huto.hemomancy.gui.manips.GuiChooseManip;
 import com.huto.hemomancy.gui.mindrunes.GuiRuneBinderViewer;
 import com.huto.hemomancy.gui.morphlingjar.GuiMorphlingJarViewer;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.IBakedModel;

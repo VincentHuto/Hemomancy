@@ -6,8 +6,8 @@ import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtils;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.hutoslib.client.models.Animation;
-import com.hutoslib.client.models.AnimationPacket;
-import com.hutoslib.client.models.IAnimatable;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtils;
-import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.client.model.Animation;
+import com.hutoslib.client.model.AnimationPacket;
+import com.hutoslib.client.model.IAnimatable;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.math.MathUtils;
 
 import net.minecraft.block.Blocks;

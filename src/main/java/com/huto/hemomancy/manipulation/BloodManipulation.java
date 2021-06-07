@@ -6,7 +6,7 @@ import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

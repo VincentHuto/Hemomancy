@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.common.HutosLibPacketHandler;
 
 import net.minecraft.entity.Entity;

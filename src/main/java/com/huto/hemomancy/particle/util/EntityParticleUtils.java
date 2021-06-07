@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 import com.huto.hemomancy.util.ModEntityPredicates;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.entity.Entity;
 

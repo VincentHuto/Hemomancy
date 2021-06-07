@@ -32,7 +32,7 @@ import com.huto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.huto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.huto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.huto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;

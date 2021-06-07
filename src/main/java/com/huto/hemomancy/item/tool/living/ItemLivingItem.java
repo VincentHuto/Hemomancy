@@ -1,6 +1,6 @@
 package com.huto.hemomancy.item.tool.living;
 
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

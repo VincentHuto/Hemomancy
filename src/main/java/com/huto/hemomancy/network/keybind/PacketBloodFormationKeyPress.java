@@ -8,8 +8,8 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

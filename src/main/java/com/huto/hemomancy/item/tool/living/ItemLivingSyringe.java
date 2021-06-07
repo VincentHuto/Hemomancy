@@ -16,8 +16,8 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.network.particle.PacketAirBloodDraw;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.ClientUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

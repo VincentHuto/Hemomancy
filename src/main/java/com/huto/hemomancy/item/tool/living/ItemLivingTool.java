@@ -8,8 +8,8 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

@@ -3,7 +3,7 @@ package com.huto.hemomancy.network.particle;
 import java.util.function.Supplier;
 
 import com.huto.hemomancy.particle.factory.HitGlowParticleFactory;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;

@@ -9,7 +9,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;

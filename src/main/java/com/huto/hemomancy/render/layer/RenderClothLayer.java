@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.model.entity.armor.ModelLivingBladeHip;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 

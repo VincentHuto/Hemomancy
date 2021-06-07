@@ -3,7 +3,7 @@ package com.huto.hemomancy.particle;
 import java.util.Random;
 
 import com.huto.hemomancy.init.RenderTypeInit;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleRenderType;

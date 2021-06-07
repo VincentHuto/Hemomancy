@@ -9,7 +9,7 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;

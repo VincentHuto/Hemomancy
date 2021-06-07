@@ -2,8 +2,8 @@ package com.huto.hemomancy.entity.mob;
 
 import javax.annotation.Nullable;
 
-import com.hutoslib.client.models.Animation;
-import com.hutoslib.client.models.IAnimatable;
+import com.hutoslib.client.model.Animation;
+import com.hutoslib.client.model.IAnimatable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

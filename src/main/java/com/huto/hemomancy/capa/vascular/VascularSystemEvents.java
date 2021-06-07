@@ -8,7 +8,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketVascularSystemServer;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;

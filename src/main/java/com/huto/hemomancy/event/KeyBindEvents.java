@@ -11,7 +11,7 @@ import com.huto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.huto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;

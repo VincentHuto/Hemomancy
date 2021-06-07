@@ -10,7 +10,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
-import com.hutoslib.util.ClientUtils;
+import com.hutoslib.client.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;

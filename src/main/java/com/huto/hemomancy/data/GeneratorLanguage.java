@@ -5,7 +5,7 @@ import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;

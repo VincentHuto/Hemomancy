@@ -13,7 +13,7 @@ import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 import com.hutoslib.math.MathUtils;
-import com.hutoslib.util.TextUtils;
+import com.hutoslib.client.TextUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;

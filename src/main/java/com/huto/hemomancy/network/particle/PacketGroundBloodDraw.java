@@ -7,8 +7,8 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.math.BitLocation;
 
 import net.minecraft.block.Block;

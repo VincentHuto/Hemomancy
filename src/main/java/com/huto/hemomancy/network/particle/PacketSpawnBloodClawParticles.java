@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.huto.hemomancy.particle.factory.BloodClawParticleFactory;
-import com.hutoslib.client.particle.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;

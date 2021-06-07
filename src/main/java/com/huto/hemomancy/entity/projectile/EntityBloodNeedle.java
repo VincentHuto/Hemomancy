@@ -4,9 +4,9 @@ import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
-import com.hutoslib.client.particle.ParticleColor;
-import com.hutoslib.client.particle.ParticleUtils;
-import com.hutoslib.client.particles.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
