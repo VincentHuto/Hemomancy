@@ -96,7 +96,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
     compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.64")
-    compile fg.deobf("curse.maven:hutoslib-478643:3337034")
+    compile fg.deobf("curse.maven:hutoslib-478643:3342652")
 
 }
 

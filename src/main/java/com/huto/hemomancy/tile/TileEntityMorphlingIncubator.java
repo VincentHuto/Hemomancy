@@ -30,48 +30,6 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 		super(TileEntityInit.morphling_incubator.get());
 	}
 
-	public boolean addItem(@Nullable PlayerEntity player, ItemStack stack, @Nullable Hand hand) {
-		if (cooldown > 0 || stack.getItem() instanceof ItemLivingStaff || stack.getItem() instanceof ItemTome) {
-			return false;
-		}
-
-		if (stack.getItem() == ItemInit.morphling_polyp.get()) {
-			if (!world.isRemote) {
-				ItemStack toSpawn = player != null && player.abilities.isCreativeMode ? stack.copy().split(1)
-						: stack.split(1);
-				ItemEntity item = new ItemEntity(world, getPos().getX() + 0.5, getPos().getY() + 1,
-						getPos().getZ() + 0.5, toSpawn);
-				item.setPickupDelay(40);
-				item.setMotion(Vector3d.ZERO);
-				world.addEntity(item);
-			}
-
-			return true;
-		}
-
-		boolean did = false;
-
-		for (int i = 0; i < inventorySize(); i++) {
-			if (getItemHandler().getStackInSlot(i).isEmpty()) {
-				did = true;
-				ItemStack stackToAdd = stack.copy();
-				stackToAdd.setCount(1);
-				getItemHandler().setInventorySlotContents(i, stackToAdd);
-
-				if (player == null || !player.abilities.isCreativeMode) {
-					stack.shrink(1);
-				}
-
-				break;
-			}
-		}
-
-		if (did) {
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-		}
-
-		return true;
-	}
 
 	@Override
 	public void tick() {
@@ -119,7 +77,7 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 	}
 
 	public boolean isEmpty() {
-		for (int i = 0; i < inventorySize(); i++) {
+		for (int i = 0; i < getSizeInventory(); i++) {
 			if (!getItemHandler().getStackInSlot(i).isEmpty()) {
 				return false;
 			}
@@ -128,15 +86,12 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 		return true;
 	}
 
+
 	@Override
-	protected Inventory createItemHandler() {
-		return new Inventory(3) {
-			@Override
-			public int getInventoryStackLimit() {
-				return 1;
-			}
-		};
+	public int getSizeInventory() {
+		return 3;
 	}
+
 
 	/*
 	 * public void onActivated(PlayerEntity player, ItemStack wand) {

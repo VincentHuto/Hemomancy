@@ -24,7 +24,7 @@ public class BloodVolumeStorage implements IStorage<IBloodVolume> {
 					"Can not deserialize to an instance that isn't the default implementation");
 		if (nbt instanceof CompoundNBT) {
 			CompoundNBT entry = (CompoundNBT) nbt;
-			if (entry.contains("Max") && entry.contains("Volume")) {
+			if (entry.contains("Active") && entry.contains("Max") && entry.contains("Volume")) {
 				instance.setActive(entry.getBoolean("Active"));
 				instance.setMaxBloodVolume(entry.getFloat("Max"));
 				instance.setBloodVolume(entry.getFloat("Volume"));

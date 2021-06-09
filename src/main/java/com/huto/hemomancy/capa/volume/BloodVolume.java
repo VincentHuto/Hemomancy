@@ -6,34 +6,28 @@ public class BloodVolume implements IBloodVolume {
 	private float maxBloodVolume = 5000.0F;
 
 	public void subtractBloodVolume(float points) {
-		if (isActive()) {
-			float curr = this.bloodVolume;
-			if (curr - points > 0) {
-				this.bloodVolume -= points;
-			} else {
-				this.bloodVolume = 0;
-			}
+		float curr = this.bloodVolume;
+		if (curr - points > 0) {
+			this.bloodVolume -= points;
+		} else {
+			this.bloodVolume = 0;
 		}
 
 	}
 
 	public void addBloodVolume(float points) {
-		if (isActive()) {
-			float curr = this.bloodVolume;
-			if (curr >= this.maxBloodVolume) {
-			}
-			if (curr + points < this.maxBloodVolume) {
-				this.bloodVolume += points;
-			} else {
-				this.bloodVolume = this.maxBloodVolume;
-			}
+		float curr = this.bloodVolume;
+		if (curr >= this.maxBloodVolume) {
+		}
+		if (curr + points < this.maxBloodVolume) {
+			this.bloodVolume += points;
+		} else {
+			this.bloodVolume = this.maxBloodVolume;
 		}
 	}
 
 	public void setBloodVolume(float points) {
-		if (isActive()) {
-			this.bloodVolume = points;
-		}
+		this.bloodVolume = points;
 	}
 
 	public float getBloodVolume() {
@@ -46,21 +40,15 @@ public class BloodVolume implements IBloodVolume {
 	}
 
 	public void setMaxBloodVolume(float points) {
-		if (isActive()) {
-			this.maxBloodVolume = points;
-		}
+		this.maxBloodVolume = points;
 	}
 
 	public void addMaxBloodVolume(float points) {
-		if (isActive()) {
-			this.maxBloodVolume += points;
-		}
+		this.maxBloodVolume += points;
 	}
 
 	public void subtractMaxBloodVolume(float points) {
-		if (isActive()) {
-			this.maxBloodVolume -= points;
-		}
+		this.maxBloodVolume -= points;
 	}
 
 	@Override

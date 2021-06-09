@@ -28,14 +28,14 @@ public class RenderMorphlingIncubator extends TileEntityRenderer<TileEntityMorph
 		ms.push();
 
 		int items = 0;
-		for (int i = 0; i < te.inventorySize(); i++) {
+		for (int i = 0; i < te.getSizeInventory(); i++) {
 			if (te.getItemHandler().getStackInSlot(i).isEmpty()) {
 				break;
 			} else {
 				items++;
 			}
 		}
-		float[] angles = new float[te.inventorySize()];
+		float[] angles = new float[te.getSizeInventory()];
 
 		float anglePer = 360F / items;
 		float totalAngle = 0F;
@@ -45,7 +45,7 @@ public class RenderMorphlingIncubator extends TileEntityRenderer<TileEntityMorph
 
 		double time = ClientTickHandler.ticksInGame + partialTicks;
 
-		for (int i = 0; i < te.inventorySize(); i++) {
+		for (int i = 0; i < te.getSizeInventory(); i++) {
 			ms.push();
 			ms.translate(0.5F, 1.25F, 0.5F);
 			ms.rotate(Vector3f.YP.rotationDegrees(angles[i] + (float) time));
