@@ -1,4 +1,4 @@
-package com.huto.hemomancy.effects;
+package com.huto.hemomancy.effect;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;

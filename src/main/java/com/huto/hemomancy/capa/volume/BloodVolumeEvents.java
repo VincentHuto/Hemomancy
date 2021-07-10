@@ -1,12 +1,11 @@
 package com.huto.hemomancy.capa.volume;
 
-import java.awt.Color;
-
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -49,7 +48,7 @@ public class BloodVolumeEvents {
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<TileEntity> event) {
 		if (event.getObject() instanceof TileEntityVisceralRecaller) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
-																		
+
 		}
 	}
 
@@ -117,7 +116,7 @@ public class BloodVolumeEvents {
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent(receiveCanceled = true)
-	public static void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
+	public static void onRenderGameOverlay(RenderGameOverlayEvent.Chat event) {
 
 		if (fontRenderer == null) {
 			fontRenderer = Minecraft.getInstance().fontRenderer;
@@ -130,24 +129,28 @@ public class BloodVolumeEvents {
 						.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
 				// Coven color Overlay
 				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-				if (volume.getBloodVolume() < 0) {
-					Minecraft.getInstance().textureManager
-							.bindTexture(new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
-					event.getMatrixStack().push();
-					float diffX = 1920 / event.getWindow().getWidth();
-					float diffY = 1080 / event.getWindow().getHeight();
-					event.getMatrixStack().scale((float) Math.pow(diffX, 1 / 3), (float) Math.pow(diffY, 1 / 3), 0.5f);
-					/*
-					 * AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
-					 * event.getWindow().getHeight(), new Color(25, 0, 0, 26).getRGB());
-					 */
-					AbstractGui.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getWidth(),
-							event.getWindow().getHeight(), (1920), (1080));
-					fontRenderer.drawString(event.getMatrixStack(), "Blood Shot", event.getWindow().getWidth() / 2, 15,
-							new Color(0, 0, 0, 0).getRGB());
-					event.getMatrixStack().pop();
-					Minecraft.getInstance().textureManager
-							.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+				if (volume.isActive()) {
+					if (volume.getBloodVolume() < 100) {
+						Minecraft.getInstance().textureManager.bindTexture(
+								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
+						event.getMatrixStack().push();
+						GlStateManager.pushMatrix();
+						GlStateManager.color4f(100, 100, 100,
+								0.415f + (float) (Math.sin(player.world.getGameTime() * 0.055f) * 0.15f));
+						GlStateManager.popMatrix();
+						float ratio = (float) event.getWindow().getGuiScaleFactor();
+						event.getMatrixStack().scale(1 / ratio, 1 / ratio, 1);
+						AbstractGui.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getWidth(),
+								event.getWindow().getHeight(), event.getWindow().getWidth(),
+								event.getWindow().getHeight());
+						/*
+						 * fontRenderer.drawString(event.getMatrixStack(), "Blood Shot",
+						 * event.getWindow().getWidth() / 2, 15, new Color(0, 0, 0, 0).getRGB());
+						 */
+						event.getMatrixStack().pop();
+						Minecraft.getInstance().textureManager
+								.bindTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+					}
 				}
 			}
 		}

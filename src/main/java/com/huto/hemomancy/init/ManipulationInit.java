@@ -98,6 +98,11 @@ public class ManipulationInit {
 			() -> register(new ManipConjuration("conjure_blood_absorbtion", ItemInit.blood_absorption, 1000, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
+	public static final RegistryObject<BloodManipulation> conjure_blood_projection = MANIPS.register(
+			"conjure_blood_projection",
+			() -> register(new ManipConjuration("conjure_blood_projection", ItemInit.blood_projection, 1000, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
+
 	public static BloodManipulation getByName(String name) {
 		for (BloodManipulation manip : MANIPULATIONS) {
 			if (name.equals(manip.getName())) {

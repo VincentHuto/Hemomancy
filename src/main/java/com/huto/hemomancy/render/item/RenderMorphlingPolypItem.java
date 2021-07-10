@@ -59,7 +59,6 @@ public class RenderMorphlingPolypItem extends EntityRenderer<ItemEntity> {
 		float f1 = shouldBob()
 				? MathHelper.sin(((float) entityIn.getAge() + partialTicks) / 10.0F + entityIn.hoverStart) * 0.1F + 0.1F
 				: 0;
-		@SuppressWarnings("deprecation")
 		float f2 = ibakedmodel.getItemCameraTransforms().getTransform(ItemCameraTransforms.TransformType.GROUND).scale
 				.getY();
 		matrixStackIn.translate(0.0D, (double) (f1 + 0.25F * f2), 0.0D);
@@ -103,7 +102,6 @@ public class RenderMorphlingPolypItem extends EntityRenderer<ItemEntity> {
 	/**
 	 * Returns the location of an entity's texture.
 	 */
-	@SuppressWarnings("deprecation")
 	public ResourceLocation getEntityTexture(ItemEntity entity) {
 		return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
 	}

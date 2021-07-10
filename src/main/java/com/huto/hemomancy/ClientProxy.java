@@ -48,16 +48,19 @@ public class ClientProxy implements IProxy {
 		modBus.addListener(this::onModelBake);
 	}
 
-	public static IBakedModel bloodAbsorptionModel;
+	public static IBakedModel bloodAbsorptionModel, bloodProjectionModel;
 
 	public void onModelRegister(ModelRegistryEvent evt) {
 		ModelLoader.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		ModelLoader.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
 
 	}
 
 	public void onModelBake(ModelBakeEvent evt) {
 		bloodAbsorptionModel = evt.getModelRegistry()
 				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		bloodProjectionModel = evt.getModelRegistry()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
 
 	}
 

@@ -78,7 +78,7 @@ public class ItemBloodMemory extends Item {
 						} else {
 							playerIn.sendStatusMessage(
 									new StringTextComponent("Player Already Knowns This Manipulation!")
-											.mergeStyle(TextFormatting.OBFUSCATED),
+											.mergeStyle(TextFormatting.DARK_RED),
 									true);
 						}
 					}

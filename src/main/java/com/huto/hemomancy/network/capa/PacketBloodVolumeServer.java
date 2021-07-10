@@ -21,6 +21,7 @@ public class PacketBloodVolumeServer {
 	}
 
 	public PacketBloodVolumeServer(boolean active, float maxIn, float volumeIn) {
+		this.active = active;
 		this.max = maxIn;
 		this.volume = volumeIn;
 	}

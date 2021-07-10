@@ -1,4 +1,4 @@
-package com.huto.hemomancy.effects;
+package com.huto.hemomancy.effect;
 
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;

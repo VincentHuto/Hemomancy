@@ -25,6 +25,8 @@ public class RenderBloodLayer extends RenderType {
 		super(null, null, 0, 0, false, false, null, null);
 	}
 
+	
+	
 	public static void renderWorld(RenderWorldLastEvent evt) {
 		MatrixStack ms = evt.getMatrixStack();
 		float partialTicks = evt.getPartialTicks();

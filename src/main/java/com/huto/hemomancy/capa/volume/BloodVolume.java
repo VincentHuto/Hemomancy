@@ -60,4 +60,9 @@ public class BloodVolume implements IBloodVolume {
 	public boolean isActive() {
 		return active;
 	}
+
+	@Override
+	public void toggleActive() {
+		this.active = !active;
+	}
 }

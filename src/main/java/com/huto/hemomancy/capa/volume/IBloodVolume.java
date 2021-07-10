@@ -11,6 +11,8 @@ public interface IBloodVolume {
 	public void setBloodVolume(float points);
 
 	public void setActive(boolean set);
+	
+	public void toggleActive();
 
 	public float getBloodVolume();
 

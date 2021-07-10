@@ -99,6 +99,9 @@ public class PacketUseQuickManipKey {
 						}
 					}
 
+				} else {
+					player.sendStatusMessage(new StringTextComponent("You lack the skill to manifest this power!")
+							.mergeStyle(TextFormatting.RED), true);
 				}
 			}
 		});

@@ -1,9 +1,9 @@
 package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
-import com.huto.hemomancy.effects.BloodBindingEffect;
-import com.huto.hemomancy.effects.BloodLossEffect;
-import com.huto.hemomancy.effects.BloodRushEffect;
+import com.huto.hemomancy.effect.BloodBindingEffect;
+import com.huto.hemomancy.effect.BloodLossEffect;
+import com.huto.hemomancy.effect.BloodRushEffect;
 
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;

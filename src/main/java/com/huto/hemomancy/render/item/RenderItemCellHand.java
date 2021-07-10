@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import com.huto.hemomancy.ClientProxy;
 import com.huto.hemomancy.Hemomancy;
+import com.huto.hemomancy.item.tool.living.ICellHand;
 import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.util.EntityParticleUtils;
+import com.hutoslib.client.ClientUtils;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
@@ -37,28 +38,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 
-public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
+public class RenderItemCellHand extends ItemStackTileEntityRenderer {
 
-	public IBakedModel location = ClientProxy.bloodAbsorptionModel;
-
+	public IBakedModel location;
+	public final ResourceLocation skinTexture = new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/hardened_skin.png");
+	
 	@Override
 	public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
 		if (transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND
 				&& transformType != ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
 			if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
-				if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
+				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.RIGHT);
 				this.spawnFirstPersonParticlesForStack(stack, HandSide.RIGHT);
 			} else if (transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
-				if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
+				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HandSide.LEFT);
@@ -72,33 +76,37 @@ public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 	private void renderDefaultItem(ItemStack stack, ItemCameraTransforms.TransformType transformType,
 			MatrixStack matrixStack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
 		IVertexBuilder buffers = buffer.getBuffer(Atlases.getCutoutBlockType());
-		IBakedModel bakedModel = ClientProxy.bloodAbsorptionModel;
-		int color = Minecraft.getInstance().getItemColors().getColor(stack, 1);
-		if (this.location == null) {
-			float r = (color >> 16 & 0xFF) / 255F;
-			float g = (color >> 8 & 0xFF) / 255F;
-			float b = (color & 0xFF) / 255F;
-			Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
-					matrixStack.getLast(), buffers, null, bakedModel, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY);
-		} else if (!stack.isEmpty()) {
-			if (this.location.isLayered()) {
-				ForgeHooksClient.drawItemLayered((ItemRenderer) Minecraft.getInstance().getItemRenderer(),
-						(IBakedModel) this.location, (ItemStack) stack, (MatrixStack) matrixStack,
-						(IRenderTypeBuffer) buffer, (int) combinedLight, (int) combinedOverlay, (boolean) true);
+		if (stack.getItem() instanceof ICellHand) {
+			ICellHand cell = (ICellHand) stack.getItem();
+			location = cell.getBakedModel();
+			int color = Minecraft.getInstance().getItemColors().getColor(stack, 1);
+			if (this.location == null) {
+				float r = (color >> 16 & 0xFF) / 255F;
+				float g = (color >> 8 & 0xFF) / 255F;
+				float b = (color & 0xFF) / 255F;
 				Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
-						matrixStack.getLast(), buffers, null, bakedModel, 255, 255, 255, 0x000000, combinedOverlay);
-			} else {
-				Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
-						matrixStack.getLast(), buffers, null, bakedModel, 255, 255, 255, combinedLight,
-						combinedOverlay);
-				matrixStack.pop();
-				matrixStack.push();
-				Minecraft.getInstance().getItemRenderer().renderItem(stack, transformType,
-						transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, matrixStack, buffer,
-						transformType == ItemCameraTransforms.TransformType.GUI ? 0xF000F0 : combinedLight,
-						transformType == ItemCameraTransforms.TransformType.GUI ? OverlayTexture.NO_OVERLAY
-								: combinedOverlay,
-						this.location);
+						matrixStack.getLast(), buffers, null, location, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY);
+			} else if (!stack.isEmpty()) {
+				if (this.location.isLayered()) {
+					ForgeHooksClient.drawItemLayered((ItemRenderer) Minecraft.getInstance().getItemRenderer(),
+							(IBakedModel) this.location, (ItemStack) stack, (MatrixStack) matrixStack,
+							(IRenderTypeBuffer) buffer, (int) combinedLight, (int) combinedOverlay, (boolean) true);
+					Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer()
+							.renderModelBrightnessColor(matrixStack.getLast(), buffers, null, location, 255, 255, 255,
+									0x000000, combinedOverlay);
+				} else {
+					Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer()
+							.renderModelBrightnessColor(matrixStack.getLast(), buffers, null, location, 255, 255, 255,
+									combinedLight, combinedOverlay);
+					matrixStack.pop();
+					matrixStack.push();
+					Minecraft.getInstance().getItemRenderer().renderItem(stack, transformType,
+							transformType == ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, matrixStack,
+							buffer, transformType == ItemCameraTransforms.TransformType.GUI ? 0xF000F0 : combinedLight,
+							transformType == ItemCameraTransforms.TransformType.GUI ? OverlayTexture.NO_OVERLAY
+									: combinedOverlay,
+							this.location);
+				}
 			}
 		}
 	}
@@ -160,7 +168,7 @@ public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 		playermodel.setRotationAngles(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		rendererArmIn.rotateAngleX = 0.0F;
 		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(
-				model.getRenderType(new ResourceLocation(Hemomancy.MOD_ID + ":textures/item/the_greed.png")));
+				model.getRenderType(skinTexture));
 		rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY);
 		rendererArmwearIn.rotateAngleX = 0.0F;
 		rendererArmwearIn.render(matrixStackIn,
@@ -173,7 +181,7 @@ public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 		if (Minecraft.getInstance().isGamePaused()) {
 			return;
 		}
-		if (!(stack.getItem() instanceof ItemBloodAbsorption)) {
+		if (!(stack.getItem() instanceof ICellHand)) {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
@@ -182,8 +190,10 @@ public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 		boolean itemIsInUse = player.getItemInUseCount() > 0;
 		Hand activeHand = player.getActiveHand();
 		World world = player.world;
+		int globalPartCount = 20;
 
 		if (itemIsInUse) {
+			Random rand = new Random();
 			Vector3d particlePos = player.getPositionVec().add(0.0, (double) (player.getEyeHeight() - 0.2f), 0.0);
 			Vector3d look = player.getLookVec().normalize().scale(0.5);
 			Vector3d perp = look.crossProduct(new Vector3d(0.0, 1.0, 0.0)).normalize()
@@ -191,33 +201,47 @@ public class RenderBloodAbsorption extends ItemStackTileEntityRenderer {
 			particlePos = particlePos.add(look).add(perp);
 
 			Vector3d origin = new Vector3d(particlePos.x, particlePos.y + 0.1, particlePos.z);
-			Vector3d vec = particlePos;
-			Random rand = new Random();
-			List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
-					player.getBoundingBox().grow(5.0));
-			if (targets.size() > 0) {
-				for (int i = 0; i < targets.size(); ++i) {
-					Entity target = targets.get(i);
-					if (target instanceof LivingEntity) {
-						LivingEntity livingTarget = (LivingEntity) target;
-						Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
-						Vector3d finalPos = vec.subtract(targetVec.x, targetVec.y, targetVec.z).inverse();
-						Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(target);
-						ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
-						world.addParticle(AbsrobedBloodCellParticleFactory.createData(targetColor), (double) vec.x,
-								(double) vec.y + 1.05D, (double) vec.z,
-								(double) ((float) finalPos.x + rand.nextFloat()) - 0.5D,
-								(double) ((float) finalPos.y - rand.nextFloat() - 0F),
-								(double) ((float) finalPos.z + rand.nextFloat()) - 0.5D);
+
+			if (player.getHeldItem(activeHand).getItem() instanceof ItemBloodAbsorption) {
+
+				List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
+						player.getBoundingBox().grow(5.0));
+				if (targets.size() > 0) {
+					for (int i = 0; i < targets.size(); ++i) {
+						Entity target = targets.get(i);
+						if (target instanceof LivingEntity) {
+							LivingEntity livingTarget = (LivingEntity) target;
+							Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);
+							Vector3d finalPos = particlePos.subtract(targetVec.x, targetVec.y, targetVec.z).inverse();
+							Predicate<Entity> targetPred = EntityParticleUtils.getEntityPredicate(target);
+							ParticleColor targetColor = EntityParticleUtils.getColorFromPredicate(targetPred);
+							world.addParticle(AbsrobedBloodCellParticleFactory.createData(targetColor),
+									(double) particlePos.x, (double) particlePos.y + 1.05D, (double) particlePos.z,
+									(double) ((float) finalPos.x + rand.nextFloat()) - 0.5D,
+									(double) ((float) finalPos.y - rand.nextFloat() - 0F),
+									(double) ((float) finalPos.z + rand.nextFloat()) - 0.5D);
+						}
 					}
+				}
+
+			} else {
+				RayTraceResult trace = player.pick(5, ClientUtils.getPartialTicks(), true);
+				if (trace.getType() == Type.BLOCK) {
+					Vector3d hitVec = trace.getHitVec();
+					Vector3d finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).inverse();
+
+					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+							(double) hitVec.x, (double) hitVec.y + 1.05D, (double) hitVec.z,
+							(double) ((float) finalPos.x) - 0.5D,
+							(double) ((float) finalPos.y - rand.nextFloat() - 0.5F),
+							(double) ((float) finalPos.z ) - 0.5D);
 				}
 			}
 
-			int globalPartCount = 20;
 			Vector3d[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vector3d[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-			Vector3d[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15,
-					false);
+			Vector3d[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016,
+					0.15, false);
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
 						origin.getX() + inversedSphere[i].x, origin.getY() + inversedSphere[i].y,

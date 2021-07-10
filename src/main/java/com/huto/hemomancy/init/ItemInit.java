@@ -4,6 +4,7 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.item.EnumBloodGourdTiers;
+import com.huto.hemomancy.item.ItemBloodStainedStone;
 import com.huto.hemomancy.item.ItemBloodVial;
 import com.huto.hemomancy.item.ItemBloodyBook;
 import com.huto.hemomancy.item.ItemBloodyFlask;
@@ -40,6 +41,7 @@ import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
+import com.huto.hemomancy.item.tool.living.ItemBloodProjection;
 import com.huto.hemomancy.item.tool.living.ItemLivingAxe;
 import com.huto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.huto.hemomancy.item.tool.living.ItemLivingBlade;
@@ -158,9 +160,15 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_blood_absorbtion));
+	public static final RegistryObject<Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
+			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
+					ManipulationInit.conjure_blood_projection));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
+	public static final RegistryObject<Item> memory_blood_aneurysm = BASEITEMS.register("memory_blood_aneurysm",
+			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
+					ManipulationInit.aneurysm));
 	public static final RegistryObject<Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
 			() -> new ItemBloodMemory(new Item.Properties().group(HemomancyItemGroup.instance),
 					ManipulationInit.blood_rush));
@@ -199,6 +207,8 @@ public class ItemInit {
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new ItemBloodAbsorption(new Item.Properties().group(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> blood_projection = SPECIALITEMS.register("blood_projection",
+			() -> new ItemBloodProjection(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
 			() -> new ItemLivingSyringe(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1)));
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
@@ -276,7 +286,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
 			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
-			() -> new Item(new Item.Properties().group(HemomancyItemGroup.instance)));
+			() -> new ItemBloodStainedStone(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
 			() -> new ItemDSD(new Item.Properties().group(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> raw_clay_flask = BASEITEMS.register("raw_clay_flask",
@@ -469,7 +479,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern_beast = BASEITEMS.register("rune_pattern_beast",
 			() -> new ItemRunePattern(new Item.Properties().group(HemomancyItemGroup.instance), rune_beast,
 					ModChiselRecipes.recipeBeast,
-					"Beast Rune, The howl of a gale, the howl of the beast, it is one and all in you, run like the wind, endless and with drive!"));
+					"Beast Rune, The howl of a gale, the howl of the beast, it is one and all in you, run like the wind, endless and with ferver!"));
 	public static final RegistryObject<Item> rune_heir = BASEITEMS.register("rune_heir",
 			() -> new ItemRune(new Item.Properties().group(HemomancyItemGroup.instance).maxStackSize(1),
 					EnumBloodTendency.DUCTILIS, 1));

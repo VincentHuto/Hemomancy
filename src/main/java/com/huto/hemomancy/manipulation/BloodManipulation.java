@@ -44,18 +44,23 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.world.isRemote) {
-
-			if (volume.getBloodVolume() > cost) {
-				if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
-					volume.subtractBloodVolume((float) cost);
-					getAction(player, world, heldItemMainhand, position);
+			if (volume.isActive()) {
+				if (volume.getBloodVolume() > cost) {
+					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
+						volume.subtractBloodVolume((float) cost);
+						getAction(player, world, heldItemMainhand, position);
+					} else {
+						player.sendStatusMessage(new StringTextComponent("Not Enough Alignment for Manipulation!")
+								.mergeStyle(TextFormatting.RED), true);
+					}
 				} else {
-					player.sendStatusMessage(new StringTextComponent("Not Enough Alignment for Manipulation!")
-							.mergeStyle(TextFormatting.RED), true);
+					player.sendStatusMessage(
+							new StringTextComponent("Not Enough Blood to be Shed!").mergeStyle(TextFormatting.RED),
+							true);
 				}
 			} else {
-				player.sendStatusMessage(
-						new StringTextComponent("Not Enough Blood to be Shed!").mergeStyle(TextFormatting.RED), true);
+				player.sendStatusMessage(new StringTextComponent("You strain your body but nothing happens!")
+						.mergeStyle(TextFormatting.RED), true);
 			}
 		}
 	}
@@ -71,7 +76,6 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		if (nbt != null && !nbt.isEmpty()) {
 			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
 					&& nbt.contains("tendency") && nbt.contains("rank") && nbt.contains("section")) {
-
 				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
 						nbt.getFloat("level"), EnumManipulationType.valueOf(nbt.getString("type")),
 						EnumManipulationRank.valueOf(nbt.getString("rank")),

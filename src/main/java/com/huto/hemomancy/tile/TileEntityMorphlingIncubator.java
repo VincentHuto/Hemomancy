@@ -2,23 +2,14 @@ package com.huto.hemomancy.tile;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
-import com.huto.hemomancy.item.ItemTome;
-import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
-import com.hutoslib.common.VanillaPacketDispatcher;
 import com.hutoslib.common.tile.TileSimpleInventory;
 
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
 
 public class TileEntityMorphlingIncubator extends TileSimpleInventory implements ITickableTileEntity {
 

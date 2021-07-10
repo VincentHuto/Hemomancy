@@ -39,7 +39,7 @@ import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
 import com.huto.hemomancy.recipe.ModRecallerRecipes;
 import com.huto.hemomancy.recipe.PolypRecipes;
-import com.huto.hemomancy.render.layer.RenderBloodAbsorptionLayer;
+import com.huto.hemomancy.render.layer.RenderCellHandLayer;
 import com.huto.hemomancy.render.layer.RenderLivingBladeHipLayer;
 import com.huto.hemomancy.render.layer.RenderRunesLayer;
 import com.huto.hemomancy.util.ModEntityPredicates;
@@ -265,7 +265,7 @@ public class Hemomancy {
 		render = skinMap.get("default");
 		render.addLayer(new RenderRunesLayer(render));
 		if (!addedAbsorbLayerDefault) {
-			render.addLayer(new RenderBloodAbsorptionLayer(render));
+			render.addLayer(new RenderCellHandLayer(render));
 			addedAbsorbLayerDefault = true;
 		}
 		if (!addedSwordLayerDefault) {
@@ -283,7 +283,7 @@ public class Hemomancy {
 			addedSwordLayerSlim = true;
 		}
 		if (!addedAbsorbLayeSlim) {
-			render.addLayer(new RenderBloodAbsorptionLayer(render));
+			render.addLayer(new RenderCellHandLayer(render));
 			addedAbsorbLayeSlim = true;
 		}
 //		if (!addedCapeLayerSlim) {

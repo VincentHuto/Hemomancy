@@ -1,4 +1,4 @@
-package com.huto.hemomancy.effects;
+package com.huto.hemomancy.effect;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
