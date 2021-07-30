@@ -1,0 +1,98 @@
+package com.huto.hemomancy.item.memories;
+
+import java.util.List;
+
+import com.huto.hemomancy.capa.manip.IKnownManipulations;
+import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.huto.hemomancy.capa.volume.IBloodVolume;
+import com.huto.hemomancy.manipulation.BloodManipulation;
+import com.huto.hemomancy.network.PacketHandler;
+import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.hutoslib.client.TextUtils;
+
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.network.PacketDistributor;
+
+import net.minecraft.world.item.Item.Properties;
+
+public class ItemBloodMemory extends Item {
+
+	RegistryObject<BloodManipulation> manip;
+
+	public ItemBloodMemory(Properties properties, RegistryObject<BloodManipulation> manip) {
+		super(properties.maxStackSize(1));
+		this.manip = manip;
+	}
+
+	public BloodManipulation getManip() {
+		return manip.get();
+	}
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new StringTextComponent(
+				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+						.mergeStyle(TextFormatting.DARK_RED);
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+		super.addInformation(stack, worldIn, tooltip, flagIn);
+		if (getManip() != null) {
+			tooltip.add(new StringTextComponent(getManip().getProperName()));
+		}
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		List<BloodManipulation> knownList = known.getKnownManips();
+
+		if (handIn == Hand.MAIN_HAND) {
+			ItemStack stack = playerIn.getHeldItem(handIn);
+			if (!worldIn.isRemote) {
+				if (volume.isActive()) {
+					if (!playerIn.isSneaking()) {
+						if (!known.doesListContainName(knownList, getManip())) {
+							knownList.add(getManip());
+							PacketHandler.CHANNELKNOWNMANIPS.send(
+									PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerIn),
+									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
+							stack.shrink(1);
+						} else {
+							playerIn.sendStatusMessage(
+									new StringTextComponent("Player Already Knowns This Manipulation!")
+											.mergeStyle(TextFormatting.DARK_RED),
+									true);
+						}
+					}
+				} else {
+					playerIn.sendStatusMessage(
+							new StringTextComponent("You lack understanding of what your even holding...")
+									.mergeStyle(TextFormatting.DARK_RED),
+							true);
+				}
+			}
+		}
+		return super.onItemRightClick(worldIn, playerIn, handIn);
+
+	}
+}

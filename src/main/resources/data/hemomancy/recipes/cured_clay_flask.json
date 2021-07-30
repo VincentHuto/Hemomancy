@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "hemomancy:raw_clay_flask"
+  },
+  "result": "hemomancy:cured_clay_flask",
+  "experience": 1.0,
+  "cookingtime": 200
+}

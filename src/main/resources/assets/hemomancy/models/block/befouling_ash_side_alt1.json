@@ -1,0 +1,6 @@
+{
+    "parent": "hemomancy:block/befouling_ash_side_alt",
+    "textures": {
+        "line": "hemomancy:block/befouling_ash_line1"
+    }
+}

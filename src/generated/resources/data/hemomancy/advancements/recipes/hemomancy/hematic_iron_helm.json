@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:hematic_iron_helm"
+    ]
+  },
+  "criteria": {
+    "has_hematic_iron_scrap": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hemomancy:hematic_iron_scrap"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:hematic_iron_helm"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hematic_iron_scrap",
+      "has_the_recipe"
+    ]
+  ]
+}
