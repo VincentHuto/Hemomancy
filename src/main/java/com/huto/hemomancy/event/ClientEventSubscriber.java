@@ -1,5 +1,7 @@
 package com.huto.hemomancy.event;
 
+import javax.swing.text.JTextComponent.KeyBinding;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.huto.hemomancy.Hemomancy;
@@ -48,21 +50,20 @@ import com.huto.hemomancy.render.tile.RenderMortalDisplay;
 import com.huto.hemomancy.render.tile.RenderRuneModStation;
 import com.huto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.huto.hemomancy.render.tile.RenderVisceralRecaller;
+import com.mojang.blaze3d.platform.ScreenManager;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-
-import NonNullList;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientEventSubscriber {

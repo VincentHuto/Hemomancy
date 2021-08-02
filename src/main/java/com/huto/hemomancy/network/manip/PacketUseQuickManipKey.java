@@ -12,13 +12,13 @@ import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.manipulation.quick.ManipConjuration;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketUseQuickManipKey {
 
@@ -47,7 +47,7 @@ public class PacketUseQuickManipKey {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			if (!player.world.isRemote) {
+			if (!player.level.isClientSide) {
 				float pTic = message.parTick;
 				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 						.orElseThrow(NullPointerException::new);

@@ -8,9 +8,9 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.container.ContainerVisceralRecaller;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketClearRecallerState {
 

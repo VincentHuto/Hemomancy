@@ -7,8 +7,6 @@ import java.util.Map;
 
 import com.hutoslib.client.particle.util.ParticleColor;
 
-import ParticleColor;
-
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
 	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>() {

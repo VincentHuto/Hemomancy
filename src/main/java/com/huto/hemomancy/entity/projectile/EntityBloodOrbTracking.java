@@ -6,33 +6,31 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BushBlock;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodOrbTracking extends ThrowableProjectile {
 	public static EntityType<EntityBloodOrbTracking> TYPE = EntityInit.tracking_blood_orb.get();
@@ -95,7 +93,7 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 	@Override
 	public void tick() {
 		super.tick();
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
 					getPosX() + ParticleUtils.inRange(-0.1, 0.1), getPosY() + ParticleUtils.inRange(-0.1, 0.1),
 					getPosZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
@@ -107,7 +105,7 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 					0);
 		}
 		LivingEntity target = getTargetEntity();
-		if (!world.isRemote && (!findTarget() || time > 40)) {
+		if (!level.isClientSide && (!findTarget() || time > 40)) {
 			remove();
 			return;
 		}

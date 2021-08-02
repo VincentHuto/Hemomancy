@@ -5,8 +5,8 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.gui.mindrunes.GuiProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class PacketOpenRunesInv {
 

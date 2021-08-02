@@ -2,8 +2,8 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
 
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 
 public class TileEntitySemiSentientConstruct extends BlockEntity implements TickableBlockEntity {
 
@@ -14,7 +14,7 @@ public class TileEntitySemiSentientConstruct extends BlockEntity implements Tick
 	@Override
 	public void tick() {
 
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			/*
 			 * double randX = pos.getX() + Math.sin(world.getGameTime() * 0.2f) * 0.3f +
 			 * 0.4f; double randY = pos.getY(); double randZ = pos.getZ() +

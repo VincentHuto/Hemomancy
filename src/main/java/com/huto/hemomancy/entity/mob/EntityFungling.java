@@ -5,49 +5,44 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.hutoslib.client.model.Animation;
 import com.hutoslib.client.model.AnimationPacket;
-import com.hutoslib.client.model.IAnimatable;
+import com.hutoslib.client.model.capability.IAnimatable;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.math.MathUtils;
 import com.hutoslib.math.Vector3;
+import com.mojang.math.Vector3d;
+import com.sun.jna.Structure;
 
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityFungling extends PathfinderMob implements IAnimatable {
 
@@ -127,7 +122,7 @@ public class EntityFungling extends PathfinderMob implements IAnimatable {
 			puffCooldown += 6;
 			if (animTick == 10)
 //				playSound(SoundHandler.ENTITY_DARK_YOUNG_HIT, .25F, 1f);
-				if (!world.isRemote && animTick >= 10) {
+				if (!level.isClientSide && animTick >= 10) {
 					LivingEntity target = getAttackTarget();
 					if (target != null) {
 						if (animTick % 30 == 0) {
@@ -186,7 +181,7 @@ public class EntityFungling extends PathfinderMob implements IAnimatable {
 			if (distFromTarget > 15 && distFromTarget < 30) {
 				AnimationPacket.send(EntityFungling.this, SPOREPUFF_ANIMATION);
 
-				if (!world.isRemote) {
+				if (!level.isClientSide) {
 					ParticleUtils.spawnPoof((ServerWorld) world, new BlockPos(Vector3.fromEntityCenter(this).x,
 							Vector3.fromEntityCenter(this).y, Vector3.fromEntityCenter(this).z));
 					sporePuff(world,

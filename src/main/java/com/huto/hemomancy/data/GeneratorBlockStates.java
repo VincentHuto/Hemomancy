@@ -3,15 +3,15 @@ package com.huto.hemomancy.data;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
 public class GeneratorBlockStates extends BlockStateProvider {
 	public GeneratorBlockStates(DataGenerator gen, ExistingFileHelper exFileHelper) {

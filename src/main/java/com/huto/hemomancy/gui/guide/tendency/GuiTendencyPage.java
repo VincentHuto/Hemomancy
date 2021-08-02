@@ -9,25 +9,21 @@ import org.lwjgl.glfw.GLFW;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtils;
 import com.hutoslib.client.ClientUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import GuiButtonTextured;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiTendencyPage extends Screen {

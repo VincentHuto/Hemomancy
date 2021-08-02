@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.particle.factory.HitGlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketEntityHitParticle {
 
@@ -39,7 +39,7 @@ public class PacketEntityHitParticle {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			if (!player.world.isRemote) {
+			if (!player.level.isClientSide) {
 				ServerWorld sWorld = (ServerWorld) player.world;
 				sWorld.spawnParticle(HitGlowParticleFactory.createData(ParticleColor.WHITE), message.x, message.y,
 						message.z, 4, 0, 0, 0, 0.001f);

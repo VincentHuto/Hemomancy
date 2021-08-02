@@ -3,9 +3,9 @@ package com.huto.hemomancy.model.entity.armor;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.RenderType;
 
 public class ModelArmBannerNew extends Model {
 	public final ModelPart leftShoulder;

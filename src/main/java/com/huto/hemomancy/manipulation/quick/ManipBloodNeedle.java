@@ -6,13 +6,13 @@ import com.huto.hemomancy.entity.projectile.EntityBloodNeedle;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
+import com.mojang.math.Vector3f;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class ManipBloodNeedle extends BloodManipulation {
 

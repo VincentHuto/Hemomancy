@@ -2,14 +2,14 @@ package com.huto.hemomancy.recipe;
 
 import com.huto.hemomancy.item.armor.ItemArmBanner;
 
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.item.BannerItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.BannerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ObjectHolder;
 

@@ -8,10 +8,10 @@ import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketBloodTendencyServer {
 	private Map<EnumBloodTendency, Float> Tendency = new HashMap<>();

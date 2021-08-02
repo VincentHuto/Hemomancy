@@ -8,16 +8,16 @@ import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.manipulation.EnumManipulationRank;
 import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.common.HutosLibPacketHandler;
+import com.hutoslib.common.network.HutosLibPacketHandler;
+import com.mojang.math.Vector3d;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.level.Level;
 
 public class ManipActivationPotential extends BloodManipulation {

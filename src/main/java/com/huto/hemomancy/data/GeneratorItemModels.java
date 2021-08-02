@@ -5,13 +5,13 @@ import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
 public class GeneratorItemModels extends ItemModelProvider {
 	public GeneratorItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper) {

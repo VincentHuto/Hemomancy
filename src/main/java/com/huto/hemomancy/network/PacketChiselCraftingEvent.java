@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.container.ContainerChiselStation;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
 
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketChiselCraftingEvent {
 

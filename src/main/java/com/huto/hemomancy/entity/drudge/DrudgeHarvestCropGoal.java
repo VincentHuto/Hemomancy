@@ -7,26 +7,25 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import com.hutoslib.common.block.BlockUtils;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.block.BeetrootBlock;
-import net.minecraft.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.CropsBlock;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.BeetrootBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.server.ServerWorld;
 
 public class DrudgeHarvestCropGoal extends RemoveBlockGoal {
@@ -82,7 +81,7 @@ public class DrudgeHarvestCropGoal extends RemoveBlockGoal {
 						if (this.breakingTime > 0) {
 							Vector3d vector3d = this.entity.getMotion();
 							this.entity.setMotion(vector3d.x, 0.3D, vector3d.z);
-							if (!world.isRemote) {
+							if (!level.isClientSide) {
 								((ServerWorld) world)
 										.spawnParticle(
 												new ItemParticleData(ParticleTypes.ITEM,
@@ -105,7 +104,7 @@ public class DrudgeHarvestCropGoal extends RemoveBlockGoal {
 						}
 						if (this.breakingTime > 60) {
 							world.destroyBlock(blockpos1, true);
-							if (!world.isRemote) {
+							if (!level.isClientSide) {
 								for (int i = 0; i < 20; ++i) {
 									double d3 = random.nextGaussian() * 0.02D;
 									double d1 = random.nextGaussian() * 0.02D;
@@ -126,7 +125,7 @@ public class DrudgeHarvestCropGoal extends RemoveBlockGoal {
 						if (this.breakingTime > 0) {
 							Vector3d vector3d = this.entity.getMotion();
 							this.entity.setMotion(vector3d.x, 0.3D, vector3d.z);
-							if (!world.isRemote) {
+							if (!level.isClientSide) {
 								((ServerWorld) world)
 										.spawnParticle(
 												new ItemParticleData(ParticleTypes.ITEM,
@@ -148,7 +147,7 @@ public class DrudgeHarvestCropGoal extends RemoveBlockGoal {
 						}
 						if (this.breakingTime > 60) {
 							world.destroyBlock(blockpos1, true);
-							if (!world.isRemote) {
+							if (!level.isClientSide) {
 								for (int i = 0; i < 20; ++i) {
 									double d3 = random.nextGaussian() * 0.02D;
 									double d1 = random.nextGaussian() * 0.02D;

@@ -3,24 +3,23 @@ package com.huto.hemomancy.entity.projectile;
 import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.init.EntityInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Explosion;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodOrbDirected extends ThrowableProjectile {
 	public static EntityType<EntityBloodOrbDirected> TYPE = EntityInit.directed_blood_orb.get();
@@ -46,7 +45,7 @@ public class EntityBloodOrbDirected extends ThrowableProjectile {
 	@Override
 	public void tick() {
 		super.tick();
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			world.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
 					getPosX() + ParticleUtils.inRange(-0.1, 0.1), getPosY() + ParticleUtils.inRange(-0.1, 0.1),
 					getPosZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
@@ -74,7 +73,7 @@ public class EntityBloodOrbDirected extends ThrowableProjectile {
 	protected void onImpact(@Nonnull RayTraceResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				this.world.createExplosion(this, this.getPosX(), this.getPosY() + (double) (this.getHeight() / 16.0F),
 						this.getPosZ(), 3.0F, Explosion.Mode.DESTROY);
 			}
@@ -82,7 +81,7 @@ public class EntityBloodOrbDirected extends ThrowableProjectile {
 			break;
 		}
 		case ENTITY: {
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				this.world.createExplosion(this, this.getPosX(), this.getPosY() + (double) (this.getHeight() / 16.0F),
 						this.getPosZ(), 3.0F, Explosion.Mode.NONE);
 			}

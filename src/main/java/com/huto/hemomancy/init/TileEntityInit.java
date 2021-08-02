@@ -13,7 +13,7 @@ import com.huto.hemomancy.tile.TileEntityUnstainedPodium;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 

@@ -9,26 +9,20 @@ import org.lwjgl.glfw.GLFW;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.huto.hemomancy.Hemomancy;
-import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import GuiButtonTextured;
-
-import ResourceLocation;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiGuideImagePage extends GuiGuidePage {

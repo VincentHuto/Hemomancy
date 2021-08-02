@@ -7,14 +7,14 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.PacketRuneSync;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.GameRules;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -22,7 +22,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RuneEntityEventHandler {
@@ -94,7 +94,7 @@ public class RuneEntityEventHandler {
 
 	@SubscribeEvent
 	public static void playerDeath(LivingDropsEvent event) {
-		if (event.getEntity() instanceof PlayerEntity && !event.getEntity().world.isRemote
+		if (event.getEntity() instanceof PlayerEntity && !event.getEntity().level.isClientSide
 				&& !event.getEntity().world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
 			dropItemsAt((PlayerEntity) event.getEntity(), event.getDrops());
 		}

@@ -8,9 +8,9 @@ import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketKnownManipulationServer {
 	private List<BloodManipulation> known = new ArrayList<>();

@@ -6,20 +6,17 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
 import net.minecraft.block.FarmlandBlock;
-import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.server.ServerWorld;
 
 public class DrudgeReplantCropGoal extends MoveToBlockGoal {

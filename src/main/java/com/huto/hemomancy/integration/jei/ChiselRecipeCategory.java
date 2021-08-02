@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.recipe.RecipeChiselStation;
-import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -22,11 +22,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 public class ChiselRecipeCategory implements IRecipeCategory<RecipeChiselStation> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "runic_chisel_station");

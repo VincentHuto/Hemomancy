@@ -6,14 +6,14 @@ import com.google.gson.JsonObject;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class CopyRuneBinderDataRecipe extends ShapedRecipe {

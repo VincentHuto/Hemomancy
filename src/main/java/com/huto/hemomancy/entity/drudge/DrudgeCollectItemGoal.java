@@ -3,10 +3,11 @@ package com.huto.hemomancy.entity.drudge;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.mojang.math.Vector3d;
+
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.item.ItemStack;
 
 public class DrudgeCollectItemGoal extends Goal {
 	private final EntityDrudge creature;

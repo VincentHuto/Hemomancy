@@ -9,20 +9,19 @@ import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
-import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.hutoslib.math.MathUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.Button.IPressable;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

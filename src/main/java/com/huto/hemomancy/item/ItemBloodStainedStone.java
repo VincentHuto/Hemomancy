@@ -12,22 +12,20 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemBloodStainedStone extends Item {
 
@@ -45,7 +43,7 @@ public class ItemBloodStainedStone extends Item {
 		IKnownManipulations manips = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
 		if (volCap.isActive()) {
-			if (!worldIn.isRemote) {
+			if (!worldIn.isClientSide) {
 				BloodManipulation selected = manips.getSelectedManip();
 				List<BloodManipulation> known = manips.getKnownManips();
 				PacketHandler.CHANNELKNOWNMANIPS.send(

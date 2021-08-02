@@ -7,21 +7,18 @@ import com.huto.hemomancy.render.item.RenderItemTome;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.Rarity;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemTendencyHiddenBook extends ItemTome {
 
@@ -33,7 +30,7 @@ public class ItemTendencyHiddenBook extends ItemTome {
 	@OnlyIn(Dist.CLIENT)
 	public InteractionResultHolder<ItemStack> onItemRightClick(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if (worldIn.isRemote) {
+		if (worldIn.isClientSide) {
 			Minecraft.getInstance().displayGuiScreen(new GuiTendencyTitlePage(true));
 			playerIn.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, 0.40f, 1F);
 

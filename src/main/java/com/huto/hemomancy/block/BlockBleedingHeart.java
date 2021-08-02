@@ -2,10 +2,8 @@ package com.huto.hemomancy.block;
 
 import com.huto.hemomancy.init.PotionInit;
 
-import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.effect.MobEffect;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.FlowerBlock;
 
 public class BlockBleedingHeart extends FlowerBlock {
 

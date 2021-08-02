@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
-import com.hutoslib.client.render.RenderMultiBlockInGui;
+import com.hutoslib.client.render.block.render.RenderMultiBlockInGui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
@@ -21,10 +21,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class BloodCraftingCategory implements IRecipeCategory<BaseBloodCraftingRecipe> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "blood_crafting");

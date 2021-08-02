@@ -5,12 +5,12 @@ import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.server.ServerWorld;
 
 public class BloodBindingEffect extends MobEffect {
@@ -49,7 +49,7 @@ public class BloodBindingEffect extends MobEffect {
 			Vector3 centerVec = Vector3.fromEntityCenter(entity);
 			if (entity.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {
 				entity.setMotion(0, 0, 0);
-				if (!entity.world.isRemote) {
+				if (!entity.level.isClientSide) {
 					ServerWorld sWorld = (ServerWorld) entity.world;
 					sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
 							centerVec.x + Math.sin(entity.ticksExisted * 0.3)

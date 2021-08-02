@@ -3,26 +3,24 @@ package com.huto.hemomancy.entity.blood;
 import javax.annotation.Nullable;
 
 import com.huto.hemomancy.entity.blood.iron.IBloodConstruct;
+import com.sun.jna.Structure;
 
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.DamageSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 
 public class EntityBloodConstruct extends PathfinderMob implements IBloodConstruct {
@@ -126,7 +124,7 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 		float g2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 				world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_DAMAGE,
 						SoundCategory.HOSTILE, 3f, 0.2f, false);
 				this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) g,
@@ -134,7 +132,7 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 			}
 		}
 
-		if (this.deathTicks <= 0.1 && !this.world.isRemote) {
+		if (this.deathTicks <= 0.1 && !this.level.isClientSide) {
 			this.remove();
 		}
 

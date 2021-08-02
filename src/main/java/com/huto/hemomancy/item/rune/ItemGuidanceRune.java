@@ -5,17 +5,15 @@ import java.util.List;
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 
+import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemGuidanceRune extends ItemRune implements IRune {
 

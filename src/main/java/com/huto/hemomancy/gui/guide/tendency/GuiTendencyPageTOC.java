@@ -6,28 +6,21 @@ import java.util.List;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.gui.guide.GuiButtonBookArrow;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtils;
 import com.hutoslib.client.ClientUtils;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.Button.IPressable;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import GuiButtonTextured;
-
-import ResourceLocation;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiTendencyPageTOC extends GuiTendencyPage {

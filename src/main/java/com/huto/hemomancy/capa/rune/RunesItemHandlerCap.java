@@ -5,12 +5,10 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.Tag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
-
-import Tag;
 
 public class RunesItemHandlerCap {
 

@@ -4,13 +4,11 @@ import java.util.Random;
 
 import com.huto.hemomancy.render.item.RenderItemTome;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemTome extends Item {
 	public int ticks;

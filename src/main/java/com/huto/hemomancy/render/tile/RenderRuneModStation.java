@@ -7,17 +7,17 @@ import com.huto.hemomancy.tile.TileEntityRuneModStation;
 import com.hutoslib.client.ClientUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.util.math.vector.Vector3f;
 
 public class RenderRuneModStation extends BlockEntityRenderer<TileEntityRuneModStation> {
 	public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;

@@ -33,14 +33,15 @@ import com.huto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.huto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.huto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.util.RegistryKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 public class PacketHandler {
 	private static int networkID = 0;

@@ -2,11 +2,12 @@ package com.huto.hemomancy.item.tool;
 
 import java.util.function.Supplier;
 
+import javax.swing.UIDefaults.LazyValue;
+
 import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.util.LazyValue;
 
 public enum EnumModToolTiers implements Tier {
 

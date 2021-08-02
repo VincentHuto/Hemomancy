@@ -7,16 +7,16 @@ import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class KnownManipulationEvents {
 	@SubscribeEvent
@@ -67,7 +67,7 @@ public class KnownManipulationEvents {
 //		if (e.getEntityLiving() instanceof PlayerEntity) {
 //			PlayerEntity player = (PlayerEntity) e.getEntityLiving();
 //			if (ClientEventSubscriber.useContManip.isKeyDown()) {
-//				if (!player.world.isRemote) {
+//				if (!player.level.isClientSide) {
 //					IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 //							.orElseThrow(NullPointerException::new);
 //					if (known.getSelectedManip() != null) {

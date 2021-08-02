@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketBloodVolumeServer {
 	private boolean active;

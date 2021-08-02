@@ -1,14 +1,9 @@
 package com.huto.hemomancy.recipe;
 
-import com.hutoslib.client.render.LabeledBlockPattern;
+import com.hutoslib.client.render.block.render.LabeledBlockPattern;
 
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
-
-import LabeledBlockPattern;
-
-import Block;
-import Item;
+import net.minecraft.world.level.block.Block;
 
 public class BaseBloodCraftingRecipe {
 

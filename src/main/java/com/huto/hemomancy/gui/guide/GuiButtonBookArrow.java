@@ -1,17 +1,16 @@
 package com.huto.hemomancy.gui.guide;
 
 import com.huto.hemomancy.Hemomancy;
-import com.hutoslib.client.gui.GuiUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

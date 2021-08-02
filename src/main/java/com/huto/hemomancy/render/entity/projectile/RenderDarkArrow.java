@@ -3,21 +3,19 @@ package com.huto.hemomancy.render.entity.projectile;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.projectile.EntityBloodShot;
 import com.huto.hemomancy.model.entity.armor.ModelDarkArrowHorizontal;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix3f;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3f;
-
-import ResourceLocation;
 
 public class RenderDarkArrow<T extends EntityBloodShot> extends EntityRenderer<EntityBloodShot> {
 	ModelDarkArrowHorizontal model = new ModelDarkArrowHorizontal();

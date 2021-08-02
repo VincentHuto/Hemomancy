@@ -2,14 +2,12 @@ package com.huto.hemomancy.init;
 
 import com.huto.hemomancy.Hemomancy;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.gen.FlatGenerationSettings;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
-
-import ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
 public class ConfiguredStructureInit {
 	public static ConfiguredStructureFeature<?, ?> CONFIGURED_RUN_DOWN_HOUSE = StructureInit.RUN_DOWN_HOUSE.get()

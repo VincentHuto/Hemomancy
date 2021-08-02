@@ -5,14 +5,14 @@ import javax.annotation.Nullable;
 import com.huto.hemomancy.container.PlayerExpandedContainer;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.Container;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class SlotRuneArmor extends Slot {
 

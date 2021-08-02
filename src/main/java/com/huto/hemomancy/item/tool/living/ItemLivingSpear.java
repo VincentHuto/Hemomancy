@@ -7,31 +7,27 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.render.item.RenderItemLivingSpear;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
+import com.mojang.math.Vector3d;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemLivingSpear extends ItemLivingTool {
 
@@ -106,7 +102,7 @@ public class ItemLivingSpear extends ItemLivingTool {
 				 * IBloodVolume playerVolume =
 				 * player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				 * .orElseThrow(NullPointerException::new); if (playerVolume.getBloodVolume() >
-				 * 50f) { if (!worldIn.isRemote) { playerVolume.subtractBloodVolume(50f);
+				 * 50f) { if (!worldIn.isClientSide) { playerVolume.subtractBloodVolume(50f);
 				 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
 				 * (ServerPlayerEntity) player), new
 				 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
@@ -132,7 +128,7 @@ public class ItemLivingSpear extends ItemLivingTool {
 		super.hitEntity(stack, target, attacker);
 		/*
 		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
-		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
+		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.level.isClientSide) {
 		 * PlayerEntity playerIn = (PlayerEntity) attacker; IBloodVolume playerVolume =
 		 * playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 		 * .orElseThrow(NullPointerException::new); float damageMod =

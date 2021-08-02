@@ -7,24 +7,20 @@ import java.util.Random;
 import com.google.common.collect.ImmutableMap;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.StructureInit;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 
-import net.minecraft.block.Blocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Mirror;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.IServerWorld;
-import net.minecraft.world.level.levelgen.structure.StructurePiece;
-import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
-import net.minecraft.world.gen.feature.template.Template;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
-
-import ResourceLocation;
 
 /*
  * This class is based off of the IglooPieces class which I am assuming is doing the proper way of generating

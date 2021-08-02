@@ -12,27 +12,25 @@ import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BushBlock;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityTrackingSerpent extends ThrowableProjectile {
 	public static EntityType<EntityTrackingSerpent> TYPE = EntityInit.tracking_snake.get();
@@ -95,7 +93,7 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 	@Override
 	public void tick() {
 		super.tick();
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			world.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 100, 0)),
 					this.getPosX() + (Math.random() - 0.5) * 0.1, this.getPosY() + (Math.random() - 0.5) * 0.1,
 					this.getPosZ() + (Math.random() - 0.5) * 0.1, 0, 0, 0);
@@ -116,7 +114,7 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 
 		}
 		LivingEntity target = getTargetEntity();
-		if (!world.isRemote && (!findTarget() || time > 40)) {
+		if (!level.isClientSide && (!findTarget() || time > 40)) {
 			remove();
 			return;
 		}

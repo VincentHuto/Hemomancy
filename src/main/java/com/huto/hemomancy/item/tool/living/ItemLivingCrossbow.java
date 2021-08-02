@@ -13,43 +13,41 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.hutoslib.client.TextUtils;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3d;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.ICrossbowUser;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	private boolean isLoadingStart = false;
@@ -87,7 +85,7 @@ public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	 */
 	@Override
 	public void onUse(World worldIn, LivingEntity livingEntityIn, ItemStack stack, int count) {
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
 			SoundEvent soundevent = this.getSoundEvent(i);
 			SoundEvent soundevent1 = i == 0 ? SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE : null;
@@ -283,7 +281,7 @@ public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	private static void fireProjectile(World worldIn, LivingEntity shooter, Hand handIn, ItemStack crossbow,
 			ItemStack projectile, float soundPitch, boolean isCreativeMode, float velocity, float inaccuracy,
 			float projectileAngle) {
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			boolean flag = projectile.getItem() == Items.FIREWORK_ROCKET;
 			ProjectileEntity projectileentity;
 			if (flag) {
@@ -401,7 +399,7 @@ public class ItemLivingCrossbow extends CrossbowItem  implements IDispellable {
 	private static void fireProjectilesAfter(World worldIn, LivingEntity shooter, ItemStack stack) {
 		if (shooter instanceof ServerPlayerEntity) {
 			ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) shooter;
-			if (!worldIn.isRemote) {
+			if (!worldIn.isClientSide) {
 				CriteriaTriggers.SHOT_CROSSBOW.test(serverplayerentity, stack);
 			}
 

@@ -8,13 +8,13 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemRecycledEnzyme extends Item {
 
@@ -29,7 +29,7 @@ public class ItemRecycledEnzyme extends Item {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			playerIn.sendStatusMessage(new StringTextComponent(String.valueOf(getTend())), false);
 			playerIn.sendStatusMessage(new StringTextComponent(String.valueOf(getAmount())), false);
 		}

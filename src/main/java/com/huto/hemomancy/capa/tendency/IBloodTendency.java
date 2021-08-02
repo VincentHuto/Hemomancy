@@ -4,8 +4,6 @@ import java.util.Map;
 
 import com.hutoslib.client.particle.util.ParticleColor;
 
-import ParticleColor;
-
 public interface IBloodTendency {
 
 	public Map<EnumBloodTendency, Float> getTendency();

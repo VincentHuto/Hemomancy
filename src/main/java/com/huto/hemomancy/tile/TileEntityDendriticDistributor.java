@@ -1,13 +1,13 @@
 package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 
 public class TileEntityDendriticDistributor extends BlockEntity implements TickableBlockEntity {
 
@@ -17,7 +17,7 @@ public class TileEntityDendriticDistributor extends BlockEntity implements Ticka
 
 	@Override
 	public void tick() {
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			int globalPartCount = 128;
 			double time = -world.getGameTime() * 0.21;
 			Vector3d[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, time, 0.5);

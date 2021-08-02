@@ -8,30 +8,28 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.TextUtils;
+import com.hutoslib.client.particle.util.ParticleColor;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.renderer.EffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingTool extends DiggerItem implements IDispellable {
 	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
@@ -64,7 +62,7 @@ public class ItemLivingTool extends DiggerItem implements IDispellable {
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target.world.rand.nextBoolean()) {
 			if (attacker instanceof PlayerEntity) {
-				if (!attacker.world.isRemote) {
+				if (!attacker.level.isClientSide) {
 					PlayerEntity playerIn = (PlayerEntity) attacker;
 					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);

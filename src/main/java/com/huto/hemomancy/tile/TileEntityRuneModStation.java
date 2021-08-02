@@ -2,16 +2,16 @@ package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.TileEntityInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.mojang.math.Vector3d;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 
 public class TileEntityRuneModStation extends BlockEntity implements TickableBlockEntity {
 
@@ -30,7 +30,7 @@ public class TileEntityRuneModStation extends BlockEntity implements TickableBlo
 			cooldown = type;
 			return true;
 		case CRAFT_EFFECT_EVENT: {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 				for (int i = 0; i < 25; i++) {
 					IParticleData data = GlowParticleFactory.createData(new ParticleColor(255, 0, 0));
 					world.addParticle(data, pos.getX() + 0.5 + Math.random() * 0.4 - 0.2, pos.getY() + 1,
@@ -48,7 +48,7 @@ public class TileEntityRuneModStation extends BlockEntity implements TickableBlo
 	@Override
 	public void tick() {
 		double globalTime = cooldown * 0.02;
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			int globalPartCount = 128;
 			Vector3d[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.5);
 			Vector3d[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.55);
@@ -97,7 +97,7 @@ public class TileEntityRuneModStation extends BlockEntity implements TickableBlo
 		}
 
 		if (cooldown > 0) {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 				int partCount = 128;
 				double time = cooldown * 0.02;
 				Vector3d[] fibboSphere = ParticleUtils.fibboSphere(partCount, time, Math.tan(time));
@@ -139,7 +139,7 @@ public class TileEntityRuneModStation extends BlockEntity implements TickableBlo
 	}
 
 	public void onActivated(PlayerEntity player, ItemStack stack) {
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			return;
 		}
 		world.addBlockEvent(getPos(), BlockInit.rune_mod_station.get(), SET_COOLDOWN_EVENT, 60);

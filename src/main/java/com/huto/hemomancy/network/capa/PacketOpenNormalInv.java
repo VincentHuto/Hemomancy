@@ -2,9 +2,9 @@ package com.huto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketOpenNormalInv {
 

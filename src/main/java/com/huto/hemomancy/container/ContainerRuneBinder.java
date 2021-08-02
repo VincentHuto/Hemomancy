@@ -4,15 +4,15 @@ import com.huto.hemomancy.containers.slot.SlotRuneBinder;
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 

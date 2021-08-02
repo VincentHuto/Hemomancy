@@ -4,11 +4,9 @@ import java.util.concurrent.Callable;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.Tag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
-
-import Tag;
 
 public class RuneCap {
 

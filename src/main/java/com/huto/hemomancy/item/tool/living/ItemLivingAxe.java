@@ -9,28 +9,25 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.huto.hemomancy.render.item.RenderItemLivingAxe;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.mojang.math.Vector3d;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingAxe extends ItemLivingTool {
 
@@ -56,7 +53,7 @@ public class ItemLivingAxe extends ItemLivingTool {
 								(double) (-MathHelper.cos(player.rotationPitch * ((float) Math.PI / 180F))));
 						List<Entity> targets = player.world.getEntitiesWithinAABBExcludingEntity(player,
 								player.getBoundingBox().grow(3.0));
-						if (player.world.isRemote) {
+						if (player.level.isClientSide) {
 							Vector3d pos = player.getPositionVec();
 							PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
 									(RegistryKey<World>) player.world.getDimensionKey());
@@ -88,7 +85,7 @@ public class ItemLivingAxe extends ItemLivingTool {
 		 * Vector3.fromEntityCenter(entityIn).add(0, -1, 0); double time =
 		 * world.getGameTime();
 		 * 
-		 * if (world.isRemote) { int globalPartCount = 90; for (int i = 0; i < 16; i++)
+		 * if (level.isClientSide) { int globalPartCount = 90; for (int i = 0; i < 16; i++)
 		 * { count += 0.002; if (count > 2) { count = 0.5f; } } double cos =
 		 * Math.cos(time) * count; double sin = Math.sin(time) * count;
 		 * 
@@ -123,7 +120,7 @@ public class ItemLivingAxe extends ItemLivingTool {
 		super.hitEntity(stack, target, attacker);
 		if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getAttackDamage() / 2);
-			if (!attacker.world.isRemote) {
+			if (!attacker.level.isClientSide) {
 				PlayerEntity playerIn = (PlayerEntity) attacker;
 				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 						.orElseThrow(NullPointerException::new);

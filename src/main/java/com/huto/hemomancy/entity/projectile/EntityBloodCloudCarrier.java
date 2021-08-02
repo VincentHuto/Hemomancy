@@ -8,24 +8,23 @@ import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 
@@ -70,7 +69,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	public void tick() {
 		super.tick();
 		Vector3 pos = Vector3.fromEntityCenter(this);
-		if (!world.isRemote) {
+		if (!level.isClientSide) {
 			ServerWorld sWorld = (ServerWorld) world;
 			for (int i = 0; i < globalPartCount; i++) {
 				sWorld.spawnParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
@@ -81,7 +80,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 
 		if (ticksExisted > 50) {
 
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), world, shooter);
 				cloud.setPosition(getPosX(), getPosY(), getPosZ());
 				world.addEntity(cloud);
@@ -174,7 +173,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	protected void onImpact(@Nonnull RayTraceResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), world, shooter);
 				cloud.setPosition(getPosX(), getPosY(), getPosZ());
 				world.addEntity(cloud);
@@ -184,7 +183,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 			break;
 		}
 		case ENTITY: {
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), world, shooter);
 				cloud.setPosition(getPosX(), getPosY() + 3, getPosZ());
 				world.addEntity(cloud);

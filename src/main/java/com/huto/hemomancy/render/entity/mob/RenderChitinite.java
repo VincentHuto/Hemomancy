@@ -9,8 +9,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-import ResourceLocation;
-
 public class RenderChitinite extends MobRenderer<EntityChitinite, ModelChitinite> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,

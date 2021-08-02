@@ -17,24 +17,21 @@ import com.hutoslib.client.ClientUtils;
 
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemBloodProjection extends Item implements IDispellable, ICellHand {
 
@@ -76,7 +73,7 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			RayTraceResult trace = player.pick(5.5, ClientUtils.getPartialTicks(), true);
 			if (trace.getType() == Type.BLOCK) {
 

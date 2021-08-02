@@ -11,15 +11,13 @@ import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RuneEntityEventHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
-
-import ItemStack;
 
 public class RunesContainer extends ItemStackHandler implements IRunesItemHandler {
 

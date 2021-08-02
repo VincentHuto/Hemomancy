@@ -7,7 +7,7 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.binder.PacketBinderTogglePickup;
 
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.Event;

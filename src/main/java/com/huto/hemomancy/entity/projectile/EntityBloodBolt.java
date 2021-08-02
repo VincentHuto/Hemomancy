@@ -9,33 +9,30 @@ import com.google.common.collect.Sets;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodBolt extends AbstractArrow {
 	private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.createKey(EntityBloodBolt.class,
@@ -120,7 +117,7 @@ public class EntityBloodBolt extends AbstractArrow {
 	 */
 	public void tick() {
 		super.tick();
-		if (this.world.isRemote) {
+		if (this.level.isClientSide) {
 			for (int i = 0; i < 2; i++) {
 				world.addParticle(GlowParticleFactory.createData(new ParticleColor(255 * world.rand.nextFloat(), 0, 0)),
 						getPosX() + ParticleUtils.inRange(-0.1, 0.1), getPosY() + ParticleUtils.inRange(-0.1, 0.1),

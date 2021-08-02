@@ -8,8 +8,6 @@ import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.world.entity.Entity;
 
-import ParticleColor;
-
 public class EntityParticleUtils {
 	public static Predicate<Entity> getEntityPredicate(Entity ent) {
 		for (Predicate<Entity> pred : ModEntityPredicates.BLOODTYPES) {

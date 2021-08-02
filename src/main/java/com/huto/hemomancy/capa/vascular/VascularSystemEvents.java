@@ -13,14 +13,13 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -30,7 +29,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class VascularSystemEvents {
 	@SubscribeEvent
@@ -74,7 +73,7 @@ public class VascularSystemEvents {
 	public static void respawn(PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) event.getEntity();
-			if (!player.getEntityWorld().isRemote) {
+			if (!player.getEntityWorld().isClientSide) {
 				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELVASCULARSYSTEM.send(
@@ -88,7 +87,7 @@ public class VascularSystemEvents {
 	public static void onPlayerDamage(LivingDamageEvent e) {
 		if (e.getEntityLiving() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) e.getEntity();
-			if (!player.getEntityWorld().isRemote) {
+			if (!player.getEntityWorld().isClientSide) {
 
 				IVascularSystem system = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
 						.orElseThrow(IllegalArgumentException::new);

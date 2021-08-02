@@ -12,23 +12,22 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.huto.hemomancy.tile.TileEntityVisceralRecaller;
-import com.hutoslib.math.MathUtils;
 import com.hutoslib.client.TextUtils;
+import com.hutoslib.math.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -39,7 +38,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimension
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class BloodTendencyEvents {
 	@SubscribeEvent
@@ -82,7 +81,7 @@ public class BloodTendencyEvents {
 	@SubscribeEvent
 	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
 		/*
-		 * // Causes particles when the air is hit if (e.getWorld().isRemote) {
+		 * // Causes particles when the air is hit if (e.getWorld().isClientSide) {
 		 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
 		 * PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks())); }
 		 */
@@ -126,7 +125,7 @@ public class BloodTendencyEvents {
 	public static void respawn(PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) event.getEntity();
-			if (!player.getEntityWorld().isRemote) {
+			if (!player.getEntityWorld().isClientSide) {
 				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(

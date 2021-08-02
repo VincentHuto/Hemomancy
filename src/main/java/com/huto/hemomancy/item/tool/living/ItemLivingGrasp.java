@@ -7,27 +7,25 @@ import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.hutoslib.client.TextUtils;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.UseAction;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingGrasp extends Item {
 
@@ -63,7 +61,7 @@ public class ItemLivingGrasp extends Item {
 			IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
 			if (playerVolume.getBloodVolume() > 50f) {
-				if (!worldIn.isRemote) {
+				if (!worldIn.isClientSide) {
 					playerVolume.subtractBloodVolume(50f);
 					PacketHandler.CHANNELBLOODVOLUME.send(
 							PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
@@ -128,7 +126,7 @@ public class ItemLivingGrasp extends Item {
 			missArray[i] = new EntityBloodOrbTracking(playerIn, false);
 			missArray[i].setPosition(playerIn.getPosX() + ((Math.random()) * 1.5), playerIn.getPosY() + 0.8f,
 					playerIn.getPosZ() + ((Math.random()) * 1.5));
-			if (!worldIn.isRemote) {
+			if (!worldIn.isClientSide) {
 				playerIn.playSound(SoundEvents.ENTITY_ENDERMAN_SCREAM, 0.6F, 0.8F + (float) Math.random() * 0.2F);
 				worldIn.addEntity(missArray[i]);
 
@@ -145,7 +143,7 @@ public class ItemLivingGrasp extends Item {
 			float zMod = (world.rand.nextFloat() - 0.5F) * 8.0F;
 			tentArray[i].setPosition(hitVec.getX() + 0.5 + xMod, hitVec.getY() + 1.5 + yMod,
 					hitVec.getZ() + 0.5 + zMod);
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				world.addEntity(tentArray[i]);
 
 			}

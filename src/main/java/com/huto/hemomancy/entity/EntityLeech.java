@@ -7,45 +7,39 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.EntityInit;
+import com.sun.jna.Structure;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CropsBlock;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.ai.goal.PanicGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
-import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Util;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.server.ServerWorld;
 
 public class EntityLeech extends Animal {
@@ -73,7 +67,7 @@ public class EntityLeech extends Animal {
 	public void tick() {
 		super.tick();
 
-		if (!world.isRemote) {
+		if (!level.isClientSide) {
 			// System.out.println(world.getBlockState(this.getPosition().add(0, 1,
 			// 0)).getBlock());
 			if (world.getBlockState(this.getPosition().add(0, 1, 0)).getBlock() instanceof CropsBlock) {
@@ -157,7 +151,7 @@ public class EntityLeech extends Animal {
 	 * this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
 	 * 0.0D, 0.0D);
 	 * 
-	 * return ActionResultType.func_233537_a_(this.world.isRemote); } else { return
+	 * return ActionResultType.func_233537_a_(this.level.isClientSide); } else { return
 	 * super.func_230254_b_(p_230254_1_, p_230254_2_); } }
 	 */
 	@Override

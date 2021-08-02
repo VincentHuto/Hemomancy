@@ -1,12 +1,10 @@
 package com.huto.hemomancy.capa.vascular;
 
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-
-import CompoundTag;
 
 public class VascularSystemStorage implements IStorage<IVascularSystem> {
 

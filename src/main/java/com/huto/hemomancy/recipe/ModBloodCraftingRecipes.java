@@ -7,15 +7,14 @@ import java.util.function.Predicate;
 
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.render.LabeledBlockPattern;
+import com.hutoslib.client.render.block.render.LabeledBlockPattern;
 
-import net.minecraft.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.pattern.BlockPattern;
-import net.minecraft.block.pattern.BlockPatternBuilder;
 import net.minecraft.block.pattern.BlockStateMatcher;
-import net.minecraft.world.item.Items;
 import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
+import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 
 public class ModBloodCraftingRecipes {
 

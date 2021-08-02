@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-import ResourceLocation;
-
 public class RenderFungling extends MobRenderer<EntityFungling, ModelFungling> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,

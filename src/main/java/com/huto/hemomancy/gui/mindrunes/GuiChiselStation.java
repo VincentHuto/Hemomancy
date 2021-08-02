@@ -13,25 +13,19 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.PacketUpdateChiselRunes;
 import com.huto.hemomancy.recipe.RecipeChiselStation;
 import com.huto.hemomancy.tile.TileEntityChiselStation;
-import com.hutoslib.client.gui.GuiButtonTextured;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.Button.IPressable;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-
-import GuiButtonTextured;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselStation> {
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(

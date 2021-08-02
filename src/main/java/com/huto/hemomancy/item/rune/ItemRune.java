@@ -12,19 +12,16 @@ import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.hutoslib.client.TextUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemRune extends Item implements IRune {
 
@@ -40,7 +37,7 @@ public class ItemRune extends Item implements IRune {
 	@Override
 	public void onEquipped(LivingEntity player) {
 		if (player instanceof Player) {
-			if (!player.getEntityWorld().isRemote) {
+			if (!player.getEntityWorld().isClientSide) {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {
@@ -57,7 +54,7 @@ public class ItemRune extends Item implements IRune {
 	@Override
 	public void onUnequipped(LivingEntity player) {
 		if (player instanceof PlayerEntity) {
-			if (!player.getEntityWorld().isRemote) {
+			if (!player.getEntityWorld().isClientSide) {
 				IBloodTendency coven = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				if (coven != null) {

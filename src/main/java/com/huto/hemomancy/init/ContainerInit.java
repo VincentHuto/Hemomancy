@@ -13,16 +13,15 @@ import com.huto.hemomancy.container.PlayerExpandedContainer;
 import com.huto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.huto.hemomancy.recipe.CopyRuneBinderDataRecipe;
 
-import net.minecraft.inventory.container.Container;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.IContainerFactory;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.fmllegacy.network.IContainerFactory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
@@ -41,7 +40,7 @@ public class ContainerInit {
 
 	@ObjectHolder("hemomancy:playerrunes")
 	public static MenuType<PlayerExpandedContainer> playerrunes = createRuneContainer("playerrunes",
-			(id, inv, data) -> new PlayerExpandedContainer(id, inv, !inv.player.world.isRemote));
+			(id, inv, data) -> new PlayerExpandedContainer(id, inv, !inv.player.level.isClientSide));
 
 	private static <T extends Container> ContainerType<T> createRuneContainer(String name,
 			IContainerFactory<T> factory) {

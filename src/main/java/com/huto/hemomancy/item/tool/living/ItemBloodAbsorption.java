@@ -17,12 +17,8 @@ import com.huto.hemomancy.render.item.RenderItemCellHand;
 
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -31,9 +27,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand {
 
@@ -83,7 +80,7 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 					LivingEntity livingTarget = (LivingEntity) target;
 					float dam = 3f / targets.size();
 					livingTarget.attackEntityFrom(ItemInit.bloodLoss, dam);
-					if (!worldIn.isRemote) {
+					if (!worldIn.isClientSide) {
 						volume.addBloodVolume(dam);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),

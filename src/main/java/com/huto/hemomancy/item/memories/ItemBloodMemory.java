@@ -14,20 +14,18 @@ import com.hutoslib.client.TextUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.network.PacketDistributor;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemBloodMemory extends Item {
 
@@ -68,7 +66,7 @@ public class ItemBloodMemory extends Item {
 
 		if (handIn == Hand.MAIN_HAND) {
 			ItemStack stack = playerIn.getHeldItem(handIn);
-			if (!worldIn.isRemote) {
+			if (!worldIn.isClientSide) {
 				if (volume.isActive()) {
 					if (!playerIn.isSneaking()) {
 						if (!known.doesListContainName(knownList, getManip())) {

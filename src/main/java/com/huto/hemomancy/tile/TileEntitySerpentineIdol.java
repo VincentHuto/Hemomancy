@@ -5,8 +5,8 @@ import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
 
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.server.ServerWorld;
 
 public class TileEntitySerpentineIdol extends BlockEntity implements TickableBlockEntity {
@@ -19,7 +19,7 @@ public class TileEntitySerpentineIdol extends BlockEntity implements TickableBlo
 	public void tick() {
 		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, 0, 0);
 		double time = world.getGameTime();
-		if (!this.world.isRemote) {
+		if (!this.level.isClientSide) {
 			ServerWorld sWorld = (ServerWorld) world;
 			sWorld.spawnParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
 					centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),

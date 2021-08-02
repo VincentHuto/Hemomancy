@@ -3,12 +3,9 @@ package com.huto.hemomancy.item.morphlings;
 import com.huto.hemomancy.entity.EntityMorphlingPolypItem;
 import com.huto.hemomancy.init.EntityInit;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemMorphlingPolyp extends Item {
 

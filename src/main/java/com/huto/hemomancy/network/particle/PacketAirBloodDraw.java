@@ -7,17 +7,17 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -48,7 +48,7 @@ public class PacketAirBloodDraw {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			if (!player.world.isRemote) {
+			if (!player.level.isClientSide) {
 				float pTic = message.parTick;
 				ServerWorld sWorld = (ServerWorld) player.world;
 				RayTraceResult airTrace = player.pick(1.5, pTic, false);

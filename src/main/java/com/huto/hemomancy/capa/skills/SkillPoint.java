@@ -4,8 +4,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 
-import CompoundTag;
-
 public class SkillPoint {
 	int id, maxLevels;
 	String name;

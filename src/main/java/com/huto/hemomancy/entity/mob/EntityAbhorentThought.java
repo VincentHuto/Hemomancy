@@ -2,30 +2,26 @@ package com.huto.hemomancy.entity.mob;
 
 import javax.annotation.Nullable;
 
-import com.hutoslib.client.model.Animation;
-import com.hutoslib.client.model.IAnimatable;
+import com.hutoslib.client.model.capability.IAnimatable;
+import com.sun.jna.Structure;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.server.ServerWorld;
 
 public class EntityAbhorentThought extends Monster implements IAnimatable {
@@ -91,8 +87,8 @@ public class EntityAbhorentThought extends Monster implements IAnimatable {
 		 * 
 		 * } if (this.ticksExisted == 220) { this.world.addParticle(ParticleTypes.POOF,
 		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.world.isRemote) {
-		 * this.setHealth(0); } else { if (!world.isRemote) {
+		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.level.isClientSide) {
+		 * this.setHealth(0); } else { if (!level.isClientSide) {
 		 * world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
 		 * SoundEvents.BLOCK_SNOW_BREAK, SoundCategory.HOSTILE, 3f, 1.2f, false); } } }
 		 */

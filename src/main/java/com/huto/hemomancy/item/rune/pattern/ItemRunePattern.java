@@ -5,18 +5,16 @@ import com.huto.hemomancy.recipe.RecipeChiselStation;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.RegistryObject;
-
-import net.minecraft.world.item.Item.Properties;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
 public class ItemRunePattern extends Item {
 
@@ -36,7 +34,7 @@ public class ItemRunePattern extends Item {
 	@OnlyIn(Dist.CLIENT)
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if (worldIn.isRemote) {
+		if (worldIn.isClientSide) {
 			Minecraft.getInstance().displayGuiScreen(getPatternGui());
 			playerIn.playSound(SoundEvents.ITEM_BOOK_PAGE_TURN, 0.40f, 1F);
 		}

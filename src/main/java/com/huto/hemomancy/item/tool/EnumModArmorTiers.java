@@ -1,15 +1,15 @@
 package com.huto.hemomancy.item.tool;
 
+import javax.swing.UIDefaults.LazyValue;
+
 import com.google.common.base.Supplier;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

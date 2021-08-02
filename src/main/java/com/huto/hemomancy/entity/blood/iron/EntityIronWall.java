@@ -1,15 +1,14 @@
 package com.huto.hemomancy.entity.blood.iron;
 
 import com.huto.hemomancy.entity.blood.EntityBloodConstruct;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.level.Level;
 
 public class EntityIronWall extends EntityBloodConstruct {
@@ -65,7 +64,7 @@ public class EntityIronWall extends EntityBloodConstruct {
 		float g2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 				world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_DAMAGE,
 						SoundCategory.HOSTILE, 3f, 0.2f, false);
 				this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) g,
@@ -73,7 +72,7 @@ public class EntityIronWall extends EntityBloodConstruct {
 			}
 		}
 
-		if (this.deathTicks <= 0.1 && !this.world.isRemote) {
+		if (this.deathTicks <= 0.1 && !this.level.isClientSide) {
 			this.remove();
 		}
 

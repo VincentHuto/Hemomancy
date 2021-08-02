@@ -9,11 +9,11 @@ import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketDisplayKnownManips {
 

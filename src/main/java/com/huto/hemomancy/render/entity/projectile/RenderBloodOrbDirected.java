@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

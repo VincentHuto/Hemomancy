@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-import ResourceLocation;
-
 public class RenderChthonianQueen extends MobRenderer<EntityChthonianQueen, ModelChthonianQueen> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,

@@ -4,14 +4,14 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerMorphlingJar;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiMorphlingJar extends AbstractContainerScreen<ContainerMorphlingJar> {
 	public GuiMorphlingJar(ContainerMorphlingJar container, Inventory playerInventory, Component name) {

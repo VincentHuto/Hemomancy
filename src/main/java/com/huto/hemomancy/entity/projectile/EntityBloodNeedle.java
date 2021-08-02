@@ -4,22 +4,20 @@ import javax.annotation.Nonnull;
 
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodNeedle extends AbstractArrow {
 
@@ -44,7 +42,7 @@ public class EntityBloodNeedle extends AbstractArrow {
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.world.isRemote) {
+		if (this.level.isClientSide) {
 			for (int i = 0; i < 2; i++) {
 				world.addParticle(GlowParticleFactory.createData(new ParticleColor(255 * world.rand.nextFloat(), 0, 0)),
 						getPosX() + ParticleUtils.inRange(-0.1, 0.1), getPosY() + ParticleUtils.inRange(-0.1, 0.1),

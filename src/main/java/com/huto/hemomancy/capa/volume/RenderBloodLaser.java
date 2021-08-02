@@ -5,15 +5,15 @@ import com.huto.hemomancy.init.RenderTypeInit;
 import com.hutoslib.math.Vector3;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3d;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class RenderBloodLaser {
@@ -21,7 +21,7 @@ public class RenderBloodLaser {
 	public static void renderLaser(RenderWorldLastEvent event, Player player, float ticks) {
 		Vector3 centerVec = Vector3.fromEntityCenter(player);
 		if (player.getActivePotionEffect(PotionInit.blood_binding.get()) != null) {
-			if (player.world.isRemote) {
+			if (player.level.isClientSide) {
 				Vector3 playerPos = Vector3.fromEntityCenter(player);
 				Vector3d playerVec = new Vector3d(playerPos.x, playerPos.y, playerPos.z);
 				Vector3d part1 = new Vector3d(centerVec.x + Math.sin(player.ticksExisted * 0.1 + Math.toRadians(30)),

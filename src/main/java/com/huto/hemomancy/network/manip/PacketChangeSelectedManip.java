@@ -7,10 +7,10 @@ import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketChangeSelectedManip {
 
@@ -39,7 +39,7 @@ public class PacketChangeSelectedManip {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			if (!player.world.isRemote) {
+			if (!player.level.isClientSide) {
 				float pTic = message.parTick;
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);

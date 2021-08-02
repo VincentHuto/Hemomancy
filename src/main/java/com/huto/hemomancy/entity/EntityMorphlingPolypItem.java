@@ -8,15 +8,13 @@ import javax.annotation.Nonnull;
 import com.huto.hemomancy.recipe.PolypRecipe;
 import com.huto.hemomancy.recipe.PolypRecipes;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.IPacket;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.IPacket;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityMorphlingPolypItem extends ItemEntity {
 
@@ -43,7 +41,7 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 		}
 
 		// Client FX
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			double r = 0.1;
 			double m = 0.1;
 			for (int i = 0; i < 1; i++) {
@@ -70,7 +68,7 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 						}
 
 						if (itemList.containsAll(rec.getIngr())) {
-							if (!world.isRemote) {
+							if (!level.isClientSide) {
 								for (ItemEntity it : itemEntList) {
 									it.getItem().shrink(1);
 								}

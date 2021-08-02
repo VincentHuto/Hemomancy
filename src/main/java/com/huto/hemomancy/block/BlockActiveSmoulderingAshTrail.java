@@ -10,36 +10,32 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.huto.hemomancy.init.BlockInit;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.block.AbstractBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.IWorldWriter;
 import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.RedstoneSide;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -324,7 +320,7 @@ public class BlockActiveSmoulderingAshTrail extends Block {
 	}
 
 	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (!oldState.matchesBlock(state.getBlock()) && !worldIn.isRemote) {
+		if (!oldState.matchesBlock(state.getBlock()) && !worldIn.isClientSide) {
 			this.updatePower(worldIn, pos, state);
 
 			for (Direction direction : Direction.Plane.VERTICAL) {
@@ -337,7 +333,7 @@ public class BlockActiveSmoulderingAshTrail extends Block {
 
 	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!isMoving && !state.matchesBlock(newState.getBlock())) {
-			if (!worldIn.isRemote) {
+			if (!worldIn.isClientSide) {
 				for (Direction direction : Direction.values()) {
 					worldIn.notifyNeighborsOfStateChange(pos.offset(direction), this);
 				}
@@ -366,7 +362,7 @@ public class BlockActiveSmoulderingAshTrail extends Block {
 
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			if (state.isValidPosition(worldIn, pos)) {
 				this.updatePower(worldIn, pos, state);
 			} else {

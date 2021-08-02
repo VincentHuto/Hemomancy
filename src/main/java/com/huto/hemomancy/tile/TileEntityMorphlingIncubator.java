@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.TileEntityInit;
-import com.hutoslib.common.tile.TileSimpleInventory;
+import com.hutoslib.common.block.entity.TileSimpleInventory;
 
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class TileEntityMorphlingIncubator extends TileSimpleInventory implements ITickableTileEntity {
 
@@ -24,9 +24,9 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 
 	@Override
 	public void tick() {
-		if (world.isRemote) {
+		if (level.isClientSide) {
 
-			if (!world.isRemote) {
+			if (!level.isClientSide) {
 				List<ItemEntity> items = world.getEntitiesWithinAABB(ItemEntity.class,
 						new AxisAlignedBB(pos, pos.add(1, 1, 1)));
 				for (ItemEntity item : items) {
@@ -58,7 +58,7 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 			cooldown = param;
 			return true;
 		case CRAFT_EFFECT_EVENT: {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 			}
 			return true;
 		}
@@ -96,7 +96,7 @@ public class TileEntityMorphlingIncubator extends TileSimpleInventory implements
 	 * (vibes.getVibes() >= manaCost) { ItemStack output =
 	 * recipe.getOutput().copy(); ItemEntity outputItem = new ItemEntity(world,
 	 * pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, output); if
-	 * (world.isRemote) { world.addParticle(ParticleTypes.PORTAL, pos.getX(),
+	 * (level.isClientSide) { world.addParticle(ParticleTypes.PORTAL, pos.getX(),
 	 * pos.getY(), pos.getZ(), 0.0D, 0.0D, 0.0D); } world.addEntity(outputItem);
 	 * vibes.setVibes(vibes.getVibes() - manaCost); currentRecipe = null;
 	 * world.addBlockEvent(getPos(), BlockInit.wand_maker.get(), SET_COOLDOWN_EVENT,

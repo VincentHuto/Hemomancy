@@ -7,13 +7,10 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.hutoslib.client.TextUtils;
 
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.potion.Effect;
 import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
 public class GeneratorLanguage extends LanguageProvider {
 	public GeneratorLanguage(DataGenerator gen) {

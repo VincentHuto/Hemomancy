@@ -7,20 +7,17 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.ItemInit;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.BitLocation;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketGroundBloodDraw {
 
@@ -48,7 +45,7 @@ public class PacketGroundBloodDraw {
 			Player player = ctx.get().getSender();
 			if (player == null)
 				return;
-			if (!player.world.isRemote) {
+			if (!player.level.isClientSide) {
 				float pTic = message.parTick;
 				if (player.getHeldItemMainhand().getItem() == ItemInit.living_staff.get()) {
 					IBloodVolume bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)

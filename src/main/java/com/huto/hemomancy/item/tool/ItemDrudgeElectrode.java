@@ -7,24 +7,21 @@ import com.huto.hemomancy.init.ItemInit;
 import com.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
-
-import net.minecraft.world.item.Item.Properties;
 
 public class ItemDrudgeElectrode extends Item {
 
@@ -37,7 +34,7 @@ public class ItemDrudgeElectrode extends Item {
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (target instanceof EntityDrudge) {
-			if (!target.world.isRemote) {
+			if (!target.level.isClientSide) {
 				ParticleUtils.spawnPoof((ServerWorld) target.world, target.getPosition());
 			}
 			ItemEntity itemEnt = new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(),

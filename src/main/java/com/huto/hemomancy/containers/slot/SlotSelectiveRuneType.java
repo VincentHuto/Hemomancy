@@ -9,8 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-import Player;
-
 public class SlotSelectiveRuneType extends SlotItemHandler {
 	int mindruneSlot;
 	Player player;

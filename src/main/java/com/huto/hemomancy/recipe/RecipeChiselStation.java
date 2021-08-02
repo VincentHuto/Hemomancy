@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableList;
 import com.huto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.hutoslib.common.recipe.IModRecipe;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 

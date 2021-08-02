@@ -22,7 +22,7 @@ import com.huto.hemomancy.manipulation.quick.ManipDeadlyGaze;
 import com.huto.hemomancy.manipulation.quick.ManipFerricTransmutation;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;

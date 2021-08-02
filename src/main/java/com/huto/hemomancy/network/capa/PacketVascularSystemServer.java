@@ -8,10 +8,10 @@ import com.huto.hemomancy.capa.vascular.EnumVeinSections;
 import com.huto.hemomancy.capa.vascular.VascularSystemProvider;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketVascularSystemServer {
 	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>();

@@ -4,10 +4,10 @@ import java.util.function.Supplier;
 
 import com.huto.hemomancy.item.rune.ItemRuneBinder;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketBinderTogglePickup {
 	public static PacketBinderTogglePickup decode(final FriendlyByteBuf buffer) {

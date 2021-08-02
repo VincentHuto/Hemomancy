@@ -6,13 +6,10 @@ import java.util.Map;
 import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.gui.recaller.GuiVisceralRecaller;
 
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-
-import ItemStack;
-import ResourceLocation;
 
 public class RecipeRecaller extends ForgeRegistryEntry<RecipeRecaller> {
 	private final ResourceLocation id;

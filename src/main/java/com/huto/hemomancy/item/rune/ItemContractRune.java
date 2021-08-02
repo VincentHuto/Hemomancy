@@ -7,8 +7,6 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class ItemContractRune extends ItemRune implements IRune {
 
 	public ItemContractRune(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {

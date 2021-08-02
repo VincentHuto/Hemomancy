@@ -3,10 +3,9 @@ package com.huto.hemomancy.network.binder;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketToggleBinderMessage {
 	public PacketToggleBinderMessage(boolean enabled) {

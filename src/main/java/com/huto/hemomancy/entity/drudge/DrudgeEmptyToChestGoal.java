@@ -1,10 +1,9 @@
 package com.huto.hemomancy.entity.drudge;
 
-import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;

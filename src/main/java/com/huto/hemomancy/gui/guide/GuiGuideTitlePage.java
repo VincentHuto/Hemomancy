@@ -3,11 +3,10 @@ package com.huto.hemomancy.gui.guide;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
-import com.hutoslib.client.gui.GuiButtonTextured;
-import com.hutoslib.client.gui.GuiUtils;
-import com.hutoslib.client.render.RenderMultiBlockInGui;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.hutoslib.client.render.block.render.RenderMultiBlockInGui;
+import com.hutoslib.client.screen.GuiButtonTextured;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -15,14 +14,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import GuiButtonTextured;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiGuideTitlePage extends Screen {

@@ -8,12 +8,12 @@ import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.hutoslib.client.TextUtils;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -43,7 +43,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		if (!player.world.isRemote) {
+		if (!player.level.isClientSide) {
 			if (volume.isActive()) {
 				if (volume.getBloodVolume() > cost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {

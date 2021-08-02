@@ -6,17 +6,14 @@ import java.util.function.Supplier;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
+import com.mojang.math.Vector3d;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.network.NetworkEvent;
-
-import ParticleColor;
-
-import Vec3;
+import net.minecraftforge.fmllegacy.LogicalSidedProvider;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketSpawnLivingToolParticles {
 	Vec3 pos;

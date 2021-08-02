@@ -5,20 +5,19 @@ import java.util.List;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.math.Vector3;
+import com.mojang.math.Vector3d;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.level.Level;
 
 public class EntityBloodCloud extends EntityBloodConstruct {
@@ -43,7 +42,7 @@ public class EntityBloodCloud extends EntityBloodConstruct {
 		if (!this.onGround && vector3d.y < 0.0D) {
 			this.setMotion(vector3d.mul(1.0D, 0.0D, 1.0D));
 		}
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			double radius = 0.2;
 			world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
 					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
@@ -93,14 +92,14 @@ public class EntityBloodCloud extends EntityBloodConstruct {
 		float g2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
 		deathTicks -= 0.05;
 		if (this.deathTicks <= 0.1) {
-			if (world.isRemote) {
+			if (level.isClientSide) {
 				world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_DAMAGE,
 						SoundCategory.HOSTILE, 3f, 0.2f, false);
 				this.world.addParticle(ParticleTypes.SQUID_INK, this.getPosX() + (double) g,
 						this.getPosY() + 2.0D + (double) g1, this.getPosZ() + (double) g2, 0.0D, 0.0D, 0.0D);
 			}
 		}
-		if (this.deathTicks <= 0.1 && !this.world.isRemote) {
+		if (this.deathTicks <= 0.1 && !this.level.isClientSide) {
 			this.remove();
 		}
 

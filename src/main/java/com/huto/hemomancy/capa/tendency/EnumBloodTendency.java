@@ -3,8 +3,6 @@ package com.huto.hemomancy.capa.tendency;
 import com.huto.hemomancy.init.ItemInit;
 import com.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.item.Item;
-
 public enum EnumBloodTendency {
 
 	ANIMUS(new ParticleColor(255, 0, 0)), FLAMMEUS(new ParticleColor(255, 100, 0)),

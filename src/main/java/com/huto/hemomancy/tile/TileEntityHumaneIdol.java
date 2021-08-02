@@ -1,12 +1,12 @@
 package com.huto.hemomancy.tile;
 
 import com.huto.hemomancy.init.TileEntityInit;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
 
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 
 public class TileEntityHumaneIdol extends BlockEntity implements TickableBlockEntity {
 
@@ -21,7 +21,7 @@ public class TileEntityHumaneIdol extends BlockEntity implements TickableBlockEn
 
 		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, -1, 0);
 		double time = world.getGameTime();
-		if (world.isRemote) {
+		if (level.isClientSide) {
 			int globalPartCount = 90;
 			for (int i = 0; i < 16; i++) {
 				count += 0.0005;
