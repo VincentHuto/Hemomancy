@@ -1,0 +1,29 @@
+{
+    "type": "hemomancy:blood_gourd_upgrade",
+   
+    "pattern":
+    [
+        " S ",
+        "SPS",
+        " S "
+    ],
+   
+    "key":
+    {
+        "S":
+        {
+            "item": "hemomancy:sanguine_formation"
+        },
+        
+         "P":
+        {
+            "item": "hemomancy:blood_gourd_white"
+        }
+    },
+    
+    "result":
+    {
+        "item": "hemomancy:blood_gourd_white",
+        "count": 1
+    }
+}

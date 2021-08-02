@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GRG",
+    "GGG"
+  ],
+  "key": {
+    "R": {
+      "item": "hemomancy:rune_pattern"
+    },
+    "G": {
+      "item": "hemomancy:sanguine_formation"
+    }
+  },
+  "result": {
+    "item": "hemomancy:rune_binder"
+  }
+}

@@ -1,0 +1,106 @@
+package com.huto.hemomancy.entity.projectile;
+
+import javax.annotation.Nonnull;
+
+import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
+import com.huto.hemomancy.capa.tendency.IBloodTendency;
+import com.huto.hemomancy.init.EntityInit;
+import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.hutoslib.client.particle.util.ParticleColor;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ParticleUtils;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
+
+public class EntityBloodShot extends AbstractArrow {
+
+	public EntityBloodShot(EntityType<? extends EntityBloodShot> type, Level worldIn) {
+		super(type, worldIn);
+	}
+
+	public EntityBloodShot(Level worldIn, double x, double y, double z) {
+		super(EntityInit.blood_shot.get(), x, y, z, worldIn);
+	}
+
+	LivingEntity shooter;
+
+	public EntityBloodShot(Level worldIn, LivingEntity shooter) {
+		super(EntityInit.blood_shot.get(), shooter, worldIn);
+		this.shooter = shooter;
+	}
+
+	@Nonnull
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+	}
+
+	public void tick() {
+		super.tick();
+		if (shooter instanceof Player) {
+			Player player = (Player) shooter;
+			IBloodTendency tend = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(NullPointerException::new);
+			ParticleColor color = tend.getAvgBloodColor();
+			ServerLevel sLevel = (ServerLevel) level;
+
+			sLevel.sendParticles(BloodCellParticleFactory.createData(color),
+					getX() + ParticleUtils.inRange(-0.05, 0.05), getY() + ParticleUtils.inRange(-0.05, 0.05),
+					getZ() + ParticleUtils.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
+
+			if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {
+				this.level.broadcastEntityEvent(this, (byte) 0);
+							this.remove(RemovalReason.KILLED);
+			}
+		}
+
+	}
+
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+
+	}
+
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+
+	}
+
+	@Override
+	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
+		super.onHitEntity(p_213868_1_);
+		// Entity entity = p_213868_1_.getEntity();
+		/*
+		 * if (entity instanceof LivingEntity) { ((LivingEntity)
+		 * entity).addPotionEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000,
+		 * 2));
+		 * 
+		 * }
+		 */
+
+	}
+
+	protected void doPostHurtEffects(LivingEntity living) {
+		super.doPostHurtEffects(living);
+
+	}
+
+	@Override
+	protected ItemStack getPickupItem() {
+		return ItemStack.EMPTY;
+	}
+
+}

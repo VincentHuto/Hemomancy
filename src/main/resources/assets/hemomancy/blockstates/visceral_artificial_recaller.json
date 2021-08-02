@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/visceral_artificial_recaller"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/visceral_artificial_recaller",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/visceral_artificial_recaller",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/visceral_artificial_recaller",
+			"y": 90
+		}
+	}
+}
