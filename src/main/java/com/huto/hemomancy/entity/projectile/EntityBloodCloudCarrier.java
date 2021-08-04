@@ -6,21 +6,22 @@ import com.huto.hemomancy.entity.blood.EntityBloodCloud;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
-import com.mojang.math.Vector3d;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -47,6 +48,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	/**
 	 * Checks if the entity is in range to render.
 	 */
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean shouldRenderAtSqrDistance(double distance) {
 		double d0 = this.getBoundingBox().getSize() * 4.0D;
@@ -62,9 +64,8 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	 */
 	int globalPartCount = 20;
 	Vec3[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
-	Vector3d[] corona = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
-	Vector3d[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.016, 0.15,
-			false);
+	Vec3[] corona = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
+	Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.016, 0.15, false);
 
 	@Override
 	public void tick() {
@@ -85,17 +86,19 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), level, shooter);
 				cloud.setPos(getX(), getY(), getZ());
 				level.addFreshEntity(cloud);
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 
 			}
 		}
 
 	}
 
+	@Override
 	protected boolean canHitEntity(Entity p_230298_1_) {
 		return super.canHitEntity(p_230298_1_) && !p_230298_1_.noPhysics;
 	}
 
+	@Override
 	protected boolean shouldBurn() {
 		return false;
 	}
@@ -104,10 +107,12 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	 * Return the motion factor for this projectile. The factor is multiplied by the
 	 * original motion.
 	 */
+	@Override
 	protected float getInertia() {
 		return 1F;
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		compound.put("power", this.newDoubleList(new double[] { this.xPower, this.yPower, this.zPower }));
@@ -116,6 +121,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	/**
 	 * (abstract) Protected helper method to read subclass entity data from NBT.
 	 */
+	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		if (compound.contains("power", 9)) {
@@ -133,10 +139,12 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	 * Returns true if other Entities should be prevented from moving through this
 	 * Entity.
 	 */
+	@Override
 	public boolean isPickable() {
 		return true;
 	}
 
+	@Override
 	public float getPickRadius() {
 		return 1.0F;
 	}
@@ -144,6 +152,7 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	/**
 	 * Called when the entity is attacked.
 	 */
+	@Override
 	public boolean hurt(DamageSource source, float amount) {
 		if (this.isInvulnerableTo(source)) {
 			return false;
@@ -151,11 +160,11 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 			this.markHurt();
 			Entity entity = source.getEntity();
 			if (entity != null) {
-				Vector3d vector3d = entity.getLookAngle();
-				this.setDeltaMovement(vector3d);
-				this.xPower = vector3d.x * 0.1D;
-				this.yPower = vector3d.y * 0.1D;
-				this.zPower = vector3d.z * 0.1D;
+				Vec3 Vec3 = entity.getLookAngle();
+				this.setDeltaMovement(Vec3);
+				this.xPower = Vec3.x * 0.1D;
+				this.yPower = Vec3.y * 0.1D;
+				this.zPower = Vec3.z * 0.1D;
 				this.setOwner(entity);
 				return true;
 			} else {
@@ -170,14 +179,14 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	}
 
 	@Override
-	protected void onHit(@Nonnull RayTraceResult pos) {
+	protected void onHit(@Nonnull HitResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
 			if (!level.isClientSide) {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), level, shooter);
 				cloud.setPos(getX(), getY(), getZ());
 				level.addFreshEntity(cloud);
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 
 			}
 			break;
@@ -187,44 +196,52 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 				EntityBloodCloud cloud = new EntityBloodCloud(EntityInit.blood_cloud.get(), level, shooter);
 				cloud.setPos(getX(), getY() + 3, getZ());
 				level.addFreshEntity(cloud);
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 
 			}
 			break;
 		}
 		default: {
-						this.remove(RemovalReason.KILLED);
+			this.remove(RemovalReason.KILLED);
 			break;
 		}
 		}
 	}
 
+	@Override
 	public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
-		Vector3d vector3d = (new Vector3d(x, y, z)).normalize().scale((double) velocity);
-		this.setDeltaMovement(vector3d);
-		float f = Mth.sqrt(getHorizontalDistanceSqr(vector3d));
-		this.yRot = (float) (Mth.atan2(vector3d.x, vector3d.z) * (double) (180F / (float) Math.PI));
-		this.xRot = (float) (Mth.atan2(vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
-		this.yRotO = this.yRot;
-		this.xRotO = this.xRot;
+		Vec3 Vec3 = (new Vec3(x, y, z)).normalize().scale(velocity);
+		this.setDeltaMovement(Vec3);
+
+		float f = Mth.sqrt(getHorizontalDistanceSqr(Vec3));
+		this.yo = (float) (Mth.atan2(Vec3.x, Vec3.z) * (180F / (float) Math.PI));
+		this.xo = (float) (Mth.atan2(Vec3.y, f) * (180F / (float) Math.PI));
+		this.yRotO = (float) this.yo;
+		this.xRotO = (float) this.xo;
+	}
+
+	private float getHorizontalDistanceSqr(Vec3 vec3) {
+		return (float) (vec3.x * vec3.x + vec3.z * vec3.z);
 	}
 
 	public void setDirectionMotion(Entity shooter, float x, float y, float z, float velocity, float inaccuracy) {
 		float f = -Mth.sin(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
 		float f1 = -Mth.sin((x + z) * ((float) Math.PI / 180F));
 		float f2 = Mth.cos(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
-		this.shoot((double) f, (double) f1, (double) f2, velocity, inaccuracy);
-		Vector3d vector3d = shooter.getDeltaMovement();
-		this.setDeltaMovement(this.getDeltaMovement().add(vector3d.x, vector3d.y, vector3d.z));
+		this.shoot(f, f1, f2, velocity, inaccuracy);
+		Vec3 Vec3 = shooter.getDeltaMovement();
+		this.setDeltaMovement(this.getDeltaMovement().add(Vec3.x, Vec3.y, Vec3.z));
 	}
 
 	/**
 	 * Gets how bright this entity is.
 	 */
+	@Override
 	public float getBrightness() {
 		return 1.0F;
 	}
 
+	@Override
 	public Packet<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 

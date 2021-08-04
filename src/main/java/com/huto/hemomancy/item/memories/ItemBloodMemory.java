@@ -2,8 +2,6 @@ package com.huto.hemomancy.item.memories;
 
 import java.util.List;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.capa.manip.IKnownManipulations;
 import com.huto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
@@ -11,6 +9,7 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -22,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.RegistryObject;
@@ -76,10 +76,8 @@ public class ItemBloodMemory extends Item {
 									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
 							stack.shrink(1);
 						} else {
-							playerIn.displayClientMessage(
-									new TextComponent("Player Already Knowns This Manipulation!")
-											.withStyle(ChatFormatting.DARK_RED),
-									true);
+							playerIn.displayClientMessage(new TextComponent("Player Already Knowns This Manipulation!")
+									.withStyle(ChatFormatting.DARK_RED), true);
 						}
 					}
 				} else {

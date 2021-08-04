@@ -12,7 +12,6 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.manipulation.BloodManipulation;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.render.item.RenderItemCellHand;
 import com.hutoslib.client.ClientUtils;
 
 import net.minecraft.ChatFormatting;
@@ -29,13 +28,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemBloodProjection extends Item implements IDispellable, ICellHand {
 
 	public ItemBloodProjection(Properties prop) {
-		super(prop.stacksTo(1).setISTER(() -> RenderItemCellHand::new));
+		super(prop.stacksTo(1));
 	}
+
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemCellHand();
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
@@ -97,7 +109,6 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 	public boolean isFoil(ItemStack stack) {
 		return true;
 	}
-
 
 	@Override
 	public BakedModel getBakedModel() {

@@ -9,8 +9,7 @@ import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.tile.BlockEntityChiselStation;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -38,7 +37,7 @@ public class ContainerChiselStation extends AbstractContainerMenu {
 		addSlot(new Slot(te, 1, 8, 22 + 2 * 18));
 		addSlot(new SlotRunePattern(te, 4, 8, 26 + 3 * 18));
 
-		addSlot(new SlotOutput((Container) te, 2, 145, 44));
+		addSlot(new SlotOutput(te, 2, 145, 44));
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -79,15 +78,14 @@ public class ContainerChiselStation extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void setItem(int slotID, ItemStack stack) {
+	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
 		te.sendUpdates();
-		super.setItem(slotID, stack);
+		super.setItem(p_182407_, p_182408_, p_182409_);
 	}
 
 	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		te.sendUpdates();
-		return super.clicked(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybindForSetup;
+package com.huto.hemomancy.network.keybind;
 /*
  * package com.huto.hemomancy.network.crafting;
  * 
@@ -17,11 +17,12 @@ package com.huto.hemomancy.network.keybindForSetup;
  * net.minecraft.entity.player.Player; import
  * net.minecraft.entity.player.ServerPlayer; import
  * net.minecraft.item.ItemStack; import net.minecraft.network.FriendlyByteBuf;
- * import net.minecraft.util.BlockInWorld; import net.minecraft.util.InteractionHand;
- * import net.minecraft.util.SoundSource; import
- * net.minecraft.util.SoundEvents; import net.minecraft.util.math.BlockPos;
- * import net.minecraft.util.math.BlockRayTraceResult; import
- * net.minecraft.util.math.RayTraceResult; import
+ * import net.minecraft.util.BlockInWorld; import
+ * net.minecraft.util.InteractionHand; import net.minecraft.util.SoundSource;
+ * import net.minecraft.util.SoundEvents; import
+ * net.minecraft.util.math.BlockPos; import
+ * net.minecraft.util.math.BlockHitResult; import
+ * net.minecraft.util.math.HitResult; import
  * net.minecraft.util.text.TextComponent; import
  * net.minecraft.world.server.ServerLevel; import
  * net.minecraftforge.fml.network.NetworkEvent; import
@@ -47,20 +48,19 @@ package com.huto.hemomancy.network.keybindForSetup;
  * (recipe.getHeldItem() == stack.getItem()) { return recipe; } } return null; }
  * 
  * public static void handle(final PacketBloodCraftingKeyPressOld message, final
- * Supplier<NetworkEvent.Context> ctx) { ctx.get().enqueueWork(() -> {
- * Player player = ctx.get().getSender(); if (player == null) return;
- * IBloodVolume bloodVolume =
- * player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+ * Supplier<NetworkEvent.Context> ctx) { ctx.get().enqueueWork(() -> { Player
+ * player = ctx.get().getSender(); if (player == null) return; IBloodVolume
+ * bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
  * .orElseThrow(NullPointerException::new);
  * 
  * BaseBloodCraftingRecipe targetPattern = getMatchingRecipe(message.heldStack);
  * ServerLevel sLevel = (ServerLevel) ctx.get().getSender().world; if
  * (player.getHeldItemMainhand().getItem() == targetPattern.getHeldItem()) { if
- * (bloodVolume.getBloodVolume() > targetPattern.getCost()) { RayTraceResult
- * rayTrace = player.pick(3, 102, false); if (rayTrace.getType() ==
- * RayTraceResult.Type.BLOCK) { BlockRayTraceResult blockResult =
- * (BlockRayTraceResult) rayTrace; BlockPos hitPos = blockResult.getPos(); Block
- * hitBlock = sLevel.getBlockState(hitPos).getBlock(); if (hitBlock ==
+ * (bloodVolume.getBloodVolume() > targetPattern.getCost()) { HitResult rayTrace
+ * = player.pick(3, 102, false); if (rayTrace.getType() == HitResult.Type.BLOCK)
+ * { BlockHitResult blockResult = (BlockHitResult) rayTrace; BlockPos hitPos =
+ * blockResult.getPos(); Block hitBlock =
+ * sLevel.getBlockState(hitPos).getBlock(); if (hitBlock ==
  * targetPattern.getHitBlock()) { BlockPattern.PatternHelper patternHelper =
  * targetPattern.getBundledPattern() .getBlockPattern().match(sLevel, hitPos);
  * if (patternHelper != null) { for (int i = 0; i <
@@ -77,8 +77,8 @@ package com.huto.hemomancy.network.keybindForSetup;
  * sLevel.addEntity(new ItemEntity(sLevel, hitPos.getX(), hitPos.getY(),
  * hitPos.getZ(), new ItemStack(targetPattern.getCreation()))); ItemStack
  * oldStack = player.getHeldItemMainhand().copy();
- * player.setHeldItem(InteractionHand.MAIN_HAND, new ItemStack(oldStack.getItem(),
- * oldStack.getCount() - 1));
+ * player.setHeldItem(InteractionHand.MAIN_HAND, new
+ * ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
  * bloodVolume.subtractBloodVolume(targetPattern.getCost());
  * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
  * (ServerPlayer) player), new

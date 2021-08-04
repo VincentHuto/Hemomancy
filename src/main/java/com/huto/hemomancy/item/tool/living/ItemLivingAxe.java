@@ -1,18 +1,15 @@
 package com.huto.hemomancy.item.tool.living;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.render.item.RenderItemLivingAxe;
 import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -29,7 +26,6 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingAxe extends ItemLivingTool {
@@ -39,18 +35,18 @@ public class ItemLivingAxe extends ItemLivingTool {
 	public ItemLivingAxe(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
 		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
 	}
-
-	@Override
-	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-		consumer.accept(new IItemRenderProperties() {
-			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingAxe();
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
-				return myRenderer;
-			}
-		});
-	}
+//
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingAxe();
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 
 	float count = 0.5f;
 
@@ -111,7 +107,6 @@ public class ItemLivingAxe extends ItemLivingTool {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
-		
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();

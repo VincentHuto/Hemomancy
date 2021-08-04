@@ -23,7 +23,7 @@ public class GeneratorRecipes extends RecipeProvider {
 	}
 
 	@Override
-	protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
+	protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 
 		SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemInit.raw_clay_flask.get()),
 				ItemInit.cured_clay_flask.get(), 1f, 200);
@@ -124,7 +124,7 @@ public class GeneratorRecipes extends RecipeProvider {
 				.define('N', Items.STICK).pattern("  N").pattern("EBE").pattern("BBE")
 				.unlockedBy("has_redstone", has(Items.REDSTONE)).save(consumer);
 
-		ShapedRecipeBuilder.shaped(ItemInit.rune_bindForSetuper.get()).define('R', ItemInit.rune_pattern.get())
+		ShapedRecipeBuilder.shaped(ItemInit.rune_binder.get()).define('R', ItemInit.rune_pattern.get())
 				.define('G', ItemInit.sanguine_formation.get()).pattern("GGG").pattern("GRG").pattern("GGG")
 				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
 

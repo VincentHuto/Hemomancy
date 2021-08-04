@@ -6,14 +6,13 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import org.apache.http.util.TextUtils;
-
 import com.google.common.collect.Lists;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.hutoslib.client.TextUtils;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
@@ -165,7 +164,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 			SoundSource soundcategory = entityLiving instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
 			worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(),
 					SoundEvents.CROSSBOW_LOADING_END, soundcategory, 1.0F,
-					1.0F / (random.nextFloat() * 0.5F + 1.0F) + 0.2F);
+					1.0F / (worldIn.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
 		}
 
 	}
@@ -173,7 +172,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 	private static boolean hasAmmo(LivingEntity entityIn, ItemStack stack) {
 		int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, stack);
 		int j = i == 0 ? 1 : 3;
-		boolean flag = entityIn instanceof Player && ((Player) entityIn).abilities.instabuild;
+		boolean flag = entityIn instanceof Player && ((Player) entityIn).getAbilities().instabuild;
 		ItemStack itemstack = entityIn.getProjectile(stack);
 		ItemStack itemstack1 = itemstack.copy();
 
@@ -363,7 +362,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 
 		for (int i = 0; i < list.size(); ++i) {
 			ItemStack itemstack = list.get(i);
-			boolean flag = shooter instanceof Player && ((Player) shooter).abilities.instabuild;
+			boolean flag = shooter instanceof Player && ((Player) shooter).getAbilities().instabuild;
 			if (!itemstack.isEmpty()) {
 				if (i == 0) {
 					fireProjectile(worldIn, shooter, handIn, stack, itemstack, afloat[i], flag, velocityIn,
@@ -388,6 +387,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 
 	private static float getRandomSoundPitch(boolean flagIn) {
 		float f = flagIn ? 0.63F : 0.43F;
+		Random random = new Random();
 		return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + f;
 	}
 

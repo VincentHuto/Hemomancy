@@ -4,13 +4,13 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Map;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketVascularSystemServer;
-import com.mojang.blaze3d.platform.//GlStateManager;
+import com.hutoslib.client.TextUtils;
+
+//GlStateManager;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -133,7 +133,7 @@ public class VascularSystemEvents {
 					for (int i = 0; i < section.getVascularSystem().keySet().size(); i++) {
 						EnumVeinSections selectedSection = (EnumVeinSections) section.getVascularSystem().keySet()
 								.toArray()[i];
-						//GlStateManager._pushMatrix();
+						// GlStateManager._pushMatrix();
 						fontRenderer.draw(event.getMatrixStack(), TextUtils.toProperCase(selectedSection.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getMatrixStack(),
@@ -142,7 +142,7 @@ public class VascularSystemEvents {
 						fontRenderer.draw(event.getMatrixStack(),
 								String.valueOf(section.getBloodFlowBySection(selectedSection)), point.x, point.y + 40,
 								new Color(255, 0, 0, 255).getRGB());
-						//GlStateManager._popMatrix();
+						// GlStateManager._popMatrix();
 						/*
 						 * if (selectedSection.equals(EnumVeinSections.SELF)) { renderItem =
 						 * Items.CRAFTING_TABLE; } else if
@@ -157,15 +157,15 @@ public class VascularSystemEvents {
 						 * (selectedSection.equals(EnumVeinSections.BEAST)) { renderItem =
 						 * ItemInit.breath_of_the_beast.get(); } else { renderItem = Items.BARRIER; }
 						 */
-						//GlStateManager._pushMatrix();
-						////GlStateManager._enableAlphaTest();
-						//GlStateManager._enableBlend();
+						// GlStateManager._pushMatrix();
+						//// GlStateManager._enableAlphaTest();
+						// GlStateManager._enableBlend();
 						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(renderItem),
 								point.x, point.y);
 						// GuiUtil.drawScaledTexturedModalRect(point.x, point.y, 0, 0, 16, 16, 0.062f);
-						//GlStateManager._disableBlend();
-						//GlStateManager._disableAlphaTest();
-						//GlStateManager._popMatrix();
+						// GlStateManager._disableBlend();
+						// GlStateManager._disableAlphaTest();
+						// GlStateManager._popMatrix();
 						point = rotatePointAbout(point, center, angleBetweenEach);
 					}
 				}
@@ -207,13 +207,14 @@ public class VascularSystemEvents {
 						 * 255, 255, devoMult).getRGB());
 						 * fontRenderer.drawString(event.getMatrixStack(), "Seraph View", 5, 5, new
 						 * Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
-						 * .bindForSetupTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-						 * break; case BEAST: AbstractGui.fill(event.getMatrixStack(), 0, 0,
-						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(255,
-						 * 0, 0, devoMult).getRGB()); fontRenderer.drawString(event.getMatrixStack(),
-						 * "Beast View", 5, 5, new Color(255, 0, 0, 15).getRGB());
-						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
-						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break;
+						 * .bindForSetupTexture(new ResourceLocation("minecraft",
+						 * "textures/gui/icons.png")); break; case BEAST:
+						 * AbstractGui.fill(event.getMatrixStack(), 0, 0, event.getWindow().getWidth(),
+						 * event.getWindow().getHeight(), new Color(255, 0, 0, devoMult).getRGB());
+						 * fontRenderer.drawString(event.getMatrixStack(), "Beast View", 5, 5, new
+						 * Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
+						 * .bindForSetupTexture(new ResourceLocation("minecraft",
+						 * "textures/gui/icons.png")); break;
 						 * 
 						 * case MACHINE: AbstractGui.fill(event.getMatrixStack(), 0, 0,
 						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(218,
@@ -224,8 +225,8 @@ public class VascularSystemEvents {
 						 * 
 						 * case SELF: fontRenderer.drawString(event.getMatrixStack(), "Self Devotee", 5,
 						 * 5, new Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
-						 * .bindForSetupTexture(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-						 * break;
+						 * .bindForSetupTexture(new ResourceLocation("minecraft",
+						 * "textures/gui/icons.png")); break;
 						 */
 						default:
 							/*

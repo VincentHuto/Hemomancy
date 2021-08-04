@@ -6,17 +6,19 @@ import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodNeedle extends AbstractArrow {
@@ -75,7 +77,7 @@ public class EntityBloodNeedle extends AbstractArrow {
 	}
 
 	@Override
-	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
@@ -88,7 +90,7 @@ public class EntityBloodNeedle extends AbstractArrow {
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
-		Entity entity = living.getEntity();
+		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
 

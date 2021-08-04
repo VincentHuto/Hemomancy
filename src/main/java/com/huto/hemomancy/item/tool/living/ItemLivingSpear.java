@@ -4,14 +4,13 @@ import java.util.List;
 
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.render.item.RenderItemLivingSpear;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.math.Vector3;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -35,9 +34,20 @@ public class ItemLivingSpear extends ItemLivingTool {
 	public static String TAG_STATE = "state";
 
 	public ItemLivingSpear(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, tier, builderIn.setISTER(() -> RenderItemLivingSpear::new));
+		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
 	}
 
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingSpear();
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 	float count = 0.5f;
 
 	@Override
@@ -76,27 +86,26 @@ public class ItemLivingSpear extends ItemLivingTool {
 			if (entityLiving instanceof Player) {
 				Player player = (Player) entityLiving;
 
-				float f7 = player.yRot;
-				float f = player.xRot;
+				float f7 = player.getYRot();
+				float f = player.getXRot();
 				float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
 				float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
 				float f3 = Mth.cos(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
 				float f4 = Mth.sqrt(f1 * f1 + f2 * f2 + f3 * f3);
-				float f5 = 3.0F * ((1.0F + (float) 3) / 4.0F);
+				float f5 = 3.0F * ((1.0F + 3) / 4.0F);
 				f1 = f1 * (f5 / f4);
 				f2 = f2 * (f5 / f4);
 				f3 = f3 * (f5 / f4);
-				player.push((double) f1, (double) f2, (double) f3);
+				player.push(f1, f2, f3);
 				player.startAutoSpinAttack(20);
 				if (player.isOnGround()) {
-					player.move(MoverType.SELF, new Vec3(0.0D, (double) 1.1999999F, 0.0D));
+					player.move(MoverType.SELF, new Vec3(0.0D, 1.1999999F, 0.0D));
 				}
 				SoundEvent soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
 				worldIn.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 
 				Vec3 pos = player.position();
-				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f,
-						(ResourceKey<Level>) player.level.dimension());
+				PacketHandler.sendLivingToolBreakParticles(pos, ParticleColor.BLOOD, 64f, player.level.dimension());
 
 				/*
 				 * IBloodVolume playerVolume =
@@ -114,8 +123,8 @@ public class ItemLivingSpear extends ItemLivingTool {
 				 * 
 				 * stack.damageItem(1, player, (p_220009_1_) -> {
 				 * p_220009_1_.sendBreakAnimation(player.getActiveHand()); }); } else {
-				 * player.sendStatusMessage(new
-				 * TextComponent("Not enough blood to be shed"), true); }
+				 * player.sendStatusMessage(new TextComponent("Not enough blood to be shed"),
+				 * true); }
 				 */
 			}
 
@@ -152,10 +161,10 @@ public class ItemLivingSpear extends ItemLivingTool {
 	}
 
 	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		EntityBloodOrbDirected miss = new EntityBloodOrbDirected((Player) playerIn, false);
+		EntityBloodOrbDirected miss = new EntityBloodOrbDirected(playerIn, false);
 		Vector3 vec = Vector3.fromEntityCenter(playerIn);
 		miss.setPos(vec.x - 0.5, vec.y + 1, vec.z - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.xRot, playerIn.yRot, 0.0F, 1.0F, 1.0F);
+		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
 		worldIn.addFreshEntity(miss);
 	}
 

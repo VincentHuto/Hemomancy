@@ -10,7 +10,7 @@ import com.huto.hemomancy.container.ContainerRuneBinder;
 import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.huto.hemomancy.network.PacketHandler;
-import com.huto.hemomancy.network.bindForSetuper.PacketToggleBinderMessage;
+import com.huto.hemomancy.network.binder.PacketToggleBinderMessage;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -24,7 +24,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;

@@ -14,10 +14,9 @@ import com.huto.hemomancy.manipulation.EnumManipulationType;
 import com.huto.hemomancy.network.PacketHandler;
 import com.hutoslib.client.particle.util.ParticleColor;
 import com.hutoslib.common.network.HutosLibPacketHandler;
-import com.mojang.math.Vector3d;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -48,10 +47,9 @@ public class ManipDeadlyGaze extends BloodManipulation {
 							rand.nextDouble() - rand.nextDouble());
 					Vec3 endVec = entVec.add(0, hitEntity.getBbHeight(), 0).add(rand.nextDouble() - rand.nextDouble(),
 							0, rand.nextDouble() - rand.nextDouble());
-					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f,
-							(ResourceKey<Level>) world.dimension());
-					HutosLibPacketHandler.sendLightningSpawn(entVec, endVec, 64.0f,
-							(ResourceKey<Level>) player.level.dimension(), ParticleColor.RED, 3, 10, 9, 1.2f);
+					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, world.dimension());
+					HutosLibPacketHandler.sendLightningSpawn(entVec, endVec, 64.0f, player.level.dimension(),
+							ParticleColor.RED, 3, 10, 9, 1.2f);
 				}
 			}
 		}
@@ -59,15 +57,14 @@ public class ManipDeadlyGaze extends BloodManipulation {
 	}
 
 	@Nullable
-	public static EntityRayTraceResult rayTraceEntities(Entity shooter, double range,
-			@Nullable Predicate<Entity> filter) {
-		Vector3d eyes = shooter.getEyePosition(1f);
-		Vector3d end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
+	public static EntityHitResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter) {
+		Vec3 eyes = shooter.getEyePosition(1f);
+		Vec3 end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
 
 		Entity result = null;
 		double distance = range * range;
 		for (Entity entity : shooter.level.getEntities(shooter, shooter.getBoundingBox().inflate(range), filter)) {
-			Optional<Vector3d> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
+			Optional<Vec3> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
 			if (opt.isPresent()) {
 				double dist = eyes.distanceToSqr(opt.get());
 				if (dist < distance) {
@@ -77,6 +74,6 @@ public class ManipDeadlyGaze extends BloodManipulation {
 			}
 		}
 
-		return result == null ? null : new EntityRayTraceResult(result);
+		return result == null ? null : new EntityHitResult(result);
 	}
 }

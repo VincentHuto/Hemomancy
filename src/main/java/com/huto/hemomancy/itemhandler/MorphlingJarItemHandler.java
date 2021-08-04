@@ -4,8 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -26,12 +24,7 @@ public class MorphlingJarItemHandler extends ItemStackHandler {
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		// check for shulkers.
-		if (stack.getItem() instanceof BlockItem) {
-			if (((BlockItem) stack.getItem()).getBlock().is(BlockTags.SHULKER_BOXES)) {
-				return stack;
-			}
-		}
+
 		// check for some other modded inventories
 		if (stack.hasTag()) {
 			CompoundTag tag = stack.getTag();

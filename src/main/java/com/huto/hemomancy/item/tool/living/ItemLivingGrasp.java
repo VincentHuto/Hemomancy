@@ -1,13 +1,12 @@
 package com.huto.hemomancy.item.tool.living;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbDirected;
 import com.huto.hemomancy.entity.projectile.EntityBloodOrbTracking;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.hutoslib.client.TextUtils;
 import com.mojang.math.Vector3d;
 
 import net.minecraft.ChatFormatting;
@@ -65,8 +64,7 @@ public class ItemLivingGrasp extends Item {
 			if (playerVolume.getBloodVolume() > 50f) {
 				if (!worldIn.isClientSide) {
 					playerVolume.subtractBloodVolume(50f);
-					PacketHandler.CHANNELBLOODVOLUME.send(
-							PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+					PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 							new PacketBloodVolumeServer(playerVolume));
 					if (worldIn.random.nextInt(10) == 6) {
 
@@ -106,9 +104,9 @@ public class ItemLivingGrasp extends Item {
 	}
 
 	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		EntityBloodOrbDirected miss = new EntityBloodOrbDirected((Player) playerIn, false);
+		EntityBloodOrbDirected miss = new EntityBloodOrbDirected(playerIn, false);
 		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.xRot, playerIn.yRot, 0.0F, 1.0F, 1.0F);
+		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
 		worldIn.addFreshEntity(miss);
 	}
 
@@ -143,7 +141,7 @@ public class ItemLivingGrasp extends Item {
 			float xMod = (world.random.nextFloat() - 0.5F) * 8.0F;
 			float yMod = (world.random.nextFloat() - 0.5F) * 4.0F;
 			float zMod = (world.random.nextFloat() - 0.5F) * 8.0F;
-			tentArray[i].setPos(hitVec.x() + 0.5 + xMod, hitVec.y() + 1.5 + yMod, hitVec.z() + 0.5 + zMod);
+			tentArray[i].setPos(hitVec.x + 0.5 + xMod, hitVec.y + 1.5 + yMod, hitVec.z + 0.5 + zMod);
 			if (!world.isClientSide) {
 				world.addFreshEntity(tentArray[i]);
 

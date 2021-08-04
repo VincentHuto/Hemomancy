@@ -38,7 +38,6 @@ import com.huto.hemomancy.item.tool.EnumModArmorTiers;
 import com.huto.hemomancy.item.tool.EnumModToolTiers;
 import com.huto.hemomancy.item.tool.ItemBloodGourd;
 import com.huto.hemomancy.item.tool.ItemDrudgeElectrode;
-import com.huto.hemomancy.item.tool.ItemKnapper;
 import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.huto.hemomancy.item.tool.living.ItemBloodBolt;
 import com.huto.hemomancy.item.tool.living.ItemBloodProjection;
@@ -51,14 +50,11 @@ import com.huto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.huto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.huto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.huto.hemomancy.recipe.ModChiselRecipes;
-import com.hutoslib.common.item.ModSpawnEggItem;
+import com.hutoslib.common.item.ItemKnapper;
 
-import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -76,7 +72,6 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -360,10 +355,10 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
-	public static final RegistryObject<Item> rune_bindForSetuper = BASEITEMS.register("rune_bindForSetuper",
-			() -> new ItemRuneBinder("rune_bindForSetuper", 18, Rarity.UNCOMMON));
-	public static final RegistryObject<Item> rune_bindForSetuper_upgraded = BASEITEMS.register("rune_bindForSetuper_upgraded",
-			() -> new ItemRuneBinder("rune_bindForSetuper_upgraded", 27, Rarity.RARE));
+	public static final RegistryObject<Item> rune_binder = BASEITEMS.register("rune_binder",
+			() -> new ItemRuneBinder("rune_binder", 18, Rarity.UNCOMMON));
+	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register(
+			"rune_binder_upgraded", () -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
 
 	// Contract Runes
 	public static final RegistryObject<Item> rune_beast_c = BASEITEMS.register("rune_beast_c",
@@ -500,62 +495,62 @@ public class ItemInit {
 
 	// Spawn Eggs
 
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
-			() -> new ModSpawnEggItem(EntityInit.leech, 7761777, 4206080,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
+//			() -> new SpawnEggItem(EntityInit.leech, 7761777, 4206080,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+//			() -> new SpawnEggItem(EntityInit.fargone, 7352833, 7958646,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+//			() -> new SpawnEggItem(EntityInit.thirster, 3093151, 9515521,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
+//			() -> new SpawnEggItem(EntityInit.drudge, 8718848, 9515521,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+//			() -> new SpawnEggItem(EntityInit.fungling, 7798794, 15711418,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
+//			() -> new SpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
+//			() -> new SpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
+//			.register("spawn_egg_chthonian_queen", () -> new SpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
+//			.register("spawn_egg_lump_of_thought", () -> new SpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
+//			.register("spawn_egg_abhorent_thought", () -> new SpawnEggItem(EntityInit.abhorent_thought, 12124160,
+//					4259840, new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<SpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
+//			.register("spawn_egg_morphling_polyp", () -> new SpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
+//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
 
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
-			() -> new ModSpawnEggItem(EntityInit.fargone, 7352833, 7958646,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
-			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
-			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
-			() -> new ModSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
-			() -> new ModSpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
-			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
-			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841,
-					12235264, new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
-			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848,
-					11315361, new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
-			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
-					4259840, new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
-			.register("spawn_egg_morphling_polyp", () -> new ModSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
-					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-	@SubscribeEvent
-	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
-		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
-				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
-				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen,
-				ItemInit.spawn_egg_lump_of_thought, ItemInit.spawn_egg_abhorent_thought);
-	}
+//	@SubscribeEvent
+//	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
+//		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_leech, ItemInit.spawn_egg_fargone,
+//				ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_fungling,
+//				ItemInit.spawn_egg_chitinite, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chthonian_queen,
+//				ItemInit.spawn_egg_lump_of_thought, ItemInit.spawn_egg_abhorent_thought);
+//	}
 
 	// Item Property Override
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
 
-		ItemModelsProperties.register(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -567,43 +562,36 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(spiked_shield.get(), new ResourceLocation("blocking"),
-				(p_239421_0_, p_239421_1_, p_239421_2_) -> {
-					return p_239421_2_ != null && p_239421_2_.isUsingItem() && p_239421_2_.getUseItem() == p_239421_0_
-							? 1.0F
-							: 0.0F;
-				});
-
-		ItemModelsProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("pull"),
-				(p_239427_0_, p_239427_1_, p_239427_2_) -> {
-					if (p_239427_2_ == null) {
-						return 0.0F;
-					} else {
-						return ItemLivingCrossbow.isCharged(p_239427_0_) ? 0.0F
-								: (float) (p_239427_0_.getUseDuration() - p_239427_2_.getUseItemRemainingTicks())
-										/ (float) ItemLivingCrossbow.getChargeTime(p_239427_0_);
-					}
-				});
-		ItemModelsProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("pulling"),
-				(p_239426_0_, p_239426_1_, p_239426_2_) -> {
-					return p_239426_2_ != null && p_239426_2_.isUsingItem() && p_239426_2_.getUseItem() == p_239426_0_
-							&& !ItemLivingCrossbow.isCharged(p_239426_0_) ? 1.0F : 0.0F;
-				});
-		ItemModelsProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("charged"),
-				(p_239425_0_, p_239425_1_, p_239425_2_) -> {
-					return p_239425_2_ != null && ItemLivingCrossbow.isCharged(p_239425_0_) ? 1.0F : 0.0F;
-				});
-		ItemModelsProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("firework"),
-				(p_239424_0_, p_239424_1_, p_239424_2_) -> {
-					return p_239424_2_ != null && ItemLivingCrossbow.isCharged(p_239424_0_)
-							&& ItemLivingCrossbow.hasChargedProjectile(p_239424_0_, Items.FIREWORK_ROCKET) ? 1.0F
-									: 0.0F;
-				});
-
-		ItemModelsProperties.register(drudge_electrode.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
-				new IItemPropertyGetter() {
+		/*
+		 * ItemProperties.register(spiked_shield.get(), new
+		 * ResourceLocation("blocking"), (p_239421_0_, p_239421_1_, p_239421_2_) -> {
+		 * return p_239421_2_ != null && p_239421_2_.isUsingItem() &&
+		 * p_239421_2_.getUseItem() == p_239421_0_ ? 1.0F : 0.0F; });
+		 * 
+		 * ItemProperties.register(ItemInit.living_crossbow.get(), new
+		 * ResourceLocation("pull"), (p_239427_0_, p_239427_1_, p_239427_2_) -> { if
+		 * (p_239427_2_ == null) { return 0.0F; } else { return
+		 * ItemLivingCrossbow.isCharged(p_239427_0_) ? 0.0F : (float)
+		 * (p_239427_0_.getUseDuration() - p_239427_2_.getUseItemRemainingTicks()) /
+		 * (float) ItemLivingCrossbow.getChargeTime(p_239427_0_); } });
+		 * ItemProperties.register(ItemInit.living_crossbow.get(), new
+		 * ResourceLocation("pulling"), (p_239426_0_, p_239426_1_, p_239426_2_) -> {
+		 * return p_239426_2_ != null && p_239426_2_.isUsingItem() &&
+		 * p_239426_2_.getUseItem() == p_239426_0_ &&
+		 * !ItemLivingCrossbow.isCharged(p_239426_0_) ? 1.0F : 0.0F; });
+		 * ItemProperties.register(ItemInit.living_crossbow.get(), new
+		 * ResourceLocation("charged"), (p_239425_0_, p_239425_1_, p_239425_2_) -> {
+		 * return p_239425_2_ != null && ItemLivingCrossbow.isCharged(p_239425_0_) ?
+		 * 1.0F : 0.0F; }); ItemProperties.register(ItemInit.living_crossbow.get(), new
+		 * ResourceLocation("firework"), (p_239424_0_, p_239424_1_, p_239424_2_) -> {
+		 * return p_239424_2_ != null && ItemLivingCrossbow.isCharged(p_239424_0_) &&
+		 * ItemLivingCrossbow.hasChargedProjectile(p_239424_0_, Items.FIREWORK_ROCKET) ?
+		 * 1.0F : 0.0F; });
+		 */
+		ItemProperties.register(drudge_electrode.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("mode")) {
 								return 1;
@@ -615,10 +603,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -630,10 +618,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(living_axe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(living_axe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -645,10 +633,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(living_spear.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(living_spear.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -660,10 +648,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -675,10 +663,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(blood_gourd_red.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(blood_gourd_red.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -690,10 +678,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(blood_gourd_black.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(blood_gourd_black.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							if (stack.getTag().getBoolean("state")) {
 								return 1;
@@ -705,10 +693,10 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(morphling_jar.get(), new ResourceLocation(Hemomancy.MOD_ID, "size"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(morphling_jar.get(), new ResourceLocation(Hemomancy.MOD_ID, "size"),
+				new ItemPropertyFunction() {
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							return stack.getTag().getInt("size");
 						} else {
@@ -717,10 +705,11 @@ public class ItemInit {
 					}
 				});
 
-		ItemModelsProperties.register(living_staff.get(), new ResourceLocation(Hemomancy.MOD_ID, "morph"),
-				new IItemPropertyGetter() {
+		ItemProperties.register(living_staff.get(), new ResourceLocation(Hemomancy.MOD_ID, "morph"),
+				new ItemPropertyFunction() {
+
 					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent) {
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
 						if (stack.hasTag()) {
 							CompoundTag CompoundTag = stack.getOrCreateTag();
 							CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
@@ -756,21 +745,6 @@ public class ItemInit {
 					}
 				});
 
-	}
-
-	@SafeVarargs
-	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ModSpawnEggItem>... spawnEggs) {
-		for (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
-			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
-		}
-	}
-
-	@SafeVarargs
-	public static void registerItemColorHandler(ItemColors colors, IItemColor itemColor,
-			RegistryObject<ModSpawnEggItem>... items) {
-		for (RegistryObject<ModSpawnEggItem> itemProvider : items) {
-			colors.register(itemColor, itemProvider.get());
-		}
 	}
 
 }

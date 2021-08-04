@@ -7,7 +7,6 @@ import java.util.function.Predicate;
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.item.tool.living.ICellHand;
 import com.huto.hemomancy.item.tool.living.ItemBloodAbsorption;
-import com.huto.hemomancy.model.entity.armor.ModelBloodArm;
 import com.huto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.huto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.huto.hemomancy.particle.util.EntityParticleUtils;
@@ -115,7 +114,7 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 
-	ModelBloodArm model = new ModelBloodArm(1.0f);
+	// ModelBloodArm model = new ModelBloodArm(1.0f);
 
 	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
 		Minecraft mc = Minecraft.getInstance();
@@ -170,8 +169,10 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 		playermodel.swimAmount = 0.0F;
 		playermodel.setupAnim(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		rendererArmIn.xRot = 0.0F;
-		VertexConsumer ivertexbuilder = bufferIn.getBuffer(model.renderType(skinTexture));
-		rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY);
+		// VertexConsumer ivertexbuilder =
+		// bufferIn.getBuffer(model.renderType(skinTexture));
+		// rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn,
+		// OverlayTexture.NO_OVERLAY);
 		rendererArmwearIn.xRot = 0.0F;
 		rendererArmwearIn.render(matrixStackIn,
 				bufferIn.getBuffer(RenderType.entityTranslucent(playerIn.getSkinTextureLocation())), combinedLightIn,
@@ -238,8 +239,8 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 
 			Vec3[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vec3[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-			Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016,
-					0.15, false);
+			Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.016, 0.15,
+					false);
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
 						origin.x() + inversedSphere[i].x, origin.y() + inversedSphere[i].y,

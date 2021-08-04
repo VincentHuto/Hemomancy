@@ -7,15 +7,17 @@ import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.recipe.RecipeChiselStation;
 import com.hutoslib.client.screen.GuiButtonTextured;
 import com.hutoslib.client.screen.GuiUtils;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.ChatFormatting;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -51,31 +53,31 @@ public class GuiRunePattern extends Screen {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;
 		int centerY = (height / 2) - guiHeight / 2;
 		this.renderBackground(matrixStack);
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._color4f(1, 1, 1, 1);
+			// GlStateManager._color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindForSetup(texture);
 			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		for (int i = 0; i < buttonList.size(); i++) {
-			buttonList.get(i).renderButton(matrixStack, 0, 0, 10);
+			buttonList.get(i).render(matrixStack, 0, 0, 10);
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._translatef((width / 2) - 20, centerY + 10, 10);
-			//GlStateManager._scalef(0.9f, 1, 1);
-			//GlStateManager._translatef(-65f, 25, 0);
+			// GlStateManager._translatef((width / 2) - 20, centerY + 10, 10);
+			// GlStateManager._scalef(0.9f, 1, 1);
+			// GlStateManager._translatef(-65f, 25, 0);
 
 			// drawCenteredString(matrixStack, font, I18n.format(text), 175, 10, 10);
 			// Split String(text,x,y,wrapwidth,color)
@@ -83,24 +85,25 @@ public class GuiRunePattern extends Screen {
 			font.drawWordWrap(new TextComponent(ChatFormatting.GOLD + I18n.get(text)), 4, 100, 170, 0);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
 			// The 10 for the z translate draws the text ON the book
-			//GlStateManager._translatef(((width / 2) - font.width(title) / 2) - 75, centerY + 50, 10);
+			// GlStateManager._translatef(((width / 2) - font.width(title) / 2) - 75,
+			// centerY + 50, 10);
 			drawString(matrixStack, font, ChatFormatting.GOLD + I18n.get(recipe.get().getOutput().getDescriptionId()),
 					0, 0, 8060954);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._translatef(centerX, centerY, 0);
-			//GlStateManager._translatef(3, 3, 0);
-			//GlStateManager._scalef(1.9f, 1.7f, 1.9f);
-			Lighting.turnBackOn();
+			// GlStateManager._translatef(centerX, centerY, 0);
+			// GlStateManager._translatef(3, 3, 0);
+			// GlStateManager._scalef(1.9f, 1.7f, 1.9f);
+			Lighting.setupFor3DItems();
 			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(icon.get()), 36, 6);
 			if (recipe.get().getInputs().size() == 1) {
 				Minecraft.getInstance().getItemRenderer()
@@ -114,7 +117,7 @@ public class GuiRunePattern extends Screen {
 			}
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
 	}
 

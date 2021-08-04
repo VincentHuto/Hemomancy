@@ -62,7 +62,7 @@ After all its just sitting there!
 [[dependencies.hemomancy]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4]"
+    versionRange="[1.17.1]"
     ordering="NONE"
     side="BOTH"
 

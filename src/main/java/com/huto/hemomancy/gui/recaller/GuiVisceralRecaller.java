@@ -11,21 +11,18 @@ import com.huto.hemomancy.container.ContainerVisceralRecaller;
 import com.huto.hemomancy.network.PacketClearRecallerState;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.tile.BlockEntityVisceralRecaller;
-import com.hutoslib.client.gui.GuiButtonTextured;
-import com.mojang.blaze3d.platform.//GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.hutoslib.client.screen.GuiButtonTextured;
+import com.hutoslib.client.screen.GuiUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import GuiButtonTextured;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import com.hutoslib.client.screen.GuiUtils;
 
 public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerVisceralRecaller> {
 	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
@@ -69,12 +66,12 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 	}
 
 	@Override
-	public void renderBackground(MatrixStack matrixStack) {
+	public void renderBackground(PoseStack matrixStack) {
 		super.renderBackground(matrixStack);
 	}
 
 	@Override
-	protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+	protected void renderLabels(PoseStack matrixStack, int x, int y) {
 		this.font.draw(matrixStack, "Visceral Recaller", 8, 4, 0);
 		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
 		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
@@ -87,9 +84,8 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 		float textureVShift = (te.getLevel().getGameTime() * 0.25f % 256);
 		float heightShift = (float) Math.cos(te.getLevel().getGameTime() * 0.1);
 		// bar
-		//GlStateManager._pushMatrix();
-		RenderSystem.enableAlphaTest();
-		//GlStateManager._rotatef(180, 1, 0, 3);
+		// GlStateManager._pushMatrix();
+		// GlStateManager._rotatef(180, 1, 0, 3);
 		// //GlStateManager.scaled(1.25, 1, 1.25);
 		GuiUtils.drawTexturedModalRect(-18.5f, -84, 23 + textureUShift, textureVShift, 6,
 				(int) newBarWidth + 8 + heightShift);
@@ -98,16 +94,15 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 		GuiUtils.drawTexturedModalRect(-21.5f, -45, 9, 244, 13, 12);
 		// Frame
 		GuiUtils.drawTexturedModalRect(-21.5f, -95, 1, 0, 12, 51);
-		RenderSystem.disableAlphaTest();
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
 		// Draw lines
 		drawCenter();
 	}
 
 	@Override
-	protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
-		//GlStateManager._color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+		// GlStateManager._color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.renderBackground(matrixStack);
 		Minecraft.getInstance().getTextureManager().bindForSetup(GUI_RECALLER);
 		GuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
@@ -115,18 +110,13 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 	}
 
 	@Override
-	public void tick() {
-		super.tick();
-	}
-
-	@Override
 	protected void init() {
 		super.init();
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
-		buttons.clear();
-		this.addButton(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, leftPos + 152, topPos + 47,
-				16, 16, 176, 0, null, (press) -> {
+		renderables.clear();
+		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, leftPos + 152,
+				topPos + 47, 16, 16, 176, 0, null, (press) -> {
 					if (press instanceof GuiButtonTextured) {
 						PacketHandler.CHANNELMAIN.sendToServer(new PacketClearRecallerState());
 					}
@@ -134,10 +124,6 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 
 	}
 
-	@Override
-	protected <T extends IGuiEventListener> T addWidget(T listener) {
-		return super.addWidget(listener);
-	}
 
 	public static int[] convertIntegers(List<Integer> integers) {
 		int[] ret = new int[integers.size()];
@@ -155,11 +141,11 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 
 	private void drawCenter() {
 		Map<EnumBloodTendency, Float> affs = te.getTendency();
-		//GlStateManager._pushMatrix();
-		//GlStateManager._translated(0, 2, 0);
-		//GlStateManager._pushMatrix();
-		//GlStateManager._scaled(0.25, 0.25, 0.25);
-		//GlStateManager._translated(385, 210, 0);
+		// GlStateManager._pushMatrix();
+		// GlStateManager._translated(0, 2, 0);
+		// GlStateManager._pushMatrix();
+		// GlStateManager._scaled(0.25, 0.25, 0.25);
+		// GlStateManager._translated(385, 210, 0);
 		int centerOffset = 8;
 		int cx = 0, cy = 0;
 		float rotAngle = -90f;
@@ -167,17 +153,13 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 		int diameter = 35;
 		float spikeBaseWidth = 23.5f;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			double cx1 = ((double) cx
-					+ Math.cos(Math.toRadians((float) rotAngle + spikeBaseWidth)) * (double) diameter);
-			double cx2 = ((double) cx
-					+ Math.cos(Math.toRadians((float) rotAngle - spikeBaseWidth)) * (double) diameter);
-			double cy1 = ((double) cy
-					+ Math.sin(Math.toRadians((float) rotAngle + spikeBaseWidth)) * (double) diameter);
-			double cy2 = ((double) cy
-					+ Math.sin(Math.toRadians((float) rotAngle - spikeBaseWidth)) * (double) diameter);
-			double depthDist = ((float) (distance - diameter) * affs.get(tend) + (float) diameter);
-			int lx = (int) ((double) cx + Math.cos(Math.toRadians(rotAngle)) * (double) depthDist);
-			int ly = (int) ((double) cy + Math.sin(Math.toRadians(rotAngle)) * (double) depthDist);
+			double cx1 = (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+			double cx2 = (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+			double cy1 = (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+			double cy2 = (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+			double depthDist = ((distance - diameter) * affs.get(tend) + diameter);
+			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist);
+			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist);
 			int displace = (int) ((float) (Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2)
 					- Math.min(cy1, cy2)) / 2f);
 			GuiUtils.fracLine(lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset, this.zLevel,
@@ -190,17 +172,17 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 					tend.getColor().getColor(), displace, 0.8);
 			rotAngle += 45;
 		}
-		//GlStateManager._popMatrix();
-		//GlStateManager._scaled(0.75, 0.75, 0.75);
-		//GlStateManager._translated(122, 65, 0);
+		// GlStateManager._popMatrix();
+		// GlStateManager._scaled(0.75, 0.75, 0.75);
+		// GlStateManager._translated(122, 65, 0);
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int newX = (int) ((double) cx + Math.cos(Math.toRadians(rotAngle)) * (double) distance / 1.75);
-			int newY = (int) ((double) cy + Math.sin(Math.toRadians(rotAngle)) * (double) distance / 1.75);
+			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * distance / 1.75);
+			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * distance / 1.75);
 			mc.getItemRenderer().renderGuiItem(new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX, newY);
 			rotAngle += 44.5f;
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 	}
 
 }

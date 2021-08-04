@@ -47,7 +47,7 @@ public class BloodBindingEffect extends MobEffect {
 		super.applyEffectTick(entity, amplifier);
 		if (entity != null) {
 			Vector3 centerVec = Vector3.fromEntityCenter(entity);
-			if (entity.getEffect(PotionInit.blood_bindForSetuping.get()) != null) {
+			if (entity.getEffect(PotionInit.blood_binding.get()) != null) {
 				entity.setDeltaMovement(0, 0, 0);
 				if (!entity.level.isClientSide) {
 					ServerLevel sLevel = (ServerLevel) entity.level;

@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class RenderBloodNeedle<T extends EntityBloodNeedle> extends EntityRenderer<EntityBloodNeedle> {
+public class RenderBloodNeedle extends EntityRenderer<EntityBloodNeedle> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/blood_needle/model_blood_needle.png");
@@ -30,8 +30,8 @@ public class RenderBloodNeedle<T extends EntityBloodNeedle> extends EntityRender
 	public void render(EntityBloodNeedle entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();
-		matrixStackIn
-				.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
+		matrixStackIn.mulPose(
+				Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
 		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 		int i = 0;
 		float f = 0.0F;
@@ -80,8 +80,8 @@ public class RenderBloodNeedle<T extends EntityBloodNeedle> extends EntityRender
 	public void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, int offsetX, int offsetY,
 			int offsetZ, float textureX, float textureY, int p_229039_9_, int p_229039_10_, int p_229039_11_,
 			int packedLightIn) {
-		vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(255, 255, 255, 255)
-				.uv(textureX, textureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn)
+		vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(255, 255, 255, 255).uv(textureX, textureY)
+				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn)
 				.normal(normals, p_229039_9_, p_229039_11_, p_229039_10_).endVertex();
 	}
 

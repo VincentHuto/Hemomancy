@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -62,8 +62,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
 
 		for (int k = 0; k < 4; ++k) {
 			final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];
-			this.addSlot(
-					new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
+			this.addSlot(new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 		this.addSlot(new SlotSelectiveRuneType(player, ItemContractRune.class, runes, 0, 77, 8));
 		this.addSlot(new SlotRune(player, runes, 1, 77 + 1 * 18, 8));
@@ -104,7 +103,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
 		this.craftResult.clearContent();
 
 		if (!player.level.isClientSide) {
-			this.clearContainer(player, player.level, this.craftMatrix);
+			this.clearContainer(player, this.craftMatrix);
 		}
 	}
 
@@ -220,10 +219,8 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
 						.ifPresent((iRune -> iRune.onEquipped(playerIn)));
 			}
 
-			ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
-
 			if (index == 0) {
-				playerIn.drop(itemstack2, false);
+				playerIn.drop(itemstack1, false);
 			}
 		}
 

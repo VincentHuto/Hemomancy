@@ -120,7 +120,7 @@ public class BlockVisceralRecaller extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntityVisceralRecaller();
+		return new BlockEntityVisceralRecaller(p_153215_, p_153216_);
 	}
 
 }

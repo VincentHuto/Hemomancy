@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.bindForSetuper;
+package com.huto.hemomancy.network.binder;
 
 import java.util.function.Supplier;
 

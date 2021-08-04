@@ -7,18 +7,19 @@ import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.init.EntityInit;
 import com.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityDarkArrow extends AbstractArrow {
@@ -44,10 +45,12 @@ public class EntityDarkArrow extends AbstractArrow {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
+	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 	}
 
+	@Override
 	@SuppressWarnings("unused")
 	public void tick() {
 		super.tick();
@@ -68,24 +71,26 @@ public class EntityDarkArrow extends AbstractArrow {
 
 			if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {
 				this.level.broadcastEntityEvent(this, (byte) 0);
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 			}
 		}
 
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 
 	}
 
 	@Override
-	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
@@ -96,6 +101,7 @@ public class EntityDarkArrow extends AbstractArrow {
 
 	}
 
+	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
 

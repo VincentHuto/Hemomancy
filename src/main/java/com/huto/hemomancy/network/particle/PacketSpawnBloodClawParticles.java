@@ -63,8 +63,8 @@ public class PacketSpawnBloodClawParticles {
 			return;
 		}
 		ClientLevel world = ((ClientLevel) clientLevel.get());
-		world.addParticle(BloodClawParticleFactory.createData(msg.getColor()), msg.getPos().x,
-				msg.getPos().y, msg.getPos().z, 0f, 0, 0);
+		world.addParticle(BloodClawParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y,
+				msg.getPos().z, 0f, 0, 0);
 
 		ctxSupplier.get().setPacketHandled(true);
 	}

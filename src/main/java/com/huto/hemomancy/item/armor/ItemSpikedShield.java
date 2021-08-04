@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.render.item.RenderItemSpikedShield;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
@@ -29,29 +27,45 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemSpikedShield extends Item {
 	public ItemSpikedShield(Item.Properties builder) {
-		super(builder.durability(1024).setISTER(() -> RenderItemSpikedShield::new));
+		super(builder.durability(1024));
 		DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
 	}
+//	
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemSpikedShield(null, null);
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 
 	@Override
 	public boolean isShield(ItemStack stack, LivingEntity entity) {
 		return true;
 	}
 
+	@Override
 	public String getDescriptionId(ItemStack stack) {
 		return stack.getTagElement("BlockEntityTag") != null ? this.getDescriptionId() + '.' + getColor(stack).getName()
 				: super.getDescriptionId(stack);
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		BannerItem.appendHoverTextFromBannerBlockEntityTag(stack, tooltip);
 	}
 
+	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
 		return UseAnim.BLOCK;
 	}
 
+	@Override
 	public int getUseDuration(ItemStack stack) {
 		return 72000;
 	}
@@ -82,12 +96,14 @@ public class ItemSpikedShield extends Item {
 
 	}
 
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
 		playerIn.startUsingItem(handIn);
 		return InteractionResultHolder.consume(itemstack);
 	}
 
+	@Override
 	public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
 		return ItemTags.PLANKS.contains(repair.getItem()) || super.isValidRepairItem(toRepair, repair);
 	}

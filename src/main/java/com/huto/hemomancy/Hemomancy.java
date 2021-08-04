@@ -11,16 +11,12 @@ import com.huto.hemomancy.capa.tendency.BloodTendencyEvents;
 import com.huto.hemomancy.capa.vascular.VascularSystemEvents;
 import com.huto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.huto.hemomancy.capa.volume.RenderBloodLaserEvent;
-import com.huto.hemomancy.event.CapeEvent;
 import com.huto.hemomancy.event.KeyBindEvents;
 import com.huto.hemomancy.event.MorphlingJarEvents;
 import com.huto.hemomancy.event.RuneBinderEvents;
-import com.huto.hemomancy.gui.guide.GuideBookLib;
-import com.huto.hemomancy.gui.guide.tendency.TendencyBookLib;
 import com.huto.hemomancy.init.BlockEntityInit;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.CapabilityInit;
-import com.huto.hemomancy.init.ConfiguredStructureInit;
 import com.huto.hemomancy.init.ContainerInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
@@ -28,7 +24,6 @@ import com.huto.hemomancy.init.ManipulationInit;
 import com.huto.hemomancy.init.ParticleInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.init.SkillPointInit;
-import com.huto.hemomancy.init.StructureInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.recipe.ArmBannerCraftRecipe;
 import com.huto.hemomancy.recipe.CopyBloodGourdDataRecipe;
@@ -53,7 +48,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.FlatLevelSource;
-import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraftforge.api.distmarker.Dist;
@@ -99,7 +93,7 @@ public class Hemomancy {
 		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
 		ModRecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
-		StructureInit.STRUCTURES.register(modEventBus);
+		//StructureInit.STRUCTURES.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
 		PotionInit.POTION_TYPES.register(modEventBus);
@@ -223,10 +217,10 @@ public class Hemomancy {
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
-		GuideBookLib.registerPages();
-		TendencyBookLib.registerPages();
+		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
+		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
+		// GuideBookLib.registerPages();
+		// TendencyBookLib.registerPages();
 		this.addLayers();
 
 	}
@@ -296,7 +290,7 @@ public class Hemomancy {
 		event.getRegistry().register(new CopyMorphlingJarDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "morphling_jar_upgrade")));
 		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
-				.setRegistryName(new ResourceLocation(MOD_ID, "rune_bindForSetuper_upgrade")));
+				.setRegistryName(new ResourceLocation(MOD_ID, "rune_binder_upgrade")));
 		event.getRegistry().register(new CopyBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
@@ -309,8 +303,8 @@ public class Hemomancy {
 	// Structure Jazz
 	@SubscribeEvent
 	public static void onRegisterStructures(final RegistryEvent.Register<StructureFeature<?>> event) {
-		StructureInit.registerStructures(event);
-		ConfiguredStructureInit.registerConfiguredStructures();
+	//	StructureInit.registerStructures(event);
+		//ConfiguredStructureInit.registerConfiguredStructures();
 	}
 
 	public void biomeModification(final BiomeLoadingEvent event) {
@@ -319,7 +313,7 @@ public class Hemomancy {
 		// precipitation, mod id
 		// event.getGeneration().getStructures().add(() ->
 		// ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
-		event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
+	//	event.getGeneration().getStructures().add(() -> ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
 	}
 
 	/**
@@ -338,8 +332,8 @@ public class Hemomancy {
 //			tempMap.put(StructureInit.RUN_DOWN_HOUSE.get(),
 //					DimensionStructuresSettings.DEFAULTS.get(StructureInit.RUN_DOWN_HOUSE.get()));
 			if (serverLevel.dimension().equals(Level.NETHER)) {
-				tempMap.put(StructureInit.blood_temple.get(),
-						StructureSettings.DEFAULTS.get(StructureInit.blood_temple.get()));
+//				tempMap.put(StructureInit.blood_temple.get(),
+//						StructureSettings.DEFAULTS.get(StructureInit.blood_temple.get()));
 			}
 			serverLevel.getChunkSource().generator.getSettings().structureConfig().putAll(tempMap);
 		}

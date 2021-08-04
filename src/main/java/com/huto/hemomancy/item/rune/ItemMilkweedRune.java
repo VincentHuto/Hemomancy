@@ -7,7 +7,7 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.render.layer.IRenderRunes;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -31,19 +31,19 @@ public class ItemMilkweedRune extends ItemContractRune implements IRune, IRender
 			RenderType type, float partialTicks) {
 
 		if (type == RenderType.HEAD) {
-			Lighting.turnBackOn();
+			Lighting.setupFor3DItems();
 			matrix.mulPose(Vector3f.XN.rotationDegrees(180f));
 			matrix.scale(0.5f, 0.5f, 0.5f);
 			matrix.translate(0, 0.5, 0.5);
 			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemInit.rune_milkweed_c.get()),
-					TransformType.FIXED, packedLightIn, OverlayTexture.NO_OVERLAY, matrix, buffer);
+					TransformType.FIXED, packedLightIn, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
 
 		}
 
 		if (type == RenderType.HEAD) {
 			if (player.isAlive()) {
-				//GlStateManager._pushMatrix();
-				//GlStateManager._color4f(1F, 1F, 1F, 1F);
+				// GlStateManager._pushMatrix();
+				// GlStateManager._color4f(1F, 1F, 1F, 1F);
 
 				IRunesItemHandler runes = player.getCapability(RunesCapabilities.RUNES)
 						.orElseThrow(IllegalArgumentException::new);
@@ -70,10 +70,10 @@ public class ItemMilkweedRune extends ItemContractRune implements IRune, IRender
 					matrix.translate(0.2, 0.375D, 0F);
 					ItemStack stack2 = runes.getStackInSlot(i);
 					mc.getItemRenderer().renderStatic(stack2, TransformType.FIXED, packedLightIn,
-							OverlayTexture.NO_OVERLAY, matrix, buffer);
+							OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
 					matrix.popPose();
 				}
-				//GlStateManager._popMatrix();
+				// GlStateManager._popMatrix();
 			}
 		}
 	}

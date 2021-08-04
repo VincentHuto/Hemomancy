@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Map;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.capa.rune.IRunesItemHandler;
 import com.huto.hemomancy.capa.rune.RunesCapabilities;
@@ -14,6 +12,7 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.huto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.huto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.hutoslib.client.TextUtils;
 import com.hutoslib.math.MathUtils;
 
 import net.minecraft.ChatFormatting;

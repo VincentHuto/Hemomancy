@@ -2,8 +2,6 @@ package com.huto.hemomancy.entity.blood;
 
 import javax.annotation.Nullable;
 
-import com.huto.hemomancy.entity.blood.iron.IBloodConstruct;
-
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -97,20 +95,20 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 		float f2 = (this.random.nextFloat() - 0.5F) * 2.0F;
 		float f3 = (this.random.nextFloat() - 0.5F) * 1.5F;
 		if (this.tickCount < 2) {
-			this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
-					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+			this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
+					0.0D, 0.0D, 0.0D);
 		}
 		if (this.tickCount > 2 && this.tickCount < 120) {
 			for (int i = 0; i < 2; i++) {
 				this.level.addParticle(DustParticleOptions.REDSTONE, this.getX() + f * 0.5, this.getY(),
 						this.getZ() + f2 * 0.5, 0.0D, 0.0D, 0.0D);
-				this.level.addParticle(ParticleTypes.ASH, this.getX() + f,
-						this.getY() + (0.0D + i) + f3, this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+				this.level.addParticle(ParticleTypes.ASH, this.getX() + f, this.getY() + (0.0D + i) + f3,
+						this.getZ() + f2, 0.0D, 0.0D, 0.0D);
 			}
 		}
 		if (this.tickCount == 120) {
-			this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1,
-					this.getZ() + f2, 0.0D, 0.0D, 0.0D);
+			this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + f, this.getY() + 2.0D + f1, this.getZ() + f2,
+					0.0D, 0.0D, 0.0D);
 			this.setHealth(0);
 
 			level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
@@ -130,8 +128,8 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 			if (level.isClientSide) {
 				level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.IRON_GOLEM_DAMAGE,
 						SoundSource.HOSTILE, 3f, 0.2f, false);
-				this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + g,
-						this.getY() + 2.0D + g1, this.getZ() + g2, 0.0D, 0.0D, 0.0D);
+				this.level.addParticle(ParticleTypes.SQUID_INK, this.getX() + g, this.getY() + 2.0D + g1,
+						this.getZ() + g2, 0.0D, 0.0D, 0.0D);
 			}
 		}
 
@@ -150,6 +148,7 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 	protected void registerGoals() {
 	}
 
+	
 	public static AttributeSupplier.Builder setAttributes() {
 		return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
 				.add(Attributes.ATTACK_KNOCKBACK).add(Attributes.MOVEMENT_SPEED, 0f)

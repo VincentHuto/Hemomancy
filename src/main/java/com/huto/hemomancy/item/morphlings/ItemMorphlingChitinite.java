@@ -40,8 +40,8 @@ public class ItemMorphlingChitinite extends ItemMorphling implements IMorphling 
 			for (int i = 0; i < 50; i++) {
 				sLevel.sendParticles(
 						GlowParticleFactory.createData(new ParticleColor(255 * worldIn.random.nextFloat(), 0, 0)),
-						pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,
-						pos.getZ() + random.nextDouble(), 10, 0f, 0.2f, 0f, sLevel.random.nextInt(3) * 0.015f);
+						pos.getX() + worldIn.random.nextDouble(), pos.getY() + worldIn.random.nextDouble() + 1,
+						pos.getZ() + worldIn.random.nextDouble(), 10, 0f, 0.2f, 0f, sLevel.random.nextInt(3) * 0.015f);
 			}
 
 		}

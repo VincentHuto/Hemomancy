@@ -65,9 +65,9 @@ public class PacketSpawnLivingToolParticles {
 		}
 		ClientLevel world = ((ClientLevel) clientLevel.get());
 		for (int i = 0; i < 20; i++) {
-			world.addParticle(BloodCellParticleFactory.createData(msg.getColor()), msg.getPos().x,
-					msg.getPos().y + 1, msg.getPos().z, ParticleUtils.inRange(-3, 3) * 0.015f,
-					ParticleUtils.inRange(-3, 3) * 0.015f, ParticleUtils.inRange(-3, 3) * 0.015f);
+			world.addParticle(BloodCellParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y + 1,
+					msg.getPos().z, ParticleUtils.inRange(-3, 3) * 0.015f, ParticleUtils.inRange(-3, 3) * 0.015f,
+					ParticleUtils.inRange(-3, 3) * 0.015f);
 		}
 		ctxSupplier.get().setPacketHandled(true);
 	}

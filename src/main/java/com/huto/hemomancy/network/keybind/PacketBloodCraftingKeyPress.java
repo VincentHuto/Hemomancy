@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybindForSetup;
+package com.huto.hemomancy.network.keybind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.huto.hemomancy.recipe.ModBloodCraftingRecipes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.BlockHitResult;
@@ -86,8 +88,7 @@ public class PacketBloodCraftingKeyPress {
 														.getHeight(); ++j) {
 													for (int k = 0; k < targetPattern.getBundledPattern()
 															.getBlockPattern().getDepth(); ++k) {
-														BlockInWorld cachedBlockInfo = patternHelper.getBlock(i, j,
-																k);
+														BlockInWorld cachedBlockInfo = patternHelper.getBlock(i, j, k);
 														sLevel.setBlock(cachedBlockInfo.getPos(),
 																Blocks.AIR.defaultBlockState(), 2);
 														sLevel.levelEvent(2001, cachedBlockInfo.getPos(),

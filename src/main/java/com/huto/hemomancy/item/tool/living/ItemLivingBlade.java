@@ -7,7 +7,6 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.huto.hemomancy.render.item.RenderItemLivingBlade;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -31,8 +30,20 @@ public class ItemLivingBlade extends ItemLivingTool {
 	public static String TAG_STATE = "state";
 
 	public ItemLivingBlade(float speedIn, float attackDamageIn, Tier tier, Properties builderIn) {
-		super(speedIn, attackDamageIn, -2.3f, tier, builderIn.setISTER(() -> RenderItemLivingBlade::new));
+		super(speedIn, attackDamageIn, -2.3f, tier, builderIn);
 	}
+
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingBlade();
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {

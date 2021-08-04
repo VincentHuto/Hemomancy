@@ -50,7 +50,7 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 	@Override
 	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
 		consumer.accept(new IItemRenderProperties() {
-			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemCellHand();
+			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemCellHand(null, null);
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {

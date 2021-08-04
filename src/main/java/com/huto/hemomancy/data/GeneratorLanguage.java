@@ -1,12 +1,11 @@
 package com.huto.hemomancy.data;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.init.BlockInit;
 import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.effect.MobEffect;
@@ -117,7 +116,7 @@ public class GeneratorLanguage extends LanguageProvider {
 		add("key.hemomancy.morphjarpickup.desc", "Toggle Morphling Jar Pickup");
 		add("key.hemomancy.openjar.desc", "Open Morphling Jar");
 		add("key.hemomancy.quickusemanip.desc", "Use Quick Manipulation");
-		add("key.hemomancy.runebindForSetuperpickup.desc", "Toggle Rune Binder Pickup");
+		add("key.hemomancy.runebinderpickup.desc", "Toggle Rune Binder Pickup");
 		add("key.hemomancy.contusemanip.desc", "Use Continous Manipulation");
 		add("key.hemomancy.cyclemanip.desc", "Cycle Known Manipulations");
 

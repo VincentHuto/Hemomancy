@@ -1,15 +1,9 @@
 package com.huto.hemomancy.item.armor;
 
-import com.huto.hemomancy.model.entity.armor.ModelChitiniteChest;
 
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemChitiniteChest extends ArmorItem {
 
@@ -17,24 +11,20 @@ public class ItemChitiniteChest extends ArmorItem {
 		super(materialIn, slot, builderIn);
 	}
 
-	@SuppressWarnings("unchecked")
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-			EquipmentSlot armorSlot, A _default) {
-		if (itemStack != ItemStack.EMPTY) {
-			if (itemStack.getItem() instanceof ArmorItem) {
-				ModelChitiniteChest model = new ModelChitiniteChest();
-				model.body.visible = armorSlot == EquipmentSlot.CHEST;
-				model.young = _default.young;
-				model.crouching = _default.crouching;
-				model.riding = _default.riding;
-				model.rightArmPose = _default.rightArmPose;
-				model.leftArmPose = _default.leftArmPose;
-				return (A) model;
-			}
-		}
-		return null;
-	}
+	/*
+	 * @SuppressWarnings("unchecked")
+	 * 
+	 * @OnlyIn(Dist.CLIENT)
+	 * 
+	 * @Override public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity
+	 * entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, A _default) { if
+	 * (itemStack != ItemStack.EMPTY) { if (itemStack.getItem() instanceof
+	 * ArmorItem) { ModelChitiniteChest model = new ModelChitiniteChest();
+	 * model.body.visible = armorSlot == EquipmentSlot.CHEST; model.young =
+	 * _default.young; model.crouching = _default.crouching; model.riding =
+	 * _default.riding; model.rightArmPose = _default.rightArmPose;
+	 * model.leftArmPose = _default.leftArmPose; return (A) model; } } return null;
+	 * }
+	 */
 
 }

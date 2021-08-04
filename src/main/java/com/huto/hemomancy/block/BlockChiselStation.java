@@ -108,7 +108,7 @@ public class BlockChiselStation extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntityChiselStation();
+		return new BlockEntityChiselStation(p_153215_, p_153216_);
 	}
 
 	@Override

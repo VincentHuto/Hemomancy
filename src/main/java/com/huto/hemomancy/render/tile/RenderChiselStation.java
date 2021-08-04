@@ -1,7 +1,7 @@
 package com.huto.hemomancy.render.tile;
 
 import com.huto.hemomancy.tile.BlockEntityChiselStation;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
@@ -9,8 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FaceInfo;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -19,19 +19,18 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChiselStation> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	public RenderChiselStation(BlockEntityRenderDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public RenderChiselStation(BlockEntityRendererProvider.Context p_173636_) {
 	}
-
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	public void render(BlockEntityChiselStation te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		// Add items above block
-		//GlStateManager._pushMatrix();
-		//GlStateManager._color4f(1F, 1F, 1F, 1F);
-		//GlStateManager._translatef(te.getBlockPos().getX(), te.getBlockPos().getY(), te.getBlockPos().getZ());
-		//GlStateManager._popMatrix();
+		// GlStateManager._pushMatrix();
+		// GlStateManager._color4f(1F, 1F, 1F, 1F);
+		// GlStateManager._translatef(te.getBlockPos().getX(), te.getBlockPos().getY(),
+		// te.getBlockPos().getZ());
+		// GlStateManager._popMatrix();
 		Minecraft.getInstance().textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
 
@@ -64,7 +63,7 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 				matrixStackIn.translate(1.3, 1f, 1.5f + 0.35f);
 			}
 			mc.getItemRenderer().renderStatic(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-					matrixStackIn, bufferIn);
+					matrixStackIn, bufferIn, 0);
 
 		}
 
@@ -99,7 +98,7 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 				matrixStackIn.translate(1f, -1.65, 1.5f);
 			}
 			mc.getItemRenderer().renderStatic(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-					matrixStackIn, bufferIn);
+					matrixStackIn, bufferIn, 0);
 		}
 		matrixStackIn.popPose();
 
@@ -132,7 +131,7 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 				matrixStackIn.translate(1f, 0.35f, 1.75f);
 			}
 			mc.getItemRenderer().renderStatic(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-					matrixStackIn, bufferIn);
+					matrixStackIn, bufferIn, 0);
 		}
 		matrixStackIn.popPose();
 
@@ -165,7 +164,7 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 				matrixStackIn.translate(1f, 0.35f, 1.75f);
 			}
 			mc.getItemRenderer().renderStatic(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-					matrixStackIn, bufferIn);
+					matrixStackIn, bufferIn, 0);
 		}
 		matrixStackIn.popPose();
 	}

@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.RuneType;
-import com.huto.hemomancy.render.item.RenderArmBanner;
 import com.huto.hemomancy.render.layer.IRenderRunes;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -37,9 +36,22 @@ public class ItemArmBanner extends Item implements IRune, IRenderRunes {
 	public ArmorMaterial material;
 
 	public ItemArmBanner(Properties prop, ArmorMaterial materialIn) {
-		super(prop.stacksTo(1).setISTER(() -> RenderArmBanner::new));
+		super(prop.stacksTo(1));
 		this.material = materialIn;
 	}
+	
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderArmBanner(null, null);
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
+
 
 	@Override
 	public String getDescriptionId(ItemStack stack) {
@@ -83,14 +95,14 @@ public class ItemArmBanner extends Item implements IRune, IRenderRunes {
 			}
 			matrix.pushPose();
 			if (stack.getItem() instanceof ItemArmBanner) {
-				Lighting.turnBackOn();
+				Lighting.setupFor3DItems();
 				matrix.mulPose(Vector3f.XN.rotationDegrees(180f));
 				matrix.mulPose(Vector3f.YN.rotationDegrees(90f));
 				matrix.mulPose(Vector3f.ZN.rotationDegrees(-72.5f));
 				matrix.scale(0.5f, 0.5f, 0.5f);
 				matrix.translate(-0.35, 0, -0.35);
 				Minecraft.getInstance().getItemRenderer().renderStatic(stack, TransformType.FIXED, packedLight,
-						OverlayTexture.NO_OVERLAY, matrix, iRenderTypeBuffer);
+						OverlayTexture.NO_OVERLAY, matrix, iRenderTypeBuffer, 0);
 			}
 			matrix.popPose();
 		}

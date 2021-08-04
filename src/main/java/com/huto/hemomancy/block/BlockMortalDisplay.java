@@ -15,7 +15,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -80,14 +79,14 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 							worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
 							worldIn.random.nextDouble() - worldIn.random.nextDouble());
 					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, worldIn.dimension());
-					HutosLibPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f,
-							(ResourceKey<Level>) player.level.dimension(), ParticleColor.RED, 2, 20, 9, 1.2f);
+					HutosLibPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level.dimension(),
+							ParticleColor.RED, 2, 20, 9, 1.2f);
 				}
 
 			} else {
 				ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
 						new ItemStack(ItemInit.bloody_flask.get(), worldIn.random.nextInt(4)));
-				worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.BlockInteraction.BREAKww);
+				worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
 				worldIn.addFreshEntity(drops);
 			}
 
@@ -138,7 +137,7 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntityMortalDisplay();
+		return new BlockEntityMortalDisplay(p_153215_, p_153216_);
 	}
 
 }

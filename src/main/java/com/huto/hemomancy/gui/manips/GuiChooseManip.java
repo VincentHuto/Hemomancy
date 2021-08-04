@@ -11,16 +11,15 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.hutoslib.client.screen.GuiButtonTextured;
 import com.hutoslib.math.MathUtils;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.widget.button.Button.IPressable;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.text.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -44,22 +43,24 @@ public class GuiChooseManip extends Screen {
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		// this.renderBackground(matrixStack);
-		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
+		for (int i = 0; i < renderables.size(); i++) {
+			renderables.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
 			List<BloodManipulation> known = manips.getKnownManips();
 			for (int j = 0; j < known.size(); j++) {
 				if (i == j) {
 					int xOff = font.width(known.get(j).getProperName());
-					if (buttons.get(i).isHovered()) {
-						font.drawShadow(matrixStack, known.get(j).getProperName(), buttons.get(i).x - xOff / 2,
-								(float) (buttons.get(i).y - 10 + Math.sin(getMinecraft().level.getGameTime() * 0.15)
-										+ partialTicks),
+					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+						font.drawShadow(matrixStack, known.get(j).getProperName(),
+								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 					} else {
-						font.drawShadow(matrixStack, known.get(j).getProperName(), buttons.get(i).x - xOff / 2,
-								(float) (buttons.get(i).y - 10), 0xffffff);
+						font.drawShadow(matrixStack, known.get(j).getProperName(),
+								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
 
 					}
 				}
@@ -70,7 +71,7 @@ public class GuiChooseManip extends Screen {
 
 	@Override
 	protected void init() {
-		buttons.clear();
+		renderables.clear();
 		IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
 		BloodManipulation selected = manips.getSelectedManip();
@@ -80,46 +81,37 @@ public class GuiChooseManip extends Screen {
 				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
 		if (!known.isEmpty()) {
 			for (int i = 0; i < known.size(); i++) {
-				//GlStateManager._pushMatrix();
-				////GlStateManager._enableAlphaTest();
-				//GlStateManager._enableBlend();
+				// GlStateManager._pushMatrix();
+				//// GlStateManager._enableAlphaTest();
+				// GlStateManager._enableBlend();
 				BloodManipulation current = known.get(i);
 				if (current.getProperName().equals(selected.getProperName())) {
-					this.addButton(
-							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, new IPressable() {
-								@Override
-								public void onPress(Button press) {
-									if (press instanceof GuiButtonTextured) {
-										player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-										player.displayClientMessage(
-												new TextComponent("Manipulation Already Selected")
-														.withStyle(ChatFormatting.RED),
-												true);
-									}
-									onClose();
+					this.addRenderableWidget(
+							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+									player.displayClientMessage(new TextComponent("Manipulation Already Selected")
+											.withStyle(ChatFormatting.RED), true);
 								}
+								onClose();
 							}));
 				} else {
-					this.addButton(
-							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 209, 0, null, new IPressable() {
-
-								@Override
-								public void onPress(Button press) {
-									if (press instanceof GuiButtonTextured) {
-										player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-										int id = ((GuiButtonTextured) press).getId();
-										manips.setSelectedManip(known.get(id));
-										PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUpdateCurrentManip(id));
-									}
-									onClose();
+					this.addRenderableWidget(
+							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 209, 0, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+									int id = ((GuiButtonTextured) press).getId();
+									manips.setSelectedManip(known.get(id));
+									PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUpdateCurrentManip(id));
 								}
+								onClose();
 
 							}));
 				}
 
-				//GlStateManager._disableBlend();
-				//GlStateManager._disableAlphaTest();
-				//GlStateManager._popMatrix();
+				// GlStateManager._disableBlend();
+				// GlStateManager._disableAlphaTest();
+				// GlStateManager._popMatrix();
 				point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
 			}
 		} else {

@@ -1,22 +1,13 @@
 package com.huto.hemomancy.block;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.tile.BlockEntityDendriticDistributor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -54,23 +45,23 @@ public class BlockDendriticDistributor extends Block implements EntityBlock {
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
-		if (worldIn.isClientSide)
-			return InteractionResult.PASS;
-		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
-		List<LivingEntity> ents = worldIn.getEntitiesOfClass(LivingEntity.class,
-				worldIn.getBlockEntity(pos).getRenderBoundingBox().inflate(5));
-		if (!ents.isEmpty()) {
-			for (LivingEntity ent : ents) {
-				if (ent instanceof EntityDrudge) {
-					EntityDrudge drudge = (EntityDrudge) ent;
-					ServerPlayer sPlay = (ServerPlayer) player;
-					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100, 100));
-					sPlay.setCamera(drudge);
-					player.displayClientMessage(new TextComponent(drudge.getRoleTitle().name()), false);
-
-				}
-			}
-		}
+//		if (worldIn.isClientSide)
+//			return InteractionResult.PASS;
+//		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
+//		List<LivingEntity> ents = worldIn.getEntitiesOfClass(LivingEntity.class,
+//				worldIn.getBlockEntity(pos).getRenderBoundingBox().inflate(5));
+//		if (!ents.isEmpty()) {
+//			for (LivingEntity ent : ents) {
+//				if (ent instanceof EntityDrudge) {
+//					EntityDrudge drudge = (EntityDrudge) ent;
+//					ServerPlayer sPlay = (ServerPlayer) player;
+//					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100, 100));
+//					sPlay.setCamera(drudge);
+//					player.displayClientMessage(new TextComponent(drudge.getRoleTitle().name()), false);
+//
+//				}
+//			}
+//		}
 
 		return InteractionResult.SUCCESS;
 
@@ -119,7 +110,7 @@ public class BlockDendriticDistributor extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new BlockEntityDendriticDistributor();
+		return new BlockEntityDendriticDistributor(arg0, arg1);
 	}
 
 }

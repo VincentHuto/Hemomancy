@@ -122,7 +122,7 @@ public class BlockMorphlingIncubator extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new BlockEntityMorphlingIncubator();
+		return new BlockEntityMorphlingIncubator(arg0, arg1);
 	}
 
 }

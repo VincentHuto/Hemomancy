@@ -6,7 +6,7 @@ import com.huto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.jar.PacketJarTogglePickup;
 
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -21,7 +21,7 @@ public class MorphlingJarEvents {
 		if (event.getPlayer().containerMenu instanceof ContainerMorphlingJar || event.getPlayer().isShiftKeyDown()
 				|| event.getItem().getItem().getItem() instanceof ItemMorphlingJar)
 			return;
-		Inventory playerInv = event.getPlayer().inventory;
+		Inventory playerInv = event.getPlayer().getInventory();
 		for (int i = 0; i <= 8; i++) {
 			ItemStack stack = playerInv.getItem(i);
 			if (stack.getItem() instanceof ItemMorphlingJar

@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybindForSetup;
+package com.huto.hemomancy.network.keybind;
 
 import java.util.Random;
 import java.util.function.Supplier;

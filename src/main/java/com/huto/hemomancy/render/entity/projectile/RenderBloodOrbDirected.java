@@ -16,7 +16,7 @@ public class RenderBloodOrbDirected extends EntityRenderer<EntityBloodOrbDirecte
 
 	public RenderBloodOrbDirected(Context renderManager) {
 		super(renderManager);
-	}			
+	}
 
 	@Nonnull
 	@Override

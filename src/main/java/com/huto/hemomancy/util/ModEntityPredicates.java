@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.huto.hemomancy.entity.mob.EntityChitinite;
-import com.huto.hemomancy.entity.mob.EntityChthonian;
-import com.huto.hemomancy.entity.mob.EntityChthonianQueen;
-import com.huto.hemomancy.entity.mob.EntityFargone;
-import com.huto.hemomancy.entity.mob.EntityFungling;
-import com.huto.hemomancy.entity.mob.EntityThirster;
-
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.Animal;
@@ -69,7 +62,8 @@ public class ModEntityPredicates {
 		@Override
 		public boolean test(Entity e) {
 			if (e instanceof Animal || e instanceof AmbientCreature || e instanceof AbstractVillager
-					|| e instanceof EntityThirster || e instanceof EntityFargone || e instanceof Player) {
+					|| e instanceof Player) {
+//|| e instanceof Player) {
 				return true;
 			} else {
 				return false;
@@ -117,7 +111,8 @@ public class ModEntityPredicates {
 		@Override
 		public boolean test(Entity e) {
 			if (e instanceof Skeleton || e instanceof WitherSkeleton || e instanceof Spider
-					|| e instanceof EntityChitinite || e instanceof EntityChthonian || e instanceof EntityChthonianQueen
+			// || e instanceof EntityChitinite || e instanceof EntityChthonian || e
+			// instanceof EntityChthonianQueen
 					|| e instanceof IronGolem || e instanceof Silverfish || e instanceof WitherBoss) {
 				return true;
 			} else {
@@ -151,7 +146,7 @@ public class ModEntityPredicates {
 	public static Predicate<Entity> PLANTBLOOD = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity e) {
-			if (e instanceof Creeper || e instanceof Slime || e instanceof EntityFungling) {
+			if (e instanceof Creeper || e instanceof Slime) {
 				return true;
 			} else {
 				return false;

@@ -1,4 +1,4 @@
-package com.huto.hemomancy.network.keybindForSetup;
+package com.huto.hemomancy.network.keybind;
 
 import java.util.Random;
 import java.util.function.Supplier;
@@ -56,8 +56,7 @@ public class PacketBloodFormationKeyPress {
 					}
 					player.drop(new ItemStack(ItemInit.sanguine_formation.get(), random.nextInt(4)), false);
 				} else {
-					player.displayClientMessage(new TextComponent("Not enough blood can be drawn for formation"),
-							true);
+					player.displayClientMessage(new TextComponent("Not enough blood can be drawn for formation"), true);
 				}
 			}
 		});

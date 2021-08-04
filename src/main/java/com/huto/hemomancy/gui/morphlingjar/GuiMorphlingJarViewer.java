@@ -8,13 +8,12 @@ import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.PacketUpdateLivingStaffMorph;
 import com.hutoslib.client.screen.GuiButtonTextured;
 import com.hutoslib.client.screen.GuiUtils;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.widget.button.Button.IPressable;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -61,44 +60,44 @@ public class GuiMorphlingJarViewer extends Screen {
 		int maxY = (int) (guiHeight * 0.86);
 		this.renderBackground(matrixStack);
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._color4f(1, 1, 1, 1);
+			// GlStateManager._color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindForSetup(texture);
 			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
-		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).renderButton(matrixStack, mouseX, mouseY, 511);
-			if (buttons.get(i).isHovered()) {
+		// GlStateManager._pushMatrix();
+		for (int i = 0; i < renderables.size(); i++) {
+			renderables.get(i).render(matrixStack, mouseX, mouseY, 511);
+			if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
 				ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 				@SuppressWarnings("unused")
-				IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+				IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 						.orElseThrow(NullPointerException::new);
 			}
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
 			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
-			IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 					.orElseThrow(NullPointerException::new);
 
-			if (bindForSetuperHandler instanceof MorphlingJarItemHandler) {
-				handler = (MorphlingJarItemHandler) bindForSetuperHandler;
+			if (binderHandler instanceof MorphlingJarItemHandler) {
+				handler = (MorphlingJarItemHandler) binderHandler;
 				handler.load();
 				slotcount = handler.getSlots();
 				itemKey = stack.getDescriptionId();
 
-				for (int i = 0; i < buttons.size(); i++) {
-					if (bindForSetuperHandler.getStackInSlot(i).getItem() instanceof ItemMorphling) {
+				for (int i = 0; i < renderables.size(); i++) {
+					if (binderHandler.getStackInSlot(i).getItem() instanceof ItemMorphling) {
 
-						//GlStateManager._translatef(0, 0, 1);
-						Lighting.turnBackOn();
+						// GlStateManager._translatef(0, 0, 1);
+						Lighting.setupFor3DItems();
 						if (i == 0) {
 							long testX = (Math
 									.abs(Math.abs(player.level.getGameTime() / 2 % (maxX * 2) - maxX) - maxX));
@@ -106,10 +105,10 @@ public class GuiMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							buttons.get(i).x = x;
-							buttons.get(i).y = y;
+							((GuiButtonTextured)renderables.get(i)).x = x;
+							((GuiButtonTextured)renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(bindForSetuperHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 1) {
 							long testX = (Math
@@ -118,10 +117,10 @@ public class GuiMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 2 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							buttons.get(i).x = x;
-							buttons.get(i).y = y;
+							((GuiButtonTextured)renderables.get(i)).x = x;
+							((GuiButtonTextured)renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(bindForSetuperHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 2) {
 							long testX = (Math.abs(Math.abs(player.level.getGameTime() % (maxX * 2) - maxX) - maxX));
@@ -129,10 +128,10 @@ public class GuiMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							buttons.get(i).x = x;
-							buttons.get(i).y = y;
+							((GuiButtonTextured)renderables.get(i)).x = x;
+							((GuiButtonTextured)renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(bindForSetuperHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 3) {
 							long testX = (Math
@@ -140,35 +139,34 @@ public class GuiMorphlingJarViewer extends Screen {
 							long testY = (Math.abs(Math.abs(player.level.getGameTime() % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							buttons.get(i).x = x;
-							buttons.get(i).y = y;
+							((GuiButtonTextured)renderables.get(i)).x = x;
+							((GuiButtonTextured)renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(bindForSetuperHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
 						}
 
 					}
-					if (buttons.get(i).isHovered()) {
-						renderTooltip(matrixStack,
-								bindForSetuperHandler.getStackInSlot(i).getItem().getName(bindForSetuperHandler.getStackInSlot(i)),
-								mouseX, mouseY);
+					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+						renderTooltip(matrixStack, binderHandler.getStackInSlot(i).getItem()
+								.getName(binderHandler.getStackInSlot(i)), mouseX, mouseY);
 					}
 				}
 			}
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._translatef(centerX, centerY, 0);
-			//GlStateManager._translatef(3, 3, 10);
-			//GlStateManager._scalef(1.9f, 1.7f, 1.9f);
-			Lighting.turnBackOn();
+			// GlStateManager._translatef(centerX, centerY, 0);
+			// GlStateManager._translatef(3, 3, 10);
+			// GlStateManager._scalef(1.9f, 1.7f, 1.9f);
+			Lighting.setupFor3DItems();
 			// Minecraft.getInstance().getItemRenderer().renderItemAndEffectIntoGUI(icon,
 			// -1, -1);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
 	}
 
@@ -179,33 +177,31 @@ public class GuiMorphlingJarViewer extends Screen {
 	protected void init() {
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
-		buttons.clear();
+		renderables.clear();
 		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
-		IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 				.orElseThrow(NullPointerException::new);
 
-		if (bindForSetuperHandler instanceof MorphlingJarItemHandler) {
-			handler = (MorphlingJarItemHandler) bindForSetuperHandler;
+		if (binderHandler instanceof MorphlingJarItemHandler) {
+			handler = (MorphlingJarItemHandler) binderHandler;
 			handler.load();
 			slotcount = handler.getSlots();
 			itemKey = stack.getDescriptionId();
 
-			for (int i = 0; i < bindForSetuperHandler.getSlots(); i++) {
-				this.addButton(new GuiButtonTextured(texture, i, 0, 0, 20, 20, 174, 98, null, new IPressable() {
-					@Override
-					public void onPress(Button press) {
-						if (press instanceof GuiButtonTextured) {
-							player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-							ItemStack morphStack = bindForSetuperHandler.getStackInSlot(((GuiButtonTextured) press).getId());
-							if (morphStack.getItem() instanceof ItemMorphling) {
-								PacketHandler.CHANNELMAIN.sendToServer(
-										new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
-							}
-
+			for (int i = 0; i < binderHandler.getSlots(); i++) {
+				this.addRenderableWidget(new GuiButtonTextured(texture, i, 0, 0, 20, 20, 174, 98, null, (press) -> {
+					if (press instanceof GuiButtonTextured) {
+						player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+						ItemStack morphStack = binderHandler
+								.getStackInSlot(((GuiButtonTextured) press).getId());
+						if (morphStack.getItem() instanceof ItemMorphling) {
+							PacketHandler.CHANNELMAIN.sendToServer(
+									new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
 						}
-						onClose();
 
 					}
+					onClose();
+
 				}));
 
 			}

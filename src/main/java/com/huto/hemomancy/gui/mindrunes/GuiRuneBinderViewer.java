@@ -9,19 +9,17 @@ import com.huto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.hutoslib.client.screen.GuiButtonTextured;
 import com.hutoslib.client.screen.GuiUtils;
-import com.mojang.blaze3d.platform.//GlStateManager;
+//GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.widget.button.Button.IPressable;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.text.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,7 +29,7 @@ import net.minecraftforge.items.IItemHandler;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiRuneBinderViewer extends Screen {
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/rune_bindForSetuper_gui.png");
+	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/rune_binder_gui.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;
@@ -54,66 +52,67 @@ public class GuiRuneBinderViewer extends Screen {
 		int centerY = (height / 2) - guiHeight / 2;
 		this.renderBackground(matrixStack);
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._color4f(1, 1, 1, 1);
+			// GlStateManager._color4f(1, 1, 1, 1);
 			Minecraft.getInstance().getTextureManager().bindForSetup(texture);
 			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
-		for (int i = 0; i < buttons.size(); i++) {
-			buttons.get(i).renderButton(matrixStack, mouseX, mouseY, 511);
-			if (buttons.get(i).isHovered()) {
-				ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
-				IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-						.orElseThrow(NullPointerException::new);
-				if (bindForSetuperHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
-					ItemRunePattern pat = (ItemRunePattern) bindForSetuperHandler.getStackInSlot(i).getItem();
-					List<Component> text = new ArrayList<Component>();
-					text.add(new TextComponent(I18n.get(pat.getRecipe().getOutput().getHoverName().getString())));
-					renderComponentTooltip(matrixStack, text, mouseX, mouseY);
-				}
+		// GlStateManager._pushMatrix();
+		for (int i = 0; i < renderables.size(); i++) {
+			renderables.get(i).render(matrixStack, mouseX, mouseY, 511);
+			// if (((GuiButtonTextured)renderables.get(i)).isHovered()) {
+			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
+			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+					.orElseThrow(NullPointerException::new);
+			if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
+				ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
+				List<Component> text = new ArrayList<Component>();
+				text.add(new TextComponent(I18n.get(pat.getRecipe().getOutput().getHoverName().getString())));
+				renderComponentTooltip(matrixStack, text, mouseX, mouseY);
 			}
+			// }
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
 			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
-			IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 					.orElseThrow(NullPointerException::new);
 
-			if (bindForSetuperHandler instanceof RuneBinderItemHandler) {
-				handler = (RuneBinderItemHandler) bindForSetuperHandler;
+			if (binderHandler instanceof RuneBinderItemHandler) {
+				handler = (RuneBinderItemHandler) binderHandler;
 				handler.load();
 				slotcount = handler.getSlots();
 				itemKey = stack.getDescriptionId();
-				for (int i = 0; i < buttons.size(); i++) {
-					//GlStateManager._translatef(0, 0, 1);
-					Lighting.turnBackOn();
-					if (bindForSetuperHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
-						ItemRunePattern pat = (ItemRunePattern) bindForSetuperHandler.getStackInSlot(i).getItem();
+				for (int i = 0; i < renderables.size(); i++) {
+					// GlStateManager._translatef(0, 0, 1);
+					Lighting.setupFor3DItems();
+					if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
+						ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
 						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(pat.getRecipe().getOutput(),
-								(buttons.get(i).x + 2), buttons.get(i).y + 2);
+								(((GuiButtonTextured) renderables.get(i)).x + 2),
+								((GuiButtonTextured) renderables.get(i)).y + 2);
 					}
 				}
 			}
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
-		//GlStateManager._pushMatrix();
+		// GlStateManager._pushMatrix();
 		{
-			//GlStateManager._translatef(centerX, centerY, 0);
-			//GlStateManager._translatef(3, 3, 10);
-			//GlStateManager._scalef(1.9f, 1.7f, 1.9f);
-			Lighting.turnBackOn();
+			// GlStateManager._translatef(centerX, centerY, 0);
+			// GlStateManager._translatef(3, 3, 10);
+			// GlStateManager._scalef(1.9f, 1.7f, 1.9f);
+			Lighting.setupFor3DItems();
 			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(icon, -1, -1);
 
 		}
-		//GlStateManager._popMatrix();
+		// GlStateManager._popMatrix();
 
 	}
 
@@ -126,62 +125,53 @@ public class GuiRuneBinderViewer extends Screen {
 		top = height / 2 - guiHeight / 2;
 		int sideLoc = left + guiWidth;
 		int verticalLoc = top + guiHeight;
-		buttons.clear();
+		renderables.clear();
 		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
-		IItemHandler bindForSetuperHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 				.orElseThrow(NullPointerException::new);
 
-		if (bindForSetuperHandler instanceof RuneBinderItemHandler) {
-			handler = (RuneBinderItemHandler) bindForSetuperHandler;
+		if (binderHandler instanceof RuneBinderItemHandler) {
+			handler = (RuneBinderItemHandler) binderHandler;
 			handler.load();
 			slotcount = handler.getSlots();
 			itemKey = stack.getDescriptionId();
-			for (int i = 0; i < bindForSetuperHandler.getSlots(); i++) {
+			for (int i = 0; i < binderHandler.getSlots(); i++) {
 				if (i < 9) {
-					this.addButton(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - 18),
-							(verticalLoc - 203) + (i * 22), 20, 20, 174, 98, null, new IPressable() {
-								@Override
-								public void onPress(Button press) {
-									if (press instanceof GuiButtonTextured) {
-										player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
-										if (bindForSetuperHandler.getStackInSlot(((GuiButtonTextured) press).getId())
-												.getItem() instanceof ItemRunePattern) {
-											ItemRunePattern pat = (ItemRunePattern) bindForSetuperHandler
-													.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-											Minecraft.getInstance().setScreen(pat.getPatternGui());
-										}
+					this.addRenderableWidget(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - 18),
+							(verticalLoc - 203) + (i * 22), 20, 20, 174, 98, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
+									if (binderHandler.getStackInSlot(((GuiButtonTextured) press).getId())
+											.getItem() instanceof ItemRunePattern) {
+										ItemRunePattern pat = (ItemRunePattern) binderHandler
+												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
+										Minecraft.getInstance().setScreen(pat.getPatternGui());
 									}
 								}
 							}));
 				} else if (i < 18) {
-					this.addButton(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - (5 + 55)),
-							(verticalLoc - 401) + (i * 22), 20, 20, 174, 98, null, new IPressable() {
-								@Override
-								public void onPress(Button press) {
-									if (press instanceof GuiButtonTextured) {
-										player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
-										if (bindForSetuperHandler.getStackInSlot(((GuiButtonTextured) press).getId())
-												.getItem() instanceof ItemRunePattern) {
-											ItemRunePattern pat = (ItemRunePattern) bindForSetuperHandler
-													.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-											Minecraft.getInstance().setScreen(pat.getPatternGui());
-										}
+					this.addRenderableWidget(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - (5 + 55)),
+							(verticalLoc - 401) + (i * 22), 20, 20, 174, 98, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
+									if (binderHandler.getStackInSlot(((GuiButtonTextured) press).getId())
+											.getItem() instanceof ItemRunePattern) {
+										ItemRunePattern pat = (ItemRunePattern) binderHandler
+												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
+										Minecraft.getInstance().setScreen(pat.getPatternGui());
 									}
 								}
 							}));
 				} else if (i < 27) {
-					this.addButton(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - 115),
-							(verticalLoc - 599) + (i * 22), 20, 20, 174, 98, null, new IPressable() {
-								@Override
-								public void onPress(Button press) {
-									if (press instanceof GuiButtonTextured) {
-										player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
-										if (bindForSetuperHandler.getStackInSlot(((GuiButtonTextured) press).getId())
-												.getItem() instanceof ItemRunePattern) {
-											ItemRunePattern pat = (ItemRunePattern) bindForSetuperHandler
-													.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-											Minecraft.getInstance().setScreen(pat.getPatternGui());
-										}
+					this.addRenderableWidget(new GuiButtonTextured(texture, i, sideLoc - (guiWidth - 115),
+							(verticalLoc - 599) + (i * 22), 20, 20, 174, 98, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
+									if (binderHandler.getStackInSlot(((GuiButtonTextured) press).getId())
+											.getItem() instanceof ItemRunePattern) {
+										ItemRunePattern pat = (ItemRunePattern) binderHandler
+												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
+										Minecraft.getInstance().setScreen(pat.getPatternGui());
 									}
 								}
 							}));

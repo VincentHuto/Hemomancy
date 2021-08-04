@@ -1,8 +1,6 @@
 package com.huto.hemomancy.item.tool.living;
 
-import java.util.Set;
-
-import org.apache.http.util.TextUtils;
+import java.util.HashSet;
 
 import com.google.common.collect.Sets;
 import com.huto.hemomancy.capa.volume.BloodVolumeProvider;
@@ -10,12 +8,14 @@ import com.huto.hemomancy.capa.volume.IBloodVolume;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.hutoslib.client.TextUtils;
 import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,12 +32,23 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class ItemLivingTool extends DiggerItem implements IDispellable {
-	private static final Set<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
+	private static final HashSet<Block> EFFECTIVE_ON = Sets.newHashSet(Blocks.COBWEB);
 	private float speed;
 
 	public ItemLivingTool(float speedIn, float attackDamageIn, float attackSpeedIn, Tier tier, Properties builderIn) {
-		super(attackDamageIn, attackSpeedIn, tier, EFFECTIVE_ON, builderIn);
+		super(attackDamageIn, attackSpeedIn, tier, BlockTags.WART_BLOCKS, builderIn);
 	}
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemLivingSpear();
+//
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				return myRenderer;
+//			}
+//		});
+//	}
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {

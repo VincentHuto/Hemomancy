@@ -61,8 +61,8 @@ public class PacketUseContManipKey {
 								selectedManip.performAction(player, (ServerLevel) player.level,
 										player.getMainHandItem(), player.blockPosition());
 							} else {
-								player.displayClientMessage(
-										new TextComponent("Selected Manipulation is not a Continous or Charged MobEffect")
+								player.displayClientMessage(new TextComponent(
+										"Selected Manipulation is not a Continous or Charged MobEffect")
 												.withStyle(ChatFormatting.RED),
 										true);
 							}

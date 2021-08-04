@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-public class RenderBloodBolt<T extends EntityBloodBolt> extends EntityRenderer<EntityBloodBolt> {
+public class RenderBloodBolt extends EntityRenderer<EntityBloodBolt> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/blood_bolt/model_blood_bolt.png");
@@ -30,8 +30,8 @@ public class RenderBloodBolt<T extends EntityBloodBolt> extends EntityRenderer<E
 	public void render(EntityBloodBolt entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();
-		matrixStackIn
-				.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
+		matrixStackIn.mulPose(
+				Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
 		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 		int i = 0;
 		float f = 0.0F;

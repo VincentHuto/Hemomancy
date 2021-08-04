@@ -7,9 +7,9 @@ import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -17,8 +17,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class RenderMorphlingIncubator implements BlockEntityRenderer<BlockEntityMorphlingIncubator> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	public RenderMorphlingIncubator(BlockEntityRenderDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public RenderMorphlingIncubator(BlockEntityRendererProvider.Context p_173636_) {
 	}
 
 	@Override
@@ -55,8 +54,8 @@ public class RenderMorphlingIncubator implements BlockEntityRenderer<BlockEntity
 			ItemStack stack = te.getItemHandler().getStackInSlot(i);
 			Minecraft mc = Minecraft.getInstance();
 			if (!stack.isEmpty()) {
-				mc.getItemRenderer().renderStatic(stack, ItemCameraTransforms.TransformType.GROUND, combinedLightIn,
-						combinedOverlayIn, ms, bufferIn);
+				mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, combinedLightIn,
+						combinedOverlayIn, ms, bufferIn, 0);
 			}
 			ms.popPose();
 		}

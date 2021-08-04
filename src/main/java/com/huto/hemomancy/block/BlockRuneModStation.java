@@ -131,7 +131,7 @@ public class BlockRuneModStation extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new BlockEntityRuneModStation();
+		return new BlockEntityRuneModStation(arg0, arg1);
 	}
 
 }

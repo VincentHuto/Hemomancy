@@ -12,6 +12,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,12 +25,14 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 public class RenderItemTome extends BlockEntityWithoutLevelRenderer {
+	public BookModel model;
+
 	public RenderItemTome(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
-		// TODO Auto-generated constructor stub
+	      this.model = new BookModel(p_172551_.bakeLayer(ModelLayers.BOOK));
+
 	}
 
-	public BookModel model;
 	public static ResourceLocation liber_sanguinum = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/liber_sanguinum.png");
 	public static ResourceLocation liber_inclinatio = new ResourceLocation(Hemomancy.MOD_ID,

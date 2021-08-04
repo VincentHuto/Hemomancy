@@ -5,7 +5,7 @@ import com.huto.hemomancy.item.rune.ItemRuneBinder;
 import com.huto.hemomancy.itemhandler.RuneBinderItemHandler;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -58,7 +58,7 @@ public class ContainerRuneBinder extends AbstractContainerMenu {
 	public String itemKey = "";
 	@SuppressWarnings("rawtypes")
 	public static final MenuType type = new MenuType<>(ContainerRuneBinder::new)
-			.setRegistryName("rune_bindForSetuper_container");
+			.setRegistryName("rune_binder_container");
 	private Inventory playerInv;
 	public RuneBinderItemHandler handler;
 
@@ -66,21 +66,15 @@ public class ContainerRuneBinder extends AbstractContainerMenu {
 	public boolean stillValid(Player playerIn) {
 		if (slotID == -106)
 			return playerIn.getOffhandItem().getItem() instanceof ItemRuneBinder;
-		return playerIn.inventory.getItem(slotID).getItem() instanceof ItemRuneBinder;
+		return playerIn.getInventory().getItem(slotID).getItem() instanceof ItemRuneBinder;
 	}
 
 	@Override
-	public ItemStack clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-		if (slot >= 0) {
-			if (getSlot(slot).getItem().getItem() instanceof ItemRuneBinder)
-				return ItemStack.EMPTY;
-		}
-		if (clickTypeIn == ClickType.SWAP)
-			return ItemStack.EMPTY;
+	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
 
-		if (slot >= 0)
+		if (slot >= 0 && clickTypeIn != ClickType.SWAP
+				&& !(getSlot(slot).getItem().getItem() instanceof ItemRuneBinder))
 			getSlot(slot).container.setChanged();
-		return super.clicked(slot, dragType, clickTypeIn, player);
 	}
 
 	private void addPlayerSlots(Inventory playerInventory) {
@@ -145,7 +139,7 @@ public class ContainerRuneBinder extends AbstractContainerMenu {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.inventory.items.size();
+			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
 			ItemStack itemstack1 = slot.getItem();
 			if (itemstack1.getCount() < 1) {
 				itemstack = itemstack1.copy();
@@ -165,7 +159,7 @@ public class ContainerRuneBinder extends AbstractContainerMenu {
 	}
 
 	private ItemStack findRuneBinder(Player playerEntity) {
-		Inventory inv = playerEntity.inventory;
+		Inventory inv = playerEntity.getInventory();
 
 		if (playerEntity.getMainHandItem().getItem() instanceof ItemRuneBinder) {
 			for (int i = 0; i <= 35; i++) {

@@ -2,11 +2,7 @@ package com.huto.hemomancy.item;
 
 import java.util.List;
 
-import com.huto.hemomancy.gui.guide.tendency.GuiTendencyTitlePage;
-import com.huto.hemomancy.render.item.RenderItemTome;
-
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
@@ -24,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ItemTendencyHiddenBook extends ItemTome {
 
 	public ItemTendencyHiddenBook(Properties prop) {
-		super(prop.setISTER(() -> RenderItemTome::new));
+		super(prop);
 	}
 
 	@Override
@@ -32,7 +28,7 @@ public class ItemTendencyHiddenBook extends ItemTome {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (worldIn.isClientSide) {
-			Minecraft.getInstance().setScreen(new GuiTendencyTitlePage(true));
+			// Minecraft.getInstance().setScreen(new GuiTendencyTitlePage(true));
 			playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 
 		}

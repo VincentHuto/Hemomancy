@@ -110,7 +110,7 @@ public class BlockUnstainedPodium extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new BlockEntityUnstainedPodium();
+		return new BlockEntityUnstainedPodium(arg0, arg1);
 	}
 
 }

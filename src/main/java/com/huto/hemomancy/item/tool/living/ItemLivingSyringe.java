@@ -20,18 +20,23 @@ import com.hutoslib.client.ClientUtils;
 import com.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -77,10 +82,8 @@ public class ItemLivingSyringe extends ItemLivingItem {
 
 									worldIn.addParticle(
 											AbsrobedBloodCellParticleFactory.createData(ParticleColor.genRandomColor()),
-											(double) vec.x(), (double) vec.y() + 2D, (double) vec.z(),
-											(double) ((float) i + rand.nextFloat()) - 0.5D,
-											(double) ((float) k - rand.nextFloat() - 1.0F),
-											(double) ((float) j + rand.nextFloat()) - 0.5D);
+											vec.x(), vec.y() + 2D, vec.z(), i + rand.nextFloat() - 0.5D,
+											k - rand.nextFloat() - 1.0F, j + rand.nextFloat() - 0.5D);
 
 								}
 							}
@@ -130,7 +133,7 @@ public class ItemLivingSyringe extends ItemLivingItem {
 					@Nullable
 
 					@Override
-					public Container createMenu(int windowId, PlayerInventory p_createMenu_2_,
+					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
 						return new ContainerLivingStaff(windowId, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
@@ -218,16 +221,15 @@ public class ItemLivingSyringe extends ItemLivingItem {
 	}
 
 	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		EntityBloodOrbDirected miss = new EntityBloodOrbDirected((Player) playerIn, false);
+		EntityBloodOrbDirected miss = new EntityBloodOrbDirected(playerIn, false);
 		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.xRot, playerIn.yRot, 0.0F, 1.0F, 1.0F);
+		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
 		worldIn.addFreshEntity(miss);
 	}
 
 	@SuppressWarnings("static-access")
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip,
-			TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		CompoundTag CompoundTag = stack.getOrCreateTag();
 		CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
 		if (items != null) {

@@ -11,7 +11,9 @@ import com.huto.hemomancy.init.ItemInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,9 +21,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -31,6 +32,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
@@ -108,6 +110,7 @@ public class EntityBloodBolt extends AbstractArrow {
 				PotionUtils.getColor(PotionUtils.getAllEffects(this.potion, this.customPotionEffects)));
 	}
 
+	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 		this.entityData.define(COLOR, -1);
@@ -116,6 +119,7 @@ public class EntityBloodBolt extends AbstractArrow {
 	/**
 	 * Called to update the entity's position/logic.
 	 */
+	@Override
 	public void tick() {
 		super.tick();
 		if (this.level.isClientSide) {
@@ -146,9 +150,9 @@ public class EntityBloodBolt extends AbstractArrow {
 	private void spawnPotionParticles(int particleCount) {
 		int i = this.getColor();
 		if (i != -1 && particleCount > 0) {
-			double d0 = (double) (i >> 16 & 255) / 255.0D;
-			double d1 = (double) (i >> 8 & 255) / 255.0D;
-			double d2 = (double) (i >> 0 & 255) / 255.0D;
+			double d0 = (i >> 16 & 255) / 255.0D;
+			double d1 = (i >> 8 & 255) / 255.0D;
+			double d2 = (i >> 0 & 255) / 255.0D;
 
 			for (int j = 0; j < particleCount; ++j) {
 				this.level.addParticle(ParticleTypes.ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY(),
@@ -167,6 +171,7 @@ public class EntityBloodBolt extends AbstractArrow {
 		this.entityData.set(COLOR, p_191507_1_);
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 		if (this.potion != Potions.EMPTY && this.potion != null) {
@@ -192,6 +197,7 @@ public class EntityBloodBolt extends AbstractArrow {
 	/**
 	 * (abstract) Protected helper method to read subclass entity data from NBT.
 	 */
+	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 		if (compound.contains("Potion", 8)) {
@@ -211,7 +217,7 @@ public class EntityBloodBolt extends AbstractArrow {
 	}
 
 	@Override
-	protected void onHitEntity(EntityRayTraceResult p_213868_1_) {
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
 		super.onHitEntity(p_213868_1_);
 		Entity entity = p_213868_1_.getEntity();
 		if (entity instanceof LivingEntity) {
@@ -224,7 +230,7 @@ public class EntityBloodBolt extends AbstractArrow {
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
-		Entity entity = living.getEntity();
+		Entity entity = living;
 		if (entity instanceof LivingEntity) {
 			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
 
@@ -232,6 +238,7 @@ public class EntityBloodBolt extends AbstractArrow {
 
 	}
 
+	@Override
 	protected ItemStack getPickupItem() {
 		if (this.customPotionEffects.isEmpty() && this.potion == Potions.EMPTY) {
 			return new ItemStack(ItemInit.blood_bolt.get());
@@ -247,14 +254,15 @@ public class EntityBloodBolt extends AbstractArrow {
 		}
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void handleEntityEvent(byte id) {
 		if (id == 0) {
 			int i = this.getColor();
 			if (i != -1) {
-				double d0 = (double) (i >> 16 & 255) / 255.0D;
-				double d1 = (double) (i >> 8 & 255) / 255.0D;
-				double d2 = (double) (i >> 0 & 255) / 255.0D;
+				double d0 = (i >> 16 & 255) / 255.0D;
+				double d1 = (i >> 8 & 255) / 255.0D;
+				double d2 = (i >> 0 & 255) / 255.0D;
 
 				for (int j = 0; j < 20; ++j) {
 					this.level.addParticle(ParticleTypes.ENTITY_EFFECT, this.getRandomX(0.5D), this.getRandomY(),

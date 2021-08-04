@@ -2,8 +2,6 @@ package com.huto.hemomancy.item.rune;
 
 import java.util.List;
 
-import org.apache.http.util.TextUtils;
-
 import com.huto.hemomancy.capa.rune.IRune;
 import com.huto.hemomancy.capa.rune.RuneType;
 import com.huto.hemomancy.capa.tendency.BloodTendencyProvider;
@@ -11,6 +9,7 @@ import com.huto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.huto.hemomancy.capa.tendency.IBloodTendency;
 import com.huto.hemomancy.network.PacketHandler;
 import com.huto.hemomancy.network.capa.PacketBloodTendencyServer;
+import com.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

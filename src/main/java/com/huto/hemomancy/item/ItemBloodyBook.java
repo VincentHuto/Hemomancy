@@ -1,14 +1,8 @@
 package com.huto.hemomancy.item;
 
 import java.util.List;
-import java.util.function.Consumer;
-
-import com.huto.hemomancy.gui.guide.GuiGuideTitlePage;
-import com.huto.hemomancy.render.item.RenderItemTome;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +17,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.IItemRenderProperties;
 
 public class ItemBloodyBook extends ItemTome {
 
@@ -31,24 +24,13 @@ public class ItemBloodyBook extends ItemTome {
 		super(prop);
 	}
 
-	@Override
-	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-		consumer.accept(new IItemRenderProperties() {
-			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemTome();
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
-				return myRenderer;
-			}
-		});
-	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (worldIn.isClientSide) {
-			Minecraft.getInstance().setScreen(new GuiGuideTitlePage());
+			// Minecraft.getInstance().setScreen(new GuiGuideTitlePage());
 			playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 
 		}

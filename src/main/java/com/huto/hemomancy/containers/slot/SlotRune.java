@@ -42,14 +42,13 @@ public class SlotRune extends SlotItemHandler {
 	}
 
 	@Override
-	public ItemStack onTake(Player playerIn, ItemStack stack) {
+	public void onTake(Player playerIn, ItemStack stack) {
 		if (!hasItem() && !((IRunesItemHandler) getItemHandler()).isEventBlocked()
 				&& stack.getCapability(RunesCapabilities.ITEM_RUNE).isPresent()) {
 			stack.getCapability(RunesCapabilities.ITEM_RUNE, null)
 					.ifPresent((iBauble) -> iBauble.onUnequipped(playerIn));
 		}
 		super.onTake(playerIn, stack);
-		return stack;
 	}
 
 	@Override

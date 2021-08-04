@@ -21,11 +21,11 @@ public class PotionInit {
 	public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.POTIONS,
 			Hemomancy.MOD_ID);
 
-	public static final RegistryObject<MobEffect> blood_bindForSetuping = EFFECTS.register("blood_bindForSetuping",
+	public static final RegistryObject<MobEffect> blood_binding = EFFECTS.register("blood_binding",
 			() -> new BloodBindingEffect(MobEffectCategory.HARMFUL, 3735555));
-	public static final RegistryObject<Potion> potion_of_blood_bindForSetuping = POTION_TYPES.register(
-			"potion_of_blood_bindForSetuping",
-			() -> new Potion("potion_of_blood_bindForSetuping", new MobEffectInstance(blood_bindForSetuping.get(), 1000, 3)));
+	public static final RegistryObject<Potion> potion_of_blood_binding = POTION_TYPES
+			.register("potion_of_blood_binding", () -> new Potion("potion_of_blood_binding",
+					new MobEffectInstance(blood_binding.get(), 1000, 3)));
 
 	public static final RegistryObject<MobEffect> blood_loss = EFFECTS.register("blood_loss",
 			() -> new BloodLossEffect(MobEffectCategory.HARMFUL, 11075587).addAttributeModifier(

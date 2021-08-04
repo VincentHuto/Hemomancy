@@ -9,6 +9,7 @@ import com.huto.hemomancy.init.EntityInit;
 import com.huto.hemomancy.init.PotionInit;
 import com.huto.hemomancy.particle.factory.SerpentParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
@@ -16,10 +17,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -28,9 +25,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityTrackingSerpent extends ThrowableProjectile {
@@ -116,7 +117,7 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 		}
 		LivingEntity target = getTargetEntity();
 		if (!level.isClientSide && (!findTarget() || time > 40)) {
-						this.remove(RemovalReason.KILLED);
+			this.remove(RemovalReason.KILLED);
 			return;
 		}
 
@@ -133,12 +134,12 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 			Vector3 diffVec = targetVec.subtract(thisVec);
 			// This normalize part changes how angular the beam gets
 			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.15 : 0.6);
-			setDeltaMovement(motionVec.toVector3d());
+			setDeltaMovement(motionVec.toVec3());
 			if (time < 10)
 				setDeltaMovement(getDeltaMovement().x() + ParticleUtils.inRange(-0.15, 0.15),
 						Math.abs(getDeltaMovement().y()), getDeltaMovement().z() + ParticleUtils.inRange(-0.15, 0.15));
-			List<LivingEntity> targetList = level.getEntitiesOfClass(LivingEntity.class, new AABB(getX() - 0.5,
-					getY() - 0.5, getZ() - 0.5, getX() + 0.5, getY() + 0.5, getZ() + 0.5));
+			List<LivingEntity> targetList = level.getEntitiesOfClass(LivingEntity.class,
+					new AABB(getX() - 0.5, getY() - 0.5, getZ() - 0.5, getX() + 0.5, getY() + 0.5, getZ() + 0.5));
 			if (targetList.contains(target)) {
 				LivingEntity thrower = (LivingEntity) getOwner();
 				if (thrower != null) {
@@ -148,11 +149,11 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 				} else
 					target.hurt(DamageSource.GENERIC, evil ? 2 : 2);
 
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 			}
 
 			if (evil && diffVec.mag() < 0)
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 		}
 
 		time++;
@@ -178,8 +179,8 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 			setTarget(null);
 
 		double range = 22;
-		AABB bounds = new AABB(getX() - range, getY() - range, getZ() - range, getX() + range,
-				getY() + range, getZ() + range);
+		AABB bounds = new AABB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range,
+				getZ() + range);
 		@SuppressWarnings("rawtypes")
 		List entities;
 		if (isEvil()) {
@@ -206,25 +207,25 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void onHit(@Nonnull RayTraceResult pos) {
+	protected void onHit(@Nonnull HitResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
-			Block block = level.getBlockState(((BlockRayTraceResult) pos).getBlockPos()).getBlock();
+			Block block = level.getBlockState(((BlockHitResult) pos).getBlockPos()).getBlock();
 			if (!(block instanceof BushBlock) && !(block instanceof LeavesBlock))
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 			break;
 		}
 		case ENTITY: {
-			if (!(pos instanceof BlockRayTraceResult)) {
-				if (((EntityRayTraceResult) pos).getEntity() == getTargetEntity())
-					((LivingEntity) ((EntityRayTraceResult) pos).getEntity())
-							.addEffect(new MobEffectInstance(PotionInit.blood_bindForSetuping.get(), 300));
-							this.remove(RemovalReason.KILLED);
+			if (!(pos instanceof BlockHitResult)) {
+				if (((EntityHitResult) pos).getEntity() == getTargetEntity())
+					((LivingEntity) ((EntityHitResult) pos).getEntity())
+							.addEffect(new MobEffectInstance(PotionInit.blood_binding.get(), 300));
+				this.remove(RemovalReason.KILLED);
 			}
 			break;
 		}
 		default: {
-						this.remove(RemovalReason.KILLED);
+			this.remove(RemovalReason.KILLED);
 			break;
 		}
 		}

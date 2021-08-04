@@ -451,12 +451,9 @@ public class BlockActiveSmoulderingAshTrail extends Block {
 		float f = maxChance - minChance;
 		if (!(rand.nextFloat() >= 0.2F * f)) {
 			float f2 = minChance + f * rand.nextFloat();
-			double d0 = 0.5D + 0.4375F * directionFrom.getStepX()
-					+ f2 * directionTo.getStepX();
-			double d1 = 0.5D + 0.4375F * directionFrom.getStepY()
-					+ f2 * directionTo.getStepY();
-			double d2 = 0.5D + 0.4375F * directionFrom.getStepZ()
-					+ f2 * directionTo.getStepZ();
+			double d0 = 0.5D + 0.4375F * directionFrom.getStepX() + f2 * directionTo.getStepX();
+			double d1 = 0.5D + 0.4375F * directionFrom.getStepY() + f2 * directionTo.getStepY();
+			double d2 = 0.5D + 0.4375F * directionFrom.getStepZ() + f2 * directionTo.getStepZ();
 			world.addParticle(new DustParticleOptions(new Vector3f(rgbVector.x(), rgbVector.y(), rgbVector.z()), 1.0F),
 					pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, 0.0D, 0.0D, 0.0D);
 		}

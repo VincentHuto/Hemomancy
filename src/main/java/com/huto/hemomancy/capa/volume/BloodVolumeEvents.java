@@ -129,12 +129,12 @@ public class BloodVolumeEvents {
 				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
 				if (volume.isActive()) {
 					if (volume.getBloodVolume() < 100) {
-						Minecraft.getInstance().textureManager.bindForSetupForSetup(
+						Minecraft.getInstance().textureManager.bindForSetup(
 								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 						event.getMatrixStack().pushPose();
 						/*
-						 * //GlStateManager._pushMatrix(); //GlStateManager._color4f(100, 100, 100, 0.415f +
-						 * (float) (Math.sin(player.level.getGameTime() * 0.055f) * 0.15f));
+						 * //GlStateManager._pushMatrix(); //GlStateManager._color4f(100, 100, 100,
+						 * 0.415f + (float) (Math.sin(player.level.getGameTime() * 0.055f) * 0.15f));
 						 * //GlStateManager._popMatrix();
 						 */
 						float ratio = (float) event.getWindow().getGuiScale();

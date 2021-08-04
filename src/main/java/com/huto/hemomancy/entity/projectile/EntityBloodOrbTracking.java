@@ -8,19 +8,16 @@ import com.google.common.base.Predicates;
 import com.huto.hemomancy.init.EntityInit;
 import com.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.hutoslib.client.particle.util.ParticleColor;
+import com.hutoslib.client.particle.util.ParticleUtils;
 import com.hutoslib.math.Vector3;
 
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.util.ParticleUtils;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -28,9 +25,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityBloodOrbTracking extends ThrowableProjectile {
@@ -100,12 +101,12 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 					getZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 			level.addParticle(ParticleTypes.ASH, this.getX() + (Math.random() - 0.5) * 0.4,
 					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
-			level.addParticle(RedstoneParticleData.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,
+			level.addParticle(DustParticleOptions.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,
 					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
 		}
 		LivingEntity target = getTargetEntity();
 		if (!level.isClientSide && (!findTarget() || time > 40)) {
-						this.remove(RemovalReason.KILLED);
+			this.remove(RemovalReason.KILLED);
 			return;
 		}
 
@@ -121,11 +122,11 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 			Vector3 targetVec = evil ? new Vector3(lockX, lockY, lockZ) : Vector3.fromEntityCenter(target);
 			Vector3 diffVec = targetVec.subtract(thisVec);
 			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.5 : 0.6);
-			setDeltaMovement(motionVec.toVector3d());
+			setDeltaMovement(motionVec.toVec3());
 			if (time < 10)
 				setDeltaMovement(getDeltaMovement().x(), Math.abs(getDeltaMovement().y()), getDeltaMovement().z());
-			List<LivingEntity> targetList = level.getEntitiesOfClass(LivingEntity.class, new AABB(getX() - 0.5,
-					getY() - 0.5, getZ() - 0.5, getX() + 0.5, getY() + 0.5, getZ() + 0.5));
+			List<LivingEntity> targetList = level.getEntitiesOfClass(LivingEntity.class,
+					new AABB(getX() - 0.5, getY() - 0.5, getZ() - 0.5, getX() + 0.5, getY() + 0.5, getZ() + 0.5));
 			if (targetList.contains(target)) {
 				LivingEntity thrower = (LivingEntity) getOwner();
 				if (thrower != null) {
@@ -135,11 +136,11 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 				} else
 					target.hurt(DamageSource.GENERIC, evil ? 12 : 7);
 
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 			}
 
 			if (evil && diffVec.mag() < 0)
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 		}
 
 		time++;
@@ -165,8 +166,8 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 			setTarget(null);
 
 		double range = 22;
-		AABB bounds = new AABB(getX() - range, getY() - range, getZ() - range, getX() + range,
-				getY() + range, getZ() + range);
+		AABB bounds = new AABB(getX() - range, getY() - range, getZ() - range, getX() + range, getY() + range,
+				getZ() + range);
 		@SuppressWarnings("rawtypes")
 		List entities;
 		if (isEvil()) {
@@ -193,21 +194,21 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void onHit(@Nonnull RayTraceResult pos) {
+	protected void onHit(@Nonnull HitResult pos) {
 		switch (pos.getType()) {
 		case BLOCK: {
-			Block block = level.getBlockState(((BlockRayTraceResult) pos).getBlockPos()).getBlock();
+			Block block = level.getBlockState(((BlockHitResult) pos).getBlockPos()).getBlock();
 			if (!(block instanceof BushBlock) && !(block instanceof LeavesBlock))
-							this.remove(RemovalReason.KILLED);
+				this.remove(RemovalReason.KILLED);
 			break;
 		}
 		case ENTITY: {
-			if (((EntityRayTraceResult) pos).getEntity() == getTargetEntity())
-							this.remove(RemovalReason.KILLED);
+			if (((EntityHitResult) pos).getEntity() == getTargetEntity())
+				this.remove(RemovalReason.KILLED);
 			break;
 		}
 		default: {
-						this.remove(RemovalReason.KILLED);
+			this.remove(RemovalReason.KILLED);
 			break;
 		}
 		}

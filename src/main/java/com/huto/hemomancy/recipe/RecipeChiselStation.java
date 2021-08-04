@@ -60,10 +60,12 @@ public class RecipeChiselStation extends ForgeRegistryEntry<RecipeChiselStation>
 		return ingredientsMissing.isEmpty();
 	}
 
+	@Override
 	public List<Ingredient> getInputs() {
 		return inputs;
 	}
 
+	@Override
 	public ItemStack getOutput() {
 		return output;
 	}
@@ -95,6 +97,12 @@ public class RecipeChiselStation extends ForgeRegistryEntry<RecipeChiselStation>
 		ArrayList<Integer> activatedRunesIn = new ArrayList<Integer>();
 		activatedRunesIn.add(buf.readInt());
 		return new RecipeChiselStation(id, output, activatedRunesIn, inputs);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

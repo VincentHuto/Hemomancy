@@ -2,16 +2,16 @@ package com.huto.hemomancy.gui.morphlingjar;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.ContainerMorphlingJar;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 
 public class GuiMorphlingJar extends AbstractContainerScreen<ContainerMorphlingJar> {
 	public GuiMorphlingJar(ContainerMorphlingJar container, Inventory playerInventory, Component name) {
@@ -51,7 +51,7 @@ public class GuiMorphlingJar extends AbstractContainerScreen<ContainerMorphlingJ
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-		RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+		//RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.getMinecraft().textureManager.bindForSetup(GUI);
 		drawTexturedQuad(leftPos, topPos, imageWidth, imageHeight, 0, 0, 1, 1, 0);
 	}
@@ -61,11 +61,11 @@ public class GuiMorphlingJar extends AbstractContainerScreen<ContainerMorphlingJ
 		Tesselator tess = Tesselator.getInstance();
 		BufferBuilder buffer = tess.getBuilder();
 
-		buffer.begin(7, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex((double) x + 0, (double) y + height, (double) z).uv(tx, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + height, (double) z).uv(tx + tw, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + 0, (double) z).uv(tx + tw, ty).endVertex();
-		buffer.vertex((double) x + 0, (double) y + 0, (double) z).uv(tx, ty).endVertex();
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
+		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
+		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
+		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
 
 		tess.end();
 	}

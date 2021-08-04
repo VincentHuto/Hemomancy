@@ -24,7 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BlockHumaneIdol extends Block implements EntityBlock{
+public class BlockHumaneIdol extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 15, 12.5);
 
@@ -85,6 +85,6 @@ public class BlockHumaneIdol extends Block implements EntityBlock{
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntityHumaneIdol();
+		return new BlockEntityHumaneIdol(p_153215_, p_153216_);
 	}
 }

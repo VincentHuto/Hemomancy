@@ -1,19 +1,15 @@
 package com.huto.hemomancy.block;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-import com.huto.hemomancy.entity.drudge.EntityDrudge;
 import com.huto.hemomancy.tile.BlockEntitySemiSentientConstruct;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -56,15 +52,15 @@ public class BlockSemiSentientConstruct extends Block implements EntityBlock {
 			BlockHitResult result) {
 
 		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
-
-		List<LivingEntity> entities = worldIn.getEntitiesOfClass(LivingEntity.class,
-				player.getBoundingBox().inflate(10));
-		for (LivingEntity ent : entities) {
-			if (ent instanceof EntityDrudge) {
-				EntityDrudge drudge = (EntityDrudge) ent;
-				player.displayClientMessage(new TextComponent(drudge.getRoleTitle().name()), false);
-			}
-		}
+//
+//		List<LivingEntity> entities = worldIn.getEntitiesOfClass(LivingEntity.class,
+//				player.getBoundingBox().inflate(10));
+//		for (LivingEntity ent : entities) {
+//			if (ent instanceof EntityDrudge) {
+//				EntityDrudge drudge = (EntityDrudge) ent;
+//				player.displayClientMessage(new TextComponent(drudge.getRoleTitle().name()), false);
+//			}
+//		}
 
 		return InteractionResult.SUCCESS;
 
@@ -112,6 +108,6 @@ public class BlockSemiSentientConstruct extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new BlockEntitySemiSentientConstruct();
+		return new BlockEntitySemiSentientConstruct(arg0, arg1);
 	}
 }

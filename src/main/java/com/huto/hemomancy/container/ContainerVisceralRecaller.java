@@ -10,14 +10,14 @@ import com.huto.hemomancy.item.memories.ItemHematicMemory;
 import com.huto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.hutoslib.common.container.SlotSelectiveType;
 
-import net.minecraft.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ContainerVisceralRecaller extends AbstractContainerMenu {
 	private final int numRows;
@@ -56,7 +56,7 @@ public class ContainerVisceralRecaller extends AbstractContainerMenu {
 
 	}
 
-	private static BlockEntityVisceralRecaller getBlockEntity(final PlayerInventory playerInv, final FriendlyByteBuf data) {
+	private static BlockEntityVisceralRecaller getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
 		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
 		Objects.requireNonNull(data, "data cannot be null");
 		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
@@ -84,15 +84,14 @@ public class ContainerVisceralRecaller extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void setItem(int slotID, ItemStack stack) {
+	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
 		te.sendUpdates();
-		super.setItem(slotID, stack);
+		super.setItem(p_182407_, p_182408_, p_182409_);
 	}
 
 	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		te.sendUpdates();
-		return super.clicked(slotId, dragType, clickTypeIn, player);
 
 	}
 

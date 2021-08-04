@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,7 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 	@CapabilityInject(IBloodTendency.class)
 	public static final Capability<IBloodTendency> TENDENCY_CAPA = null;
-	private LazyOptional<IBloodTendency> instance = LazyOptional.of(TENDENCY_CAPA::getDefaultInstance);
+	private LazyOptional<IBloodTendency> instance = LazyOptional.of(BloodTendency::new);
 
 	@Nonnull
 	@Override
@@ -27,13 +28,13 @@ public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 
 	@Override
 	public Tag serializeNBT() {
-		return (Tag) TENDENCY_CAPA.getStorage().writeNBT(TENDENCY_CAPA,
+		return writeNBT(TENDENCY_CAPA,
 				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
 	}
 
 	@Override
 	public void deserializeNBT(Tag nbt) {
-		TENDENCY_CAPA.getStorage().readNBT(TENDENCY_CAPA,
+		readNBT(TENDENCY_CAPA,
 				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null, nbt);
 
 	}
@@ -42,4 +43,26 @@ public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 		return player.getCapability(TENDENCY_CAPA).orElseThrow(IllegalStateException::new).getTendency();
 	}
 
+	public CompoundTag writeNBT(Capability<IBloodTendency> capability, IBloodTendency instance, Direction side) {
+		CompoundTag covenTag = new CompoundTag();
+		for (EnumBloodTendency key : instance.getTendency().keySet()) {
+			if (instance.getTendency().get(key) != null) {
+				covenTag.putFloat(key.toString(), instance.getTendency().get(key));
+			} else {
+				covenTag.putFloat(key.toString(), 0);
+
+			}
+		}
+		return covenTag;
+	}
+
+	public void readNBT(Capability<IBloodTendency> capability, IBloodTendency instance, Direction side, Tag nbt) {
+		if (!(instance instanceof BloodTendency))
+			throw new IllegalArgumentException(
+					"Can not deserialize to an instance that isn't the default implementation");
+		CompoundTag test = (CompoundTag) nbt;
+		for (EnumBloodTendency coven : EnumBloodTendency.values()) {
+			instance.getTendency().put(coven, test.getFloat(coven.toString()));
+		}
+	}
 }

@@ -75,7 +75,7 @@ public class KnownManipulationEvents {
 //						if (selectedManip != null) {
 //							if (selectedManip.getName() == ManipulationInit.sanguine_ward.get().getName()) {
 //								double dist = e.getEntityLiving().getDistance(player);
-//								RayTraceResult trace = e.getEntityLiving().pick(dist, 0, false);
+//								HitResult trace = e.getEntityLiving().pick(dist, 0, false);
 //								PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(
 //										trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
 //								e.setAmount((float) (e.getAmount() * 0));

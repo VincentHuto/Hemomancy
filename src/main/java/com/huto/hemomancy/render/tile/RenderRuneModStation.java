@@ -5,15 +5,14 @@ import com.huto.hemomancy.capa.rune.RunesCapabilities;
 import com.huto.hemomancy.event.ClientTickHandler;
 import com.huto.hemomancy.tile.BlockEntityRuneModStation;
 import com.hutoslib.client.ClientUtils;
-import com.mojang.blaze3d.platform.//GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -22,8 +21,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRuneModStation> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	public RenderRuneModStation(BlockEntityRenderDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public RenderRuneModStation(BlockEntityRendererProvider.Context p_173636_) {
 	}
 
 	@SuppressWarnings("deprecation")
@@ -32,8 +30,8 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		Player player = ClientUtils.getClientPlayer();
 		if (player.isAlive()) {
-			//GlStateManager._pushMatrix();
-			//GlStateManager._color4f(1F, 1F, 1F, 1F);
+			// GlStateManager._pushMatrix();
+			// GlStateManager._color4f(1F, 1F, 1F, 1F);
 
 			IRunesItemHandler runes = player.getCapability(RunesCapabilities.RUNES)
 					.orElseThrow(IllegalArgumentException::new);
@@ -65,7 +63,7 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 			ItemStack stack = runes.getStackInSlot(0);
 			if (!stack.isEmpty()) {
 				mc.getItemRenderer().renderStatic(stack, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-						matrixStackIn, bufferIn);
+						matrixStackIn, bufferIn, 0);
 			}
 			matrixStackIn.popPose();
 
@@ -79,10 +77,10 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 				matrixStackIn.scale(0.1f, 0.1f, 0.1f);
 				ItemStack stack2 = runes.getStackInSlot(i);
 				mc.getItemRenderer().renderStatic(stack2, TransformType.FIXED, combinedLightIn, combinedOverlayIn,
-						matrixStackIn, bufferIn);
+						matrixStackIn, bufferIn, 0);
 				matrixStackIn.popPose();
 			}
-			//GlStateManager._popMatrix();
+			// GlStateManager._popMatrix();
 		}
 	}
 }

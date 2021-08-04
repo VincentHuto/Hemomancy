@@ -2,7 +2,6 @@ package com.huto.hemomancy.gui.mindrunes;
 
 import com.huto.hemomancy.Hemomancy;
 import com.huto.hemomancy.container.PlayerExpandedContainer;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -10,7 +9,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.getInventory();
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -28,16 +27,19 @@ public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerE
 		super(container, inventory, name);
 	}
 
+	// Replacing tick because im lazy
 	@Override
-	public void tick() { // tick
+	protected boolean isHovering(int p_97768_, int p_97769_, int p_97770_, int p_97771_, double p_97772_,
+			double p_97773_) {
 		this.menu.runes.setEventBlock(false);
 		this.checkEffectRendering();
 		this.resetGuiLeft();
+		return true;
 	}
 
 	@Override
 	protected void init() { // init
-		this.buttons.clear(); // this.buttons
+		this.renderables.clear(); // this.renderables
 		super.init();
 		this.resetGuiLeft();
 	}
@@ -55,13 +57,13 @@ public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerE
 		this.renderBackground(matrixStack); // renderBackground
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		this.renderTooltip(matrixStack, mouseX, mouseY); // renderHoveredToolTip
-		this.oldMouseX = (float) mouseX;
-		this.oldMouseY = (float) mouseY;
+		this.oldMouseX = mouseX;
+		this.oldMouseY = mouseY;
 	}
 
 	@Override
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) { // drawGuiContainerBackgroundLayer
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		// RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		if (this.minecraft != null) {
 			this.minecraft.getTextureManager().bindForSetup(background);
 			int k = this.leftPos;
@@ -73,8 +75,8 @@ public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerE
 					this.blit(matrixStack, k + slot.x, l + slot.y, 200, 0, 16, 16);
 				}
 			}
-			InventoryScreen.renderEntityInInventory(k + 51, l + 75, 30, (float) (k + 51) - this.oldMouseX,
-					(float) (l + 75 - 50) - this.oldMouseY, this.minecraft.player);
+			InventoryScreen.renderEntityInInventory(k + 51, l + 75, 30, k + 51 - this.oldMouseX,
+					l + 75 - 50 - this.oldMouseY, this.minecraft.player);
 		}
 	}
 

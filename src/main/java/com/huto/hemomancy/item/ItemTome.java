@@ -2,8 +2,6 @@ package com.huto.hemomancy.item;
 
 import java.util.Random;
 
-import com.huto.hemomancy.render.item.RenderItemTome;
-
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
@@ -24,8 +22,21 @@ public class ItemTome extends Item {
 	private static final Random random = new Random();
 
 	public ItemTome(Properties prop) {
-		super(prop.setISTER(() -> RenderItemTome::new));
+		super(prop);
 	}
+
+//	@Override
+//	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+//		consumer.accept(new IItemRenderProperties() {
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemTome(null, null);
+//			@Override
+//			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+//				
+//				return myRenderer;
+//						
+//			}
+//		});
+//	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
@@ -38,7 +49,7 @@ public class ItemTome extends Item {
 				float f1 = this.flipT;
 
 				do {
-					this.flipT += (float) (random.nextInt(4) - random.nextInt(4));
+					this.flipT += random.nextInt(4) - random.nextInt(4);
 				} while (f1 == this.flipT);
 			}
 			while (this.nextPageAngle >= (float) Math.PI) {

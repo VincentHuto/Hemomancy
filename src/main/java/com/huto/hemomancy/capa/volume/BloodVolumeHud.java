@@ -60,8 +60,8 @@ public class BloodVolumeHud extends Screen {
 					ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 					ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 							"textures/gui/blood_fill_tiled.png");
-					mc.textureManager.bindForSetupForSetup(fill_texture);
-					//RenderSystem.enableAlphaTest();
+					mc.textureManager.bindForSetup(fill_texture);
+					// RenderSystem.enableAlphaTest();
 					float textureUShift = (world.getGameTime() * 0.25f % 256);
 					float textureVShift = (world.getGameTime() * 0.25f % 256);
 					float heightShift = (float) Math.cos(world.getGameTime() * 0.1);
@@ -75,7 +75,7 @@ public class BloodVolumeHud extends Screen {
 					// bar
 					GuiUtils.drawTexturedModalRect(xOff + 2, yOff + 3, 23 + textureUShift, textureVShift, 6,
 							(int) newBarWidth + 8 + heightShift);
-					mc.textureManager.bindForSetupForSetup(texture);
+					mc.textureManager.bindForSetup(texture);
 					// Cap
 					GuiUtils.drawTexturedModalRect(xOff - 1, yOff + 106, 9, 244, 13, 12);
 					// Frame
@@ -83,7 +83,7 @@ public class BloodVolumeHud extends Screen {
 
 					GL11.glPopMatrix();
 					GL11.glPushMatrix();
-				//	RenderSystem.disableAlphaTest();
+					// RenderSystem.disableAlphaTest();
 					GL11.glPushMatrix();
 					// "Blood Volume"
 					GL11.glPushMatrix();

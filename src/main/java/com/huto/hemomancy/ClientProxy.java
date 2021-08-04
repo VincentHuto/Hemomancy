@@ -20,8 +20,8 @@ public class ClientProxy implements IProxy {
 
 	@Override
 	public void openBinderGui() {
-		Minecraft.getInstance().setScreen(
-				new GuiRuneBinderViewer(new ItemStack(ItemInit.rune_bindForSetuper.get()), ClientUtils.getClientPlayer()));
+		Minecraft.getInstance().setScreen(new GuiRuneBinderViewer(new ItemStack(ItemInit.rune_binder.get()),
+				ClientUtils.getClientPlayer()));
 	}
 
 	@Override

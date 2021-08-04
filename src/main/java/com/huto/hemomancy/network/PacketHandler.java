@@ -70,7 +70,7 @@ public class PacketHandler {
 			new ResourceLocation(Hemomancy.MOD_ID, "morphlingjarchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static SimpleChannel CHANNELRUNEBINDER = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "runebindForSetuperchannel"), () -> PROTOCOL_VERSION,
+			new ResourceLocation(Hemomancy.MOD_ID, "runebinderchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
