@@ -11,7 +11,7 @@ issueTrackerURL="http://my.issue.tracker/" #optional
 modId="hemomancy" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.0" #mandatory
+version="2.01" #mandatory
 
  # A display name for the mod
 displayName="Hemomancy; Sanguine Mastery" #mandatory
@@ -62,7 +62,7 @@ After all its just sitting there!
 [[dependencies.hemomancy]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4]"
+    versionRange="[1.17.1]"
     ordering="NONE"
     side="BOTH"
 
