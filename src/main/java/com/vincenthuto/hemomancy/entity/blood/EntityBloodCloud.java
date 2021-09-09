@@ -2,13 +2,13 @@ package com.vincenthuto.hemomancy.entity.blood;
 
 import java.util.List;
 
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.math.Vector3;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;

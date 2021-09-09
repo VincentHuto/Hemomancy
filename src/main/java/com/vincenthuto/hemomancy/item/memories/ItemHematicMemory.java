@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.item.memories;
 
 import java.util.List;
 
-import com.hutoslib.client.TextUtils;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

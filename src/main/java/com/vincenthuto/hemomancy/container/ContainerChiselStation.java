@@ -63,7 +63,7 @@ public class ContainerChiselStation extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player playerIn) {
-		return true;
+		return this.te.stillValid(playerIn);
 	}
 
 	@Override
@@ -85,6 +85,7 @@ public class ContainerChiselStation extends AbstractContainerMenu {
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slotId, dragType, clickTypeIn, player);
 		te.sendUpdates();
 	}
 

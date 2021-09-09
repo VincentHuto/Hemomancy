@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.math.Vector3;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.render.item.RenderItemLivingSpear;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

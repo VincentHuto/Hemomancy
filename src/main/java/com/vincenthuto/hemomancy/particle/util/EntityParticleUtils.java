@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.particle.util;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.util.ModEntityPredicates;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.world.entity.Entity;
 

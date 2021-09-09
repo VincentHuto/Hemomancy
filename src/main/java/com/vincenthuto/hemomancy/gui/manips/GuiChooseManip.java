@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.gui.manips;
 import java.awt.Point;
 import java.util.List;
 
-import com.hutoslib.client.screen.GuiButtonTextured;
-import com.hutoslib.math.MathUtils;
 //GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -13,6 +11,8 @@ import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
+import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
+import com.vincenthuto.hutoslib.math.MathUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -81,9 +81,6 @@ public class GuiChooseManip extends Screen {
 				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
 		if (!known.isEmpty()) {
 			for (int i = 0; i < known.size(); i++) {
-				// GlStateManager._pushMatrix();
-				//// GlStateManager._enableAlphaTest();
-				// GlStateManager._enableBlend();
 				BloodManipulation current = known.get(i);
 				if (current.getProperName().equals(selected.getProperName())) {
 					this.addRenderableWidget(
@@ -108,10 +105,6 @@ public class GuiChooseManip extends Screen {
 
 							}));
 				}
-
-				// GlStateManager._disableBlend();
-				// GlStateManager._disableAlphaTest();
-				// GlStateManager._popMatrix();
 				point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
 			}
 		} else {

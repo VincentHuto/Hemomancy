@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.recipe;
 
-import com.hutoslib.client.render.block.render.LabeledBlockPattern;
+import com.vincenthuto.hutoslib.client.render.block.render.LabeledBlockPattern;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

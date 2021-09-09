@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.tile;
 
 import java.util.List;
 
-import com.hutoslib.common.block.entity.TileSimpleInventory;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hutoslib.common.block.entity.TileSimpleInventory;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;

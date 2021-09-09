@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.manipulation;
 
-import com.hutoslib.client.TextUtils;
 import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;

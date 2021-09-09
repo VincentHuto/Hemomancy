@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.item.morphlings;
 
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

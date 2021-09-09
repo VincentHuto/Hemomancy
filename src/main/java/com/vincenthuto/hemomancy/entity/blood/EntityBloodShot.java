@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.entity.blood;
 
 import javax.annotation.Nonnull;
 
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -44,10 +44,12 @@ public class EntityBloodShot extends AbstractArrow {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
+	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 	}
 
+	@Override
 	public void tick() {
 		super.tick();
 		if (shooter instanceof Player) {
@@ -69,11 +71,13 @@ public class EntityBloodShot extends AbstractArrow {
 
 	}
 
+	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
 
 	}
 
+	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
 
@@ -93,6 +97,7 @@ public class EntityBloodShot extends AbstractArrow {
 
 	}
 
+	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
 		super.doPostHurtEffects(living);
 

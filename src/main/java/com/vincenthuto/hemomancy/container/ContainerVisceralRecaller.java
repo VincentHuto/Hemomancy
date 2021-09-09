@@ -2,13 +2,13 @@ package com.vincenthuto.hemomancy.container;
 
 import java.util.Objects;
 
-import com.hutoslib.common.container.SlotSelectiveType;
 import com.vincenthuto.hemomancy.containers.slot.SlotOutput;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
 import com.vincenthuto.hemomancy.item.ItemEnzyme;
 import com.vincenthuto.hemomancy.item.memories.ItemHematicMemory;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,7 +37,8 @@ public class ContainerVisceralRecaller extends AbstractContainerMenu {
 		// SLOTS
 		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 64, 8, 14));
 		addSlot(new SlotSelectiveType(te, ItemEnzyme.class, 1, 64, 26, 14));
-		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26, 80));
+		addSlot(new com.vincenthuto.hutoslib.common.container.SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26,
+				80));
 		addSlot(new SlotOutput(te, 3, 152, 14));
 
 		// output

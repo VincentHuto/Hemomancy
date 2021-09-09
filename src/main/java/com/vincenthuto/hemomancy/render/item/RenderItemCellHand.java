@@ -4,10 +4,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import com.hutoslib.client.ClientUtils;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.math.Vector3;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -17,6 +13,10 @@ import com.vincenthuto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.vincenthuto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.util.EntityParticleUtils;
+import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;

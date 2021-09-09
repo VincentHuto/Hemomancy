@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.gui.morphlingjar;
 
-import com.hutoslib.client.screen.GuiUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.ContainerMorphlingJar;
+import com.vincenthuto.hutoslib.client.screen.GuiUtils;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;

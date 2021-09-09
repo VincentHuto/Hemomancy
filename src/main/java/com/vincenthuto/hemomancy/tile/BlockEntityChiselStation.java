@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.hutoslib.common.item.ItemKnapper;
-import com.hutoslib.common.network.VanillaPacketDispatcher;
 import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.container.ContainerChiselStation;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
+import com.vincenthuto.hutoslib.common.item.ItemKnapper;
+import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -179,19 +179,21 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 
 	// NBT
 	@Override
-	public void load( CompoundTag compound) {
-		super.load( compound);
+	public void load(CompoundTag compound) {
+		super.load(compound);
 		readPacketNBT(compound);
 		this.chestContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		if (!this.tryLoadLootTable(compound)) {
 			ContainerHelper.loadAllItems(compound, this.chestContents);
 		}
 		ListTag tagList = compound.getList(TAG_RUNELIST, Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < tagList.size(); i++) {
-			CompoundTag tag = tagList.getCompound(i);
-			int s = tag.getInt("ListPos " + i);
-			runesList.add(i, s);
-			runesList.set(i, s);
+		if (this.runesList != null) {
+			for (int i = 0; i < tagList.size(); i++) {
+				CompoundTag tag = tagList.getCompound(i);
+				int s = tag.getInt("ListPos " + i);
+				runesList.add(i, s);
+				runesList.set(i, s);
+			}
 		}
 
 	}

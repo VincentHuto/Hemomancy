@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.hutoslib.client.render.block.render.LabeledBlockPattern;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hutoslib.client.render.block.render.LabeledBlockPattern;
 
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.capa.tendency;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.world.item.Item;
 

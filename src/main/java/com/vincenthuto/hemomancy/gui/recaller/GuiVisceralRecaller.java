@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.hutoslib.client.screen.GuiButtonTextured;
-import com.hutoslib.client.screen.GuiUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
@@ -14,6 +12,8 @@ import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
 import com.vincenthuto.hemomancy.network.PacketClearRecallerState;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
+import com.vincenthuto.hutoslib.client.screen.GuiUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -123,7 +123,6 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 				}));
 
 	}
-
 
 	public static int[] convertIntegers(List<Integer> integers) {
 		int[] ret = new int[integers.size()];

@@ -6,12 +6,12 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Sets;
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;

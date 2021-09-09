@@ -5,12 +5,12 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicates;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.math.Vector3;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;

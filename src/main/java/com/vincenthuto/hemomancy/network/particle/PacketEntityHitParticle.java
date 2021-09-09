@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.network.particle;
 
 import java.util.function.Supplier;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.particle.factory.HitGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;

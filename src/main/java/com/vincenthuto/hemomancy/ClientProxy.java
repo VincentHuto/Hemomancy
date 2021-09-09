@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy;
 
-import com.hutoslib.client.ClientUtils;
+import com.vincenthuto.hemomancy.gui.guide.HemoTitlePage;
 import com.vincenthuto.hemomancy.gui.manips.GuiChooseManip;
 import com.vincenthuto.hemomancy.gui.mindrunes.GuiRuneBinderViewer;
 import com.vincenthuto.hemomancy.gui.morphlingjar.GuiMorphlingJarViewer;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hutoslib.client.ClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
@@ -18,6 +19,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy implements IProxy {
 
+	@Override
+	public void openGuideGui() {
+		Minecraft.getInstance().setScreen(new HemoTitlePage());
+	}
+	
 	@Override
 	public void openBinderGui() {
 		Minecraft.getInstance().setScreen(

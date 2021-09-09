@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.event;
 
-import com.hutoslib.client.ClientUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
@@ -12,6 +11,7 @@ import com.vincenthuto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.vincenthuto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.vincenthuto.hutoslib.client.ClientUtils;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;

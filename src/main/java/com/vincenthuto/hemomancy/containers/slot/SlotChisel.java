@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.containers.slot;
 
-import com.hutoslib.common.item.ItemKnapper;
+import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

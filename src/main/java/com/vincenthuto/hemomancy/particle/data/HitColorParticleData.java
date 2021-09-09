@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.particle.data;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.vincenthuto.hemomancy.init.ParticleInit;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;

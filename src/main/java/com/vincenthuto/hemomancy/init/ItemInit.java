@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.init;
 
-import com.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
@@ -51,6 +50,7 @@ import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
+import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;

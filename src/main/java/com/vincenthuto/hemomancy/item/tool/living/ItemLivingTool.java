@@ -3,13 +3,13 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.HashSet;
 
 import com.google.common.collect.Sets;
-import com.hutoslib.client.TextUtils;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

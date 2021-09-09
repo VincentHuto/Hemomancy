@@ -2,13 +2,13 @@ package com.vincenthuto.hemomancy.manipulation.quick;
 
 import java.util.Random;
 
-import com.hutoslib.client.particle.factory.GlowParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

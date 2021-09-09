@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.block;
 
 import java.util.stream.Stream;
 
-import com.hutoslib.common.container.InventoryHelper;
-import com.hutoslib.common.network.VanillaPacketDispatcher;
 import com.vincenthuto.hemomancy.tile.BlockEntityMorphlingIncubator;
+import com.vincenthuto.hutoslib.common.block.InventoryHelper;
+import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

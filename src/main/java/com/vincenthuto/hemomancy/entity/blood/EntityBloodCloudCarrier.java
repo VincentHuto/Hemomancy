@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.entity.blood;
 
 import javax.annotation.Nonnull;
 
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.math.Vector3;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;

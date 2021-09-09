@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
 import com.vincenthuto.hemomancy.event.RuneBinderEvents;
+import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
@@ -207,6 +208,8 @@ public class Hemomancy {
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
+		HemoLib hemo = new HemoLib();
+		hemo.registerTome();
 		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
 		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
 		// GuideBookLib.registerPages();

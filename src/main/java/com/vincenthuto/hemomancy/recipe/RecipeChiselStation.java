@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.hutoslib.common.recipe.IModRecipe;
 import com.vincenthuto.hemomancy.gui.mindrunes.GuiChiselStation;
+import com.vincenthuto.hutoslib.common.recipe.IModRecipe;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

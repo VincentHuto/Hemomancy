@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.particle;
 
 import java.util.Random;
 
-import com.hutoslib.client.ClientUtils;
-import com.hutoslib.client.particle.HutosLibRenderTypeInit;
+import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HutosLibRenderTypeInit;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.hutoslib.client.screen.GuiButtonTextured;
-import com.hutoslib.client.screen.GuiUtils;
-import com.hutoslib.common.item.ItemKnapper;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.ContainerChiselStation;
@@ -16,9 +14,13 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
+import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
+import com.vincenthuto.hutoslib.client.screen.GuiUtils;
+import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -83,7 +85,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 			// GlStateManager._translatef(-80, 0, 10);
 			for (int i = 0; i < 64; i++) {
 
-				if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+				if (((GuiButtonTextured) renderables.get(i)).isFocused()) {
 					renderTooltip(matrixStack, new TextComponent("Rune:" + i), mouseX, mouseY);
 				}
 			}
@@ -114,7 +116,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 							renderables.add(runePatternButtonArray[i][j] = new GuiButtonTextured(GUI_Chisel, incPattern,
 									left + guiWidth - (guiWidth + 80 - (i * 8)), top + guiHeight - (160 - (j * 8)), 8,
 									8, 176, 0, runePattern.getRecipe().getActivatedRunes().contains(incPattern - 100),
-									null, (press) -> {
+									(press) -> {
 									}));
 							incPattern++;
 						}
@@ -192,13 +194,16 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
 		// GlStateManager._color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.renderBackground(matrixStack);
-		Minecraft.getInstance().getTextureManager().bindForSetup(GUI_Chisel);
-		GuiUtils.drawScaledTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 0f);
+
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, GUI_Chisel);
+
+		this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
 	}
 
@@ -213,7 +218,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 			for (int j = 0; j < runeButtonArray.length; j++) {
 				this.addRenderableWidget(runeButtonArray[i][j] = new GuiButtonTextured(GUI_Chisel, inc,
 						left + guiWidth - (guiWidth - 50 - (i * 8)), top + guiHeight - (160 - (j * 8)), 8, 8, 176, 0,
-						false, null, (press) -> {
+						false, (press) -> {
 							if (press instanceof GuiButtonTextured) {
 								GuiButtonTextured button = (GuiButtonTextured) press;
 								if (button.getId() <= 64) {
@@ -242,7 +247,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 			}
 		}
 		this.addRenderableWidget(clearButton = new GuiButtonTextured(GUI_Chisel, CLEARBUTTONID,
-				left + guiWidth - (guiWidth - 120), top + guiHeight - (170), 16, 16, 176, 16, null, (press) -> {
+				left + guiWidth - (guiWidth - 120), top + guiHeight - (170), 16, 16, 176, 16, (press) -> {
 					// PacketHandler.INSTANCE.sendToServer(new PacketChiselCraftingEvent());
 					for (int i = 0; i < 64; i++) {
 						if (renderables.get(i) instanceof GuiButtonTextured) {
@@ -256,7 +261,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 					}
 				}));
 		this.addRenderableWidget(chiselButton = new GuiButtonTextured(GUI_Chisel, CHISELBUTTONID,
-				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, null, (press) -> {
+				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, (press) -> {
 					if (te.chestContents.get(3).getItem() != Items.AIR) {
 						PacketHandler.CHANNELMAIN.sendToServer(new PacketChiselCraftingEvent());
 						for (

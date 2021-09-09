@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.particle.factory;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.particle.ParticleBloodClaw;
 import com.vincenthuto.hemomancy.particle.data.BloodClawData;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;

@@ -82,8 +82,8 @@ repositories {
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.43'
-    implementation fg.deobf("curse.maven:hutoslib-478643:3437127")
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.58'
+    implementation fg.deobf("curse.maven:hutoslib-478643:3454499")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
 

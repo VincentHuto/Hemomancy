@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.network;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.binder.PacketBinderTogglePickup;
 import com.vincenthuto.hemomancy.network.binder.PacketOpenRuneBinder;
@@ -33,6 +32,7 @@ import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.data;
 
-import com.hutoslib.client.TextUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
+import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.effect.MobEffect;

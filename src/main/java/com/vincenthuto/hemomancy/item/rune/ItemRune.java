@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.item.rune;
 
 import java.util.List;
 
-import com.hutoslib.client.TextUtils;
 import com.vincenthuto.hemomancy.capa.rune.IRune;
 import com.vincenthuto.hemomancy.capa.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
@@ -10,6 +9,7 @@ import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
+import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

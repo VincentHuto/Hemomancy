@@ -4,11 +4,11 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Map;
 
-import com.hutoslib.client.TextUtils;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
+import com.vincenthuto.hutoslib.client.TextUtils;
 
 //GlStateManager;
 

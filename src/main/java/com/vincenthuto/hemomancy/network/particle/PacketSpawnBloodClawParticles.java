@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.network.particle;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hemomancy.particle.factory.BloodClawParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;

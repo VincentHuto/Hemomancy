@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.gui.mindrunes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hutoslib.client.screen.GuiButtonTextured;
-import com.hutoslib.client.screen.GuiUtils;
 //GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -13,6 +11,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.itemhandler.RuneBinderItemHandler;
+import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
+import com.vincenthuto.hutoslib.client.screen.GuiUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

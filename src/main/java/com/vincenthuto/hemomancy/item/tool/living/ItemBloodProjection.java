@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.hutoslib.client.ClientUtils;
 import com.vincenthuto.hemomancy.ClientProxy;
 import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
@@ -15,6 +14,7 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.render.item.RenderItemCellHand;
+import com.vincenthuto.hutoslib.client.ClientUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

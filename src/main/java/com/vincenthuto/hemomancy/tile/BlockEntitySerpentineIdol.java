@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.tile;
 
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.math.Vector3;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

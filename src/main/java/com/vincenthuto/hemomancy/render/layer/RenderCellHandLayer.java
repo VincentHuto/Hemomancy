@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import com.hutoslib.client.ClientUtils;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
-import com.hutoslib.math.Vector3;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
@@ -21,6 +17,10 @@ import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
 import com.vincenthuto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.util.EntityParticleUtils;
+import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ArmedModel;
@@ -60,7 +60,7 @@ public class RenderCellHandLayer<T extends LivingEntity, M extends EntityModel<T
 	public final ResourceLocation skinTexture = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/item/hardened_skin.png");
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Override
 	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, T entitylivingbaseIn,
 			float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,

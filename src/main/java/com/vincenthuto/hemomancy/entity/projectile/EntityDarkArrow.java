@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.entity.projectile;
 
 import javax.annotation.Nonnull;
 
-import com.hutoslib.client.particle.factory.DarkGlowParticleFactory;
-import com.hutoslib.client.particle.util.ParticleColor;
-import com.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.init.EntityInit;
+import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
