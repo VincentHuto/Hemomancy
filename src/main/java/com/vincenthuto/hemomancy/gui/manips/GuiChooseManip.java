@@ -42,7 +42,6 @@ public class GuiChooseManip extends Screen {
 
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		// this.renderBackground(matrixStack);
 		for (int i = 0; i < renderables.size(); i++) {
 			renderables.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)

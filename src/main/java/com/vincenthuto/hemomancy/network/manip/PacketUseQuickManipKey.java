@@ -15,7 +15,6 @@ import com.vincenthuto.hemomancy.manipulation.quick.ManipConjuration;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
@@ -61,15 +60,15 @@ public class PacketUseQuickManipKey {
 						if (selectedManip != null) {
 							if (selectedManip.getType() == EnumManipulationType.QUICK
 									|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
-								if (selectedManip instanceof ManipConjuration) {
-									ManipConjuration conjure = (ManipConjuration) selectedManip;
+								if (selectedManip instanceof ManipConjuration conjure) {
 									if (!mainStack.isEmpty()) {
-										if (mainStack.getItem() instanceof IDispellable) {
+										if (mainStack.getItem()instanceof IDispellable dispel) {
 											mainStack.shrink(1);
+											float bloodCost = dispel.getBaseCost();
 											float bloodRefund = Math
 													.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamageValue());
-											if (bloodRefund > 900) {
-												bloodRefund = 900;
+											if (bloodRefund > bloodCost * 0.9) {
+												bloodRefund = bloodCost * 0.9f;
 											}
 
 											volume.addBloodVolume(bloodRefund);
@@ -83,11 +82,11 @@ public class PacketUseQuickManipKey {
 													true);
 										}
 									} else {
-										selectedManip.performAction(player, (ServerLevel) player.level, mainStack,
+										selectedManip.performAction(player, player.level, mainStack,
 												player.blockPosition());
 									}
 								} else {
-									selectedManip.performAction(player, (ServerLevel) player.level, mainStack,
+									selectedManip.performAction(player, player.level, mainStack,
 											player.blockPosition());
 								}
 							} else {

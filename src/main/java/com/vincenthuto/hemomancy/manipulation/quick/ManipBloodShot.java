@@ -17,9 +17,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class ManipBloodShot extends BloodManipulation {
 
-	public ManipBloodShot(String name, double cost, double alignLevel, EnumManipulationType type,
+	public ManipBloodShot(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class ManipBloodShot extends BloodManipulation {
 		Vector3f vector3f = new Vector3f(vector3d);
 		vector3f.transform(quaternion);
 		EntityBloodShot shot = new EntityBloodShot(world, player);
-		shot.shoot((double) vector3f.x(), (double) vector3f.y(), (double) vector3f.z(), 4.5F, 1.0f);
+		shot.shoot(vector3f.x(), vector3f.y(), vector3f.z(), 4.5F, 1.0f);
 		world.addFreshEntity(shot);
 	}
 

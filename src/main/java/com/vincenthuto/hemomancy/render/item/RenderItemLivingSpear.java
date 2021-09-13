@@ -56,7 +56,7 @@ public class RenderItemLivingSpear extends BlockEntityWithoutLevelRenderer {
 			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
 			InteractionHand activeHand = player.getUsedItemHand();
 			ms.scale(0.65f, 0.65f, 0.65f);
-			ms.translate(-0.675, -0.5, 0.25);
+			ms.translate(-0.675, -0, 0.25);
 			if (p_239207_2_ == ItemTransforms.TransformType.GUI) {
 				ms.scale(0.75f, 0.75f, 0.75f);
 			}
@@ -71,7 +71,7 @@ public class RenderItemLivingSpear extends BlockEntityWithoutLevelRenderer {
 				if (activeHand == InteractionHand.MAIN_HAND) {
 					if (p_239207_2_ == ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
 						ms.mulPose(new Quaternion(Vector3f.XP, 180, true));
-						ms.translate(0, 0 - .55, 0.);
+						ms.translate(0,1, -1);
 
 					}
 					if (p_239207_2_ == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {

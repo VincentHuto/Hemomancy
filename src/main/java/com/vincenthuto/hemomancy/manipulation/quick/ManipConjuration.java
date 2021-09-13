@@ -18,9 +18,9 @@ public class ManipConjuration extends BloodManipulation {
 
 	RegistryObject<Item> item;
 
-	public ManipConjuration(String name, RegistryObject<Item> item, double cost, double alignLevel,
+	public ManipConjuration(String name, RegistryObject<Item> item, double cost, double alignLevel,double xpCost,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, EnumManipulationType.QUICK, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, EnumManipulationType.QUICK, rank, tendency, section);
 		this.item = item;
 	}
 

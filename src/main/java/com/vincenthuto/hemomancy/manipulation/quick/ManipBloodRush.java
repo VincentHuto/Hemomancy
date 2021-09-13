@@ -15,9 +15,9 @@ import net.minecraft.world.level.Level;
 
 public class ManipBloodRush extends BloodManipulation {
 
-	public ManipBloodRush(String name, double cost, double alignLevel, EnumManipulationType type,
+	public ManipBloodRush(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override

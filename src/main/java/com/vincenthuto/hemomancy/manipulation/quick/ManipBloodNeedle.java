@@ -16,9 +16,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class ManipBloodNeedle extends BloodManipulation {
 
-	public ManipBloodNeedle(String name, double cost, double alignLevel, EnumManipulationType type,
+	public ManipBloodNeedle(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class ManipBloodNeedle extends BloodManipulation {
 		EntityBloodNeedle[] needles = new EntityBloodNeedle[randInt];
 		for (int i = 0; i < needles.length; i++) {
 			needles[i] = new EntityBloodNeedle(world, player);
-			needles[i].shoot((double) vector3f.x(), (double) vector3f.y(), (double) vector3f.z(),
+			needles[i].shoot(vector3f.x(), vector3f.y(), vector3f.z(),
 					world.random.nextInt(5) + 4, world.random.nextInt(20) - world.random.nextInt(20));
 			world.addFreshEntity(needles[i]);
 		}

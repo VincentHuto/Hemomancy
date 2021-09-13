@@ -15,17 +15,28 @@ import net.minecraft.world.item.Items;
 public class HemoLib extends TomeLib {
 
 	public static List<TomeChapter> chapters = new ArrayList<TomeChapter>();;
-	public static List<GuiGuidePage> bloodPages = new ArrayList<GuiGuidePage>();
+	public static List<GuiGuidePage> introPages = new ArrayList<GuiGuidePage>();
+	public static List<GuiGuidePage> vasuclarPages = new ArrayList<GuiGuidePage>();
+	public static List<GuiGuidePage> tendencyPages = new ArrayList<GuiGuidePage>();
 	public static List<GuiGuidePage> manipPages = new ArrayList<GuiGuidePage>();
-	public static TomeChapter bloodChapter;
-	public static TomeChapter manipChapter;
+	public static TomeChapter introChapter, vasuclarChapter, tendencyChapter, manipChapter;
 
 	@Override
 	public void registerTome() {
-		bloodPages.add(new HemoGuideTOC("Blood"));
-		bloodPages.add(new HemoGuidePage(1, "Blood"));
 
-		bloodPages.add(new HemoGuidePage(2, "Blood", "efuwijjjjjjjjjfejiufhewiufhewuifhweuifhewif"));
+		introPages.add(new HemoGuideTOC("Intro"));
+		introPages.add(new HemoGuidePage(1, "Intro", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
+		introPages.add(new HemoGuidePage(2, "Intro", "Intro", "Getting to know yourself",
+				"ejfiuoejhwiofehjwiofhnjewifnhjuew", new ItemStack(Items.BOOK)));
+
+		vasuclarPages.add(new HemoGuideTOC("Vascularity"));
+		vasuclarPages.add(new HemoGuidePage(1, "Vascularity"));
+		vasuclarPages.add(new HemoGuidePage(2, "Vascularity", "efuwijjjjjjjjjfejiufhewiufhewuifhweuifhewif"));
+
+		tendencyPages.add(new HemoGuideTOC("Tendency"));
+		tendencyPages.add(new HemoGuidePage(1, "Tendency", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
+		tendencyPages.add(new HemoGuidePage(2, "Tendency", "Manips", "Control", "ejfiuoejhwiofehjwiofhnjewifnhjuew",
+				new ItemStack(Items.PUMPKIN)));
 
 		manipPages.add(new HemoGuideTOC("Manips"));
 		manipPages.add(new HemoGuidePage(1, "Manips", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
@@ -36,9 +47,11 @@ public class HemoLib extends TomeLib {
 
 	@Override
 	public void registerChapters() {
-		bloodChapter = new TomeChapter("Blood", new HemoGuideTOC("Blood"), bloodPages);
+		introChapter = new TomeChapter("Intro", new HemoGuideTOC("Intro"), introPages);
+		vasuclarChapter = new TomeChapter("Vascularity", new HemoGuideTOC("Vascularity"), vasuclarPages);
+		tendencyChapter = new TomeChapter("Tendency", new HemoGuideTOC("Tendency"), tendencyPages);
 		manipChapter = new TomeChapter("Manips", new HemoGuideTOC("Manips"), manipPages);
-		Collections.addAll(chapters, bloodChapter, manipChapter);
+		Collections.addAll(chapters, introChapter, vasuclarChapter, tendencyChapter, manipChapter);
 	}
 
 	@Override

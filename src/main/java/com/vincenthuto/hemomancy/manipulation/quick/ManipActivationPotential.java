@@ -11,7 +11,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HutosLibPacketHandler;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,9 +21,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class ManipActivationPotential extends BloodManipulation {
 
-	public ManipActivationPotential(String name, double cost, double alignLevel, EnumManipulationType type,
+	public ManipActivationPotential(String name, double cost, double alignLevel,double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override
@@ -36,11 +35,11 @@ public class ManipActivationPotential extends BloodManipulation {
 					LivingEntity target = (LivingEntity) targets.get(i);
 					Vec3 translation = new Vec3(0, 1, 0);
 					Vec3 speedVec = new Vec3(target.blockPosition().getX(),
-							(float) target.blockPosition().getY() + target.getBbHeight() / 2.0f,
+							target.blockPosition().getY() + target.getBbHeight() / 2.0f,
 							target.blockPosition().getZ());
 					HutosLibPacketHandler.sendLightningSpawn(player.position().add(translation), speedVec, 64.0f,
-							(ResourceKey<Level>) player.level.dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
-					target.hurt(DamageSource.playerAttack((Player) player), 5.0f);
+							player.level.dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
+					target.hurt(DamageSource.playerAttack(player), 5.0f);
 				}
 			}
 		}

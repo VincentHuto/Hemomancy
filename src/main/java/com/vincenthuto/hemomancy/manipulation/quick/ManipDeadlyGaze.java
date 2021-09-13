@@ -28,9 +28,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class ManipDeadlyGaze extends BloodManipulation {
 
-	public ManipDeadlyGaze(String name, double cost, double alignLevel, EnumManipulationType type,
+	public ManipDeadlyGaze(String name, double cost, double alignLevel, double xpCost,EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
-		super(name, cost, alignLevel, type, rank, tendency, section);
+		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
 	@Override
