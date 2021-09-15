@@ -3,12 +3,12 @@ package com.vincenthuto.hemomancy.gui.manips;
 import java.awt.Point;
 import java.util.List;
 
-//GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
@@ -34,7 +34,6 @@ public class GuiChooseManip extends Screen {
 	Player player;
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook_hidden.png");
 
-	@OnlyIn(Dist.CLIENT)
 	public GuiChooseManip(Player clientPlayer) {
 		super(titleComponent);
 		this.player = clientPlayer;
@@ -46,18 +45,21 @@ public class GuiChooseManip extends Screen {
 			renderables.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
-			List<BloodManipulation> known = manips.getKnownManips();
+			List<BloodManipulation> known = manips.getManipList();
+			List<ManipLevel> level = manips.getLevelList();
+
 			for (int j = 0; j < known.size(); j++) {
 				if (i == j) {
+					//Hovered
 					int xOff = font.width(known.get(j).getProperName());
 					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
-						font.drawShadow(matrixStack, known.get(j).getProperName(),
+						font.drawShadow(matrixStack, known.get(j).getProperName()+ " " + level.get(j).getCurrentLevel(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 					} else {
-						font.drawShadow(matrixStack, known.get(j).getProperName(),
+						font.drawShadow(matrixStack, known.get(j).getProperName()+ " " + level.get(j).getCurrentLevel(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
 
@@ -74,7 +76,7 @@ public class GuiChooseManip extends Screen {
 		IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
 		BloodManipulation selected = manips.getSelectedManip();
-		List<BloodManipulation> known = manips.getKnownManips();
+		List<BloodManipulation> known = manips.getManipList();
 		double angleBetweenEach = 360.0 / known.size();
 		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 - 48, mc.getWindow().getGuiScaledHeight() / 2),
 				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);

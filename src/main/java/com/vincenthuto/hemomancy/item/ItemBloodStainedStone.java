@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.item;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.gui.manips.GuiChooseManip;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 
@@ -45,7 +46,7 @@ public class ItemBloodStainedStone extends Item {
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
 				BloodManipulation selected = manips.getSelectedManip();
-				List<BloodManipulation> known = manips.getKnownManips();
+				LinkedHashMap<BloodManipulation, ManipLevel> known = manips.getKnownManips();
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketKnownManipulationServer(known, selected));
 			} else {

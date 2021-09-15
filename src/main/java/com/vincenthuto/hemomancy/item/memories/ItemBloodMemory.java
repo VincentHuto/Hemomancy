@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.item.memories;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
@@ -7,6 +8,7 @@ import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 import com.vincenthuto.hutoslib.client.TextUtils;
@@ -62,7 +64,7 @@ public class ItemBloodMemory extends Item {
 				.orElseThrow(NullPointerException::new);
 		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
-		List<BloodManipulation> knownList = known.getKnownManips();
+		LinkedHashMap<BloodManipulation, ManipLevel> knownList = known.getKnownManips();
 
 		if (handIn == InteractionHand.MAIN_HAND) {
 			ItemStack stack = playerIn.getItemInHand(handIn);
@@ -70,7 +72,7 @@ public class ItemBloodMemory extends Item {
 				if (volume.isActive()) {
 					if (!playerIn.isShiftKeyDown()) {
 						if (!known.doesListContainName(knownList, getManip())) {
-							knownList.add(getManip());
+							knownList.put(getManip(), ManipLevel.BLANK);
 							PacketHandler.CHANNELKNOWNMANIPS.send(
 									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));

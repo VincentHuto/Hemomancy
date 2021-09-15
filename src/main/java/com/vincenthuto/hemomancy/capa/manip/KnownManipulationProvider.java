@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.capa.manip;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +43,7 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 
 	}
 
-	public static List<BloodManipulation> getPlayerManips(Player player) {
+	public static LinkedHashMap<BloodManipulation, ManipLevel> getPlayerManips(Player player) {
 		return player.getCapability(MANIP_CAPA).orElseThrow(IllegalStateException::new).getKnownManips();
 	}
 
@@ -54,10 +54,12 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 		selectedManip.put("Selected", instance.getSelectedManip().serialize());
 		list.add(selectedManip);
 		for (int i = 0; i < instance.getKnownManips().size(); i++) {
-			BloodManipulation manip = instance.getKnownManips().get(i);
-			if (manip != null) {
+			BloodManipulation manip = instance.getManipList().get(i);
+			ManipLevel level = instance.getLevelList().get(i);
+			if (manip != null && level != null) {
 				CompoundTag entry = new CompoundTag();
 				entry.put("Manip" + i, manip.serialize());
+				entry.put("Level" + i, level.serialize());
 				list.add(entry);
 			}
 		}
@@ -66,8 +68,7 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 
 	public void readNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side,
 			Tag nbt) {
-
-		List<BloodManipulation> list = new ArrayList<BloodManipulation>();
+		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<BloodManipulation, ManipLevel>();
 		if (nbt instanceof ListTag) {
 			ListTag listNbt = (ListTag) nbt;
 			for (int i = 0; i < listNbt.size(); i++) {
@@ -80,14 +81,16 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 					}
 
 					if (parsedNbt.contains("Manip" + (i - 1))) {
-						CompoundTag finalNbt = parsedNbt.getCompound("Manip" + (i - 1));
-						BloodManipulation bloodManip = BloodManipulation.deserialize(finalNbt);
-						list.add(bloodManip);
+						CompoundTag manipNbt = parsedNbt.getCompound("Manip" + (i - 1));
+						CompoundTag levleNbt = parsedNbt.getCompound("Level" + (i - 1));
+						BloodManipulation bloodManip = BloodManipulation.deserialize(manipNbt);
+						ManipLevel level = ManipLevel.deserialize(levleNbt);
+						map.put(bloodManip, level);
 					}
 				}
 			}
 		}
-		instance.setKnownManips(list);
+		instance.setKnownManips(map);
 	}
 
 }

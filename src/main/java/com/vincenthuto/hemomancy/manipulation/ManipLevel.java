@@ -6,6 +6,7 @@ public class ManipLevel {
 
 	int currentLevel;
 	double xp;
+	public static ManipLevel BLANK = new ManipLevel(0, 0);
 
 	public ManipLevel(int currentLevel, double xp) {
 		this.currentLevel = currentLevel;

@@ -37,11 +37,12 @@ public class PacketUpdateCurrentManip {
 				if (!player.level.isClientSide) {
 					IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 							.orElseThrow(NullPointerException::new);
-					List<BloodManipulation> manips = known.getKnownManips();
+					List<BloodManipulation> manips = known.getManipList();
 					if (manips.get(msg.selected) != null) {
 						known.setSelectedManip(manips.get(msg.selected));
-						player.displayClientMessage(new TextComponent(
-								"Selected:" + known.getKnownManips().get(msg.selected).getProperName()), true);
+						player.displayClientMessage(
+								new TextComponent("Selected:" + known.getManipList().get(msg.selected).getProperName()),
+								true);
 					}
 				}
 			});

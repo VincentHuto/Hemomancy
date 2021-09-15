@@ -43,8 +43,7 @@ public class PacketChangeSelectedManip {
 				float pTic = message.parTick;
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(NullPointerException::new);
-				List<BloodManipulation> manips = known.getKnownManips();
-
+				List<BloodManipulation> manips = known.getManipList();
 				if (!manips.contains(known.getSelectedManip())) {
 					if (!manips.isEmpty()) {
 						known.setSelectedManip(manips.get(0));

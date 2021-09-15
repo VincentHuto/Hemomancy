@@ -50,7 +50,7 @@ public class PacketDisplayKnownManips {
 					false);
 			for (int i = 0; i < known.getKnownManips().size(); i++) {
 				player.displayClientMessage(
-						new TextComponent("Manipulation " + i + ": " + known.getKnownManips().get(i).getProperName()),
+						new TextComponent("Manipulation " + i + ": " + known.getManipList().get(i).getProperName()),
 						false);
 			}
 		});

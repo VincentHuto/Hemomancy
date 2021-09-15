@@ -1,9 +1,10 @@
 package com.vincenthuto.hemomancy.capa.manip;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 
@@ -30,7 +31,7 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
-		List<BloodManipulation> known = KnownManipulationProvider.getPlayerManips(player);
+		LinkedHashMap<BloodManipulation, ManipLevel> known = KnownManipulationProvider.getPlayerManips(player);
 		BloodManipulation selected = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
@@ -51,7 +52,7 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
-		List<BloodManipulation> known = KnownManipulationProvider.getPlayerManips(player);
+		LinkedHashMap<BloodManipulation, ManipLevel> known = KnownManipulationProvider.getPlayerManips(player);
 		BloodManipulation selected = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new).getSelectedManip();
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),

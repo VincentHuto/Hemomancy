@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.capa.manip;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
@@ -9,10 +9,9 @@ import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 
 public class KnownManipulations implements IKnownManipulations {
 
-	List<BloodManipulation> knownManips = new ArrayList<BloodManipulation>();
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
-
-	public HashMap<BloodManipulation, ManipLevel> skillsMap = new HashMap<BloodManipulation, ManipLevel>();
+	ManipLevel manipLevel = ManipLevel.BLANK;
+	public LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<BloodManipulation, ManipLevel>();
 
 	@Override
 	public BloodManipulation getSelectedManip() {
@@ -25,23 +24,40 @@ public class KnownManipulations implements IKnownManipulations {
 	}
 
 	@Override
-	public List<BloodManipulation> getKnownManips() {
+	public LinkedHashMap<BloodManipulation, ManipLevel> getKnownManips() {
 		return knownManips;
 	}
 
 	@Override
-	public void setKnownManips(List<BloodManipulation> knownManips) {
+	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips) {
 		this.knownManips = knownManips;
 	}
 
-	public boolean doesMapContainName(HashMap<BloodManipulation, ManipLevel> map, BloodManipulation manipIn) {
-		for (BloodManipulation curr : map.keySet()) {
-			if (manipIn.getName().equals(curr.getName())) {
-				return true;
-			}
-		}
-		return false;
+	@Override
+	public ManipLevel getManipLevel(BloodManipulation manip) {
+		if (doesListContainName(knownManips, manip)) {
+			return knownManips.get(manip);
 
+		}
+
+		return ManipLevel.BLANK;
+
+	}
+
+	@Override
+	public List<BloodManipulation> getManipList() {
+		return new ArrayList<BloodManipulation>(knownManips.keySet());
+
+	}
+
+	@Override
+	public List<ManipLevel> getLevelList() {
+		return new ArrayList<ManipLevel>(knownManips.values());
+	}
+
+	@Override
+	public ManipLevel getSelectedManipLevel() {
+		return knownManips.get(selectedManip);
 	}
 
 	/*
@@ -49,13 +65,14 @@ public class KnownManipulations implements IKnownManipulations {
 	 * them 1:1
 	 */
 	@Override
-	public boolean doesListContainName(List<BloodManipulation> list, BloodManipulation manipIn) {
-		for (BloodManipulation current : list) {
-			if (manipIn.getName().equals(current.getName())) {
+	public boolean doesListContainName(LinkedHashMap<BloodManipulation, ManipLevel> map, BloodManipulation manipIn) {
+		for (BloodManipulation curr : map.keySet()) {
+			if (manipIn.getName().equals(curr.getName())) {
 				return true;
 			}
 		}
 		return false;
+
 	}
 
 }

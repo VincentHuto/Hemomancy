@@ -11,7 +11,6 @@ import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.render.item.RenderItemCellHand;
@@ -69,7 +68,6 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 				.orElseThrow(NullPointerException::new);
 		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
-		List<BloodManipulation> knownList = known.getKnownManips();
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
 				playerIn.startUsingItem(handIn);

@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.item.tool.living;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.ClientProxy;
@@ -10,7 +9,6 @@ import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.render.item.RenderItemCellHand;
@@ -41,7 +39,6 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 		super(prop.stacksTo(1));
 	}
 
-
 	@Override
 	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
 		consumer.accept(new IItemRenderProperties() {
@@ -53,7 +50,6 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 			}
 		});
 	}
-
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
@@ -70,7 +66,6 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 				.orElseThrow(NullPointerException::new);
 		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
-		List<BloodManipulation> knownList = known.getKnownManips();
 		if (volume.isActive()) {
 			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
 				playerIn.startUsingItem(handIn);

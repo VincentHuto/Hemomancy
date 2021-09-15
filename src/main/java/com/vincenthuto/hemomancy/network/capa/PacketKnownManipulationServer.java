@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.network.capa;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,10 +13,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class PacketKnownManipulationServer {
-	private List<BloodManipulation> known = new ArrayList<>();
+	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<BloodManipulation, ManipLevel>();
 	BloodManipulation selected;
 
-	public PacketKnownManipulationServer(List<BloodManipulation> list, BloodManipulation selected) {
+	public PacketKnownManipulationServer(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected) {
 		this.known = list;
 		this.selected = selected;
 	}
@@ -39,8 +39,9 @@ public class PacketKnownManipulationServer {
 		}
 		buf.writeInt(msg.known.size());
 		for (int i = 0; i < msg.known.size(); ++i) {
-			if (msg.known.get(i) != null) {
-				buf.writeNbt(msg.known.get(i).serialize());
+			if (msg.known.keySet().toArray()[i] != null) {
+				buf.writeNbt(((BloodManipulation) msg.known.keySet().toArray()[i]).serialize());
+				buf.writeNbt(((ManipLevel) msg.known.values().toArray()[i]).serialize());
 			}
 		}
 	}
@@ -48,9 +49,10 @@ public class PacketKnownManipulationServer {
 	public static PacketKnownManipulationServer decode(final FriendlyByteBuf buf) {
 		BloodManipulation sel = BloodManipulation.deserialize(buf.readNbt());
 		int count = buf.readInt();
-		List<BloodManipulation> manips = new ArrayList<BloodManipulation>();
+		LinkedHashMap<BloodManipulation, ManipLevel> manips = new LinkedHashMap<BloodManipulation, ManipLevel>();
 		for (int i = 0; i < count; ++i) {
-			manips.add(BloodManipulation.deserialize(buf.readNbt()));
+			manips.put(BloodManipulation.deserialize(buf.readNbt()), ManipLevel.deserialize(buf.readNbt()));
+
 		}
 
 		return new PacketKnownManipulationServer(manips, sel);
