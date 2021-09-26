@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.tile;
 
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +20,7 @@ public class BlockEntityDendriticDistributor extends BlockEntity  {
 		if (level.isClientSide) {
 			int globalPartCount = 128;
 			double time = -level.getGameTime() * 0.21;
-			Vec3[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, time, 0.5);
+			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, time, 0.5);
 			double sizeMod = 2;
 			double sinX = Math.abs(Math.pow(Math.sin(time), 9)) * sizeMod;
 			double sinZ = Math.cos(time) * sizeMod;

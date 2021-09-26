@@ -1,8 +1,13 @@
 package com.vincenthuto.hemomancy;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.capa.vascular.VascularSystemEvents;
@@ -14,6 +19,7 @@ import com.vincenthuto.hemomancy.event.RuneBinderEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
+import com.vincenthuto.hemomancy.init.ConfiguredStructInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -21,8 +27,8 @@ import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
+import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.recipe.ArmBannerCraftRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyBloodGourdDataRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyRuneBinderDataRecipe;
@@ -33,7 +39,9 @@ import com.vincenthuto.hemomancy.recipe.ModRecallerRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.util.ModEntityPredicates;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -41,8 +49,13 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome.BiomeCategory;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -57,9 +70,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -96,6 +108,7 @@ public class Hemomancy {
 		BlockInit.BASEBLOCKS.register(modEventBus);
 		BlockInit.SLABBLOCKS.register(modEventBus);
 		BlockInit.STAIRBLOCKS.register(modEventBus);
+		StructureInit.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
 		BlockInit.COLUMNBLOCKS.register(modEventBus);
 		BlockInit.CROSSBLOCKS.register(modEventBus);
 		BlockInit.OBJBLOCKS.register(modEventBus);
@@ -105,8 +118,6 @@ public class Hemomancy {
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
-		modEventBus.addListener(this::enqueueIMC);
-		modEventBus.addListener(this::processIMC);
 		modEventBus.addListener(this::clientSetup);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.addListener(RuneBinderEvents::pickupEvent);
@@ -197,15 +208,6 @@ public class Hemomancy {
 
 	}
 
-	private void commonSetup(final FMLCommonSetupEvent event) {
-		ModEntityPredicates.init();
-		SkillPointInit.init();
-		ModBloodCraftingRecipes.initPatterns();
-		ModBloodCraftingRecipes.initRecipes();
-		PolypRecipes.initRecipes();
-		PacketHandler.registerChannels();
-	}
-
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
@@ -221,16 +223,63 @@ public class Hemomancy {
 		 */
 	}
 
-	private void enqueueIMC(final InterModEnqueueEvent event) {
-
-	}
-
-	private void processIMC(final InterModProcessEvent event) {
-
-	}
-
 	@SubscribeEvent
 	public void onServerStarting(FMLServerStartingEvent event) {
+	}
+
+	private void commonSetup(final FMLCommonSetupEvent event) {
+		ModEntityPredicates.init();
+		SkillPointInit.init();
+		ModBloodCraftingRecipes.initPatterns();
+		ModBloodCraftingRecipes.initRecipes();
+		PolypRecipes.initRecipes();
+		PacketHandler.registerChannels();
+
+		event.enqueueWork(() -> {
+			StructureInit.setupStructures();
+			ConfiguredStructInit.registerConfiguredStructures();
+		});
+	}
+
+	public void biomeModification(final BiomeLoadingEvent event) {
+		if (event.getCategory() == BiomeCategory.NETHER) {
+			event.getGeneration().getStructures().add(() -> ConfiguredStructInit.configured_blood_temple);
+		}
+	}
+
+	private static Method GETCODEC_METHOD;
+
+	@SuppressWarnings("unchecked")
+	public void addDimensionalSpacing(final WorldEvent.Load event) {
+		if (event.getWorld() instanceof ServerLevel) {
+			ServerLevel serverWorld = (ServerLevel) event.getWorld();
+
+			try {
+				if (GETCODEC_METHOD == null)
+					GETCODEC_METHOD = ObfuscationReflectionHelper.findMethod(ChunkGenerator.class, "func_230347_a_");
+				ResourceLocation cgRL = Registry.CHUNK_GENERATOR
+						.getKey((Codec<? extends ChunkGenerator>) GETCODEC_METHOD
+								.invoke(serverWorld.getChunkSource().generator));
+				if (cgRL != null && cgRL.getNamespace().equals("terraforged"))
+					return;
+			} catch (Exception e) {
+				Hemomancy.LOGGER.error("Was unable to check if " + serverWorld.dimension().location()
+						+ " is using Terraforged's ChunkGenerator.");
+			}
+
+			if (serverWorld.getChunkSource().getGenerator() instanceof FlatLevelSource
+					&& serverWorld.dimension().equals(Level.OVERWORLD)) {
+				return;
+			}
+
+			Map<StructureFeature<?>, StructureFeatureConfiguration> tempMap = new HashMap<>(
+					serverWorld.getChunkSource().generator.getSettings().structureConfig());
+			if (serverWorld.dimension().equals(Level.NETHER)) {
+				tempMap.putIfAbsent(StructureInit.blood_temple.get(),
+						StructureSettings.DEFAULTS.get(StructureInit.blood_temple.get()));
+			}
+			serverWorld.getChunkSource().generator.getSettings().structureConfig = tempMap;
+		}
 	}
 
 	// Combined a few methods into one more generic one
@@ -259,49 +308,6 @@ public class Hemomancy {
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
 		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
-		event.getRegistry().register(new SimpleRecipeSerializer<>(ArmBannerCraftRecipe::new)
-				.setRegistryName(new ResourceLocation(MOD_ID, "arm_banner_craft")));
-
-	}
-
-	// Structure Jazz
-	@SubscribeEvent
-	public static void onRegisterStructures(final RegistryEvent.Register<StructureFeature<?>> event) {
-		// StructureInit.registerStructures(event);
-		// ConfiguredStructureInit.registerConfiguredStructures();
-	}
-
-	public void biomeModification(final BiomeLoadingEvent event) {
-		// Add our structure to all biomes including other modded biomes
-		// You can filter to certain biomes based on stuff like temperature, scale,
-		// precipitation, mod id
-		// event.getGeneration().getStructures().add(() ->
-		// ConfiguredStructureInit.CONFIGURED_RUN_DOWN_HOUSE);
-		// event.getGeneration().getStructures().add(() ->
-		// ConfiguredStructureInit.CONFIGURED_BLOOD_TEMPLE);
-	}
-
-	/**
-	 * Use this for dimension blacklists for your structure.
-	 */
-	public void addDimensionalSpacing(final WorldEvent.Load event) {
-//		if (event.getWorld() instanceof ServerLevel) {
-//			ServerLevel serverLevel = (ServerLevel) event.getWorld();
-//			// Prevent spawning our structure in Vanilla's superflat world
-//			if (serverLevel.getChunkSource().getGenerator() instanceof FlatLevelSource
-//					&& serverLevel.dimension().equals(Level.OVERWORLD)) {
-//				return;
-//			}
-//			Map<StructureFeature<?>, StructureFeatureConfiguration> tempMap = new HashMap<>(
-//					serverLevel.getChunkSource().generator.getSettings().structureConfig());
-////			tempMap.put(StructureInit.RUN_DOWN_HOUSE.get(),
-////					DimensionStructuresSettings.DEFAULTS.get(StructureInit.RUN_DOWN_HOUSE.get()));
-//			if (serverLevel.dimension().equals(Level.NETHER)) {
-////				tempMap.put(StructureInit.blood_temple.get(),
-////						StructureSettings.DEFAULTS.get(StructureInit.blood_temple.get()));
-//			}
-//			serverLevel.getChunkSource().generator.getSettings().structureConfig().putAll(tempMap);
-//		}
 	}
 
 }

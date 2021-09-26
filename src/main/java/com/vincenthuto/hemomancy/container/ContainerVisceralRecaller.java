@@ -92,6 +92,7 @@ public class ContainerVisceralRecaller extends AbstractContainerMenu {
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slotId, dragType, clickTypeIn, player);
 		te.sendUpdates();
 
 	}

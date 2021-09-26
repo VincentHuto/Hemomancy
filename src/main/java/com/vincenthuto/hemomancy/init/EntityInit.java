@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBolt;
+import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodCloud;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodCloudCarrier;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodNeedle;
@@ -132,6 +133,13 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityBloodNeedle>of(EntityBloodNeedle::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_needle").toString()));
+	
+	public static final RegistryObject<EntityType<EntityBloodBullet>> blood_bullet = ENTITY_TYPES.register(
+			"blood_bullet",
+			() -> EntityType.Builder.<EntityBloodBullet>of(EntityBloodBullet::new, MobCategory.MISC).sized(0.5F, 0.5F)
+					.clientTrackingRange(4).setUpdateInterval(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet").toString()));
+	
 
 	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
 			() -> EntityType.Builder.<EntityBloodShot>of(EntityBloodShot::new, MobCategory.MISC).sized(0.5F, 0.5F)

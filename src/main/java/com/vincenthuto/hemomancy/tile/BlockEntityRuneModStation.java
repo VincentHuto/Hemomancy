@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.tile;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -51,14 +51,14 @@ public class BlockEntityRuneModStation extends BlockEntity {
 		double globalTime = cooldown * 0.02;
 		if (level.isClientSide) {
 			int globalPartCount = 128;
-			Vec3[] fibboSphere = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
-			Vec3[] corona = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);
-			Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5,
+			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
+			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);
+			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5,
 					false);
-			Vec3[] earth = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.1);
-			Vec3[] mars = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.08);
+			Vec3[] earth = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.1);
+			Vec3[] mars = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.08);
 
-			Vec3[] randomSwim = ParticleUtils.randomSwimming(globalPartCount, -level.getGameTime() * 0.005, 1, false);
+			Vec3[] randomSwim = HLParticleUtils.randomSwimming(globalPartCount, -level.getGameTime() * 0.005, 1, false);
 
 			for (int i = 0; i < globalPartCount; i++) {
 
@@ -100,20 +100,20 @@ public class BlockEntityRuneModStation extends BlockEntity {
 			if (level.isClientSide) {
 				int partCount = 128;
 				double time = cooldown * 0.02;
-				Vec3[] fibboSphere = ParticleUtils.fibboSphere(partCount, time, Math.tan(time));
-				Vec3[] expandingSphere = ParticleUtils.randomSphere(partCount, time, Math.tan(time * 0.25));
-				Vec3[] randomSphere = ParticleUtils.randomSphere(partCount, time, 1);
-				Vec3[] randomSwimming = ParticleUtils.randomSwimming(partCount, time, 1, false);
-				Vec3[] squashStretch = ParticleUtils.squashAndStretch(partCount, time, 1, false);
-				Vec3[] funMovement = ParticleUtils.tangentFunnel(partCount, time, 1, false);
-				Vec3[] inversedSphere = ParticleUtils.inversedSphere(partCount, time, 1, false);
-				Vec3[] lotusFountain = ParticleUtils.lotusFountain(partCount, time, 1, false);
-				Vec3[] lotusFountainFlip = ParticleUtils.lotusFountainFlip(partCount, time, 1, false);
-				Vec3[] cosmicBirthFlip = ParticleUtils.cosmicBirthFlip(partCount, time, 1, false);
-				Vec3[] bloomingFlower = ParticleUtils.bloomingFlower(partCount, time, 1, false);
-				Vec3[] bloomingFlowerFlip = ParticleUtils.bloomingFlowerFlip(partCount, time, 1, false);
-				Vec3[] cosmicBirthInverse = ParticleUtils.cosmicBirthInverse(partCount, time, 1, false);
-				Vec3[] cosmicBirthInverseFlip = ParticleUtils.cosmicBirthInverseFlip(partCount, time, 1, false);
+				Vec3[] fibboSphere = HLParticleUtils.fibboSphere(partCount, time, Math.tan(time));
+				Vec3[] expandingSphere = HLParticleUtils.randomSphere(partCount, time, Math.tan(time * 0.25));
+				Vec3[] randomSphere = HLParticleUtils.randomSphere(partCount, time, 1);
+				Vec3[] randomSwimming = HLParticleUtils.randomSwimming(partCount, time, 1, false);
+				Vec3[] squashStretch = HLParticleUtils.squashAndStretch(partCount, time, 1, false);
+				Vec3[] funMovement = HLParticleUtils.tangentFunnel(partCount, time, 1, false);
+				Vec3[] inversedSphere = HLParticleUtils.inversedSphere(partCount, time, 1, false);
+				Vec3[] lotusFountain = HLParticleUtils.lotusFountain(partCount, time, 1, false);
+				Vec3[] lotusFountainFlip = HLParticleUtils.lotusFountainFlip(partCount, time, 1, false);
+				Vec3[] cosmicBirthFlip = HLParticleUtils.cosmicBirthFlip(partCount, time, 1, false);
+				Vec3[] bloomingFlower = HLParticleUtils.bloomingFlower(partCount, time, 1, false);
+				Vec3[] bloomingFlowerFlip = HLParticleUtils.bloomingFlowerFlip(partCount, time, 1, false);
+				Vec3[] cosmicBirthInverse = HLParticleUtils.cosmicBirthInverse(partCount, time, 1, false);
+				Vec3[] cosmicBirthInverseFlip = HLParticleUtils.cosmicBirthInverseFlip(partCount, time, 1, false);
 
 				Vec3[] selectedParticle = fibboSphere;
 				for (int i = 0; i < partCount; i++) {

@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.particles.ParticleOptions;
@@ -62,9 +62,9 @@ public class EntityBloodCloudCarrier extends AbstractHurtingProjectile {
 	 * Called to update the entity's position/logic.
 	 */
 	int globalPartCount = 20;
-	Vec3[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
-	Vec3[] corona = ParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
-	Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.016, 0.15, false);
+	Vec3[] fibboSphere = HLParticleUtils.fibboSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
+	Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.15);
+	Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.016, 0.15, false);
 
 	@Override
 	public void tick() {

@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
-import com.vincenthuto.hutoslib.client.screen.GuiUtils;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -60,7 +60,7 @@ public class GuiRuneBinderViewer extends Screen {
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.setShaderTexture(0, texture);
-			GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+			HLGuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
 		}
 		// GlStateManager._popMatrix();

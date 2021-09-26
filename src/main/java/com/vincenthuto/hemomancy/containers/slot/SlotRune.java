@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.containers.slot;
 import com.vincenthuto.hemomancy.capa.rune.IRune;
 import com.vincenthuto.hemomancy.capa.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.rune.RunesCapabilities;
-import com.vincenthuto.hemomancy.item.armor.ItemArmBanner;
 import com.vincenthuto.hemomancy.item.rune.ItemContractRune;
 import com.vincenthuto.hemomancy.item.rune.ItemVasculariumCharm;
 
@@ -24,7 +23,7 @@ public class SlotRune extends SlotItemHandler {
 	@Override
 	public boolean mayPlace(ItemStack stack) {
 		if (stack.getItem() instanceof IRune && !(stack.getItem() instanceof ItemContractRune)
-				&& !(stack.getItem() instanceof ItemVasculariumCharm) && !(stack.getItem() instanceof ItemArmBanner)) {
+				&& !(stack.getItem() instanceof ItemVasculariumCharm)) {
 			return true;
 		} else {
 			return false;

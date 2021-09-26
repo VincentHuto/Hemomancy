@@ -47,7 +47,7 @@ public class BloodVolumeHud extends Screen {
 	/**
 	 * Draws a textured rectangle at the current z-value. Ported From past Versions
 	 */
-	public static void drawTexturedModalRect(float x, float y, float textureX, float textureY, float width,
+	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
 			float height) {
 		/*
 		 * float f = 0.00390625F; float f1 = 0.00390625F;
@@ -108,7 +108,7 @@ public class BloodVolumeHud extends Screen {
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 					RenderSystem.setShaderTexture(0, fill_texture);
 					matrix.mulPose(new Quaternion(Vector3f.ZP, 45, true));
-					drawTexturedModalRect(-12, 113, 23 + textureUShift, textureUShift, 6,
+					drawFlippedTexturedModalRect(-12, 113, 23 + textureUShift, textureUShift, 6,
 							8 + heightShift - newBarWidth);
 					matrix.popPose();
 	

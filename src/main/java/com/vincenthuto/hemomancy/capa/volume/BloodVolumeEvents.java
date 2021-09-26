@@ -23,9 +23,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
@@ -33,7 +33,8 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+			BloodVolumeProvider provider = new BloodVolumeProvider();
+			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), provider);
 		}
 	}
 
@@ -41,7 +42,6 @@ public class BloodVolumeEvents {
 	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
 		if (event.getObject().getItem() instanceof ItemBloodGourd) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
-
 		}
 	}
 
@@ -49,7 +49,6 @@ public class BloodVolumeEvents {
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
 		if (event.getObject() instanceof BlockEntityVisceralRecaller) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
-
 		}
 	}
 
@@ -60,10 +59,8 @@ public class BloodVolumeEvents {
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketBloodVolumeServer(volume));
-
 		player.displayClientMessage(
 				new TextComponent("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
-
 		player.displayClientMessage(
 				new TextComponent(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
@@ -84,32 +81,38 @@ public class BloodVolumeEvents {
 	}
 
 	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		IBloodVolume bloodVolumeOld = event.getOriginal().getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		IBloodVolume bloodVolumeNew = event.getEntity().getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		if (bloodVolumeOld.getBloodVolume() > 20) {
-			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume() - 20f);
-			((Player) event.getEntity()).displayClientMessage(
-					new TextComponent(ChatFormatting.ITALIC + "Upon death, your blood volume has decreased to: "
-							+ ChatFormatting.RED + ChatFormatting.ITALIC + bloodVolumeNew.getBloodVolume() + "ml"),
-					false);
-		} else {
-			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
-
+	public static void playerRespawn(PlayerRespawnEvent event) {
+		Player playernew = event.getPlayer();
+		if (!playernew.level.isClientSide) {
+			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playernew),
+					new PacketBloodVolumeServer(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
+							bloodVolumeNew.getBloodVolume()));
 		}
 	}
 
 	@SubscribeEvent
-	public static void regainBloodVolume(PlayerTickEvent e) {
+	public static void playerDeath(PlayerEvent.Clone event) {
+		if (event.isWasDeath()) {
+			Player peorig = event.getOriginal();
+			peorig.revive();
+			IBloodVolume bloodVolumeOld = peorig.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(IllegalStateException::new);
 
-		/*
-		 * IBloodVolume bloodVolume =
-		 * e.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-		 * .orElseThrow(NullPointerException::new); if (bloodVolume.getBloodVolume() <
-		 * 5000) { bloodVolume.addBloodVolume(0.5f); }
-		 */
+			Player playernew = event.getPlayer();
+			peorig.reviveCaps();
+
+			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodVolumeNew.setActive(bloodVolumeOld.isActive());
+			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
+			bloodVolumeNew.setMaxBloodVolume(bloodVolumeOld.getMaxBloodVolume());
+			System.out.println(bloodVolumeNew);
+
+			peorig.invalidateCaps();
+		}
+
 	}
 
 	private static Font fontRenderer;
@@ -133,6 +136,8 @@ public class BloodVolumeEvents {
 					if (volume.getBloodVolume() < 250) {
 						RenderSystem.setShader(GameRenderer::getPositionTexShader);
 						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+						float time = (float) Math.sin(player.level.getGameTime()*0.05f);
+						RenderSystem.setShaderColor(1, 1, 1,0.5f+time);
 						RenderSystem._setShaderTexture(0,
 								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 						event.getMatrixStack().pushPose();

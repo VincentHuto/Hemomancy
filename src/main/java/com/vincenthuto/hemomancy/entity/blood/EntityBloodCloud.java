@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,16 +46,16 @@ public class EntityBloodCloud extends EntityBloodConstruct {
 		if (level.isClientSide) {
 			double radius = 0.2;
 			level.addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
-					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
+					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
+					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
 			level.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
-					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
+					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
+					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
 			level.addParticle(BloodCellParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					pos.x + ParticleUtils.inRange(-radius, radius), pos.y + ParticleUtils.inRange(-radius, radius),
-					pos.z + ParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
-			level.addParticle(ParticleTypes.FALLING_LAVA, pos.x + ParticleUtils.inRange(-radius, radius),
-					pos.y + ParticleUtils.inRange(-radius, radius), pos.z + ParticleUtils.inRange(-radius, radius), 0,
+					pos.x + HLParticleUtils.inRange(-radius, radius), pos.y + HLParticleUtils.inRange(-radius, radius),
+					pos.z + HLParticleUtils.inRange(-radius, radius), 0, 0.005, 0);
+			level.addParticle(ParticleTypes.FALLING_LAVA, pos.x + HLParticleUtils.inRange(-radius, radius),
+					pos.y + HLParticleUtils.inRange(-radius, radius), pos.z + HLParticleUtils.inRange(-radius, radius), 0,
 					0.005, 0);
 
 		}

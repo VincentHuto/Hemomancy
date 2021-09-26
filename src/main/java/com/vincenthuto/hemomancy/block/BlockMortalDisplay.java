@@ -6,16 +6,14 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.tile.BlockEntityMortalDisplay;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.common.network.HutosLibPacketHandler;
+import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -42,7 +40,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class BlockMortalDisplay extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -61,15 +58,12 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
-		if (!worldIn.isClientSide) {
 
 			IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
 			worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			if (!volume.isActive()) {
 				volume.setActive(true);
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketBloodVolumeServer(volume));
 				player.displayClientMessage(
 						new TextComponent("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
 
@@ -79,7 +73,7 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 							worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
 							worldIn.random.nextDouble() - worldIn.random.nextDouble());
 					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, worldIn.dimension());
-					HutosLibPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level.dimension(),
+					HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level.dimension(),
 							ParticleColor.RED, 2, 20, 9, 1.2f);
 				}
 
@@ -90,7 +84,7 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 				worldIn.addFreshEntity(drops);
 			}
 
-		}
+		
 
 		return InteractionResult.SUCCESS;
 

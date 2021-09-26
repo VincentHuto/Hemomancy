@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.render.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.capa.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.rune.RunesCapabilities;
-import com.vincenthuto.hemomancy.item.armor.ItemArmBanner;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -51,16 +50,16 @@ public class RenderRunesLayer<T extends Player, M extends PlayerModel<T>> extend
 				stack.getCapability(RunesCapabilities.ITEM_RUNE).ifPresent(rune -> {
 					if (rune instanceof IRenderRunes) {
 						matrix.pushPose();
-						if (!(stack.getItem() instanceof ItemArmBanner)) {
+					//	if (!(stack.getItem() instanceof ItemArmBanner)) {
 							((IRenderRunes) rune).onPlayerRuneRender(matrix, packedLightIn, iRenderTypeBuffer, player,
 									type, partialTicks);
-						} else {
-							if (type != IRenderRunes.RenderType.HEAD) {
-								ItemArmBanner arm = (ItemArmBanner) stack.getItem();
-								arm.onPlayerRuneRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, type,
-										partialTicks);
-							}
-						}
+//						} else {
+//							if (type != IRenderRunes.RenderType.HEAD) {
+//								ItemArmBanner arm = (ItemArmBanner) stack.getItem();
+//								arm.onPlayerRuneRender(matrix, stack, packedLightIn, iRenderTypeBuffer, player, type,
+//										partialTicks);
+//							}
+//						}
 						matrix.popPose();
 
 					}

@@ -28,12 +28,14 @@ public class PacketBloodVolumeServer {
 
 	public static void handle(final PacketBloodVolumeServer msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new).setActive(msg.active);
-			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new).setMaxBloodVolume(msg.max);
-			Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new).setBloodVolume(msg.volume);
+
+			if (Minecraft.getInstance().player != null) {
+				IBloodVolume capa = Minecraft.getInstance().player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(NullPointerException::new);
+				capa.setActive(msg.active);
+				capa.setMaxBloodVolume(msg.max);
+				capa.setBloodVolume(msg.volume);
+			}
 
 		});
 		ctx.get().setPacketHandled(true);

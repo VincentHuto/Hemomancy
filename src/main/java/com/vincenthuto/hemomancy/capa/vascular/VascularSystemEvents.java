@@ -64,11 +64,16 @@ public class VascularSystemEvents {
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
-		IVascularSystem BloodFlowOld = event.getOriginal().getCapability(VascularSystemProvider.VASCULAR_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		IVascularSystem BloodFlowNew = event.getEntity().getCapability(VascularSystemProvider.VASCULAR_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		BloodFlowNew.setVascularSystem(BloodFlowOld.getVascularSystem());
+		Player peorig = event.getOriginal();
+		Player playernew = event.getPlayer();
+		if (event.isWasDeath()) {
+			peorig.reviveCaps();
+			IVascularSystem bloodVolumeNew = playernew.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodVolumeNew.setVascularSystem(peorig.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getVascularSystem());
+			peorig.invalidateCaps();
+		}
 	}
 
 	@SubscribeEvent

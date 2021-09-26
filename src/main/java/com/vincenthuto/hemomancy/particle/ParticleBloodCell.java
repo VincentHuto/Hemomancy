@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.particle;
 
 import java.util.Random;
 
-import com.vincenthuto.hutoslib.client.HutosLibRenderTypeInit;
+import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
@@ -47,7 +47,7 @@ public class ParticleBloodCell extends TextureSheetParticle {
 
 	@Override
 	public ParticleRenderType getRenderType() {
-		return HutosLibRenderTypeInit.DARK_GLOW_RENDER;
+		return HLRenderTypeInit.DARK_GLOW_RENDER;
 	}
 
 	@Override

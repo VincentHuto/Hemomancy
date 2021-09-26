@@ -50,19 +50,28 @@ public class GuiChooseManip extends Screen {
 
 			for (int j = 0; j < known.size(); j++) {
 				if (i == j) {
-					//Hovered
+					// Hovered
 					int xOff = font.width(known.get(j).getProperName());
 					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
-						font.drawShadow(matrixStack, known.get(j).getProperName()+ " " + level.get(j).getCurrentLevel(),
+						font.drawShadow(matrixStack, known.get(j).getProperName(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
+
+						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
+								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).y + 10
+										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+								0xffffff);
 					} else {
-						font.drawShadow(matrixStack, known.get(j).getProperName()+ " " + level.get(j).getCurrentLevel(),
+						font.drawShadow(matrixStack, known.get(j).getProperName(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
 
+						font.drawShadow(matrixStack,  level.get(j).getCurrentLevel() + "",
+								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
 					}
 				}
 			}

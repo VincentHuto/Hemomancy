@@ -114,11 +114,18 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
-		IBloodTendency BloodTendencyOld = event.getOriginal().getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		IBloodTendency BloodTendencyNew = event.getEntity().getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		BloodTendencyNew.setTendency(BloodTendencyOld.getTendency());
+
+		Player peorig = event.getOriginal();
+		Player playernew = event.getPlayer();
+		if (event.isWasDeath()) {
+			peorig.reviveCaps();
+			IBloodTendency bloodTendencyNew = playernew.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodTendencyNew.setTendency(peorig.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getTendency());
+			peorig.invalidateCaps();
+		}
+
 	}
 
 	@SubscribeEvent

@@ -2,12 +2,10 @@ package com.vincenthuto.hemomancy.entity.blood;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
-import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -48,24 +46,28 @@ public class EntityBloodShot extends AbstractArrow {
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 	}
+	
 
+	@SuppressWarnings("unused")
 	@Override
 	public void tick() {
 		super.tick();
-		if (shooter instanceof Player) {
-			Player player = (Player) shooter;
-			IBloodTendency tend = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-					.orElseThrow(NullPointerException::new);
-			ParticleColor color = tend.getAvgBloodColor();
-			ServerLevel sLevel = (ServerLevel) level;
+		if (shooter != null) {
+			if (shooter instanceof Player) {
+				Player player = (Player) shooter;
+//				IBloodTendency tend = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+//						.orElseThrow(NullPointerException::new);
+				ParticleColor color = ParticleColor.BLOOD;
+				ServerLevel sLevel = (ServerLevel) level;
 
-			sLevel.sendParticles(BloodCellParticleFactory.createData(color),
-					getX() + ParticleUtils.inRange(-0.05, 0.05), getY() + ParticleUtils.inRange(-0.05, 0.05),
-					getZ() + ParticleUtils.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
+				sLevel.sendParticles(BloodCellParticleFactory.createData(color),
+						getX() + HLParticleUtils.inRange(-0.05, 0.05), getY() + HLParticleUtils.inRange(-0.05, 0.05),
+						getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
 
-			if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {
-				this.level.broadcastEntityEvent(this, (byte) 0);
-				this.remove(RemovalReason.KILLED);
+				if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {
+					this.level.broadcastEntityEvent(this, (byte) 0);
+					this.remove(RemovalReason.KILLED);
+				}
 			}
 		}
 

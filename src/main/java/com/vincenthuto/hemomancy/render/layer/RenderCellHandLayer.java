@@ -18,8 +18,8 @@ import com.vincenthuto.hemomancy.particle.factory.AbsrobedBloodCellParticleFacto
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.util.EntityParticleUtils;
 import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
@@ -202,9 +202,9 @@ public class RenderCellHandLayer<T extends LivingEntity, M extends EntityModel<T
 
 				}
 			}
-			Vec3[] fibboSphere = ParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-			Vec3[] corona = ParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
-			Vec3[] inversedSphere = ParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
+			Vec3[] fibboSphere = HLParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
+			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
 					false);
 
 			for (int i = 0; i < globalPartCount; i++) {

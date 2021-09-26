@@ -41,12 +41,19 @@ public class KnownManipulationEvents {
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
-		IKnownManipulations bloodVolumeOld = event.getOriginal().getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		IKnownManipulations bloodVolumeNew = event.getEntity().getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		bloodVolumeNew.setKnownManips(bloodVolumeOld.getKnownManips());
-		bloodVolumeNew.setSelectedManip(bloodVolumeOld.getSelectedManip());
+		Player peorig = event.getOriginal();
+		Player playernew = event.getPlayer();
+		if (event.isWasDeath()) {
+			peorig.reviveCaps();
+			IKnownManipulations bloodTendencyNew = playernew.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodTendencyNew.setKnownManips(peorig.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getKnownManips());
+			bloodTendencyNew.setSelectedManip(peorig.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getSelectedManip());
+			peorig.invalidateCaps();
+		}
+
 	}
 
 	@SubscribeEvent

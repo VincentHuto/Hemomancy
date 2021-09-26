@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.network.capa;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
@@ -16,7 +17,13 @@ public class PacketKnownManipulationServer {
 	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<BloodManipulation, ManipLevel>();
 	BloodManipulation selected;
 
-	public PacketKnownManipulationServer(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected) {
+	public PacketKnownManipulationServer(IKnownManipulations known) {
+		this.known = known.getKnownManips();
+		this.selected = known.getSelectedManip();
+	}
+
+	public PacketKnownManipulationServer(LinkedHashMap<BloodManipulation, ManipLevel> list,
+			BloodManipulation selected) {
 		this.known = list;
 		this.selected = selected;
 	}

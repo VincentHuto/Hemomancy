@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicates;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
@@ -95,12 +95,12 @@ public class EntityTrackingPests extends ThrowableProjectile {
 		super.tick();
 		if (level.isClientSide) {
 			level.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
-					getX() + ParticleUtils.inRange(-0.25, 0.25), getY() + ParticleUtils.inRange(-0.25, 0.25),
-					getZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
+					getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.25, 0.25),
+					getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
 			level.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
-					getX() + ParticleUtils.inRange(-0.25, 0.25), getY() + ParticleUtils.inRange(-0.1, 0.1),
-					getZ() + ParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
+					getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+					getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
 
 		}
 		LivingEntity target = getTargetEntity();

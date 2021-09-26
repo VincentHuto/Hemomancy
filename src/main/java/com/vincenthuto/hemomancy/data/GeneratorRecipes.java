@@ -25,9 +25,6 @@ public class GeneratorRecipes extends RecipeProvider {
 	@Override
 	protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 
-		SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemInit.raw_clay_flask.get()),
-				ItemInit.cured_clay_flask.get(), 1f, 200);
-
 		SimpleCookingRecipeBuilder.smelting(Ingredient.of(BlockInit.polished_venous_stone_bricks.get()),
 				BlockInit.cracked_polished_venous_stone_bricks.get(), 1f, 200);
 
@@ -168,9 +165,6 @@ public class GeneratorRecipes extends RecipeProvider {
 		ShapedRecipeBuilder.shaped(ItemInit.hematic_iron_sword.get()).define('R', ItemInit.hematic_iron_scrap.get())
 				.define('N', Items.STICK).pattern("R").pattern("R").pattern("N")
 				.unlockedBy("has_hematic_iron_scrap", has(ItemInit.hematic_iron_scrap.get())).save(consumer);
-
-		ShapedRecipeBuilder.shaped(ItemInit.raw_clay_flask.get()).define('C', Items.CLAY_BALL).pattern(" C ")
-				.pattern("C C").pattern("CCC").unlockedBy("has_clay_ball", has(Items.CLAY_BALL)).save(consumer);
 
 		ShapedRecipeBuilder.shaped(BlockInit.venous_stone_stairs.get(), 4).define('C', BlockInit.venous_stone.get())
 				.pattern("C  ").pattern("CC ").pattern("CCC")

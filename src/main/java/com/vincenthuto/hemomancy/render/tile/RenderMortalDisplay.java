@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.render.tile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
@@ -34,11 +35,12 @@ public class RenderMortalDisplay implements BlockEntityRenderer<BlockEntityMorta
 
 		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
 		matrixStackIn.pushPose();
-		matrixStackIn.translate(0.5D, 1.2D, 0.5D);
+		matrixStackIn.translate(0.5D, 1.75D, 0.5D);
+		matrixStackIn.mulPose(new Quaternion(Vector3f.XN, 180, true));
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 		matrixStackIn.translate(0D, (Math.sin(Math.PI * currentTime / 2 / 32) / 5) + 0.1D, 0D);
 		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) ticks / 2));
-		float scale = (float) Math.abs(Math.cos(currentTime * 0.015f) * 0.25f) + 0.4f;
+		float scale = (float) Math.abs(Math.cos(currentTime * 0.045f) * 0.25f) + 0.4f;
 		matrixStackIn.scale(scale, scale, scale);
 		matrixStackIn.translate(0, -scale * 0.7f - 0.2f +.5, 0);
 		MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource

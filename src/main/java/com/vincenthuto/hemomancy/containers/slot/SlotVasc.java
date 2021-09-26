@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.containers.slot;
 import com.vincenthuto.hemomancy.capa.rune.IRune;
 import com.vincenthuto.hemomancy.capa.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.rune.RunesCapabilities;
-import com.vincenthuto.hemomancy.item.armor.ItemArmBanner;
 import com.vincenthuto.hemomancy.item.rune.ItemVasculariumCharm;
 
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +21,7 @@ public class SlotVasc extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		return stack.getItem() instanceof ItemVasculariumCharm || stack.getItem() instanceof ItemArmBanner;
+		return stack.getItem() instanceof ItemVasculariumCharm;
 	}
 
 	@Override

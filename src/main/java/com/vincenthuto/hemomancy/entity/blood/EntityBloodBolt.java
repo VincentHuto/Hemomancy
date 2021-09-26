@@ -10,8 +10,8 @@ import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
@@ -126,8 +126,8 @@ public class EntityBloodBolt extends AbstractArrow {
 			for (int i = 0; i < 2; i++) {
 				level.addParticle(
 						GlowParticleFactory.createData(new ParticleColor(255 * level.random.nextFloat(), 0, 0)),
-						getX() + ParticleUtils.inRange(-0.1, 0.1), getY() + ParticleUtils.inRange(-0.1, 0.1),
-						getZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
+						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 
 			}
 			if (this.inGround) {

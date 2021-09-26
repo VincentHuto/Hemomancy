@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -61,12 +61,12 @@ public class EntityDarkArrow extends AbstractArrow {
 			ParticleColor color = ParticleColor.BLACK;
 			ServerLevel sLevel = (ServerLevel) level;
 
-			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + ParticleUtils.inRange(-0.05, 0.05),
-					getY() + ParticleUtils.inRange(-0.05, 0.05), getZ() + ParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
+			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
+					getY() + HLParticleUtils.inRange(-0.05, 0.05), getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
 					0.3, 0.005, 0.001d);
 
-			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + ParticleUtils.inRange(-0.05, 0.05),
-					getY() + ParticleUtils.inRange(-0.05, 0.05), getZ() + ParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
+			sLevel.sendParticles(DarkGlowParticleFactory.createData(color), getX() + HLParticleUtils.inRange(-0.05, 0.05),
+					getY() + HLParticleUtils.inRange(-0.05, 0.05), getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.005,
 					-0.3, 0.0005, 0.001d);
 
 			if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {

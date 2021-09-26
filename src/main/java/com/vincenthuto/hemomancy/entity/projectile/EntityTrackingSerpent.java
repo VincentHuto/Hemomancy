@@ -8,8 +8,8 @@ import com.google.common.base.Predicates;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
@@ -136,8 +136,8 @@ public class EntityTrackingSerpent extends ThrowableProjectile {
 			Vector3 motionVec = diffVec.normalize().multiply(evil ? 0.15 : 0.6);
 			setDeltaMovement(motionVec.toVec3());
 			if (time < 10)
-				setDeltaMovement(getDeltaMovement().x() + ParticleUtils.inRange(-0.15, 0.15),
-						Math.abs(getDeltaMovement().y()), getDeltaMovement().z() + ParticleUtils.inRange(-0.15, 0.15));
+				setDeltaMovement(getDeltaMovement().x() + HLParticleUtils.inRange(-0.15, 0.15),
+						Math.abs(getDeltaMovement().y()), getDeltaMovement().z() + HLParticleUtils.inRange(-0.15, 0.15));
 			List<LivingEntity> targetList = level.getEntitiesOfClass(LivingEntity.class,
 					new AABB(getX() - 0.5, getY() - 0.5, getZ() - 0.5, getX() + 0.5, getY() + 0.5, getZ() + 0.5));
 			if (targetList.contains(target)) {

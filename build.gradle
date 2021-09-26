@@ -6,11 +6,15 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+
+
+    
+}
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+
 
 version = '2.0'
 group = 'com.vincenthuto.hemomancy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -51,6 +55,8 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+          property "mixin.env.remapRefMap", "true"
+            property "mixin.env.refMapRemappingFile", "hemomancy/build/createSrgToMcp/output.srg"
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 examplemod {
@@ -82,10 +88,11 @@ repositories {
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.58'
-    implementation fg.deobf("curse.maven:hutoslib-478643:3454499")
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.71'
+    implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
+
 
 }
 
@@ -100,6 +107,8 @@ jar {
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "examplemodsareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+
+
         ])
     }
 }

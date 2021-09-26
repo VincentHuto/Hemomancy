@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.network.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
-import com.vincenthuto.hutoslib.client.screen.GuiUtils;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.client.Minecraft;
@@ -163,16 +163,16 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 		if (te.hasValidRecipe()) {
 			Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
 			if (te.areRunesMatching()) {
-				GuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 96, 16, 16, 10f);
+				HLGuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 96, 16, 16, 10f);
 			} else {
-				GuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 80, 16, 16, 10f);
+				HLGuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 80, 16, 16, 10f);
 			}
 			if (te.getItem(3).getItem() instanceof ItemKnapper) {
 				//// GlStateManager._enableAlphaTest();
-				GuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96, 16, 16, 10f);
+				HLGuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96, 16, 16, 10f);
 			} else {
 				//// GlStateManager._enableAlphaTest();
-				GuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96 - 16, 16, 16, 10f);
+				HLGuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96 - 16, 16, 16, 10f);
 			}
 		}
 

@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBolt;
+import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBullet;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloud;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloudCarrier;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodNeedle;
@@ -80,6 +81,8 @@ public class ClientEventSubscriber {
 		event.registerEntityRenderer(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
 		event.registerEntityRenderer(EntityInit.blood_needle.get(), RenderBloodNeedle::new);
 		event.registerEntityRenderer(EntityInit.blood_shot.get(), RenderBloodShot::new);
+		event.registerEntityRenderer(EntityInit.blood_bullet.get(), RenderBloodBullet::new);
+
 		// event.registerEntityRenderer(EntityInit.dark_arrow.get(),
 		// RenderDarkArrow::new);
 		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), RenderMorphlingPolypItem::new);

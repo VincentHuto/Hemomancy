@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicates;
 import com.vincenthuto.hemomancy.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.core.particles.DustParticleOptions;
@@ -97,8 +97,8 @@ public class EntityBloodOrbTracking extends ThrowableProjectile {
 		super.tick();
 		if (level.isClientSide) {
 			level.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					getX() + ParticleUtils.inRange(-0.1, 0.1), getY() + ParticleUtils.inRange(-0.1, 0.1),
-					getZ() + ParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
+					getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+					getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
 			level.addParticle(ParticleTypes.ASH, this.getX() + (Math.random() - 0.5) * 0.4,
 					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
 			level.addParticle(DustParticleOptions.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,

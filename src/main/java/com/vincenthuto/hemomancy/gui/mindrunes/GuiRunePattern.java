@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
-import com.vincenthuto.hutoslib.client.screen.GuiUtils;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -62,7 +62,7 @@ public class GuiRunePattern extends Screen {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, texture);
-		GuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+		HLGuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
 		for (int i = 0; i < buttonList.size(); i++) {
 			buttonList.get(i).render(matrixStack, 0, 0, 10);

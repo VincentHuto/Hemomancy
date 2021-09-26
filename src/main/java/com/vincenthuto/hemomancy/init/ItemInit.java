@@ -13,12 +13,14 @@ import com.vincenthuto.hemomancy.item.ItemEnzyme;
 import com.vincenthuto.hemomancy.item.ItemRecycledEnzyme;
 import com.vincenthuto.hemomancy.item.ItemTendencyBook;
 import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
-import com.vincenthuto.hemomancy.item.armor.ItemArmBanner;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteChest;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteHelmet;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
+import com.vincenthuto.hemomancy.item.memories.ItemFerventHusk;
 import com.vincenthuto.hemomancy.item.memories.ItemHematicMemory;
+import com.vincenthuto.hemomancy.item.memories.ItemLethianBrew;
+import com.vincenthuto.hemomancy.item.memories.ItemLethianDew;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingChitinite;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingFungal;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingJar;
@@ -46,12 +48,17 @@ import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingCrossbow;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingGrasp;
+import com.vincenthuto.hemomancy.item.tool.living.ItemLivingPistol;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
+import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
+import com.vincenthuto.hutoslib.common.item.ModSpawnEggItem;
 
+import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
@@ -62,7 +69,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
@@ -73,6 +79,7 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -94,21 +101,9 @@ public class ItemInit {
 
 	public static final DamageSource bloodLoss = new DamageSource("bloodloss");
 
-	// Banners and Patterns
-
-	public static final RegistryObject<Item> leather_arm_banner = SPECIALITEMS.register("leather_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), ArmorMaterials.LEATHER));
-	public static final RegistryObject<Item> iron_arm_banner = SPECIALITEMS.register("iron_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), ArmorMaterials.IRON));
-	public static final RegistryObject<Item> gold_arm_banner = SPECIALITEMS.register("gold_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), ArmorMaterials.GOLD));
-	public static final RegistryObject<Item> diamond_arm_banner = SPECIALITEMS.register("diamond_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), ArmorMaterials.DIAMOND));
-	public static final RegistryObject<Item> netherite_arm_banner = SPECIALITEMS.register("netherite_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), ArmorMaterials.NETHERITE));
 	public static final RegistryObject<Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
-			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance),
-					EnumModArmorTiers.CHITINITE));
+			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), EnumModArmorTiers.CHITINITE,
+					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/arm_banner/chitinite_arm_banner.png")));
 
 	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
 			() -> new BannerPatternItem(BannerTypeInit.heart, new Item.Properties().tab(HemomancyItemGroup.instance)));
@@ -148,6 +143,12 @@ public class ItemInit {
 	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
 			() -> new ItemRecycledEnzyme());
 	// Hematic Memories
+	public static final RegistryObject<Item> lethian_dew = BASEITEMS.register("lethian_dew",
+			() -> new ItemLethianDew(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> lethian_brew = BASEITEMS.register("lethian_brew",
+			() -> new ItemLethianBrew(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> fervent_husk = BASEITEMS.register("fervent_husk",
+			() -> new ItemFerventHusk(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
 			() -> new ItemHematicMemory(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
@@ -220,6 +221,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
 			() -> new ItemLivingBaghnakh(25f, 1, EnumModToolTiers.LIVING,
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> living_pistol = SPECIALITEMS.register("living_pistol",
+			() -> new ItemLivingPistol(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new ItemLivingCrossbow(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
@@ -282,10 +285,6 @@ public class ItemInit {
 			() -> new ItemBloodStainedStone(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
 			() -> new ItemDSD(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> raw_clay_flask = BASEITEMS.register("raw_clay_flask",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> cured_clay_flask = BASEITEMS.register("cured_clay_flask",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
@@ -495,7 +494,6 @@ public class ItemInit {
 					"Communion Rune, The call from beyond rings louder for you, you wish to join them, you must join them. join.joi,jo..."));
 
 	// Spawn Eggs
-
 //	public static final RegistryObject<SpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
 //			() -> new SpawnEggItem(EntityInit.leech, 7761777, 4206080,
 //					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
@@ -535,32 +533,44 @@ public class ItemInit {
 //			.register("spawn_egg_morphling_polyp", () -> new SpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
 //					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
 
-	/*
-	 * @SubscribeEvent public static void
-	 * registerItemColorHandlers(ColorHandlerEvent.Item event) {
-	 * registerSpawnEggColorHandler(event.getItemColors(),
-	 * HutosLibItemInit.spawn_test_mob); }
-	 * 
-	 * @SuppressWarnings("unchecked")
-	 * 
-	 * @SafeVarargs public static void registerSpawnEggColorHandler(ItemColors
-	 * colors, RegistryObject<ModSpawnEggItem>... spawnEggs) { for
-	 * (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
-	 * registerItemColorHandler(colors, (stack, tintIndex) ->
-	 * spawnEgg.get().getColor(tintIndex), spawnEgg); } }
-	 * 
-	 * @SuppressWarnings("unchecked") public static void
-	 * registerItemColorHandler(ItemColors colors, ItemColor itemColor,
-	 * RegistryObject<ModSpawnEggItem>... items) { for
-	 * (RegistryObject<ModSpawnEggItem> itemProvider : items) {
-	 * colors.register(itemColor, itemProvider.get()); } }
-	 */
+	@SubscribeEvent
+	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
+//		registerSpawnEggColorHandler(event.getItemColors(), HutosLibItemInit.spawn_test_mob);
+	}
 
+	@SuppressWarnings("unchecked")
+
+	@SafeVarargs
+	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ModSpawnEggItem>... spawnEggs) {
+		for (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
+			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void registerItemColorHandler(ItemColors colors, ItemColor itemColor,
+			RegistryObject<ModSpawnEggItem>... items) {
+		for (RegistryObject<ModSpawnEggItem> itemProvider : items) {
+			colors.register(itemColor, itemProvider.get());
+		}
+	}
 
 	// Item Property Override
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
+
+		ItemProperties.register(living_pistol.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
+				new ItemPropertyFunction() {
+					@Override
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
+						if (stack.hasTag()) {
+							return stack.getTag().getInt("mode");
+						} else {
+							return 0;
+						}
+					}
+				});
 
 		ItemProperties.register(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
 				new ItemPropertyFunction() {
@@ -606,7 +616,6 @@ public class ItemInit {
 					return ent != null && ItemLivingCrossbow.isCharged(stack)
 							&& ItemLivingCrossbow.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
 				});
-		
 
 		ItemProperties.register(living_syringe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new ItemPropertyFunction() {
@@ -754,7 +763,6 @@ public class ItemInit {
 									ItemStack selectedStack = stack.of(((ListTag) items.get("Items")).getCompound(0));
 									if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
 										return 1;
-
 									} else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
 										return 2;
 									} else if (selectedStack.getItem() == ItemInit.morphling_fungal.get()) {

@@ -6,15 +6,19 @@ import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
@@ -49,6 +53,9 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 				if (volume.getBloodVolume() > cost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.subtractBloodVolume((float) cost);
+						PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+								new PacketBloodVolumeServer(volume.isActive(), volume.getMaxBloodVolume(),
+										volume.getBloodVolume()));
 						getAction(player, world, heldItemMainhand, position);
 					} else {
 						player.displayClientMessage(new TextComponent("Not Enough Alignment for Manipulation!")

@@ -15,7 +15,11 @@ public class KnownManipulations implements IKnownManipulations {
 
 	@Override
 	public BloodManipulation getSelectedManip() {
+		if (selectedManip == null) {
+			selectedManip = getManipList().get(0);
+		}
 		return selectedManip;
+
 	}
 
 	@Override
@@ -35,11 +39,9 @@ public class KnownManipulations implements IKnownManipulations {
 
 	@Override
 	public ManipLevel getManipLevel(BloodManipulation manip) {
-		if (doesListContainName(knownManips, manip)) {
+		if (knownManips.get(manip) != null) {
 			return knownManips.get(manip);
-
 		}
-
 		return ManipLevel.BLANK;
 
 	}
@@ -58,6 +60,19 @@ public class KnownManipulations implements IKnownManipulations {
 	@Override
 	public ManipLevel getSelectedManipLevel() {
 		return knownManips.get(selectedManip);
+	}
+
+	@Override
+	public void setSelectedManipLevel(int level) {
+		knownManips.get(selectedManip).setCurrentLevel(level);
+	}
+
+	@Override
+	public void incrSelectedManipLevel(int incr) {
+		ManipLevel sel = getManipLevel(selectedManip);
+		int currLevel = sel.getCurrentLevel();
+		sel.setCurrentLevel(currLevel += incr); 
+
 	}
 
 	/*

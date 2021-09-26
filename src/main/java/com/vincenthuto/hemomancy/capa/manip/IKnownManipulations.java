@@ -26,4 +26,9 @@ public interface IKnownManipulations {
 
 	public ManipLevel getSelectedManipLevel();
 
+	public void setSelectedManipLevel(int level);
+
+	public void incrSelectedManipLevel(int incr);
+
+
 }

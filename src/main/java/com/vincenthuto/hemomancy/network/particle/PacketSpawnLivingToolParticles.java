@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.client.particle.util.ParticleUtils;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
@@ -66,8 +66,8 @@ public class PacketSpawnLivingToolParticles {
 		ClientLevel world = ((ClientLevel) clientLevel.get());
 		for (int i = 0; i < 20; i++) {
 			world.addParticle(BloodCellParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y + 1,
-					msg.getPos().z, ParticleUtils.inRange(-3, 3) * 0.015f, ParticleUtils.inRange(-3, 3) * 0.015f,
-					ParticleUtils.inRange(-3, 3) * 0.015f);
+					msg.getPos().z, HLParticleUtils.inRange(-3, 3) * 0.015f, HLParticleUtils.inRange(-3, 3) * 0.015f,
+					HLParticleUtils.inRange(-3, 3) * 0.015f);
 		}
 		ctxSupplier.get().setPacketHandled(true);
 	}

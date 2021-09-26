@@ -9,11 +9,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.ItemTome;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -47,8 +45,6 @@ public class RenderItemTome extends BlockEntityWithoutLevelRenderer {
 	@Override
 	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transform, PoseStack ms,
 			MultiBufferSource buffers, int light, int overlay) {
-		Minecraft mc = Minecraft.getInstance();
-		LocalPlayer player = mc.player;
 
 		if (stack.getItem() instanceof ItemTome) {
 			ItemTome item = (ItemTome) stack.getItem();
@@ -74,18 +70,8 @@ public class RenderItemTome extends BlockEntityWithoutLevelRenderer {
 			float f3 = Mth.lerp(1, item.oFlip, item.flip);
 			float f4 = Mth.frac(f3 + 0.25F) * 1.6F - 0.3F;
 			float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
-			if (player.getMainHandItem() == stack || player.getOffhandItem() == stack) {
-				if (close < 1) {
-					close += 0.005f;
-					this.model.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), close);
-				}
-			} else {
-				if (close > 0) {
-					close -= 0.005f;
-					this.model.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), close);
-				}
+			this.model.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), close);
 
-			}
 			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 					.immediate(Tesselator.getInstance().getBuilder());
 			ResourceLocation location = stack.getItem() == ItemInit.liber_sanguinum.get() ? liber_sanguinum
