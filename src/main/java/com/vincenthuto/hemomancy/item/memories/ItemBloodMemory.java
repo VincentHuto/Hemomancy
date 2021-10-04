@@ -3,10 +3,10 @@ package com.vincenthuto.hemomancy.item.memories;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -75,7 +75,7 @@ public class ItemBloodMemory extends Item {
 							knownList.put(getManip(), ManipLevel.BLANK);
 							PacketHandler.CHANNELKNOWNMANIPS.send(
 									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-									new PacketKnownManipulationServer(knownList, known.getSelectedManip()));
+									new PacketKnownManipulationServer(known));
 							stack.shrink(1);
 						} else {
 							playerIn.displayClientMessage(new TextComponent("Player Already Knowns This Manipulation!")

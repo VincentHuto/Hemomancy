@@ -6,8 +6,8 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.ContainerLivingStaff;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.item.morphlings.IMorphling;

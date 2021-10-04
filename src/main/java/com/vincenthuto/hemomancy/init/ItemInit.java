@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.item.EnumBloodGourdTiers;
 import com.vincenthuto.hemomancy.item.ItemBloodStainedStone;
 import com.vincenthuto.hemomancy.item.ItemBloodVial;
@@ -157,6 +157,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_blood_projection));
+	public static final RegistryObject<Item> memory_venous_travel = BASEITEMS.register("memory_venous_travel",
+			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.venous_travel));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
@@ -288,6 +291,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> living_stent = BASEITEMS.register("living_stent",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",

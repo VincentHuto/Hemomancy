@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.network;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

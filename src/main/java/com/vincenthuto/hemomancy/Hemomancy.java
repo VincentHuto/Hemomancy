@@ -8,11 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyEvents;
-import com.vincenthuto.hemomancy.capa.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
-import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.capa.block.vein.EarthenVeinLocEvents;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeEvents;
+import com.vincenthuto.hemomancy.capa.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
 import com.vincenthuto.hemomancy.event.RuneBinderEvents;
@@ -129,6 +130,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(VascularSystemEvents.class);
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
 		MinecraftForge.EVENT_BUS.register(KnownManipulationEvents.class);
+		MinecraftForge.EVENT_BUS.register(EarthenVeinLocEvents.class);
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		forgeBus.addListener(EventPriority.NORMAL, this::addDimensionalSpacing);
 		forgeBus.addListener(EventPriority.HIGH, this::biomeModification);

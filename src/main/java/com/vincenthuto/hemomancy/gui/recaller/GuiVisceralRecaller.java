@@ -6,25 +6,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3d;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
 import com.vincenthuto.hemomancy.network.PacketClearRecallerState;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
@@ -37,11 +40,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 
 public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerVisceralRecaller> {
-	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
+	static final ResourceLocation GUI_RECALLER = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/recaller_gui.png");
-	private static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/blood_bar.png");
-	private static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
+	static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
+	static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_fill_tiled.png");
 	final Inventory playerInv;
 	final BlockEntityVisceralRecaller te;
@@ -65,9 +67,7 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 
 	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
 			float height) {
-		/*
-		 * float f = 0.00390625F; float f1 = 0.00390625F;
-		 */
+
 		Tesselator tessellator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuilder();
 		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -93,7 +93,7 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 
 		matrix.pushPose();
-		float bloodVolume = te.getBloodVolume() ;
+		float bloodVolume = te.getBloodVolume();
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
 		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
@@ -110,7 +110,7 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 		RenderSystem.setShaderTexture(0, fill_texture);
 		matrix.mulPose(new Quaternion(Vector3f.ZP, 45, true));
 		drawFlippedTexturedModalRect(-12 + screenWidth + 5, 60 + screenHeight + 32, 23 + textureUShift, textureVShift,
-				6,  heightShift - newBarWidth);
+				6, heightShift - newBarWidth);
 		matrix.popPose();
 
 		// Frame
@@ -199,65 +199,69 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 		int cx = 0, cy = 0;
 		float rotAngle = -90f;
 		int iconDiameter = 65;
-		int diameter = 35;
+		int diameter = 15;
 		float spikeBaseWidth = 23.5f;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
-			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
-			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
-			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 90;
+			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
+			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 47;
+			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 47;
 			double depthDist = ((iconDiameter - diameter) * affs.get(tend) + diameter);
-			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist);
-			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist);
-			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2)
-					- Math.min(cy1, cy2)) / 2f);
+			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
+			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 47;
+			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
+					/ 2f);
 			fracLine(stack, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset, this.zLevel,
-					tend.getColor().getColor(), displace, 1.1);
+					tend.getColor(), displace, 1.1);
 			fracLine(stack, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset, this.zLevel,
-					tend.getColor().getColor(), displace, 1.1);
+					tend.getColor(), displace, 1.1);
 			fracLine(stack, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
-					tend.getColor().getColor(), displace, 0.8);
+					tend.getColor(), displace, 0.8);
 			fracLine(stack, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset, this.zLevel,
-					tend.getColor().getColor(), displace, 0.8);
-			rotAngle += 45;
-		}
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			rotAngle += 45f;
+					tend.getColor(), displace, 0.8);
 			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
 			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
 			mc.getItemRenderer().renderGuiItem(new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX + xOff + 90,
 					newY + yOff + 47);
-
+			rotAngle += 45;
 		}
-		// GlStateManager._popMatrix();
 	}
 
-	public static void drawLine(PoseStack matrix,int src_x, int src_y, int dst_x, int dst_y, int zLevel, int color,
-			int displace) {
-		GuiComponent.fill(matrix, src_x, src_y, dst_x, dst_y, color);
-		
-//		GL11.glDisable(3553);
-//		GL11.glLineWidth(1.0f);
-//		GL11.glColor3f(((color & 0xFF0000) >> 16) / 255.0f,
-//				((color & 0xFF00) >> 8) / 255.0f, (color & 0xFF) / 255.0f);
-//		GL11.glBegin(1);
-//		GL11.glVertex3f((float) src_x, (float) src_y, zLevel);
-//		GL11.glVertex3f((float) dst_x, (float) dst_y, zLevel);
-//		GL11.glEnd();
-//		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-//		GL11.glEnable(3553);
+	private static void drawLine(PoseStack stack, int x1, int y1, int x2, int y2, ParticleColor color, int displace) {
+		RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+		GlStateManager._disableTexture();
+		GlStateManager._depthMask(false);
+		GlStateManager._disableCull();
+		RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
+		Tesselator var4 = RenderSystem.renderThreadTesselator();
+		BufferBuilder var5 = var4.getBuilder();
+		RenderSystem.lineWidth(1.0F);
+		var5.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+		Vector3d vector3f = new Vector3d(x2 - x1, y2 - y1, 0);
+		Vector3d vector3f2 = new Vector3d(x1 - x2, y1 - y2, 0);
+		int red = (int) color.getRed();
+		int green = (int) color.getGreen();
+		int blue = (int) color.getBlue();
+		var5.vertex(x1, y1, 0.0D).color(red, green, blue, 255).normal((float) vector3f.x, (float) vector3f.y, 0.0F)
+				.endVertex();
+		var5.vertex(x2, y2, 0.0D).color(red, green, blue, 255).normal((float) vector3f2.x, (float) vector3f2.y, 0.0F)
+				.endVertex();
+		var4.end();
+		GlStateManager._enableCull();
+		GlStateManager._depthMask(true);
+		GlStateManager._enableTexture();
 	}
 
-	public static void fracLine(PoseStack matrix,int src_x, int src_y, int dst_x, int dst_y, int zLevel, int color,
-			int displace, double detail) {
+	public static void fracLine(PoseStack matrix, int src_x, int src_y, int dst_x, int dst_y, int zLevel,
+			ParticleColor color, int displace, double detail) {
 		if (displace < detail) {
-			drawLine(matrix, src_x, src_y, dst_x, dst_y, zLevel, color, displace);
+			drawLine(matrix, src_x, src_y, dst_x, dst_y, color, displace);
 		} else {
 			Random rand = new Random();
 			int mid_x = (dst_x + src_x) / 2;
 			int mid_y = (dst_y + src_y) / 2;
-			mid_x = (int) (mid_x + (rand.nextFloat() - 0.5) * displace * 0.5);
-			mid_y = (int) (mid_y + (rand.nextFloat() - 0.5) * displace * 0.5);
+			mid_x = (int) (mid_x + (rand.nextFloat() - 0.25) * displace * 0.25);
+			mid_y = (int) (mid_y + (rand.nextFloat() - 0.25) * displace * 0.25);
 			fracLine(matrix, src_x, src_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
 			fracLine(matrix, dst_x, dst_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
 

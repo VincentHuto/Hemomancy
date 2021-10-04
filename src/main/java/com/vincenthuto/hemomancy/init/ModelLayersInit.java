@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
 import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
 import com.vincenthuto.hemomancy.model.entity.ModelBloodBullet;
 import com.vincenthuto.hemomancy.model.entity.ModelIronPillar;
@@ -53,6 +54,8 @@ public class ModelLayersInit {
 			new ResourceLocation(Hemomancy.MOD_ID, "iron_spike"), "main");
 	public static final ModelLayerLocation blood_bullet = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet"), "main");
+	public static final ModelLayerLocation earth_vein = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "modelearthenvein"), "main");
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -68,7 +71,7 @@ public class ModelLayersInit {
 		event.registerLayerDefinition(iron_spike, ModelIronSpike::createBodyLayer);
 		event.registerLayerDefinition(iron_pillar, ModelIronPillar::createBodyLayer);
 		event.registerLayerDefinition(blood_bullet, ModelBloodBullet::createBodyLayer);
-
+		event.registerLayerDefinition(earth_vein, ModelEarthenVein::createBodyLayer);
 	}
 
 }

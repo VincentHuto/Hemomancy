@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;

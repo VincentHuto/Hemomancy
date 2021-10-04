@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.mojang.math.Vector3d;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;

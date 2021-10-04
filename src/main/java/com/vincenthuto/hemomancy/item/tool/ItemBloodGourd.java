@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.item.tool;
 import java.util.List;
 import java.util.Random;
 
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.EnumBloodGourdTiers;
 

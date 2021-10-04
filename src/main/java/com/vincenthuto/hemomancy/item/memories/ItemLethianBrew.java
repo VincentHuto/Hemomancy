@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.item.memories;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;

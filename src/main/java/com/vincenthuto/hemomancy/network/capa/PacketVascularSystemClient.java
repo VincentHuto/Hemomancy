@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.vascular.IVascularSystem;
-import com.vincenthuto.hemomancy.capa.vascular.VascularSystemProvider;
+import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
+import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;

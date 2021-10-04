@@ -86,8 +86,8 @@ public class ContainerVisceralRecaller extends AbstractContainerMenu {
 
 	@Override
 	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
-		te.sendUpdates();
 		super.setItem(p_182407_, p_182408_, p_182409_);
+		te.sendUpdates();
 	}
 
 	@Override

@@ -5,11 +5,11 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -117,7 +117,6 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 			ContainerHelper.saveAllItems(tag, this.contents);
 		}
 		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-
 		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 			if (tendency.getTendency().get(key) != null) {
 				tag.putFloat(key.toString(), tendency.getTendency().get(key));
@@ -127,6 +126,11 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 		}
 
 		return tag;
+	}
+
+	public void writePacketNBT(CompoundTag par1CompoundTag) {
+		par1CompoundTag.merge(itemHandler.serializeNBT());
+
 	}
 
 	public void readPacketNBT(CompoundTag tag) {
@@ -142,11 +146,6 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
 			clientTendency.put(tend, tag.getFloat(tend.toString()));
 		}
-	}
-
-	public void writePacketNBT(CompoundTag par1CompoundTag) {
-		par1CompoundTag.merge(itemHandler.serializeNBT());
-
 	}
 
 	@Override

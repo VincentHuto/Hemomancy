@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;

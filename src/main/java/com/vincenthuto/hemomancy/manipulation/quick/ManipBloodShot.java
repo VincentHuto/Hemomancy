@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.manipulation.quick;
 
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodShot;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;

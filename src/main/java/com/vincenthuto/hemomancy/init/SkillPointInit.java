@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.init;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vincenthuto.hemomancy.capa.skills.EnumSkillStates;
-import com.vincenthuto.hemomancy.capa.skills.SkillPoint;
+import com.vincenthuto.hemomancy.capa.player.skills.EnumSkillStates;
+import com.vincenthuto.hemomancy.capa.player.skills.SkillPoint;
 
 public class SkillPointInit {
 

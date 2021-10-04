@@ -29,6 +29,7 @@ import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.vincenthuto.hemomancy.render.item.RenderMorphlingPolypItem;
 import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
 import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
+import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
 import com.vincenthuto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
 import com.vincenthuto.hemomancy.render.tile.RenderRuneModStation;
@@ -103,6 +104,7 @@ public class ClientEventSubscriber {
 		BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(), RenderDendriticDistributor::new);
 		BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), RenderMortalDisplay::new);
 		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), RenderVisceralRecaller::new);
+		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), RenderEarthenVein::new);
 
 		// Screen
 		MenuScreens.register(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);

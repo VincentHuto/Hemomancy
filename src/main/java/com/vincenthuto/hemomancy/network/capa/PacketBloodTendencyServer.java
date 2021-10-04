@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityDendriticDistributor;
+import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
 import com.vincenthuto.hemomancy.tile.BlockEntityHumaneIdol;
 import com.vincenthuto.hemomancy.tile.BlockEntityMorphlingIncubator;
 import com.vincenthuto.hemomancy.tile.BlockEntityMortalDisplay;
@@ -48,6 +49,9 @@ public class BlockEntityInit {
 			.register("humane_idol",	() -> BlockEntityType.Builder
 					.of(BlockEntityHumaneIdol::new, BlockInit.humane_idol.get()).build(null));
 	
+	public static final RegistryObject<BlockEntityType<BlockEntityEarthenVein>> earthen_vein = TILES
+			.register("earthen_vein", () -> BlockEntityType.Builder
+					.of(BlockEntityEarthenVein::new, BlockInit.earthen_vein.get()).build(null));
 	
 	
 	

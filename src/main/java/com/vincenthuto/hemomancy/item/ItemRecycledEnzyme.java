@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;

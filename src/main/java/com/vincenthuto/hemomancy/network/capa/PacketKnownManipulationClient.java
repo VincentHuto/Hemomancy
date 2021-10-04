@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,7 +24,7 @@ public class PacketKnownManipulationClient {
 				IKnownManipulations manips = sender.getCapability(KnownManipulationProvider.MANIP_CAPA)
 						.orElseThrow(IllegalStateException::new);
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> sender),
-						new PacketKnownManipulationServer(manips.getKnownManips(), manips.getSelectedManip()));
+						new PacketKnownManipulationServer(manips));
 			}
 		});
 		ctx.get().setPacketHandled(true);

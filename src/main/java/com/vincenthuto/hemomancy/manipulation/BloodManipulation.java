@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.manipulation;
 
-import com.vincenthuto.hemomancy.capa.tendency.BloodTendencyProvider;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.capa.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hutoslib.client.TextUtils;

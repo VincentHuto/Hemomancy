@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/earthen_vein"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/earthen_vein",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/earthen_vein",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/earthen_vein",
+			"y": 90
+		}
+	}
+}

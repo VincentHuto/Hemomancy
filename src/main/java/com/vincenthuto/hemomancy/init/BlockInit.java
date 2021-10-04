@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.block.BlockBleedingHeart;
 import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
 import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
+import com.vincenthuto.hemomancy.block.BlockEarthenVein;
 import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
 import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
 import com.vincenthuto.hemomancy.block.BlockRuneModStation;
@@ -187,9 +188,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new BlockMortalDisplay(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-
 	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
 			.register("visceral_artificial_recaller", () -> new BlockVisceralRecaller(
+					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
+	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
+			() -> new BlockEarthenVein(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	@SubscribeEvent
@@ -208,6 +211,7 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.translucent());
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.translucent());
 
 		}
 	}

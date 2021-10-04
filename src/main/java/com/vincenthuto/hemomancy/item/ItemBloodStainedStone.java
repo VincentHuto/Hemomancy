@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.item;
 
-import java.util.LinkedHashMap;
-
-import com.vincenthuto.hemomancy.capa.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.gui.manips.GuiChooseManip;
-import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 
@@ -45,10 +41,8 @@ public class ItemBloodStainedStone extends Item {
 				.orElseThrow(NullPointerException::new);
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
-				BloodManipulation selected = manips.getSelectedManip();
-				LinkedHashMap<BloodManipulation, ManipLevel> known = manips.getKnownManips();
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new PacketKnownManipulationServer(known, selected));
+						new PacketKnownManipulationServer(manips));
 			} else {
 				Minecraft.getInstance().setScreen(new GuiChooseManip(playerIn));
 				playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);

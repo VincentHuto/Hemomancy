@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.recipe;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.gui.recaller.GuiVisceralRecaller;
 
 import net.minecraft.network.FriendlyByteBuf;

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.manipulation.quick.ManipBloodShot;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipConjuration;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipDeadlyGaze;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipFerricTransmutation;
+import com.vincenthuto.hemomancy.manipulation.quick.ManipVenousTravel;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fmllegacy.RegistryObject;
@@ -36,6 +37,10 @@ public class ManipulationInit {
 	public static Supplier<IForgeRegistry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
 			.makeRegistry("manipulation_types", () -> new RegistryBuilder<BloodManipulation>()
 					.setMaxID(Integer.MAX_VALUE - 1).setDefaultKey(new ResourceLocation(Hemomancy.MOD_ID, "null")));
+
+	public static RegistryObject<BloodManipulation> venous_travel = MANIPS.register("venous_travel",
+			() -> register(new ManipVenousTravel("venous_travel", 100, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)));
 
 	public static final RegistryObject<BloodManipulation> blood_shot = MANIPS.register("blood_shot",
 			() -> register(new ManipBloodShot("blood_shot", 100, 0, 0, EnumManipulationType.QUICK,

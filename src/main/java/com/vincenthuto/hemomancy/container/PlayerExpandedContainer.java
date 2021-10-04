@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.container;
 
-import com.vincenthuto.hemomancy.capa.rune.IRunesItemHandler;
-import com.vincenthuto.hemomancy.capa.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.containers.slot.SlotRune;
 import com.vincenthuto.hemomancy.containers.slot.SlotRuneArmor;
 import com.vincenthuto.hemomancy.containers.slot.SlotRuneOffHand;

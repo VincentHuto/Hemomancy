@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.capa.vascular.VascularSystemProvider;
+import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 

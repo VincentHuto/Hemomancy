@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.item.tool.living;
 
 import com.mojang.math.Vector3d;
-import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbTracking;
 import com.vincenthuto.hemomancy.network.PacketHandler;

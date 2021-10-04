@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.init.ItemInit;
 
 import net.minecraft.resources.ResourceLocation;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.render.layer;
 
 //GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.capa.rune.IRune;
+import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
