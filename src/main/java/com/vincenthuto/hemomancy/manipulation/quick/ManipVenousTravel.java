@@ -1,14 +1,12 @@
 package com.vincenthuto.hemomancy.manipulation.quick;
 
-import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.PacketOpenVeinGUI;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,19 +24,17 @@ public class ManipVenousTravel extends BloodManipulation {
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(NullPointerException::new);
-		
+
 //		RegistryKey<World> key = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimRL);
 //		ServerWorld ovw = worldIn.getServer().getWorld(key);
 //		serverPlayer.teleport(ovw, bp.getX() + 0.5, bp.getY() + 1, bp.getZ() + 0.5,
 //				serverPlayer.rotationYaw, serverPlayer.rotationPitch);
 //		
+		if (!world.isClientSide) {
+			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+					new PacketOpenVeinGUI());
+		} 
 
-		
-		System.out.println(known.getVeinList());
-		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-				new PacketKnownManipulationServer(known));
 	}
 
 }

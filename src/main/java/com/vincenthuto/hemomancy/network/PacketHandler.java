@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationClient;
 import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.network.capa.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.network.capa.PacketOpenVeinGUI;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemClient;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
 import com.vincenthuto.hemomancy.network.jar.PacketJarTogglePickup;
@@ -23,7 +24,9 @@ import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketChangeMorphKey;
 import com.vincenthuto.hemomancy.network.manip.PacketChangeSelectedManip;
 import com.vincenthuto.hemomancy.network.manip.PacketDisplayKnownManips;
+import com.vincenthuto.hemomancy.network.manip.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
+import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentVein;
 import com.vincenthuto.hemomancy.network.manip.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.particle.PacketAirBloodDraw;
@@ -112,6 +115,13 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentManip.class,
 				PacketUpdateCurrentManip::encode, PacketUpdateCurrentManip::decode,
 				PacketUpdateCurrentManip.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketTeleportToVein.class, PacketTeleportToVein::encode,
+				PacketTeleportToVein::decode, PacketTeleportToVein.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketOpenVeinGUI.class, PacketOpenVeinGUI::decode,
+				PacketOpenVeinGUI::new, PacketOpenVeinGUI::handle);
+
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentVein.class, PacketUpdateCurrentVein::encode,
+				PacketUpdateCurrentVein::decode, PacketUpdateCurrentVein.Handler::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
 				PacketVascularSystemClient::handle);
@@ -147,7 +157,6 @@ public class PacketHandler {
 		CHANNELPARTICLES.messageBuilder(PacketSpawnLivingToolParticles.class, networkID++)
 				.decoder(PacketSpawnLivingToolParticles::decode).encoder(PacketSpawnLivingToolParticles::encode)
 				.consumer(PacketSpawnLivingToolParticles::handle).add();
-		
 
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
@@ -196,7 +205,5 @@ public class PacketHandler {
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
-
-	
 
 }

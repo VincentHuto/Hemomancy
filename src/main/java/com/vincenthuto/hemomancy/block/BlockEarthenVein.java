@@ -6,11 +6,13 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class BlockEarthenVein extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -58,14 +61,20 @@ public class BlockEarthenVein extends Block implements EntityBlock {
 		if (worldIn.getBlockEntity(pos)instanceof BlockEntityEarthenVein te) {
 			ItemStack stack = player.getItemInHand(handIn);
 			if (stack.getItem() == ItemInit.living_stent.get()) {
-				if (!known.getVeinList().contains(te.getLoc())) {
-					stack.shrink(1);
-					known.getVeinList().add(te.getLoc());
-					player.displayClientMessage(new TextComponent(te.getLoc().toString()), true);
+				if (!worldIn.isClientSide) {
+				//	known.getVeinList().clear();
+					if (!known.getVeinBlockList().contains(te.getLoc().getPosition())) {
+						stack.shrink(1);
+						known.getVeinList().add(te.getLoc());
+					}
+					PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+							new PacketKnownManipulationServer(known));
+
 				}
-
+//				} else {
+//					player.displayClientMessage(new TextComponent(te.getLoc().toString()), true);
+//				}
 			}
-
 		}
 		return InteractionResult.SUCCESS;
 

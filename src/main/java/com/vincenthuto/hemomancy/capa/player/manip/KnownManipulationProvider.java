@@ -66,6 +66,9 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 				list.add(entry);
 			}
 		}
+		CompoundTag selectedVein = new CompoundTag();
+		selectedManip.put("SelectedVein", instance.getSelectedVein().serializeNBT());
+		list.add(selectedVein);
 
 		CompoundTag veinCount = new CompoundTag();
 		veinCount.putInt("veinCount", instance.getVeinList().size());
@@ -98,29 +101,40 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 						BloodManipulation selectedManip = BloodManipulation.deserialize(selectedNbt);
 						instance.setSelectedManip(selectedManip);
 					}
+
 					if (parsedNbt.contains("Manip" + (i - 1))) {
+
 						CompoundTag manipNbt = parsedNbt.getCompound("Manip" + (i - 1));
 						CompoundTag levleNbt = parsedNbt.getCompound("Level" + (i - 1));
 						BloodManipulation bloodManip = BloodManipulation.deserialize(manipNbt);
 						ManipLevel level = ManipLevel.deserialize(levleNbt);
 						map.put(bloodManip, level);
+
 					}
+
+					if (parsedNbt.contains("SelectedVein")) {
+						CompoundTag selectedNbt = parsedNbt.getCompound("SelectedVein");
+						VeinLocation selectedVein = VeinLocation.deserializeToLoc(selectedNbt);
+						instance.setSelectedVein(selectedVein);
+					}
+
 					if (parsedNbt.contains("veinCount")) {
 						veinCount = parsedNbt.getInt("veinCount");
 					}
+					System.out.println(parsedNbt);
 					for (int j = 0; j < veinCount; j++) {
-						if (parsedNbt.contains("Vein" + j)) {
-							System.out.println("CONTAINED VEIN");
-							CompoundTag veinNbt = parsedNbt.getCompound("Vein" + j);
+						if (parsedNbt.contains("Vein" + (j))) {
+							CompoundTag veinNbt = parsedNbt.getCompound("Vein" + (j));
 							VeinLocation vein = VeinLocation.deserializeToLoc(veinNbt);
 							veinList.add(vein);
 						}
 					}
 				}
 			}
+			instance.setKnownManips(map);
+			instance.setVeinList(veinList);
 		}
-		instance.setKnownManips(map);
-		instance.setVeinList(veinList);
+
 	}
 
 }

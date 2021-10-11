@@ -119,7 +119,6 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
 		Minecraft mc = Minecraft.getInstance();
 		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
-
 		matrixStackIn.pushPose();
 		if (side == HumanoidArm.RIGHT) {
 			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(12.0f));

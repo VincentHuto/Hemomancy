@@ -53,9 +53,9 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 				if (volume.getBloodVolume() > cost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.subtractBloodVolume((float) cost);
-						PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new PacketBloodVolumeServer(volume.isActive(), volume.getMaxBloodVolume(),
-										volume.getBloodVolume()));
+						PacketHandler.CHANNELBLOODVOLUME.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new PacketBloodVolumeServer(
+										volume.isActive(), volume.getMaxBloodVolume(), volume.getBloodVolume()));
 						getAction(player, world, heldItemMainhand, position);
 					} else {
 						player.displayClientMessage(new TextComponent("Not Enough Alignment for Manipulation!")
@@ -118,6 +118,11 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 	}
 
 	public String getProperName() {
+		return TextUtils.convertInitToLang(name);
+	}
+
+	@Override
+	public String toString() {
 		return TextUtils.convertInitToLang(name);
 	}
 

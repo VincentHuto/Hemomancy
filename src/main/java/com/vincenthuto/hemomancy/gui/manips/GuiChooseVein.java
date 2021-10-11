@@ -7,10 +7,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
+import com.vincenthuto.hemomancy.network.manip.PacketTeleportToVein;
+import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentVein;
+import com.vincenthuto.hemomancy.util.VeinLocation;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -25,16 +25,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiChooseManip extends Screen {
+public class GuiChooseVein extends Screen {
 	int left, top;
 	static TextComponent titleComponent = new TextComponent("");
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
 	Player player;
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook_hidden.png");
+	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/choose_vein.png");
 
-	public GuiChooseManip(Player clientPlayer) {
+	public GuiChooseVein(Player clientPlayer) {
 		super(titleComponent);
 		this.player = clientPlayer;
 	}
@@ -45,33 +45,46 @@ public class GuiChooseManip extends Screen {
 			renderables.get(i).render(matrixStack, mouseX, mouseY, partialTicks);
 			IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
-			List<BloodManipulation> known = manips.getManipList();
-			List<ManipLevel> level = manips.getLevelList();
+			List<VeinLocation> known = manips.getVeinList();
+
+			if (renderables.get(i)instanceof GuiButtonTextured telebutton) {
+				if (telebutton.id == 69) {
+					if (telebutton.isHovered()) {
+						font.drawShadow(matrixStack, "Teleport To Selected", telebutton.x - 10 / 2, telebutton.y - 10,
+								0xffffff);
+					} else {
+
+//						font.drawShadow(matrixStack,  level.get(j).getCurrentLevel() + "",
+//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+					}
+				}
+			}
 
 			for (int j = 0; j < known.size(); j++) {
-				if (i == j) {
+				if (i == j + 1) {
 					// Hovered
-					int xOff = font.width(known.get(j).getProperName());
+					int xOff = font.width(known.get(j).getName());
 					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
-						font.drawShadow(matrixStack, known.get(j).getProperName(),
+						font.drawShadow(matrixStack, known.get(j).getName(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 
-						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y + 10
-										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
-								0xffffff);
+//						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
+//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//								(float) (((GuiButtonTextured) renderables.get(i)).y + 10
+//										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+//								0xffffff);
 					} else {
-						font.drawShadow(matrixStack, known.get(j).getProperName(),
+						font.drawShadow(matrixStack, known.get(j).getName(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
 
-						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+//						font.drawShadow(matrixStack,  level.get(j).getCurrentLevel() + "",
+//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
 					}
 				}
 			}
@@ -84,22 +97,33 @@ public class GuiChooseManip extends Screen {
 		renderables.clear();
 		IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
-		BloodManipulation selected = manips.getSelectedManip();
-		List<BloodManipulation> known = manips.getManipList();
+		VeinLocation selected = manips.getSelectedVein();
+		List<VeinLocation> known = manips.getVeinList();
 		double angleBetweenEach = 360.0 / known.size();
-		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 , mc.getWindow().getGuiScaledHeight() / 2),
+		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 - 48, mc.getWindow().getGuiScaledHeight() / 2),
 				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
-		
 		if (!known.isEmpty()) {
+
+			this.addRenderableWidget(new GuiButtonTextured(texture, 69, mc.getWindow().getGuiScaledWidth() / 2,
+					mc.getWindow().getGuiScaledHeight() / 2, 16, 16, 209, 32, null, (press) -> {
+						if (press instanceof GuiButtonTextured) {
+							player.playSound(SoundEvents.PORTAL_TRAVEL, 0.20f, 0.1F);
+							PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketTeleportToVein());
+						}
+						onClose();
+
+					}));
+
 			for (int i = 0; i < known.size(); i++) {
-				BloodManipulation current = known.get(i);
-				if (current.getProperName().equals(selected.getProperName())) {
+				VeinLocation current = known.get(i);
+				if (current.getName().equals(selected.getName())) {
 					this.addRenderableWidget(
 							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, (press) -> {
 								if (press instanceof GuiButtonTextured) {
 									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-									player.displayClientMessage(new TextComponent("Manipulation Already Selected")
-											.withStyle(ChatFormatting.RED), true);
+									player.displayClientMessage(
+											new TextComponent("Vein Already Selected").withStyle(ChatFormatting.RED),
+											true);
 								}
 								onClose();
 							}));
@@ -109,8 +133,8 @@ public class GuiChooseManip extends Screen {
 								if (press instanceof GuiButtonTextured) {
 									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
 									int id = ((GuiButtonTextured) press).getId();
-									manips.setSelectedManip(known.get(id));
-									PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUpdateCurrentManip(id));
+									manips.setSelectedVein(known.get(id));
+									PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUpdateCurrentVein(id));
 								}
 								onClose();
 

@@ -7,6 +7,8 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.util.VeinLocation;
 
+import net.minecraft.core.BlockPos;
+
 public interface IKnownManipulations {
 
 	public LinkedHashMap<BloodManipulation, ManipLevel> getKnownManips();
@@ -31,8 +33,14 @@ public interface IKnownManipulations {
 
 	public void incrSelectedManipLevel(int incr);
 
+	public VeinLocation getSelectedVein();
+
+	public void setSelectedVein(VeinLocation selectedVein);
+
 	public List<VeinLocation> getVeinList();
+	
+	public List<BlockPos> getVeinBlockList();
 
 	public void setVeinList(List<VeinLocation> dimPos);
-	
+
 }

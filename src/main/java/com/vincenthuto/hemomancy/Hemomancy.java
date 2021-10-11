@@ -98,7 +98,6 @@ public class Hemomancy {
 		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
 		ModRecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
-		// StructureInit.STRUCTURES.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
 		PotionInit.POTION_TYPES.register(modEventBus);

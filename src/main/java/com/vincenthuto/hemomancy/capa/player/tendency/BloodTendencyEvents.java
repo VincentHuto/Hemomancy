@@ -15,13 +15,10 @@ import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.vincenthuto.hutoslib.client.TextUtils;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
-import net.minecraft.ChatFormatting;
-
 //GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -47,7 +44,6 @@ public class BloodTendencyEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			System.out.println("Attatches Capability");
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodtendancy"), new BloodTendencyProvider());
 		}
 	}
@@ -58,8 +54,8 @@ public class BloodTendencyEvents {
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketBloodTendencyServer(BloodTendency));
-		player.displayClientMessage(
-				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
+//		player.displayClientMessage(
+//				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent
@@ -75,8 +71,8 @@ public class BloodTendencyEvents {
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketBloodTendencyServer(BloodTendency));
-		player.displayClientMessage(
-				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
+//		player.displayClientMessage(
+//				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent

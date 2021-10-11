@@ -10,12 +10,8 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
 import com.vincenthuto.hutoslib.client.TextUtils;
 
-//GlStateManager;
-
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -37,7 +33,6 @@ public class VascularSystemEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			System.out.println("Attatches Capability");
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "vascularsystem"), new VascularSystemProvider());
 		}
 	}
@@ -48,8 +43,8 @@ public class VascularSystemEvents {
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketVascularSystemServer(BloodFlow));
-		player.displayClientMessage(
-				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+//		player.displayClientMessage(
+//				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent
@@ -58,8 +53,8 @@ public class VascularSystemEvents {
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketVascularSystemServer(BloodFlow));
-		player.displayClientMessage(
-				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+//		player.displayClientMessage(
+//				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent

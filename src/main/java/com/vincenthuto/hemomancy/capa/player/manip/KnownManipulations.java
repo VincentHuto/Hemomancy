@@ -8,13 +8,16 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.util.VeinLocation;
 
+import net.minecraft.core.BlockPos;
+
 public class KnownManipulations implements IKnownManipulations {
 
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
 	ManipLevel manipLevel = ManipLevel.BLANK;
 	public LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<BloodManipulation, ManipLevel>();
 	public List<VeinLocation> veinList = new ArrayList<>();
-	
+	VeinLocation selectedVein = VeinLocation.BLANK;
+
 	@Override
 	public BloodManipulation getSelectedManip() {
 		if (selectedManip == null) {
@@ -23,7 +26,6 @@ public class KnownManipulations implements IKnownManipulations {
 		return selectedManip;
 
 	}
-	
 
 	@Override
 	public void setSelectedManip(BloodManipulation selectedManip) {
@@ -74,7 +76,7 @@ public class KnownManipulations implements IKnownManipulations {
 	public void incrSelectedManipLevel(int incr) {
 		ManipLevel sel = getManipLevel(selectedManip);
 		int currLevel = sel.getCurrentLevel();
-		sel.setCurrentLevel(currLevel += incr); 
+		sel.setCurrentLevel(currLevel += incr);
 
 	}
 
@@ -93,16 +95,37 @@ public class KnownManipulations implements IKnownManipulations {
 
 	}
 
-
 	@Override
 	public List<VeinLocation> getVeinList() {
 		return veinList;
 	}
 
-
 	@Override
 	public void setVeinList(List<VeinLocation> dimPos) {
 		this.veinList = dimPos;
+	}
+
+	@Override
+	public VeinLocation getSelectedVein() {
+		if (selectedVein == null) {
+			selectedVein = getVeinList().get(0);
+		}
+		return selectedVein;
+	}
+
+	@Override
+	public void setSelectedVein(VeinLocation selectedVein) {
+		this.selectedVein = selectedVein;
+
+	}
+
+	@Override
+	public List<BlockPos> getVeinBlockList() {
+		List<BlockPos> list = new ArrayList<BlockPos>();
+		for(VeinLocation loc : getVeinList()) {
+			list.add(loc.getPosition());
+		}
+		return list;
 	}
 
 }

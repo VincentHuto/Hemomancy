@@ -31,7 +31,6 @@ public class KnownManipulationEvents {
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known));
-		
 
 	}
 
@@ -49,6 +48,9 @@ public class KnownManipulationEvents {
 					.orElseThrow(IllegalArgumentException::new).getSelectedManip());
 			bloodTendencyNew.setVeinList(peorig.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(IllegalArgumentException::new).getVeinList());
+			bloodTendencyNew.setSelectedVein(peorig.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getSelectedVein());
+
 			peorig.invalidateCaps();
 		}
 
