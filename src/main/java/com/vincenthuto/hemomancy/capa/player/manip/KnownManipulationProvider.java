@@ -95,7 +95,6 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 			for (int i = 0; i < listNbt.size(); i++) {
 				CompoundTag parsedNbt = (CompoundTag) listNbt.get(i);
 				if (parsedNbt != null && !parsedNbt.isEmpty()) {
-					System.out.println(parsedNbt);
 					if (parsedNbt.contains("Selected")) {
 						CompoundTag selectedNbt = parsedNbt.getCompound("Selected");
 						BloodManipulation selectedManip = BloodManipulation.deserialize(selectedNbt);
@@ -121,7 +120,6 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 					if (parsedNbt.contains("veinCount")) {
 						veinCount = parsedNbt.getInt("veinCount");
 					}
-					System.out.println(parsedNbt);
 					for (int j = 0; j < veinCount; j++) {
 						if (parsedNbt.contains("Vein" + (j))) {
 							CompoundTag veinNbt = parsedNbt.getCompound("Vein" + (j));

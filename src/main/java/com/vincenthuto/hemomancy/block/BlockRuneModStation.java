@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.tile.BlockEntityRuneModStation;
 
 import net.minecraft.core.BlockPos;

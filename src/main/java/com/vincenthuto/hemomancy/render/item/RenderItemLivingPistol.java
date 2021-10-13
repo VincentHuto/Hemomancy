@@ -24,7 +24,6 @@ public class RenderItemLivingPistol extends BlockEntityWithoutLevelRenderer {
 	@Override
 	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transform, PoseStack ms,
 			MultiBufferSource buffers, int light, int overlay) {
-		System.out.println("rerwr");
 		if (stack.getItem()instanceof ItemLivingPistol pistol) {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
@@ -32,7 +31,6 @@ public class RenderItemLivingPistol extends BlockEntityWithoutLevelRenderer {
 			InteractionHand activeHand = player.getUsedItemHand();
 			if (itemIsInUse) {
 				if (activeHand == InteractionHand.MAIN_HAND) {
-					System.out.println("t");
 					if (transform == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
 						ms.mulPose(new Quaternion(Vector3f.XP, -20, true));
 						ms.translate(-.55, 0, 0.);

@@ -5,7 +5,7 @@ import java.util.List;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -49,7 +49,6 @@ public class ItemFerventHusk extends Item {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {
 			if(known.getSelectedManip() != null) {
-				System.out.println(known.getSelectedManip().getProperName());
 				known.incrSelectedManipLevel(1);
 				
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),

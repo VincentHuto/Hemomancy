@@ -128,7 +128,6 @@ public class BlockEntityEarthenVein extends BlockEntity {
 
 	public void setLoc(VeinLocation locCap) {
 		this.locCap.setVeinLoc(locCap);
-		;
 	}
 
 	public VeinLocation getLoc() {

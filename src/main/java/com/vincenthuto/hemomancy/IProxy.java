@@ -22,4 +22,8 @@ public interface IProxy {
 
 	}
 
+	default void openVeinGui() {
+		
+	}
+
 }

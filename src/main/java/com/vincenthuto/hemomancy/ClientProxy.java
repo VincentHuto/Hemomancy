@@ -23,7 +23,7 @@ public class ClientProxy implements IProxy {
 	public void openGuideGui() {
 		Minecraft.getInstance().setScreen(new HemoTitlePage());
 	}
-	
+
 	@Override
 	public void openBinderGui() {
 		Minecraft.getInstance().setScreen(

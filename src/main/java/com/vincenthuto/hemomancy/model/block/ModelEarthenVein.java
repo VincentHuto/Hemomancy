@@ -23,6 +23,7 @@ public class ModelEarthenVein extends Model  {
 		this.base = root.getChild("base");
 	}
 
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

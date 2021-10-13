@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -52,19 +52,11 @@ public class GuiChooseManip extends Screen {
 				if (i == j) {
 					// Hovered
 					int xOff = font.width(known.get(j).getProperName());
-					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
-						font.drawShadow(matrixStack, known.get(j).getProperName(),
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
-										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
-								0xffffff);
 
-						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y + 10
-										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
-								0xffffff);
-					} else {
+					// eventually a config option
+
+					boolean alwaysDisplayHover = false;
+					if (alwaysDisplayHover) {
 						font.drawShadow(matrixStack, known.get(j).getProperName(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
@@ -72,6 +64,28 @@ public class GuiChooseManip extends Screen {
 						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+					} else {
+
+						if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+							font.drawShadow(matrixStack, known.get(j).getProperName(),
+									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+									0xffffff);
+							font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
+									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).y + 10
+											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+									0xffffff);
+						} else {
+//							font.drawShadow(matrixStack, known.get(j).getProperName(),
+//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+//
+//							font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
+//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+						}
 					}
 				}
 			}
@@ -87,9 +101,8 @@ public class GuiChooseManip extends Screen {
 		BloodManipulation selected = manips.getSelectedManip();
 		List<BloodManipulation> known = manips.getManipList();
 		double angleBetweenEach = 360.0 / known.size();
-		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 , mc.getWindow().getGuiScaledHeight() / 2),
+		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 - 48, mc.getWindow().getGuiScaledHeight() / 2),
 				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
-		
 		if (!known.isEmpty()) {
 			for (int i = 0; i < known.size(); i++) {
 				BloodManipulation current = known.get(i);

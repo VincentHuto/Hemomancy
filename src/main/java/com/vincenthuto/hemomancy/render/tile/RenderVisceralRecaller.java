@@ -33,13 +33,15 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 	public RenderVisceralRecaller(BlockEntityRendererProvider.Context p_173636_) {
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void render(BlockEntityVisceralRecaller te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		Vector3f startVec = new Vector3f(te.getBlockPos().getX(), te.getBlockPos().getY(), te.getBlockPos().getZ());
-		drawCenter(matrixStackIn, te, startVec);
+	//	drawCenter(matrixStackIn, te, startVec);
 	}
 
+	@SuppressWarnings("unused")
 	private void drawCenter(PoseStack stack, BlockEntityVisceralRecaller te, Vector3f from) {
 		Map<EnumBloodTendency, Float> affs = te.getTendency();
 		int cx = (int) from.x(), cz = (int) from.z();

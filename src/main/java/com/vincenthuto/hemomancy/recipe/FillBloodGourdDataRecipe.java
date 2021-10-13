@@ -43,15 +43,20 @@ public class FillBloodGourdDataRecipe extends ShapedRecipe {
 					break;
 				}
 			}
-			if (dataSource.getItem() instanceof ItemBloodGourd) {
+			if (dataSource.getItem()instanceof ItemBloodGourd gourd1) {
 				if (!dataSource.isEmpty() && dataSource.hasTag()) {
 					craftingResult.setTag(dataSource.getTag().copy());
 					IBloodVolume bloodVolume = dataSource.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
-					if (craftingResult.getItem() instanceof ItemBloodGourd) {
+					if (craftingResult.getItem()instanceof ItemBloodGourd gourd2) {
 						IBloodVolume resultVolume = craftingResult.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 								.orElseThrow(NullPointerException::new);
-						resultVolume.setBloodVolume(bloodVolume.getBloodVolume() + 200);
+
+						float maxBlood = gourd2.getMaxBlood();
+						float fillBlood = bloodVolume.getBloodVolume() + 200;
+						float fillAmount = fillBlood <= maxBlood ? fillBlood : maxBlood;
+
+						resultVolume.setBloodVolume(fillAmount);
 					}
 				}
 			}

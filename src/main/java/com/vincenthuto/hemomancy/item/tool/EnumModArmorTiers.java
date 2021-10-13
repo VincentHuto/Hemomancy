@@ -30,7 +30,11 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	CHITINITEHELMET(Hemomancy.MOD_ID + ":chitinite_helmet", 37, new int[] { 3, 6, 8, 3 }, 15,
 			SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
-			});
+			}),
+	BARBEDCHEST(Hemomancy.MOD_ID + ":barbed_chestplate", 37, new int[] { 3, 6, 8, 3 }, 15,
+			SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
+				return Ingredient.of(ItemInit.chitinous_husk.get());
+			})
 	;
 
 	private static final int[] MAX_DAMAGE_ARRAY = new int[] { 13, 15, 16, 11 };
@@ -55,35 +59,43 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 		this.repairMaterial = new LazyLoadedValue<>(repairIng);
 	}
 
+	@Override
 	public int getDurabilityForSlot(EquipmentSlot slotIn) {
 		return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
 	}
 
+	@Override
 	public int getDefenseForSlot(EquipmentSlot slotIn) {
 		return this.damageReductionAmountArray[slotIn.getIndex()];
 	}
 
+	@Override
 	public int getEnchantmentValue() {
 		return this.enchantability;
 	}
 
+	@Override
 	public SoundEvent getEquipSound() {
 		return this.soundEvent;
 	}
 
+	@Override
 	public Ingredient getRepairIngredient() {
 		return this.repairMaterial.get();
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public float getToughness() {
 		return this.toughness;
 	}
 
+	@Override
 	public float getKnockbackResistance() {
 		return this.knockbackResistance;
 	}

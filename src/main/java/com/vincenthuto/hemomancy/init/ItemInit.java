@@ -13,8 +13,10 @@ import com.vincenthuto.hemomancy.item.ItemEnzyme;
 import com.vincenthuto.hemomancy.item.ItemRecycledEnzyme;
 import com.vincenthuto.hemomancy.item.ItemTendencyBook;
 import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
+import com.vincenthuto.hemomancy.item.ItemVeinRecaller;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteChest;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteHelmet;
+import com.vincenthuto.hemomancy.item.armor.ItemSpikedChestplate;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
 import com.vincenthuto.hemomancy.item.memories.ItemFerventHusk;
@@ -159,7 +161,7 @@ public class ItemInit {
 					ManipulationInit.conjure_blood_projection));
 	public static final RegistryObject<Item> memory_venous_travel = BASEITEMS.register("memory_venous_travel",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.venous_travel));
+					ManipulationInit.venous_recaller));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
@@ -206,6 +208,8 @@ public class ItemInit {
 			() -> new ItemBloodAbsorption(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> blood_projection = SPECIALITEMS.register("blood_projection",
 			() -> new ItemBloodProjection(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> venous_recaller = SPECIALITEMS.register("venous_recaller",
+			() -> new ItemVeinRecaller(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
 			() -> new ItemLivingSyringe(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
@@ -331,9 +335,18 @@ public class ItemInit {
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
-	// Shield
+	// Barbed/Spiked
+	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
+			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
+					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+
 	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
 			() -> new ItemSpikedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	
+	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
+			() -> new ItemSpikedChestplate(EnumModArmorTiers.BARBEDCHEST, EquipmentSlot.CHEST,
+					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+	
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
 			() -> new ItemChitiniteHelmet(EnumModArmorTiers.CHITINITEHELMET, EquipmentSlot.HEAD,

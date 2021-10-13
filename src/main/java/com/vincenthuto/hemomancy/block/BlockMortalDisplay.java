@@ -59,32 +59,32 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
 
-			IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(NullPointerException::new);
-			worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-			if (!volume.isActive()) {
-				volume.setActive(true);
-				player.displayClientMessage(
-						new TextComponent("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		worldIn.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+		if (!volume.isActive()) {
+			volume.setActive(true);
+			player.displayClientMessage(
+					new TextComponent("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
 
-				for (int i = 0; i < 10; i++) {
-					Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
-					Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(
-							worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
-							worldIn.random.nextDouble() - worldIn.random.nextDouble());
+			for (int i = 0; i < 10; i++) {
+				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
+				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(
+						worldIn.random.nextDouble() - worldIn.random.nextDouble(), 0,
+						worldIn.random.nextDouble() - worldIn.random.nextDouble());
+				if (!worldIn.isClientSide) {
 					PacketHandler.sendClawParticles(endVec, ParticleColor.BLOOD, 64f, worldIn.dimension());
 					HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level.dimension(),
 							ParticleColor.RED, 2, 20, 9, 1.2f);
 				}
-
-			} else {
-				ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
-						new ItemStack(ItemInit.bloody_flask.get(), worldIn.random.nextInt(4)));
-				worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
-				worldIn.addFreshEntity(drops);
 			}
 
-		
+		} else {
+			ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
+					new ItemStack(ItemInit.bloody_flask.get(), worldIn.random.nextInt(4)));
+			worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
+			worldIn.addFreshEntity(drops);
+		}
 
 		return InteractionResult.SUCCESS;
 

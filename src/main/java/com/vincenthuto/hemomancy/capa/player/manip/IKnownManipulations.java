@@ -41,6 +41,8 @@ public interface IKnownManipulations {
 	
 	public List<BlockPos> getVeinBlockList();
 
+	public List<String> getVeinNameList();
+	
 	public void setVeinList(List<VeinLocation> dimPos);
 
 }

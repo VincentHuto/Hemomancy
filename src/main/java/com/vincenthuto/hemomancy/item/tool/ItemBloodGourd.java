@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.item.tool;
 import java.util.List;
 import java.util.Random;
 
+import com.vincenthuto.hemomancy.capa.player.rune.IRune;
+import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -22,10 +24,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class ItemBloodGourd extends Item {
+public class ItemBloodGourd extends Item  implements IRune{
 
 	public static String TAG_STATE = "state";
-	public float currentBlood;
 	EnumBloodGourdTiers tier;
 
 	public ItemBloodGourd(Properties prop, EnumBloodGourdTiers tierIn) {
@@ -33,6 +34,11 @@ public class ItemBloodGourd extends Item {
 		this.tier = tierIn;
 	}
 
+	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return false;
+	}
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
@@ -59,7 +65,7 @@ public class ItemBloodGourd extends Item {
 
 				} else {
 					// Refill from player
-					if (bloodVolume.getBloodVolume() < tier.getMaxVolume()) {
+					if (bloodVolume.getBloodVolume() < tier.getMaxVolume()/10) {
 						Random rand = worldIn.random;
 						if (rand.nextInt(200) == 20) {
 							player.hurt(ItemInit.bloodLoss, 0.5f);
@@ -115,8 +121,9 @@ public class ItemBloodGourd extends Item {
 		return tier.getMaxVolume();
 	}
 
-	public float getCurrentBlood() {
-		return currentBlood;
+	@Override
+	public RuneType getRuneType() {
+		return RuneType.GOURD;
 	}
 
 }

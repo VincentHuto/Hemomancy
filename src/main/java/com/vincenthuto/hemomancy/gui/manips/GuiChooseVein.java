@@ -8,9 +8,10 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.manip.PacketTeleportToVein;
-import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentVein;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
 import com.vincenthuto.hemomancy.util.VeinLocation;
+import com.vincenthuto.hutoslib.client.TextUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -21,10 +22,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class GuiChooseVein extends Screen {
 	int left, top;
 	static TextComponent titleComponent = new TextComponent("");
@@ -65,26 +63,61 @@ public class GuiChooseVein extends Screen {
 				if (i == j + 1) {
 					// Hovered
 					int xOff = font.width(known.get(j).getName());
-					if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+
+					// eventually a config option
+					boolean alwaysDisplayHover = false;
+					if (alwaysDisplayHover) {
 						font.drawShadow(matrixStack, known.get(j).getName(),
+								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).y - 20
+										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+								0xffffff);
+
+						font.drawShadow(matrixStack, TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 
-//						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//								(float) (((GuiButtonTextured) renderables.get(i)).y + 10
-//										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
-//								0xffffff);
-					} else {
-						font.drawShadow(matrixStack, known.get(j).getName(),
+						font.drawShadow(matrixStack, known.get(j).getPosition().toShortString(),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+								(float) (((GuiButtonTextured) renderables.get(i)).y
+										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+								0xffffff);
+					} else {
+						// is hovered
+						if (((GuiButtonTextured) renderables.get(i)).isHovered()) {
+							font.drawShadow(matrixStack, known.get(j).getName(),
+									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).y - 20
+											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+									0xffffff);
 
-//						font.drawShadow(matrixStack,  level.get(j).getCurrentLevel() + "",
-//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+							font.drawShadow(matrixStack,
+									TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
+									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+									0xffffff);
+
+							font.drawShadow(matrixStack, known.get(j).getPosition().toShortString(),
+									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).y
+											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
+									0xffffff);
+						} else {
+//							font.drawShadow(matrixStack, known.get(j).getName(),
+//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).y - 20, 0xffffff);
+//	
+//							font.drawShadow(matrixStack, TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
+//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+//							
+//							font.drawShadow(matrixStack,known.get(j).getPosition().toShortString(),
+//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).y - 0, 0xffffff);
+						}
 					}
 				}
 			}

@@ -25,6 +25,7 @@ public class RenderEarthenVein implements BlockEntityRenderer<BlockEntityEarthen
 		vein = new ModelEarthenVein(p_173636_.bakeLayer(ModelLayersInit.earth_vein));
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void render(BlockEntityEarthenVein te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {

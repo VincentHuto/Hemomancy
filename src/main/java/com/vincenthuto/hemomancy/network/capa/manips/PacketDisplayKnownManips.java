@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.network.manip;
+package com.vincenthuto.hemomancy.network.capa.manips;
 
 import java.util.ArrayList;
 import java.util.List;

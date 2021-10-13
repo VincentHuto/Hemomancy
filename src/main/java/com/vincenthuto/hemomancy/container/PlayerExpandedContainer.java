@@ -64,7 +64,7 @@ public class PlayerExpandedContainer extends AbstractContainerMenu {
 		this.addSlot(new SlotRune(player, runes, 2, 77 + 2 * 18, 8));
 		this.addSlot(new SlotRune(player, runes, 3, 77 + 3 * 18, 8));
 		this.addSlot(new SlotSelectiveRuneType(player, ItemVasculariumCharm.class, runes, 4, 77, 26));
-		this.addSlot(new SlotSelectiveRuneType(player, ItemBloodGourd.class, runes, 5, 77, 44));
+		this.addSlot(new SlotSelectiveRuneType(player, ItemBloodGourd.class, runes,5,77, 44));
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {

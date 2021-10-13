@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hutoslib.client.TextUtils;
 
 import net.minecraft.ChatFormatting;

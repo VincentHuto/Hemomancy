@@ -4,7 +4,8 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.gui.manips.GuiChooseManip;
+import com.vincenthuto.hemomancy.gui.manips.GuiChooseVein;
+import com.vincenthuto.hemomancy.item.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 
@@ -12,10 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,9 +23,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
-public class ItemBloodStainedStone extends Item {
+public class ItemVeinRecaller extends Item implements IDispellable {
 
-	public ItemBloodStainedStone(Properties prop) {
+	public ItemVeinRecaller(Properties prop) {
 		super(prop);
 		prop.stacksTo(1);
 	}
@@ -44,7 +43,7 @@ public class ItemBloodStainedStone extends Item {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketKnownManipulationServer(manips));
 			} else {
-				Minecraft.getInstance().setScreen(new GuiChooseManip(playerIn));
+				Minecraft.getInstance().setScreen(new GuiChooseVein(playerIn));
 				playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 			}
 		} else {
@@ -55,11 +54,8 @@ public class ItemBloodStainedStone extends Item {
 	}
 
 	@Override
-	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		SoundSource soundcategory = entityLiving instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
-		worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(),
-				SoundEvents.BEACON_DEACTIVATE, soundcategory, 1.0F,
-				1.0F / (worldIn.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
+	public int getEntityLifespan(ItemStack itemStack, Level world) {
+		return 0;
 	}
 
 }

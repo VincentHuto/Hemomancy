@@ -24,6 +24,7 @@ public class SlotSelectiveRuneType extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
+
 		return itemType.isInstance(stack.getItem());
 	}
 

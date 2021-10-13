@@ -87,7 +87,6 @@ public class PacketUpdateLivingStaffMorph {
 				 * if (jarHandler instanceof MorphlingJarItemHandler && staffHandler instanceof
 				 * LivingStaffItemHandler) { System.out.println("IS WORKING");
 				 * MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-				 * System.out.println(castedJar.toString());
 				 * 
 				 * LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
 				 * // ItemStack originalFocus = castedStaff.getStackInSlot(0).copy(); ItemStack

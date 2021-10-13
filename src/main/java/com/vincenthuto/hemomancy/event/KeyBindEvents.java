@@ -2,12 +2,12 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketChangeSelectedManip;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketChangeMorphKey;
-import com.vincenthuto.hemomancy.network.manip.PacketChangeSelectedManip;
-import com.vincenthuto.hemomancy.network.manip.PacketUseContManipKey;
-import com.vincenthuto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.vincenthuto.hemomancy.recipe.BaseBloodCraftingRecipe;
 import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;

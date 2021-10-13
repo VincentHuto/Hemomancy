@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
@@ -42,8 +42,12 @@ public class ItemLethianDew extends Item {
 
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
-		known.getKnownManips().remove(known.getSelectedManip());
+
+		if (known.getKnownManips().containsKey(known.getSelectedManip())) {
+			known.getKnownManips().remove(known.getSelectedManip());
+		}
 		known.setSelectedManip(BloodManipulation.BLANK);
+
 		if (!p_42985_.isClientSide) {
 			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 					new PacketKnownManipulationServer(known));
@@ -83,9 +87,9 @@ public class ItemLethianDew extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(new TextComponent("Gathered dew from the flowers of the underworld"));
-		tooltip.add(new TextComponent("Used to forget your selected manipulation"));
-		tooltip.add(new TextComponent("\"Tastes like static...\""));
+		tooltip.add(new TextComponent("Highly concentrated lethian dew"));
+		tooltip.add(new TextComponent("Used to forget ALL your manipulations"));
+		tooltip.add(new TextComponent("\"Dont Spill It...\""));
 	}
 
 }

@@ -122,8 +122,17 @@ public class KnownManipulations implements IKnownManipulations {
 	@Override
 	public List<BlockPos> getVeinBlockList() {
 		List<BlockPos> list = new ArrayList<BlockPos>();
-		for(VeinLocation loc : getVeinList()) {
+		for (VeinLocation loc : getVeinList()) {
 			list.add(loc.getPosition());
+		}
+		return list;
+	}
+
+	@Override
+	public List<String> getVeinNameList() {
+		List<String> list = new ArrayList<String>();
+		for (VeinLocation loc : getVeinList()) {
+			list.add(loc.getName());
 		}
 		return list;
 	}

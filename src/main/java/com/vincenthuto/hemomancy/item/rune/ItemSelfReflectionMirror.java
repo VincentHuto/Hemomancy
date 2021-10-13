@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.item.rune;
 
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenRunesInv;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

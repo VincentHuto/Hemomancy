@@ -31,7 +31,6 @@ public class ItemVasculariumCharm extends ItemRune implements IRune {
 
 		if (!worldIn.isClientSide) {
 			if (volCap != null) {
-				System.out.println(worldIn.isClientSide);
 				volCap.toggleActive();
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketBloodVolumeServer(volCap));

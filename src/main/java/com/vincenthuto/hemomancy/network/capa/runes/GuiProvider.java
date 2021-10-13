@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.network.capa;
+package com.vincenthuto.hemomancy.network.capa.runes;
 
 import javax.annotation.Nullable;
 

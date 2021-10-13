@@ -48,14 +48,15 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 		IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 				.orElseThrow(NullPointerException::new);
 
+		
 		if (!player.level.isClientSide) {
 			if (volume.isActive()) {
 				if (volume.getBloodVolume() > cost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.subtractBloodVolume((float) cost);
 						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new PacketBloodVolumeServer(
-										volume.isActive(), volume.getMaxBloodVolume(), volume.getBloodVolume()));
+								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+								new PacketBloodVolumeServer(volume));
 						getAction(player, world, heldItemMainhand, position);
 					} else {
 						player.displayClientMessage(new TextComponent("Not Enough Alignment for Manipulation!")

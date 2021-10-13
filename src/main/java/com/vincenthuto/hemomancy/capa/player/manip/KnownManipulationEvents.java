@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.capa.player.manip;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

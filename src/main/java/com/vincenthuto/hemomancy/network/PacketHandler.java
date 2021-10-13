@@ -8,13 +8,19 @@ import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyClient;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeClient;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationClient;
-import com.vincenthuto.hemomancy.network.capa.PacketKnownManipulationServer;
-import com.vincenthuto.hemomancy.network.capa.PacketOpenNormalInv;
-import com.vincenthuto.hemomancy.network.capa.PacketOpenRunesInv;
-import com.vincenthuto.hemomancy.network.capa.PacketOpenVeinGUI;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemClient;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketChangeSelectedManip;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketDisplayKnownManips;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationClient;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenNormalInv;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.network.jar.PacketJarTogglePickup;
 import com.vincenthuto.hemomancy.network.jar.PacketOpenJar;
 import com.vincenthuto.hemomancy.network.jar.PacketOpenStaff;
@@ -22,13 +28,6 @@ import com.vincenthuto.hemomancy.network.jar.PacketToggleJarMessage;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketChangeMorphKey;
-import com.vincenthuto.hemomancy.network.manip.PacketChangeSelectedManip;
-import com.vincenthuto.hemomancy.network.manip.PacketDisplayKnownManips;
-import com.vincenthuto.hemomancy.network.manip.PacketTeleportToVein;
-import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentManip;
-import com.vincenthuto.hemomancy.network.manip.PacketUpdateCurrentVein;
-import com.vincenthuto.hemomancy.network.manip.PacketUseContManipKey;
-import com.vincenthuto.hemomancy.network.manip.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.particle.PacketAirBloodDraw;
 import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
@@ -117,8 +116,6 @@ public class PacketHandler {
 				PacketUpdateCurrentManip.Handler::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketTeleportToVein.class, PacketTeleportToVein::encode,
 				PacketTeleportToVein::decode, PacketTeleportToVein.Handler::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketOpenVeinGUI.class, PacketOpenVeinGUI::decode,
-				PacketOpenVeinGUI::new, PacketOpenVeinGUI::handle);
 
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentVein.class, PacketUpdateCurrentVein::encode,
 				PacketUpdateCurrentVein::decode, PacketUpdateCurrentVein.Handler::handle);

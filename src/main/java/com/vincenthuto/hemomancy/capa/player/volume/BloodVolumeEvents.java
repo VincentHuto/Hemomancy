@@ -108,7 +108,6 @@ public class BloodVolumeEvents {
 			bloodVolumeNew.setActive(bloodVolumeOld.isActive());
 			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
 			bloodVolumeNew.setMaxBloodVolume(bloodVolumeOld.getMaxBloodVolume());
-			System.out.println(bloodVolumeNew);
 
 			peorig.invalidateCaps();
 		}
@@ -136,8 +135,8 @@ public class BloodVolumeEvents {
 					if (volume.getBloodVolume() < 250) {
 						RenderSystem.setShader(GameRenderer::getPositionTexShader);
 						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-						float time = (float) Math.sin(player.level.getGameTime()*0.05f);
-						RenderSystem.setShaderColor(1, 1, 1,0.5f+time);
+						float time = (float) Math.sin(player.level.getGameTime() * 0.05f);
+						RenderSystem.setShaderColor(1, 1, 1, 0.5f + time);
 						RenderSystem._setShaderTexture(0,
 								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 						event.getMatrixStack().pushPose();

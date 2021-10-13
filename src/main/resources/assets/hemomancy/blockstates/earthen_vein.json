@@ -1,19 +1,124 @@
 {
-	"variants": {
-		"facing=north": {
-			"model": "hemomancy:block/earthen_vein"
-		},
-		"facing=south": {
-			"model": "hemomancy:block/earthen_vein",
-			"y": 180
-		},
-		"facing=west": {
-			"model": "hemomancy:block/earthen_vein",
-			"y": 270
-		},
-		"facing=east": {
-			"model": "hemomancy:block/earthen_vein",
-			"y": 90
-		}
-	}
+  "variants" : {
+    "facing=north,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein"
+    },
+    "facing=south,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented"
+    },
+    "facing=south,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named"
+    },
+    "facing=south,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named"
+    },
+    "facing=south,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein"
+    },
+    "facing=south,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented"
+    },
+    "facing=south,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named"
+    },
+    "facing=south,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named"
+    },
+    "facing=south,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:block/earthen_vein_stented_named",
+      "y" : 90
+    }
+  }
 }
