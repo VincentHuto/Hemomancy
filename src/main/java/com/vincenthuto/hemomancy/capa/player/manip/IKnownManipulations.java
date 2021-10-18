@@ -38,11 +38,15 @@ public interface IKnownManipulations {
 	public void setSelectedVein(VeinLocation selectedVein);
 
 	public List<VeinLocation> getVeinList();
-	
+
 	public List<BlockPos> getVeinBlockList();
 
 	public List<String> getVeinNameList();
-	
+
 	public void setVeinList(List<VeinLocation> dimPos);
+
+	public boolean isAvatarActive();
+
+	public void setAvatarActive(boolean avatarActive);
 
 }

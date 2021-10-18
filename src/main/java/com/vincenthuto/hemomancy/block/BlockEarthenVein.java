@@ -124,18 +124,18 @@ public class BlockEarthenVein extends Block implements EntityBlock, SimpleWaterl
 				if (known.getVeinBlockList().contains(te.getLoc().getPosition())) {
 					if (state.getValue(STENTED)) {
 						te.getLoc().setName(stack.getHoverName().getString());
-						te.setName(stack.getHoverName().getString());
-						stack.shrink(1);
-						BlockState newState = state.setValue(NAMED, true);
-						worldIn.setBlock(pos, newState, 10);
-
+						if (stack.hasCustomHoverName()) {
+							System.out.println(stack.hasCustomHoverName());
+							te.setName(stack.getHoverName().getString());
+							stack.shrink(1);
+							BlockState newState = state.setValue(NAMED, true);
+							worldIn.setBlock(pos, newState, 10);
+						}
 					} else {
 						player.displayClientMessage(new TextComponent("Only Stented Veins can be Renamed!"), true);
-
 					}
 				} else {
 					player.displayClientMessage(new TextComponent("You do not control this vein!"), true);
-
 				}
 			}
 			if (!worldIn.isClientSide) {

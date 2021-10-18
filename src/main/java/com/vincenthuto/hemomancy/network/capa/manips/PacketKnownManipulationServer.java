@@ -21,20 +21,24 @@ public class PacketKnownManipulationServer {
 	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<BloodManipulation, ManipLevel>();
 	private BloodManipulation selected;
 	private VeinLocation selectedVein;
+	private boolean avatarActive;
 
 	public PacketKnownManipulationServer(IKnownManipulations known) {
 		this.known = known.getKnownManips();
 		this.selected = known.getSelectedManip();
 		this.veinList = known.getVeinList();
 		this.selectedVein = known.getSelectedVein();
+		this.avatarActive = known.isAvatarActive();
 	}
 
 	public PacketKnownManipulationServer(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
-			List<VeinLocation> veinList, VeinLocation selectedVein) {
+			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive) {
 		this.known = list;
 		this.selected = selected;
 		this.veinList = veinList;
 		this.selectedVein = selectedVein;
+		this.avatarActive = avatarActive;
+
 	}
 
 	public static void handle(final PacketKnownManipulationServer msg, Supplier<NetworkEvent.Context> ctx) {
@@ -45,6 +49,7 @@ public class PacketKnownManipulationServer {
 			known.setSelectedManip(msg.selected);
 			known.setVeinList(msg.veinList);
 			known.setSelectedVein(msg.selectedVein);
+			known.setAvatarActive(msg.avatarActive);
 		});
 		ctx.get().setPacketHandled(true);
 	}
@@ -70,6 +75,7 @@ public class PacketKnownManipulationServer {
 				buf.writeNbt(msg.veinList.get(i).serializeNBT());
 			}
 		}
+		buf.writeBoolean(msg.avatarActive);
 	}
 
 	public static PacketKnownManipulationServer decode(final FriendlyByteBuf buf) {
@@ -86,6 +92,8 @@ public class PacketKnownManipulationServer {
 		for (int i = 0; i < veincount; ++i) {
 			veinList.add(VeinLocation.deserializeToLoc(buf.readNbt()));
 		}
-		return new PacketKnownManipulationServer(manips, sel, veinList, selvein);
+		boolean avatarActive = buf.readBoolean();
+
+		return new PacketKnownManipulationServer(manips, sel, veinList, selvein, avatarActive);
 	}
 }

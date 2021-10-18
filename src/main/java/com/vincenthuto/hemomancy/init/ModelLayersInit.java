@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.model.entity.ModelBloodBullet;
 import com.vincenthuto.hemomancy.model.entity.ModelIronPillar;
 import com.vincenthuto.hemomancy.model.entity.ModelIronSpike;
 import com.vincenthuto.hemomancy.model.entity.ModelIronWall;
+import com.vincenthuto.hemomancy.model.entity.ModelWretchedWill;
 import com.vincenthuto.hemomancy.model.item.ModelArmBanner;
 import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
 import com.vincenthuto.hemomancy.model.item.ModelLivingAxe;
@@ -57,6 +58,9 @@ public class ModelLayersInit {
 	public static final ModelLayerLocation earth_vein = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelearthenvein"), "main");
 
+	public static final ModelLayerLocation wretched_will = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "modelwretchedwill"), "main");
+
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		event.registerLayerDefinition(living_blade_tame, ModelLivingBladeHandTame::createLayers);
@@ -72,6 +76,8 @@ public class ModelLayersInit {
 		event.registerLayerDefinition(iron_pillar, ModelIronPillar::createBodyLayer);
 		event.registerLayerDefinition(blood_bullet, ModelBloodBullet::createBodyLayer);
 		event.registerLayerDefinition(earth_vein, ModelEarthenVein::createBodyLayer);
+		event.registerLayerDefinition(wretched_will, ModelWretchedWill::createBodyLayer);
+
 	}
 
 }

@@ -27,8 +27,7 @@ import net.minecraftforge.fmllegacy.network.PacketDistributor;
 public class ItemBloodStainedStone extends Item {
 
 	public ItemBloodStainedStone(Properties prop) {
-		super(prop);
-		prop.stacksTo(1);
+		super(prop.stacksTo(1));
 	}
 
 	@Override
@@ -39,6 +38,8 @@ public class ItemBloodStainedStone extends Item {
 				.orElseThrow(NullPointerException::new);
 		IKnownManipulations manips = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
+		
+		System.out.println(manips);
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),

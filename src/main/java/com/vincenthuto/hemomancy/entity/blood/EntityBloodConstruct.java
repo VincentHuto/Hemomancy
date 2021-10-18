@@ -174,5 +174,9 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 	public LivingEntity getCreator() {
 		return creator;
 	}
+	
+	public void setCreator(LivingEntity creator) {
+		this.creator = creator;
+	}
 
 }

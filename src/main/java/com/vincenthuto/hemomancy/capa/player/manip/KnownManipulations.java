@@ -14,9 +14,20 @@ public class KnownManipulations implements IKnownManipulations {
 
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
 	ManipLevel manipLevel = ManipLevel.BLANK;
-	public LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<BloodManipulation, ManipLevel>();
-	public List<VeinLocation> veinList = new ArrayList<>();
+	LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<BloodManipulation, ManipLevel>();
+	List<VeinLocation> veinList = new ArrayList<>();
 	VeinLocation selectedVein = VeinLocation.BLANK;
+	boolean avatarActive = false;
+
+	@Override
+	public boolean isAvatarActive() {
+		return avatarActive;
+	}
+
+	@Override
+	public void setAvatarActive(boolean avatarActive) {
+		this.avatarActive = avatarActive;
+	}
 
 	@Override
 	public BloodManipulation getSelectedManip() {

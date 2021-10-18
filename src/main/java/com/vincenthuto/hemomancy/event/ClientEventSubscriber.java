@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodNeedle;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbDirected;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbTracking;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodShot;
+import com.vincenthuto.hemomancy.render.entity.blood.RenderWretchedWill;
 import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronPillar;
 import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronSpike;
 import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronWall;
@@ -91,7 +92,12 @@ public class ClientEventSubscriber {
 		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
 		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
 		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
+		
+		event.registerEntityRenderer(EntityInit.wretched_will.get(), RenderWretchedWill::new);
+
 	}
+	
+	
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {

@@ -108,8 +108,8 @@ public class BloodVolumeHud extends Screen {
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 					RenderSystem.setShaderTexture(0, fill_texture);
 					matrix.mulPose(new Quaternion(Vector3f.ZP, 45, true));
-					drawFlippedTexturedModalRect(-12, 113, 23 + textureUShift, textureUShift, 6,
-							8 + heightShift - newBarWidth);
+					drawFlippedTexturedModalRect(-13, 113, 22 + textureUShift, textureUShift, 7f,
+							2 + heightShift - newBarWidth);
 					matrix.popPose();
 	
 					//Frame

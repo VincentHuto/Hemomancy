@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RenderBloodBullet extends EntityRenderer<EntityBloodBullet> {
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/block/end_portal.png");
+			"textures/entity/wretched_will/modelwretchedwill.png");
 
 	public RenderBloodBullet(Context renderManagerIn) {
 		super(renderManagerIn);

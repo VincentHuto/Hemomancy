@@ -81,6 +81,9 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 				list.add(entry);
 			}
 		}
+		CompoundTag avatarActive = new CompoundTag();
+		avatarActive.putBoolean("avatarActive", instance.isAvatarActive());
+		list.add(avatarActive);
 
 		return list;
 	}
@@ -127,7 +130,13 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 							veinList.add(vein);
 						}
 					}
+
+					if (parsedNbt.contains("avatarActive")) {
+						instance.setAvatarActive(parsedNbt.getBoolean("avatarActive"));
+					}
+
 				}
+
 			}
 			instance.setKnownManips(map);
 			instance.setVeinList(veinList);

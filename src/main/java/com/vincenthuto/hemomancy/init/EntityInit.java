@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.entity.blood.EntityBloodNeedle;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbTracking;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodShot;
+import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
@@ -133,18 +134,23 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityBloodNeedle>of(EntityBloodNeedle::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_needle").toString()));
-	
+
 	public static final RegistryObject<EntityType<EntityBloodBullet>> blood_bullet = ENTITY_TYPES.register(
 			"blood_bullet",
 			() -> EntityType.Builder.<EntityBloodBullet>of(EntityBloodBullet::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet").toString()));
-	
 
 	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
 			() -> EntityType.Builder.<EntityBloodShot>of(EntityBloodShot::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_shot").toString()));
+
+	public static final RegistryObject<EntityType<EntityWretchedWill>> wretched_will = ENTITY_TYPES.register(
+			"wretched_will",
+			() -> EntityType.Builder.<EntityWretchedWill>of(EntityWretchedWill::new, MobCategory.MISC).sized(0.5F, 0.5F)
+					.clientTrackingRange(4).setUpdateInterval(20)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "wretched_will").toString()));
 
 	public static final RegistryObject<EntityType<EntityBloodShot>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
 			() -> EntityType.Builder.<EntityBloodShot>of(EntityBloodShot::new, MobCategory.MISC).sized(0.5F, 0.5F)
@@ -157,6 +163,7 @@ public class EntityInit {
 		event.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().build());
 		event.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().build());
 		event.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().build());
+		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
 	}
 //		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
 //		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());

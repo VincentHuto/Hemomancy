@@ -449,6 +449,7 @@ public class ModelAbhorentThought<T extends Entity> extends EntityModel<T> {
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
+		
 
 	}
 
