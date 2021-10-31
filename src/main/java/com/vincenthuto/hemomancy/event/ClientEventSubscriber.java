@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
 import com.vincenthuto.hemomancy.gui.mindrunes.GuiChiselStation;
 import com.vincenthuto.hemomancy.gui.mindrunes.GuiRuneBinder;
 import com.vincenthuto.hemomancy.gui.mindrunes.PlayerExpandedScreen;
@@ -13,6 +14,7 @@ import com.vincenthuto.hemomancy.gui.recaller.GuiVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.init.EntityInit;
+import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBolt;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBullet;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloud;
@@ -27,7 +29,8 @@ import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronSpike;
 import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronWall;
 import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
-import com.vincenthuto.hemomancy.render.item.RenderMorphlingPolypItem;
+import com.vincenthuto.hemomancy.render.item.RenderItemMorphlingPolyp;
+import com.vincenthuto.hemomancy.render.layer.LayerBloodGourd;
 import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
 import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
@@ -36,13 +39,27 @@ import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
 import com.vincenthuto.hemomancy.render.tile.RenderRuneModStation;
 import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
+import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -87,17 +104,15 @@ public class ClientEventSubscriber {
 
 		// event.registerEntityRenderer(EntityInit.dark_arrow.get(),
 		// RenderDarkArrow::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), RenderMorphlingPolypItem::new);
+		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), RenderItemMorphlingPolyp::new);
 
 		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
 		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
 		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
-		
+
 		event.registerEntityRenderer(EntityInit.wretched_will.get(), RenderWretchedWill::new);
 
 	}
-	
-	
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
@@ -113,13 +128,17 @@ public class ClientEventSubscriber {
 		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), RenderEarthenVein::new);
 
 		// Screen
-		MenuScreens.register(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
-		MenuScreens.register(ContainerInit.visceral_recaller.get(), GuiVisceralRecaller::new);
-		MenuScreens.register(ContainerInit.rune_binder.get(), GuiRuneBinder::new);
-		MenuScreens.register(ContainerInit.morphling_jar.get(), GuiMorphlingJar::new);
-		MenuScreens.register(ContainerInit.living_syringe.get(), GuiLivingSyringe::new);
-		MenuScreens.register(ContainerInit.living_staff.get(), GuiLivingStaff::new);
-		MenuScreens.register(ContainerInit.playerrunes, PlayerExpandedScreen::new);
+		event.enqueueWork(() -> {
+
+			MenuScreens.register(ContainerInit.runic_chisel_station.get(), GuiChiselStation::new);
+			MenuScreens.register(ContainerInit.visceral_recaller.get(), GuiVisceralRecaller::new);
+			MenuScreens.register(ContainerInit.rune_binder.get(), GuiRuneBinder::new);
+			MenuScreens.register(ContainerInit.morphling_jar.get(), GuiMorphlingJar::new);
+			MenuScreens.register(ContainerInit.living_syringe.get(), GuiLivingSyringe::new);
+			MenuScreens.register(ContainerInit.living_staff.get(), GuiLivingStaff::new);
+			MenuScreens.register(ContainerInit.playerrunes, PlayerExpandedScreen::new);
+			MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
+		});
 
 		// Entity
 //		event.registerEntityRenderer(EntityInit.leech.get(), RenderLeech::new);
@@ -152,4 +171,50 @@ public class ClientEventSubscriber {
 
 		}
 	}
+
+	@SubscribeEvent
+	public static void constructLayers(EntityRenderersEvent.AddLayers event) {
+
+		addLayerToEntity(event, EntityType.ARMOR_STAND);
+		addLayerToEntity(event, EntityType.ZOMBIE);
+		addLayerToEntity(event, EntityType.SKELETON);
+		addLayerToEntity(event, EntityType.HUSK);
+		addLayerToEntity(event, EntityType.DROWNED);
+		addLayerToEntity(event, EntityType.STRAY);
+		addLayerToPlayerSkin(event, "default");
+		addLayerToPlayerSkin(event, "slim");
+
+	}
+
+	@SubscribeEvent
+	public static void textureStitch(TextureStitchEvent.Pre event) {
+		if (event.getMap().location() == InventoryMenu.BLOCK_ATLAS) {
+			event.addSprite(BannerSlot.SLOT_BACKGROUND);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
+		EntityRenderer<? extends Player> render = event.getSkin(skinName);
+		if (render instanceof LivingEntityRenderer livingRenderer) {
+			livingRenderer.addLayer(new LayerBloodGourd<>(livingRenderer));
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
+			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
+		R renderer = event.getRenderer(entityType);
+		if (renderer != null)
+			renderer.addLayer(new LayerBloodGourd(renderer));
+	}
+
+	public static void playHornAnimation() {
+		LocalPlayer ent = Minecraft.getInstance().player;
+		Minecraft.getInstance().particleEngine.createTrackingEmitter(ent, ParticleTypes.SOUL, 30);
+		Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.curved_horn.get()));
+		Minecraft.getInstance().level.playLocalSound(ent.getX(), ent.getY(), ent.getZ(), SoundEvents.TOTEM_USE,
+				ent.getSoundSource(), 1F, 0.6F, false);
+	}
+
 }

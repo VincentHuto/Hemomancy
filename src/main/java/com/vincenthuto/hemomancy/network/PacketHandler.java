@@ -19,15 +19,16 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenRunesInv;
-import com.vincenthuto.hemomancy.network.jar.PacketJarTogglePickup;
-import com.vincenthuto.hemomancy.network.jar.PacketOpenJar;
-import com.vincenthuto.hemomancy.network.jar.PacketOpenStaff;
-import com.vincenthuto.hemomancy.network.jar.PacketToggleJarMessage;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
-import com.vincenthuto.hemomancy.network.keybind.PacketChangeMorphKey;
+import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
+import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
+import com.vincenthuto.hemomancy.network.morphling.PacketOpenJar;
+import com.vincenthuto.hemomancy.network.morphling.PacketOpenStaff;
+import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
 import com.vincenthuto.hemomancy.network.particle.PacketAirBloodDraw;
 import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
@@ -161,8 +162,9 @@ public class PacketHandler {
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
 				PacketRuneSync::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketArmBannerSync.class, PacketArmBannerSync::decode,
-				PacketArmBannerSync::new, PacketArmBannerSync::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
+				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
+
 
 		CHANNELRUNEBINDER.registerMessage(networkID++, PacketBinderTogglePickup.class, PacketBinderTogglePickup::encode,
 				PacketBinderTogglePickup::decode, PacketBinderTogglePickup::handle);

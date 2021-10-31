@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
+import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
@@ -268,7 +268,7 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 
 	@Override
 	protected AbstractContainerMenu createMenu(int id, Inventory player) {
-		return new ContainerVisceralRecaller(id, player, this);
+		return new MenuVisceralRecaller(id, player, this);
 	}
 
 	public static class SimpleItemStackHandler extends ItemStackHandler {

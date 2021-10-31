@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy;
 
 import com.vincenthuto.hemomancy.gui.guide.HemoTitlePage;
 import com.vincenthuto.hemomancy.gui.manips.GuiChooseManip;
+import com.vincenthuto.hemomancy.gui.manips.GuiChooseVein;
 import com.vincenthuto.hemomancy.gui.mindrunes.GuiRuneBinderViewer;
 import com.vincenthuto.hemomancy.gui.morphlingjar.GuiMorphlingJarViewer;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -48,6 +49,11 @@ public class ClientProxy implements IProxy {
 		Minecraft.getInstance().setScreen(new GuiChooseManip(ClientUtils.getClientPlayer()));
 	}
 
+	@Override
+	public void openVeinGui() {
+		Minecraft.getInstance().setScreen(new GuiChooseVein(ClientUtils.getClientPlayer()));
+	}
+	
 	@Override
 	public void registerHandlers() {
 		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

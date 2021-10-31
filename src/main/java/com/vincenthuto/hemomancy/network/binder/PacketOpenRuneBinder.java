@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,7 +41,7 @@ public class PacketOpenRuneBinder {
 					@Override
 					public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new ContainerRuneBinder(p_createMenu_1_, p_createMenu_3_.level,
+						return new MenuRuneBinder(p_createMenu_1_, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});

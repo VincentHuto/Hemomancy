@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerMorphlingJar;
+import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.jar.PacketJarTogglePickup;
+import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class MorphlingJarEvents {
 
 	public static void pickupEvent(EntityItemPickupEvent event) {
-		if (event.getPlayer().containerMenu instanceof ContainerMorphlingJar || event.getPlayer().isShiftKeyDown()
+		if (event.getPlayer().containerMenu instanceof MenuMorphlingJar || event.getPlayer().isShiftKeyDown()
 				|| event.getItem().getItem().getItem() instanceof ItemMorphlingJar)
 			return;
 		Inventory playerInv = event.getPlayer().getInventory();

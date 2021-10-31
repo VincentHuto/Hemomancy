@@ -5,10 +5,12 @@ import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockActiveSmoulderingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockBleedingHeart;
+import com.vincenthuto.hemomancy.block.BlockBrazier;
 import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
 import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
 import com.vincenthuto.hemomancy.block.BlockEarthenVein;
+import com.vincenthuto.hemomancy.block.BlockJuiceinator;
 import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
 import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
 import com.vincenthuto.hemomancy.block.BlockRuneModStation;
@@ -162,6 +164,7 @@ public class BlockInit {
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
 			() -> new BlockHumaneIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
 			() -> new BlockSerpentineIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -195,6 +198,14 @@ public class BlockInit {
 			() -> new BlockEarthenVein(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
+	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
+			() -> new BlockBrazier(
+					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
+	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
+			() -> new BlockJuiceinator(
+					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
 		if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -212,7 +223,7 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.translucent());
-
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
 		}
 	}
 

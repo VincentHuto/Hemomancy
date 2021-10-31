@@ -7,9 +7,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.block.BlockChiselStation;
-import com.vincenthuto.hemomancy.container.ContainerChiselStation;
+import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -126,7 +126,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 	}
 
 	public RecipeChiselStation getCurrentRecipe() {
-		for (RecipeChiselStation recipe : ModChiselRecipes.runeRecipies) {
+		for (RecipeChiselStation recipe : ChiselRecipes.runeRecipies) {
 			if (recipe.getInputs().size() == 1) {
 				if (recipe.getInputs().get(0).test(this.getItems().get(0))) {
 					currentRecipe = recipe;
@@ -148,7 +148,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 	}
 
 	public boolean hasValidRecipe() {
-		for (RecipeChiselStation recipe : ModChiselRecipes.runeRecipies) {
+		for (RecipeChiselStation recipe : ChiselRecipes.runeRecipies) {
 			if (recipe.getInputs().size() == 1) {
 				if (recipe.getInputs().get(0).test(this.getItems().get(0))) {
 					return true;
@@ -362,7 +362,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 
 	@Override
 	protected AbstractContainerMenu createMenu(int id, Inventory player) {
-		return new ContainerChiselStation(id, player, this);
+		return new MenuChiselStation(id, player, this);
 	}
 
 	public void sendUpdates() {
@@ -381,7 +381,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 		if (currentRecipe != null)
 			recipe = currentRecipe;
 		else
-			for (RecipeChiselStation recipe_ : ModChiselRecipes.runeRecipies) {
+			for (RecipeChiselStation recipe_ : ChiselRecipes.runeRecipies) {
 
 				List<Ingredient> recipieInObjFirst = recipe_.getInputs();
 				if (recipieInObjFirst.get(0).test(chestStuff.get(0)) && recipieInObjFirst.size() == 1) {

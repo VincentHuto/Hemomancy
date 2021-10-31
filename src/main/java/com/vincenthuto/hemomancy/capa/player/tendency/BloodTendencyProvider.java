@@ -13,7 +13,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
+@SuppressWarnings("removal")
 public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 	@CapabilityInject(IBloodTendency.class)
 	public static final Capability<IBloodTendency> TENDENCY_CAPA = null;

@@ -7,10 +7,10 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
-import com.vincenthuto.hemomancy.network.keybind.PacketChangeMorphKey;
+import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
-import com.vincenthuto.hemomancy.recipe.BaseBloodCraftingRecipe;
-import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hutoslib.client.ClientUtils;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,7 +27,7 @@ public class KeyBindEvents {
 		}
 
 		if (ClientEventSubscriber.bloodCrafting.consumeClick()) {
-			for (BaseBloodCraftingRecipe pattern : ModBloodCraftingRecipes.RECIPES) {
+			for (RecipeBaseBloodCrafting pattern : BloodCraftingRecipes.RECIPES) {
 				if (ClientUtils.getClientPlayer().getMainHandItem().getItem() == pattern.getHeldItem()) {
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
 							new PacketBloodCraftingKeyPress(ClientUtils.getClientPlayer().getMainHandItem()));

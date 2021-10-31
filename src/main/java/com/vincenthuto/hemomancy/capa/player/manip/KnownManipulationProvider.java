@@ -20,7 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
+@SuppressWarnings("removal")
 public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 	@CapabilityInject(IKnownManipulations.class)
 	public static final Capability<IKnownManipulations> MANIP_CAPA = null;

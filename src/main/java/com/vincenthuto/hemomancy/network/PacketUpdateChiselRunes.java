@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.container.ContainerChiselStation;
+import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -43,8 +43,8 @@ public class PacketUpdateChiselRunes {
 		public static void handle(final PacketUpdateChiselRunes msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
 				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
-				if (container instanceof ContainerChiselStation) {
-					BlockEntityChiselStation station = ((ContainerChiselStation) container).getTe();
+				if (container instanceof MenuChiselStation) {
+					BlockEntityChiselStation station = ((MenuChiselStation) container).getTe();
 					station.setRuneList(msg.getRunes());
 				}
 			});

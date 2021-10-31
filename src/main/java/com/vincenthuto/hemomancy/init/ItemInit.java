@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.item.EnumBloodGourdTiers;
-import com.vincenthuto.hemomancy.item.ItemBloodStainedStone;
 import com.vincenthuto.hemomancy.item.ItemBloodVial;
 import com.vincenthuto.hemomancy.item.ItemBloodyBook;
 import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
@@ -13,7 +12,8 @@ import com.vincenthuto.hemomancy.item.ItemEnzyme;
 import com.vincenthuto.hemomancy.item.ItemRecycledEnzyme;
 import com.vincenthuto.hemomancy.item.ItemTendencyBook;
 import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
-import com.vincenthuto.hemomancy.item.ItemVeinRecaller;
+import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteChest;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteHelmet;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedChestplate;
@@ -38,13 +38,14 @@ import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.ItemSelfReflectionMirror;
 import com.vincenthuto.hemomancy.item.rune.ItemVasculariumCharm;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
-import com.vincenthuto.hemomancy.item.tool.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.item.tool.EnumModToolTiers;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
+import com.vincenthuto.hemomancy.item.tool.ItemCurvedHorn;
 import com.vincenthuto.hemomancy.item.tool.ItemDrudgeElectrode;
 import com.vincenthuto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.vincenthuto.hemomancy.item.tool.living.ItemBloodBolt;
 import com.vincenthuto.hemomancy.item.tool.living.ItemBloodProjection;
+import com.vincenthuto.hemomancy.item.tool.living.ItemBloodStainedStone;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingAxe;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBaghnakh;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBlade;
@@ -54,9 +55,10 @@ import com.vincenthuto.hemomancy.item.tool.living.ItemLivingPistol;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSyringe;
-import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
+import com.vincenthuto.hemomancy.item.tool.living.ItemVeinRecaller;
+import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
-import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.item.ModSpawnEggItem;
 
 import net.minecraft.client.color.item.ItemColor;
@@ -78,7 +80,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tiers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -261,6 +262,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> blood_gourd_black = SPECIALITEMS.register("blood_gourd_black",
 			() -> new ItemBloodGourd(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodGourdTiers.ASHEN));
+	public static final RegistryObject<Item> curved_horn = SPECIALITEMS.register("curved_horn",
+			() -> new ItemCurvedHorn(EnumBloodGourdTiers.HORN));
+
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
@@ -310,11 +314,11 @@ public class ItemInit {
 			"stabilized_sanguine_formation",
 			() -> new ItemBloodyFlask(new Item.Properties().tab(HemomancyItemGroup.instance), 5000));
 	// Tools
-	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
-			() -> new ItemKnapper(25f, 1, 0, Tiers.IRON, new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
-			() -> new ItemKnapper(50f, 1, 0, EnumModToolTiers.LIVING,
-					new Item.Properties().tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
+//			() -> new ItemKnapper(25f, 1, 0, Tiers.IRON, new Item.Properties().tab(HemomancyItemGroup.instance)));
+//	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
+//			() -> new ItemKnapper(50f, 1, 0, EnumModToolTiers.LIVING,
+//					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Equipment
 	// Tainted
@@ -342,11 +346,11 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
 			() -> new ItemSpikedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	
+
 	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
 			() -> new ItemSpikedChestplate(EnumModArmorTiers.BARBEDCHEST, EquipmentSlot.CHEST,
 					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
-	
+
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
 			() -> new ItemChitiniteHelmet(EnumModArmorTiers.CHITINITEHELMET, EquipmentSlot.HEAD,
@@ -360,6 +364,29 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
 			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET,
 					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+
+	// Blood Lust
+	// Masks
+	public static final RegistryObject<Item> tengu_mask = BASEITEMS.register("tengu_mask",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> horned_mask = BASEITEMS.register("horned_mask",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+
+	public static final RegistryObject<Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
+	public static final RegistryObject<Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+					EnumBloodLustMaskTypes.TENGU));
+	public static final RegistryObject<Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+					EnumBloodLustMaskTypes.HORNED));
+	public static final RegistryObject<Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.CHEST,
+					EnumBloodLustMaskTypes.NONE));
+	public static final RegistryObject<Item> blood_lust_legs = BASEITEMS.register("blood_lust_legs",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.LEGS, EnumBloodLustMaskTypes.NONE));
+	public static final RegistryObject<Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
+			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.FEET, EnumBloodLustMaskTypes.NONE));
 
 	// Runes
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
@@ -384,42 +411,42 @@ public class ItemInit {
 					EnumBloodTendency.ANIMUS, 5));
 	public static final RegistryObject<Item> rune_pattern_beast_c = BASEITEMS.register("rune_pattern_beast_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_beast_c,
-					ModChiselRecipes.recipeBeastContract,
+					ChiselRecipes.recipeBeastContract,
 					"Beast Contract Rune, Unleash your inner beast, destroy your Ego and let the Id become all you are, a primal beast of pure strength."));
 	public static final RegistryObject<Item> rune_corruption_c = BASEITEMS.register("rune_corruption_c",
 			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 5));
 	public static final RegistryObject<Item> rune_pattern_corruption_c = BASEITEMS.register("rune_pattern_corruption_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_corruption_c,
-					ModChiselRecipes.recipeCorruptionContract,
+					ChiselRecipes.recipeCorruptionContract,
 					"Corruption Contract Rune, Corrupted by those who wished you the worst, your faith has become dark, your dreams have become nightmares!"));
 	public static final RegistryObject<Item> rune_impurity_c = BASEITEMS.register("rune_impurity_c",
 			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.TENEBRIS, 5));
 	public static final RegistryObject<Item> rune_pattern_impurity_c = BASEITEMS.register("rune_pattern_impurity_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_impurity_c,
-					ModChiselRecipes.recipeImpurityContract,
+					ChiselRecipes.recipeImpurityContract,
 					"Impurity Contract Rune, Your blood has become tainted and black, you hunger for all that is immoral and unclean..."));
 	public static final RegistryObject<Item> rune_milkweed_c = BASEITEMS.register("rune_milkweed_c",
 			() -> new ItemMilkweedRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.TENEBRIS, 5));
 	public static final RegistryObject<Item> rune_pattern_milkweed_c = BASEITEMS.register("rune_pattern_milkweed_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_milkweed_c,
-					ModChiselRecipes.recipeMilkweedContract,
+					ChiselRecipes.recipeMilkweedContract,
 					"Milkweed Contract Rune, Gain contact with the outer beings from beyond all known realms, learn from them, if you dare..."));
 	public static final RegistryObject<Item> rune_radiance_c = BASEITEMS.register("rune_radiance_c",
 			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.LUX, 5));
 	public static final RegistryObject<Item> rune_pattern_radiance_c = BASEITEMS.register("rune_pattern_radiance_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_radiance_c,
-					ModChiselRecipes.recipeRadianceContract,
+					ChiselRecipes.recipeRadianceContract,
 					"Radiance Contract Rune, Shining symbol of rioutous grace and fury, unleash your inner saint against all the heathens you face!"));
 	public static final RegistryObject<Item> rune_hunter_c = BASEITEMS.register("rune_hunter_c",
 			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 5));
 	public static final RegistryObject<Item> rune_pattern_hunter_c = BASEITEMS.register("rune_pattern_hunter_c",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_hunter_c,
-					ModChiselRecipes.recipeHunterContract,
+					ChiselRecipes.recipeHunterContract,
 					"Hunter Contract Rune, A trained killer, set in your ways, a true hunter of hunters, weapons are your muse, the battle has become your muse."));
 
 	// Base Runes
@@ -429,7 +456,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern_metamorphosis = BASEITEMS.register(
 			"rune_pattern_metamorphosis",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_metamorphosis,
-					ModChiselRecipes.recipeMetamorphosis,
+					ChiselRecipes.recipeMetamorphosis,
 					"Anti Metamorphosis Rune, The crooked metamorphosis has begun, your vitatlity has increased, you feel like you could regrow anything!"));
 
 	public static final RegistryObject<Item> rune_metamorphosis_cw = BASEITEMS.register("rune_metamorphosis_cw",
@@ -438,7 +465,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern_metamorphosis_cw = BASEITEMS.register(
 			"rune_pattern_metamorphosis_cw",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_metamorphosis_cw,
-					ModChiselRecipes.recipeMetamorphosisCW,
+					ChiselRecipes.recipeMetamorphosisCW,
 					"Metamorphois Rune, The proper metamorphosis has begun, your vitality has increased, you feel full of life anew!"));
 
 	public static final RegistryObject<Item> rune_lake = BASEITEMS.register("rune_lake",
@@ -446,69 +473,69 @@ public class ItemInit {
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_lake = BASEITEMS.register("rune_pattern_lake",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_lake,
-					ModChiselRecipes.recipeLake,
+					ChiselRecipes.recipeLake,
 					"Lake Rune, The rushing of sacred waters, the roar of a great ocean calls to you, you know your home, and it beckons you back.."));
 	public static final RegistryObject<Item> rune_clawmark = BASEITEMS.register("rune_clawmark",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.ANIMUS, 1));
 	public static final RegistryObject<Item> rune_pattern_clawmark = BASEITEMS.register("rune_pattern_clawmark",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_clawmark,
-					ModChiselRecipes.recipeClawMark,
+					ChiselRecipes.recipeClawMark,
 					"Clawmark Rune, Tooth and Nail is all you know, the endless fight has just begun, bring the armies home, they are no threat."));
 	public static final RegistryObject<Item> rune_rapture = BASEITEMS.register("rune_rapture",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_rapture = BASEITEMS.register("rune_pattern_rapture",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_rapture,
-					ModChiselRecipes.recipeRapture,
+					ChiselRecipes.recipeRapture,
 					"Rapture Rune, The blood of war is your fuel, the lifeblood of your enemy becomes your own, absorb those who would oppose you!"));
 	public static final RegistryObject<Item> rune_oedon = BASEITEMS.register("rune_oedon",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_oedon = BASEITEMS.register("rune_pattern_oedon",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_oedon,
-					ModChiselRecipes.recipeOedon,
+					ChiselRecipes.recipeOedon,
 					"Oedon Rune, You feel as if you have a false heart, one granted to you on contract, nevertheless this life is yours now, use it."));
 	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
-					ModChiselRecipes.recipeEye,
+					ChiselRecipes.recipeEye,
 					"Eye Rune, Your eyes, o' glorious eyes! do not faulter, do not die, for you shall see, beyond the veil, to see what beyond the darkness entails..."));
 	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_moon,
-					ModChiselRecipes.recipeMoon,
+					ChiselRecipes.recipeMoon,
 					"Moon Rune, The great moon above has become your muse, it is what drives you, turn away from the cursed sun, carpe noctum!"));
 	public static final RegistryObject<Item> rune_beast = BASEITEMS.register("rune_beast",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.ANIMUS, 1));
 	public static final RegistryObject<Item> rune_pattern_beast = BASEITEMS.register("rune_pattern_beast",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_beast,
-					ModChiselRecipes.recipeBeast,
+					ChiselRecipes.recipeBeast,
 					"Beast Rune, The howl of a gale, the howl of the beast, it is one and all in you, run like the wind, endless and with ferver!"));
 	public static final RegistryObject<Item> rune_heir = BASEITEMS.register("rune_heir",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_heir = BASEITEMS.register("rune_pattern_heir",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heir,
-					ModChiselRecipes.recipeHeir,
+					ChiselRecipes.recipeHeir,
 					"Heir Rune, you develop this watchful sense,you, the spiritual succesor to a once great power, shall rekindle their former glory; Divine Heir."));
 	public static final RegistryObject<Item> rune_guidance = BASEITEMS.register("rune_guidance",
 			() -> new ItemGuidanceRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_pattern_guidance = BASEITEMS.register("rune_pattern_guidance",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_guidance,
-					ModChiselRecipes.recipeGuidance,
+					ChiselRecipes.recipeGuidance,
 					"Guidance Rune, The supernatural blessing, one of fortune and direction, may it guide you to your wants, as it has so many others before."));
 	public static final RegistryObject<Item> rune_communion = BASEITEMS.register("rune_communion",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance), EnumBloodTendency.LUX, 1));
 	public static final RegistryObject<Item> rune_pattern_communion = BASEITEMS.register("rune_pattern_communion",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_communion,
-					ModChiselRecipes.recipeCommunion,
+					ChiselRecipes.recipeCommunion,
 					"Communion Rune, The call from beyond rings louder for you, you wish to join them, you must join them. join.joi,jo..."));
 
 	// Spawn Eggs
@@ -696,6 +723,21 @@ public class ItemInit {
 				});
 
 		ItemProperties.register(living_spear.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+				new ItemPropertyFunction() {
+					@Override
+					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
+						if (stack.hasTag()) {
+							if (stack.getTag().getBoolean("state")) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+						return 0;
+					}
+				});
+
+		ItemProperties.register(curved_horn.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {

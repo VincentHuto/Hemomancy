@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
+import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,8 +44,8 @@ public class PacketClearRecallerState {
 					}
 				};
 				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
-				if (container instanceof ContainerVisceralRecaller) {
-					BlockEntityVisceralRecaller station = ((ContainerVisceralRecaller) container).getTe();
+				if (container instanceof MenuVisceralRecaller) {
+					BlockEntityVisceralRecaller station = ((MenuVisceralRecaller) container).getTe();
 					station.getTendCapability().setTendency(blankTend);
 				}
 			});

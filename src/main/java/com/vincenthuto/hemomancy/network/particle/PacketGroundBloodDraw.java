@@ -77,7 +77,7 @@ public class PacketGroundBloodDraw {
 											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 									sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 											x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 									sLevel.setBlockAndUpdate(bHit.getBlockPos().offset(0, 1, 0),
 											BlockInit.smouldering_ash_trail.get().defaultBlockState());
 									player.getOffhandItem().shrink(1);
@@ -91,7 +91,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 										BlockInit.active_smouldering_ash_trail.get().defaultBlockState());
 								bloodVol.subtractBloodVolume(25);
@@ -104,7 +104,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 
 							}
 
@@ -119,7 +119,7 @@ public class PacketGroundBloodDraw {
 											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 									sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 											x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+											z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 									sLevel.setBlockAndUpdate(bHit.getBlockPos().offset(0, 1, 0),
 											BlockInit.befouling_ash_trail.get().defaultBlockState());
 									player.getOffhandItem().shrink(1);
@@ -132,7 +132,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 										BlockInit.active_befouling_ash_trail.get().defaultBlockState());
 								bloodVol.subtractBloodVolume(25);
@@ -144,7 +144,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(100, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y - 1,
-										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 							}
 
 							Block[] bannedBlocks = { BlockInit.befouling_ash_trail.get(),
@@ -154,25 +154,25 @@ public class PacketGroundBloodDraw {
 									.contains(sLevel.getBlockState(bHit.getBlockPos()).getBlock())) {
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(0, 0, 255)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(0, 255, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255, 0, 255)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255, 255, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(0, 255, 255)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 1, 0, 0, 0, 0.005f);
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(0, 0, 0)),
 										x + side.getStepX() + truePos.x, y + side.getStepY() + truePos.y,
-										z + side.getStepZ() + truePos.z, 15, 0, 0, 0, 0.015f);
+										z + side.getStepZ() + truePos.z, 15, 0, 0, 0, 0.005f);
 							}
 
 						}

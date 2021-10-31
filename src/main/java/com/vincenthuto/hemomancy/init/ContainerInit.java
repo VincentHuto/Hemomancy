@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerChiselStation;
-import com.vincenthuto.hemomancy.container.ContainerLivingStaff;
-import com.vincenthuto.hemomancy.container.ContainerLivingSyringe;
-import com.vincenthuto.hemomancy.container.ContainerMorphlingJar;
-import com.vincenthuto.hemomancy.container.ContainerRuneBinder;
-import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
-import com.vincenthuto.hemomancy.container.PlayerExpandedContainer;
+import com.vincenthuto.hemomancy.container.MenuChiselStation;
+import com.vincenthuto.hemomancy.container.MenuLivingStaff;
+import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
+import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
+import com.vincenthuto.hemomancy.container.MenuRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRunes;
+import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
+import com.vincenthuto.hemomancy.container.MenuJuiceinator;
 import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyRuneBinderDataRecipe;
 
@@ -34,27 +35,30 @@ public class ContainerInit {
 			Hemomancy.MOD_ID);
 	public static List<MenuType<?>> RUNECONTAINER = new ArrayList<>();
 
-	public static final RegistryObject<MenuType<ContainerChiselStation>> runic_chisel_station = CONTAINERS
-			.register("runic_chisel_station", () -> IForgeContainerType.create(ContainerChiselStation::new));
+	public static final RegistryObject<MenuType<MenuChiselStation>> runic_chisel_station = CONTAINERS
+			.register("runic_chisel_station", () -> IForgeContainerType.create(MenuChiselStation::new));
 
-	public static final RegistryObject<MenuType<ContainerVisceralRecaller>> visceral_recaller = CONTAINERS
-			.register("visceral_recaller", () -> IForgeContainerType.create(ContainerVisceralRecaller::new));
+	public static final RegistryObject<MenuType<MenuVisceralRecaller>> visceral_recaller = CONTAINERS
+			.register("visceral_recaller", () -> IForgeContainerType.create(MenuVisceralRecaller::new));
 
-	public static final RegistryObject<MenuType<ContainerRuneBinder>> rune_binder = CONTAINERS.register("rune_binder",
-			() -> IForgeContainerType.create(ContainerRuneBinder::new));
+	public static final RegistryObject<MenuType<MenuRuneBinder>> rune_binder = CONTAINERS.register("rune_binder",
+			() -> IForgeContainerType.create(MenuRuneBinder::new));
 
-	public static final RegistryObject<MenuType<ContainerMorphlingJar>> morphling_jar = CONTAINERS
-			.register("morphling_jar", () -> IForgeContainerType.create(ContainerMorphlingJar::new));
+	public static final RegistryObject<MenuType<MenuMorphlingJar>> morphling_jar = CONTAINERS
+			.register("morphling_jar", () -> IForgeContainerType.create(MenuMorphlingJar::new));
 
-	public static final RegistryObject<MenuType<ContainerLivingStaff>> living_staff = CONTAINERS
-			.register("living_staff", () -> IForgeContainerType.create(ContainerLivingStaff::new));
+	public static final RegistryObject<MenuType<MenuLivingStaff>> living_staff = CONTAINERS
+			.register("living_staff", () -> IForgeContainerType.create(MenuLivingStaff::new));
+
+	public static final RegistryObject<MenuType<MenuLivingSyringe>> living_syringe = CONTAINERS
+			.register("living_syringe", () -> IForgeContainerType.create(MenuLivingSyringe::new));
+
+	public static final RegistryObject<MenuType<MenuJuiceinator>> juiceinator = CONTAINERS.register("juiceinator",
+			() -> IForgeContainerType.create(MenuJuiceinator::new));
 	
-	public static final RegistryObject<MenuType<ContainerLivingSyringe>> living_syringe = CONTAINERS
-			.register("living_syringe", () -> IForgeContainerType.create(ContainerLivingSyringe::new));
-
 	@ObjectHolder("hemomancy:playerrunes")
-	public static MenuType<PlayerExpandedContainer> playerrunes = createRuneContainer("playerrunes",
-			(id, inv, data) -> new PlayerExpandedContainer(id, inv, !inv.player.level.isClientSide));
+	public static MenuType<MenuRunes> playerrunes = createRuneContainer("playerrunes",
+			(id, inv, data) -> new MenuRunes(id, inv, !inv.player.level.isClientSide));
 
 	private static <T extends AbstractContainerMenu> MenuType<T> createRuneContainer(String name,
 			IContainerFactory<T> factory) {

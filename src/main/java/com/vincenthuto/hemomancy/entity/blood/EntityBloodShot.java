@@ -9,7 +9,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +45,6 @@ public class EntityBloodShot extends AbstractArrow {
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 	}
-	
 
 	@SuppressWarnings("unused")
 	@Override
@@ -58,12 +56,13 @@ public class EntityBloodShot extends AbstractArrow {
 //				IBloodTendency tend = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 //						.orElseThrow(NullPointerException::new);
 				ParticleColor color = ParticleColor.BLOOD;
-				ServerLevel sLevel = (ServerLevel) level;
+				if (level.isClientSide) {
+					level.addParticle(BloodCellParticleFactory.createData(color),
+							getX() + HLParticleUtils.inRange(-0.05, 0.05),
+							getY() + HLParticleUtils.inRange(-0.05, 0.05),
+							getZ() + HLParticleUtils.inRange(-0.05, 0.05), 0, 0.0, 0.1);
 
-				sLevel.sendParticles(BloodCellParticleFactory.createData(color),
-						getX() + HLParticleUtils.inRange(-0.05, 0.05), getY() + HLParticleUtils.inRange(-0.05, 0.05),
-						getZ() + HLParticleUtils.inRange(-0.05, 0.05), 20, 0.0, 0.1, 0.00, 0.002d);
-
+				}
 				if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 100) {
 					this.level.broadcastEntityEvent(this, (byte) 0);
 					this.remove(RemovalReason.KILLED);

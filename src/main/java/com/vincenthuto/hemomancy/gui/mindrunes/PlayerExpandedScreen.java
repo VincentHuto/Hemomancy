@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.PlayerExpandedContainer;
+import com.vincenthuto.hemomancy.container.MenuRunes;
 
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerExpandedContainer> {
+public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<MenuRunes> {
 
 	public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/gui_mind_runes.png");
@@ -29,7 +29,7 @@ public class PlayerExpandedScreen extends EffectRenderingInventoryScreen<PlayerE
 	private float oldMouseX;
 	private float oldMouseY;
 
-	public PlayerExpandedScreen(PlayerExpandedContainer container, Inventory inventory, Component name) {
+	public PlayerExpandedScreen(MenuRunes container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 	}
 

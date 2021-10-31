@@ -13,7 +13,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
+@SuppressWarnings("removal")
 public class VascularSystemProvider implements ICapabilitySerializable<Tag> {
 	@CapabilityInject(IVascularSystem.class)
 	public static final Capability<IVascularSystem> VASCULAR_CAPA = null;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.network;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.container.ContainerChiselStation;
+import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,8 +26,8 @@ public class PacketChiselCraftingEvent {
 		public static void handle(final PacketChiselCraftingEvent msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
 				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
-				if (container instanceof ContainerChiselStation) {
-					BlockEntityChiselStation station = ((ContainerChiselStation) container).getTe();
+				if (container instanceof MenuChiselStation) {
+					BlockEntityChiselStation station = ((MenuChiselStation) container).getTe();
 					station.craftEvent();
 				}
 			});

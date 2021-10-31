@@ -8,8 +8,8 @@ import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hemomancy.recipe.BaseBloodCraftingRecipe;
-import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -49,9 +49,9 @@ public class PacketBloodCraftingKeyPress {
 		buffer.writeItem(message.heldStack);
 	}
 
-	public static List<BaseBloodCraftingRecipe> getMatchingRecipes(ItemStack stack) {
-		List<BaseBloodCraftingRecipe> matchedRecipes = new ArrayList<BaseBloodCraftingRecipe>();
-		for (BaseBloodCraftingRecipe recipe : ModBloodCraftingRecipes.RECIPES) {
+	public static List<RecipeBaseBloodCrafting> getMatchingRecipes(ItemStack stack) {
+		List<RecipeBaseBloodCrafting> matchedRecipes = new ArrayList<RecipeBaseBloodCrafting>();
+		for (RecipeBaseBloodCrafting recipe : BloodCraftingRecipes.RECIPES) {
 			if (recipe.getHeldItem() == stack.getItem()) {
 				matchedRecipes.add(recipe);
 			}
@@ -66,10 +66,10 @@ public class PacketBloodCraftingKeyPress {
 				return;
 			IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-			List<BaseBloodCraftingRecipe> matchedPatterns = getMatchingRecipes(message.heldStack);
+			List<RecipeBaseBloodCrafting> matchedPatterns = getMatchingRecipes(message.heldStack);
 			if (matchedPatterns != null) {
 				if (!matchedPatterns.isEmpty()) {
-					for (BaseBloodCraftingRecipe targetPattern : matchedPatterns) {
+					for (RecipeBaseBloodCrafting targetPattern : matchedPatterns) {
 						ServerLevel sLevel = (ServerLevel) ctx.get().getSender().level;
 						if (player.getMainHandItem().getItem() == targetPattern.getHeldItem()) {
 							if (bloodVolume.getBloodVolume() > targetPattern.getCost()) {

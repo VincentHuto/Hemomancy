@@ -1,18 +1,33 @@
 {
 	"variants": {
-		"facing=north": {
+		"facing=north,active=false": {
 			"model": "hemomancy:block/serpentine_idol"
 		},
-		"facing=south": {
+		"facing=south,active=false": {
 			"model": "hemomancy:block/serpentine_idol",
 			"y": 180
 		},
-		"facing=west": {
+		"facing=west,active=false": {
 			"model": "hemomancy:block/serpentine_idol",
 			"y": 270
 		},
-		"facing=east": {
+		"facing=east,active=false": {
 			"model": "hemomancy:block/serpentine_idol",
+			"y": 90
+		},
+		"facing=north,active=true": {
+			"model": "hemomancy:block/serpentine_idol_active"
+		},
+		"facing=south,active=true": {
+			"model": "hemomancy:block/serpentine_idol_active",
+			"y": 180
+		},
+		"facing=west,active=true": {
+			"model": "hemomancy:block/serpentine_idol_active",
+			"y": 270
+		},
+		"facing=east,active=true": {
+			"model": "hemomancy:block/serpentine_idol_active",
 			"y": 90
 		}
 	}

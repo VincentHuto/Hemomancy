@@ -6,8 +6,8 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.recipe.BaseBloodCraftingRecipe;
-import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;
+import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
@@ -29,9 +29,9 @@ public class PacketDisplayKnownManips {
 		buffer.writeByte(0);
 	}
 
-	public static List<BaseBloodCraftingRecipe> getMatchingRecipes(ItemStack stack) {
-		List<BaseBloodCraftingRecipe> matchedRecipes = new ArrayList<BaseBloodCraftingRecipe>();
-		for (BaseBloodCraftingRecipe recipe : ModBloodCraftingRecipes.RECIPES) {
+	public static List<RecipeBaseBloodCrafting> getMatchingRecipes(ItemStack stack) {
+		List<RecipeBaseBloodCrafting> matchedRecipes = new ArrayList<RecipeBaseBloodCrafting>();
+		for (RecipeBaseBloodCrafting recipe : BloodCraftingRecipes.RECIPES) {
 			if (recipe.getHeldItem() == stack.getItem()) {
 				matchedRecipes.add(recipe);
 			}

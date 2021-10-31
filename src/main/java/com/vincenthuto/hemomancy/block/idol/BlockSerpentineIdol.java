@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.block.idol;
 
+import javax.annotation.Nullable;
+
+import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.tile.BlockEntitySerpentineIdol;
 
 import net.minecraft.core.BlockPos;
@@ -17,8 +20,11 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -26,17 +32,28 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockSerpentineIdol extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 	private static final VoxelShape SHAPE_N = Block.box(3.5, 0, 3.5, 12.5, 9, 12.5);
 
 	public BlockSerpentineIdol(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(ACTIVE, false));
 
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		return type == BlockEntityInit.serpentine_idol.get() ? BlockEntitySerpentineIdol::tick : null;
 	}
 
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
+
+		BlockState newState = state.setValue(ACTIVE, !state.getValue(ACTIVE));
+		worldIn.setBlock(pos, newState, 10);
 
 		/*
 		 * worldIn.playSound(player, pos, SoundEvents.ENTITY_ZOMBIE_AMBIENT,
@@ -67,7 +84,8 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(ACTIVE, false);
 	}
 
 	@Override
@@ -75,7 +93,6 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
@@ -83,13 +100,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
+		builder.add(FACING, ACTIVE);
 	}
 
 	@Override

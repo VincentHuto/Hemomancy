@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.container.ContainerLivingSyringe;
+import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.itemhandler.LivingSyringeItemHandler;
@@ -67,7 +67,7 @@ public class ItemLivingSyringe extends ItemLivingItem {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new ContainerLivingSyringe(windowId, p_createMenu_3_.level,
+						return new MenuLivingSyringe(windowId, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});

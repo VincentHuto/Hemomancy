@@ -12,7 +12,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
+@SuppressWarnings("removal")
 public class EarthenVeinLocProvider implements ICapabilitySerializable<CompoundTag> {
 	@CapabilityInject(IEarthenVeinLoc.class)
 	public static final Capability<IEarthenVeinLoc> VEIN_CAPA = null;

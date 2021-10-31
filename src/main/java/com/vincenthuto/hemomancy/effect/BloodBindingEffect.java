@@ -7,11 +7,11 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public class BloodBindingEffect extends MobEffect {
 
@@ -49,29 +49,26 @@ public class BloodBindingEffect extends MobEffect {
 			Vector3 centerVec = Vector3.fromEntityCenter(entity);
 			if (entity.getEffect(PotionInit.blood_binding.get()) != null) {
 				entity.setDeltaMovement(0, 0, 0);
-				if (!entity.level.isClientSide) {
-					ServerLevel sLevel = (ServerLevel) entity.level;
-					sLevel.sendParticles(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
-							centerVec.x + Math.sin(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							centerVec.y + Math.sin(entity.tickCount * 0.1),
-							centerVec.z + Math.cos(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							2, 0f, 0.0f, 0f, 0);
+				Level level = entity.level;
+				if (level.isClientSide) {
 
-					sLevel.sendParticles(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
-							centerVec.x + Math.sin(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							centerVec.y + Math.sin(entity.tickCount * 0.1),
-							centerVec.z + Math.cos(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							4, 0f, 0.0f, 0f, 0.0005f);
-					sLevel.sendParticles(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
-							centerVec.x + Math.sin(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							centerVec.y + Math.sin(entity.tickCount * 0.1),
-							centerVec.z + Math.cos(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							8, 0f, 0.0f, 0f, 0.0015f);
-					sLevel.sendParticles(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
-							centerVec.x + Math.sin(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							centerVec.y + Math.sin(entity.tickCount * 0.1),
-							centerVec.z + Math.cos(entity.tickCount * 0.3) * (0.50 + Math.sin(entity.tickCount) * 0.05),
-							1, 0f, 0.0f, 0f, 0.0035f);
+					double time = level.getGameTime();
+					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
+							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+							centerVec.y + Math.sin(time * 0.1) * 0.55f,
+							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05),0, 0f, 0.0f);
+					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
+							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+							centerVec.y + Math.sin(time * 0.1) * 0.55f,
+							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
+					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+							centerVec.y + Math.sin(time * 0.1) * 0.55f,
+							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
+					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+							centerVec.y + Math.sin(time * 0.1) * 0.55f,
+							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
 				}
 			}
 		}

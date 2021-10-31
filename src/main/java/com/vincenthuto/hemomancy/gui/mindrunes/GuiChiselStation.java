@@ -7,7 +7,7 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerChiselStation;
+import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.network.PacketChiselCraftingEvent;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -29,7 +29,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselStation> {
+public class GuiChiselStation extends AbstractContainerScreen<MenuChiselStation> {
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
 
@@ -47,7 +47,7 @@ public class GuiChiselStation extends AbstractContainerScreen<ContainerChiselSta
 	GuiButtonTextured chiselButton;
 	public List<Integer> activatedRuneList = new ArrayList<Integer>();
 
-	public GuiChiselStation(ContainerChiselStation screenContainer, Inventory inv, Component titleIn) {
+	public GuiChiselStation(MenuChiselStation screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
 		this.leftPos = 0;
 		this.topPos = 0;

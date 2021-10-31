@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -94,7 +94,7 @@ public class ItemRuneBinder extends Item {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new ContainerRuneBinder(windowId, p_createMenu_3_.level, p_createMenu_3_.blockPosition(),
+						return new MenuRuneBinder(windowId, p_createMenu_3_.level, p_createMenu_3_.blockPosition(),
 								p_createMenu_2_, p_createMenu_3_);
 					}
 				});

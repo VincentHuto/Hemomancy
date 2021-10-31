@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
+@SuppressWarnings("removal")
 public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 	@CapabilityInject(IBloodVolume.class)
 	public static final Capability<IBloodVolume> VOLUME_CAPA = null;

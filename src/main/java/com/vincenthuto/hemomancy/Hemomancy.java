@@ -27,17 +27,19 @@ import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
+import com.vincenthuto.hemomancy.init.RecipeTypeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
 import com.vincenthuto.hemomancy.recipe.CopyBloodGourdDataRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyRuneBinderDataRecipe;
 import com.vincenthuto.hemomancy.recipe.FillBloodGourdDataRecipe;
-import com.vincenthuto.hemomancy.recipe.ModBloodCraftingRecipes;
-import com.vincenthuto.hemomancy.recipe.ModChiselRecipes;
-import com.vincenthuto.hemomancy.recipe.ModRecallerRecipes;
+import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
 import com.vincenthuto.hemomancy.util.ModEntityPredicates;
 
 import net.minecraft.core.Registry;
@@ -50,6 +52,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -95,8 +98,8 @@ public class Hemomancy {
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		ModChiselRecipes.CHISELRECIPES.register(modEventBus);
-		ModRecallerRecipes.RECALLERRECIPES.register(modEventBus);
+		ChiselRecipes.CHISELRECIPES.register(modEventBus);
+		RecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
@@ -114,6 +117,8 @@ public class Hemomancy {
 		BlockInit.OBJBLOCKS.register(modEventBus);
 		BlockInit.SPECIALBLOCKS.register(modEventBus);
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
+	//	FluidInit.FLUIDS.register(modEventBus);
+		RecipeTypeInit.RECIPES.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
@@ -213,15 +218,6 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
-		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
-		// MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
-		// GuideBookLib.registerPages();
-		// TendencyBookLib.registerPages();
-		/*
-		 * PlayerRenderer render = (PlayerRenderer)
-		 * Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap().get(
-		 * "default"); render.addLayer(new RenderCellHandLayer<>(render));
-		 */
 	}
 
 	@SubscribeEvent
@@ -231,8 +227,8 @@ public class Hemomancy {
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		ModEntityPredicates.init();
 		SkillPointInit.init();
-		ModBloodCraftingRecipes.initPatterns();
-		ModBloodCraftingRecipes.initRecipes();
+		BloodCraftingRecipes.initPatterns();
+		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
 
@@ -240,6 +236,14 @@ public class Hemomancy {
 			StructureInit.setupStructures();
 			ConfiguredStructInit.registerConfiguredStructures();
 		});
+		
+		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "juiceinator"),
+				new RecipeType<JuiceinatorDataRecipe>() {
+					@Override
+					public String toString() {
+						return "juiceinator";
+					}
+				});
 	}
 
 	public void biomeModification(final BiomeLoadingEvent event) {

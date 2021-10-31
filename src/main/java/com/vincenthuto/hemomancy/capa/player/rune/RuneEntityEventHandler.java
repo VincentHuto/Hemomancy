@@ -4,12 +4,19 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.PacketRuneSync;
+import com.vincenthuto.hemomancy.network.capa.runes.PacketCurvedHornAnimation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,10 +25,12 @@ import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -68,10 +77,36 @@ public class RuneEntityEventHandler {
 	}
 
 	@SubscribeEvent
+	public static void playerHurt(LivingDeathEvent event) {
+
+		if (event.getEntityLiving()instanceof Player player && !event.getEntityLiving().level.isClientSide) {
+
+			player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+				// player events
+				ItemStack itemstack = runes.getStackInSlot(5);
+				if (itemstack.getItem() == ItemInit.curved_horn.get()) {
+					itemstack.hurtAndBreak(1, player, (p_220017_1_) -> {
+						p_220017_1_.broadcastBreakEvent(player.getUsedItemHand());
+					});
+					player.addEffect(new MobEffectInstance(PotionInit.blood_rush.get(), 200, 1));
+					player.setHealth(1.0f);
+					ServerLevel world = (ServerLevel) player.level;
+					world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE,
+							SoundSource.AMBIENT, 0.5f, 0.5f);
+					PacketHandler.CHANNELRUNES.sendTo(new PacketCurvedHornAnimation(),
+							((ServerPlayer) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+
+					event.setCanceled(true);
+				}
+			});
+		}
+
+	}
+
+	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
-		// player events
+		Player player = event.player;
 		if (event.phase == TickEvent.Phase.END) {
-			Player player = event.player;
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(IRunesItemHandler::tick);
 		}
 	}

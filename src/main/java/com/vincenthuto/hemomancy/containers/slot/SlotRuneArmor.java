@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.containers.slot;
 import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
-import com.vincenthuto.hemomancy.container.PlayerExpandedContainer;
+import com.vincenthuto.hemomancy.container.MenuRunes;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -46,6 +46,6 @@ public class SlotRuneArmor extends Slot {
 	@Nullable
 	@Override
 	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() { // getSlotTexture
-		return Pair.of(InventoryMenu.BLOCK_ATLAS, PlayerExpandedContainer.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
+		return Pair.of(InventoryMenu.BLOCK_ATLAS, MenuRunes.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
 	}
 }

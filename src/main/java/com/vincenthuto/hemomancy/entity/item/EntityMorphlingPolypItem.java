@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.recipe.PolypRecipe;
+import com.vincenthuto.hemomancy.recipe.RecipePolyp;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
 import net.minecraft.core.particles.ParticleTypes;
@@ -60,7 +60,7 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 		for (int i = 0; i < entList.size(); i++) {
 			if (entList.get(i) instanceof ItemEntity) {
 				ItemEntity itemEnt = (ItemEntity) entList.get(i);
-				for (PolypRecipe rec : PolypRecipes.POLYPRECIPES) {
+				for (RecipePolyp rec : PolypRecipes.POLYPRECIPES) {
 					if (rec.getIngr().contains(itemEnt.getItem().getItem())) {
 						if (!itemList.contains(itemEnt.getItem().getItem())) {
 							itemList.add(itemEnt.getItem().getItem());

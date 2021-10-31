@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerLivingStaff;
+import com.vincenthuto.hemomancy.container.MenuLivingStaff;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -13,8 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class GuiLivingStaff extends AbstractContainerScreen<ContainerLivingStaff> {
-	public GuiLivingStaff(ContainerLivingStaff container, Inventory playerInventory, Component name) {
+public class GuiLivingStaff extends AbstractContainerScreen<MenuLivingStaff> {
+	public GuiLivingStaff(MenuLivingStaff container, Inventory playerInventory, Component name) {
 		super(container, playerInventory, name);
 
 		switch (container.slotcount) {

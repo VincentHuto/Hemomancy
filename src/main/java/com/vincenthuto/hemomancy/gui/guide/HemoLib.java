@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.vincenthuto.hutoslib.client.screen.guide.GuiGuidePage;
 import com.vincenthuto.hutoslib.client.screen.guide.GuiGuideTitlePage;
+import com.vincenthuto.hutoslib.client.screen.guide.TomeCategoryTab.TabColor;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeChapter;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeLib;
 
@@ -47,10 +48,10 @@ public class HemoLib extends TomeLib {
 
 	@Override
 	public void registerChapters() {
-		introChapter = new TomeChapter("Intro", new HemoGuideTOC("Intro"), introPages);
-		vasuclarChapter = new TomeChapter("Vascularity", new HemoGuideTOC("Vascularity"), vasuclarPages);
-		tendencyChapter = new TomeChapter("Tendency", new HemoGuideTOC("Tendency"), tendencyPages);
-		manipChapter = new TomeChapter("Manips", new HemoGuideTOC("Manips"), manipPages);
+		introChapter = new TomeChapter("Intro", TabColor.BLACK, new HemoGuideTOC("Intro"), introPages);
+		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED, new HemoGuideTOC("Vascularity"), vasuclarPages);
+		tendencyChapter = new TomeChapter("Tendency", TabColor.BLACK, new HemoGuideTOC("Tendency"), tendencyPages);
+		manipChapter = new TomeChapter("Manips", TabColor.RED, new HemoGuideTOC("Manips"), manipPages);
 		Collections.addAll(chapters, introChapter, vasuclarChapter, tendencyChapter, manipChapter);
 	}
 

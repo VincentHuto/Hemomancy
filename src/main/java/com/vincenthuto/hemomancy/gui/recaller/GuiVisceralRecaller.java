@@ -19,7 +19,7 @@ import com.mojang.math.Vector3d;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.container.ContainerVisceralRecaller;
+import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.network.PacketClearRecallerState;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
@@ -39,7 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 
-public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerVisceralRecaller> {
+public class GuiVisceralRecaller extends AbstractContainerScreen<MenuVisceralRecaller> {
 	static final ResourceLocation GUI_RECALLER = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/recaller_gui.png");
 	static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
@@ -55,7 +55,7 @@ public class GuiVisceralRecaller extends AbstractContainerScreen<ContainerViscer
 	GuiButtonTextured forgetButton;
 	int FORGETBUTTONID = 1;
 
-	public GuiVisceralRecaller(ContainerVisceralRecaller screenContainer, Inventory inv, Component titleIn) {
+	public GuiVisceralRecaller(MenuVisceralRecaller screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
 		this.leftPos = 0;
 		this.topPos = 0;

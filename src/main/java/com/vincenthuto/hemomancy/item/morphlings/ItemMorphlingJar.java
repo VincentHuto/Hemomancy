@@ -6,10 +6,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.ContainerMorphlingJar;
+import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
 import com.vincenthuto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.jar.PacketToggleJarMessage;
+import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -113,7 +113,7 @@ public class ItemMorphlingJar extends Item {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new ContainerMorphlingJar(windowId, p_createMenu_3_.level,
+						return new MenuMorphlingJar(windowId, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});
