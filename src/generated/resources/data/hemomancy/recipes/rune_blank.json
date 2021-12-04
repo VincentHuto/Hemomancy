@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NON",
+    "OPO",
+    "NON"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:obsidian"
+    },
+    "O": {
+      "item": "minecraft:snow"
+    },
+    "P": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:rune_blank"
+  }
+}

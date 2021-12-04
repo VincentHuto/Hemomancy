@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:polished_venous_stone"
+    ]
+  },
+  "criteria": {
+    "has_venous_stone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "hemomancy:venous_stone"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:polished_venous_stone"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_venous_stone",
+      "has_the_recipe"
+    ]
+  ]
+}
