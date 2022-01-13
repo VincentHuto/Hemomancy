@@ -50,7 +50,6 @@ public class Bloodline {
 			}
 		}
 		tag.put("players", playerList);
-		System.out.println(tag);
 		return tag;
 	}
 

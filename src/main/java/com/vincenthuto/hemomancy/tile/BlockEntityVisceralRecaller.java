@@ -27,18 +27,16 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
-public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntity implements MenuProvider {
+public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider {
 	NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
-	SimpleItemStackHandler itemHandler = createItemHandler();
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	static final String TAG_BLOOD_TENDENCY = "tendency";
 	float clientBloodLevel = 0.0f;
@@ -74,10 +72,6 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 		volume.setActive(true);
 	}
 
-	protected SimpleItemStackHandler createItemHandler() {
-		return new SimpleItemStackHandler(this, true);
-	}
-
 	public IBloodVolume getBloodCapability() {
 		return volume;
 	}
@@ -102,20 +96,22 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 	@Override
 	public void load(CompoundTag tag) {
 		super.load(tag);
-		readPacketNBT(tag);
 		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(tag)) {
-			ContainerHelper.loadAllItems(tag, this.contents);
+		ContainerHelper.loadAllItems(tag, this.contents);
+		if (tag != null) {
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+				clientTendency.put(tend, tag.getFloat(tend.toString()));
+			}
 		}
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
-		super.save(tag);
-		writePacketNBT(tag);
-		if (!this.trySaveLootTable(tag)) {
-			ContainerHelper.saveAllItems(tag, this.contents);
-		}
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+		ContainerHelper.saveAllItems(tag, this.contents);
 		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 			if (tendency.getTendency().get(key) != null) {
@@ -125,50 +121,31 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 			}
 		}
 
-		return tag;
-	}
-
-	public void writePacketNBT(CompoundTag par1CompoundTag) {
-		par1CompoundTag.merge(itemHandler.serializeNBT());
-
-	}
-
-	public void readPacketNBT(CompoundTag tag) {
-		itemHandler = createItemHandler();
-		itemHandler.deserializeNBT(tag);
-		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(tag)) {
-			ContainerHelper.loadAllItems(tag, this.contents);
-		}
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			clientTendency.put(tend, tag.getFloat(tend.toString()));
-		}
 	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
-		CompoundTag tag = pkt.getTag();
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			clientTendency.put(tend, tag.getFloat(tend.toString()));
+		// ADDING THIS CHECK SEEMS TO HAVE FIXED STUFF
+		if (pkt.getTag() != null) {
+			CompoundTag tag = pkt.getTag();
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+				clientTendency.put(tend, tag.getFloat(tend.toString()));
+			}
 		}
 	}
 
 	@Override
 	public final CompoundTag getUpdateTag() {
-		return save(new CompoundTag());
+		return super.getUpdateTag();
 	}
 
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		CompoundTag tag = new CompoundTag();
-		writePacketNBT(tag);
 		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 			if (tendency.getTendency().get(key) != null) {
@@ -184,28 +161,20 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 	@Override
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
-		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(tag)) {
-			ContainerHelper.loadAllItems(tag, this.contents);
-		}
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			clientTendency.put(tend, tag.getFloat(tend.toString()));
+		if (tag != null) {
+
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+				clientTendency.put(tend, tag.getFloat(tend.toString()));
+			}
 		}
 	}
 
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nonnull Direction side) {
 		return super.getCapability(cap, side);
-
-	}
-
-	public static void swapContents(BlockEntityVisceralRecaller te, BlockEntityVisceralRecaller otherTe) {
-		NonNullList<ItemStack> list = te.getItems();
-		te.setItems(otherTe.getItems());
-		otherTe.setItems(list);
 	}
 
 	public void sendUpdates() {
@@ -214,15 +183,57 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 		setChanged();
 	}
 
-	@Override
-	public int getContainerSize() {
-		return 5;
+	public NonNullList<ItemStack> getItems() {
+		// Absorb the enzyme
+
+		return this.contents;
 	}
 
 	@Override
-	public NonNullList<ItemStack> getItems() {
+	protected Component getDefaultName() {
+		return new TranslatableComponent("container.visceral_recaller");
+	}
 
+	@Override
+	protected AbstractContainerMenu createMenu(int id, Inventory player) {
+		return new MenuVisceralRecaller(id, player, this);
+	}
+
+	@Override
+	public int getContainerSize() {
+		return this.contents.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemstack : this.contents) {
+			if (!itemstack.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public ItemStack getItem(int p_58328_) {
+		return this.contents.get(p_58328_);
+	}
+
+	@Override
+	public ItemStack removeItem(int pIndex, int pCount) {
+		return ContainerHelper.removeItem(this.contents, pIndex, pCount);
+	}
+
+	@Override
+	public ItemStack removeItemNoUpdate(int pIndex) {
+		return ContainerHelper.takeItem(this.contents, pIndex);
+	}
+
+	@Override
+	public void setItem(int pIndex, ItemStack pStack) {
 		// Absorb the enzyme
+		this.contents.set(pIndex, pStack);
+
 		if (!contents.get(1).isEmpty()) {
 			ItemStack stack = contents.get(1);
 			if (stack.getItem() instanceof ItemEnzyme) {
@@ -251,60 +262,21 @@ public class BlockEntityVisceralRecaller extends RandomizableContainerBlockEntit
 				}
 			}
 		}
-
-		return this.contents;
-	}
-
-	@Override
-	protected void setItems(NonNullList<ItemStack> itemsIn) {
-		this.contents = itemsIn;
+		sendUpdates();
 
 	}
 
 	@Override
-	protected Component getDefaultName() {
-		return new TranslatableComponent("container.visceral_recaller");
+	public boolean stillValid(Player p_58340_) {
+		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
+				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
+						this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
-	protected AbstractContainerMenu createMenu(int id, Inventory player) {
-		return new MenuVisceralRecaller(id, player, this);
-	}
+	public void clearContent() {
+		this.contents.clear();
 
-	public static class SimpleItemStackHandler extends ItemStackHandler {
-
-		private final boolean allowWrite;
-		private final BlockEntity tile;
-
-		public SimpleItemStackHandler(BlockEntity inv, boolean allowWrite) {
-			super(5);
-			this.allowWrite = allowWrite;
-			tile = inv;
-		}
-
-		@Nonnull
-		@Override
-		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-			if (allowWrite) {
-				return super.insertItem(slot, stack, simulate);
-			} else
-				return stack;
-		}
-
-		@Nonnull
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			if (allowWrite) {
-
-				return super.extractItem(slot, amount, simulate);
-			} else
-				return ItemStack.EMPTY;
-		}
-
-		@Override
-		public void onContentsChanged(int slot) {
-			tile.setChanged();
-		}
 	}
 
 }

@@ -199,8 +199,8 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag compound) {
-		super.save(compound);
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
 		writePacketNBT(compound);
 		if (!this.trySaveLootTable(compound)) {
 			ContainerHelper.saveAllItems(compound, this.chestContents);
@@ -220,7 +220,6 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 			compound.put(TAG_RUNELIST, tagList);
 		}
 
-		return compound;
 	}
 
 	public void readPacketNBT(CompoundTag par1CompoundTag) {

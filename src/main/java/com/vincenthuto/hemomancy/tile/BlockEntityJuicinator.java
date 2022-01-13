@@ -250,7 +250,6 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 	public void load(CompoundTag tag) {
 		super.load(tag);
 		tank.readFromNBT(tag);
-		System.out.println(tank);
 		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, this.items);
 		this.litTime = tag.getInt("BurnTime");
@@ -265,8 +264,8 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
-		super.save(tag);
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
 		tank.writeToNBT(tag);
 		tag.putInt("BurnTime", this.litTime);
 		tag.putInt("CookTime", this.cookingProgress);
@@ -277,7 +276,6 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 			compoundtag.putInt(p_58382_.toString(), p_58383_);
 		});
 		tag.put("RecipesUsed", compoundtag);
-		return tag;
 	}
 
 	@Override
@@ -288,9 +286,12 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
-		CompoundTag tag = pkt.getTag();
-		tank.readFromNBT(tag);
-		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+		if(pkt.getTag() != null) {
+			CompoundTag tag = pkt.getTag();
+			tank.readFromNBT(tag);
+			clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+		}
+
 	}
 
 	@Override

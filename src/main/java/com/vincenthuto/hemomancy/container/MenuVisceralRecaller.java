@@ -37,7 +37,7 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 		// SLOTS
 		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 64, 8, 14));
 		addSlot(new SlotSelectiveType(te, ItemEnzyme.class, 1, 64, 26, 14));
-		addSlot(new com.vincenthuto.hutoslib.common.container.SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26,
+		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26,
 				80));
 		addSlot(new SlotOutput(te, 3, 152, 14));
 
@@ -69,7 +69,7 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player playerIn) {
-		return true;
+		return this.te.stillValid(playerIn);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 
 	@Override
 	public void broadcastChanges() {
-		te.sendUpdates();
+	//	te.sendUpdates();
 		super.broadcastChanges();
 
 	}
@@ -87,20 +87,20 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 	@Override
 	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
 		super.setItem(p_182407_, p_182408_, p_182409_);
-		te.sendUpdates();
+		//te.sendUpdates();
 	}
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
-		te.sendUpdates();
+//		te.sendUpdates();
 
 	}
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack stack = ItemStack.EMPTY;
-		te.sendUpdates();
+	//	te.sendUpdates();
 		Slot slot = this.slots.get(index);
 
 		if (slot != null && slot.hasItem()) {

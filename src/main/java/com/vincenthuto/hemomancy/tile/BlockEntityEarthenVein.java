@@ -53,11 +53,10 @@ public class BlockEntityEarthenVein extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag compound) {
-		super.save(compound);
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
 		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
 		compound.putString(TAG_NAME, getName());
-		return compound;
 	}
 
 	public void readPacketNBT(CompoundTag tag) {

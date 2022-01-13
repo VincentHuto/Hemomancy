@@ -354,9 +354,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
 			() -> new ItemSpikedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
-	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-			() -> new ItemSpikedChestplate(EnumModArmorTiers.BARBEDCHEST, EquipmentSlot.CHEST,
-					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+//	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
+//			() -> new ItemSpikedChestplate(EnumModArmorTiers.BARBEDCHEST, EquipmentSlot.CHEST,
+//					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
 
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
