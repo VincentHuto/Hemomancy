@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockEntityEarthenVein extends BlockEntity {
-	VeinLocation clientloc = VeinLocation.BLANK;
 	IEarthenVeinLoc locCap = getCapability(EarthenVeinLocProvider.VEIN_CAPA).orElseThrow(IllegalStateException::new);
 	static final String TAG_VEIN_LOC = "veinlocation";
 	static final String TAG_NAME = "name";
@@ -49,7 +48,8 @@ public class BlockEntityEarthenVein extends BlockEntity {
 	@Override
 	public void load(CompoundTag tag) {
 		super.load(tag);
-		readPacketNBT(tag);
+		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
+		name = tag.getString(TAG_NAME);
 	}
 
 	@Override
@@ -59,22 +59,11 @@ public class BlockEntityEarthenVein extends BlockEntity {
 		compound.putString(TAG_NAME, getName());
 	}
 
-	public void readPacketNBT(CompoundTag tag) {
-		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
-		clientloc = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
-		name = tag.getString(TAG_NAME);
-	}
-
-	public void writePacketNBT(CompoundTag par1CompoundTag) {
-
-	}
-
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
 		CompoundTag tag = pkt.getTag();
 		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
-		clientloc = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
 		name = tag.getString(TAG_NAME);
 
 	}
@@ -86,11 +75,6 @@ public class BlockEntityEarthenVein extends BlockEntity {
 
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		super.getUpdatePacket();
-		CompoundTag tag = new CompoundTag();
-		writePacketNBT(tag);
-		tag.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
-		tag.putString(TAG_NAME, getName());
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
@@ -98,7 +82,6 @@ public class BlockEntityEarthenVein extends BlockEntity {
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
 		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
-		clientloc = VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC));
 		name = tag.getString(TAG_NAME);
 
 	}

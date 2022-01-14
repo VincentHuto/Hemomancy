@@ -79,7 +79,7 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 
 	@Override
 	public void broadcastChanges() {
-	//	te.sendUpdates();
+		te.sendUpdates();
 		super.broadcastChanges();
 
 	}
@@ -87,20 +87,20 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 	@Override
 	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
 		super.setItem(p_182407_, p_182408_, p_182409_);
-		//te.sendUpdates();
+		te.sendUpdates();
 	}
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
-//		te.sendUpdates();
+		te.sendUpdates();
 
 	}
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack stack = ItemStack.EMPTY;
-	//	te.sendUpdates();
+		te.sendUpdates();
 		Slot slot = this.slots.get(index);
 
 		if (slot != null && slot.hasItem()) {

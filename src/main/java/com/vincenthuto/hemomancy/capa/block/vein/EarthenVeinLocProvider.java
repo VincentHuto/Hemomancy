@@ -13,10 +13,11 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-@SuppressWarnings("removal")
+
 public class EarthenVeinLocProvider implements ICapabilitySerializable<CompoundTag> {
-	//@CapabilityInject(IEarthenVeinLoc.class)
-	public static final Capability<IEarthenVeinLoc> VEIN_CAPA = CapabilityManager.get(new CapabilityToken<IEarthenVeinLoc>() {});
+	public static final Capability<IEarthenVeinLoc> VEIN_CAPA = CapabilityManager
+			.get(new CapabilityToken<IEarthenVeinLoc>() {
+			});
 	private LazyOptional<IEarthenVeinLoc> instance = LazyOptional.of(EarthenVeinLoc::new);
 
 	@Nonnull

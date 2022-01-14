@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.util;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.vincenthuto.hutoslib.math.DimensionalPosition;
 
@@ -16,6 +17,7 @@ public class VeinLocation extends DimensionalPosition {
 	public static final VeinLocation BLANK = new VeinLocation("blankvein", new ResourceLocation("blankvein"),
 			new BlockPos(0, 0, 0));
 	private String name;
+	private UUID uuid;
 	static List<String> prefixes = Arrays.asList("Superior", "Inferior", "Major", "Minor", "Cranial", "Caudal",
 			"Anterior", "Ventral", "Posterior", "Dorsal", "Proximal", "Lateral", "Medial", "Distal", "Pulmonary",
 			"Systemic");
@@ -30,21 +32,34 @@ public class VeinLocation extends DimensionalPosition {
 	public VeinLocation(String name, ResourceLocation dim, BlockPos pos) {
 		super(dim, pos);
 		this.name = name;
+		this.uuid = UUID.randomUUID();
+	}
+
+	/*
+	 * to get RL Player().level.dimension().location();
+	 */
+	public VeinLocation(UUID uuid, String name, ResourceLocation dim, BlockPos pos) {
+		super(dim, pos);
+		this.name = name;
+		this.uuid = uuid;
 	}
 
 	@Override
 	public CompoundTag serializeNBT() {
 		CompoundTag nbt = super.serializeNBT();
 		nbt.putString("name", this.name);
+		nbt.putUUID("id", this.uuid);
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
 		super.deserializeNBT(nbt);
-		if (nbt.contains("name")) {
+		if (nbt.contains("name") && nbt.contains("id")) {
 			String name = nbt.getString("dim");
+			UUID uuid = nbt.getUUID("id");
 			this.name = name;
+			this.uuid = uuid;
 		}
 	}
 
@@ -52,15 +67,25 @@ public class VeinLocation extends DimensionalPosition {
 		String name;
 		BlockPos bPos;
 		ResourceLocation dim;
-		if (nbt.contains("dim") && nbt.contains("pos") && nbt.contains("name")) {
+		UUID uuid;
+		if (nbt.contains("dim") && nbt.contains("pos") && nbt.contains("name") && nbt.contains("id")) {
 			name = nbt.getString("name");
+			uuid = nbt.getUUID("id");
 			dim = new ResourceLocation(nbt.getString("dim"));
 			bPos = NbtUtils.readBlockPos(nbt.getCompound("pos"));
-			VeinLocation loc = new VeinLocation(name, dim, bPos);
+			VeinLocation loc = new VeinLocation(uuid,name, dim, bPos);
 			return loc;
 		}
 
 		return VeinLocation.BLANK;
+	}
+
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	public void setUUID(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getName() {
@@ -85,6 +110,7 @@ public class VeinLocation extends DimensionalPosition {
 
 	@Override
 	public String toString() {
-		return ("Vein: '" + getName() + "' Located in: " + getDimension().getPath() + " at Position: " + getPosition());
+		return ("Vein: '" + getName() + "UUID: " + getUUID() + "' Located in: " + getDimension().getPath()
+				+ " at Position: " + getPosition());
 	}
 }
