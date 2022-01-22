@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.gui.recaller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -181,15 +180,6 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 
 	}
 
-	public static int[] convertIntegers(List<Integer> integers) {
-		int[] ret = new int[integers.size()];
-		Iterator<Integer> iterator = integers.iterator();
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = iterator.next().intValue();
-		}
-		return ret;
-	}
-
 	@Override
 	public boolean isPauseScreen() {
 		return false;
@@ -230,7 +220,7 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 	}
 
 	private static void drawLine(PoseStack stack, int x1, int y1, int x2, int y2, ParticleColor color, int displace) {
-		//RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+		// RenderSystem.assertThread(RenderSystem::isOnRenderThread);
 		GlStateManager._disableTexture();
 		GlStateManager._depthMask(false);
 		GlStateManager._disableCull();

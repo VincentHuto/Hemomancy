@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Map;
 
+import org.apache.http.util.TextUtils;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
@@ -12,7 +14,7 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
 //GlStateManager;
@@ -166,7 +168,7 @@ public class BloodTendencyEvents {
 						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getTendency().keySet()
 								.toArray()[i];
 						// GlStateManager._pushMatrix();
-						fontRenderer.draw(event.getMatrixStack(), TextUtils.toProperCase(selectedCoven.toString()),
+						fontRenderer.draw(event.getMatrixStack(), HLTextUtils.toProperCase(selectedCoven.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getMatrixStack(),
 								String.valueOf(tendency.getAlignmentByTendency(selectedCoven)), point.x, point.y + 30,

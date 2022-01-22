@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteChest;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteHelmet;
-import com.vincenthuto.hemomancy.item.armor.ItemSpikedChestplate;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
 import com.vincenthuto.hemomancy.item.bloodline.ItemUnsignedLedger;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
@@ -75,6 +74,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BannerPatternItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -208,6 +208,11 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_crossbow));
+	
+	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
+			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.summon_avatar ));
+
 
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
@@ -546,48 +551,55 @@ public class ItemInit {
 					"Communion Rune, The call from beyond rings louder for you, you wish to join them, you must join them. join.joi,jo..."));
 
 	// Spawn Eggs
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
-//			() -> new SpawnEggItem(EntityInit.leech, 7761777, 4206080,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
-//			() -> new SpawnEggItem(EntityInit.fargone, 7352833, 7958646,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
-//			() -> new SpawnEggItem(EntityInit.thirster, 3093151, 9515521,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
-//			() -> new SpawnEggItem(EntityInit.drudge, 8718848, 9515521,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
-//			() -> new SpawnEggItem(EntityInit.fungling, 7798794, 15711418,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
-//			() -> new SpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
-//			() -> new SpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
-//			.register("spawn_egg_chthonian_queen", () -> new SpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
-//			.register("spawn_egg_lump_of_thought", () -> new SpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
-//			.register("spawn_egg_abhorent_thought", () -> new SpawnEggItem(EntityInit.abhorent_thought, 12124160,
-//					4259840, new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<SpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
-//			.register("spawn_egg_morphling_polyp", () -> new SpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
-//					new Item.Properties().tab(ItemGroup.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
+			() -> new ModSpawnEggItem(EntityInit.leech, 7761777, 4206080,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+			() -> new ModSpawnEggItem(EntityInit.fargone, 7352833, 7958646,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
+			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+			() -> new ModSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
+			() -> new ModSpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
+			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
+			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
+			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
+			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
+					4259840, new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<ModSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
+			.register("spawn_egg_morphling_polyp", () -> new ModSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
+					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
-//		registerSpawnEggColorHandler(event.getItemColors(), HutosLibItemInit.spawn_test_mob);
+		registerSpawnEggColorHandler(event.getItemColors()
+				, ItemInit.spawn_egg_morphling_polyp
+				, ItemInit.spawn_egg_abhorent_thought
+				, ItemInit.spawn_egg_lump_of_thought
+				, ItemInit.spawn_egg_chthonian_queen
+				, ItemInit.spawn_egg_chthonian
+				, ItemInit.spawn_egg_chitinite
+				, ItemInit.spawn_egg_fungling
+				, ItemInit.spawn_egg_drudge
+				, ItemInit.spawn_egg_thirster
+				, ItemInit.spawn_egg_fargone
+				, ItemInit.spawn_egg_leech
+				);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -32,7 +32,7 @@ public class ItemFerventHusk extends Item {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
-		return new TextComponent(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath()))
+		return new TextComponent(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath()))
 				.withStyle(ChatFormatting.GOLD);
 	}
 

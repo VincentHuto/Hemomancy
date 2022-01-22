@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -14,8 +16,12 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 public class ModelSpikedShield extends Model {
+	public static final ModelLayerLocation spiked_shield = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "spiked_shield"), "main");
+
 	private final List<ModelPart> parts = new ArrayList<ModelPart>();
 
 	public ModelSpikedShield(ModelPart part) {

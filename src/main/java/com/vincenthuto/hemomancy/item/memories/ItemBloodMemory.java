@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.item.memories;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.http.util.TextUtils;
+
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
@@ -11,7 +13,7 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -46,7 +48,7 @@ public class ItemBloodMemory extends Item {
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return new TextComponent(
-				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+				HLTextUtils.stringToBloody(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.withStyle(ChatFormatting.DARK_RED);
 	}
 

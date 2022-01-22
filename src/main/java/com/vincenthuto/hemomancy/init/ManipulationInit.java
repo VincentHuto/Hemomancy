@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.manipulation.quick.ManipBloodShot;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipConjuration;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipDeadlyGaze;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipFerricTransmutation;
+import com.vincenthuto.hemomancy.manipulation.quick.ManipSummonAvatar;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
@@ -49,6 +50,10 @@ public class ManipulationInit {
 	public static final RegistryObject<BloodManipulation> deadly_gaze = MANIPS.register("deadly_gaze",
 			() -> register(new ManipDeadlyGaze("deadly_gaze", 100, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)));
+	
+	public static final RegistryObject<BloodManipulation> summon_avatar = MANIPS.register("summon_avatar",
+			() -> register(new ManipSummonAvatar("summon_avatar", 100, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)));
 
 	public static final RegistryObject<BloodManipulation> blood_needle = MANIPS.register("blood_needle",
 			() -> register(new ManipBloodNeedle("blood_needle", 100, 0, 0, EnumManipulationType.QUICK,

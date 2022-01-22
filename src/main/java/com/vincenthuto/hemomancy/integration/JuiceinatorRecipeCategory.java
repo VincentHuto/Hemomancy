@@ -47,17 +47,18 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 	protected IDrawableStatic staticFlame;
 	protected IDrawableAnimated animatedFlame;
 
+	@SuppressWarnings("deprecation")
 	public JuiceinatorRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(150, 110);
 		overlay = guiHelper.createDrawable(texture, 0, 0, 150, 110);
 		icon = guiHelper.createDrawableIngredient(new ItemStack(BlockInit.juiceinator.get()));
-		this.staticFlame = guiHelper.createDrawable(texture, 143+16, 0, 14, 14);
+		this.staticFlame = guiHelper.createDrawable(texture, 143 + 16, 0, 14, 14);
 		this.animatedFlame = guiHelper.createAnimatedDrawable(staticFlame, 300, IDrawableAnimated.StartDirection.TOP,
 				true);
 		this.cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<>() {
 			@Override
 			public IDrawableAnimated load(Integer cookTime) {
-				return guiHelper.drawableBuilder(texture, 143+16, 14, 24, 17).buildAnimated(cookTime,
+				return guiHelper.drawableBuilder(texture, 143 + 16, 14, 24, 17).buildAnimated(cookTime,
 						IDrawableAnimated.StartDirection.LEFT, false);
 			}
 		});

@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbTracking;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -51,7 +51,7 @@ public class ItemLivingGrasp extends Item {
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return new TextComponent(
-				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+				HLTextUtils.stringToBloody(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.withStyle(ChatFormatting.DARK_RED);
 	}
 

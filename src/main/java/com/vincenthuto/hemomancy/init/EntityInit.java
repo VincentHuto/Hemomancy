@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.entity.EntityLeech;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBolt;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodCloud;
@@ -13,7 +14,17 @@ import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
+import com.vincenthuto.hemomancy.entity.drudge.EntityDrudge;
 import com.vincenthuto.hemomancy.entity.item.EntityMorphlingPolypItem;
+import com.vincenthuto.hemomancy.entity.mob.EntityAbhorentThought;
+import com.vincenthuto.hemomancy.entity.mob.EntityChitinite;
+import com.vincenthuto.hemomancy.entity.mob.EntityChthonian;
+import com.vincenthuto.hemomancy.entity.mob.EntityChthonianQueen;
+import com.vincenthuto.hemomancy.entity.mob.EntityFargone;
+import com.vincenthuto.hemomancy.entity.mob.EntityFungling;
+import com.vincenthuto.hemomancy.entity.mob.EntityLumpOfThought;
+import com.vincenthuto.hemomancy.entity.mob.EntityMorphlingPolyp;
+import com.vincenthuto.hemomancy.entity.mob.EntityThirster;
 import com.vincenthuto.hemomancy.entity.projectile.EntityTrackingPests;
 import com.vincenthuto.hemomancy.entity.projectile.EntityTrackingSerpent;
 
@@ -34,45 +45,45 @@ public class EntityInit {
 			Hemomancy.MOD_ID);
 
 	// Mobs
-//	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
-//			() -> EntityType.Builder.<EntityLeech>of(EntityLeech::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "leech").toString()));
-//	public static final RegistryObject<EntityType<EntityFargone>> fargone = ENTITY_TYPES.register("fargone",
-//			() -> EntityType.Builder.<EntityFargone>of(EntityFargone::new, MobCategory.MONSTER).sized(1F, 1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "fargone").toString()));
-//	public static final RegistryObject<EntityType<EntityThirster>> thirster = ENTITY_TYPES.register("thirster",
-//			() -> EntityType.Builder.<EntityThirster>of(EntityThirster::new, MobCategory.MONSTER).sized(1F, 1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
-//	public static final RegistryObject<EntityType<EntityAbhorentThought>> abhorent_thought = ENTITY_TYPES
-//			.register("abhorent_thought",
-//					() -> EntityType.Builder.<EntityAbhorentThought>of(EntityAbhorentThought::new, MobCategory.MONSTER)
-//							.sized(1.5f, 3F)
-//							.build(new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought").toString()));
-//	public static final RegistryObject<EntityType<EntityLumpOfThought>> lump_of_thought = ENTITY_TYPES.register(
-//			"lump_of_thought",
-//			() -> EntityType.Builder.<EntityLumpOfThought>of(EntityLumpOfThought::new, MobCategory.MONSTER)
-//					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "lump_of_thought").toString()));
-//	public static final RegistryObject<EntityType<EntityMorphlingPolyp>> morphling_polyp = ENTITY_TYPES.register(
-//			"morphling_polyp",
-//			() -> EntityType.Builder.<EntityMorphlingPolyp>of(EntityMorphlingPolyp::new, MobCategory.MONSTER)
-//					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
-//
-//	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
-//			() -> EntityType.Builder.<EntityDrudge>of(EntityDrudge::new, MobCategory.CREATURE).sized(1f, 0.5f)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
-//	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
-//			() -> EntityType.Builder.<EntityFungling>of(EntityFungling::new, MobCategory.CREATURE).sized(1F, 1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
-//	public static final RegistryObject<EntityType<EntityChitinite>> chitinite = ENTITY_TYPES.register("chitinite",
-//			() -> EntityType.Builder.<EntityChitinite>of(EntityChitinite::new, MobCategory.CREATURE).sized(1F, 1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "chitinite").toString()));
-//	public static final RegistryObject<EntityType<EntityChthonian>> chthonian = ENTITY_TYPES.register("chthonian",
-//			() -> EntityType.Builder.<EntityChthonian>of(EntityChthonian::new, MobCategory.MONSTER).sized(1F, 1F)
-//					.build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
-//	public static final RegistryObject<EntityType<EntityChthonianQueen>> chthonian_queen = ENTITY_TYPES.register(
-//			"chthonian_queen",
-//			() -> EntityType.Builder.<EntityChthonianQueen>of(EntityChthonianQueen::new, MobCategory.MONSTER)
-//					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
+	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
+			() -> EntityType.Builder.<EntityLeech>of(EntityLeech::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "leech").toString()));
+	public static final RegistryObject<EntityType<EntityFargone>> fargone = ENTITY_TYPES.register("fargone",
+			() -> EntityType.Builder.<EntityFargone>of(EntityFargone::new, MobCategory.MONSTER).sized(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "fargone").toString()));
+	public static final RegistryObject<EntityType<EntityThirster>> thirster = ENTITY_TYPES.register("thirster",
+			() -> EntityType.Builder.<EntityThirster>of(EntityThirster::new, MobCategory.MONSTER).sized(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "thirster").toString()));
+	public static final RegistryObject<EntityType<EntityAbhorentThought>> abhorent_thought = ENTITY_TYPES
+			.register("abhorent_thought",
+					() -> EntityType.Builder.<EntityAbhorentThought>of(EntityAbhorentThought::new, MobCategory.MONSTER)
+							.sized(1.5f, 3F)
+							.build(new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought").toString()));
+	public static final RegistryObject<EntityType<EntityLumpOfThought>> lump_of_thought = ENTITY_TYPES.register(
+			"lump_of_thought",
+			() -> EntityType.Builder.<EntityLumpOfThought>of(EntityLumpOfThought::new, MobCategory.MONSTER)
+					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "lump_of_thought").toString()));
+	public static final RegistryObject<EntityType<EntityMorphlingPolyp>> morphling_polyp = ENTITY_TYPES.register(
+			"morphling_polyp",
+			() -> EntityType.Builder.<EntityMorphlingPolyp>of(EntityMorphlingPolyp::new, MobCategory.MONSTER)
+					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
+
+	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
+			() -> EntityType.Builder.<EntityDrudge>of(EntityDrudge::new, MobCategory.CREATURE).sized(1f, 0.5f)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
+	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
+			() -> EntityType.Builder.<EntityFungling>of(EntityFungling::new, MobCategory.CREATURE).sized(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
+	public static final RegistryObject<EntityType<EntityChitinite>> chitinite = ENTITY_TYPES.register("chitinite",
+			() -> EntityType.Builder.<EntityChitinite>of(EntityChitinite::new, MobCategory.CREATURE).sized(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "chitinite").toString()));
+	public static final RegistryObject<EntityType<EntityChthonian>> chthonian = ENTITY_TYPES.register("chthonian",
+			() -> EntityType.Builder.<EntityChthonian>of(EntityChthonian::new, MobCategory.MONSTER).sized(1F, 1F)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
+	public static final RegistryObject<EntityType<EntityChthonianQueen>> chthonian_queen = ENTITY_TYPES.register(
+			"chthonian_queen",
+			() -> EntityType.Builder.<EntityChthonianQueen>of(EntityChthonianQueen::new, MobCategory.MONSTER)
+					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
 
 	// Projectiles
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
@@ -164,17 +175,18 @@ public class EntityInit {
 		event.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().build());
 		event.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().build());
 		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
+
+		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
+		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());
+		event.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().build());
+		event.put(EntityInit.fungling.get(), EntityFungling.setAttributes().build());
+		event.put(EntityInit.thirster.get(), EntityThirster.setAttributes().build());
+		event.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().build());
+		event.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().build());
+		event.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().build());
+		event.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().build());
+		event.put(EntityInit.abhorent_thought.get(), EntityAbhorentThought.setAttributes().build());
+		event.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().build());
 	}
-//		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
-//		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());
-//		event.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().build());
-//		event.put(EntityInit.fungling.get(), EntityFungling.setAttributes().build());
-//		event.put(EntityInit.thirster.get(), EntityThirster.setAttributes().build());
-//		event.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().build());
-//		event.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().build());
-//		event.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().build());
-//		event.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().build());
-//		event.put(EntityInit.abhorent_thought.get(), EntityAbhorentThought.setAttributes().build());
-//		event.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().build());
 
 }

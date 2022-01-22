@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.capa.player.volume;
 /*
- * package com.huto.hemomancy.capa.volume;
+ * package com.vincenthuto.hemomancy.capa.volume;
  * 
- * import com.huto.hemomancy.init.PotionInit; import
- * com.huto.hemomancy.init.RenderTypeInit; import com.hutoslib.math.Vector3;
+ * import com.vincenthuto.hemomancy.init.PotionInit; import
+ * com.vincenthuto.hemomancy.init.RenderTypeInit; import com.hutoslib.math.Vector3;
  * import com.mojang.blaze3d.vertex.PoseStack; import
  * com.mojang.blaze3d.vertex.VertexConsumer; import com.mojang.math.Matrix4f;
  * import com.mojang.math.Vector3d; import com.mojang.math.Vector3f;

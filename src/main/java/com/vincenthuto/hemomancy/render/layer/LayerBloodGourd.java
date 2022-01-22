@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodGourd;
 import com.vincenthuto.hemomancy.model.armor.ModelCurvedHorn;
@@ -34,9 +33,9 @@ public class LayerBloodGourd<T extends LivingEntity, M extends HumanoidModel<T>>
 	public LayerBloodGourd(LivingEntityRenderer<T, M> owner) {
 		super(owner);
 		modelBloodGourd = new ModelBloodGourd<T>(
-				Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayersInit.blood_gourd));
+				Minecraft.getInstance().getEntityModels().bakeLayer(ModelBloodGourd.blood_gourd));
 		modelCurvedHorn = new ModelCurvedHorn<T>(
-				Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayersInit.curved_horn));
+				Minecraft.getInstance().getEntityModels().bakeLayer(ModelCurvedHorn.curved_horn));
 	}
 
 	@Override

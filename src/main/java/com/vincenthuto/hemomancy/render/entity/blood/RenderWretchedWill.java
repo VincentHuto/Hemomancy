@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.entity.ModelWretchedWill;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,7 +21,7 @@ public class RenderWretchedWill extends MobRenderer<EntityWretchedWill, ModelWre
 			"textures/entity/wretched_will/modelwretchedwill.png");
 
 	public RenderWretchedWill(EntityRendererProvider.Context p_174447_) {
-		super(p_174447_, new ModelWretchedWill<EntityWretchedWill>(p_174447_.bakeLayer(ModelLayersInit.wretched_will)),
+		super(p_174447_, new ModelWretchedWill<EntityWretchedWill>(p_174447_.bakeLayer(ModelWretchedWill.wretched_will)),
 				0F);
 
 	}

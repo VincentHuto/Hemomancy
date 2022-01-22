@@ -39,21 +39,24 @@ public class CameraEventSubscriber {
 	@SubscribeEvent
 	public static void cameraVIew(EntityEvent.Size event) {
 		if (event.getEntity()instanceof Player player) {
-			player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
-				// System.out.println(manip.getKnownManips());
+			if (player.isAddedToWorld()) {
+				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+					System.out.println(manip.getKnownManips());
+					System.out.println(manip.getSelectedManip());
+					System.out.println(manip.isAvatarActive());
 
-				if (player.isAddedToWorld()) {
+					if (player.isAddedToWorld()) {
 //					float oldHeight = event.getOldEyeHeight();
 //					float defaultHeight = Player.DEFAULT_EYE_HEIGHT;
 //					float crouchHeight = Player.CROUCH_BB_HEIGHT;
 //			if(player.isCrouching()) {
 //				event.setNewEyeHeight(crouchHeight);
 //			}
-					// float oldHeight = event.getOldEyeHeight();
-					// event.setNewEyeHeight(defaultHeight);
-				}
-			});
-
+						// float oldHeight = event.getOldEyeHeight();
+						// event.setNewEyeHeight(defaultHeight);
+					}
+				});
+			}
 		}
 	}
 

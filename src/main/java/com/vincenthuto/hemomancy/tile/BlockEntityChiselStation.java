@@ -34,17 +34,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
-public class BlockEntityChiselStation extends RandomizableContainerBlockEntity implements MenuProvider {
-	public NonNullList<ItemStack> chestContents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
-	public SimpleItemStackHandler itemHandler = createItemHandler();
+public class BlockEntityChiselStation extends BaseContainerBlockEntity implements MenuProvider {
+	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 
 	public int numPlayersUsing = 0;
 	public float lidAngle, prevLidAngle;
@@ -56,14 +53,6 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 
 	public BlockEntityChiselStation(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.runic_chisel_station.get(), pos, state);
-	}
-
-	protected SimpleItemStackHandler createItemHandler() {
-		return new SimpleItemStackHandler(this, true);
-	}
-
-	public IItemHandlerModifiable getItemHandler() {
-		return itemHandler;
 	}
 
 	@Override
@@ -95,7 +84,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 
 	@Override
 	public boolean isEmpty() {
-		for (ItemStack stack : this.chestContents) {
+		for (ItemStack stack : this.contents) {
 			if (!stack.isEmpty()) {
 				return false;
 			}
@@ -166,26 +155,12 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 		return false;
 	}
 
-	@Override
-	public NonNullList<ItemStack> getItems() {
-		return this.chestContents;
-	}
-
-	@Override
-	protected void setItems(NonNullList<ItemStack> itemsIn) {
-		this.chestContents = itemsIn;
-
-	}
-
 	// NBT
 	@Override
 	public void load(CompoundTag compound) {
 		super.load(compound);
-		readPacketNBT(compound);
-		this.chestContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(compound)) {
-			ContainerHelper.loadAllItems(compound, this.chestContents);
-		}
+		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(compound, this.contents);
 		ListTag tagList = compound.getList(TAG_RUNELIST, Tag.TAG_COMPOUND);
 		if (this.runesList != null) {
 			for (int i = 0; i < tagList.size(); i++) {
@@ -201,11 +176,41 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 	@Override
 	public void saveAdditional(CompoundTag compound) {
 		super.saveAdditional(compound);
-		writePacketNBT(compound);
-		if (!this.trySaveLootTable(compound)) {
-			ContainerHelper.saveAllItems(compound, this.chestContents);
+		ContainerHelper.saveAllItems(compound, this.contents);
+		if (compound != null) {
+			ListTag tagList = new ListTag();
+			if (runesList != null) {
+				for (int i = 0; i < runesList.size(); i++) {
+					Integer s = runesList.get(i);
+					CompoundTag ss = new CompoundTag();
+					if (s != null) {
+						ss.putInt("Int", s);
+						tagList.add(ss);
+					}
+				}
+				compound.put(TAG_RUNELIST, tagList);
+			}
 		}
 
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		if (tag != null) {
+
+			if (tag.get(TAG_RUNELIST) != null) {
+				for (int i = 0; i < runesList.size(); i++) {
+					clientRuneList.add(runesList.get(i));
+				}
+			}
+		}
+	}
+
+	@Override
+	public final CompoundTag getUpdateTag() {
+		CompoundTag tag = new CompoundTag();
+		ContainerHelper.saveAllItems(tag, this.contents);
 		ListTag tagList = new ListTag();
 		if (runesList != null) {
 			for (int i = 0; i < runesList.size(); i++) {
@@ -217,80 +222,37 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 				}
 			}
 
-			compound.put(TAG_RUNELIST, tagList);
+			tag.put(TAG_RUNELIST, tagList);
 		}
-
-	}
-
-	public void readPacketNBT(CompoundTag par1CompoundTag) {
-		itemHandler = createItemHandler();
-		itemHandler.deserializeNBT(par1CompoundTag);
-		this.chestContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(par1CompoundTag)) {
-			ContainerHelper.loadAllItems(par1CompoundTag, this.chestContents);
-		}
-	}
-
-	public void writePacketNBT(CompoundTag par1CompoundTag) {
-		par1CompoundTag.merge(itemHandler.serializeNBT());
-
+		return tag;
 	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
-		this.chestContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(pkt.getTag())) {
-			ContainerHelper.loadAllItems(pkt.getTag(), this.chestContents);
+		if (pkt.getTag() != null) {
+			ListTag tagList = pkt.getTag().getList(TAG_RUNELIST, Tag.TAG_COMPOUND);
+			List<Integer> test = new ArrayList<Integer>();
+			for (int i = 0; i < tagList.size(); i++) {
+				CompoundTag tag = tagList.getCompound(i);
+				int s = Integer.valueOf(tag.toString().substring(5).replace("}", ""));
+				test.add(i, s);
+				test.set(i, s);
+			}
+			this.runesList = test;
+			clientRuneList = test;
 		}
-		ListTag tagList = pkt.getTag().getList(TAG_RUNELIST, Tag.TAG_COMPOUND);
-		List<Integer> test = new ArrayList<Integer>();
-		for (int i = 0; i < tagList.size(); i++) {
-			CompoundTag tag = tagList.getCompound(i);
-			int s = Integer.valueOf(tag.toString().substring(5).replace("}", ""));
-			test.add(i, s);
-			test.set(i, s);
-		}
-		this.runesList = test;
-		clientRuneList = test;
 	}
 
-	@Override
-	public final CompoundTag getUpdateTag() {
-		return save(new CompoundTag());
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
 	}
 
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		super.getUpdatePacket();
-		CompoundTag tag = new CompoundTag();
-		writePacketNBT(tag);
-		ListTag tagList = new ListTag();
-		tagList.add(tag);
-		if (runesList != null) {
-			for (int i = 0; i < runesList.size(); i++) {
-				Integer s = runesList.get(i);
-				if (s != null) {
-					tagList.add(tag);
-				}
-			}
-			save(tag);
-		}
 		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		this.chestContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(tag)) {
-			ContainerHelper.loadAllItems(tag, this.chestContents);
-		}
-		if (tag.get(TAG_RUNELIST) != null) {
-			for (int i = 0; i < runesList.size(); i++) {
-				clientRuneList.add(runesList.get(i));
-			}
-		}
 	}
 
 	@Override
@@ -303,26 +265,6 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 		}
 	}
 
-	@Override
-	public void startOpen(Player player) {
-		if (!player.isSpectator()) {
-			if (this.numPlayersUsing < 0) {
-				this.numPlayersUsing = 0;
-			}
-
-			++this.numPlayersUsing;
-			this.onOpenOrClose();
-		}
-	}
-
-	@Override
-	public void stopOpen(Player player) {
-		if (!player.isSpectator()) {
-			--this.numPlayersUsing;
-			this.onOpenOrClose();
-		}
-	}
-
 	public static int getPlayersUsing(BlockGetter reader, BlockPos pos) {
 		BlockState blockstate = reader.getBlockState(pos);
 		if (blockstate.hasBlockEntity()) {
@@ -332,12 +274,6 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 			}
 		}
 		return 0;
-	}
-
-	public static void swapContents(BlockEntityChiselStation te, BlockEntityChiselStation otherTe) {
-		NonNullList<ItemStack> list = te.getItems();
-		te.setItems(otherTe.getItems());
-		otherTe.setItems(list);
 	}
 
 	protected void onOpenOrClose() {
@@ -364,16 +300,10 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 		return new MenuChiselStation(id, player, this);
 	}
 
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 	public void craftEvent() {
 		List<ItemStack> chestStuff = new ArrayList<ItemStack>();
-		chestStuff.add(chestContents.get(0));
-		chestStuff.add(chestContents.get(1));
+		chestStuff.add(contents.get(0));
+		chestStuff.add(contents.get(1));
 
 		RecipeChiselStation recipe = null;
 
@@ -395,7 +325,7 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 				}
 			}
 
-		if (recipe != null && chestContents.get(2).isEmpty()) {
+		if (recipe != null && contents.get(2).isEmpty()) {
 
 			List<Ingredient> recipieInObj = recipe.getInputs();
 
@@ -427,17 +357,17 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 						level.addParticle(ParticleTypes.PORTAL, worldPosition.getX(), worldPosition.getY(),
 								worldPosition.getZ(), 0.0D, 0.0D, 0.0D);
 					}
-					chestContents.set(0, output);
+					contents.set(0, output);
 					currentRecipe = null;
 					for (int i = 0; i < getContainerSize(); i++) {
-						chestContents.set(0, ItemStack.EMPTY);
-						chestContents.set(1, ItemStack.EMPTY);
-						chestContents.set(2, output);
-						ItemStack knapperIn = chestContents.get(3);
+						contents.set(0, ItemStack.EMPTY);
+						contents.set(1, ItemStack.EMPTY);
+						contents.set(2, output);
+						ItemStack knapperIn = contents.get(3);
 						if (knapperIn.getItem() instanceof ItemKnapper) {
 							ItemStack newKnapper = knapperIn.copy();
 							newKnapper.hurt(recipe.getActivatedRunes().size(), level.random, null);
-							chestContents.set(3, newKnapper);
+							contents.set(3, newKnapper);
 						}
 						runesList.clear();
 						this.sendUpdates();
@@ -450,40 +380,40 @@ public class BlockEntityChiselStation extends RandomizableContainerBlockEntity i
 
 	}
 
-	public static class SimpleItemStackHandler extends ItemStackHandler {
+	@Override
+	public void setItem(int pIndex, ItemStack pStack) {
+		this.contents.set(pIndex, pStack);
+	}
 
-		private final boolean allowWrite;
-		private final BlockEntity tile;
+	@Override
+	public ItemStack getItem(int p_58328_) {
+		return this.contents.get(p_58328_);
+	}
 
-		public SimpleItemStackHandler(BlockEntity inv, boolean allowWrite) {
-			super(5);
-			this.allowWrite = allowWrite;
-			tile = inv;
-		}
+	@Override
+	public ItemStack removeItem(int pIndex, int pCount) {
+		return ContainerHelper.removeItem(this.contents, pIndex, pCount);
+	}
 
-		@Nonnull
-		@Override
-		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-			if (allowWrite) {
-				return super.insertItem(slot, stack, simulate);
-			} else
-				return stack;
-		}
+	@Override
+	public ItemStack removeItemNoUpdate(int pIndex) {
+		return ContainerHelper.takeItem(this.contents, pIndex);
+	}
 
-		@Nonnull
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			if (allowWrite) {
+	@Override
+	public boolean stillValid(Player p_58340_) {
+		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
+				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
+						this.worldPosition.getZ() + 0.5D) <= 64.0D;
+	}
 
-				return super.extractItem(slot, amount, simulate);
-			} else
-				return ItemStack.EMPTY;
-		}
+	@Override
+	public void clearContent() {
+		this.contents.clear();
+	}
 
-		@Override
-		public void onContentsChanged(int slot) {
-			tile.setChanged();
-		}
+	public NonNullList<ItemStack> getItems() {
+		return this.contents;
 	}
 
 }

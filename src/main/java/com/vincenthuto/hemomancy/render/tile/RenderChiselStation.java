@@ -36,8 +36,8 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 
 		// Chisel
 		matrixStackIn.pushPose();
-		if (te.chestContents.get(3) != null) {
-			ItemStack stack = te.chestContents.get(3);
+		if (te.contents.get(3) != null) {
+			ItemStack stack = te.contents.get(3);
 			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(90));
@@ -71,8 +71,8 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 
 		// Output
 		matrixStackIn.pushPose();
-		if (te.chestContents.get(2) != ItemStack.EMPTY) {
-			ItemStack stack = te.chestContents.get(2);
+		if (te.contents.get(2) != ItemStack.EMPTY) {
+			ItemStack stack = te.contents.get(2);
 			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
@@ -104,8 +104,8 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 
 		// Blank Rune
 		matrixStackIn.pushPose();
-		if (te.chestContents.get(0) != ItemStack.EMPTY) {
-			ItemStack stack = te.chestContents.get(0);
+		if (te.contents.get(0) != ItemStack.EMPTY) {
+			ItemStack stack = te.contents.get(0);
 			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));
@@ -137,8 +137,8 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 
 		// Aux Slot
 		matrixStackIn.pushPose();
-		if (te.chestContents.get(1) != ItemStack.EMPTY) {
-			ItemStack stack = te.chestContents.get(1);
+		if (te.contents.get(1) != ItemStack.EMPTY) {
+			ItemStack stack = te.contents.get(1);
 			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
 				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 				matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90));

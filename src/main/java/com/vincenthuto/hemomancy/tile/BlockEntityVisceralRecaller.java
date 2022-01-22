@@ -75,7 +75,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 	public Map<EnumBloodTendency, Float> getTendency() {
 		return tendency.getTendency();
 	}
-	
+
 	@Override
 	public void setItem(int pIndex, ItemStack pStack) {
 		// Absorb the enzyme
@@ -112,7 +112,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		sendUpdates();
 
 	}
-	
 
 	// NBT
 	@Override
@@ -133,7 +132,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		super.saveAdditional(tag);
 		ContainerHelper.saveAllItems(tag, this.contents);
 		if (tag != null) {
-
 			tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 				if (tendency.getTendency().get(key) != null) {
@@ -146,8 +144,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 
 	}
 
-
-
 	@Override
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
@@ -158,7 +154,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 			}
 		}
 	}
-	
+
 	@Override
 	public final CompoundTag getUpdateTag() {
 		CompoundTag tag = new CompoundTag();
@@ -171,9 +167,9 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 				tag.putFloat(key.toString(), 0);
 			}
 		}
-		return  tag;
+		return tag;
 	}
-	
+
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
@@ -190,8 +186,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
-
-
 
 	public void sendUpdates() {
 		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());

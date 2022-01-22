@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSpear;
 import com.vincenthuto.hemomancy.model.item.ModelLivingSpear;
@@ -34,7 +33,7 @@ public class RenderItemLivingSpear extends BlockEntityWithoutLevelRenderer {
 
 	public RenderItemLivingSpear(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
-		spearModel= new ModelLivingSpear(p_172551_.bakeLayer(ModelLayersInit.living_spear));
+		spearModel= new ModelLivingSpear(p_172551_.bakeLayer(ModelLivingSpear.living_spear));
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public class BlockEntityEarthenVein extends BlockEntity {
 
 	@Override
 	public CompoundTag getUpdateTag() {
-		return save(new CompoundTag());
+		return super.getUpdateTag();
 	}
 
 	@Override

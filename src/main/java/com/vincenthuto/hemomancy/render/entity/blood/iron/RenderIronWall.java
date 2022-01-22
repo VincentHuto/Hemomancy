@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.render.entity.blood.iron;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.entity.ModelIronWall;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -18,7 +17,7 @@ public class RenderIronWall extends MobRenderer<EntityIronWall, ModelIronWall<En
 			"textures/entity/iron_wall/model_iron_wall.png");
 
 	public RenderIronWall(EntityRendererProvider.Context p_174447_) {
-		super(p_174447_, new ModelIronWall<EntityIronWall>(p_174447_.bakeLayer(ModelLayersInit.iron_wall)), 0.5F);
+		super(p_174447_, new ModelIronWall<EntityIronWall>(p_174447_.bakeLayer(ModelIronWall.iron_wall)), 0.5F);
 
 	}
 	

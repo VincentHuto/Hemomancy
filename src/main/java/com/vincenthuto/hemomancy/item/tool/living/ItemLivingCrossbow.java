@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -78,7 +78,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return new TextComponent(
-				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+				HLTextUtils.stringToBloody(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.withStyle(ChatFormatting.DARK_RED);
 	}
 

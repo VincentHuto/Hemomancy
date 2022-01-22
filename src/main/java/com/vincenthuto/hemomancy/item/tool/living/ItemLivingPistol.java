@@ -3,11 +3,13 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.http.util.TextUtils;
+
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodNeedle;
 import com.vincenthuto.hemomancy.render.item.RenderItemLivingPistol;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -136,7 +138,7 @@ public class ItemLivingPistol extends Item implements IDispellable {
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return new TextComponent(
-				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+				HLTextUtils.stringToBloody(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.withStyle(ChatFormatting.DARK_RED);
 	}
 

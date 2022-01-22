@@ -35,7 +35,6 @@ public class ItemBloodStainedStone extends Item {
 		IKnownManipulations manips = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
 		
-		System.out.println(manips.isAvatarActive());
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),

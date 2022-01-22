@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.item.armor;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
-import com.vincenthuto.hemomancy.event.LayerEvents;
+import com.vincenthuto.hemomancy.event.ArmorLayerEvents;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -16,8 +16,6 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 
 public class ItemBloodLustArmor extends ArmorItem {
@@ -60,22 +58,22 @@ public class ItemBloodLustArmor extends ArmorItem {
 	}
 
 	private static final class RenderBloodLustArmor implements IItemRenderProperties {
-		@SuppressWarnings("unchecked")
+
 		@Override
-		@OnlyIn(Dist.CLIENT)
-		public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-				EquipmentSlot armorSlot, A _default) {
+		public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot,
+				HumanoidModel<?> _default) {
 			if (((ArmorItem) itemStack.getItem()).getMaterial().equals(EnumModArmorTiers.BLOODLUST)) {
 				if (armorSlot == EquipmentSlot.HEAD) {
 					if (itemStack.getItem()instanceof ItemBloodLustArmor helm) {
-						return (A) LayerEvents.getHelmArmor(armorSlot,helm.maskType);
+						return ArmorLayerEvents.getHelmArmor(armorSlot, helm.maskType);
 					}
 				} else {
-					return (A) LayerEvents.getArmor(armorSlot);
+					return ArmorLayerEvents.getArmor(armorSlot);
 
 				}
 			}
 			return IItemRenderProperties.super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
+
 		}
 	}
 }

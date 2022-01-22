@@ -1,9 +1,11 @@
-package com.vincenthuto.hemomancy.model.entity;
+package com.vincenthuto.hemomancy.model.entity.mob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -11,9 +13,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class ModelAbhorentThought<T extends Entity> extends EntityModel<T> {
+public class ModelAbhorentThought<EntityAbhorentThought extends Entity> extends EntityModel<EntityAbhorentThought> {
+	
+	public static final ModelLayerLocation abhorent_thought = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought"), "main");
+	
 	private final ModelPart whole;
 	private final ModelPart hips;
 
@@ -447,7 +454,7 @@ public class ModelAbhorentThought<T extends Entity> extends EntityModel<T> {
 	}
 
 	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+	public void setupAnim(EntityAbhorentThought entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
 		
 

@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.render.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.item.ModelSpikedShield;
 
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -26,7 +25,7 @@ public class RenderItemSpikedShield extends BlockEntityWithoutLevelRenderer {
 
 	public RenderItemSpikedShield(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
-		modelShield = new ModelSpikedShield(p_172551_.bakeLayer(ModelLayersInit.spiked_shield));
+		modelShield = new ModelSpikedShield(p_172551_.bakeLayer(ModelSpikedShield.spiked_shield));
 	}
 
 	@Override

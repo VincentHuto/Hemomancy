@@ -7,12 +7,13 @@ import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hutoslib.common.block.entity.TileSimpleInventory;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class BlockEntityMorphlingIncubator extends TileSimpleInventory  {
+public class BlockEntityMorphlingIncubator extends TileSimpleInventory {
 
 	private int cooldown = 0;
 	private static final int SET_COOLDOWN_EVENT = 1;
@@ -32,7 +33,7 @@ public class BlockEntityMorphlingIncubator extends TileSimpleInventory  {
 					if (item.isAlive() && !item.getItem().isEmpty()
 							&& item.getItem().getItem() != ItemInit.morphling_polyp.get()) {
 						ItemStack stack = item.getItem();
-						addItem(null, stack, null);
+						// addItem(null, stack, null);
 					}
 				}
 
@@ -50,35 +51,20 @@ public class BlockEntityMorphlingIncubator extends TileSimpleInventory  {
 
 	}
 
-	@Override
-	public boolean triggerEvent(int id, int param) {
-		switch (id) {
-		case SET_COOLDOWN_EVENT:
-			cooldown = param;
-			return true;
-		case CRAFT_EFFECT_EVENT: {
-			if (level.isClientSide) {
-			}
-			return true;
-		}
-		default:
-			return super.triggerEvent(id, param);
-		}
-	}
-
-	public boolean isEmpty() {
-		for (int i = 0; i < getSizeInventory(); i++) {
-			if (!getItemHandler().getStackInSlot(i).isEmpty()) {
-				return false;
-			}
-		}
-
-		return true;
-	}
+//	public boolean isEmpty() {
+//		for (int i = 0; i < getSizeInventory(); i++) {
+//			if (!getItemHandler().getStackInSlot(i).isEmpty()) {
+//				return false;
+//			}
+//		}
+//
+//		return true;
+//	}
 
 	@Override
-	public int getSizeInventory() {
-		return 3;
+	protected SimpleContainer createItemHandler() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*

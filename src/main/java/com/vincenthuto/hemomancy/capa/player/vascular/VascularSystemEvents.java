@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -134,7 +134,7 @@ public class VascularSystemEvents {
 						EnumVeinSections selectedSection = (EnumVeinSections) section.getVascularSystem().keySet()
 								.toArray()[i];
 						// GlStateManager._pushMatrix();
-						fontRenderer.draw(event.getMatrixStack(), TextUtils.toProperCase(selectedSection.toString()),
+						fontRenderer.draw(event.getMatrixStack(), HLTextUtils.toProperCase(selectedSection.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getMatrixStack(),
 								String.valueOf(section.getHealthBySection(selectedSection)), point.x, point.y + 30,

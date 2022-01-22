@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -119,12 +119,12 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 	}
 
 	public String getProperName() {
-		return TextUtils.convertInitToLang(name);
+		return HLTextUtils.convertInitToLang(name);
 	}
 
 	@Override
 	public String toString() {
-		return TextUtils.convertInitToLang(name);
+		return HLTextUtils.convertInitToLang(name);
 	}
 
 	public void setName(String name) {

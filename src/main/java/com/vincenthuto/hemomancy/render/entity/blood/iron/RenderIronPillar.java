@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.render.entity.blood.iron;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.entity.ModelIronPillar;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -18,7 +17,7 @@ public class RenderIronPillar extends MobRenderer<EntityIronPillar, ModelIronPil
 			"textures/entity/iron_pillar/model_iron_pillar.png");
 
 	public RenderIronPillar(EntityRendererProvider.Context p_174447_) {
-		super(p_174447_, new ModelIronPillar<EntityIronPillar>(p_174447_.bakeLayer(ModelLayersInit.iron_pillar)), 0.5F);
+		super(p_174447_, new ModelIronPillar<EntityIronPillar>(p_174447_.bakeLayer(ModelIronPillar.iron_pillar)), 0.5F);
 
 	}
 

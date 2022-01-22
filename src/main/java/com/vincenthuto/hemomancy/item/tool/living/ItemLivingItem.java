@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.item.tool.living;
 
-import com.vincenthuto.hutoslib.client.TextUtils;
+import org.apache.http.util.TextUtils;
+
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -21,7 +23,7 @@ public class ItemLivingItem extends Item {
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return new TextComponent(
-				TextUtils.stringToBloody(TextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
+				HLTextUtils.stringToBloody(HLTextUtils.convertInitToLang(stack.getItem().getRegistryName().getPath())))
 						.withStyle(ChatFormatting.DARK_RED);
 	}
 

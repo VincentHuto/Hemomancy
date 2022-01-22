@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
 import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
 
@@ -22,7 +21,7 @@ public class RenderEarthenVein implements BlockEntityRenderer<BlockEntityEarthen
 			"textures/entity/earthen_vein/model_earthen_vein.png");
 
 	public RenderEarthenVein(BlockEntityRendererProvider.Context p_173636_) {
-		vein = new ModelEarthenVein(p_173636_.bakeLayer(ModelLayersInit.earth_vein));
+		vein = new ModelEarthenVein(p_173636_.bakeLayer(ModelEarthenVein.earth_vein));
 	}
 
 	@SuppressWarnings("unused")

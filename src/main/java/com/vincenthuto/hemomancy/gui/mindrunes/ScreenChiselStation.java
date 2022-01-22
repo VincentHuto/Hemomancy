@@ -15,7 +15,6 @@ import com.vincenthuto.hemomancy.network.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
-import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.client.Minecraft;
@@ -57,57 +56,35 @@ public class ScreenChiselStation extends AbstractContainerScreen<MenuChiselStati
 		this.te = screenContainer.getTe();
 	}
 
-	@SuppressWarnings({ "deprecation", "unused" })
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
-		int centerX = (width / 2) - guiWidth / 2;
-		int centerY = (height / 2) - guiHeight / 2;
-
-		// GlStateManager._pushMatrix();
-		{
-			//// GlStateManager._enableAlphaTest();
-			// GlStateManager._enableBlend();
-			// GlStateManager._color4f(1, 1, 1, 1);
-			Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
-
-		}
-		// GlStateManager._popMatrix();
-		for (int i = 0; i < renderables.size(); i++) {
-			renderables.get(i).render(matrixStack, mouseX, mouseY, 10);
-		}
-
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		this.renderTooltip(matrixStack, mouseX, mouseY);
 
-		// GlStateManager._pushMatrix();
-		{
-			// GlStateManager._translatef(-80, 0, 10);
-			for (int i = 0; i < 64; i++) {
-
-				if (((GuiButtonTextured) renderables.get(i)).isFocused()) {
-					renderTooltip(matrixStack, new TextComponent("Rune:" + i), mouseX, mouseY);
-				}
-			}
-
-			List<Component> cat1 = new ArrayList<Component>();
-			cat1.add(new TextComponent(I18n.get("Clear Runes")));
-			if (clearButton.isHoveredOrFocused()) {
-				renderComponentTooltip(matrixStack, cat1, left + guiWidth - (guiWidth - 120), top + guiHeight - (170));
-			}
-			List<Component> cat9 = new ArrayList<Component>();
-			cat9.add(new TextComponent(I18n.get("Chisel Rune")));
-			if (chiselButton.isHoveredOrFocused()) {
-				renderComponentTooltip(matrixStack, cat9, left + guiWidth - (guiWidth - 120), top + guiHeight - (150));
-			}
+		List<Component> cat1 = new ArrayList<Component>();
+		cat1.add(new TextComponent(I18n.get("Clear Runes")));
+		if (clearButton.isHoveredOrFocused()) {
+			renderComponentTooltip(matrixStack, cat1, left + guiWidth - (guiWidth - 120), top + guiHeight - (170));
 		}
-		// GlStateManager._popMatrix();
+		List<Component> cat9 = new ArrayList<Component>();
+		cat9.add(new TextComponent(I18n.get("Chisel Rune")));
+		if (chiselButton.isHoveredOrFocused()) {
+			renderComponentTooltip(matrixStack, cat9, left + guiWidth - (guiWidth - 120), top + guiHeight - (150));
+		}
+
+	}
+
+	@Override
+	public void renderBackground(PoseStack matrixStack) {
+		super.renderBackground(matrixStack);
+		for (int i = 0; i < renderables.size(); i++) {
+			renderables.get(i).render(matrixStack, 0, 00, 10);
+		}
 
 		if (te.getLevel().getGameTime() % 2 == 0) {
 			if (te.getItem(4) != null && this.te.getItem(4) != ItemStack.EMPTY) {
 				Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
 				if (te.getItem(4).getItem() instanceof ItemRunePattern) {
-					// GlStateManager._translatef(0, 0, -1);
 					ItemRunePattern runePattern = (ItemRunePattern) te.getItem(4).getItem();
 					int incPattern = 100;
 					for (int i = 0; i < runePatternButtonArray.length; i++) {
@@ -134,77 +111,44 @@ public class ScreenChiselStation extends AbstractContainerScreen<MenuChiselStati
 				}
 			}
 		}
-
 	}
 
-	@Override
-	public void renderBackground(PoseStack matrixStack) {
-		super.renderBackground(matrixStack);
-	}
-
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
+		this.font.draw(matrixStack, "Chisel Station", 8, 4, 0);
+		matrixStack.pushPose();
 		this.font.draw(matrixStack, this.te.getDisplayName().getContents(), 8, 6, 65444444);
 		this.font.draw(matrixStack, this.playerInv.getDisplayName().getContents(), 8, this.imageHeight - 92, 000000);
-		// GlStateManager._pushMatrix();
 		if (te.hasValidRecipe()) {
 			RecipeChiselStation currentRecipe = te.getCurrentRecipe();
-			// GlStateManager._translatef(0, 0, 10);
+			this.font.draw(matrixStack, I18n.get(currentRecipe.getOutput().getDescriptionId()), 120, 65, 0);
 			minecraft.getItemRenderer().renderAndDecorateItem(currentRecipe.getOutput(), 145, 44);
-			// GlStateManager._scalef(0.45f, 0.5f, 0.5f);
-			renderTooltip(matrixStack, new TextComponent(I18n.get(currentRecipe.getOutput().getDescriptionId())), 250,
-					150);
-
-		}
-		// GlStateManager._popMatrix();
-
-		// GlStateManager._pushMatrix();
-		if (te.hasValidRecipe()) {
-			Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
 			if (te.areRunesMatching()) {
-				HLGuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 96, 16, 16, 10f);
+				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
+				blit(matrixStack, 162 - 42, 45 + 32, 176, 96, 16, 16);
 			} else {
-				HLGuiUtils.drawScaledTexturedModalRect(162 - 42, 45 + 32, 176, 80, 16, 16, 10f);
+				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
+				blit(matrixStack, 162 - 42, 45 + 32, 176, 80, 16, 16);
 			}
 			if (te.getItem(3).getItem() instanceof ItemKnapper) {
-				//// GlStateManager._enableAlphaTest();
-				HLGuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96, 16, 16, 10f);
+				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
+				blit(matrixStack, 162 - 42 + 16, 45 + 32, 176 + 16, 96, 16, 16);
 			} else {
-				//// GlStateManager._enableAlphaTest();
-				HLGuiUtils.drawScaledTexturedModalRect(162 - 42 + 16, 45 + 32, 176 + 16, 96 - 16, 16, 16, 10f);
+				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
+				blit(matrixStack, 162 - 42 + 16, 45 + 32, 176 + 16, 96 - 16, 16, 16);
 			}
 		}
-
-		// GlStateManager._popMatrix();
-
-		// GlStateManager._pushMatrix();
-		// Prevents the runes from disappering on resize or jei check
-		for (int l = 0; l < runeButtonArray.length; l++) {
-			for (int m = 0; m < runeButtonArray.length; m++) {
-				for (int k = 0; k < this.getActivatedRuneList().size(); k++) {
-					if (runeButtonArray[l][m].getId() == this.getActivatedRuneList().get(k)) {
-						runeButtonArray[l][m].setState(true);
-					}
-				}
-			}
-		}
-
-		// GlStateManager._popMatrix();
+		matrixStack.popPose();
 
 	}
 
 	@Override
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-		// GlStateManager._color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		this.renderBackground(matrixStack);
-
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, GUI_Chisel);
-
 		this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-
 	}
 
 	@Override
@@ -248,7 +192,6 @@ public class ScreenChiselStation extends AbstractContainerScreen<MenuChiselStati
 		}
 		this.addRenderableWidget(clearButton = new GuiButtonTextured(GUI_Chisel, CLEARBUTTONID,
 				left + guiWidth - (guiWidth - 120), top + guiHeight - (170), 16, 16, 176, 16, (press) -> {
-					// PacketHandler.INSTANCE.sendToServer(new PacketChiselCraftingEvent());
 					for (int i = 0; i < 64; i++) {
 						if (renderables.get(i) instanceof GuiButtonTextured) {
 							GuiButtonTextured test = (GuiButtonTextured) renderables.get(i);
@@ -262,11 +205,9 @@ public class ScreenChiselStation extends AbstractContainerScreen<MenuChiselStati
 				}));
 		this.addRenderableWidget(chiselButton = new GuiButtonTextured(GUI_Chisel, CHISELBUTTONID,
 				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, (press) -> {
-					if (te.chestContents.get(3).getItem() != Items.AIR) {
+					if (te.contents.get(3).getItem() != Items.AIR) {
 						PacketHandler.CHANNELMAIN.sendToServer(new PacketChiselCraftingEvent());
-						for (
-
-								int i = 0; i < 64; i++) {
+						for (int i = 0; i < 64; i++) {
 							if (renderables.get(i) instanceof GuiButtonTextured) {
 								GuiButtonTextured test = (GuiButtonTextured) renderables.get(i);
 								if (test.getState() == true) {

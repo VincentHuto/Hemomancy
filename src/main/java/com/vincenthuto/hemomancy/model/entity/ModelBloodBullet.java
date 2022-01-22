@@ -2,9 +2,11 @@ package com.vincenthuto.hemomancy.model.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -12,8 +14,12 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 
 public class ModelBloodBullet extends EntityModel<EntityBloodBullet> {
+	
+	public static final ModelLayerLocation blood_bullet = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet"), "main");
 
 	private final ModelPart head;
 

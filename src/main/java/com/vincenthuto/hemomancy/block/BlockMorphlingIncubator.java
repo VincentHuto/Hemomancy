@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.block;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.tile.BlockEntityMorphlingIncubator;
-import com.vincenthuto.hutoslib.common.block.InventoryHelper;
+import com.vincenthuto.hutoslib.common.container.HLInventoryHelper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
@@ -62,13 +62,13 @@ public class BlockMorphlingIncubator extends Block implements EntityBlock {
 		ItemStack stack = player.getItemInHand(handIn);
 
 		if (player.isShiftKeyDown()) {
-			InventoryHelper.withdrawFromInventory(te, player);
+			HLInventoryHelper.withdrawFromInventory(te, player);
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 			return InteractionResult.SUCCESS;
 		} else if (!stack.isEmpty()) {
-			boolean hit = te.addItem(player, stack, handIn);
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
+//			boolean hit = te.addItem(player, stack, handIn);
+//			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+//			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}
 
 		return InteractionResult.PASS;

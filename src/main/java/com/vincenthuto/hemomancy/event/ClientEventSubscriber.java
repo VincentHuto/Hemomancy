@@ -13,24 +13,6 @@ import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
 import com.vincenthuto.hemomancy.gui.recaller.ScreenVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.init.EntityInit;
-import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBolt;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBullet;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloud;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloudCarrier;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodNeedle;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbDirected;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbTracking;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodShot;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderWretchedWill;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronPillar;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronSpike;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronWall;
-import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingPests;
-import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
-import com.vincenthuto.hemomancy.render.item.RenderItemMorphlingPolyp;
-import com.vincenthuto.hemomancy.render.layer.LayerBloodGourd;
 import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
 import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
@@ -39,28 +21,13 @@ import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
 import com.vincenthuto.hemomancy.render.tile.RenderRuneModStation;
 import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
-import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -88,31 +55,7 @@ public class ClientEventSubscriber {
 	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
 			"key.hemomancy.category");
 
-	@SubscribeEvent
-	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
 
-		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), RenderBloodOrbDirected::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), RenderBloodCloudCarrier::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud.get(), RenderBloodCloud::new);
-		event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), RenderBloodOrbTracking::new);
-		event.registerEntityRenderer(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);
-		event.registerEntityRenderer(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
-		event.registerEntityRenderer(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
-		event.registerEntityRenderer(EntityInit.blood_needle.get(), RenderBloodNeedle::new);
-		event.registerEntityRenderer(EntityInit.blood_shot.get(), RenderBloodShot::new);
-		event.registerEntityRenderer(EntityInit.blood_bullet.get(), RenderBloodBullet::new);
-
-		// event.registerEntityRenderer(EntityInit.dark_arrow.get(),
-		// RenderDarkArrow::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), RenderItemMorphlingPolyp::new);
-
-		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
-		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
-		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
-
-		event.registerEntityRenderer(EntityInit.wretched_will.get(), RenderWretchedWill::new);
-
-	}
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
@@ -136,22 +79,6 @@ public class ClientEventSubscriber {
 		MenuScreens.register(ContainerInit.playerrunes, ScreenPlayerExpanded::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), ScreenJuiceinator::new);
 
-		// Entity
-//		event.registerEntityRenderer(EntityInit.leech.get(), RenderLeech::new);
-//		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
-//		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
-//		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
-//		event.registerEntityRenderer(EntityInit.fargone.get(), RenderFargone::new);
-//		event.registerEntityRenderer(EntityInit.thirster.get(), RenderThirster::new);
-//		event.registerEntityRenderer(EntityInit.drudge.get(), RenderDrudge::new);
-//		event.registerEntityRenderer(EntityInit.fungling.get(), RenderFungling::new);
-//		event.registerEntityRenderer(EntityInit.chitinite.get(), RenderChitinite::new);
-//		event.registerEntityRenderer(EntityInit.chthonian.get(), RenderChthonian::new);
-//		event.registerEntityRenderer(EntityInit.lump_of_thought.get(), RenderLumpOfThought::new);
-//		event.registerEntityRenderer(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
-//		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), RenderAbhorentThought::new);
-//		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), RenderMorphlingPolyp::new);
-
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);
 		keyBinds.add(1, bloodFormation);
@@ -166,51 +93,6 @@ public class ClientEventSubscriber {
 			ClientRegistry.registerKeyBinding(bind);
 
 		}
-	}
-
-	@SubscribeEvent
-	public static void constructLayers(EntityRenderersEvent.AddLayers event) {
-
-		addLayerToEntity(event, EntityType.ARMOR_STAND);
-		addLayerToEntity(event, EntityType.ZOMBIE);
-		addLayerToEntity(event, EntityType.SKELETON);
-		addLayerToEntity(event, EntityType.HUSK);
-		addLayerToEntity(event, EntityType.DROWNED);
-		addLayerToEntity(event, EntityType.STRAY);
-		addLayerToPlayerSkin(event, "default");
-		addLayerToPlayerSkin(event, "slim");
-
-	}
-
-	@SubscribeEvent
-	public static void textureStitch(TextureStitchEvent.Pre event) {
-		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
-			event.addSprite(BannerSlot.SLOT_BACKGROUND);
-		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
-		EntityRenderer<? extends Player> render = event.getSkin(skinName);
-		if (render instanceof LivingEntityRenderer livingRenderer) {
-			livingRenderer.addLayer(new LayerBloodGourd<>(livingRenderer));
-		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
-			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
-		R renderer = event.getRenderer(entityType);
-		if (renderer != null)
-			renderer.addLayer(new LayerBloodGourd(renderer));
-	}
-
-	public static void playHornAnimation() {
-		LocalPlayer ent = Minecraft.getInstance().player;
-		Minecraft.getInstance().particleEngine.createTrackingEmitter(ent, ParticleTypes.SOUL, 30);
-		Minecraft.getInstance().gameRenderer.displayItemActivation(new ItemStack(ItemInit.curved_horn.get()));
-		Minecraft.getInstance().level.playLocalSound(ent.getX(), ent.getY(), ent.getZ(), SoundEvents.TOTEM_USE,
-				ent.getSoundSource(), 1F, 0.6F, false);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.manipulation;
 
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.nbt.CompoundTag;
 
@@ -50,6 +50,6 @@ public class ManipLevel {
 
 	@Override
 	public String toString() {
-		return TextUtils.convertInitToLang("Level: " + currentLevel + ", Xp: " + xp);
+		return HLTextUtils.convertInitToLang("Level: " + currentLevel + ", Xp: " + xp);
 	}
 }

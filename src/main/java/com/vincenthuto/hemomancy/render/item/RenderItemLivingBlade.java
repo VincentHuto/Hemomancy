@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBlade;
 import com.vincenthuto.hemomancy.model.item.ModelLivingBladeHandTame;
@@ -34,8 +33,8 @@ public class RenderItemLivingBlade extends BlockEntityWithoutLevelRenderer {
 
 	public RenderItemLivingBlade(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
-		unleashed = new ModelLivingBladeUnleashed(p_172551_.bakeLayer(ModelLayersInit.living_blade_unleashed));
-		tame = new ModelLivingBladeHandTame(p_172551_.bakeLayer(ModelLayersInit.living_blade_tame));
+		unleashed = new ModelLivingBladeUnleashed(p_172551_.bakeLayer(ModelLivingBladeUnleashed.living_blade_unleashed));
+		tame = new ModelLivingBladeHandTame(p_172551_.bakeLayer(ModelLivingBladeHandTame.living_blade_tame));
 	}
 
 	@Override

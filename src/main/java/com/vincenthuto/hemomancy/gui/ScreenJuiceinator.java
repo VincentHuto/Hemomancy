@@ -91,8 +91,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 		matrix.popPose();
 
 	}
-	
-	
+
 	public void renderVolumeFrame(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 		matrix.translate(0, 0, 100);
 		matrix.pushPose();
@@ -102,7 +101,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 		matrix.popPose();
 
 		float heightShift = (float) Math.cos(te.getLevel().getGameTime() * 0.1);
-		
+
 		// Frame
 		matrix.pushPose();
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -147,13 +146,12 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 		int l = this.menu.getBurnProgress();
 		this.blit(p_97853_, i + 79, j + 34, 176, 14, l + 1, 16);
 	}
-	
+
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
 		this.font.draw(matrixStack, String.valueOf(te.clientBloodLevel), 130, 4, 0000);
 
 	}
-
 
 	@Override
 	protected void slotClicked(Slot p_97848_, int p_97849_, int p_97850_, ClickType p_97851_) {

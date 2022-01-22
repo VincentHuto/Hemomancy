@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
 import com.vincenthuto.hemomancy.util.VeinLocation;
-import com.vincenthuto.hutoslib.client.TextUtils;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -73,7 +73,7 @@ public class ScreenChooseVein extends Screen {
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 
-						font.drawShadow(matrixStack, TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
+						font.drawShadow(matrixStack, HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
 								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
@@ -94,7 +94,7 @@ public class ScreenChooseVein extends Screen {
 									0xffffff);
 
 							font.drawShadow(matrixStack,
-									TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
+									HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
 									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 									(float) (((GuiButtonTextured) renderables.get(i)).y - 10
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
@@ -110,7 +110,7 @@ public class ScreenChooseVein extends Screen {
 //									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 //									(float) ((GuiButtonTextured) renderables.get(i)).y - 20, 0xffffff);
 //	
-//							font.drawShadow(matrixStack, TextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
+//							font.drawShadow(matrixStack, HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
 //									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 //									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
 //							

@@ -6,7 +6,11 @@ import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
+import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
 import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -26,21 +30,29 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		registry.addRecipeCategories(new JuiceinatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ChiselRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new BloodCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new RecallerRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 	}
 
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
 		registry.addRecipes(JuiceinatorDataRecipe.getAllRecipes(world), JuiceinatorRecipeCategory.UID);
-
+		registry.addRecipes(ChiselRecipes.runeRecipies, ChiselRecipeCategory.UID);
+		registry.addRecipes(BloodCraftingRecipes.RECIPES, BloodCraftingCategory.UID);
+		registry.addRecipes(RecallerRecipes.recallerRecipies, RecallerRecipeCategory.UID);
 	}
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.juiceinator.get()), JuiceinatorRecipeCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), ChiselRecipeCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(ItemInit.sanguine_formation.get()), BloodCraftingCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.visceral_artificial_recaller.get()),
+				RecallerRecipeCategory.UID);
 
 	}
-
 	@Nonnull
 	@Override
 	public ResourceLocation getPluginUid() {

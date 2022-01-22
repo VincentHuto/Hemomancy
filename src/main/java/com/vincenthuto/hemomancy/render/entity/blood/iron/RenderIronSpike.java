@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.render.entity.blood.iron;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.entity.ModelIronSpike;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -18,7 +17,7 @@ public class RenderIronSpike extends MobRenderer<EntityIronSpike, ModelIronSpike
 			"textures/entity/iron_spike/model_iron_spike.png");
 
 	public RenderIronSpike(EntityRendererProvider.Context p_174447_) {
-		super(p_174447_, new ModelIronSpike<EntityIronSpike>(p_174447_.bakeLayer(ModelLayersInit.iron_spike)), 0.5F);
+		super(p_174447_, new ModelIronSpike<EntityIronSpike>(p_174447_.bakeLayer(ModelIronSpike.iron_spike)), 0.5F);
 
 	}
 	

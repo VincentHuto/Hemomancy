@@ -2,8 +2,10 @@ package com.vincenthuto.hemomancy.model.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -11,10 +13,14 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class ModelWretchedWill<T extends Entity> extends EntityModel<T> {
 
+	public static final ModelLayerLocation wretched_will = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "modelwretchedwill"), "main");
+	
 	private final ModelPart whole;
 
 	public ModelWretchedWill(ModelPart root) {

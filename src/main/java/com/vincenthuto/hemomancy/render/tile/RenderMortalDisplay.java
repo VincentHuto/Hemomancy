@@ -7,7 +7,6 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
 import com.vincenthuto.hemomancy.tile.BlockEntityMortalDisplay;
 
@@ -26,7 +25,7 @@ public class RenderMortalDisplay implements BlockEntityRenderer<BlockEntityMorta
 			"textures/entity/model_floating_heart.png");
 
 	public RenderMortalDisplay(BlockEntityRendererProvider.Context p_173636_) {
-		heart = new ModelFloatingHeart(p_173636_.bakeLayer(ModelLayersInit.mortal_display));
+		heart = new ModelFloatingHeart(p_173636_.bakeLayer(ModelFloatingHeart.mortal_display));
 	}
 
 	@Override

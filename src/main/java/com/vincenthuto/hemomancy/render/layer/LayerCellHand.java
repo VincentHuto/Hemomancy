@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.init.ModelLayersInit;
 import com.vincenthuto.hemomancy.item.tool.living.ICellHand;
 import com.vincenthuto.hemomancy.item.tool.living.ItemBloodAbsorption;
 import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
@@ -52,7 +51,7 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 
 	public LayerCellHand(RenderLayerParent<T, M> rendererIn) {
 		super(rendererIn);
-		model = new ModelBloodArm<T>(Minecraft.getInstance().getEntityModels().bakeLayer((ModelLayersInit.blood_arm)),
+		model = new ModelBloodArm<T>(Minecraft.getInstance().getEntityModels().bakeLayer((ModelBloodArm.blood_arm)),
 				false);
 
 	}

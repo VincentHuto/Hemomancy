@@ -63,7 +63,7 @@ public class BlockEarthenVein extends Block implements EntityBlock, SimpleWaterl
 	public BlockState updateShape(BlockState p_53323_, Direction p_53324_, BlockState p_53325_, LevelAccessor p_53326_,
 			BlockPos p_53327_, BlockPos p_53328_) {
 		if (p_53323_.getValue(WATERLOGGED)) {
-	         p_53326_.scheduleTick(p_53327_, Fluids.WATER, Fluids.WATER.getTickDelay(p_53326_));
+			p_53326_.scheduleTick(p_53327_, Fluids.WATER, Fluids.WATER.getTickDelay(p_53326_));
 		}
 
 		return super.updateShape(p_53323_, p_53324_, p_53325_, p_53326_, p_53327_, p_53328_);
@@ -125,7 +125,6 @@ public class BlockEarthenVein extends Block implements EntityBlock, SimpleWaterl
 					if (state.getValue(STENTED)) {
 						te.getLoc().setName(stack.getHoverName().getString());
 						if (stack.hasCustomHoverName()) {
-							System.out.println(stack.hasCustomHoverName());
 							te.setName(stack.getHoverName().getString());
 							stack.shrink(1);
 							BlockState newState = state.setValue(NAMED, true);
@@ -133,9 +132,12 @@ public class BlockEarthenVein extends Block implements EntityBlock, SimpleWaterl
 						}
 					} else {
 						player.displayClientMessage(new TextComponent("Only Stented Veins can be Renamed!"), true);
+
 					}
 				} else {
-					player.displayClientMessage(new TextComponent("You do not control this vein!"), true);
+					if (!worldIn.isClientSide) {
+						player.displayClientMessage(new TextComponent("You do not control this vein!"), true);
+					}
 				}
 			}
 			if (!worldIn.isClientSide) {
