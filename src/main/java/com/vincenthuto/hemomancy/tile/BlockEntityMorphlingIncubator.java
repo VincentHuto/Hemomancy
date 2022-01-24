@@ -1,70 +1,81 @@
 package com.vincenthuto.hemomancy.tile;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hutoslib.common.block.entity.TileSimpleInventory;
+import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public class BlockEntityMorphlingIncubator extends TileSimpleInventory {
-
-	private int cooldown = 0;
-	private static final int SET_COOLDOWN_EVENT = 1;
-	private static final int CRAFT_EFFECT_EVENT = 2;
 
 	public BlockEntityMorphlingIncubator(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.morphling_incubator.get(), pos, state);
 	}
 
-	public void tick() {
-		if (level.isClientSide) {
+	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
 
-			if (!level.isClientSide) {
-				List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class,
-						new AABB(worldPosition, worldPosition.offset(1, 1, 1)));
-				for (ItemEntity item : items) {
-					if (item.isAlive() && !item.getItem().isEmpty()
-							&& item.getItem().getItem() != ItemInit.morphling_polyp.get()) {
-						ItemStack stack = item.getItem();
-						// addItem(null, stack, null);
-					}
+		boolean did = false;
+
+		for (int i = 0; i < inventorySize(); i++) {
+			if (getItemHandler().getItem(i).isEmpty()) {
+				did = true;
+				ItemStack stackToAdd = stack.copy();
+				stackToAdd.setCount(1);
+				getItemHandler().setItem(i, stackToAdd);
+
+				if (player == null || !player.getAbilities().instabuild) {
+					stack.shrink(1);
 				}
 
-			} else {
-
-				if (cooldown > 0) {
-				}
+				break;
 			}
-
-			if (cooldown > 0) {
-				cooldown--;
-			}
-
 		}
+
+		if (did) {
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		}
+
+		return true;
+	}
+
+	public boolean isEmpty() {
+		for (int i = 0; i < inventorySize(); i++) {
+			if (!getItemHandler().getItem(i).isEmpty()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public void writePacketNBT(CompoundTag tag) {
+		super.writePacketNBT(tag);
 
 	}
 
-//	public boolean isEmpty() {
-//		for (int i = 0; i < getSizeInventory(); i++) {
-//			if (!getItemHandler().getStackInSlot(i).isEmpty()) {
-//				return false;
-//			}
-//		}
-//
-//		return true;
-//	}
+	@Override
+	public void readPacketNBT(CompoundTag tag) {
+		super.readPacketNBT(tag);
+
+	}
 
 	@Override
 	protected SimpleContainer createItemHandler() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SimpleContainer(5) {
+			@Override
+			public int getMaxStackSize() {
+				return 1;
+			}
+		};
 	}
 
 	/*

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -63,6 +64,11 @@ public class KnownManipulationEvents {
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known));
+	}
+	
+	@SubscribeEvent
+	public static void onDimensionChange(PlayerTickEvent event) {
+		event.player.refreshDimensions();
 	}
 
 	@SubscribeEvent

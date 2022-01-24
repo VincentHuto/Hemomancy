@@ -134,6 +134,7 @@ public class ItemInit {
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
 			() -> new ItemEnzyme(EnumBloodTendency.ANIMUS, 10));
+	
 	public static final RegistryObject<Item> ruinous_enzyme = BASEITEMS.register("ruinous_enzyme",
 			() -> new ItemEnzyme(EnumBloodTendency.MORTEM, 10));
 	public static final RegistryObject<Item> neurotic_enzyme = BASEITEMS.register("neurotic_enzyme",

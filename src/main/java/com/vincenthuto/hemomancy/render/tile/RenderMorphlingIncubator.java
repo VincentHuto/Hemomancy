@@ -26,39 +26,39 @@ public class RenderMorphlingIncubator implements BlockEntityRenderer<BlockEntity
 
 		ms.pushPose();
 
-//		int items = 0;
-//		for (int i = 0; i < te.getSizeInventory(); i++) {
-//			if (te.getItemHandler().getStackInSlot(i).isEmpty()) {
-//				break;
-//			} else {
-//				items++;
-//			}
-//		}
-//		float[] angles = new float[te.getSizeInventory()];
-//
-//		float anglePer = 360F / items;
-//		float totalAngle = 0F;
-//		for (int i = 0; i < angles.length; i++) {
-//			angles[i] = totalAngle += anglePer;
-//		}
-//
-//		double time = ClientTickHandler.ticksInGame + partialTicks;
-//
-//		for (int i = 0; i < te.getSizeInventory(); i++) {
-//			ms.pushPose();
-//			ms.translate(0.5F, 1.25F, 0.5F);
-//			ms.mulPose(Vector3f.YP.rotationDegrees(angles[i] + (float) time));
-//			ms.translate(1.125F, 0F, 0.25F);
-//			ms.mulPose(Vector3f.YP.rotationDegrees(90F));
-//			ms.translate(0D, 0.075 * Math.sin((time + i * 10) / 5D), 0F);
-//			ItemStack stack = te.getItemHandler().getStackInSlot(i);
-//			Minecraft mc = Minecraft.getInstance();
-//			if (!stack.isEmpty()) {
-//				mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, combinedLightIn,
-//						combinedOverlayIn, ms, bufferIn, 0);
-//			}
-//			ms.popPose();
-//		}
+		int items = 0;
+		for (int i = 0; i < te.inventorySize(); i++) {
+			if (te.getItemHandler().getItem(i).isEmpty()) {
+				break;
+			} else {
+				items++;
+			}
+		}
+		float[] angles = new float[te.inventorySize()];
+
+		float anglePer = 360F / items;
+		float totalAngle = 0F;
+		for (int i = 0; i < angles.length; i++) {
+			angles[i] = totalAngle += anglePer;
+		}
+
+		double time = ClientTickHandler.ticksInGame + partialTicks;
+
+		for (int i = 0; i < te.inventorySize(); i++) {
+			ms.pushPose();
+			ms.translate(0.5F, 1.25F, 0.5F);
+			ms.mulPose(Vector3f.YP.rotationDegrees(angles[i] + (float) time));
+			ms.translate(1.125F, 0F, 0.25F);
+			ms.mulPose(Vector3f.YP.rotationDegrees(90F));
+			ms.translate(0D, 0.075 * Math.sin((time + i * 10) / 5D), 0F);
+			ItemStack stack = te.getItemHandler().getItem(i);
+			Minecraft mc = Minecraft.getInstance();
+			if (!stack.isEmpty()) {
+				mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, combinedLightIn,
+						combinedOverlayIn, ms, bufferIn, 0);
+			}
+			ms.popPose();
+		}
 
 		ms.popPose();
 

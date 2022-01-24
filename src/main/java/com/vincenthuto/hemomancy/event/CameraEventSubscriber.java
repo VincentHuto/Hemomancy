@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.event;
 
+import com.mojang.math.Quaternion;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -11,8 +12,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,27 +38,43 @@ public class CameraEventSubscriber {
 		}
 
 	}
+	
+	
 
 	@SubscribeEvent
 	public static void cameraVIew(EntityEvent.Size event) {
 		if (event.getEntity()instanceof Player player) {
 			if (player.isAddedToWorld()) {
 				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
-					System.out.println(manip.getKnownManips());
-					System.out.println(manip.getSelectedManip());
 					System.out.println(manip.isAvatarActive());
+					if (manip.isAvatarActive()) {
+						event.setNewEyeHeight(3.5f);
+						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
+					} else {
+						event.setNewEyeHeight(Player.DEFAULT_EYE_HEIGHT);
+						event.setNewSize(player.getDimensions(Pose.STANDING));
 
-					if (player.isAddedToWorld()) {
-//					float oldHeight = event.getOldEyeHeight();
-//					float defaultHeight = Player.DEFAULT_EYE_HEIGHT;
-//					float crouchHeight = Player.CROUCH_BB_HEIGHT;
-//			if(player.isCrouching()) {
-//				event.setNewEyeHeight(crouchHeight);
-//			}
-						// float oldHeight = event.getOldEyeHeight();
-						// event.setNewEyeHeight(defaultHeight);
 					}
 				});
+			}
+		}
+	}
+	
+	
+
+	@SubscribeEvent
+	public static void renderPlayerSize(RenderPlayerEvent event) {
+		if (event.getEntity()instanceof Player player) {
+			if (player.isAddedToWorld()) {
+				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+				//	System.out.println(manip.isAvatarActive());
+					if (manip.isAvatarActive()) {
+						event.getPoseStack().scale(2, 2, 2);
+					} else {
+						event.getPoseStack().scale(1, 1, 1);
+					}
+				});
+
 			}
 		}
 	}

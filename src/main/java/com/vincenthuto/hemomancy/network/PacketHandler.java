@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServ
 import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdatePlayerAvatarPose;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.capa.runes.PacketCurvedHornAnimation;
@@ -117,7 +118,9 @@ public class PacketHandler {
 				PacketUpdateCurrentManip.Handler::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketTeleportToVein.class, PacketTeleportToVein::encode,
 				PacketTeleportToVein::decode, PacketTeleportToVein.Handler::handle);
-
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdatePlayerAvatarPose.class, PacketUpdatePlayerAvatarPose::encode,
+				PacketUpdatePlayerAvatarPose::decode, PacketUpdatePlayerAvatarPose::handle);
+		
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentVein.class, PacketUpdateCurrentVein::encode,
 				PacketUpdateCurrentVein::decode, PacketUpdateCurrentVein.Handler::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,

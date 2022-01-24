@@ -66,9 +66,9 @@ public class BlockMorphlingIncubator extends Block implements EntityBlock {
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 			return InteractionResult.SUCCESS;
 		} else if (!stack.isEmpty()) {
-//			boolean hit = te.addItem(player, stack, handIn);
-//			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-//			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
+			boolean hit = te.addItem(player, stack, handIn);
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}
 
 		return InteractionResult.PASS;

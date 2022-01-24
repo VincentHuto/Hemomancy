@@ -1,16 +1,25 @@
 package com.vincenthuto.hemomancy.manipulation.quick;
 
+import com.mojang.realmsclient.dto.PlayerInfo;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
+import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationClient;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdatePlayerAvatarPose;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.PacketDistributor;
 
 public class ManipSummonAvatar extends BloodManipulation {
 
@@ -20,16 +29,16 @@ public class ManipSummonAvatar extends BloodManipulation {
 	}
 
 	@Override
-	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+	public void getAction(Player playerIn, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		System.out.println("Summoned Avatar");
-
-		if (player.isAddedToWorld()) {
-			player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+		if (playerIn.isAddedToWorld()) {
+			playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
 				manip.setAvatarActive(!manip.isAvatarActive());
-				System.out.println(manip.getKnownManips());
-				System.out.println(manip.getSelectedManip());
-				System.out.println(manip.isAvatarActive());
-
+				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
+						new PacketUpdatePlayerAvatarPose());
+				playerIn.setForcedPose(Pose.SPIN_ATTACK);
+				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
+						new PacketKnownManipulationServer(manip));
 			});
 
 		}
