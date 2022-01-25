@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.capa.player.manip;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -65,10 +70,41 @@ public class KnownManipulationEvents {
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new PacketKnownManipulationServer(known));
 	}
-	
+
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerTickEvent event) {
 		event.player.refreshDimensions();
+	}
+
+	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
+		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+			syncAvatar(player, receivers, manips.isAvatarActive());
+		});
+	}
+
+	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
+		PacketSyncTrackingAvatar pkt = new PacketSyncTrackingAvatar(player.getId(), isAvatarActive);
+		for (Player receiver : receivers) {
+			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerJoin(EntityJoinWorldEvent event) {
+		Entity entity = event.getEntity();
+		if (entity instanceof ServerPlayer) {
+			ServerPlayer player = (ServerPlayer) entity;
+			syncAvatars(player, Collections.singletonList(player));
+
+		}
+	}
+
+	@SubscribeEvent
+	public static void onStartTracking(PlayerEvent.StartTracking event) {
+		Entity target = event.getTarget();
+		if (target instanceof ServerPlayer) {
+			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getPlayer()));
+		}
 	}
 
 	@SubscribeEvent

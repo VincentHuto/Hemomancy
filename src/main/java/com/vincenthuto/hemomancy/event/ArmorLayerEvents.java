@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
+import com.vincenthuto.hemomancy.render.layer.LayerBloodAvatar;
 import com.vincenthuto.hemomancy.render.layer.LayerBloodGourd;
 import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
@@ -126,6 +127,8 @@ public class ArmorLayerEvents {
 		EntityRenderer<? extends Player> render = event.getSkin(skinName);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
 			livingRenderer.addLayer(new LayerBloodGourd<>(livingRenderer));
+			livingRenderer.addLayer(new LayerBloodAvatar(livingRenderer));
+
 		}
 	}
 
@@ -133,8 +136,10 @@ public class ArmorLayerEvents {
 	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
 			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
 		R renderer = event.getRenderer(entityType);
-		if (renderer != null)
+		if (renderer != null) {
 			renderer.addLayer(new LayerBloodGourd(renderer));
+			renderer.addLayer(new LayerBloodAvatar(renderer));
+		}
 	}
 
 	// For when the horn breaks it shows the custom animation

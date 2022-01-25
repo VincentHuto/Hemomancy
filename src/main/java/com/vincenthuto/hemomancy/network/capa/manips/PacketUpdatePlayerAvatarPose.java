@@ -16,8 +16,8 @@ public class PacketUpdatePlayerAvatarPose {
 
 	public static void handle(final PacketUpdatePlayerAvatarPose msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			System.out.println("test");
 			Minecraft.getInstance().player.setForcedPose(Pose.SPIN_ATTACK);
+			Minecraft.getInstance().player.setPose(Pose.STANDING);
 		});
 		ctx.get().setPacketHandled(true);
 	}

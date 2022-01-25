@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketChangeSelectedManip;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketDisplayKnownManips;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationClient;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
+import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
@@ -118,11 +119,14 @@ public class PacketHandler {
 				PacketUpdateCurrentManip.Handler::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketTeleportToVein.class, PacketTeleportToVein::encode,
 				PacketTeleportToVein::decode, PacketTeleportToVein.Handler::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdatePlayerAvatarPose.class, PacketUpdatePlayerAvatarPose::encode,
-				PacketUpdatePlayerAvatarPose::decode, PacketUpdatePlayerAvatarPose::handle);
-		
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdatePlayerAvatarPose.class,
+				PacketUpdatePlayerAvatarPose::encode, PacketUpdatePlayerAvatarPose::decode,
+				PacketUpdatePlayerAvatarPose::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSyncTrackingAvatar.class,
+				PacketSyncTrackingAvatar::toBytes, PacketSyncTrackingAvatar::new, PacketSyncTrackingAvatar::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentVein.class, PacketUpdateCurrentVein::encode,
 				PacketUpdateCurrentVein::decode, PacketUpdateCurrentVein.Handler::handle);
+
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
 				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
 				PacketVascularSystemClient::handle);
@@ -167,7 +171,6 @@ public class PacketHandler {
 				PacketRuneSync::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
-
 
 		CHANNELRUNEBINDER.registerMessage(networkID++, PacketBinderTogglePickup.class, PacketBinderTogglePickup::encode,
 				PacketBinderTogglePickup::decode, PacketBinderTogglePickup::handle);

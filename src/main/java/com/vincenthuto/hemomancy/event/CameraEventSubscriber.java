@@ -46,7 +46,6 @@ public class CameraEventSubscriber {
 		if (event.getEntity()instanceof Player player) {
 			if (player.isAddedToWorld()) {
 				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
-					System.out.println(manip.isAvatarActive());
 					if (manip.isAvatarActive()) {
 						event.setNewEyeHeight(3.5f);
 						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
@@ -69,9 +68,10 @@ public class CameraEventSubscriber {
 				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
 				//	System.out.println(manip.isAvatarActive());
 					if (manip.isAvatarActive()) {
-						event.getPoseStack().scale(2, 2, 2);
+				//		event.getPoseStack().scale(2, 2, 2);
+						event.getPoseStack().translate(0, 2, 0);
 					} else {
-						event.getPoseStack().scale(1, 1, 1);
+				//		event.getPoseStack().scale(1, 1, 1);
 					}
 				});
 
