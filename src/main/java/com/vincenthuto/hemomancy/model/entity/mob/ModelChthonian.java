@@ -29,7 +29,7 @@ public class ModelChthonian<T extends Entity> extends EntityModel<T> {
 	public ModelChthonian(ModelPart root) {
 		this.whole = root.getChild("whole");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

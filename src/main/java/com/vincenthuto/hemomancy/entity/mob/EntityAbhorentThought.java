@@ -26,7 +26,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 public class EntityAbhorentThought extends Monster{
 
 	public int puffCooldown = 0;
-	private int animationTick;
+	//private int animationTick;
 
 	public EntityAbhorentThought(EntityType<? extends EntityAbhorentThought> type, Level worldIn) {
 		super(type, worldIn);

@@ -27,7 +27,7 @@ public class ModelChthonianQueen<T extends Entity> extends EntityModel<T> {
 	public ModelChthonianQueen(ModelPart root) {
 		this.whole = root.getChild("whole");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

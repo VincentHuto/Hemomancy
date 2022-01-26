@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.http.util.TextUtils;
-
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodNeedle;

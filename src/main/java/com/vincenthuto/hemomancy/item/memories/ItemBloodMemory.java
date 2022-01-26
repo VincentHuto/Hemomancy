@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.item.memories;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.http.util.TextUtils;
-
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;

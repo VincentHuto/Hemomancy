@@ -37,7 +37,7 @@ public class ModelFargone<T extends Entity> extends EntityModel<T> {
 		this.LeftLeg = root.getChild("LeftLeg");
 		this.LeftArm = root.getChild("LeftArm");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

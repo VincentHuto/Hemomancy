@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -20,17 +19,19 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IWeatherRenderHandler;
-
+@OnlyIn(Dist.CLIENT)
 public class BloodMoonWeatherRenderHandler implements IWeatherRenderHandler {
 
-	private static final ResourceLocation BLOOD_MOON_LOCATION = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/environment/blood_moon_phases.png");
-	private static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
-	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
-	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
-	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
-	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
+//	private static final ResourceLocation BLOOD_MOON_LOCATION = new ResourceLocation(Hemomancy.MOD_ID,
+//			"textures/environment/blood_moon_phases.png");
+//	private static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
+//	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
+//	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
+//	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
+//	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
 	private static final ResourceLocation RAIN_LOCATION = new ResourceLocation("textures/environment/rain.png");
 	private static final ResourceLocation SNOW_LOCATION = new ResourceLocation("textures/environment/snow.png");
 

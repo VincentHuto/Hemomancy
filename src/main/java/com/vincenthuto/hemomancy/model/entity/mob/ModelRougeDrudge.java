@@ -45,7 +45,7 @@ public class ModelRougeDrudge<T extends Entity> extends EntityModel<T> {
 		this.tent8 = root.getChild("tent8");
 		this.brain = root.getChild("brain");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

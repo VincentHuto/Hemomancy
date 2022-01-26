@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.network.capa.runes;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.event.ArmorLayerEvents;
+import com.vincenthuto.hemomancy.event.LayerEvents;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +22,7 @@ public class PacketCurvedHornAnimation {
 
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ArmorLayerEvents::playHornAnimation);
+			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> LayerEvents::playHornAnimation);
 		});
 		ctx.get().setPacketHandled(true);
 	}

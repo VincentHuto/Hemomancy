@@ -2,8 +2,11 @@ package com.vincenthuto.hemomancy.model.armor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -12,11 +15,35 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.util.Lazy;
 
 public class ModelBloodLustArmor<T extends LivingEntity> extends HumanoidModel<T> {
 
+	
+	public static final ModelLayerLocation BLOOD_LUST_HEAD_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_HEAD_TENGU_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet_tengu"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_HEAD_HORNED_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet_horned"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_CHEST_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_chest"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_LEGS_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_legs"), "main");
+	public static final ModelLayerLocation BLOOD_LUST_BOOTS_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_boots"), "main");
+	
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> helmet = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> tengu = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_TENGU_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> horned = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_HORNED_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> chest = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_CHEST_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> legs = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_LEGS_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> boots = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_BOOTS_LAYER)));
+
+	
 	public ModelBloodLustArmor(ModelPart root) {
 		super(root, RenderType::entityTranslucent);
 

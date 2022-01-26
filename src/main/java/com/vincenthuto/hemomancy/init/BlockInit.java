@@ -90,7 +90,6 @@ public class BlockInit {
 	public static final RegistryObject<Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
 			() -> new IronBarsBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f)
 					.sound(SoundType.GLASS).noOcclusion()));
-
 	public static final RegistryObject<Block> venous_stone = BASEBLOCKS.register("venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
@@ -98,21 +97,19 @@ public class BlockInit {
 			() -> new SlabBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final RegistryObject<Block> venous_stone_stairs = BASEBLOCKS.register(("venous_stone_stairs"),
-			() -> new StairBlock(venous_stone.get().defaultBlockState(),
+			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())));
-
 	public static final RegistryObject<Block> gilded_venous_stone = BASEBLOCKS.register("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
-
 	public static final RegistryObject<Block> polished_venous_stone = BASEBLOCKS.register("polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 	public static final RegistryObject<Block> polished_venous_stone_slab = SLABBLOCKS
 			.register("polished_venous_stone_slab", () -> new SlabBlock(BlockBehaviour.Properties
 					.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
-	public static final RegistryObject<Block> polished_venous_stone_stairs = STAIRBLOCKS
-			.register(("polished_venous_stone_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
+	public static final RegistryObject<Block> polished_venous_stone_stairs = STAIRBLOCKS.register(
+			("polished_venous_stone_stairs"), () -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())));
 	public static final RegistryObject<Block> chiseled_polished_venous_stone = BASEBLOCKS
 			.register("chiseled_polished_venous_stone", () -> new Block(BlockBehaviour.Properties
@@ -124,7 +121,7 @@ public class BlockInit {
 			.register("polished_venous_stone_brick_slab", () -> new SlabBlock(BlockBehaviour.Properties
 					.of(Material.STONE, MaterialColor.STONE).requiresCorrectToolForDrops().strength(1.5f, 6.0F)));
 	public static final RegistryObject<Block> polished_venous_stone_brick_stairs = STAIRBLOCKS.register(
-			("polished_venous_stone_brick_stairs"), () -> new StairBlock(venous_stone.get().defaultBlockState(),
+			("polished_venous_stone_brick_stairs"), () -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())));
 	public static final RegistryObject<Block> cracked_polished_venous_stone_bricks = BASEBLOCKS
 			.register("cracked_polished_venous_stone_bricks", () -> new Block(BlockBehaviour.Properties
@@ -177,18 +174,18 @@ public class BlockInit {
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new BlockMorphlingIncubator(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-	
+
 	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new BlockSemiSentientConstruct(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
 			() -> new BlockUnstainedPodium(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-	
+
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new BlockScryingPodium(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-	
+
 	public static final RegistryObject<Block> rune_mod_station = MODELEDBLOCKS.register("rune_mod_station",
 			() -> new BlockRuneModStation(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -208,11 +205,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
 			() -> new BlockBrazier(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-	
+
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-	
+
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
 		if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -229,7 +226,8 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.cutoutMipped());
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(),
+					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
 		}

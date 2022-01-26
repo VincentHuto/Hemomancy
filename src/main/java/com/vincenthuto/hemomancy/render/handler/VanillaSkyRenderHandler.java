@@ -13,7 +13,6 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -31,23 +30,24 @@ import net.minecraftforge.client.ISkyRenderHandler;
 
 @OnlyIn(Dist.CLIENT)
 public class VanillaSkyRenderHandler implements ISkyRenderHandler {
-	private static final ResourceLocation BLOOD_MOON_LOCATION = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/environment/blood_moon_phases.png");
+//	private static final ResourceLocation BLOOD_MOON_LOCATION = new ResourceLocation(Hemomancy.MOD_ID,
+//			"textures/environment/blood_moon_phases.png");
 	private static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
 	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
-	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
-	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
-	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
-	private static final ResourceLocation RAIN_LOCATION = new ResourceLocation("textures/environment/rain.png");
-	private static final ResourceLocation SNOW_LOCATION = new ResourceLocation("textures/environment/snow.png");
+//	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
+//	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
+//	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
+//	private static final ResourceLocation RAIN_LOCATION = new ResourceLocation("textures/environment/rain.png");
+//	private static final ResourceLocation SNOW_LOCATION = new ResourceLocation("textures/environment/snow.png");
 	private VertexBuffer starVBO;
-	private final VertexFormat vertexBufferFormat = DefaultVertexFormat.POSITION;
+//	private final VertexFormat vertexBufferFormat = DefaultVertexFormat.POSITION;
 	
 	public VanillaSkyRenderHandler() {
 		generateStars();
 
 		
 	}
+	@SuppressWarnings("unused")
 	@Override
 	public void render(int ticks, float partialTicks, PoseStack ms, ClientLevel world, Minecraft mc) {
 		LevelRenderer rg = mc.levelRenderer;

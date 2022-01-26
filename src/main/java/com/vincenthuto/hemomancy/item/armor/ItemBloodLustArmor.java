@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.item.armor;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
-import com.vincenthuto.hemomancy.event.ArmorLayerEvents;
+import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -50,30 +51,46 @@ public class ItemBloodLustArmor extends ArmorItem {
 		super.onArmorTick(stack, world, player);
 	}
 
-	public static final RenderBloodLustArmor renderStuff = new RenderBloodLustArmor();
-
 	@Override
 	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-		consumer.accept(renderStuff);
+		consumer.accept(new IItemRenderProperties() {
+			@Override
+			public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
+					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+				if (itemStack.getItem() == ItemInit.blood_lust_helm.get()) {
+					return ModelBloodLustArmor.helmet.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_horned.get()) {
+					return ModelBloodLustArmor.horned.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_helm_tengu.get()) {
+					return ModelBloodLustArmor.tengu.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_chest.get()) {
+					return ModelBloodLustArmor.chest.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_legs.get()) {
+					return ModelBloodLustArmor.legs.get();
+				} else if (itemStack.getItem() == ItemInit.blood_lust_boots.get()) {
+					return ModelBloodLustArmor.boots.get();
+				}
+				return IItemRenderProperties.super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
+			}
+		});
 	}
 
-	private static final class RenderBloodLustArmor implements IItemRenderProperties {
+	public static ModelBloodLustArmor<LivingEntity> getArmor(EquipmentSlot slot) {
+		return switch (slot) {
+		case CHEST -> ModelBloodLustArmor.chest.get();
+		case LEGS -> ModelBloodLustArmor.legs.get();
+		case FEET -> ModelBloodLustArmor.boots.get();
+		default -> null;
+		};
+	}
 
-		@Override
-		public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot,
-				HumanoidModel<?> _default) {
-			if (((ArmorItem) itemStack.getItem()).getMaterial().equals(EnumModArmorTiers.BLOODLUST)) {
-				if (armorSlot == EquipmentSlot.HEAD) {
-					if (itemStack.getItem()instanceof ItemBloodLustArmor helm) {
-						return ArmorLayerEvents.getHelmArmor(armorSlot, helm.maskType);
-					}
-				} else {
-					return ArmorLayerEvents.getArmor(armorSlot);
-
-				}
-			}
-			return IItemRenderProperties.super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
-
-		}
+	public static ModelBloodLustArmor<LivingEntity> getHelmArmor(EquipmentSlot armorSlot,
+			EnumBloodLustMaskTypes maskType) {
+		return switch (maskType) {
+		case NONE -> ModelBloodLustArmor.helmet.get();
+		case TENGU -> ModelBloodLustArmor.tengu.get();
+		case HORNED -> ModelBloodLustArmor.horned.get();
+		default -> null;
+		};
 	}
 }

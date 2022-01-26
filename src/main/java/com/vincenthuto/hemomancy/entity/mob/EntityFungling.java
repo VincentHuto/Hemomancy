@@ -49,7 +49,7 @@ public class EntityFungling extends PathfinderMob {
 //	public static final Animation HEADBUTT_ANIMATION = new Animation(17);
 //	public static final Animation SPOREPUFF_ANIMATION = new Animation(17);
 	public int puffCooldown = 0;
-	private int animationTick;
+//	private int animationTick;
 
 	public EntityFungling(EntityType<? extends EntityFungling> type, Level worldIn) {
 		super(type, worldIn);

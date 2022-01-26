@@ -39,6 +39,7 @@ public class ModelLeech<T extends Entity> extends EntityModel<T> {
 		this.Tail = root.getChild("Tail");
 		this.tailTop = root.getChild("tailTop");
 	}
+	@SuppressWarnings("unused")
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();

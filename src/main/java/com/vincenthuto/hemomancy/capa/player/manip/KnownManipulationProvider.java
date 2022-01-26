@@ -21,7 +21,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-@SuppressWarnings("removal")
 public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 	//@CapabilityInject(IKnownManipulations.class)
 	public static final Capability<IKnownManipulations> MANIP_CAPA = CapabilityManager.get(new CapabilityToken<IKnownManipulations>() {});;

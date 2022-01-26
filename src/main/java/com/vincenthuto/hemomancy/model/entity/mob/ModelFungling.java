@@ -29,7 +29,7 @@ public class ModelFungling<T extends Entity> extends EntityModel<T> {
 	public ModelFungling(ModelPart root) {
 		this.full = root.getChild("full");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

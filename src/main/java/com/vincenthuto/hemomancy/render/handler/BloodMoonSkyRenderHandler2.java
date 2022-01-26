@@ -26,18 +26,20 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ISkyRenderHandler;
-
+@OnlyIn(Dist.CLIENT)
 public class BloodMoonSkyRenderHandler2 implements ISkyRenderHandler {
 	private static final ResourceLocation BLOOD_MOON_LOCATION = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/environment/blood_moon_phases.png");
-	private static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
+//	private static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
 	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
-	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
-	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
-	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
-	private static final ResourceLocation RAIN_LOCATION = new ResourceLocation("textures/environment/rain.png");
-	private static final ResourceLocation SNOW_LOCATION = new ResourceLocation("textures/environment/snow.png");
+//	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
+//	private static final ResourceLocation END_SKY_LOCATION = new ResourceLocation("textures/environment/end_sky.png");
+//	private static final ResourceLocation FORCEFIELD_LOCATION = new ResourceLocation("textures/misc/forcefield.png");
+//	private static final ResourceLocation RAIN_LOCATION = new ResourceLocation("textures/environment/rain.png");
+//	private static final ResourceLocation SNOW_LOCATION = new ResourceLocation("textures/environment/snow.png");
 	private VertexBuffer starVBO;
 	private final VertexFormat vertexBufferFormat = DefaultVertexFormat.POSITION;
 
@@ -46,6 +48,7 @@ public class BloodMoonSkyRenderHandler2 implements ISkyRenderHandler {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void render(int ticks, float partialTicks, PoseStack matrixStack, ClientLevel world, Minecraft mc) {
 		GameRenderer p_109605_ = mc.gameRenderer;
@@ -56,6 +59,7 @@ public class BloodMoonSkyRenderHandler2 implements ISkyRenderHandler {
 
 	}
 
+	@SuppressWarnings("unused")
 	public void renderSky(PoseStack p_181410_, Matrix4f p_181411_, float p_181412_, ClientLevel level,
 			Minecraft minecraft, int ticks) {
 		if (minecraft.level.effects().skyType() == DimensionSpecialEffects.SkyType.NORMAL) {

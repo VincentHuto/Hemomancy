@@ -126,15 +126,14 @@ public class ItemInit {
 			() -> new ItemTendencyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
 			() -> new ItemTendencyHiddenBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	
+
 	public static final RegistryObject<Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
 			() -> new ItemUnsignedLedger(new Item.Properties().tab(HemomancyItemGroup.instance)));
-
 
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
 			() -> new ItemEnzyme(EnumBloodTendency.ANIMUS, 10));
-	
+
 	public static final RegistryObject<Item> ruinous_enzyme = BASEITEMS.register("ruinous_enzyme",
 			() -> new ItemEnzyme(EnumBloodTendency.MORTEM, 10));
 	public static final RegistryObject<Item> neurotic_enzyme = BASEITEMS.register("neurotic_enzyme",
@@ -209,11 +208,10 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_crossbow));
-	
+
 	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.summon_avatar ));
-
+					ManipulationInit.summon_avatar));
 
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
@@ -574,11 +572,11 @@ public class ItemInit {
 			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
 					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
-			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264,
-					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841,
+					12235264, new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
-			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361,
-					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
+			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848,
+					11315361, new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
 			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
 					4259840, new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
@@ -588,19 +586,11 @@ public class ItemInit {
 
 	@SubscribeEvent
 	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
-		registerSpawnEggColorHandler(event.getItemColors()
-				, ItemInit.spawn_egg_morphling_polyp
-				, ItemInit.spawn_egg_abhorent_thought
-				, ItemInit.spawn_egg_lump_of_thought
-				, ItemInit.spawn_egg_chthonian_queen
-				, ItemInit.spawn_egg_chthonian
-				, ItemInit.spawn_egg_chitinite
-				, ItemInit.spawn_egg_fungling
-				, ItemInit.spawn_egg_drudge
-				, ItemInit.spawn_egg_thirster
-				, ItemInit.spawn_egg_fargone
-				, ItemInit.spawn_egg_leech
-				);
+		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
+				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
+				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
+				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_thirster,
+				ItemInit.spawn_egg_fargone, ItemInit.spawn_egg_leech);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -621,11 +611,11 @@ public class ItemInit {
 	}
 
 	// Item Property Override
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
 
-		
 		ItemProperties.register(unsigned_ancestral_ledger.get(), new ResourceLocation(Hemomancy.MOD_ID, "unsigned"),
 				new ItemPropertyFunction() {
 					@Override
@@ -640,8 +630,7 @@ public class ItemInit {
 						return 0;
 					}
 				});
-		
-		
+
 		ItemProperties.register(living_pistol.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
 				new ItemPropertyFunction() {
 					@Override

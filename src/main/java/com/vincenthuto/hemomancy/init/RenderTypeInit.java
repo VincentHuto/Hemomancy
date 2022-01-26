@@ -9,16 +9,18 @@ import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
 
-	
-    private final static ResourceLocation laserBeam = new ResourceLocation(Hemomancy.MOD_ID + ":textures/misc/laser.png");
-    private final static ResourceLocation laserBeam2 = new ResourceLocation(Hemomancy.MOD_ID + ":textures/misc/laser2.png");
-    private final static ResourceLocation laserBeamGlow = new ResourceLocation(Hemomancy.MOD_ID + ":textures/misc/laser_glow.png");
+	private final static ResourceLocation laserBeam = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/misc/laser.png");
+	private final static ResourceLocation laserBeam2 = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/misc/laser2.png");
+	private final static ResourceLocation laserBeamGlow = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/misc/laser_glow.png");
 
-	
 	public RenderTypeInit(String nameIn, VertexFormat formatIn, Mode drawModeIn, int bufferSizeIn,
 			boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
 		super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
@@ -27,42 +29,44 @@ public class RenderTypeInit extends RenderType {
 	@SuppressWarnings("unused")
 	private static final LineStateShard THICK_LINES = new LineStateShard(OptionalDouble.of(3.0D));
 
-	   public static final RenderType LASER_MAIN_BEAM = create("MiningLaserMainBeam",
-	            DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256,false, false,
-	            RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam2, false, false))
-	                    .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
-	                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-	                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-	                    .setDepthTestState(NO_DEPTH_TEST)
-	                    .setCullState(NO_CULL)
-	                    .setLightmapState(NO_LIGHTMAP)
-	                    .setWriteMaskState(COLOR_WRITE)
-	                    .createCompositeState(false));
+	public static final RenderType LASER_MAIN_BEAM = create("MiningLaserMainBeam",
+			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, false,
+			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam2, false, false))
+					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
+					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
 
-	    public static final RenderType LASER_MAIN_ADDITIVE = create("MiningLaserAdditiveBeam",
-	            DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256,false, false,
-	            RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
-	                    .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
-	                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-	                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-	                    .setDepthTestState(NO_DEPTH_TEST)
-	                    .setCullState(NO_CULL)
-	                    .setLightmapState(NO_LIGHTMAP)
-	                    .setWriteMaskState(COLOR_WRITE)
-	                    .createCompositeState(false));
+	public static final RenderType LASER_MAIN_ADDITIVE = create("MiningLaserAdditiveBeam",
+			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, false,
+			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
+					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
+					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
 
-	    public static final RenderType LASER_MAIN_CORE = create("MiningLaserCoreBeam",
-	            DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256,false, false,
-	            RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
-	                    .setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
-	                    .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-	                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-	                    .setDepthTestState(NO_DEPTH_TEST)
-	                    .setCullState(NO_CULL)
-	                    .setLightmapState(NO_LIGHTMAP)
-	                    .setWriteMaskState(COLOR_WRITE)
-	                    .createCompositeState(false));
+	public static final RenderType LASER_MAIN_CORE = create("MiningLaserCoreBeam",
+			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, false,
+			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
+					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER).setLayeringState(VIEW_OFFSET_Z_LAYERING)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
+					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
 
+	public static RenderType itemEnergySwirl(ResourceLocation pLocation, float pU, float pV) {
+		return create("energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder().setShaderState(POSITION_COLOR_TEX_SHADER)
+						.setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
+						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(pU, pV))
+						.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(CULL).setLightmapState(LIGHTMAP)
+						.setOverlayState(OVERLAY).createCompositeState(false));
+	}
+
+	private static final RenderType CUTOUT_MIPPED = create("cutout_mipped", DefaultVertexFormat.BLOCK,
+			VertexFormat.Mode.QUADS, 131072, true, false,
+			RenderType.CompositeState.builder().setLightmapState(LIGHTMAP)
+					.setShaderState(RENDERTYPE_CUTOUT_MIPPED_SHADER).setTextureState(BLOCK_SHEET_MIPPED)
+					.createCompositeState(true));
 
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;

@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.EntityInit;
+import com.vincenthuto.hemomancy.model.armor.ModelBloodAvatar;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodGourd;
+import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
+import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.model.armor.ModelCurvedHorn;
 import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
 import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
@@ -55,6 +58,7 @@ import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingPests;
 import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.vincenthuto.hemomancy.render.item.RenderItemMorphlingPolyp;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -64,7 +68,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class EntityEventSubscriber {
 
-	
 	@SubscribeEvent
 	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), RenderBloodOrbDirected::new);
@@ -97,13 +100,14 @@ public class EntityEventSubscriber {
 		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), RenderAbhorentThought::new);
 		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), RenderMorphlingPolyp::new);
 	}
-	
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		event.registerLayerDefinition(ModelAbhorentThought.abhorent_thought, ModelAbhorentThought::createLayers);
-		event.registerLayerDefinition(ModelLivingBladeHandTame.living_blade_tame, ModelLivingBladeHandTame::createLayers);
-		event.registerLayerDefinition(ModelLivingBladeUnleashed.living_blade_unleashed, ModelLivingBladeUnleashed::createLayers);
+		event.registerLayerDefinition(ModelLivingBladeHandTame.living_blade_tame,
+				ModelLivingBladeHandTame::createLayers);
+		event.registerLayerDefinition(ModelLivingBladeUnleashed.living_blade_unleashed,
+				ModelLivingBladeUnleashed::createLayers);
 		event.registerLayerDefinition(ModelLivingAxe.living_axe, ModelLivingAxe::createLayers);
 		event.registerLayerDefinition(ModelLivingSpear.living_spear, ModelLivingSpear::createLayers);
 		event.registerLayerDefinition(ModelBloodArm.blood_arm, ModelBloodArm::createLayers);
@@ -127,7 +131,20 @@ public class EntityEventSubscriber {
 		event.registerLayerDefinition(ModelLumpOfThought.LAYER_LOCATION, ModelLumpOfThought::createBodyLayer);
 		event.registerLayerDefinition(ModelMorphlingPolyp.LAYER_LOCATION, ModelMorphlingPolyp::createBodyLayer);
 		event.registerLayerDefinition(ModelThirster.LAYER_LOCATION, ModelThirster::createBodyLayer);
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_LAYER,
+				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_TENGU_LAYER,
+				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.TENGU));
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_HORNED_LAYER,
+				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.HORNED));
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_CHEST_LAYER,
+				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_LEGS_LAYER,
+				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_BOOTS_LAYER,
+				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.FEET));
+		event.registerLayerDefinition(ModelBloodAvatar.layer, ModelBloodAvatar::createLayer);
 
 	}
-	
+
 }

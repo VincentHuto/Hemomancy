@@ -12,25 +12,26 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ManipConjuration extends BloodManipulation {
 
-	Item item;
+	RegistryObject<Item> item;
 
-	public ManipConjuration(String name, Item item, double cost, double alignLevel, double xpCost,
+	public ManipConjuration(String name,RegistryObject<Item> item, double cost, double alignLevel, double xpCost,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, EnumManipulationType.QUICK, rank, tendency, section);
 		this.item = item;
 	}
 
-	public Item getItem() {
+	public 	RegistryObject<Item> getItem() {
 		return item;
 	}
 
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (heldItemMainhand.isEmpty()) {
-			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
+			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item.get()));
 		}
 	}
 }

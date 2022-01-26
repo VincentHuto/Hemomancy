@@ -1,13 +1,12 @@
 package com.vincenthuto.hemomancy.item.rune;
 
-import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 
-public class ItemContractRune extends ItemRune implements IRune {
+public class ItemContractRune extends ItemRune {
 
 	public ItemContractRune(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
 		super(properties, tendencyIn, deepenAmount);

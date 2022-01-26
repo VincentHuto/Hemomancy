@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.item.tool.living;
 
-import org.apache.http.util.TextUtils;
-
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;

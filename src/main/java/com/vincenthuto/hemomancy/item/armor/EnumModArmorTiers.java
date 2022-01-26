@@ -52,10 +52,10 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	private final float knockbackResistance;
 	private final LazyLoadedValue<Ingredient> repairMaterial;
 
-	private EnumModArmorTiers(String name, int damgaeFactor, int[] armorVals, int ench, SoundEvent soundevent,
+	private EnumModArmorTiers(String name, int damageFactor, int[] armorVals, int ench, SoundEvent soundevent,
 			float tough, float p_i231593_9_, Supplier<Ingredient> repairIng) {
 		this.name = name;
-		this.maxDamageFactor = damgaeFactor;
+		this.maxDamageFactor = damageFactor;
 		this.damageReductionAmountArray = armorVals;
 		this.enchantability = ench;
 		this.soundEvent = soundevent;

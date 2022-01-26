@@ -53,7 +53,7 @@ public class EntityChthonianQueen extends PathfinderMob {
 
 	public int puffCooldown = 0;
 
-	private int animationTick;
+//	private int animationTick;
 
 	public EntityChthonianQueen(EntityType<? extends EntityChthonianQueen> type, Level worldIn) {
 		super(type, worldIn);

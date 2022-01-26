@@ -39,7 +39,7 @@ public class ManipulationInit {
 					.setMaxID(Integer.MAX_VALUE - 1).setDefaultKey(new ResourceLocation(Hemomancy.MOD_ID, "null")));
 	
 	public static final RegistryObject<BloodManipulation> venous_recaller = MANIPS.register("venous_recaller",
-			() -> register(new ManipConjuration("venous_recaller", ItemInit.venous_recaller.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("venous_recaller", ItemInit.venous_recaller, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 	
 
@@ -84,34 +84,34 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)));
 
 	public static final RegistryObject<BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
-			() -> register(new ManipConjuration("conjure_blade", ItemInit.living_blade.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("conjure_blade", ItemInit.living_blade, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_axe = MANIPS.register("conjure_axe",
-			() -> register(new ManipConjuration("conjure_axe", ItemInit.living_axe.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("conjure_axe", ItemInit.living_axe, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_spear = MANIPS.register("conjure_spear",
-			() -> register(new ManipConjuration("conjure_spear", ItemInit.living_spear.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("conjure_spear", ItemInit.living_spear, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_crossbow = MANIPS.register("conjure_crossbow",
-			() -> register(new ManipConjuration("conjure_crossbow", ItemInit.living_crossbow.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("conjure_crossbow", ItemInit.living_crossbow, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_claws = MANIPS.register("conjure_claws",
-			() -> register(new ManipConjuration("conjure_claw", ItemInit.living_baghnakh.get(), 1000, 0, 0,
+			() -> register(new ManipConjuration("conjure_claw", ItemInit.living_baghnakh, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_blood_absorbtion = MANIPS
 			.register("conjure_blood_absorbtion",
-					() -> register(new ManipConjuration("conjure_blood_absorbtion", ItemInit.blood_absorption.get(),
+					() -> register(new ManipConjuration("conjure_blood_absorbtion", ItemInit.blood_absorption,
 							1000, 0, 0, EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC,
 							EnumVeinSections.RIGHTARM)));
 
 	public static final RegistryObject<BloodManipulation> conjure_blood_projection = MANIPS
 			.register("conjure_blood_projection",
-					() -> register(new ManipConjuration("conjure_blood_projection", ItemInit.blood_projection.get(),
+					() -> register(new ManipConjuration("conjure_blood_projection", ItemInit.blood_projection,
 							1000, 0, 0, EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC,
 							EnumVeinSections.RIGHTARM)));
 

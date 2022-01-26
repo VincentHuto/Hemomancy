@@ -42,7 +42,7 @@ public class EntityChitinite extends PathfinderMob{
 
 	public int puffCooldown = 0;
 
-	private int animationTick;
+	//private int animationTick;
 
 	public EntityChitinite(EntityType<? extends EntityChitinite> type, Level worldIn) {
 		super(type, worldIn);

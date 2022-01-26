@@ -29,6 +29,7 @@ public class ModelLumpOfThought<T extends Entity> extends EntityModel<T> {
 	public ModelLumpOfThought(ModelPart root) {
 		this.bone = root.getChild("bone");
 	}
+	@SuppressWarnings("unused")
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();

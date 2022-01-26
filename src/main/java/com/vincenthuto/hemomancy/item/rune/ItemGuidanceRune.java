@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.item.rune;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.ChatFormatting;
@@ -15,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class ItemGuidanceRune extends ItemRune implements IRune {
+public class ItemGuidanceRune extends ItemRune  {
 
 	public ItemGuidanceRune(Properties properties, EnumBloodTendency tendencyIn, int deepenAmount) {
 		super(properties, tendencyIn, deepenAmount);
@@ -25,7 +24,7 @@ public class ItemGuidanceRune extends ItemRune implements IRune {
 
 	@Override
 	public void onWornTick(LivingEntity player) {
-		IRune.super.onWornTick(player);
+		super.onWornTick(player);
 		player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 250, 1, false, false));
 	}
 

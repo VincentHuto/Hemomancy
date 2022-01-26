@@ -14,7 +14,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-@SuppressWarnings("removal")
 public class VascularSystemProvider implements ICapabilitySerializable<Tag> {
 	//@CapabilityInject(IVascularSystem.class)
 	public static final Capability<IVascularSystem> VASCULAR_CAPA = CapabilityManager.get(new CapabilityToken<IVascularSystem>() {});;

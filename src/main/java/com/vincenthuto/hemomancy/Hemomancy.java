@@ -117,7 +117,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(BloodTendencyEvents.class);
 		MinecraftForge.EVENT_BUS.register(KnownManipulationEvents.class);
 		MinecraftForge.EVENT_BUS.register(EarthenVeinLocEvents.class);
-		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+	//	IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 	//	forgeBus.addListener(EventPriority.NORMAL, this::addDimensionalSpacing);
 	//	forgeBus.addListener(EventPriority.HIGH, this::biomeModification);
 

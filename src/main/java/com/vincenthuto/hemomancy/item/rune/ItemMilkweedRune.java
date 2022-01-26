@@ -4,7 +4,6 @@ package com.vincenthuto.hemomancy.item.rune;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
@@ -19,7 +18,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class ItemMilkweedRune extends ItemContractRune implements IRune, IRenderRunes {
+public class ItemMilkweedRune extends ItemContractRune implements IRenderRunes {
 
 	public ItemMilkweedRune(Properties properties, EnumBloodTendency tendencyIn, int deepenAmount) {
 		super(properties, tendencyIn, deepenAmount);

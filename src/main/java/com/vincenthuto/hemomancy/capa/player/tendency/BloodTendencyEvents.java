@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Map;
 
-import org.apache.http.util.TextUtils;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;

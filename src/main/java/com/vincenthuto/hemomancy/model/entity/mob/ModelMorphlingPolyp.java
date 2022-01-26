@@ -29,7 +29,7 @@ public class ModelMorphlingPolyp<T extends Entity> extends EntityModel<T> {
 	public ModelMorphlingPolyp(ModelPart root) {
 		this.bone = root.getChild("bone");
 	}
-
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
