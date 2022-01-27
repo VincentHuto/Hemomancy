@@ -22,7 +22,7 @@ public class Generator {
 	@SuppressWarnings("unused")
 	private static void registerServerProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		// generator.addProvider(new GeneratorLoots(generator));
+		 generator.addProvider(new GeneratorLoots(generator));
 		// generator.addProvider(new GeneratorBlockTags(generator, helper));
 		generator.addProvider(new GeneratorRecipes(generator));
 	}

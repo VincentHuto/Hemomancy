@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:rune_pattern_radiance_c"
+    ]
+  },
+  "criteria": {
+    "has_rune_pattern": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:rune_pattern"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:rune_pattern_radiance_c"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_rune_pattern",
+      "has_the_recipe"
+    ]
+  ]
+}

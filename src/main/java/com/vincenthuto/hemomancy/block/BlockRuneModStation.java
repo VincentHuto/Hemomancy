@@ -40,21 +40,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockRuneModStation extends BaseEntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 1, 13),
-			Block.box(4, 12, 4, 12, 14.01, 12), Block.box(3, 12, 3, 13, 14, 13), Block.box(6, 14, 6, 10, 15, 10),
-			Block.box(5.800000000000001, 14, 5.800000000000001, 10.2, 14.9, 10.2),
-			Block.box(7.5, 15, 7.5, 8.5, 15.5, 8.5), Block.box(6, 16, 6, 10, 20, 10),
-			Block.box(6.5, 16.5, 5.499999999999998, 9.5, 19.5, 6.499999999999998),
-			Block.box(6.5, 16.5, 9.499999999999998, 9.5, 19.5, 10.499999999999998),
-			Block.box(5.499999999999998, 16.5, 6.5, 6.499999999999998, 19.5, 9.5),
-			Block.box(9.499999999999998, 16.5, 6.5, 10.499999999999998, 19.5, 9.5),
-			Block.box(6.5, 19.499999999999993, 6.6, 9.5, 20.499999999999993, 9.5),
-			Block.box(6.5, 15.499999999999993, 6.6, 9.5, 16.499999999999993, 9.5), Block.box(3, 10, 3, 13, 12, 13),
-			Block.box(2, 11, 3, 3, 13, 13), Block.box(13, 11, 3, 14, 13, 13), Block.box(3, 11, 13, 13, 13, 14),
-			Block.box(3, 11, 2, 13, 13, 3), Block.box(4, 1, 4, 12, 2, 12), Block.box(4, 9, 4, 12, 10, 12),
-			Block.box(5, 2, 5, 11, 9, 11)).reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+	private static final VoxelShape SHAPE_N = Stream
+			.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13), Block.box(6, 13, 6, 10, 15, 10),
+					Block.box(7, 16, 7, 9, 17, 9), Block.box(7, 21, 7, 9, 22, 9), Block.box(6, 17, 6, 10, 21, 10),
+					Block.box(7, 18, 10, 9, 20, 11), Block.box(7, 18, 5, 9, 20, 6), Block.box(5, 18, 7, 6, 20, 9),
+					Block.box(10, 18, 7, 11, 20, 9), Block.box(3, 9, 3, 13, 12, 13), Block.box(2, 11, 2, 14, 13, 14),
+					Block.box(4, 1, 4, 12, 3, 12), Block.box(4, 8, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11))
+			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
 	public BlockRuneModStation(Properties properties) {
 		super(properties);

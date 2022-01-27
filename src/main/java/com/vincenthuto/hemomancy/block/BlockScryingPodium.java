@@ -41,16 +41,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockScryingPodium extends BaseEntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(3, 0, 3, 13, 1, 13), Block.box(4, 12, 4, 12, 14.01, 12), Block.box(3, 12, 3, 13, 14, 13),
-					Block.box(3, 10, 3, 13, 12, 13), Block.box(2, 11, 3, 3, 13, 13), Block.box(13, 11, 3, 14, 13, 13),
-					Block.box(3, 11, 13, 13, 13, 14), Block.box(3, 11, 2, 13, 13, 3), Block.box(4, 1, 4, 12, 2, 12),
-					Block.box(4, 9, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11), Block.box(3, 15.5, 5, 5, 16.5, 11),
-					Block.box(4, 15.25, 4, 5, 16.25, 5), Block.box(4, 15.25, 11, 5, 16.25, 12),
-					Block.box(5, 15.5, 11, 11, 16.5, 13), Block.box(5, 15.25, 5, 11, 16.25, 11),
-					Block.box(5, 15.5, 3, 11, 16.5, 5), Block.box(11, 15.25, 4, 12, 16.25, 5),
-					Block.box(11, 15.5, 5, 13, 16.5, 11), Block.box(11, 15.25, 11, 12, 16.25, 12),
-					Block.box(5, 14.5, 5, 11.2, 15.5, 11.2), Block.box(6, 13.5, 6, 10, 14.5, 10))
+	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13),
+			Block.box(6, 13, 6, 10, 15, 10), Block.box(6, 13, 6, 10, 15, 10), Block.box(5, 15, 5, 11, 16, 11),
+			Block.box(3, 9, 3, 13, 12, 13), Block.box(2, 11, 2, 14, 13, 14), Block.box(4, 1, 4, 12, 3, 12),
+			Block.box(4, 8, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11))
 			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
 	public BlockScryingPodium(Properties properties) {

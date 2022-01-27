@@ -72,6 +72,12 @@ public class GeneratorLoots extends LootTableProvider {
 			for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 				this.dropSelf(b.get());
 			}
+			for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+				this.dropSelf(b.get());
+			}
+			for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+				this.dropSelf(b.get());
+			}
 
 		}
 

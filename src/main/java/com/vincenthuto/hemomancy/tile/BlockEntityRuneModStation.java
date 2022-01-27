@@ -49,52 +49,52 @@ public class BlockEntityRuneModStation extends BlockEntity {
 	@SuppressWarnings("unused")
 	public static void animTick(Level level, BlockPos pos, BlockState state, BlockEntityRuneModStation ent) {
 		double globalTime = cooldown * 0.02;
-		if (level.isClientSide) {
-			int globalPartCount = 128;
-			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
-			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);
-			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5,
-					false);
-			Vec3[] earth = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.1);
-			Vec3[] mars = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.08);
-
-			Vec3[] randomSwim = HLParticleUtils.randomSwimming(globalPartCount, -level.getGameTime() * 0.005, 1, false);
-
-			for (int i = 0; i < globalPartCount; i++) {
-
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
-								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
-						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
-
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
-								(int) (inversedSphere[i].y * 255), (int) (inversedSphere[i].z * 255))),
-						pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
-						pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
-
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor((int) (randomSwim[i].x * 255),
-								(int) (randomSwim[i].y * 255), (int) (randomSwim[i].z * 255))),
-						pos.getX() + randomSwim[i].x + .5, pos.getY() + 1.1 + randomSwim[i].y,
-						pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
-
-				/*
-				 * // This creates a Star like effect
-				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255,
-				 * (world.rand.nextInt()), 0)), pos.getX() + fibboSphere[i].x + .5, pos.getY() +
-				 * 1.5 + fibboSphere[i].y, pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
-				 * 
-				 * if (i % 2 == 0) { world.addParticle(GlowParticleData.createData(new
-				 * ParticleColor(100, 80, 10)), pos.getX() + corona[i].x + .5, pos.getY() + 1.5
-				 * + corona[i].y, pos.getZ() + corona[i].z + .5, 0.0, -0.00, 0.0); }
-				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
-				 * pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 +
-				 * inversedSphere[i].y, pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
-				 */
-			}
-		}
+//		if (level.isClientSide) {
+//			int globalPartCount = 128;
+//			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
+//			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);
+//			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5,
+//					false);
+//			Vec3[] earth = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.1);
+//			Vec3[] mars = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.08);
+//
+//			Vec3[] randomSwim = HLParticleUtils.randomSwimming(globalPartCount, -level.getGameTime() * 0.005, 1, false);
+//
+//			for (int i = 0; i < globalPartCount; i++) {
+//
+//				level.addParticle(
+//						GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
+//								(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
+//						pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
+//						pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
+//
+//				level.addParticle(
+//						GlowParticleFactory.createData(new ParticleColor((int) (inversedSphere[i].x * 255),
+//								(int) (inversedSphere[i].y * 255), (int) (inversedSphere[i].z * 255))),
+//						pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 + inversedSphere[i].y,
+//						pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
+//
+//				level.addParticle(
+//						GlowParticleFactory.createData(new ParticleColor((int) (randomSwim[i].x * 255),
+//								(int) (randomSwim[i].y * 255), (int) (randomSwim[i].z * 255))),
+//						pos.getX() + randomSwim[i].x + .5, pos.getY() + 1.1 + randomSwim[i].y,
+//						pos.getZ() + randomSwim[i].z + .5, 0, 0.00, 0);
+//
+//				/*
+//				 * // This creates a Star like effect
+//				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255,
+//				 * (world.rand.nextInt()), 0)), pos.getX() + fibboSphere[i].x + .5, pos.getY() +
+//				 * 1.5 + fibboSphere[i].y, pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
+//				 * 
+//				 * if (i % 2 == 0) { world.addParticle(GlowParticleData.createData(new
+//				 * ParticleColor(100, 80, 10)), pos.getX() + corona[i].x + .5, pos.getY() + 1.5
+//				 * + corona[i].y, pos.getZ() + corona[i].z + .5, 0.0, -0.00, 0.0); }
+//				 * world.addParticle(GlowParticleData.createData(new ParticleColor(255, 0, 0)),
+//				 * pos.getX() + inversedSphere[i].x + .5, pos.getY() + 1.5 +
+//				 * inversedSphere[i].y, pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
+//				 */
+//			}
+//		}
 
 		if (cooldown > 0) {
 			if (level.isClientSide) {
@@ -120,12 +120,12 @@ public class BlockEntityRuneModStation extends BlockEntity {
 					level.addParticle(
 							GlowParticleFactory.createData(new ParticleColor((int) (fibboSphere[i].x * 255),
 									(int) (fibboSphere[i].y * 255), (int) (fibboSphere[i].z * 255))),
-							pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.5 + fibboSphere[i].y,
+							pos.getX() + fibboSphere[i].x + .5, pos.getY() + 1.25 + fibboSphere[i].y,
 							pos.getZ() + fibboSphere[i].z + .5, 0, 0.00, 0);
 					level.addParticle(
 							GlowParticleFactory.createData(new ParticleColor((int) (expandingSphere[i].x * 255),
 									(int) (expandingSphere[i].y * 255), (int) (expandingSphere[i].z * 255))),
-							pos.getX() + expandingSphere[i].x + .5, pos.getY() + 1.5 + expandingSphere[i].y,
+							pos.getX() + expandingSphere[i].x + .5, pos.getY() + 1.25 + expandingSphere[i].y,
 							pos.getZ() + expandingSphere[i].z + .5, 0, 0.00, 0);
 
 				}

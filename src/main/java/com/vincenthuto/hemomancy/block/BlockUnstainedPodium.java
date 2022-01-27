@@ -35,15 +35,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockUnstainedPodium extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(3, 0, 3, 13, 1, 13), Block.box(4, 12, 4, 12, 14.01, 12), Block.box(3, 12, 3, 13, 14, 13),
-					Block.box(5.800000000000001, 14, 5.800000000000001, 10.2, 14.9, 10.2),
-					Block.box(3, 10, 3, 13, 12, 13), Block.box(2, 11, 3, 3, 13, 13), Block.box(13, 11, 3, 14, 13, 13),
-					Block.box(3, 11, 13, 13, 13, 14), Block.box(3, 11, 2, 13, 13, 3), Block.box(4, 1, 4, 12, 2, 12),
-					Block.box(4, 9, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11))
-			.reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13),
+			Block.box(3, 9, 3, 13, 12, 13), Block.box(2, 11, 2, 14, 13, 14), Block.box(4, 1, 4, 12, 3, 12),
+			Block.box(4, 8, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11))
+			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
 	public BlockUnstainedPodium(Properties properties) {
 		super(properties);
@@ -63,7 +58,7 @@ public class BlockUnstainedPodium extends Block implements EntityBlock {
 				stack.shrink(1);
 				worldIn.setBlockAndUpdate(pos, BlockInit.rune_mod_station.get().defaultBlockState());
 			}
-			
+
 			if (stack.getItem() == ItemInit.scrying_dish.get()) {
 				worldIn.destroyBlock(pos, false);
 				stack.shrink(1);

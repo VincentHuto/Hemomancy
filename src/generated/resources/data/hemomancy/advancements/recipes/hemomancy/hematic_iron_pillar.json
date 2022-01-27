@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:hematic_iron_pillar"
+    ]
+  },
+  "criteria": {
+    "has_hematic_iron_block": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:hematic_iron_block"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:hematic_iron_pillar"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hematic_iron_block",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -32,32 +32,22 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class BlockVisceralRecaller extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream.of(Block.box(1.5, 1.96, 3.25, 2.5, 2.96, 12.75),
-			Block.box(13.5, 6.9, 3, 14.5, 7.8, 12.75), Block.box(13.5, 9, 3, 14.5, 9.8, 12.75),
-			Block.box(0.75, 0.064, 0.75, 3.25, 14.101, 3.25), Block.box(0.5, 0, 0.5, 3.5, 1, 3.5),
-			Block.box(0.5, 13.5, 0.5, 3.5, 14.5, 3.5), Block.box(12.75, 0.064, 0.75, 15.25, 14.101, 3.25),
-			Block.box(12.5, 0, 0.5, 15.5, 1, 3.5), Block.box(12.5, 13.5, 0.5, 15.5, 14.5, 3.5),
-			Block.box(0.75, 0.064, 12.75, 3.25, 14.101, 15.25), Block.box(0.5, 0, 12.5, 3.5, 1, 15.5),
-			Block.box(0.5, 13.5, 12.5, 3.5, 14.5, 15.5), Block.box(12.75, 0.064, 12.75, 15.25, 14.101, 15.25),
-			Block.box(12.5, 0, 12.5, 15.5, 1, 15.5), Block.box(12.5, 13.5, 12.5, 15.5, 14.5, 15.5),
-			Block.box(13.5, 4, 3, 14.5, 5, 12.75), Block.box(13.5, 1.96, 3, 14.5, 2.96, 12.75),
-			Block.box(1.5, 4, 3.25, 2.5, 5, 12.75), Block.box(1.5, 6.9, 3.25, 2.5, 7.8, 12.75),
-			Block.box(1.5, 9, 3.25, 2.5, 9.8, 12.75), Block.box(3.25, 6.9, 1.5, 12.75, 7.8, 2.5),
-			Block.box(3.25, 9, 1.5, 12.75, 9.8, 2.5), Block.box(3.25, 4, 1.5, 12.75, 5, 2.5),
-			Block.box(3.25, 1.96, 1.5, 12.75, 2.96, 2.5), Block.box(3.25, 1.96, 13.5, 12.75, 2.96, 14.5),
-			Block.box(3.25, 4, 13.5, 12.75, 5, 14.5), Block.box(3.25, 6.9, 13.5, 12.75, 7.8, 14.5),
-			Block.box(3.25, 9, 13.5, 12.75, 9.8, 14.5), Block.box(2, 7, 2, 14, 11.002, 14),
-			Block.box(2.75, 10.752, 2.75, 13.25, 14.75, 13.25), Block.box(1, 12.25, 1, 15, 14.25, 15),
-			Block.box(-1, 11.752, -1, 2, 14.754, 2), Block.box(-1, 13.351, 2, 1, 15.351, 14),
-			Block.box(-1, 11.752, 14, 2, 14.754, 17), Block.box(2, 13.351, 15, 14, 15.351, 17),
-			Block.box(14, 11.752, 14, 17, 14.754, 17), Block.box(15, 13.351, 2, 17, 15.351, 14),
-			Block.box(14, 11.752, -1, 17, 14.754, 2), Block.box(2, 13.351, -1, 14, 15.351, 1),
-			Block.box(0.5, 9.5, 0.5, 3.5, 12.5, 3.5), Block.box(0.5, 9.5, 12.5, 3.5, 12.5, 15.5),
-			Block.box(12.5, 9.5, 12.5, 15.5, 12.5, 15.5), Block.box(12.5, 9.5, 0.5, 15.5, 12.5, 3.5),
-			Block.box(12.5, 1.5, 0.5, 15.5, 4.5, 3.5), Block.box(0.5, 1.5, 0.5, 3.5, 4.5, 3.5),
-			Block.box(0.5, 1.5, 12.5, 3.5, 4.5, 15.5), Block.box(12.5, 1.5, 12.5, 15.5, 4.5, 15.5)).reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+	private static final VoxelShape SHAPE_N = Stream
+			.of(Block.box(1.5, 5, 3.25, 2.5, 6, 12.75), Block.box(0.75, 0.1, 0.75, 3.25, 14.1, 3.25),
+					Block.box(2, 10, 2, 14, 14, 14), Block.box(0.5, 0, 0.5, 3.5, 2, 3.5),
+					Block.box(12.75, 0.1, 0.75, 15.25, 14.1, 3.25), Block.box(12.5, 0, 0.5, 15.5, 2, 3.5),
+					Block.box(0.75, 0.1, 12.75, 3.25, 14.1, 15.25), Block.box(0.5, 0, 12.5, 3.5, 2, 15.5),
+					Block.box(12.75, 0.1, 12.75, 15.25, 14.1, 15.25), Block.box(12.5, 0, 12.5, 15.5, 2, 15.5),
+					Block.box(13.5, 7, 3, 14.5, 8, 12.75), Block.box(13.5, 5, 3, 14.5, 6, 12.75),
+					Block.box(1.5, 7, 3.25, 2.5, 8, 12.75), Block.box(3.25, 7, 1.5, 12.75, 8, 2.5),
+					Block.box(3.25, 5, 1.5, 12.75, 6, 2.5), Block.box(3.25, 5, 13.5, 12.75, 6, 14.5),
+					Block.box(3.25, 7, 13.5, 12.75, 8, 14.5), Block.box(2.75, 12.75, 2.75, 13.25, 14.75, 13.25),
+					Block.box(1, 12.25, 1, 15, 14.25, 15), Block.box(1, 13.35, -1, 15, 15.35, 1),
+					Block.box(1, 13.35, 15, 15, 15.35, 17), Block.box(15, 13.35, 1, 17, 15.35, 15),
+					Block.box(-1, 13.35, 1, 1, 15.35, 15), Block.box(12.5, 8.5, 12.5, 15.5, 15.5, 15.5),
+					Block.box(0.5, 8.5, 12.5, 3.5, 15.5, 15.5), Block.box(0.5, 8.5, 0.5, 3.5, 15.5, 3.5),
+					Block.box(12.5, 8.5, 0.5, 15.5, 15.5, 3.5))
+			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
 	public BlockVisceralRecaller(Properties properties) {
 		super(properties);

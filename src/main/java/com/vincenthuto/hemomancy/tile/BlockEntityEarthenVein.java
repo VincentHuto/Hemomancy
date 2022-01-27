@@ -70,7 +70,10 @@ public class BlockEntityEarthenVein extends BlockEntity {
 
 	@Override
 	public CompoundTag getUpdateTag() {
-		return super.getUpdateTag();
+		CompoundTag compound = super.getUpdateTag();
+		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
+		compound.putString(TAG_NAME, getName());
+		return compound;
 	}
 
 	@Override

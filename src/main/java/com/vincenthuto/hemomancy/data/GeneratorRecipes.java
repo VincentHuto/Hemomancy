@@ -25,6 +25,9 @@ public class GeneratorRecipes extends RecipeProvider {
 	@Override
 	protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 
+		SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemInit.foul_paste.get()),
+				BlockInit.befouling_ash_trail.get(), 1f, 200);
+
 		SimpleCookingRecipeBuilder.smelting(Ingredient.of(BlockInit.polished_venous_stone_bricks.get()),
 				BlockInit.cracked_polished_venous_stone_bricks.get(), 1f, 200);
 
