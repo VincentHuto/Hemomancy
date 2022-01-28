@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.capa.block.vein;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.util.VeinLocation;
-
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;

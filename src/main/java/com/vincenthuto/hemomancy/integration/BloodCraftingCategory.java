@@ -38,7 +38,6 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	private final IDrawable overlay;
 	private final IDrawable icon;
 
-	@SuppressWarnings("deprecation")
 	public BloodCraftingCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(150, 110);
 		localizedName = I18n.get("hemomancy.jei.blood_crafting");
@@ -116,7 +115,6 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	public static void renderPatternInGUI(PoseStack ms, Minecraft mc, LabeledBlockPattern pattern, double xOff,
 			double yOff) {
 		PoseStack viewModelPose = RenderSystem.getModelViewStack();
-
 		viewModelPose.pushPose();
 		Lighting.setupFor3DItems();
 		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
@@ -124,7 +122,6 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 		viewModelPose.scale(1f, 1f, 1f);
 		for (BlockPosBlockPair pair : patternList) {
 			viewModelPose.translate(0, 2, 1);
-
 			mc.getItemRenderer().renderAndDecorateItem(new ItemStack(pair.getBlock()),
 					(int) xOff + pair.getPos().getX() * -16, (int) yOff + pair.getPos().getZ() * -16,
 					(int) pair.getPos().getY() * -16);

@@ -52,6 +52,7 @@ public class LayerBloodAvatar<T extends LivingEntity, M extends HumanoidModel<T>
 				Minecraft.getInstance().getEntityModels().bakeLayer(ModelBloodAvatar.layer));
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
 			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
@@ -200,7 +201,6 @@ public class LayerBloodAvatar<T extends LivingEntity, M extends HumanoidModel<T>
 	public void renderModelLists(BakedModel pModel, ItemStack pStack, int pCombinedLight, int pCombinedOverlay,
 			PoseStack pMatrixStack, VertexConsumer pBuffer) {
 		Random random = new Random();
-		long i = 42L;
 
 		for (Direction direction : Direction.values()) {
 			random.setSeed(42L);

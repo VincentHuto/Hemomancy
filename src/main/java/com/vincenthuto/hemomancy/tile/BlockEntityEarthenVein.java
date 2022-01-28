@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.tile;
 
 import com.vincenthuto.hemomancy.capa.block.vein.EarthenVeinLocProvider;
 import com.vincenthuto.hemomancy.capa.block.vein.IEarthenVeinLoc;
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.capa.block.vein;
 
-import com.vincenthuto.hemomancy.util.VeinLocation;
-
 public class EarthenVeinLoc implements IEarthenVeinLoc {
 
 	public VeinLocation veinLoc = VeinLocation.BLANK;

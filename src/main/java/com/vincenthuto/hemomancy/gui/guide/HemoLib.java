@@ -48,11 +48,13 @@ public class HemoLib extends TomeLib {
 
 	@Override
 	public void registerChapters() {
-		introChapter = new TomeChapter("Intro", TabColor.BLACK, introPages);
-		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED, vasuclarPages);
-		tendencyChapter = new TomeChapter("Tendency", TabColor.BLACK, tendencyPages);
-		manipChapter = new TomeChapter("Manips", TabColor.RED, manipPages);
+		introChapter = new TomeChapter("Intro", TabColor.BLACK, new HemoGuideTOC("Intro"),introPages);
+		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED,new HemoGuideTOC("Vascularity"), vasuclarPages);
+		tendencyChapter = new TomeChapter("Tendency", TabColor.BLACK, new HemoGuideTOC("Tendency"),tendencyPages);
+		manipChapter = new TomeChapter("Manips", TabColor.RED,new HemoGuideTOC("Manips"), manipPages);
 		Collections.addAll(chapters, introChapter, vasuclarChapter, tendencyChapter, manipChapter);
+
+
 	}
 
 	@Override

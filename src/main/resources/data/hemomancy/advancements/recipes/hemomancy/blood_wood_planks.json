@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "hemomancy:blood_wood_log"
+            "items": [
+              "hemomancy:blood_wood_log"
+            ]
           }
         ]
       }

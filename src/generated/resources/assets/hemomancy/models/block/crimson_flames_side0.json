@@ -1,0 +1,7 @@
+
+{
+  "parent": "minecraft:block/template_fire_side",
+  "textures": {
+    "fire": "hemomancy:block/crimson_flames"
+  }
+}

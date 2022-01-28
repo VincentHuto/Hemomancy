@@ -2,9 +2,12 @@ package com.vincenthuto.hemomancy.item;
 
 import java.util.List;
 
+import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -17,10 +20,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemTendencyHiddenBook extends ItemTome {
+public class ItemTendencyHiddenBook extends ItemGuideBook {
 
-	public ItemTendencyHiddenBook(Properties prop) {
-		super(prop);
+	public ItemTendencyHiddenBook(Properties prop, ResourceLocation loc) {
+		super(prop, loc);
 	}
 
 	@Override

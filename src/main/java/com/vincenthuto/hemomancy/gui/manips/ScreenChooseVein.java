@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;

@@ -20,7 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
@@ -65,8 +64,8 @@ public class ItemLivingAxe extends ItemLivingTool {
 				if (compound.getBoolean(TAG_STATE)) {
 					if (player.isOnGround()) {
 
-						player.knockback(2F, Mth.sin(player.getXRot() * ((float) Math.PI / 180F)),
-								(-Mth.cos(player.getXRot() * ((float) Math.PI / 180F))));
+//						player.knockback(2F, Mth.sin(player.getXRot() * ((float) Math.PI / 180F)),
+//								(-Mth.cos(player.getXRot() * ((float) Math.PI / 180F))));
 						List<Entity> targets = player.level.getEntities(player, player.getBoundingBox().inflate(3.0));
 						if (player.level.isClientSide) {
 							Vec3 pos = player.position();

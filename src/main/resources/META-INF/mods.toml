@@ -71,5 +71,5 @@ After all its just sitting there!
     modId="hutoslib"
     mandatory=true
     versionRange="[1,)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"

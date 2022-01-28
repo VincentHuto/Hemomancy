@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.network.capa.manips;
 
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
@@ -9,7 +10,6 @@ import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.math.DimensionalPosition;
 

@@ -7,9 +7,9 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

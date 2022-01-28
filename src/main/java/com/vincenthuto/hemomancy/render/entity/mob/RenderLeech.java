@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.render.entity.mob;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.entity.EntityLeech;
+import com.vincenthuto.hemomancy.entity.mob.EntityLeech;
 import com.vincenthuto.hemomancy.model.entity.mob.ModelLeech;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;

@@ -43,8 +43,11 @@ public class GeneratorLanguage extends LanguageProvider {
 
 		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
 
+		add("fluid.hemomancy.blood", "Blood");
+
 		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
-			addEntityType(e, HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
+			addEntityType(e,
+					HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
 		}
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			addBlock(b,
@@ -82,16 +85,20 @@ public class GeneratorLanguage extends LanguageProvider {
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
-			addItem(i, HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+			addItem(i,
+					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPECIALITEMS.getEntries()) {
-			addItem(i, HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+			addItem(i,
+					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
-			addItem(i, HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+			addItem(i,
+					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
-			addItem(i, HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+			addItem(i,
+					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
 
 		for (RegistryObject<MobEffect> i : PotionInit.EFFECTS.getEntries()) {

@@ -33,15 +33,15 @@ public class ClientProxy implements IProxy {
 
 	@Override
 	public void openJarGui() {
-		Minecraft.getInstance().setScreen(
-				new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()), ClientUtils.getClientPlayer()));
+		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
+				ClientUtils.getClientPlayer()));
 
 	}
 
 	@Override
 	public void openStaffGui() {
-		Minecraft.getInstance().setScreen(
-				new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()), ClientUtils.getClientPlayer()));
+		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
+				ClientUtils.getClientPlayer()));
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ClientProxy implements IProxy {
 	public void openVeinGui() {
 		Minecraft.getInstance().setScreen(new ScreenChooseVein(ClientUtils.getClientPlayer()));
 	}
-	
+
 	@Override
 	public void registerHandlers() {
 		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();

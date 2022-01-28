@@ -1,6 +1,6 @@
 {
-   "parent": "item/generated",
-   "textures": {
-       "layer0": "hemomancy:item/blood_lust_helm_tengu"
-   }
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/blood_lust_helm_tengu"
+  }
 }

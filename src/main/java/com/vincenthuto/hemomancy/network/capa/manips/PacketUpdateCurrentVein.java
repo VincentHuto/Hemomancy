@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.network.capa.manips;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;

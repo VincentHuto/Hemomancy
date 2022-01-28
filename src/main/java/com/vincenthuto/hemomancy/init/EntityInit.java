@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.entity.EntityLeech;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBolt;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodBullet;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodCloud;
@@ -22,6 +21,7 @@ import com.vincenthuto.hemomancy.entity.mob.EntityChthonian;
 import com.vincenthuto.hemomancy.entity.mob.EntityChthonianQueen;
 import com.vincenthuto.hemomancy.entity.mob.EntityFargone;
 import com.vincenthuto.hemomancy.entity.mob.EntityFungling;
+import com.vincenthuto.hemomancy.entity.mob.EntityLeech;
 import com.vincenthuto.hemomancy.entity.mob.EntityLumpOfThought;
 import com.vincenthuto.hemomancy.entity.mob.EntityMorphlingPolyp;
 import com.vincenthuto.hemomancy.entity.mob.EntityThirster;

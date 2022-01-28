@@ -3,19 +3,19 @@ package com.vincenthuto.hemomancy.particle.util;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import com.vincenthuto.hemomancy.util.ModEntityPredicates;
+import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.world.entity.Entity;
 
 public class EntityParticleUtils {
 	public static Predicate<Entity> getEntityPredicate(Entity ent) {
-		for (Predicate<Entity> pred : ModEntityPredicates.BLOODTYPES) {
+		for (Predicate<Entity> pred : HemoEntityPredicates.BLOODTYPES) {
 			if (pred.test(ent)) {
 				return pred;
 			}
 		}
-		return ModEntityPredicates.WARMBLOODED;
+		return HemoEntityPredicates.WARMBLOODED;
 
 	}
 
@@ -25,25 +25,25 @@ public class EntityParticleUtils {
 	}
 
 	public static ParticleColor getColorFromPredicate(Predicate<Entity> pred) {
-		if (pred == ModEntityPredicates.COLDBLOODED) {
+		if (pred == HemoEntityPredicates.COLDBLOODED) {
 			return ParticleColor.CYAN;
 		}
-		if (pred == ModEntityPredicates.ENDERBLOOD) {
+		if (pred == HemoEntityPredicates.ENDERBLOOD) {
 			return ParticleColor.PURPLE;
 		}
-		if (pred == ModEntityPredicates.INFERNALBLOOD) {
+		if (pred == HemoEntityPredicates.INFERNALBLOOD) {
 			return ParticleColor.ORANGE;
 		}
-		if (pred == ModEntityPredicates.NOBLOOD) {
+		if (pred == HemoEntityPredicates.NOBLOOD) {
 			return ParticleColor.BLACK;
 		}
-		if (pred == ModEntityPredicates.PLANTBLOOD) {
+		if (pred == HemoEntityPredicates.PLANTBLOOD) {
 			return ParticleColor.GREEN;
 		}
-		if (pred == ModEntityPredicates.UNDEAD) {
+		if (pred == HemoEntityPredicates.UNDEAD) {
 			return ParticleColor.UNDEADBLOOD;
 		}
-		if (pred == ModEntityPredicates.WARMBLOODED) {
+		if (pred == HemoEntityPredicates.WARMBLOODED) {
 			return ParticleColor.RED;
 		}
 		return ParticleColor.BLOOD;

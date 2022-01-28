@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.capa.player.manip;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.capa.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.util.VeinLocation;
 
 import net.minecraft.core.BlockPos;
 

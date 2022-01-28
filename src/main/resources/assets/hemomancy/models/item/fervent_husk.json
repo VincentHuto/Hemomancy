@@ -1,6 +1,6 @@
 {
-  "parent" : "item/generated",
-  "textures" : {
-    "layer0" : "hemomancy:item/fervent_husk"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/fervent_husk"
   }
 }

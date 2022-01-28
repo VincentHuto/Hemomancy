@@ -120,12 +120,18 @@ public class ItemInit {
 					EnumBloodTendency.ANIMUS, 0));
 
 	// Book
+
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
-			() -> new ItemBloodyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new ItemBloodyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_sanguinum.png")));
+
 	public static final RegistryObject<Item> liber_inclinatio = SPECIALITEMS.register("liber_inclinatio",
-			() -> new ItemTendencyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new ItemTendencyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio.png")));
+
 	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
-			() -> new ItemTendencyHiddenBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new ItemTendencyHiddenBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio_hidden.png")));
 
 	public static final RegistryObject<Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
 			() -> new ItemUnsignedLedger(new Item.Properties().tab(HemomancyItemGroup.instance)));
@@ -326,12 +332,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> stabilized_sanguine_formation = BASEITEMS.register(
 			"stabilized_sanguine_formation",
 			() -> new ItemBloodyFlask(new Item.Properties().tab(HemomancyItemGroup.instance), 5000));
-	// Tools
-//	public static final RegistryObject<Item> iron_knapper = HANDHELDITEMS.register("iron_knapper",
-//			() -> new ItemKnapper(25f, 1, 0, Tiers.IRON, new Item.Properties().tab(HemomancyItemGroup.instance)));
-//	public static final RegistryObject<Item> obsidian_knapper = HANDHELDITEMS.register("obsidian_knapper",
-//			() -> new ItemKnapper(50f, 1, 0, EnumModToolTiers.LIVING,
-//					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Equipment
 	// Tainted

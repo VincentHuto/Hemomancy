@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderTypeInit extends RenderType {
@@ -61,12 +60,6 @@ public class RenderTypeInit extends RenderType {
 						.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setCullState(CULL).setLightmapState(LIGHTMAP)
 						.setOverlayState(OVERLAY).createCompositeState(false));
 	}
-
-	private static final RenderType CUTOUT_MIPPED = create("cutout_mipped", DefaultVertexFormat.BLOCK,
-			VertexFormat.Mode.QUADS, 131072, true, false,
-			RenderType.CompositeState.builder().setLightmapState(LIGHTMAP)
-					.setShaderState(RENDERTYPE_CUTOUT_MIPPED_SHADER).setTextureState(BLOCK_SHEET_MIPPED)
-					.createCompositeState(true));
 
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;

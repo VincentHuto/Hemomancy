@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "hemomancy:rune_pattern"
+            "items": [
+              "hemomancy:rune_pattern"
+            ]
           }
         ]
       }

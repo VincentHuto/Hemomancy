@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "hemomancy:rune_mod_station"
+            "items": [
+              "hemomancy:rune_mod_station"
+            ]
           }
         ]
       }

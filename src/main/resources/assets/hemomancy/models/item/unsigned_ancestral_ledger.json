@@ -1,20 +1,6 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "hemomancy:item/unsigned_ancestral_ledger"
-	},
-	"overrides": [
-		{
-			"predicate": {
-				"hemomancy:unsigned": 0
-			},
-			"model": "hemomancy:item/unsigned_ancestral_ledger"
-		},
-		{
-			"predicate": {
-				"hemomancy:unsigned": 1
-			},
-			"model": "hemomancy:item/signed_ancestral_ledger"
-		}
-	]
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/unsigned_ancestral_ledger"
+  }
 }
