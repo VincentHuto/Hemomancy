@@ -118,43 +118,43 @@ public class BloodVolumeEvents {
 
 	}
 
-	private static Font fontRenderer;
-
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent(receiveCanceled = true)
-	public static void onRenderGameOverlay(RenderGameOverlayEvent.Chat event) {
-
-		if (fontRenderer == null) {
-			fontRenderer = Minecraft.getInstance().font;
-		}
-		Player player = Minecraft.getInstance().player;
-		if (player != null) {
-			if (player.isAlive()) {
-				// Redraws Icons so they dont get overwrote
-				Minecraft.getInstance().textureManager
-						.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-				// Coven color Overlay
-				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-				if (volume.isActive()) {
-					if (volume.getBloodVolume() < 250) {
-						RenderSystem.setShader(GameRenderer::getPositionTexShader);
-						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-						float time = (float) Math.sin(player.level.getGameTime() * 0.05f);
-						RenderSystem.setShaderColor(1, 1, 1, 0.5f + time);
-						RenderSystem._setShaderTexture(0,
-								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
-						event.getMatrixStack().pushPose();
-						float ratio = (float) event.getWindow().getGuiScale();
-						event.getMatrixStack().scale(1 / ratio, 1 / ratio, 1);
-						GuiComponent.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getScreenWidth(),
-								event.getWindow().getScreenHeight(), event.getWindow().getScreenWidth(),
-								event.getWindow().getScreenHeight());
-						event.getMatrixStack().popPose();
-						Minecraft.getInstance().textureManager
-								.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-					}
-				}
-			}
-		}
-	}
+//	private static Font fontRenderer;
+//
+//	@OnlyIn(Dist.CLIENT)
+//	@SubscribeEvent(receiveCanceled = true)
+//	public static void onRenderGameOverlay(RenderGameOverlayEvent.Chat event) {
+//
+//		if (fontRenderer == null) {
+//			fontRenderer = Minecraft.getInstance().font;
+//		}
+//		Player player = Minecraft.getInstance().player;
+//		if (player != null) {
+//			if (player.isAlive()) {
+//				// Redraws Icons so they dont get overwrote
+//				Minecraft.getInstance().textureManager
+//						.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+//				// Coven color Overlay
+//				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+//				if (volume.isActive()) {
+//					if (volume.getBloodVolume() < 250) {
+//						RenderSystem.setShader(GameRenderer::getPositionTexShader);
+//						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//						float time = (float) Math.sin(player.level.getGameTime() * 0.05f);
+//						RenderSystem.setShaderColor(1, 1, 1, 0.5f + time);
+//						RenderSystem._setShaderTexture(0,
+//								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
+//						event.getMatrixStack().pushPose();
+//						float ratio = (float) event.getWindow().getGuiScale();
+//						event.getMatrixStack().scale(1 / ratio, 1 / ratio, 1);
+//						GuiComponent.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getScreenWidth(),
+//								event.getWindow().getScreenHeight(), event.getWindow().getScreenWidth(),
+//								event.getWindow().getScreenHeight());
+//						event.getMatrixStack().popPose();
+//						Minecraft.getInstance().textureManager
+//								.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
+//					}
+//				}
+//			}
+//		}
+//	}
 }

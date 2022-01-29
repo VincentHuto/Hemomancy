@@ -45,6 +45,7 @@ public class GeneratorLanguage extends LanguageProvider {
 
 		add("fluid.hemomancy.blood", "Blood");
 
+		
 		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
 			addEntityType(e,
 					HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));

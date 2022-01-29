@@ -430,7 +430,7 @@ public class ModelBloodAvatar<T extends LivingEntity> extends HumanoidModel<T> {
 				PartPose.offsetAndRotation(-2.75F, 1.75F, 0.0F, 0.0F, 0.0F, 0.3054F));
 
 		PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(0, 48)
-				.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F, new CubeDeformation(0.15F)),
+				.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 9.0F, 4.0F, new CubeDeformation(0.15F)),
 				PartPose.offset(1.9F, 12.0F, 0.0F));
 
 		PartDefinition lBackShingle = left_leg.addOrReplaceChild("lBackShingle",

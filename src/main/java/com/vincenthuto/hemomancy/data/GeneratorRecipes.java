@@ -55,66 +55,66 @@ public class GeneratorRecipes extends RecipeProvider {
 				.requires(ItemInit.rune_blank.get()).unlockedBy("has_rune_blank", has(ItemInit.rune_blank.get()))
 				.save(consumer);
 
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_beast_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Tags.Items.GEMS_DIAMOND).requires(Items.BONE)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_beast.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.BEEF).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_clawmark.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.FLINT).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_communion.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.GHAST_TEAR).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
-				.save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_corruption_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.FERMENTED_SPIDER_EYE).requires(Tags.Items.GEMS_DIAMOND)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_hunter_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.GOLDEN_SWORD).requires(Tags.Items.GEMS_DIAMOND)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_heir.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.STRING).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_impurity_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.ROTTEN_FLESH).requires(Tags.Items.GEMS_DIAMOND)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_lake.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.WATER_BUCKET).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
-				.save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_metamorphosis_cw.get())
-				.requires(ItemInit.rune_pattern.get()).requires(Items.GOLDEN_APPLE)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_metamorphosis.get())
-				.requires(ItemInit.rune_pattern.get()).requires(Items.GOLDEN_CARROT)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_milkweed_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.ENDER_EYE).requires(Tags.Items.GEMS_DIAMOND)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_moon.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.REDSTONE).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
-				.save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_oedon.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.RED_DYE).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
-				.save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_radiance_c.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.GLOWSTONE_DUST).requires(Tags.Items.GEMS_DIAMOND)
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_rapture.get()).requires(ItemInit.rune_pattern.get())
-				.requires(Items.GLOWSTONE_DUST).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
-				.save(consumer);
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_beast_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Tags.Items.GEMS_DIAMOND).requires(Items.BONE)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_beast.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.BEEF).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_clawmark.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.FLINT).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_communion.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.GHAST_TEAR).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
+//				.save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_corruption_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.FERMENTED_SPIDER_EYE).requires(Tags.Items.GEMS_DIAMOND)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_hunter_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.GOLDEN_SWORD).requires(Tags.Items.GEMS_DIAMOND)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_heir.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.STRING).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_impurity_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.ROTTEN_FLESH).requires(Tags.Items.GEMS_DIAMOND)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_lake.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.WATER_BUCKET).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
+//				.save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_metamorphosis_cw.get())
+//				.requires(ItemInit.rune_pattern.get()).requires(Items.GOLDEN_APPLE)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_metamorphosis.get())
+//				.requires(ItemInit.rune_pattern.get()).requires(Items.GOLDEN_CARROT)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_milkweed_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.ENDER_EYE).requires(Tags.Items.GEMS_DIAMOND)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_moon.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.REDSTONE).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
+//				.save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_oedon.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.RED_DYE).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
+//				.save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_radiance_c.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.GLOWSTONE_DUST).requires(Tags.Items.GEMS_DIAMOND)
+//				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
+//
+//		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern_rapture.get()).requires(ItemInit.rune_pattern.get())
+//				.requires(Items.GLOWSTONE_DUST).unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get()))
+//				.save(consumer);
 
 		ShapedRecipeBuilder.shaped(ItemInit.rune_blank.get()).define('N', Blocks.OBSIDIAN).define('O', Blocks.SNOW)
 				.define('P', Items.REDSTONE).pattern("NON").pattern("OPO").pattern("NON")

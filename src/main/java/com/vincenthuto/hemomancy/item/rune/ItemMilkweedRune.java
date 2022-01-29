@@ -34,8 +34,8 @@ public class ItemMilkweedRune extends ItemContractRune implements IRenderRunes {
 			matrix.mulPose(Vector3f.XN.rotationDegrees(180f));
 			matrix.scale(0.5f, 0.5f, 0.5f);
 			matrix.translate(0, 0.5, 0.5);
-			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemInit.rune_milkweed_c.get()),
-					TransformType.FIXED, packedLightIn, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
+//			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(ItemInit.rune_milkweed_c.get()),
+//					TransformType.FIXED, packedLightIn, OverlayTexture.NO_OVERLAY, matrix, buffer, 0);
 
 		}
 

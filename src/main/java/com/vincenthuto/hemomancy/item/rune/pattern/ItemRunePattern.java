@@ -1,9 +1,11 @@
 package com.vincenthuto.hemomancy.item.rune.pattern;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRunePattern;
 import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,12 +24,11 @@ public class ItemRunePattern extends Item {
 	RegistryObject<RecipeChiselStation> recipe;
 	RegistryObject<Item> rune;
 
-	public ItemRunePattern(Properties prop, RegistryObject<Item> rune, RegistryObject<RecipeChiselStation> recipe,
-			String text) {
+	public ItemRunePattern(Properties prop, RegistryObject<Item> rune, RegistryObject<RecipeChiselStation> recipe) {
 		super(prop.stacksTo(1));
 		this.rune = rune;
 		this.recipe = recipe;
-		this.text = text;
+		this.text = I18n.get(Hemomancy.MOD_ID+"." + rune.get().getRegistryName().getPath() + ".pattern.text");
 	}
 
 	@Override

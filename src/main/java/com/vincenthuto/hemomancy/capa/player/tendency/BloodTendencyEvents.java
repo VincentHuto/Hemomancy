@@ -86,26 +86,26 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent e) {
-		// Radiant Protection
-		if (e.getEntityLiving() instanceof Player) {
-			Player player = (Player) e.getEntityLiving();
-			IRunesItemHandler itemHandler = player.getCapability(RunesCapabilities.RUNES)
-					.orElseThrow(NullPointerException::new);
-			if (itemHandler.getStackInSlot(0).getItem() == ItemInit.rune_radiance_c.get()) {
-				double dist = e.getEntityLiving().distanceTo(player);
-				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
-						trace.getLocation().y, trace.getLocation().z));
-			}
-			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.chitinite_chestplate.get()) {
-				e.setAmount((float) (e.getAmount() * 0.25));
-				double dist = e.getEntityLiving().distanceTo(player);
-				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
-						trace.getLocation().y, trace.getLocation().z));
-			}
-
-		}
+//		// Radiant Protection
+//		if (e.getEntityLiving() instanceof Player) {
+//			Player player = (Player) e.getEntityLiving();
+//			IRunesItemHandler itemHandler = player.getCapability(RunesCapabilities.RUNES)
+//					.orElseThrow(NullPointerException::new);
+//			if (itemHandler.getStackInSlot(0).getItem() == ItemInit.rune_radiance_c.get()) {
+//				double dist = e.getEntityLiving().distanceTo(player);
+//				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
+//				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
+//						trace.getLocation().y, trace.getLocation().z));
+//			}
+//			if (player.getItemBySlot(EquipmentSlot.HEAD).getItem() == ItemInit.chitinite_chestplate.get()) {
+//				e.setAmount((float) (e.getAmount() * 0.25));
+//				double dist = e.getEntityLiving().distanceTo(player);
+//				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
+//				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
+//						trace.getLocation().y, trace.getLocation().z));
+//			}
+//
+//		}
 	}
 
 	@SubscribeEvent

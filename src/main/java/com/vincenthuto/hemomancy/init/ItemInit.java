@@ -30,9 +30,6 @@ import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingLeech;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingPolyp;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingSerpent;
-import com.vincenthuto.hemomancy.item.rune.ItemContractRune;
-import com.vincenthuto.hemomancy.item.rune.ItemGuidanceRune;
-import com.vincenthuto.hemomancy.item.rune.ItemMilkweedRune;
 import com.vincenthuto.hemomancy.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.ItemSelfReflectionMirror;
@@ -418,138 +415,68 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
 			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
 
-	// Contract Runes
-	public static final RegistryObject<Item> rune_beast_c = BASEITEMS.register("rune_beast_c",
-			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.ANIMUS, 5));
-	public static final RegistryObject<Item> rune_pattern_beast_c = BASEITEMS.register("rune_pattern_beast_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_beast_c,
-					ChiselRecipes.recipeBeastContract,
-					"Beast Contract Rune, Unleash your inner beast, destroy your Ego and let the Id become all you are, a primal beast of pure strength."));
-	public static final RegistryObject<Item> rune_corruption_c = BASEITEMS.register("rune_corruption_c",
-			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 5));
-	public static final RegistryObject<Item> rune_pattern_corruption_c = BASEITEMS.register("rune_pattern_corruption_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_corruption_c,
-					ChiselRecipes.recipeCorruptionContract,
-					"Corruption Contract Rune, Corrupted by those who wished you the worst, your faith has become dark, your dreams have become nightmares!"));
-	public static final RegistryObject<Item> rune_impurity_c = BASEITEMS.register("rune_impurity_c",
-			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.TENEBRIS, 5));
-	public static final RegistryObject<Item> rune_pattern_impurity_c = BASEITEMS.register("rune_pattern_impurity_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_impurity_c,
-					ChiselRecipes.recipeImpurityContract,
-					"Impurity Contract Rune, Your blood has become tainted and black, you hunger for all that is immoral and unclean..."));
-	public static final RegistryObject<Item> rune_milkweed_c = BASEITEMS.register("rune_milkweed_c",
-			() -> new ItemMilkweedRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.TENEBRIS, 5));
-	public static final RegistryObject<Item> rune_pattern_milkweed_c = BASEITEMS.register("rune_pattern_milkweed_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_milkweed_c,
-					ChiselRecipes.recipeMilkweedContract,
-					"Milkweed Contract Rune, Gain contact with the outer beings from beyond all known realms, learn from them, if you dare..."));
-	public static final RegistryObject<Item> rune_radiance_c = BASEITEMS.register("rune_radiance_c",
-			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.LUX, 5));
-	public static final RegistryObject<Item> rune_pattern_radiance_c = BASEITEMS.register("rune_pattern_radiance_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_radiance_c,
-					ChiselRecipes.recipeRadianceContract,
-					"Radiance Contract Rune, Shining symbol of rioutous grace and fury, unleash your inner saint against all the heathens you face!"));
-	public static final RegistryObject<Item> rune_hunter_c = BASEITEMS.register("rune_hunter_c",
-			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 5));
-	public static final RegistryObject<Item> rune_pattern_hunter_c = BASEITEMS.register("rune_pattern_hunter_c",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_hunter_c,
-					ChiselRecipes.recipeHunterContract,
-					"Hunter Contract Rune, A trained killer, set in your ways, a true hunter of hunters, weapons are your muse, the battle has become your muse."));
+//	// Contract Runes
+//	public static final RegistryObject<Item> rune_beast_c = BASEITEMS.register("rune_beast_c",
+//			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+//					EnumBloodTendency.ANIMUS, 5));
 
-	// Base Runes
-	public static final RegistryObject<Item> rune_metamorphosis = BASEITEMS.register("rune_metamorphosis",
+	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_metamorphosis = BASEITEMS.register(
-			"rune_pattern_metamorphosis",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_metamorphosis,
-					ChiselRecipes.recipeMetamorphosis,
-					"Anti Metamorphosis Rune, The crooked metamorphosis has begun, your vitatlity has increased, you feel like you could regrow anything!"));
 
-	public static final RegistryObject<Item> rune_metamorphosis_cw = BASEITEMS.register("rune_metamorphosis_cw",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_metamorphosis_cw = BASEITEMS.register(
-			"rune_pattern_metamorphosis_cw",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_metamorphosis_cw,
-					ChiselRecipes.recipeMetamorphosisCW,
-					"Metamorphois Rune, The proper metamorphosis has begun, your vitality has increased, you feel full of life anew!"));
+	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
+			"rune_pattern_transcendence",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_transcendence,
+					ChiselRecipes.recipeTranscendence));
 
-	public static final RegistryObject<Item> rune_lake = BASEITEMS.register("rune_lake",
+	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_lake = BASEITEMS.register("rune_pattern_lake",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_lake,
-					ChiselRecipes.recipeLake,
-					"Lake Rune, The rushing of sacred waters, the roar of a great ocean calls to you, you know your home, and it beckons you back.."));
-	public static final RegistryObject<Item> rune_clawmark = BASEITEMS.register("rune_clawmark",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.ANIMUS, 1));
-	public static final RegistryObject<Item> rune_pattern_clawmark = BASEITEMS.register("rune_pattern_clawmark",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_clawmark,
-					ChiselRecipes.recipeClawMark,
-					"Clawmark Rune, Tooth and Nail is all you know, the endless fight has just begun, bring the armies home, they are no threat."));
-	public static final RegistryObject<Item> rune_rapture = BASEITEMS.register("rune_rapture",
+
+	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_sol,
+					ChiselRecipes.recipeSol));
+
+	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_rapture = BASEITEMS.register("rune_pattern_rapture",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_rapture,
-					ChiselRecipes.recipeRapture,
-					"Rapture Rune, The blood of war is your fuel, the lifeblood of your enemy becomes your own, absorb those who would oppose you!"));
-	public static final RegistryObject<Item> rune_oedon = BASEITEMS.register("rune_oedon",
+
+	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heart,
+					ChiselRecipes.recipeHeart));
+
+	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_oedon = BASEITEMS.register("rune_pattern_oedon",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_oedon,
-					ChiselRecipes.recipeOedon,
-					"Oedon Rune, You feel as if you have a false heart, one granted to you on contract, nevertheless this life is yours now, use it."));
-	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
-					ChiselRecipes.recipeEye,
-					"Eye Rune, Your eyes, o' glorious eyes! do not faulter, do not die, for you shall see, beyond the veil, to see what beyond the darkness entails..."));
+
+	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_descendence,
+					ChiselRecipes.recipeDescendence));
+
 	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
+
 	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_moon,
-					ChiselRecipes.recipeMoon,
-					"Moon Rune, The great moon above has become your muse, it is what drives you, turn away from the cursed sun, carpe noctum!"));
-	public static final RegistryObject<Item> rune_beast = BASEITEMS.register("rune_beast",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.ANIMUS, 1));
-	public static final RegistryObject<Item> rune_pattern_beast = BASEITEMS.register("rune_pattern_beast",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_beast,
-					ChiselRecipes.recipeBeast,
-					"Beast Rune, The howl of a gale, the howl of the beast, it is one and all in you, run like the wind, endless and with ferver!"));
-	public static final RegistryObject<Item> rune_heir = BASEITEMS.register("rune_heir",
+					ChiselRecipes.recipeMoon));
+
+	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_heir = BASEITEMS.register("rune_pattern_heir",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heir,
-					ChiselRecipes.recipeHeir,
-					"Heir Rune, you develop this watchful sense,you, the spiritual succesor to a once great power, shall rekindle their former glory; Divine Heir."));
-	public static final RegistryObject<Item> rune_guidance = BASEITEMS.register("rune_guidance",
-			() -> new ItemGuidanceRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+
+	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
+					ChiselRecipes.recipeEye));
+
+	public static final RegistryObject<Item> rune_feral = BASEITEMS.register("rune_feral",
+			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_pattern_guidance = BASEITEMS.register("rune_pattern_guidance",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_guidance,
-					ChiselRecipes.recipeGuidance,
-					"Guidance Rune, The supernatural blessing, one of fortune and direction, may it guide you to your wants, as it has so many others before."));
-	public static final RegistryObject<Item> rune_communion = BASEITEMS.register("rune_communion",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance), EnumBloodTendency.LUX, 1));
-	public static final RegistryObject<Item> rune_pattern_communion = BASEITEMS.register("rune_pattern_communion",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_communion,
-					ChiselRecipes.recipeCommunion,
-					"Communion Rune, The call from beyond rings louder for you, you wish to join them, you must join them. join.joi,jo..."));
+
+	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_feral,
+					ChiselRecipes.recipeFeral));
+
 
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
