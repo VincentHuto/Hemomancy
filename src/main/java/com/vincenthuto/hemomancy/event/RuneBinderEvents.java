@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRuneBinderInventory;
 import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.binder.PacketBinderTogglePickup;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class RuneBinderEvents {
 
 	public static void pickupEvent(EntityItemPickupEvent event) {
-		if (event.getPlayer().containerMenu instanceof MenuRuneBinder || event.getPlayer().isShiftKeyDown()
+		if (event.getPlayer().containerMenu instanceof MenuRuneBinderInventory || event.getPlayer().isShiftKeyDown()
 				|| event.getItem().getItem().getItem() instanceof ItemRuneBinder)
 			return;
 		Inventory playerInv = event.getPlayer().getInventory();

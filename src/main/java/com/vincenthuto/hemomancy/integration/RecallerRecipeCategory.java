@@ -113,7 +113,7 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecipeRecaller> {
 			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
 			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 72;
 			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 72;
-			double depthDist = ((float) (iconDiameter - diameter) * tends.get(tend) + (float) diameter);
+			double depthDist = (iconDiameter - diameter) * tends.get(tend)/2.5 + diameter ;
 			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
 			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 72;
 			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))

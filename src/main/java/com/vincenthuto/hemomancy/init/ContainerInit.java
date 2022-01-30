@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.container.MenuJuiceinator;
 import com.vincenthuto.hemomancy.container.MenuLivingStaff;
 import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
 import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
-import com.vincenthuto.hemomancy.container.MenuRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRuneBinderInventory;
 import com.vincenthuto.hemomancy.container.MenuRunes;
 import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
@@ -44,8 +44,8 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<MenuJuiceinator>> juiceinator = CONTAINERS.register("juiceinator",
 			() -> IForgeMenuType.create(MenuJuiceinator::new));
 
-	public static final RegistryObject<MenuType<MenuRuneBinder>> rune_binder = CONTAINERS.register("rune_binder",
-			() -> IForgeMenuType.create(MenuRuneBinder::new));
+	public static final RegistryObject<MenuType<MenuRuneBinderInventory>> rune_binder = CONTAINERS.register("rune_binder",
+			() -> IForgeMenuType.create(MenuRuneBinderInventory::new));
 
 	public static final RegistryObject<MenuType<MenuMorphlingJar>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IForgeMenuType.create(MenuMorphlingJar::new));

@@ -35,9 +35,7 @@ public class PacketSyncTrackingAvatar {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
 				p.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(b -> {
-					b.setAvatarActive(isActive);
-					System.out.println("attempted to sync");
-					
+					b.setAvatarActive(isActive);					
 				});
 			}
 		});

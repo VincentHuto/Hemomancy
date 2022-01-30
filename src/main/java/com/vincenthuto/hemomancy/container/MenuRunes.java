@@ -64,7 +64,7 @@ public class MenuRunes extends AbstractContainerMenu {
 		this.addSlot(new SlotRune(player, runes, 2, 77 + 2 * 18, 8));
 		this.addSlot(new SlotRune(player, runes, 3, 77 + 3 * 18, 8));
 		this.addSlot(new SlotSelectiveRuneType(player, ItemVasculariumCharm.class, runes, 4, 77, 26));
-		this.addSlot(new SlotSelectiveRuneType(player, ItemBloodGourd.class, runes,5,77, 44));
+		this.addSlot(new SlotSelectiveRuneType(player, ItemBloodGourd.class, runes, 5, 77, 44));
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {
@@ -109,66 +109,26 @@ public class MenuRunes extends AbstractContainerMenu {
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player p_39723_, int p_39724_) {
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(p_39724_);
+	public ItemStack quickMoveStack(Player playerIn, int index) {
+		ItemStack stack = ItemStack.EMPTY;
+		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
-			ItemStack itemstack1 = slot.getItem();
-			itemstack = itemstack1.copy();
-			EquipmentSlot equipmentslot = Mob.getEquipmentSlotForItem(itemstack);
-			if (p_39724_ == 0) {
-				if (!this.moveItemStackTo(itemstack1, 9, 45, true)) {
+			ItemStack itemStack = slot.getItem();
+			stack = itemStack.copy();
+			if (index < 3 * 9) {
+				if (!this.moveItemStackTo(itemStack, 3 * 9, this.slots.size(), true)) {
 					return ItemStack.EMPTY;
 				}
-
-				slot.onQuickCraft(itemstack1, itemstack);
-			} else if (p_39724_ >= 1 && p_39724_ < 5) {
-				if (!this.moveItemStackTo(itemstack1, 9, 45, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (p_39724_ >= 5 && p_39724_ < 9) {
-				if (!this.moveItemStackTo(itemstack1, 9, 45, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (equipmentslot.getType() == EquipmentSlot.Type.ARMOR
-					&& !this.slots.get(8 - equipmentslot.getIndex()).hasItem()) {
-				int i = 8 - equipmentslot.getIndex();
-				if (!this.moveItemStackTo(itemstack1, i, i + 1, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (equipmentslot == EquipmentSlot.OFFHAND && !this.slots.get(45).hasItem()) {
-				if (!this.moveItemStackTo(itemstack1, 45, 46, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (p_39724_ >= 9 && p_39724_ < 36) {
-				if (!this.moveItemStackTo(itemstack1, 36, 45, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (p_39724_ >= 36 && p_39724_ < 45) {
-				if (!this.moveItemStackTo(itemstack1, 9, 36, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (!this.moveItemStackTo(itemstack1, 9, 45, false)) {
+			} else if (!this.moveItemStackTo(itemStack, 0, 3 * 9, false)) {
 				return ItemStack.EMPTY;
 			}
-
-			if (itemstack1.isEmpty()) {
+			if (itemStack.isEmpty()) {
 				slot.set(ItemStack.EMPTY);
 			} else {
 				slot.setChanged();
 			}
-
-			if (itemstack1.getCount() == itemstack.getCount()) {
-				return ItemStack.EMPTY;
-			}
-
-			slot.onTake(p_39723_, itemstack1);
-			if (p_39724_ == 0) {
-				p_39723_.drop(itemstack1, false);
-			}
 		}
-
-		return itemstack;
+		return stack;
 	}
 
 	@Override

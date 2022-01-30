@@ -30,7 +30,6 @@ public class ManipSummonAvatar extends BloodManipulation {
 
 	@Override
 	public void getAction(Player playerIn, Level world, ItemStack heldItemMainhand, BlockPos position) {
-		System.out.println("Summoned Avatar");
 		if (playerIn.isAddedToWorld()) {
 			playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
 				manip.setAvatarActive(!manip.isAvatarActive());

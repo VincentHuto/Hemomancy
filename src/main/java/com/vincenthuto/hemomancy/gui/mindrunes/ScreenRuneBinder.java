@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuRuneBinder;
+import com.vincenthuto.hemomancy.container.MenuRuneBinderInventory;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -15,8 +15,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class ScreenRuneBinder extends AbstractContainerScreen<MenuRuneBinder> {
-	public ScreenRuneBinder(MenuRuneBinder container, Inventory playerInventory, Component name) {
+public class ScreenRuneBinder extends AbstractContainerScreen<MenuRuneBinderInventory> {
+	public ScreenRuneBinder(MenuRuneBinderInventory container, Inventory playerInventory, Component name) {
 		super(container, playerInventory, name);
 
 		switch (container.slotcount) {

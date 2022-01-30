@@ -14,8 +14,7 @@ import com.vincenthuto.hemomancy.item.ItemTendencyBook;
 import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
 import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
-import com.vincenthuto.hemomancy.item.armor.ItemChitiniteChest;
-import com.vincenthuto.hemomancy.item.armor.ItemChitiniteHelmet;
+import com.vincenthuto.hemomancy.item.armor.ItemChitiniteArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
 import com.vincenthuto.hemomancy.item.bloodline.ItemUnsignedLedger;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
@@ -363,17 +362,13 @@ public class ItemInit {
 
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
-			() -> new ItemChitiniteHelmet(EnumModArmorTiers.CHITINITEHELMET, EquipmentSlot.HEAD,
-					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.HEAD));
 	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
-			() -> new ItemChitiniteChest(EnumModArmorTiers.CHITINITECHEST, EquipmentSlot.CHEST,
-					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.CHEST));
 	public static final RegistryObject<Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
-			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.LEGS,
-					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.LEGS));
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
-			() -> new ArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET,
-					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
 
 	// Blood Lust
 	// Masks
@@ -476,7 +471,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_feral,
 					ChiselRecipes.recipeFeral));
-
 
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",

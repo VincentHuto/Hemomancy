@@ -17,17 +17,17 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class MenuRuneBinder extends AbstractContainerMenu {
-	public MenuRuneBinder(final int windowId, final Inventory playerInventory) {
+public class MenuRuneBinderInventory extends AbstractContainerMenu {
+	public MenuRuneBinderInventory(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
 
-	public MenuRuneBinder(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
+	public MenuRuneBinderInventory(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
 
-	public MenuRuneBinder(int windowId, Level world, BlockPos pos, Inventory playerInventory,
+	public MenuRuneBinderInventory(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(ContainerInit.rune_binder.get(), windowId);
 
@@ -53,7 +53,7 @@ public class MenuRuneBinder extends AbstractContainerMenu {
 			playerEntity.closeContainer();
 	}
 
-	public MenuRuneBinder(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
+	public MenuRuneBinderInventory(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		this(windowId, world, pos, playerInventory, playerEntity);
 	}

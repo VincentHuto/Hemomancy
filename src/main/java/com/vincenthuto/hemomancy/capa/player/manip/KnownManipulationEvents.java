@@ -56,7 +56,7 @@ public class KnownManipulationEvents {
 					.orElseThrow(IllegalArgumentException::new).getVeinList());
 			bloodTendencyNew.setSelectedVein(peorig.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(IllegalArgumentException::new).getSelectedVein());
-
+			bloodTendencyNew.setAvatarActive(false);
 			peorig.invalidateCaps();
 		}
 

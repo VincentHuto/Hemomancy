@@ -85,7 +85,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 			ItemStack stack = contents.get(1);
 			if (stack.getItem() instanceof ItemEnzyme) {
 				ItemEnzyme enzyme = (ItemEnzyme) stack.getItem();
-				if (getTendency().get(enzyme.getTend()) < 2.0f) {
+				if (getTendency().get(enzyme.getTend()) < 1f) {
 					tendency.addTendencyAlignment(enzyme.getTend(), enzyme.getAmount() / 50);
 					stack.shrink(1);
 				}

@@ -75,22 +75,4 @@ public class ItemBloodLustArmor extends ArmorItem {
 		});
 	}
 
-	public static ModelBloodLustArmor<LivingEntity> getArmor(EquipmentSlot slot) {
-		return switch (slot) {
-		case CHEST -> ModelBloodLustArmor.chest.get();
-		case LEGS -> ModelBloodLustArmor.legs.get();
-		case FEET -> ModelBloodLustArmor.boots.get();
-		default -> null;
-		};
-	}
-
-	public static ModelBloodLustArmor<LivingEntity> getHelmArmor(EquipmentSlot armorSlot,
-			EnumBloodLustMaskTypes maskType) {
-		return switch (maskType) {
-		case NONE -> ModelBloodLustArmor.helmet.get();
-		case TENGU -> ModelBloodLustArmor.tengu.get();
-		case HORNED -> ModelBloodLustArmor.horned.get();
-		default -> null;
-		};
-	}
 }

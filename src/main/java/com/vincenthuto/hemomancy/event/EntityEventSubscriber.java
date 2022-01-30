@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.model.armor.ModelBloodAvatar;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodGourd;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
+import com.vincenthuto.hemomancy.model.armor.ModelChitiniteArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelCurvedHorn;
 import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
 import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
@@ -145,6 +146,18 @@ public class EntityEventSubscriber {
 				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.FEET));
 		event.registerLayerDefinition(ModelBloodAvatar.layer, ModelBloodAvatar::createLayer);
 
+		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_HELMET_LAYER,
+				() -> ModelChitiniteArmor.createHeadLayer(EquipmentSlot.HEAD));
+
+		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_CHEST_LAYER,
+				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.CHEST));
+
+		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_LEGS_LAYER,
+				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.LEGS));
+		
+		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_FEET_LAYER,
+				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.FEET));
+		
 	}
 
 }

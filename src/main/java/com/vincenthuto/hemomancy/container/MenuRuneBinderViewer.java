@@ -16,13 +16,13 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class MenuRuneViewer extends AbstractContainerMenu {
-	public MenuRuneViewer(final int windowId, final Inventory playerInventory) {
+public class MenuRuneBinderViewer extends AbstractContainerMenu {
+	public MenuRuneBinderViewer(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
 
-	public MenuRuneViewer(int windowId, Level world, BlockPos pos, Inventory playerInventory,
+	public MenuRuneBinderViewer(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(type, windowId);
 
@@ -48,7 +48,7 @@ public class MenuRuneViewer extends AbstractContainerMenu {
 			playerEntity.closeContainer();
 	}
 
-	public MenuRuneViewer(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
+	public MenuRuneBinderViewer(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		this(windowId, world, pos, playerInventory, playerEntity);
 	}
@@ -58,7 +58,7 @@ public class MenuRuneViewer extends AbstractContainerMenu {
 	private int slotID;
 	public String itemKey = "";
 	@SuppressWarnings("rawtypes")
-	public static final MenuType type = new MenuType<>(MenuRuneViewer::new)
+	public static final MenuType type = new MenuType<>(MenuRuneBinderViewer::new)
 			.setRegistryName("rune_binder_container");
 	private Inventory playerInv;
 	public RuneBinderItemHandler handler;

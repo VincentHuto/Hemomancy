@@ -61,6 +61,15 @@ public class RenderTypeInit extends RenderType {
 						.setOverlayState(OVERLAY).createCompositeState(false));
 	}
 
+	public static RenderType energySwirl(ResourceLocation pLocation, float pU, float pV) {
+		return create("energy_swirl", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
+				RenderType.CompositeState.builder().setShaderState(RENDERTYPE_ENERGY_SWIRL_SHADER)
+						.setTextureState(new RenderStateShard.TextureStateShard(pLocation, false, false))
+						.setTexturingState(new RenderStateShard.OffsetTexturingStateShard(pU, pV))
+						.setTransparencyState(ADDITIVE_TRANSPARENCY).setCullState(NO_CULL).setLightmapState(LIGHTMAP)
+						.setOverlayState(OVERLAY).createCompositeState(false));
+	}
+
 	public static RenderType getCrimsonGlint() {
 		return CRIMSON_GLINT;
 	}
