@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.gui.recaller.ScreenVisceralRecaller;
+import com.vincenthuto.hemomancy.gui.ScreenVisceralRecaller;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

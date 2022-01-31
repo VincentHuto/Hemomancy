@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.model.anim.IAnimatable;
 
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ public class CapabilityInit {
 
 	@SubscribeEvent
 	public static void init(RegisterCapabilitiesEvent event) {
+		event.register(IAnimatable.class);
 		event.register(IBloodTendency.class);
 		event.register(IVascularSystem.class);
 		event.register(IBloodVolume.class);

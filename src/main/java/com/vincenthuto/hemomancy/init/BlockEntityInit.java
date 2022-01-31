@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 import com.vincenthuto.hemomancy.tile.BlockEntityDendriticDistributor;
 import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
+import com.vincenthuto.hemomancy.tile.BlockEntityEarthlyTransfuser;
 import com.vincenthuto.hemomancy.tile.BlockEntityHumaneIdol;
 import com.vincenthuto.hemomancy.tile.BlockEntityIronBrazier;
 import com.vincenthuto.hemomancy.tile.BlockEntityJuicinator;
@@ -76,5 +77,10 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<BlockEntityJuicinator>> juiceinator = TILES
 			.register("juiceinator", () -> BlockEntityType.Builder
 					.of(BlockEntityJuicinator::new, BlockInit.juiceinator.get()).build(null));
+	
+	
+	public static final RegistryObject<BlockEntityType<BlockEntityEarthlyTransfuser>> earthly_transfuser = TILES
+			.register("earthly_transfuser", () -> BlockEntityType.Builder
+					.of(BlockEntityEarthlyTransfuser::new, BlockInit.earthly_transfuser.get()).build(null));
 	
 }

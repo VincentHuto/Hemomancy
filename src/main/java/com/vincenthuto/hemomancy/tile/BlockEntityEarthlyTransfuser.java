@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vincenthuto.hemomancy.container.MenuJuiceinator;
+import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.FluidInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -67,7 +67,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-public class BlockEntityJuicinator extends BaseContainerBlockEntity
+public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
 	protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
 	private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
@@ -135,9 +135,10 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 	};
 	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
 	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeTypeInit.juiceinator_recipe_type;
+	public float clientBloodLevel = 0.0f;
 
-	public BlockEntityJuicinator(BlockPos p_154992_, BlockState p_154993_) {
-		super(BlockEntityInit.juiceinator.get(), p_154992_, p_154993_);
+	public BlockEntityEarthlyTransfuser(BlockPos p_154992_, BlockState p_154993_) {
+		super(BlockEntityInit.earthly_transfuser.get(), p_154992_, p_154993_);
 	}
 
 	public FluidTank getTank() {
@@ -279,26 +280,7 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 
 	@Override
 	public CompoundTag getUpdateTag() {
-		CompoundTag tag = new CompoundTag();
-		tank.writeToNBT(tag);
-		tag.putInt("BurnTime", this.litTime);
-		tag.putInt("CookTime", this.cookingProgress);
-		tag.putInt("CookTimeTotal", this.cookingTotalTime);
-		ContainerHelper.saveAllItems(tag, this.items);
-		CompoundTag compoundtag = new CompoundTag();
-		this.recipesUsed.forEach((p_58382_, p_58383_) -> {
-			compoundtag.putInt(p_58382_.toString(), p_58383_);
-		});
-		tag.put("RecipesUsed", compoundtag);
-		return tag;
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		if (tag != null) {
-			tank.readFromNBT(tag);
-		}
+		return super.getUpdateTag();
 	}
 
 	@Override
@@ -307,18 +289,28 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
 			tank.readFromNBT(tag);
-
+			clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
 		}
 
 	}
 
 	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		tank.readFromNBT(tag);
+		clientBloodLevel = tag.getFloat(TAG_BLOOD_LEVEL);
+	}
+
+	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		CompoundTag tag = new CompoundTag();
+		tag.putFloat(TAG_BLOOD_LEVEL, tank.getFluidAmount());
 		return ClientboundBlockEntityDataPacket.create(this);
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, BlockEntityJuicinator te) {
+	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, BlockEntityEarthlyTransfuser te) {
 		boolean flag = te.isLit();
 		boolean flag1 = false;
 		if (te.isLit()) {
@@ -664,12 +656,12 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 
 	@Override
 	protected Component getDefaultName() {
-		return new TranslatableComponent("container.hemomancy.juiceinator");
+		return new TranslatableComponent("container.hemomancy.transfuser");
 	}
 
 	@Override
 	protected AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_) {
-		return new MenuJuiceinator(p_58627_, p_58628_, this, this.dataAccess);
+		return new MenuEarthlyTransfuser(p_58627_, p_58628_, this, this.dataAccess);
 	}
 
 }

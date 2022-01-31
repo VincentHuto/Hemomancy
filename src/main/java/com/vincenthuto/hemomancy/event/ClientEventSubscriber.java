@@ -3,14 +3,15 @@ package com.vincenthuto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.gui.ScreenEarthlyTransfuser;
 import com.vincenthuto.hemomancy.gui.ScreenJuiceinator;
+import com.vincenthuto.hemomancy.gui.ScreenVisceralRecaller;
 import com.vincenthuto.hemomancy.gui.mindrunes.ScreenChiselStation;
 import com.vincenthuto.hemomancy.gui.mindrunes.ScreenPlayerExpanded;
 import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRuneBinder;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingStaff;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingSyringe;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
-import com.vincenthuto.hemomancy.gui.recaller.ScreenVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
@@ -78,6 +79,7 @@ public class ClientEventSubscriber {
 		MenuScreens.register(ContainerInit.living_staff.get(), ScreenLivingStaff::new);
 		MenuScreens.register(ContainerInit.playerrunes, ScreenPlayerExpanded::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), ScreenJuiceinator::new);
+		MenuScreens.register(ContainerInit.earthly_transfuser.get(), ScreenEarthlyTransfuser::new);
 
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);

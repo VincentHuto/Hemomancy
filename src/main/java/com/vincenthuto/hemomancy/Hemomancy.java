@@ -30,10 +30,7 @@ import com.vincenthuto.hemomancy.init.WorldInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
-import com.vincenthuto.hemomancy.recipe.CopyBloodGourdDataRecipe;
-import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
-import com.vincenthuto.hemomancy.recipe.CopyRuneBinderDataRecipe;
-import com.vincenthuto.hemomancy.recipe.FillBloodGourdDataRecipe;
+import com.vincenthuto.hemomancy.recipe.EarthlyTransfuserDataRecipe;
 import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
@@ -46,7 +43,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -220,13 +216,21 @@ public class Hemomancy {
 			WorldInit.registerConfiguredStructures();
 		});
 
-		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "juiceinator"),
-				new RecipeType<JuiceinatorDataRecipe>() {
-					@Override
-					public String toString() {
-						return "juiceinator";
-					}
-				});
+//		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "juiceinator"),
+//				new RecipeType<JuiceinatorDataRecipe>() {
+//					@Override
+//					public String toString() {
+//						return "juiceinator";
+//					}
+//				});
+//
+//		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "earthly_transfuser"),
+//				new RecipeType<EarthlyTransfuserDataRecipe>() {
+//					@Override
+//					public String toString() {
+//						return "earthly_transfuser";
+//					}
+//				});
 	}
 
 	// Combined a few methods into one more generic one
@@ -243,18 +247,6 @@ public class Hemomancy {
 		}
 		return ItemStack.EMPTY;
 
-	}
-
-	@SubscribeEvent
-	public static void onRecipeRegistry(final RegistryEvent.Register<RecipeSerializer<?>> event) {
-		event.getRegistry().register(new CopyMorphlingJarDataRecipe.Serializer()
-				.setRegistryName(new ResourceLocation(MOD_ID, "morphling_jar_upgrade")));
-		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
-				.setRegistryName(new ResourceLocation(MOD_ID, "rune_binder_upgrade")));
-		event.getRegistry().register(new CopyBloodGourdDataRecipe.Serializer()
-				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_upgrade")));
-		event.getRegistry().register(new FillBloodGourdDataRecipe.Serializer()
-				.setRegistryName(new ResourceLocation(MOD_ID, "blood_gourd_fill")));
 	}
 
 }

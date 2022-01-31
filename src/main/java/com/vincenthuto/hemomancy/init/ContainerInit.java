@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.MenuChiselStation;
+import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
 import com.vincenthuto.hemomancy.container.MenuJuiceinator;
 import com.vincenthuto.hemomancy.container.MenuLivingStaff;
 import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
@@ -44,8 +45,11 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<MenuJuiceinator>> juiceinator = CONTAINERS.register("juiceinator",
 			() -> IForgeMenuType.create(MenuJuiceinator::new));
 
-	public static final RegistryObject<MenuType<MenuRuneBinderInventory>> rune_binder = CONTAINERS.register("rune_binder",
-			() -> IForgeMenuType.create(MenuRuneBinderInventory::new));
+	public static final RegistryObject<MenuType<MenuEarthlyTransfuser>> earthly_transfuser = CONTAINERS
+			.register("earthly_transfuser", () -> IForgeMenuType.create(MenuEarthlyTransfuser::new));
+
+	public static final RegistryObject<MenuType<MenuRuneBinderInventory>> rune_binder = CONTAINERS
+			.register("rune_binder", () -> IForgeMenuType.create(MenuRuneBinderInventory::new));
 
 	public static final RegistryObject<MenuType<MenuMorphlingJar>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IForgeMenuType.create(MenuMorphlingJar::new));

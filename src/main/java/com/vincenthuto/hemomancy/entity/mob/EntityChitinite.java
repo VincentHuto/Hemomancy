@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.model.anim.Animation;
+import com.vincenthuto.hemomancy.model.anim.AnimationPacket;
+import com.vincenthuto.hemomancy.model.anim.IAnimatable;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -13,6 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,14 +39,14 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityChitinite extends PathfinderMob{
+public class EntityChitinite extends PathfinderMob implements IAnimatable{
 
-//	private Animation animation = NO_ANIMATION;
-//	public static final Animation ROLLUP_ANIMATION = new Animation(128);
+	private Animation animation = NO_ANIMATION;
+	public static final Animation ROLLUP_ANIMATION = new Animation(128);
 
 	public int puffCooldown = 0;
 
-	//private int animationTick;
+	private int animationTick;
 
 	public EntityChitinite(EntityType<? extends EntityChitinite> type, Level worldIn) {
 		super(type, worldIn);
@@ -99,8 +103,8 @@ public class EntityChitinite extends PathfinderMob{
 	@Override
 	public void aiStep() {
 		super.aiStep();
-		//Animation animation = getAnimation();
-		//int animTick = getAnimationTick();
+		Animation animation = getAnimation();
+		int animTick = getAnimationTick();
 
 		if (puffCooldown > 0) {
 			--puffCooldown;
@@ -127,7 +131,7 @@ public class EntityChitinite extends PathfinderMob{
 	@Override
 	public void tick() {
 		super.tick();
-	//	updateAnimations();
+		updateAnimations();
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -140,12 +144,12 @@ public class EntityChitinite extends PathfinderMob{
 		if (isClose) {
 			yHeadRot = (float) MathUtils.getAngle(EntityChitinite.this, target) + 90f;
 		}
-//		if (noActiveAnimation()) {
-//			if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityChitinite.this, target) + 90,
-//					yRot) < 30) {
-//				AnimationPacket.send(EntityChitinite.this, ROLLUP_ANIMATION);
-//			}
-//		}
+		if (noAnimations()) {
+			if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityChitinite.this, target) + 90,
+					yRotO) < 30) {
+				AnimationPacket.send(EntityChitinite.this, ROLLUP_ANIMATION);
+			}
+		}
 	}
 
 	@Override
@@ -192,6 +196,35 @@ public class EntityChitinite extends PathfinderMob{
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	public int getAnimationTick() {
+		return animationTick;
+	}
+
+	@Override
+	public void setAnimationTick(int tick) {
+		animationTick = tick;
+
+	}
+
+	@Override
+	public Animation getAnimation() {
+		return animation;
+	}
+
+	@Override
+	public void setAnimation(Animation animation) {
+		if (animation == null)
+			animation = NO_ANIMATION;
+		setAnimationTick(0);
+		this.animation = animation;
+	}
+
+	@Override
+	public Animation[] getAnimations() {
+		return new Animation[] { ROLLUP_ANIMATION };
 	}
 
 //	@Override

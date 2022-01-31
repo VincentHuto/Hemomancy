@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.gui.recaller;
+package com.vincenthuto.hemomancy.gui;
 
 import java.util.ArrayList;
 import java.util.List;

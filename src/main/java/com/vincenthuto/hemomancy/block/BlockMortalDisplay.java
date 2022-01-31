@@ -64,7 +64,6 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 			volume.setActive(true);
 			player.displayClientMessage(
 					new TextComponent("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
-
 			for (int i = 0; i < 10; i++) {
 				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
 				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(

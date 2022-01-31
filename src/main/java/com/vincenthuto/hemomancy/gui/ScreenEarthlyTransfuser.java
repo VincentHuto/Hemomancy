@@ -9,8 +9,8 @@ import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuJuiceinator;
-import com.vincenthuto.hemomancy.tile.BlockEntityJuicinator;
+import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
+import com.vincenthuto.hemomancy.tile.BlockEntityEarthlyTransfuser;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -22,13 +22,13 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.gui.GuiUtils;
 
-public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> {
+public class ScreenEarthlyTransfuser extends AbstractContainerScreen<MenuEarthlyTransfuser> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/juiceinator_gui.png");
+			"textures/gui/earthly_transfuser_gui.png");
 	private final ResourceLocation texture;
-	final BlockEntityJuicinator te;
+	final BlockEntityEarthlyTransfuser te;
 
-	public ScreenJuiceinator(MenuJuiceinator screenContainer, Inventory inv, Component titleIn) {
+	public ScreenEarthlyTransfuser(MenuEarthlyTransfuser screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
 		this.texture = TEXTURE;
 		this.te = screenContainer.getTe();
@@ -70,7 +70,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 
 		matrix.pushPose();
-		float bloodVolume = te.getTank().getFluidAmount() * 5;
+		float bloodVolume = te.clientBloodLevel * 5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
 		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
@@ -95,7 +95,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 	public void renderVolumeFrame(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 		matrix.translate(0, 0, 100);
 		matrix.pushPose();
-		float bloodVolume =  te.getTank().getFluidAmount() * 5;
+		float bloodVolume = te.clientBloodLevel * 5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 		matrix.popPose();
@@ -149,7 +149,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		this.font.draw(matrixStack, String.valueOf(te.getTank().getFluidAmount()), 130, 4, 0000);
+		this.font.draw(matrixStack, String.valueOf(te.clientBloodLevel), 130, 4, 0000);
 
 	}
 

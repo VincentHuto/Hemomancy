@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
 import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
 import com.vincenthuto.hemomancy.block.BlockEarthenVein;
+import com.vincenthuto.hemomancy.block.BlockEarthlyTransfuser;
 import com.vincenthuto.hemomancy.block.BlockJuiceinator;
 import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
 import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
@@ -209,6 +210,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
+	public static final RegistryObject<Block> earthly_transfuser = MODELEDBLOCKS.register("earthly_transfuser",
+			() -> new BlockEarthlyTransfuser(
+					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
@@ -230,6 +236,8 @@ public class BlockInit {
 					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthly_transfuser.get(), RenderType.cutoutMipped());
+
 		}
 	}
 
