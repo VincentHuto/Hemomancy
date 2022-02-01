@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.block;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -27,33 +28,43 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
-public class BlockEarthlyTransfuser extends BaseEntityBlock {
+public class BlockEarthlyTransfuser extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	private static final VoxelShape SHAPE_N = Stream.of(
+			Block.box(3, 5, 3, 13, 7, 13),
+			Block.box(5, 3, 5, 11, 5, 11),
+			Block.box(4, 1, 4, 12, 3, 12),
+			Block.box(0, 0, 0, 16, 1, 16)
+			).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
 	public BlockEarthlyTransfuser(BlockBehaviour.Properties p_48687_) {
 		super(p_48687_);
 		this.registerDefaultState(
-				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, Boolean.valueOf(false)));
+				this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(LIT, Boolean.valueOf(false)));
 	}
 
 	@Override
@@ -119,24 +130,24 @@ public class BlockEarthlyTransfuser extends BaseEntityBlock {
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState p_48727_) {
-		return RenderShape.MODEL;
+	public BlockState rotate(BlockState state, Rotation rot) {
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	public BlockState rotate(BlockState p_48722_, Rotation p_48723_) {
-		return p_48722_.setValue(FACING, p_48723_.rotate(p_48722_.getValue(FACING)));
+	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
-	public BlockState mirror(BlockState p_48719_, Mirror p_48720_) {
-		return p_48719_.rotate(p_48720_.getRotation(p_48719_.getValue(FACING)));
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(FACING, LIT);
 	}
 
-	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-		p_48725_.add(FACING, LIT);
+	@Nullable
+	protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+			BlockEntityType<A> p_152133_, BlockEntityType<E> p_152134_, BlockEntityTicker<? super E> p_152135_) {
+		return p_152134_ == p_152133_ ? (BlockEntityTicker<A>) p_152135_ : null;
 	}
 
 	@Nullable
@@ -144,6 +155,13 @@ public class BlockEarthlyTransfuser extends BaseEntityBlock {
 			BlockEntityType<T> p_151989_, BlockEntityType<? extends BlockEntityEarthlyTransfuser> p_151990_) {
 		return p_151988_.isClientSide ? null
 				: createTickerHelper(p_151989_, p_151990_, BlockEntityEarthlyTransfuser::serverTick);
+	}
+
+	private static BlockEntityTicker<BlockEntityEarthlyTransfuser> createTickerHelper(
+			BlockEntityType<BlockEntityEarthlyTransfuser> p_151989_,
+			BlockEntityType<? extends BlockEntityEarthlyTransfuser> p_151990_, Object object) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -185,4 +203,20 @@ public class BlockEarthlyTransfuser extends BaseEntityBlock {
 					d2 + d7, 0.0D, 0.0D, 0.0D);
 		}
 	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		return SHAPE_N;
+	}
+
+	@Override
+	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(state, world, pos, neighbor);
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+			boolean isMoving) {
+	}
+
 }

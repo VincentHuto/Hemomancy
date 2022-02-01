@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
 import com.vincenthuto.hemomancy.entity.drudge.EntityDrudge;
+import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.entity.mob.EntityAbhorentThought;
 import com.vincenthuto.hemomancy.entity.mob.EntityChitinite;
@@ -86,6 +87,13 @@ public class EntityInit {
 					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "chthonian").toString()));
 
 	// Projectiles
+
+	public static final RegistryObject<EntityType<EntityFlyingCharm>> flying_charm = ENTITY_TYPES.register(
+			"flying_charm",
+			() -> EntityType.Builder.<EntityFlyingCharm>of(EntityFlyingCharm::new, MobCategory.MISC).sized(0.25F, 0.25F)
+					.clientTrackingRange(4).updateInterval(4)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "flying_charm").toString()));
+
 	public static final RegistryObject<EntityType<EntityBloodOrbDirected>> directed_blood_orb = ENTITY_TYPES.register(
 			"directed_blood_orb",
 			() -> EntityType.Builder.<EntityBloodOrbDirected>of(EntityBloodOrbDirected::new, MobCategory.MISC)

@@ -197,11 +197,14 @@ public class EntityDrudge extends TamableAnimal {
 	@Override
 	public void tick() {
 		super.tick();
+        this.setAirSupply(100);
+
 		if (this.isTame()) {
 
 		}
 	}
 
+	
 	@Override
 	protected void registerGoals() {
 		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, Villager.class, false));

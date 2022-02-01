@@ -178,40 +178,58 @@ public class ModelChitiniteArmor<T extends LivingEntity> extends HumanoidModel<T
 		if (slot.equals(EquipmentSlot.LEGS)) {
 
 			PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg",
-					CubeListBuilder.create().texOffs(47, 76)
-							.addBox(-1.4F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+					CubeListBuilder.create().texOffs(50, 116)
+							.addBox(-1.4F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(50, 116)
 							.addBox(-1.4F, 3.1F, -2.2F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(1.6F, 6.1F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+							.addBox(1.6F, 6.1F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(51, 94)
+							.addBox(1.85F, 6.6F, -0.95F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
 							.addBox(1.6F, -0.9F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+							.addBox(1.35F, 3.1F, -1.45F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(49, 116)
 							.addBox(-1.4F, 8.1F, -2.45F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.4F, 7.1F, -2.1F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.4F, -0.9F, 1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.4F, 3.1F, 1.5F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+							.addBox(-1.4F, 7.1F, -2.1F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(46, 91)
+							.addBox(-1.4F, -0.9F, 1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(56, 99)
+							.addBox(-0.9F, -0.9F, 2.75F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(38, 77)
+							.addBox(-0.9F, 6.1F, 2.25F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(27, 102)
+							.addBox(-0.4F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(29, 88)
+							.addBox(-1.4F, 3.1F, 1.5F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(35, 79)
 							.addBox(-1.4F, 7.1F, 1.3F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(1.9F, 12.0F, 0.0F));
 
 			PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg",
-					CubeListBuilder.create().texOffs(47, 76)
-							.addBox(-1.6F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.6F, 3.1F, -2.2F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+					CubeListBuilder.create().texOffs(50, 116)
+							.addBox(-1.6F, -0.9F, -2.3F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(50, 116)
+							.addBox(-1.6F, 3.1F, -2.2F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(49, 116)
 							.addBox(-1.6F, 8.1F, -2.45F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.6F, 7.1F, -2.1F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.6F, -0.9F, 1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-1.6F, 3.1F, 1.5F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+							.addBox(-1.6F, 7.1F, -2.1F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(43, 95)
+							.addBox(-1.6F, -0.9F, 1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(32, 91)
+							.addBox(-1.6F, 3.1F, 1.5F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(46, 91)
 							.addBox(-1.6F, 7.1F, 1.3F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
 							.addBox(-2.6F, 6.1F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
-							.addBox(-2.6F, -0.9F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(87, 85),
+							.addBox(-2.6F, -0.9F, -1.45F, 1.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(47, 76)
+							.addBox(-2.35F, 3.1F, -1.45F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(56, 99)
+							.addBox(-1.1F, -0.9F, 2.75F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(38, 75)
+							.addBox(-1.1F, 6.1F, 2.25F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(27, 102)
+							.addBox(-0.6F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(43, 74)
+							.addBox(-2.85F, 6.6F, -0.95F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(-1.9F, 12.0F, 0.0F));
 
 		}
 		if (slot.equals(EquipmentSlot.FEET)) {
 
-			PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create()
-					.texOffs(81, 51).addBox(-1.9F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)),
+			PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg",
+					CubeListBuilder.create().texOffs(38, 91)
+							.addBox(-1.9F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(40, 89)
+							.addBox(-1.9F, 11.1F, -3.75F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(40, 89)
+							.addBox(-1.9F, 11.1F, 2.25F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(48, 108)
+							.addBox(1.6F, 10.6F, -3.0F, 1.0F, 1.0F, 6.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(1.9F, 12.0F, 0.0F));
 
-			PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create()
-					.texOffs(87, 85).addBox(-2.1F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)),
+			PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg",
+					CubeListBuilder.create().texOffs(48, 108)
+							.addBox(-2.6F, 10.6F, -3.0F, 1.0F, 1.0F, 6.0F, new CubeDeformation(0.0F)).texOffs(39, 97)
+							.addBox(-2.1F, 10.1F, -2.75F, 4.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(46, 123)
+							.addBox(-2.1F, 11.1F, -3.75F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(46, 123)
+							.addBox(-2.1F, 11.1F, 2.25F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(-1.9F, 12.0F, 0.0F));
 
 		}

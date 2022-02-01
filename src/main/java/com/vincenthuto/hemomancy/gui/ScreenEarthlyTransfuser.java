@@ -70,7 +70,7 @@ public class ScreenEarthlyTransfuser extends AbstractContainerScreen<MenuEarthly
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 
 		matrix.pushPose();
-		float bloodVolume = te.clientBloodLevel * 5;
+		float bloodVolume = te.getBloodVolume() * 5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
 		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
@@ -95,7 +95,7 @@ public class ScreenEarthlyTransfuser extends AbstractContainerScreen<MenuEarthly
 	public void renderVolumeFrame(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 		matrix.translate(0, 0, 100);
 		matrix.pushPose();
-		float bloodVolume = te.clientBloodLevel * 5;
+		float bloodVolume = te.getBloodVolume() * 5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 		matrix.popPose();
@@ -149,7 +149,7 @@ public class ScreenEarthlyTransfuser extends AbstractContainerScreen<MenuEarthly
 
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		this.font.draw(matrixStack, String.valueOf(te.clientBloodLevel), 130, 4, 0000);
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
 
 	}
 

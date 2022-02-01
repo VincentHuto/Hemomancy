@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.containers.slot;
 import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
-import com.vincenthuto.hemomancy.item.rune.ItemVasculariumCharm;
+import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

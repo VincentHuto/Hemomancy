@@ -168,10 +168,10 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 		playermodel.swimAmount = 0.0F;
 		playermodel.setupAnim(playerIn, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		rendererArmIn.xRot = 0.0F;
-		// VertexConsumer ivertexbuilder =
-		// bufferIn.getBuffer(model.renderType(skinTexture));
-		// rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn,
-		// OverlayTexture.NO_OVERLAY);
+		 VertexConsumer ivertexbuilder =
+		 bufferIn.getBuffer(playermodel.renderType(skinTexture));
+		 rendererArmIn.render(matrixStackIn, ivertexbuilder, combinedLightIn,
+		 OverlayTexture.NO_OVERLAY);
 		rendererArmwearIn.xRot = 0.0F;
 		rendererArmwearIn.render(matrixStackIn,
 				bufferIn.getBuffer(RenderType.entityTranslucent(playerIn.getSkinTextureLocation())), combinedLightIn,

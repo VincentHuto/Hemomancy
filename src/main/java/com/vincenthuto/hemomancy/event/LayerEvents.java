@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.render.layer.LayerBloodAvatar;
 import com.vincenthuto.hemomancy.render.layer.LayerBloodGourd;
+import com.vincenthuto.hemomancy.render.layer.LayerCellHand;
 import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
 import net.minecraft.client.Minecraft;
@@ -63,6 +64,8 @@ public class LayerEvents {
 		if (render instanceof LivingEntityRenderer livingRenderer) {
 			livingRenderer.addLayer(new LayerBloodGourd<>(livingRenderer));
 			livingRenderer.addLayer(new LayerBloodAvatar(livingRenderer));
+			livingRenderer.addLayer(new LayerCellHand(livingRenderer));
+
 
 		}
 	}
@@ -74,6 +77,8 @@ public class LayerEvents {
 		if (renderer != null) {
 			renderer.addLayer(new LayerBloodGourd(renderer));
 			renderer.addLayer(new LayerBloodAvatar(renderer));
+			renderer.addLayer(new LayerCellHand(renderer));
+
 		}
 	}
 

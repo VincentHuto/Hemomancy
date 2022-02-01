@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.containers.slot.SlotRuneArmor;
 import com.vincenthuto.hemomancy.containers.slot.SlotRuneOffHand;
 import com.vincenthuto.hemomancy.containers.slot.SlotSelectiveRuneType;
 import com.vincenthuto.hemomancy.init.ContainerInit;
+import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;
 import com.vincenthuto.hemomancy.item.rune.ItemContractRune;
-import com.vincenthuto.hemomancy.item.rune.ItemVasculariumCharm;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
 
 import net.minecraft.resources.ResourceLocation;

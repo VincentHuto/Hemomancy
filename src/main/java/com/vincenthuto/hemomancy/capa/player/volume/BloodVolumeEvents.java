@@ -1,17 +1,13 @@
 package com.vincenthuto.hemomancy.capa.player.volume;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hemomancy.tile.BlockEntityEarthlyTransfuser;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,9 +15,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -47,7 +40,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof BlockEntityVisceralRecaller) {
+		if (event.getObject() instanceof BlockEntityVisceralRecaller || event.getObject() instanceof BlockEntityEarthlyTransfuser) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}

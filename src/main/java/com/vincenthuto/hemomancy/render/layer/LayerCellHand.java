@@ -51,8 +51,7 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 
 	public LayerCellHand(RenderLayerParent<T, M> rendererIn) {
 		super(rendererIn);
-		model = new ModelBloodArm<T>(Minecraft.getInstance().getEntityModels().bakeLayer((ModelBloodArm.blood_arm)),
-				false);
+		model = new ModelBloodArm<T>(Minecraft.getInstance().getEntityModels().bakeLayer((ModelBloodArm.blood_arm)));
 
 	}
 
@@ -194,7 +193,6 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 				if (trace.getType() == Type.BLOCK) {
 					Vec3 hitVec = trace.getLocation();
 					Vec3 finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).reverse();
-
 					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD), hitVec.x,
 							hitVec.y + 1.05D, hitVec.z, (float) finalPos.x + rand.nextFloat() - 0.5D,
 							(float) finalPos.y - rand.nextFloat() - 0.5F, (float) finalPos.z + rand.nextFloat() - 0.5D);
@@ -205,6 +203,7 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
 					false);
+			//particlePos = particlePos.reverse();
 
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),
