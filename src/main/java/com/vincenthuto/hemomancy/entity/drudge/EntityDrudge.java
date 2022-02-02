@@ -139,6 +139,44 @@ public class EntityDrudge extends TamableAnimal {
 		this.getDrudgeInventory().fromTag(compound.getList("Inventory", 10));
 		this.setDrudgeRole(compound.getInt("Role"));
 		this.setDrudgeRank(compound.getInt("Rank"));
+		this.targetSelector.removeGoal(new DrudgeNearestAttackableTargetGoal<>(this, Villager.class, false));
+		this.goalSelector.removeGoal(new MeleeAttackGoal(this, 2.5D, true));
+		this.goalSelector.removeGoal(new DrudgeExtractFromChestGoal(this, 2.5D, 10));
+		this.goalSelector.removeGoal(new DrudgeCollectItemGoal(this, 2.5D, 25));
+		this.goalSelector.removeGoal(new DrudgeEmptyToChestGoal(this, 2.5D, 25));
+		this.goalSelector.removeGoal(new DrudgeHarvestCropGoal(this, 2.5D, 25));
+		this.goalSelector.removeGoal(new DrudgeReplantCropGoal(this, 2.5D, 10));
+
+		switch (this.getRoleTitle()) {
+		case ATTACK:
+			this.goalSelector.addGoal(0, new MeleeAttackGoal(this, 2.5D, true));
+			this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, Villager.class, false));
+			break;
+		case BASE:
+			break;
+		case COLLECTOR:
+			this.goalSelector.addGoal(0, new DrudgeEmptyToChestGoal(this, 2.5D, 25));
+			this.goalSelector.addGoal(1, new DrudgeCollectItemGoal(this, 2.5D, 25));
+			break;
+		case HARVEST:
+			this.goalSelector.addGoal(0, new DrudgeCollectItemGoal(this, 2.5D, 25));
+			this.goalSelector.addGoal(1, new DrudgeHarvestCropGoal(this, 2.5D, 25));
+			break;
+		case NOROLE:
+			break;
+		case PET:
+			break;
+		case PLACER:
+			this.goalSelector.addGoal(5, new DrudgeExtractFromChestGoal(this, 2.5D, 15));
+			this.goalSelector.addGoal(0, new DrudgeReplantCropGoal(this, 2.5D, 10));
+			break;
+		case SEA:
+			break;
+		default:
+			break;
+
+		}
+
 	}
 
 	public SimpleContainer getDrudgeInventory() {
@@ -197,14 +235,23 @@ public class EntityDrudge extends TamableAnimal {
 	@Override
 	public void tick() {
 		super.tick();
-        this.setAirSupply(100);
+		this.setAirSupply(100);
+//		if(isUnderWater()) {
+//			jumpFromGround();
+//		}
+//		
 
 		if (this.isTame()) {
 
 		}
 	}
 
-	
+	@Override
+	protected void reassessTameGoals() {
+		// TODO Auto-generated method stub
+		super.reassessTameGoals();
+	}
+
 	@Override
 	protected void registerGoals() {
 		this.targetSelector.addGoal(0, new DrudgeNearestAttackableTargetGoal<>(this, Villager.class, false));

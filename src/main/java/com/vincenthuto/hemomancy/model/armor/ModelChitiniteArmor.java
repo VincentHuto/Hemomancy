@@ -192,7 +192,9 @@ public class ModelChitiniteArmor<T extends LivingEntity> extends HumanoidModel<T
 							.addBox(-0.9F, 6.1F, 2.25F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(27, 102)
 							.addBox(-0.4F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(29, 88)
 							.addBox(-1.4F, 3.1F, 1.5F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(35, 79)
-							.addBox(-1.4F, 7.1F, 1.3F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)),
+							.addBox(-1.4F, 7.1F, 1.3F, 3.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 16)
+							.mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+							.mirror(false),
 					PartPose.offset(1.9F, 12.0F, 0.0F));
 
 			PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg",
@@ -210,9 +212,11 @@ public class ModelChitiniteArmor<T extends LivingEntity> extends HumanoidModel<T
 							.addBox(-1.1F, -0.9F, 2.75F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(38, 75)
 							.addBox(-1.1F, 6.1F, 2.25F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(27, 102)
 							.addBox(-0.6F, 6.6F, 3.25F, 1.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(43, 74)
-							.addBox(-2.85F, 6.6F, -0.95F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)),
+							.addBox(-2.85F, 6.6F, -0.95F, 1.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 16)
+							.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(-1.9F, 12.0F, 0.0F));
 
+			
 		}
 		if (slot.equals(EquipmentSlot.FEET)) {
 

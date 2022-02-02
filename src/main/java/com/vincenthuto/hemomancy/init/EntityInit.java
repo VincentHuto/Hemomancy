@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
+import com.vincenthuto.hemomancy.entity.brain.EntityBrainTest;
 import com.vincenthuto.hemomancy.entity.drudge.EntityDrudge;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.entity.item.EntityMorphlingPolypItem;
@@ -45,6 +46,16 @@ public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 			Hemomancy.MOD_ID);
 
+	
+	
+	
+	public static final RegistryObject<EntityType<EntityBrainTest>> brain = ENTITY_TYPES.register("brain",
+			() -> EntityType.Builder.<EntityBrainTest>of(EntityBrainTest::new, MobCategory.CREATURE).fireImmune()
+					.sized(0.9F, 1.7F).clientTrackingRange(10)
+					.build(new ResourceLocation(Hemomancy.MOD_ID, "brain").toString()));
+	
+	
+	
 	// Mobs
 	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<EntityLeech>of(EntityLeech::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -70,7 +81,8 @@ public class EntityInit {
 					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
 
 	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
-			() -> EntityType.Builder.<EntityDrudge>of(EntityDrudge::new, MobCategory.CREATURE).sized(1f, 0.5f)
+			() -> EntityType.Builder.<EntityDrudge>of(EntityDrudge::new, MobCategory.CREATURE).fireImmune()
+					.sized(0.9F, 1.7F).clientTrackingRange(10)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
 	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
 			() -> EntityType.Builder.<EntityFungling>of(EntityFungling::new, MobCategory.CREATURE).sized(1F, 1F)
@@ -195,6 +207,8 @@ public class EntityInit {
 		event.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().build());
 		event.put(EntityInit.abhorent_thought.get(), EntityAbhorentThought.setAttributes().build());
 		event.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().build());
+		event.put(EntityInit.brain.get(), EntityBrainTest.setAttributes().build());
+
 	}
 
 }

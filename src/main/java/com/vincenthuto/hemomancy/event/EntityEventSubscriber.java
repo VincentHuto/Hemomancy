@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.EntityInit;
+import com.vincenthuto.hemomancy.model.armor.ModelBarbedArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodAvatar;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodGourd;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
@@ -60,7 +61,6 @@ import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
 import com.vincenthuto.hemomancy.render.item.RenderItemMorphlingPolyp;
 
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -104,7 +104,6 @@ public class EntityEventSubscriber {
 		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), RenderMorphlingPolyp::new);
 		event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
 
-		
 	}
 
 	@SubscribeEvent
@@ -158,10 +157,22 @@ public class EntityEventSubscriber {
 
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_LEGS_LAYER,
 				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.LEGS));
-		
+
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_FEET_LAYER,
 				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.FEET));
 		event.registerLayerDefinition(ModelBloodArm.blood_arm, ModelBloodArm::createHeadLayer);
+
+		event.registerLayerDefinition(ModelBarbedArmor.BARBED_HELMET_LAYER,
+				() -> ModelBarbedArmor.createHeadLayer(EquipmentSlot.HEAD));
+
+		event.registerLayerDefinition(ModelBarbedArmor.BARBED_CHEST_LAYER,
+				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.CHEST));
+
+		event.registerLayerDefinition(ModelBarbedArmor.BARBED_LEGS_LAYER,
+				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.LEGS));
+
+		event.registerLayerDefinition(ModelBarbedArmor.BARBED_FEET_LAYER,
+				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.FEET));
 
 	}
 

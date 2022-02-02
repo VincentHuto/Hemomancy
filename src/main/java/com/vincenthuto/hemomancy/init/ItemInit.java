@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.item.ItemTendencyBook;
 import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
 import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;
 import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.item.armor.ItemBarbedArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
@@ -210,7 +211,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.conjure_crossbow));
-
 	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
 			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.summon_avatar));
@@ -352,13 +352,16 @@ public class ItemInit {
 	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
 			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
 					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-
 	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
 			() -> new ItemSpikedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
-
-//	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-//			() -> new ItemSpikedChestplate(EnumModArmorTiers.BARBEDCHEST, EquipmentSlot.CHEST,
-//					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
+	public static final RegistryObject<Item> barbed_helm = BASEITEMS.register("barbed_helm",
+			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.HEAD));
+	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
+			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.CHEST));
+	public static final RegistryObject<Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
+			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.LEGS));
+	public static final RegistryObject<Item> barbed_boots = BASEITEMS.register("barbed_boots",
+			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.FEET));
 
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",

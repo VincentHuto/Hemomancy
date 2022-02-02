@@ -11,8 +11,10 @@ import com.vincenthuto.hemomancy.model.entity.mob.ModelDrudge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +25,8 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge<EntityDr
 			"textures/entity/drudge/model_drudge.png");
 
 	public RenderDrudge(Context renderManagerIn) {
-		super(renderManagerIn, new ModelDrudge<EntityDrudge>(renderManagerIn.bakeLayer(ModelDrudge.LAYER_LOCATION)), 0.5F);
+		super(renderManagerIn, new ModelDrudge<EntityDrudge>(renderManagerIn.bakeLayer(ModelDrudge.LAYER_LOCATION)),
+				0.5F);
 
 	}
 
@@ -31,9 +34,9 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge<EntityDr
 	public void render(EntityDrudge entityIn, float entityYaw, float partialTicks, PoseStack ms,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		super.render(entityIn, entityYaw, partialTicks, ms, bufferIn, packedLightIn);
+		Minecraft mc = Minecraft.getInstance();
 
 		int rank = entityIn.getDrudgeRank();
-		Minecraft mc = Minecraft.getInstance();
 		Font fontR = mc.font;
 		ms.scale(0.05f, 0.05f, 0.05f);
 		ms.translate(0, 21, 0);
@@ -72,7 +75,7 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge<EntityDr
 			double time = ClientTickHandler.ticksInGame + partialTicks;
 
 			for (int i = 0; i < inv.getContainerSize(); i++) {
-
+				
 				ms.pushPose();
 				ms.translate(0.5F, 1.25F, 0.5F);
 				ms.mulPose(Vector3f.YP.rotationDegrees(angles[i] + (float) time));
@@ -81,8 +84,8 @@ public class RenderDrudge extends MobRenderer<EntityDrudge, ModelDrudge<EntityDr
 				ms.translate(0D, 0.075 * Math.sin((time + i * 10) / 5D), 0F);
 				ItemStack stack = inv.getItem(i);
 				if (!stack.isEmpty()) {
-//					mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, packedLightIn,
-//							OverlayTexture.NO_OVERLAY, ms, bufferIn);
+					mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED, packedLightIn,
+							OverlayTexture.NO_OVERLAY, ms, bufferIn, i);
 				}
 				ms.popPose();
 			}

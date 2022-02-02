@@ -23,8 +23,8 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 			0.1F, () -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
 			}),
-	BARBEDCHEST(Hemomancy.MOD_ID + ":barbed_chestplate", 37, new int[] { 3, 6, 8, 3 }, 15,
-			SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
+	BARBED(Hemomancy.MOD_ID + ":barbed", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F,
+			0.1F, () -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
 			}),
 	BLOODLUST(Hemomancy.MOD_ID + ":blood_lust", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC,

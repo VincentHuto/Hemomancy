@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.player.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.entity.brain.SensorInit;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
 import com.vincenthuto.hemomancy.event.RuneBinderEvents;
@@ -105,6 +106,9 @@ public class Hemomancy {
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		FeatureInit.STRUCTURES.register(modEventBus);
+		SensorInit.DATA_SERIALIZERS.register(modEventBus);
+		SensorInit.SENSORS.register(modEventBus);
+
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 		forgeBus.register(this);

@@ -33,10 +33,10 @@ public class DrudgeReplantCropGoal extends MoveToBlockGoal {
 		this.creature = creature;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void tick() {
 		super.tick();
+		System.out.println("wwwt");
 		if (this.blockPos == null || this.blockPos.closerThan(creature.position(), 1.0D)) {
 			if (creature.level instanceof ServerLevel) {
 				ServerLevel worldIn = (ServerLevel) creature.level;
