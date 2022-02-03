@@ -18,13 +18,13 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-public class ModelSpikedShield extends Model {
-	public static final ModelLayerLocation spiked_shield = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "spiked_shield"), "main");
+public class ModelBarbedShield extends Model {
+	public static final ModelLayerLocation barbed_shield = new ModelLayerLocation(
+			new ResourceLocation(Hemomancy.MOD_ID, "barbed_shield"), "main");
 
 	private final List<ModelPart> parts = new ArrayList<ModelPart>();
 
-	public ModelSpikedShield(ModelPart part) {
+	public ModelBarbedShield(ModelPart part) {
 		super(RenderType::entityTranslucent);
 		for (int i = 0; i < 13; i++) {
 			ModelPart shield3 = part.getChild(Integer.toString(i));

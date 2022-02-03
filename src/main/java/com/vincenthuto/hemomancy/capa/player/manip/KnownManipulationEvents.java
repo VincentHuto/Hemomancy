@@ -4,14 +4,19 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.event.ClientEventSubscriber;
+import com.vincenthuto.hemomancy.init.ManipulationInit;
+import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
+import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -110,31 +115,20 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent e) {
 
-//		// Radiant Protection
-//		if (e.getEntityLiving() instanceof Player) {
-//			Player player = (Player) e.getEntityLiving();
-//			if (ClientEventSubscriber.useContManip.isKeyDown()) {
-//				if (!player.world.isRemote) {
-//					IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
-//							.orElseThrow(NullPointerException::new);
-//					if (known.getSelectedManip() != null) {
-//						BloodManipulation selectedManip = ManipulationInit
-//								.getByName(known.getSelectedManip().getName());
-//						if (selectedManip != null) {
-//							if (selectedManip.getName() == ManipulationInit.sanguine_ward.get().getName()) {
-//								double dist = e.getEntityLiving().getDistance(player);
-//								HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-//								PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(
-//										trace.getHitVec().x, trace.getHitVec().y, trace.getHitVec().z));
-//								e.setAmount((float) (e.getAmount() * 0));
-//							}
-//						}
-//					}
-//				}
-//
-//			}
-//		}
-//	}
+		// Radiant Protection
+		if (e.getEntityLiving() instanceof Player) {
+			Player player = (Player) e.getEntityLiving();
+			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(NullPointerException::new);
+			if (!known.isAvatarActive()) {
+				double dist = e.getEntityLiving().distanceToSqr(player);
+				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
+				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
+						trace.getLocation().y, trace.getLocation().z));
+				e.setAmount((float) (e.getAmount() * 0));
+			}
+
+		}
 	}
 
 }

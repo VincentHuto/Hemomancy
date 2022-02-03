@@ -27,7 +27,7 @@
     },
     "gui" : {
       "rotation" : [ 15, -25, -5 ],
-      "translation" : [ 2, 3, 0 ],
+      "translation" : [ 2, 7.5, 0 ],
       "scale" : [ 0.65, 0.65, 0.65 ]
     },
     "fixed" : {
@@ -45,6 +45,6 @@
     "predicate" : {
       "blocking" : 1
     },
-    "model" : "hemomancy:item/spiked_shield_blocking"
+    "model" : "hemomancy:item/chitinite_shield_blocking"
   } ]
 }

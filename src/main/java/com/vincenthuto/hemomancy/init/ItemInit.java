@@ -17,7 +17,8 @@ import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.item.armor.ItemBarbedArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteArmor;
-import com.vincenthuto.hemomancy.item.armor.ItemSpikedShield;
+import com.vincenthuto.hemomancy.item.armor.ItemChitiniteShield;
+import com.vincenthuto.hemomancy.item.armor.ItemBarbedShield;
 import com.vincenthuto.hemomancy.item.bloodline.ItemUnsignedLedger;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
 import com.vincenthuto.hemomancy.item.memories.ItemFerventHusk;
@@ -348,12 +349,12 @@ public class ItemInit {
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
-	// Barbed/Spiked
+	// Barbed/Barbed
 	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
 			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
 					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> spiked_shield = SPECIALITEMS.register("spiked_shield",
-			() -> new ItemSpikedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
+			() -> new ItemBarbedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> barbed_helm = BASEITEMS.register("barbed_helm",
 			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.HEAD));
 	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
@@ -364,6 +365,11 @@ public class ItemInit {
 			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.FEET));
 
 	// Chitinite
+	public static final RegistryObject<Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
+			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
+					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+	public static final RegistryObject<Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
+			() -> new ItemChitiniteShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
 			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.HEAD));
 	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
@@ -584,7 +590,12 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(spiked_shield.get(), new ResourceLocation("blocking"),
+		ItemProperties.register(barbed_shield.get(), new ResourceLocation("blocking"),
+				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
+					return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
+				});
+		
+		ItemProperties.register(chitinite_shield.get(), new ResourceLocation("blocking"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
 					return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
 				});

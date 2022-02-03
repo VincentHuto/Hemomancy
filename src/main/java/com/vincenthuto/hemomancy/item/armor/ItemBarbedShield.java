@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.render.item.RenderItemSpikedShield;
+import com.vincenthuto.hemomancy.render.item.RenderItemBarbedShield;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -31,8 +31,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
 
-public class ItemSpikedShield extends Item {
-	public ItemSpikedShield(Item.Properties builder) {
+public class ItemBarbedShield extends Item {
+	public ItemBarbedShield(Item.Properties builder) {
 		super(builder.durability(1024));
 		DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
 	}
@@ -40,7 +40,7 @@ public class ItemSpikedShield extends Item {
 //	@Override
 //	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
 //		consumer.accept(new IItemRenderProperties() {
-//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemSpikedShield(null, null);
+//			final BlockEntityWithoutLevelRenderer myRenderer = new RenderItemBarbedShield(null, null);
 //
 //			@Override
 //			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
@@ -122,14 +122,14 @@ public class ItemSpikedShield extends Item {
 	@Override
 	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
 		super.initializeClient(consumer);
-		consumer.accept(RenderPropSpikedShield.INSTANCE);
+		consumer.accept(RenderPropBarbedShield.INSTANCE);
 
 	}
 }
 
-class RenderPropSpikedShield implements IItemRenderProperties {
+class RenderPropBarbedShield implements IItemRenderProperties {
 
-	public static RenderPropSpikedShield INSTANCE = new RenderPropSpikedShield();
+	public static RenderPropBarbedShield INSTANCE = new RenderPropBarbedShield();
 
 	@Override
 	public Font getFont(ItemStack stack) {
@@ -138,7 +138,7 @@ class RenderPropSpikedShield implements IItemRenderProperties {
 
 	@Override
 	public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
-		return new RenderItemSpikedShield(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+		return new RenderItemBarbedShield(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
 				Minecraft.getInstance().getEntityModels());
 	}
 }
