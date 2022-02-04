@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
 
 import net.minecraft.core.NonNullList;
@@ -52,9 +52,9 @@ public class FillBloodGourdDataRecipe extends ShapedRecipe {
 						IBloodVolume resultVolume = craftingResult.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 								.orElseThrow(NullPointerException::new);
 
-						float maxBlood = gourd2.getMaxBlood();
-						float fillBlood = bloodVolume.getBloodVolume() + 200;
-						float fillAmount = fillBlood <= maxBlood ? fillBlood : maxBlood;
+						double maxBlood = gourd2.getMaxBlood();
+						double fillBlood = bloodVolume.getBloodVolume() + 200;
+						double fillAmount = fillBlood <= maxBlood ? fillBlood : maxBlood;
 
 						resultVolume.setBloodVolume(fillAmount);
 					}

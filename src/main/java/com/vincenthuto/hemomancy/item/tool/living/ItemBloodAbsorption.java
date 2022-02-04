@@ -8,8 +8,8 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -94,7 +94,7 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 					float dam = 3f / targets.size();
 					livingTarget.hurt(ItemInit.bloodLoss, dam);
 					if (!worldIn.isClientSide) {
-						volume.addBloodVolume(dam);
+						volume.fill(dam);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 								new PacketBloodVolumeServer(volume));

@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.network.capa;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.Bloodline;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.Bloodline;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,8 +13,8 @@ import net.minecraftforge.network.NetworkEvent;
 public class PacketBloodVolumeServer {
 
 	private boolean active;
-	private float max;
-	private float volume;
+	private double max;
+	private double volume;
 	private Bloodline bloodline;
 
 	public PacketBloodVolumeServer(IBloodVolume volume) {
@@ -24,7 +24,7 @@ public class PacketBloodVolumeServer {
 		this.bloodline = volume.getBloodLine();
 	}
 
-	public PacketBloodVolumeServer(boolean active, float maxIn, float volumeIn, Bloodline bloodline) {
+	public PacketBloodVolumeServer(boolean active, double maxIn, double volumeIn, Bloodline bloodline) {
 		this.active = active;
 		this.max = maxIn;
 		this.volume = volumeIn;
@@ -49,13 +49,13 @@ public class PacketBloodVolumeServer {
 
 	public static void encode(final PacketBloodVolumeServer msg, final FriendlyByteBuf packetBuffer) {
 		packetBuffer.writeBoolean(msg.active);
-		packetBuffer.writeFloat(msg.max);
-		packetBuffer.writeFloat(msg.volume);
+		packetBuffer.writeDouble(msg.max);
+		packetBuffer.writeDouble(msg.volume);
 		packetBuffer.writeNbt(msg.bloodline.serialize());
 	}
 
 	public static PacketBloodVolumeServer decode(final FriendlyByteBuf packetBuffer) {
-		return new PacketBloodVolumeServer(packetBuffer.readBoolean(), packetBuffer.readFloat(),
-				packetBuffer.readFloat(), Bloodline.deserialize(packetBuffer.readNbt()));
+		return new PacketBloodVolumeServer(packetBuffer.readBoolean(), packetBuffer.readDouble(),
+				packetBuffer.readDouble(), Bloodline.deserialize(packetBuffer.readNbt()));
 	}
 }

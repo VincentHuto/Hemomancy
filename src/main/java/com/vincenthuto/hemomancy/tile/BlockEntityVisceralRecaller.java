@@ -5,8 +5,8 @@ import java.util.Map;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider {
+public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider,IBloodTile {
 	NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	static final String TAG_BLOOD_TENDENCY = "tendency";
@@ -60,11 +60,11 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		return volume;
 	}
 
-	public float getBloodVolume() {
+	public double getBloodVolume() {
 		return volume.getBloodVolume();
 	}
 
-	public float getMaxBloodVolume() {
+	public double getMaxBloodVolume() {
 		return volume.getMaxBloodVolume();
 	}
 
@@ -104,7 +104,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 			if (stack.getItem() instanceof ItemBloodyFlask) {
 				ItemBloodyFlask flask = (ItemBloodyFlask) stack.getItem();
 				if (this.getBloodVolume() < this.getMaxBloodVolume()) {
-					volume.addBloodVolume(flask.getAmount());
+					volume.fill(flask.getAmount());
 					stack.shrink(1);
 				}
 			}
@@ -132,7 +132,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		super.saveAdditional(tag);
 		ContainerHelper.saveAllItems(tag, this.contents);
 		if (tag != null) {
-			tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 				if (tendency.getTendency().get(key) != null) {
 					tag.putFloat(key.toString(), tendency.getTendency().get(key));
@@ -159,7 +159,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 	public final CompoundTag getUpdateTag() {
 		CompoundTag tag = new CompoundTag();
 		ContainerHelper.saveAllItems(tag, this.contents);
-		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 			if (tendency.getTendency().get(key) != null) {
 				tag.putFloat(key.toString(), tendency.getTendency().get(key));

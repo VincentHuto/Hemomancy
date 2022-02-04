@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.mojang.math.Vector3d;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
@@ -94,7 +94,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 										BlockInit.active_smouldering_ash_trail.get().defaultBlockState());
-								bloodVol.subtractBloodVolume(25);
+								bloodVol.drain(25);
 
 							}
 							if (sLevel.getBlockState(bHit.getBlockPos())
@@ -135,7 +135,7 @@ public class PacketGroundBloodDraw {
 										z + side.getStepZ() + truePos.z, 3, 0, 0, 0, 0.005f);
 								sLevel.setBlockAndUpdate(bHit.getBlockPos(),
 										BlockInit.active_befouling_ash_trail.get().defaultBlockState());
-								bloodVol.subtractBloodVolume(25);
+								bloodVol.drain(25);
 							}
 							if (sLevel.getBlockState(bHit.getBlockPos())
 									.getBlock() == BlockInit.active_befouling_ash_trail.get()) {

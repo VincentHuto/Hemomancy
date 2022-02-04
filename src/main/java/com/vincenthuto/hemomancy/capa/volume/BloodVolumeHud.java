@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.capa.player.volume;
+package com.vincenthuto.hemomancy.capa.volume;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -27,7 +27,7 @@ import net.minecraftforge.client.gui.GuiUtils;
 @OnlyIn(Dist.CLIENT)
 public class BloodVolumeHud extends Screen {
 
-	public float bloodVolume = 0;
+	public double bloodVolume = 0;
 	private Minecraft mc;
 	LocalPlayer player;
 

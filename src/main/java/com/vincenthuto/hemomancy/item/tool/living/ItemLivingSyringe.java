@@ -5,8 +5,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
 import com.vincenthuto.hemomancy.entity.blood.EntityBloodOrbDirected;
 import com.vincenthuto.hemomancy.item.morphlings.IMorphling;
@@ -136,7 +136,7 @@ public class ItemLivingSyringe extends ItemLivingItem {
 								if (selectedStack.getItem() instanceof IMorphling) {
 									IMorphling morphling = (IMorphling) selectedStack.getItem();
 									morphling.use(player, player.getUsedItemHand(), stack, worldIn);
-									playerVolume.subtractBloodVolume(morphling.getBloodCost());
+									playerVolume.drain(morphling.getBloodCost());
 									PacketHandler.CHANNELBLOODVOLUME.send(
 											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 											new PacketBloodVolumeServer(playerVolume));
@@ -146,7 +146,7 @@ public class ItemLivingSyringe extends ItemLivingItem {
 
 					} else {
 						this.summonDirectedOrb(worldIn, player);
-						playerVolume.subtractBloodVolume(50f);
+						playerVolume.drain(50f);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 								new PacketBloodVolumeServer(playerVolume));

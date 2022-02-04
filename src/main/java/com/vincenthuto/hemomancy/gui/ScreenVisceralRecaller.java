@@ -92,7 +92,7 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 
 		matrix.pushPose();
-		float bloodVolume = te.getBloodVolume();
+		double bloodVolume = te.getBloodVolume();
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
 		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");

@@ -1,11 +1,10 @@
-package com.vincenthuto.hemomancy.capa.player.volume;
+package com.vincenthuto.hemomancy.capa.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hemomancy.tile.BlockEntityEarthlyTransfuser;
-import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hemomancy.tile.IBloodTile;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
@@ -40,7 +39,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof BlockEntityVisceralRecaller || event.getObject() instanceof BlockEntityEarthlyTransfuser) {
+		if (event.getObject() instanceof IBloodTile) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}
@@ -59,8 +58,7 @@ public class BloodVolumeEvents {
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
 		player.displayClientMessage(
-				new TextComponent(
-						"Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
+				new TextComponent("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
 				false);
 	}
 
@@ -132,12 +130,12 @@ public class BloodVolumeEvents {
 //					if (volume.getBloodVolume() < 250) {
 //						RenderSystem.setShader(GameRenderer::getPositionTexShader);
 //						RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//						float time = (float) Math.sin(player.level.getGameTime() * 0.05f);
+//						double time = (double) Math.sin(player.level.getGameTime() * 0.05f);
 //						RenderSystem.setShaderColor(1, 1, 1, 0.5f + time);
 //						RenderSystem._setShaderTexture(0,
 //								new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_shot_overlay.png"));
 //						event.getMatrixStack().pushPose();
-//						float ratio = (float) event.getWindow().getGuiScale();
+//						double ratio = (double) event.getWindow().getGuiScale();
 //						event.getMatrixStack().scale(1 / ratio, 1 / ratio, 1);
 //						GuiComponent.blit(event.getMatrixStack(), 0, 0, 0, 0, event.getWindow().getScreenWidth(),
 //								event.getWindow().getScreenHeight(), event.getWindow().getScreenWidth(),

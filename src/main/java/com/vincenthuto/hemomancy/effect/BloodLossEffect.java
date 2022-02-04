@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.effect;
 
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -56,7 +56,7 @@ public class BloodLossEffect extends MobEffect {
 				Player playerIn = (Player) entity;
 				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 						.orElseThrow(NullPointerException::new);
-				playerVolume.subtractBloodVolume(0.5f * amplifier);
+				playerVolume.drain(0.5f*amplifier);
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketBloodVolumeServer(playerVolume));
 			}

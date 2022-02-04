@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.capa.player.volume;
+package com.vincenthuto.hemomancy.capa.volume;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,8 +15,10 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 //	//@CapabilityInject(IBloodVolume.class)
-	public static final Capability<IBloodVolume> VOLUME_CAPA = CapabilityManager.get(new CapabilityToken<IBloodVolume>() {});
-	
+	public static final Capability<IBloodVolume> VOLUME_CAPA = CapabilityManager
+			.get(new CapabilityToken<IBloodVolume>() {
+			});
+
 	BloodVolume capability = new BloodVolume();
 	private LazyOptional<IBloodVolume> instance = LazyOptional.of(() -> capability);
 
@@ -38,15 +40,15 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 				null, nbt);
 	}
 
-	public static float getPlayerbloodVolume(Player player) {
+	public static double getPlayerbloodVolume(Player player) {
 		return player.getCapability(VOLUME_CAPA).orElseThrow(IllegalStateException::new).getBloodVolume();
 	}
 
 	public CompoundTag writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
 		CompoundTag entry = new CompoundTag();
 		entry.putBoolean("Active", instance.isActive());
-		entry.putFloat("Max", instance.getMaxBloodVolume());
-		entry.putFloat("Volume", instance.getBloodVolume());
+		entry.putDouble("Max", instance.getMaxBloodVolume());
+		entry.putDouble("Volume", instance.getBloodVolume());
 		entry.put("Bloodline", instance.getBloodLine().serialize());
 		return entry;
 	}
@@ -59,8 +61,8 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 			if (entry.contains("Active") && entry.contains("Max") && entry.contains("Volume")
 					&& entry.contains("Bloodline")) {
 				instance.setActive(entry.getBoolean("Active"));
-				instance.setMaxBloodVolume(entry.getFloat("Max"));
-				instance.setBloodVolume(entry.getFloat("Volume"));
+				instance.setMaxBloodVolume(entry.getDouble("Max"));
+				instance.setBloodVolume(entry.getDouble("Volume"));
 				instance.setBloodLine(Bloodline.deserialize(entry.getCompound("Bloodline")));
 			}
 		}

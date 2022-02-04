@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.item.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
@@ -71,7 +71,7 @@ public class PacketUseQuickManipKey {
 												bloodRefund = bloodCost * 0.9f;
 											}
 
-											volume.addBloodVolume(bloodRefund);
+											volume.fill(bloodRefund);
 											mainStack.shrink(1);
 											player.displayClientMessage(new TextComponent("Dispelled Conjured Item")
 													.withStyle(ChatFormatting.RED), true);

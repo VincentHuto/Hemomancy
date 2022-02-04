@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
@@ -103,7 +103,7 @@ public class PacketBloodCraftingKeyPress {
 											ItemStack oldStack = player.getMainHandItem().copy();
 											player.setItemInHand(InteractionHand.MAIN_HAND,
 													new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
-											bloodVolume.subtractBloodVolume(targetPattern.getCost());
+											bloodVolume.drain(targetPattern.getCost());
 											PacketHandler.CHANNELBLOODVOLUME.send(
 													PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 													new PacketBloodVolumeServer(bloodVolume));

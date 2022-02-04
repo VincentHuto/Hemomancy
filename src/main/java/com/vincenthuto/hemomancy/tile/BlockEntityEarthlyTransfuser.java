@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.FluidInit;
@@ -70,7 +70,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
-		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible {
+		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IBloodTile {
 
 	protected static final int SLOT_INPUT = 0;
 	protected static final int SLOT_FUEL = 1;
@@ -150,11 +150,11 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		return volume;
 	}
 
-	public float getBloodVolume() {
+	public double getBloodVolume() {
 		return volume.getBloodVolume();
 	}
 
-	public float getMaxBloodVolume() {
+	public double getMaxBloodVolume() {
 		return volume.getMaxBloodVolume();
 	}
 
@@ -287,7 +287,7 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		});
 		tag.put("RecipesUsed", compoundtag);
 		if (tag != null) {
-			tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		}
 	}
 
@@ -303,7 +303,7 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 	public CompoundTag getUpdateTag() {
 		CompoundTag tag = new CompoundTag();
 		ContainerHelper.saveAllItems(tag, this.items);
-		tag.putFloat(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
 		return tag;
 	}
 
@@ -319,7 +319,6 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		CompoundTag tag = new CompoundTag();
 		return ClientboundBlockEntityDataPacket.create(this);
 
 	}
@@ -361,7 +360,7 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 						te.cookingTotalTime = getTotalCookTime(level, te.recipeType, te);
 						if (te.burn(recipe, te.items, i)) {
 							te.setRecipeUsed(recipe);
-							te.getBloodCapability().addBloodVolume(100);
+							te.getBloodCapability().fill(100);
 							te.sendUpdates();
 						}
 						flag1 = true;
@@ -542,11 +541,11 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 				stack.shrink(1);
 				if (this.items.get(2).isEmpty()) {
 					this.items.set(2, new ItemStack(ItemInit.bloody_flask.get()));
-					volume.subtractBloodVolume(100);
+					volume.drain (100);
 					sendUpdates();
 				} else if (this.items.get(2).getItem() == ItemInit.bloody_flask.get()) {
 					this.items.get(2).grow(1);
-					volume.subtractBloodVolume(100);
+					volume.drain(100);
 					sendUpdates();
 				}
 			}

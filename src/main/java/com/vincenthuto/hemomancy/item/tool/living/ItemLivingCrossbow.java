@@ -9,8 +9,8 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -137,7 +137,7 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 		} else {
 			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-			float vol = volume.getBloodVolume();
+			double vol = volume.getBloodVolume();
 			if (vol >= 0) {
 				if (!isCharged(itemstack)) {
 					this.isLoadingStart = false;
@@ -315,12 +315,12 @@ public class ItemLivingCrossbow extends CrossbowItem implements IDispellable {
 								.orElseThrow(NullPointerException::new);
 						float damageMod = 50f;
 						if (playerVolume.getBloodVolume() > damageMod) {
-							playerVolume.subtractBloodVolume(damageMod);
+							playerVolume.drain(damageMod);
 							PacketHandler.CHANNELBLOODVOLUME.send(
 									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 									new PacketBloodVolumeServer(playerVolume));
 						} else {
-							playerVolume.subtractBloodVolume(damageMod);
+							playerVolume.drain(damageMod);
 							crossbow.hurtAndBreak(2050, shooter, (p_220017_1_) -> {
 								p_220017_1_.broadcastBreakEvent(shooter.getUsedItemHand());
 							});

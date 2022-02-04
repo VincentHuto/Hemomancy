@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.event.ClientEventSubscriber;
-import com.vincenthuto.hemomancy.init.ManipulationInit;
-import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;

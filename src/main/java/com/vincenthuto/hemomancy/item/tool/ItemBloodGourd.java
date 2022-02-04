@@ -5,8 +5,8 @@ import java.util.Random;
 
 import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.EnumBloodGourdTiers;
 
@@ -58,8 +58,8 @@ public class ItemBloodGourd extends Item implements IRune {
 					IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
-						bloodVolume.subtractBloodVolume(0.5f);
-						playerVolume.addBloodVolume(0.5f);
+						bloodVolume.drain(0.5f);
+						playerVolume.fill(0.5f);
 
 					}
 
@@ -69,7 +69,7 @@ public class ItemBloodGourd extends Item implements IRune {
 						Random rand = worldIn.random;
 						if (rand.nextInt(200) == 20) {
 							player.hurt(ItemInit.bloodLoss, 0.5f);
-							bloodVolume.addBloodVolume(50f);
+							bloodVolume.fill(50f);
 						}
 					}
 				}
@@ -117,7 +117,7 @@ public class ItemBloodGourd extends Item implements IRune {
 		}
 	}
 
-	public float getMaxBlood() {
+	public double getMaxBlood() {
 		return tier.getMaxVolume();
 	}
 

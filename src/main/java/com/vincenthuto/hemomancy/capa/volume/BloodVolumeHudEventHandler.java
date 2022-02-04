@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.capa.player.volume;
+package com.vincenthuto.hemomancy.capa.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;

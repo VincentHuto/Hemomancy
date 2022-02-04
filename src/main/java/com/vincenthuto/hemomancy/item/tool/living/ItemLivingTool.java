@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.HashSet;
 
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -78,12 +78,12 @@ public class ItemLivingTool extends DiggerItem implements IDispellable {
 							.orElseThrow(NullPointerException::new);
 					float damageMod = this.getAttackDamage() * 25f;
 					if (playerVolume.getBloodVolume() > damageMod) {
-						playerVolume.subtractBloodVolume(damageMod);
+						playerVolume.drain(damageMod);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 								new PacketBloodVolumeServer(playerVolume));
 					} else {
-						playerVolume.subtractBloodVolume(damageMod);
+						playerVolume.drain(damageMod);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 								new PacketBloodVolumeServer(playerVolume));

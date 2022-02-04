@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.network.keybind;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
@@ -43,7 +43,7 @@ public class PacketBloodFormationKeyPress {
 			if (player.getMainHandItem().getItem() instanceof SwordItem) {
 				if (bloodVolume.getBloodVolume() > 100) {
 					player.displayClientMessage(new TextComponent("Blood has been drawn for a greater cause"), true);
-					bloodVolume.subtractBloodVolume(100);
+					bloodVolume.drain(100);
 					PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 							new PacketBloodVolumeServer(bloodVolume));
 					BlockPos pos = player.blockPosition();

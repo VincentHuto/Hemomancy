@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
-import com.vincenthuto.hemomancy.capa.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.capa.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.render.item.RenderItemCellHand;
@@ -17,6 +17,7 @@ import com.vincenthuto.hutoslib.client.ClientUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.client.IItemRenderProperties;
@@ -82,14 +84,26 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 
 	@Override
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		if (!worldIn.isClientSide) {
-			HitResult trace = player.pick(5.5, ClientUtils.getPartialTicks(), true);
-			if (trace.getType() == Type.BLOCK) {
+		HitResult trace = player.pick(5.5, ClientUtils.getPartialTicks(), true);
+		if (trace.getType() == Type.BLOCK) {
+			if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
+				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+						.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
+					System.out.println("hit fillable tile");
+					IBloodVolume tileVolume = worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+							.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+
+					tileVolume.fillFromSource(playerVolume, 100f);
+
+				}
+			}
+			if (!worldIn.isClientSide) {
+
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketBloodVolumeServer(volume));
+						new PacketBloodVolumeServer(playerVolume));
 			}
 		}
 

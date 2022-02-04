@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.capa.player.volume;
+package com.vincenthuto.hemomancy.capa.volume;
 /*
  * package com.vincenthuto.hemomancy.capa.volume;
  * 
