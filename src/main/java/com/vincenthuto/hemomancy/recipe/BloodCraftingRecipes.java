@@ -47,14 +47,14 @@ public class BloodCraftingRecipes {
 
 	}
 
-	public static List<LabeledBlockPattern> BUNDELDPATTERNS = new ArrayList<>();
-	public static LabeledBlockPattern liber_sanguinum_pattern;
-	public static LabeledBlockPattern living_staff_pattern;
-	public static LabeledBlockPattern living_grip_pattern;
-	public static LabeledBlockPattern ssc_pattern;
-	public static LabeledBlockPattern hematic_iron_pattern;
-	public static LabeledBlockPattern unstained_pillar_pattern;
-	public static LabeledBlockPattern morphling_polyp_pattern;
+	static List<LabeledBlockPattern> BUNDELDPATTERNS = new ArrayList<>();
+	static LabeledBlockPattern liber_sanguinum_pattern;
+	static LabeledBlockPattern living_staff_pattern;
+	static LabeledBlockPattern living_grip_pattern;
+	static LabeledBlockPattern ssc_pattern;
+	static LabeledBlockPattern hematic_iron_pattern;
+	static LabeledBlockPattern unstained_pillar_pattern;
+	static LabeledBlockPattern morphling_polyp_pattern;
 
 	public static void initPatterns() {
 		liber_sanguinum_pattern = registerPattern(
@@ -74,7 +74,7 @@ public class BloodCraftingRecipes {
 
 	// Morphling Incubator Block Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
 		{
 			put('G', BlockInit.sanguine_glass.get());
 			put('T', BlockInit.hematic_iron_block.get());
@@ -83,10 +83,10 @@ public class BloodCraftingRecipes {
 
 		}
 	};
-	public static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
+	static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
 			{ "TGT", "TGT", "AAA" } };
 
-	public static BlockPattern getMorphIncBlockPattern() {
+	static BlockPattern getMorphIncBlockPattern() {
 		BlockPattern morphIncPattern = null;
 		if (morphIncPattern == null) {
 			// 3x3x3
@@ -108,7 +108,7 @@ public class BloodCraftingRecipes {
 
 	// Unstained Pillar Block Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> unsPillarSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> unsPillarSymbolList = new HashMap<Character, Block>() {
 		{
 			put('P', Blocks.QUARTZ_PILLAR);
 			put('S', Blocks.QUARTZ_BLOCK);
@@ -117,10 +117,10 @@ public class BloodCraftingRecipes {
 
 		}
 	};
-	public static String[][] unsPillarPatternArray = { { "AAA", "AAA", "SSS" }, { "ATA", "APA", "SPS" },
+	static String[][] unsPillarPatternArray = { { "AAA", "AAA", "SSS" }, { "ATA", "APA", "SPS" },
 			{ "AAA", "AAA", "SSS" } };
 
-	public static BlockPattern getUnsPillarBlockPattern() {
+	static BlockPattern getUnsPillarBlockPattern() {
 		BlockPattern unsPillarPattern = null;
 		if (unsPillarPattern == null) {
 			// 3x3x3
@@ -140,16 +140,16 @@ public class BloodCraftingRecipes {
 
 	// Tainted Iron Block Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> tIronSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> tIronSymbolList = new HashMap<Character, Block>() {
 		{
 			put('B', BlockInit.active_befouling_ash_trail.get());
 			put('I', Blocks.IRON_BLOCK);
 			put('A', Blocks.AIR);
 		}
 	};
-	public static String[][] tIronPatternArray = { { "AAA", "BBB" }, { "ABA", "BIB" }, { "AAA", "BBB" } };
+	static String[][] tIronPatternArray = { { "AAA", "BBB" }, { "ABA", "BIB" }, { "AAA", "BBB" } };
 
-	public static BlockPattern getTaintedBlockPattern() {
+	static BlockPattern getTaintedBlockPattern() {
 		BlockPattern tIronPattern = null;
 		if (tIronPattern == null) {
 			// 3x2x3
@@ -167,7 +167,7 @@ public class BloodCraftingRecipes {
 
 	// SSC Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> sscSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> sscSymbolList = new HashMap<Character, Block>() {
 		{
 			put('V', BlockInit.venous_stone.get());
 			put('A', Blocks.AIR);
@@ -178,10 +178,10 @@ public class BloodCraftingRecipes {
 
 		}
 	};
-	public static String[][] sscArray = { { "AAAAAA", "SSSSSS" }, { "AABBAA", "SBTTBS" }, { "ABCCBA", "STVVTS" },
+	static String[][] sscArray = { { "AAAAAA", "SSSSSS" }, { "AABBAA", "SBTTBS" }, { "ABCCBA", "STVVTS" },
 			{ "ABCCBA", "STVVTS" }, { "AABBAA", "SBTTBS" }, { "AAAAAA", "SSSSSS" } };
 
-	public static BlockPattern getSSCPattern() {
+	static BlockPattern getSSCPattern() {
 		BlockPattern sscPattern = null;
 		if (sscPattern == null) {
 			// 6x2x6
@@ -207,17 +207,17 @@ public class BloodCraftingRecipes {
 
 	// Grip Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> gripSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> gripSymbolList = new HashMap<Character, Block>() {
 		{
 			put('R', BlockInit.active_befouling_ash_trail.get());
 			put('V', BlockInit.venous_stone.get());
 			put('A', Blocks.AIR);
 		}
 	};
-	public static String[][] gripPatternArray = { { "AAAAA", "ARRRA" }, { "AVAVA", "RVRVR" }, { "AAVAA", "RRRRR" },
+	static String[][] gripPatternArray = { { "AAAAA", "ARRRA" }, { "AVAVA", "RVRVR" }, { "AAVAA", "RRRRR" },
 			{ "AVAVA", "RVRVR" }, { "AAAAA", "ARRRA" } };
 
-	public static BlockPattern getGripPattern() {
+	static BlockPattern getGripPattern() {
 		BlockPattern gripPattern = null;
 		if (gripPattern == null) {
 			// 5x2x5
@@ -240,15 +240,15 @@ public class BloodCraftingRecipes {
 
 	// Book Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> bookSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> bookSymbolList = new HashMap<Character, Block>() {
 		{
 			put('R', BlockInit.befouling_ash_trail.get());
 			put('B', Blocks.BOOKSHELF);
 		}
 	};
-	public static String[][] bookPatternArray = { { "RRR" }, { "RBR" }, { "RRR" } };
+	static String[][] bookPatternArray = { { "RRR" }, { "RBR" }, { "RRR" } };
 
-	public static BlockPattern getBookPattern() {
+	static BlockPattern getBookPattern() {
 		BlockPattern bookPattern = null;
 		if (bookPattern == null) {
 			// 3x1x3
@@ -262,16 +262,16 @@ public class BloodCraftingRecipes {
 
 	// Living Staff Pattern
 	@SuppressWarnings("serial")
-	public static HashMap<Character, Block> staffSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> staffSymbolList = new HashMap<Character, Block>() {
 		{
 			put('I', Blocks.IRON_BARS);
 			put('V', BlockInit.venous_stone.get());
 
 		}
 	};
-	public static String[][] staffPatternArray = { { "V", "I", "I", "V" } };
+	static String[][] staffPatternArray = { { "V", "I", "I", "V" } };
 
-	public static BlockPattern getLivingStaffPattern() {
+	static BlockPattern getLivingStaffPattern() {
 		BlockPattern bookPattern = null;
 		if (bookPattern == null) {
 			bookPattern = BlockPatternBuilder.start().aisle("V", "I", "I", "V")
@@ -281,21 +281,21 @@ public class BloodCraftingRecipes {
 		return bookPattern;
 	}
 
-	public static Predicate<BlockInWorld> blockPredFromHash(HashMap<Character, Block> hash, char c) {
+	static Predicate<BlockInWorld> blockPredFromHash(HashMap<Character, Block> hash, char c) {
 		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(hash.get(c))));
 	}
 
-	public static RecipeSacrificialBloodCrafting registerRecipe(RecipeSacrificialBloodCrafting recipe) {
+	static RecipeSacrificialBloodCrafting registerRecipe(RecipeSacrificialBloodCrafting recipe) {
 		RECIPES.add(recipe);
 		return recipe;
 	}
 
-	public static RecipeBaseBloodCrafting registerRecipe(RecipeBaseBloodCrafting recipe) {
+	static RecipeBaseBloodCrafting registerRecipe(RecipeBaseBloodCrafting recipe) {
 		RECIPES.add(recipe);
 		return recipe;
 	}
 
-	public static LabeledBlockPattern registerPattern(LabeledBlockPattern pattern) {
+	static LabeledBlockPattern registerPattern(LabeledBlockPattern pattern) {
 		BUNDELDPATTERNS.add(pattern);
 		return pattern;
 	}

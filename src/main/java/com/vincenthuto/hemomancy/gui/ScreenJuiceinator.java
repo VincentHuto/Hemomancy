@@ -70,7 +70,7 @@ public class ScreenJuiceinator extends AbstractContainerScreen<MenuJuiceinator> 
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
 
 		matrix.pushPose();
-		double bloodVolume = te.getBloodVolume() * 5;
+		double bloodVolume = te.getBloodVolume() *2.5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
 		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");

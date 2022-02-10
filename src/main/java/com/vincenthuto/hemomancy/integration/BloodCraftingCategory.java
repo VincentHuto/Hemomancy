@@ -13,8 +13,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.gui.HemoBlockPosBlockPair;
+import com.vincenthuto.hemomancy.gui.HemoGuiUtils;
+import com.vincenthuto.hemomancy.gui.ScreenBlockTintGetter;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
+import com.vincenthuto.hutoslib.client.ClientUtils;
 import com.vincenthuto.hutoslib.client.render.block.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.client.render.block.LabeledBlockPattern;
 
@@ -95,39 +100,47 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	}
 
 	int left, top;
-	int guiWidth = 176;
-	int guiHeight = 186;
+	static int guiWidth = 176;
+	static int guiHeight = 186;
 	int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
 	int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) - guiHeight / 2;
 
 	@Override
 	public void draw(RecipeBaseBloodCrafting recipe, PoseStack matrixStack, double mouseX, double mouseY) {
 		overlay.draw(matrixStack);
-		renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern(), centerX + 50,
-				centerY + 50);
-		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Held Item"), -50,
-				(int) (Minecraft.getInstance().font.lineHeight) - 22, 150, 0);
-		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Hit Block"), -50,
-				(int) (Minecraft.getInstance().font.lineHeight) + 25, 150, 0);
+
+		renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern(), mouseX, mouseY);
+//		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Held Item"), -50,
+//				(int) (Minecraft.getInstance().font.lineHeight) - 22, 150, 0);
+//		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Hit Block"), -50,
+//				(int) (Minecraft.getInstance().font.lineHeight) + 25, 150, 0);
 
 	}
 
-	public static void renderPatternInGUI(PoseStack ms, Minecraft mc, LabeledBlockPattern pattern, double xOff,
+	public static void renderPatternInGUI(PoseStack matrices, Minecraft mc, LabeledBlockPattern pattern, double xOff,
 			double yOff) {
-		PoseStack viewModelPose = RenderSystem.getModelViewStack();
-		viewModelPose.pushPose();
-		Lighting.setupFor3DItems();
-		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
-		viewModelPose.mulPose(new Quaternion(Vector3f.YP, 45, true));
-		viewModelPose.scale(1f, 1f, 1f);
-		for (BlockPosBlockPair pair : patternList) {
-			viewModelPose.translate(0, 2, 1);
-			mc.getItemRenderer().renderAndDecorateItem(new ItemStack(pair.getBlock()),
-					(int) xOff + pair.getPos().getX() * -16, (int) yOff + pair.getPos().getZ() * -16,
-					(int) pair.getPos().getY() * -16);
+		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
+		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) ;
+		matrices.pushPose();
+		matrices.mulPose(Vector3f.XN.rotationDegrees(-45));
+		matrices.mulPose(Vector3f.YP.rotationDegrees(45));
+		float structScale = 5f;
+		matrices.scale(structScale, structScale, structScale);
+		HemoGuiUtils.renderMultiBlock(matrices,pattern,
+				ClientUtils.getPartialTicks(), new ScreenBlockTintGetter(), centerX, centerY * 5);
+		matrices.popPose();
 
-		}
-		viewModelPose.popPose();
+//		PoseStack viewModelPose = RenderSystem.getModelViewStack();
+//		viewModelPose.pushPose();
+//		Lighting.setupFor3DItems();
+//		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
+//		viewModelPose.scale(0.5f, 0.5f, -1f);
+//		viewModelPose.mulPose(new Quaternion(Vector3f.YP, -5, true));
+//		for (BlockPosBlockPair pair : patternList) {
+//			HemoGuiUtils.renderItemStackInGui(matrices, new ItemStack(pair.getBlock()), pair.getPos().getX() * -16,
+//					pair.getPos().getZ() * 16);
+//		}
+//		viewModelPose.popPose();
 	}
 
 	@Override

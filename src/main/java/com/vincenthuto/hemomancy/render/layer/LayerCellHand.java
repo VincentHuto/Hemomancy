@@ -203,7 +203,7 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);
 			Vec3[] inversedSphere = HLParticleUtils.inversedSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15,
 					false);
-			//particlePos = particlePos.reverse();
+			// particlePos = particlePos.reverse();
 
 			for (int i = 0; i < globalPartCount; i++) {
 				world.addParticle(BloodCellParticleFactory.createData(new ParticleColor(255, 0, 0)),

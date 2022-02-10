@@ -11,7 +11,6 @@ public class BloodVolume implements IBloodVolume {
 		return bloodLine;
 	}
 
-	
 	@Override
 	public void setBloodLine(Bloodline bloodLine) {
 		this.bloodLine = bloodLine;
@@ -25,6 +24,7 @@ public class BloodVolume implements IBloodVolume {
 		this.bloodVolume -= points;
 
 	}
+
 	/***
 	 * only use if you want to explicitly bypass max volume limits
 	 */
@@ -90,21 +90,22 @@ public class BloodVolume implements IBloodVolume {
 	}
 
 	@Override
-	public boolean canAcceptFill(double points) {
-		return !isFull() && maxBloodVolume >= bloodVolume + points;
+	public boolean wouldOverflow(double points) {
+		return bloodVolume + points > maxBloodVolume;
 	}
 
 	@Override
-	public boolean canAcceptDrain(double points) {
-		return bloodVolume - points >= 0f;
+	public boolean wouldOverstrain(double points) {
+		return bloodVolume - points < 0;
 	}
 
 	@Override
 	public boolean fill(double points) {
-		if (canAcceptFill(points)) {
+		if (!wouldOverflow(points)) {
 			bloodVolume += points;
 			return true;
 		} else {
+			bloodVolume = maxBloodVolume;
 			return false;
 		}
 
@@ -112,10 +113,11 @@ public class BloodVolume implements IBloodVolume {
 
 	@Override
 	public boolean drain(double points) {
-		if (canAcceptDrain(points)) {
+		if (!wouldOverstrain(points)) {
 			bloodVolume -= points;
 			return true;
 		} else {
+			bloodVolume = 0;
 			return false;
 		}
 	}
@@ -139,4 +141,5 @@ public class BloodVolume implements IBloodVolume {
 			return false;
 		}
 	}
+
 }

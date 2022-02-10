@@ -29,10 +29,10 @@ public interface IBloodVolume {
 	public boolean isFull();
 
 	public boolean isEmpty();
-
-	public boolean canAcceptFill(double points);
-
-	public boolean canAcceptDrain(double points);
+	
+	public boolean wouldOverflow(double points);
+	
+	public boolean wouldOverstrain(double points);
 
 	public boolean fill(double points);
 

@@ -37,7 +37,7 @@ public class ItemBloodyFlask extends Item {
 			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
 
-			if (!volume.canAcceptFill(amount)) {
+			if (volume.isFull()) {
 				playerIn.displayClientMessage(new TextComponent("Blood Volume Full"), true);
 			} else {
 				volume.fill(amount);

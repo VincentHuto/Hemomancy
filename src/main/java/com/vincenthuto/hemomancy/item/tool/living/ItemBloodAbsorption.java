@@ -25,12 +25,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.network.PacketDistributor;
@@ -56,6 +58,17 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 				return myRenderer;
 			}
 		});
+	}
+
+	public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving) {
+		if (entityLiving instanceof Player) {
+			((Player) entityLiving).releaseUsingItem();
+		}
+		return stack;
+	}
+
+	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+		return InteractionResult.PASS;
 	}
 
 	@SuppressWarnings("unused")
@@ -112,7 +125,15 @@ public class ItemBloodAbsorption extends Item implements IDispellable, ICellHand
 
 	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.BOW;
+		return UseAnim.NONE;
+	}
+
+	public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
+		return armorType == EquipmentSlot.MAINHAND || armorType == EquipmentSlot.OFFHAND;
+	}
+
+	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
+		return true;
 	}
 
 	@Override

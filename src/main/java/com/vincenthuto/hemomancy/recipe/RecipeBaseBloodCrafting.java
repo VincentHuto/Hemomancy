@@ -4,6 +4,7 @@ import com.vincenthuto.hutoslib.client.render.block.LabeledBlockPattern;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
 
 public class RecipeBaseBloodCrafting {
 
@@ -45,6 +46,10 @@ public class RecipeBaseBloodCrafting {
 
 	public LabeledBlockPattern getBundledPattern() {
 		return pattern;
+	}
+
+	public BlockPattern geBlockPattern() {
+		return pattern.getBlockPattern();
 	}
 
 	public Item getCreation() {
