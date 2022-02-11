@@ -8,10 +8,10 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.gui.HemoGuiUtils;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.recipe.RecipeRecaller;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 //GlStateManager;
 
@@ -88,12 +88,15 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecipeRecaller> {
 		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
 		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
 		ms.translate(87, 45, 0);
-		drawCenter(ms, recipe.getTendency(), 177, 140);
+		drawCenter(ms, recipe.getTendency(), centerX, centerY);
 	}
 
 	private int zLevel = 10;
 
 	private void drawCenter(PoseStack ms, Map<EnumBloodTendency, Float> tends, int xOff, int yOff) {
+		float guiHeight = 228, guiWidth = 174;
+		float left = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
+		float top = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiHeight / 2;
 		int centerOffset = 8;
 		int cx = 0, cy = 0;
 		float rotAngle = -90f;
@@ -101,26 +104,26 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecipeRecaller> {
 		int diameter = 15;
 		float spikeBaseWidth = 23.5f;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff;
-			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff;
-			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff;
-			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff;
+			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 3;
+			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 3;
+			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 23;
+			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 23;
 			double depthDist = ((iconDiameter - diameter) * tends.get(tend) * 0.2 + diameter);
-			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff;
-			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff;
+			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff +3;
+			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 23;
 			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
 					/ 2f);
-			HemoGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
+			HLGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
 					this.zLevel, tend.getColor(), displace, 1.1);
-			HemoGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
+			HLGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
 					this.zLevel, tend.getColor(), displace, 1.1);
-			HemoGuiUtils.fracLine(ms, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
+			HLGuiUtils.fracLine(ms, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
 					tend.getColor(), displace, 0.8);
-			HemoGuiUtils.fracLine(ms, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
+			HLGuiUtils.fracLine(ms, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
 					this.zLevel, tend.getColor(), displace, 0.8);
 			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
 			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			HemoGuiUtils.renderItemStackInGui(ms, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX, newY);
+			HLGuiUtils.renderItemStackInGui(ms, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX, newY);
 			rotAngle += 45;
 		}
 		// GlStateManager._popMatrix();

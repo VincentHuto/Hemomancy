@@ -121,11 +121,15 @@ repositories {
     name = "ModMaven"
     url = "https://modmaven.k-4u.nl"
   }
+   flatDir {
+      dir 'libs'
+   }
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.64'
-    implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.75'
+   // implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
+   implementation fg.deobf("com.vincenthuto:hutoslib:3.31")
    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
 

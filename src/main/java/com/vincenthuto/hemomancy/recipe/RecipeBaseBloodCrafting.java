@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.recipe;
 
-import com.vincenthuto.hutoslib.client.render.block.LabeledBlockPattern;
+import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -12,10 +12,10 @@ public class RecipeBaseBloodCrafting {
 	Item heldItem;
 	Block hitBlock;
 	Item creation;
-	LabeledBlockPattern pattern;
+	MultiblockPattern pattern;
 
 	public RecipeBaseBloodCrafting(Item creation, float cost, Item heldItem, Block hitBlock,
-			LabeledBlockPattern pattern) {
+			MultiblockPattern pattern) {
 		this.cost = cost;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
@@ -24,7 +24,7 @@ public class RecipeBaseBloodCrafting {
 	}
 
 	public RecipeBaseBloodCrafting(Block creation, float cost, Item heldItem, Block hitBlock,
-			LabeledBlockPattern pattern) {
+			MultiblockPattern pattern) {
 		this.cost = cost;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
@@ -44,7 +44,7 @@ public class RecipeBaseBloodCrafting {
 		return hitBlock;
 	}
 
-	public LabeledBlockPattern getBundledPattern() {
+	public MultiblockPattern getMultiblockPattern() {
 		return pattern;
 	}
 

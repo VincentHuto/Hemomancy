@@ -85,13 +85,13 @@ public class PacketBloodCraftingKeyPressNew {
 										Block hitBlock = sLevel.getBlockState(hitPos).getBlock();
 										if (hitBlock == targetPattern.getHitBlock()) {
 											BlockPattern.BlockPatternMatch patternHelper = targetPattern
-													.getBundledPattern().getBlockPattern().find(sLevel, hitPos);
+													.getMultiblockPattern().getBlockPattern().find(sLevel, hitPos);
 											if (patternHelper != null) {
-												for (int i = 0; i < targetPattern.getBundledPattern().getBlockPattern()
+												for (int i = 0; i < targetPattern.getMultiblockPattern().getBlockPattern()
 														.getWidth(); ++i) {
-													for (int j = 0; j < targetPattern.getBundledPattern()
+													for (int j = 0; j < targetPattern.getMultiblockPattern()
 															.getBlockPattern().getHeight(); ++j) {
-														for (int k = 0; k < targetPattern.getBundledPattern()
+														for (int k = 0; k < targetPattern.getMultiblockPattern()
 																.getBlockPattern().getDepth(); ++k) {
 															BlockInWorld cachedBlockInfo = patternHelper.getBlock(i, j,
 																	k);

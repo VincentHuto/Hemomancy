@@ -198,23 +198,23 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
 			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 47;
 			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 47;
-			double depthDist = ((iconDiameter - diameter) * affs.get(tend)*0.5 + diameter);
+			double depthDist = ((iconDiameter - diameter) * affs.get(tend) * 0.5 + diameter);
 			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
 			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 47;
 			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
 					/ 2f);
-			fracLine(stack, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset, this.zLevel,
-					tend.getColor(), displace, 1.1);
-			fracLine(stack, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset, this.zLevel,
-					tend.getColor(), displace, 1.1);
-			fracLine(stack, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
+			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
+					this.zLevel, tend.getColor(), displace, 1.1);
+			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
+					this.zLevel, tend.getColor(), displace, 1.1);
+			HLGuiUtils.fracLine(stack, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
 					tend.getColor(), displace, 0.8);
-			fracLine(stack, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset, this.zLevel,
-					tend.getColor(), displace, 0.8);
+			HLGuiUtils.fracLine(stack, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
+					this.zLevel, tend.getColor(), displace, 0.8);
 			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
 			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			mc.getItemRenderer().renderGuiItem(new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX + xOff + 90,
-					newY + yOff + 47);
+			HLGuiUtils.renderItemStackInGui(stack, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
+					newX + xOff + 90, newY + yOff + 47);
 			rotAngle += 45;
 		}
 	}

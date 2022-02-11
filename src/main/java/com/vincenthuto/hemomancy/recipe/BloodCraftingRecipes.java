@@ -2,12 +2,17 @@ package com.vincenthuto.hemomancy.recipe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hutoslib.client.render.block.LabeledBlockPattern;
+import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -47,64 +52,39 @@ public class BloodCraftingRecipes {
 
 	}
 
-	static List<LabeledBlockPattern> BUNDELDPATTERNS = new ArrayList<>();
-	static LabeledBlockPattern liber_sanguinum_pattern;
-	static LabeledBlockPattern living_staff_pattern;
-	static LabeledBlockPattern living_grip_pattern;
-	static LabeledBlockPattern ssc_pattern;
-	static LabeledBlockPattern hematic_iron_pattern;
-	static LabeledBlockPattern unstained_pillar_pattern;
-	static LabeledBlockPattern morphling_polyp_pattern;
+	static List<MultiblockPattern> BUNDELDPATTERNS = new ArrayList<>();
+	static MultiblockPattern liber_sanguinum_pattern;
+	static MultiblockPattern living_staff_pattern;
+	static MultiblockPattern living_grip_pattern;
+	static MultiblockPattern ssc_pattern;
+	static MultiblockPattern hematic_iron_pattern;
+	static MultiblockPattern unstained_pillar_pattern;
+	static MultiblockPattern morphling_polyp_pattern;
 
 	public static void initPatterns() {
-		liber_sanguinum_pattern = registerPattern(
-				new LabeledBlockPattern(getBookPattern(), bookSymbolList, bookPatternArray));
-		living_staff_pattern = registerPattern(
-				new LabeledBlockPattern(getLivingStaffPattern(), staffSymbolList, staffPatternArray));
-		living_grip_pattern = registerPattern(
-				new LabeledBlockPattern(getGripPattern(), gripSymbolList, gripPatternArray));
-		ssc_pattern = registerPattern(new LabeledBlockPattern(getSSCPattern(), sscSymbolList, sscArray));
-		hematic_iron_pattern = registerPattern(
-				new LabeledBlockPattern(getTaintedBlockPattern(), tIronSymbolList, tIronPatternArray));
+		liber_sanguinum_pattern = registerPattern(generateBlockPatternFromArray(bookSymbolList, bookPatternArray));
+		living_staff_pattern = registerPattern(generateBlockPatternFromArray(staffSymbolList, staffPatternArray));
+		living_grip_pattern = registerPattern(generateBlockPatternFromArray(gripSymbolList, gripPatternArray));
+		ssc_pattern = registerPattern(generateBlockPatternFromArray(sscSymbolList, sscArray));
+		hematic_iron_pattern = registerPattern(generateBlockPatternFromArray(tIronSymbolList, tIronPatternArray));
 		unstained_pillar_pattern = registerPattern(
-				new LabeledBlockPattern(getUnsPillarBlockPattern(), unsPillarSymbolList, unsPillarPatternArray));
+				generateBlockPatternFromArray(unsPillarSymbolList, unsPillarPatternArray));
 		morphling_polyp_pattern = registerPattern(
-				new LabeledBlockPattern(getMorphIncBlockPattern(), morphIncSymbolList, morphIncPatternArray));
+				generateBlockPatternFromArray(morphIncSymbolList, morphIncPatternArray));
 	}
 
 	// Morphling Incubator Block Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
+	 static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
 		{
 			put('G', BlockInit.sanguine_glass.get());
 			put('T', BlockInit.hematic_iron_block.get());
 			put('I', BlockInit.infested_venous_stone.get());
 			put('A', Blocks.AIR);
-
 		}
 	};
-	static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
+	 static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
 			{ "TGT", "TGT", "AAA" } };
-
-	static BlockPattern getMorphIncBlockPattern() {
-		BlockPattern morphIncPattern = null;
-		if (morphIncPattern == null) {
-			// 3x3x3
-			morphIncPattern = BlockPatternBuilder.start()
-
-					.aisle("TGT", "TGT", "AAA").where('T', blockPredFromHash(morphIncSymbolList, 'T'))
-					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
-					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).aisle("GGG", "GIG", "ATA")
-					.where('T', blockPredFromHash(morphIncSymbolList, 'T'))
-					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
-					.where('I', blockPredFromHash(morphIncSymbolList, 'I'))
-					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).aisle("TGT", "TGT", "AAA")
-					.where('T', blockPredFromHash(morphIncSymbolList, 'T'))
-					.where('A', blockPredFromHash(morphIncSymbolList, 'A'))
-					.where('G', blockPredFromHash(morphIncSymbolList, 'G')).build();
-		}
-		return morphIncPattern;
-	}
 
 	// Unstained Pillar Block Pattern
 	@SuppressWarnings("serial")
@@ -120,24 +100,6 @@ public class BloodCraftingRecipes {
 	static String[][] unsPillarPatternArray = { { "AAA", "AAA", "SSS" }, { "ATA", "APA", "SPS" },
 			{ "AAA", "AAA", "SSS" } };
 
-	static BlockPattern getUnsPillarBlockPattern() {
-		BlockPattern unsPillarPattern = null;
-		if (unsPillarPattern == null) {
-			// 3x3x3
-			unsPillarPattern = BlockPatternBuilder.start()
-
-					.aisle("AAA", "AAA", "SSS").where('S', blockPredFromHash(unsPillarSymbolList, 'S'))
-					.where('A', blockPredFromHash(unsPillarSymbolList, 'A')).aisle("ATA", "APA", "SPS")
-					.where('T', blockPredFromHash(unsPillarSymbolList, 'T'))
-					.where('A', blockPredFromHash(unsPillarSymbolList, 'A'))
-					.where('P', blockPredFromHash(unsPillarSymbolList, 'P'))
-					.where('S', blockPredFromHash(unsPillarSymbolList, 'S')).aisle("AAA", "AAA", "SSS")
-					.where('S', blockPredFromHash(unsPillarSymbolList, 'S'))
-					.where('A', blockPredFromHash(unsPillarSymbolList, 'A')).build();
-		}
-		return unsPillarPattern;
-	}
-
 	// Tainted Iron Block Pattern
 	@SuppressWarnings("serial")
 	static HashMap<Character, Block> tIronSymbolList = new HashMap<Character, Block>() {
@@ -148,22 +110,6 @@ public class BloodCraftingRecipes {
 		}
 	};
 	static String[][] tIronPatternArray = { { "AAA", "BBB" }, { "ABA", "BIB" }, { "AAA", "BBB" } };
-
-	static BlockPattern getTaintedBlockPattern() {
-		BlockPattern tIronPattern = null;
-		if (tIronPattern == null) {
-			// 3x2x3
-			tIronPattern = BlockPatternBuilder.start().aisle("AAA", "BBB")
-					.where('B', blockPredFromHash(tIronSymbolList, 'B'))
-					.where('A', blockPredFromHash(tIronSymbolList, 'A')).aisle("ABA", "BIB")
-					.where('I', blockPredFromHash(tIronSymbolList, 'I'))
-					.where('A', blockPredFromHash(tIronSymbolList, 'A'))
-					.where('B', blockPredFromHash(tIronSymbolList, 'B')).aisle("AAA", "BBB")
-					.where('B', blockPredFromHash(tIronSymbolList, 'B'))
-					.where('A', blockPredFromHash(tIronSymbolList, 'A')).build();
-		}
-		return tIronPattern;
-	}
 
 	// SSC Pattern
 	@SuppressWarnings("serial")
@@ -181,30 +127,6 @@ public class BloodCraftingRecipes {
 	static String[][] sscArray = { { "AAAAAA", "SSSSSS" }, { "AABBAA", "SBTTBS" }, { "ABCCBA", "STVVTS" },
 			{ "ABCCBA", "STVVTS" }, { "AABBAA", "SBTTBS" }, { "AAAAAA", "SSSSSS" } };
 
-	static BlockPattern getSSCPattern() {
-		BlockPattern sscPattern = null;
-		if (sscPattern == null) {
-			// 6x2x6
-			sscPattern = BlockPatternBuilder.start().aisle("AAAAAA", "SSSSSS")
-					.where('S', blockPredFromHash(sscSymbolList, 'S')).where('A', blockPredFromHash(sscSymbolList, 'A'))
-					.aisle("AABBAA", "SBTTBS").where('S', blockPredFromHash(sscSymbolList, 'S'))
-					.where('A', blockPredFromHash(sscSymbolList, 'A')).where('B', blockPredFromHash(sscSymbolList, 'B'))
-					.where('T', blockPredFromHash(sscSymbolList, 'T')).aisle("ABCCBA", "STVVTS")
-					.where('S', blockPredFromHash(sscSymbolList, 'S')).where('A', blockPredFromHash(sscSymbolList, 'A'))
-					.where('B', blockPredFromHash(sscSymbolList, 'B')).where('T', blockPredFromHash(sscSymbolList, 'T'))
-					.where('C', blockPredFromHash(sscSymbolList, 'C')).where('V', blockPredFromHash(sscSymbolList, 'V'))
-					.aisle("ABCCBA", "STVVTS").where('S', blockPredFromHash(sscSymbolList, 'S'))
-					.where('A', blockPredFromHash(sscSymbolList, 'A')).where('B', blockPredFromHash(sscSymbolList, 'B'))
-					.where('T', blockPredFromHash(sscSymbolList, 'T')).where('C', blockPredFromHash(sscSymbolList, 'C'))
-					.where('V', blockPredFromHash(sscSymbolList, 'V')).aisle("AABBAA", "SBTTBS")
-					.where('S', blockPredFromHash(sscSymbolList, 'S')).where('A', blockPredFromHash(sscSymbolList, 'A'))
-					.where('B', blockPredFromHash(sscSymbolList, 'B')).where('T', blockPredFromHash(sscSymbolList, 'T'))
-					.aisle("AAAAAA", "SSSSSS").where('S', blockPredFromHash(sscSymbolList, 'S'))
-					.where('A', blockPredFromHash(sscSymbolList, 'A')).build();
-		}
-		return sscPattern;
-	}
-
 	// Grip Pattern
 	@SuppressWarnings("serial")
 	static HashMap<Character, Block> gripSymbolList = new HashMap<Character, Block>() {
@@ -217,27 +139,6 @@ public class BloodCraftingRecipes {
 	static String[][] gripPatternArray = { { "AAAAA", "ARRRA" }, { "AVAVA", "RVRVR" }, { "AAVAA", "RRRRR" },
 			{ "AVAVA", "RVRVR" }, { "AAAAA", "ARRRA" } };
 
-	static BlockPattern getGripPattern() {
-		BlockPattern gripPattern = null;
-		if (gripPattern == null) {
-			// 5x2x5
-			gripPattern = BlockPatternBuilder.start().aisle("AAAAA", "ARRRA")
-					.where('R', blockPredFromHash(gripSymbolList, 'R'))
-					.where('A', blockPredFromHash(gripSymbolList, 'A')).aisle("AVAVA", "RVRVR")
-					.where('V', blockPredFromHash(gripSymbolList, 'V'))
-					.where('A', blockPredFromHash(gripSymbolList, 'A'))
-					.where('R', blockPredFromHash(gripSymbolList, 'R')).aisle("AAVAA", "RRRRR")
-					.where('R', blockPredFromHash(gripSymbolList, 'R'))
-					.where('A', blockPredFromHash(gripSymbolList, 'A')).aisle("AVAVA", "RVRVR")
-					.where('V', blockPredFromHash(gripSymbolList, 'V'))
-					.where('A', blockPredFromHash(gripSymbolList, 'A'))
-					.where('R', blockPredFromHash(gripSymbolList, 'R')).aisle("AAAAA", "ARRRA")
-					.where('R', blockPredFromHash(gripSymbolList, 'R'))
-					.where('A', blockPredFromHash(gripSymbolList, 'A')).build();
-		}
-		return gripPattern;
-	}
-
 	// Book Pattern
 	@SuppressWarnings("serial")
 	static HashMap<Character, Block> bookSymbolList = new HashMap<Character, Block>() {
@@ -247,18 +148,6 @@ public class BloodCraftingRecipes {
 		}
 	};
 	static String[][] bookPatternArray = { { "RRR" }, { "RBR" }, { "RRR" } };
-
-	static BlockPattern getBookPattern() {
-		BlockPattern bookPattern = null;
-		if (bookPattern == null) {
-			// 3x1x3
-			bookPattern = BlockPatternBuilder.start().aisle("RRR").where('R', blockPredFromHash(bookSymbolList, 'R'))
-					.aisle("RBR").where('B', blockPredFromHash(bookSymbolList, 'B'))
-					.where('R', blockPredFromHash(bookSymbolList, 'R')).aisle("RRR")
-					.where('R', blockPredFromHash(bookSymbolList, 'R')).build();
-		}
-		return bookPattern;
-	}
 
 	// Living Staff Pattern
 	@SuppressWarnings("serial")
@@ -271,20 +160,6 @@ public class BloodCraftingRecipes {
 	};
 	static String[][] staffPatternArray = { { "V", "I", "I", "V" } };
 
-	static BlockPattern getLivingStaffPattern() {
-		BlockPattern bookPattern = null;
-		if (bookPattern == null) {
-			bookPattern = BlockPatternBuilder.start().aisle("V", "I", "I", "V")
-					.where('I', blockPredFromHash(staffSymbolList, 'I'))
-					.where('V', blockPredFromHash(staffSymbolList, 'V')).build();
-		}
-		return bookPattern;
-	}
-
-	static Predicate<BlockInWorld> blockPredFromHash(HashMap<Character, Block> hash, char c) {
-		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(hash.get(c))));
-	}
-
 	static RecipeSacrificialBloodCrafting registerRecipe(RecipeSacrificialBloodCrafting recipe) {
 		RECIPES.add(recipe);
 		return recipe;
@@ -295,8 +170,45 @@ public class BloodCraftingRecipes {
 		return recipe;
 	}
 
-	static LabeledBlockPattern registerPattern(LabeledBlockPattern pattern) {
+	static MultiblockPattern registerPattern(MultiblockPattern pattern) {
 		BUNDELDPATTERNS.add(pattern);
 		return pattern;
 	}
+
+	public static MultiblockPattern generateBlockPatternFromArray(HashMap<Character, Block> symbolList,
+			String[][] schematic) {
+		BlockPatternBuilder builder = null;
+		if (builder == null) {
+			builder = BlockPatternBuilder.start();
+			for (int aisle = 0; aisle < schematic.length; aisle++) {
+				builder.aisle(schematic[aisle]);
+				for (int z = 0; z < schematic[aisle].length; z++) {
+					List<Character> distinct = getDistinctChars(schematic[aisle][z]);
+					for (int c = 0; c < distinct.size(); c++) {
+						builder.where(distinct.get(c), blockPredFromHash(symbolList, distinct.get(c)));
+					}
+				}
+
+			}
+		}
+		BlockPattern pattern = builder.build();
+		return new MultiblockPattern(pattern, symbolList, schematic);
+	}
+
+	static Predicate<BlockInWorld> blockPredFromHash(HashMap<Character, Block> hash, char c) {
+		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(hash.get(c))));
+	}
+
+	public static List<Character> getDistinctChars(String chars) {
+		List<Character> distinct = new ArrayList<Character>();
+		for (int i = 0; i < chars.length(); i++) {
+			if (!distinct.contains(chars.charAt(i))) {
+				distinct.add(chars.charAt(i));
+			}
+		}
+		return distinct;
+
+	}
+
+
 }

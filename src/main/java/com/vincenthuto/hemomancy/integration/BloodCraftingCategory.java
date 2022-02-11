@@ -7,21 +7,15 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.gui.HemoBlockPosBlockPair;
-import com.vincenthuto.hemomancy.gui.HemoGuiUtils;
-import com.vincenthuto.hemomancy.gui.ScreenBlockTintGetter;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
 import com.vincenthuto.hutoslib.client.ClientUtils;
-import com.vincenthuto.hutoslib.client.render.block.BlockPosBlockPair;
-import com.vincenthuto.hutoslib.client.render.block.LabeledBlockPattern;
+import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
+import com.vincenthuto.hutoslib.client.screen.guide.ScreenBlockTintGetter;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -35,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+
 
 public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCrafting> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "blood_crafting");
@@ -109,7 +104,7 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	public void draw(RecipeBaseBloodCrafting recipe, PoseStack matrixStack, double mouseX, double mouseY) {
 		overlay.draw(matrixStack);
 
-		renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getBundledPattern(), mouseX, mouseY);
+		renderPatternInGUI(matrixStack, Minecraft.getInstance(), recipe.getMultiblockPattern(), mouseX, mouseY);
 //		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Held Item"), -50,
 //				(int) (Minecraft.getInstance().font.lineHeight) - 22, 150, 0);
 //		Minecraft.getInstance().font.drawWordWrap(new TextComponent("Hit Block"), -50,
@@ -117,17 +112,17 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 
 	}
 
-	public static void renderPatternInGUI(PoseStack matrices, Minecraft mc, LabeledBlockPattern pattern, double xOff,
+	public static void renderPatternInGUI(PoseStack matrices, Minecraft mc, MultiblockPattern pattern, double xOff,
 			double yOff) {
 		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
-		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) ;
+		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
 		matrices.pushPose();
 		matrices.mulPose(Vector3f.XN.rotationDegrees(-45));
 		matrices.mulPose(Vector3f.YP.rotationDegrees(45));
 		float structScale = 5f;
 		matrices.scale(structScale, structScale, structScale);
-		HemoGuiUtils.renderMultiBlock(matrices,pattern,
-				ClientUtils.getPartialTicks(), new ScreenBlockTintGetter(), centerX, centerY * 5);
+		HLGuiUtils.renderMultiBlock(matrices, pattern, ClientUtils.getPartialTicks(), new ScreenBlockTintGetter(),
+				centerX, centerY * 5);
 		matrices.popPose();
 
 //		PoseStack viewModelPose = RenderSystem.getModelViewStack();

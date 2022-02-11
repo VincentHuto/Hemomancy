@@ -236,9 +236,9 @@ public class ItemMorphlingJar extends Item {
 
 		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
 		if (pickupEnabled)
-			tooltip.add(new TextComponent(I18n.get("Hemomancy.autopickupenabled")));
+			tooltip.add(new TextComponent(I18n.get("hemomancy.autopickupenabled")));
 		else
-			tooltip.add(new TextComponent(I18n.get("Hemomancy.autopickupdisabled")));
+			tooltip.add(new TextComponent(I18n.get("hemomancy.autopickupdisabled")));
 
 		if (Screen.hasShiftDown()) {
 			IItemHandler jarHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
@@ -261,7 +261,7 @@ public class ItemMorphlingJar extends Item {
 			}
 
 		} else {
-			tooltip.add(new TextComponent(fallbackString("Hemomancy.shift", "Press <�6�oShift�r> for info.")));
+			tooltip.add(new TextComponent(fallbackString("hemomancy.shift", "Press <�6�oShift�r> for info.")));
 		}
 	}
 }
