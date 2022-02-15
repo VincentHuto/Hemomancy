@@ -156,16 +156,15 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 			this.setDeltaMovement(vec3);
 		}
 
-		float f2 = 0.25F;
 		if (this.isInWater()) {
 			for (int i = 0; i < 4; ++i) {
 				this.level.addParticle(ParticleTypes.BUBBLE, d0 - vec3.x * 0.25D, d1 - vec3.y * 0.25D,
 						d2 - vec3.z * 0.25D, vec3.x, vec3.y, vec3.z);
 			}
 		} else {
-			this.level.addParticle(GlowParticleFactory.createData(ParticleColor.BLOOD), d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D,
-					d1 - vec3.y * 0.25D - 0.5D, d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x,
-					vec3.y, vec3.z);
+			this.level.addParticle(GlowParticleFactory.createData(ParticleColor.BLOOD),
+					d0 - vec3.x * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, d1 - vec3.y * 0.25D - 0.5D,
+					d2 - vec3.z * 0.25D + this.random.nextDouble() * 0.6D - 0.3D, vec3.x, vec3.y, vec3.z);
 		}
 
 		if (!this.level.isClientSide) {

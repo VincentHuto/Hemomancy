@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.model.armor.ModelChitiniteArmor;
 import com.vincenthuto.hemomancy.model.armor.ModelCurvedHorn;
+import com.vincenthuto.hemomancy.model.armor.ModelUnstainedArmor;
 import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
 import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
 import com.vincenthuto.hemomancy.model.entity.ModelBloodBullet;
@@ -27,13 +28,13 @@ import com.vincenthuto.hemomancy.model.entity.mob.ModelLeech;
 import com.vincenthuto.hemomancy.model.entity.mob.ModelLumpOfThought;
 import com.vincenthuto.hemomancy.model.entity.mob.ModelMorphlingPolyp;
 import com.vincenthuto.hemomancy.model.entity.mob.ModelThirster;
+import com.vincenthuto.hemomancy.model.item.ModelBarbedShield;
 import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
 import com.vincenthuto.hemomancy.model.item.ModelChitiniteShield;
 import com.vincenthuto.hemomancy.model.item.ModelLivingAxe;
 import com.vincenthuto.hemomancy.model.item.ModelLivingBladeHandTame;
 import com.vincenthuto.hemomancy.model.item.ModelLivingBladeUnleashed;
 import com.vincenthuto.hemomancy.model.item.ModelLivingSpear;
-import com.vincenthuto.hemomancy.model.item.ModelBarbedShield;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBolt;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBullet;
 import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloud;
@@ -137,6 +138,8 @@ public class EntityEventSubscriber {
 		event.registerLayerDefinition(ModelLumpOfThought.LAYER_LOCATION, ModelLumpOfThought::createBodyLayer);
 		event.registerLayerDefinition(ModelMorphlingPolyp.LAYER_LOCATION, ModelMorphlingPolyp::createBodyLayer);
 		event.registerLayerDefinition(ModelThirster.LAYER_LOCATION, ModelThirster::createBodyLayer);
+		event.registerLayerDefinition(ModelBloodArm.blood_arm, ModelBloodArm::createHeadLayer);
+
 		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_LAYER,
 				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
 		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_TENGU_LAYER,
@@ -153,28 +156,30 @@ public class EntityEventSubscriber {
 
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_HELMET_LAYER,
 				() -> ModelChitiniteArmor.createHeadLayer(EquipmentSlot.HEAD));
-
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_CHEST_LAYER,
 				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.CHEST));
-
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_LEGS_LAYER,
 				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.LEGS));
-
 		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_FEET_LAYER,
 				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.FEET));
-		event.registerLayerDefinition(ModelBloodArm.blood_arm, ModelBloodArm::createHeadLayer);
 
 		event.registerLayerDefinition(ModelBarbedArmor.BARBED_HELMET_LAYER,
 				() -> ModelBarbedArmor.createHeadLayer(EquipmentSlot.HEAD));
-
 		event.registerLayerDefinition(ModelBarbedArmor.BARBED_CHEST_LAYER,
 				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.CHEST));
-
 		event.registerLayerDefinition(ModelBarbedArmor.BARBED_LEGS_LAYER,
 				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.LEGS));
-
 		event.registerLayerDefinition(ModelBarbedArmor.BARBED_FEET_LAYER,
 				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.FEET));
+
+		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_HELMET_LAYER,
+				() -> ModelUnstainedArmor.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_CHEST_LAYER,
+				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_LEGS_LAYER,
+				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_FEET_LAYER,
+				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.FEET));
 
 	}
 

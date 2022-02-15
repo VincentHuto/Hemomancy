@@ -50,28 +50,21 @@ public class HemoLib extends TomeLib {
 				new ItemStack(Items.APPLE)));
 
 		multiblockPages.add(new HemoGuideTOC("Multiblocks"));
-		multiblockPages.add(new HemoGuideMultiblockPage(1, "Multiblocks", "Liber Sanguinum", "Bloody Book",
+		multiblockPages.add(new HemoGuideBloodStructurePage(1, "Multiblocks", "Liber Sanguinum", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(ItemInit.liber_sanguinum.get()),
-				BloodCraftingRecipes.liber_sanguinum_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(2, "Multiblocks", "Living Staff",
-				new ItemStack(ItemInit.living_staff.get()),
-				BloodCraftingRecipes.living_staff_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(3, "Multiblocks", "Living Grasp",
-				new ItemStack(ItemInit.living_grasp.get()),
-				BloodCraftingRecipes.living_grip_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(4, "Multiblocks", "S.S.C",
-				new ItemStack(BlockInit.semi_sentient_construct.get()),
-				BloodCraftingRecipes.ssc_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(5, "Multiblocks", "Hematic Iron",
-				new ItemStack(BlockInit.hematic_iron_block.get()),
-				BloodCraftingRecipes.hematic_iron_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(6, "Multiblocks", "Unstained Pillar",
-				new ItemStack(BlockInit.unstained_podium.get()),
-				BloodCraftingRecipes.unstained_pillar_recipe.getMultiblockPattern()));
-		multiblockPages.add(new HemoGuideMultiblockPage(7, "Multiblocks", "Morphling Incubator",
-				new ItemStack(BlockInit.morphling_incubator.get()),
-				BloodCraftingRecipes.morphling_incubator_recipe.getMultiblockPattern()));
+				new ItemStack(ItemInit.liber_sanguinum.get()), BloodCraftingRecipes.liber_sanguinum_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(2, "Multiblocks", "Living Staff",
+				new ItemStack(ItemInit.living_staff.get()), BloodCraftingRecipes.living_staff_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "Living Grasp",
+				new ItemStack(ItemInit.living_grasp.get()), BloodCraftingRecipes.living_grip_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "S.S.C",
+				new ItemStack(BlockInit.semi_sentient_construct.get()), BloodCraftingRecipes.ssc_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Hematic Iron",
+				new ItemStack(BlockInit.hematic_iron_block.get()), BloodCraftingRecipes.hematic_iron_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Unstained Pillar",
+				new ItemStack(BlockInit.unstained_podium.get()), BloodCraftingRecipes.unstained_pillar_recipe));
+		multiblockPages.add(new HemoGuideBloodStructurePage(7, "Multiblocks", "Morphling Incubator",
+				new ItemStack(BlockInit.morphling_incubator.get()), BloodCraftingRecipes.morphling_incubator_recipe));
 
 		registerChapters();
 	}

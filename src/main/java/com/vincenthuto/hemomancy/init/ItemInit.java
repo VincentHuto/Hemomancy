@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.item.armor.ItemBarbedArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemChitiniteShield;
+import com.vincenthuto.hemomancy.item.armor.ItemUnstainedArmor;
 import com.vincenthuto.hemomancy.item.armor.ItemBarbedShield;
 import com.vincenthuto.hemomancy.item.bloodline.ItemUnsignedLedger;
 import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
@@ -379,6 +380,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
 			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
 
+	
+	//Unstained
+	public static final RegistryObject<Item> unstained_helm = BASEITEMS.register("unstained_helm",
+			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.HEAD));
+	public static final RegistryObject<Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
+			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.CHEST));
+	public static final RegistryObject<Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
+			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.LEGS));
+	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
+			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
+	
 	// Blood Lust
 	// Masks
 	public static final RegistryObject<Item> tengu_mask = BASEITEMS.register("tengu_mask",
