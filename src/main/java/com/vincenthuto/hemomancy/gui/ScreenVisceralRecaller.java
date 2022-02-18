@@ -219,44 +219,4 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 		}
 	}
 
-	private static void drawLine(PoseStack stack, int x1, int y1, int x2, int y2, ParticleColor color, int displace) {
-		// RenderSystem.assertThread(RenderSystem::isOnRenderThread);
-		GlStateManager._disableTexture();
-		GlStateManager._depthMask(false);
-		GlStateManager._disableCull();
-		RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
-		Tesselator var4 = RenderSystem.renderThreadTesselator();
-		BufferBuilder var5 = var4.getBuilder();
-		RenderSystem.lineWidth(1.0F);
-		var5.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-		Vector3d vector3f = new Vector3d(x2 - x1, y2 - y1, 0);
-		Vector3d vector3f2 = new Vector3d(x1 - x2, y1 - y2, 0);
-		int red = (int) color.getRed();
-		int green = (int) color.getGreen();
-		int blue = (int) color.getBlue();
-		var5.vertex(x1, y1, 0.0D).color(red, green, blue, 255).normal((float) vector3f.x, (float) vector3f.y, 0.0F)
-				.endVertex();
-		var5.vertex(x2, y2, 0.0D).color(red, green, blue, 255).normal((float) vector3f2.x, (float) vector3f2.y, 0.0F)
-				.endVertex();
-		var4.end();
-		GlStateManager._enableCull();
-		GlStateManager._depthMask(true);
-		GlStateManager._enableTexture();
-	}
-
-	public static void fracLine(PoseStack matrix, int src_x, int src_y, int dst_x, int dst_y, int zLevel,
-			ParticleColor color, int displace, double detail) {
-		if (displace < detail) {
-			drawLine(matrix, src_x, src_y, dst_x, dst_y, color, displace);
-		} else {
-			Random rand = new Random();
-			int mid_x = (dst_x + src_x) / 2;
-			int mid_y = (dst_y + src_y) / 2;
-			mid_x = (int) (mid_x + (rand.nextFloat() - 0.25) * displace * 0.25);
-			mid_y = (int) (mid_y + (rand.nextFloat() - 0.25) * displace * 0.25);
-			fracLine(matrix, src_x, src_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
-			fracLine(matrix, dst_x, dst_y, mid_x, mid_y, zLevel, color, (displace / 2), detail);
-
-		}
-	}
 }

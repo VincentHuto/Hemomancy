@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.containers.slot.JuiceinatorFlaskSlot;
 import com.vincenthuto.hemomancy.containers.slot.JuiceinatorFuelSlot;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.init.RecipeTypeInit;
+import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.tile.BlockEntityJuicinator;
 import com.vincenthuto.hutoslib.common.item.HLItemInit;
 
@@ -52,7 +52,7 @@ public class MenuJuiceinator extends AbstractContainerMenu {
 			final ContainerData containerData) {
 		super(ContainerInit.juiceinator.get(), windowId);
 		this.te = container;
-		this.recipeType = RecipeTypeInit.juiceinator_recipe_type;
+		this.recipeType = RecipeInit.juiceinator_recipe_type;
 		checkContainerSize(container, 4);
 		checkContainerDataCount(containerData, 4);
 		this.container = container;

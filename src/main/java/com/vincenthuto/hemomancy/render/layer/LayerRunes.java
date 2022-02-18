@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.render.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.capa.player.rune.IRenderRunes;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 

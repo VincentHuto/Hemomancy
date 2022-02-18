@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.container.MenuJuiceinator;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.FluidInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.init.RecipeTypeInit;
+import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hutoslib.common.item.HLItemInit;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
@@ -136,7 +136,7 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 		}
 	};
 	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeTypeInit.juiceinator_recipe_type;
+	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeInit.juiceinator_recipe_type;
 
 	public BlockEntityJuicinator(BlockPos p_154992_, BlockState p_154993_) {
 		super(BlockEntityInit.juiceinator.get(), p_154992_, p_154993_);

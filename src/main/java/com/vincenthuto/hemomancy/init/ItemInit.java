@@ -380,8 +380,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
 			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
 
-	
-	//Unstained
+	// Unstained
 	public static final RegistryObject<Item> unstained_helm = BASEITEMS.register("unstained_helm",
 			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.HEAD));
 	public static final RegistryObject<Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
@@ -390,7 +389,7 @@ public class ItemInit {
 			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.LEGS));
 	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
 			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
-	
+
 	// Blood Lust
 	// Masks
 	public static final RegistryObject<Item> tengu_mask = BASEITEMS.register("tengu_mask",
@@ -606,7 +605,7 @@ public class ItemInit {
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
 					return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
 				});
-		
+
 		ItemProperties.register(chitinite_shield.get(), new ResourceLocation("blocking"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
 					return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;

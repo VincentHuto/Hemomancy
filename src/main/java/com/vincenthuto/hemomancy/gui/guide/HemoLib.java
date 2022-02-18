@@ -31,39 +31,46 @@ public class HemoLib extends TomeLib {
 	public void registerTome() {
 
 		introPages.add(new HemoGuideTOC("Intro"));
-		introPages.add(new HemoGuidePage(1, "Intro", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
+		introPages.add(new HemoGuidePage(1, "Intro", "Hemomancy", "No its not Blood Magic",
+				"Welcome to Hemomancy! My first(released) major mod, This is a magic mod centered around blood, and blood control, focusing more so on the quality and efficency of blood rather than quantity."));
 		introPages.add(new HemoGuidePage(2, "Intro", "Intro", "Getting to know yourself",
 				"ejfiuoejhwiofehjwiofhnjewifnhjuew", new ItemStack(Items.BOOK)));
 
 		vasuclarPages.add(new HemoGuideTOC("Vascularity"));
-		vasuclarPages.add(new HemoGuidePage(1, "Vascularity"));
-		vasuclarPages.add(new HemoGuidePage(2, "Vascularity", "efuwijjjjjjjjjfejiufhewiufhewuifhweuifhewif"));
-
-		tendencyPages.add(new HemoGuideTOC("Tendency"));
-		tendencyPages.add(new HemoGuidePage(1, "Tendency", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
-		tendencyPages.add(new HemoGuidePage(2, "Tendency", "Manips", "Control", "ejfiuoejhwiofehjwiofhnjewifnhjuew",
-				new ItemStack(Items.PUMPKIN)));
+		vasuclarPages.add(new HemoGuidePage(1, "Vascularity", "Hemomancy", "No its not Blood Magic", ""));
 
 		manipPages.add(new HemoGuideTOC("Manips"));
-		manipPages.add(new HemoGuidePage(1, "Manips", "MANUIUIDI*WQJHDUIWQHNUIJDWQHBNUDJIHNUIQ"));
-		manipPages.add(new HemoGuidePage(2, "Manips", "Manips", "Control", "ejfiuoejhwiofehjwiofhnjewifnhjuew",
-				new ItemStack(Items.APPLE)));
+		manipPages.add(new HemoGuidePage(1, "Manips", "Manipulations", "Directing the flow",
+				"ejfiuoejhwiofehjwiofhnjewifnhjuew", new ItemStack(ItemInit.blood_stained_stone.get())));
+		manipPages.add(new HemoGuidePage(2, "Manips", "Hematic Memory", "Remembering your potential",
+				"ejfiuoejhwiofehjwiofhnjewifnhjuew", new ItemStack(ItemInit.hematic_memory.get())));
+		manipPages.add(new HemoGuidePage(3, "Manips", "Visceral Recaller", "Jog your memory",
+				"ejfiuoejhwiofehjwiofhnjewifnhjuew", new ItemStack(BlockInit.visceral_artificial_recaller.get())));
+
+		tendencyPages.add(new HemoGuideTOC("Tendency"));
+		tendencyPages.add(new HemoGuidePage(1, "Tendency", "Old Habits Never Die"));
 
 		multiblockPages.add(new HemoGuideTOC("Multiblocks"));
 		multiblockPages.add(new HemoGuideBloodStructurePage(1, "Multiblocks", "Liber Sanguinum", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(ItemInit.liber_sanguinum.get()), BloodCraftingRecipes.liber_sanguinum_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(2, "Multiblocks", "Living Staff",
+		multiblockPages.add(new HemoGuideBloodStructurePage(2, "Multiblocks", "Living Staff", "",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(ItemInit.living_staff.get()), BloodCraftingRecipes.living_staff_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "Living Grasp",
+		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "Living Grasp", "",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(ItemInit.living_grasp.get()), BloodCraftingRecipes.living_grip_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "S.S.C",
+		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "S.S.C", "",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.semi_sentient_construct.get()), BloodCraftingRecipes.ssc_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Hematic Iron",
+		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Hematic Iron", "Bloody Book",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.hematic_iron_block.get()), BloodCraftingRecipes.hematic_iron_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Unstained Pillar",
+		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Unstained Pillar", "",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.unstained_podium.get()), BloodCraftingRecipes.unstained_pillar_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(7, "Multiblocks", "Morphling Incubator",
+		multiblockPages.add(new HemoGuideBloodStructurePage(7, "Multiblocks", "Morphling Incubator", "",
+				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.morphling_incubator.get()), BloodCraftingRecipes.morphling_incubator_recipe));
 
 		registerChapters();
@@ -73,12 +80,11 @@ public class HemoLib extends TomeLib {
 	public void registerChapters() {
 		introChapter = new TomeChapter("Intro", TabColor.BLACK, new HemoGuideTOC("Intro"), introPages);
 		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED, new HemoGuideTOC("Vascularity"), vasuclarPages);
-		tendencyChapter = new TomeChapter("Tendency", TabColor.BLACK, new HemoGuideTOC("Tendency"), tendencyPages);
-		manipChapter = new TomeChapter("Manips", TabColor.RED, new HemoGuideTOC("Manips"), manipPages);
+		manipChapter = new TomeChapter("Manips", TabColor.BLACK, new HemoGuideTOC("Manips"), manipPages);
+		tendencyChapter = new TomeChapter("Tendency", TabColor.RED, new HemoGuideTOC("Tendency"), tendencyPages);
 		multiblockChapter = new TomeChapter("Multiblocks", TabColor.PURPLE, new HemoGuideTOC("Multiblocks"),
 				multiblockPages);
-
-		Collections.addAll(chapters, introChapter, vasuclarChapter, tendencyChapter, manipChapter, multiblockChapter);
+		Collections.addAll(chapters, introChapter, vasuclarChapter, manipChapter, tendencyChapter, multiblockChapter);
 
 	}
 

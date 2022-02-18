@@ -34,8 +34,8 @@ public class ChiselRecipes {
 			"recipetranscendence",
 			() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipetranscendence"),
 					new ItemStack(ItemInit.rune_transcendence.get(), 1),
-					Arrays.asList(1,8,11, 12, 16, 18, 19, 2, 21, 22, 24, 25, 28, 31, 32, 33, 36, 39, 40, 42, 43, 45, 46, 48,
-							51, 52, 57, 58, 8),
+					Arrays.asList(1, 8, 11, 12, 16, 18, 19, 2, 21, 22, 24, 25, 28, 31, 32, 33, 36, 39, 40, 42, 43, 45,
+							46, 48, 51, 52, 57, 58, 8),
 					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.GLOWSTONE_DUST)));
 
 	public static final RegistryObject<RecipeChiselStation> recipeSol = CHISELRECIPES.register("recipesol",
@@ -48,7 +48,7 @@ public class ChiselRecipes {
 	public static final RegistryObject<RecipeChiselStation> recipeHeart = CHISELRECIPES.register("recipeheart",
 			() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipeheart"),
 					new ItemStack(ItemInit.rune_heart.get(), 1),
-					Arrays.asList(1,13, 16, 2, 22, 25, 3, 31, 33, 39, 4, 40, 46, 48, 53, 57, 58, 59, 60, 8),
+					Arrays.asList(1, 13, 16, 2, 22, 25, 3, 31, 33, 39, 4, 40, 46, 48, 53, 57, 58, 59, 60, 8),
 					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.GLOWSTONE_DUST)));
 
 	public static final RegistryObject<RecipeChiselStation> recipeDescendence = CHISELRECIPES.register(
@@ -59,24 +59,24 @@ public class ChiselRecipes {
 							47, 50, 51, 55, 60, 61, 62, 63),
 					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.NETHER_STAR)));
 
-	public static final RegistryObject<RecipeChiselStation> recipeMoon = CHISELRECIPES
-			.register("recipemoon",
-					() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipemoon"),
-							new ItemStack(ItemInit.rune_moon.get(), 1), Arrays.asList(14,16, 2, 23, 24, 27, 28, 3, 31, 32,
-									39, 4, 40, 42, 45, 47, 49, 5, 50, 53, 54, 9),
-							Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.NETHER_STAR)));
+	public static final RegistryObject<RecipeChiselStation> recipeMoon = CHISELRECIPES.register("recipemoon",
+			() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipemoon"),
+					new ItemStack(ItemInit.rune_moon.get(), 1),
+					Arrays.asList(14, 16, 2, 23, 24, 27, 28, 3, 31, 32, 39, 4, 40, 42, 45, 47, 49, 5, 50, 53, 54, 9),
+					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.NETHER_STAR)));
 
 	public static final RegistryObject<RecipeChiselStation> recipeEye = CHISELRECIPES.register("recipeeye",
 			() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipeeye"),
 					new ItemStack(ItemInit.rune_eye.get(), 1),
-					Arrays.asList(14,16, 17, 2, 22, 23, 24, 25, 27, 28, 3, 30, 31, 32, 33, 35, 36, 38, 39, 4, 40, 41, 46,
-							47, 49, 5, 54, 58, 59, 60, 61, 9),
+					Arrays.asList(14, 16, 17, 2, 22, 23, 24, 25, 27, 28, 3, 30, 31, 32, 33, 35, 36, 38, 39, 4, 40, 41,
+							46, 47, 49, 5, 54, 58, 59, 60, 61, 9),
 					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.NETHER_STAR)));
 
 	public static final RegistryObject<RecipeChiselStation> recipeFeral = CHISELRECIPES.register("recipeferal",
 			() -> registerChiselRecipe(new ResourceLocation(Hemomancy.MOD_ID, "recipeferal"),
-					new ItemStack(ItemInit.rune_feral.get(), 1), Arrays.asList(1,3,8,10,14, 16, 17, 19, 21, 23, 24, 26, 31, 32,
-							33, 35, 39, 40, 42, 47, 49, 53, 54, 58, 59, 60),
+					new ItemStack(ItemInit.rune_feral.get(), 1),
+					Arrays.asList(1, 3, 8, 10, 14, 16, 17, 19, 21, 23, 24, 26, 31, 32, 33, 35, 39, 40, 42, 47, 49, 53,
+							54, 58, 59, 60),
 					Ingredient.of(ItemInit.rune_blank.get()), Ingredient.of(Items.NETHER_STAR)));
 
 //	public static final RegistryObject<RecipeChiselStation> recipeMoon = CHISELRECIPES.register("recipemoon",

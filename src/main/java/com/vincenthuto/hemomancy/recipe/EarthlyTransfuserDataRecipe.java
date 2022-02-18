@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.recipe;
 import java.util.Collection;
 
 import com.vincenthuto.hemomancy.init.BlockInit;
-import com.vincenthuto.hemomancy.init.RecipeTypeInit;
+import com.vincenthuto.hemomancy.init.RecipeInit;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 public class EarthlyTransfuserDataRecipe extends AbstractCookingRecipe {
 	public EarthlyTransfuserDataRecipe(ResourceLocation resourceLocation, String group, Ingredient ingredient,
 			ItemStack result, float experience, int cookingTime) {
-		super(RecipeTypeInit.earthly_transfuser_recipe_type, resourceLocation, group, ingredient, result, experience,
+		super(RecipeInit.earthly_transfuser_recipe_type, resourceLocation, group, ingredient, result, experience,
 				cookingTime);
 	}
 
@@ -27,11 +27,11 @@ public class EarthlyTransfuserDataRecipe extends AbstractCookingRecipe {
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return RecipeTypeInit.earthly_transfuser_serializer.get();
+		return RecipeInit.earthly_transfuser_serializer.get();
 	}
 
 	public static Collection<EarthlyTransfuserDataRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeTypeInit.earthly_transfuser_recipe_type);
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.earthly_transfuser_recipe_type);
 	}
 
 	@Override

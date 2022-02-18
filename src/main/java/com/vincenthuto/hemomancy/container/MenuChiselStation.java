@@ -36,7 +36,6 @@ public class MenuChiselStation extends AbstractContainerMenu {
 		addSlot(new Slot(te, 0, 8, 18 + 1 * 18));
 		addSlot(new Slot(te, 1, 8, 22 + 2 * 18));
 		addSlot(new SlotRunePattern(te, 4, 8, 26 + 3 * 18));
-
 		addSlot(new SlotOutput(te, 2, 145, 44));
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {

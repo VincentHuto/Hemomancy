@@ -41,7 +41,7 @@ public class ModelUnstainedArmor<T extends LivingEntity> extends HumanoidModel<T
 			() -> new ModelUnstainedArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(UNSTAINED_FEET_LAYER)));
 
 	public ModelUnstainedArmor(ModelPart root) {
-		super(root, RenderType::entityCutout);
+		super(root, RenderType::entityTranslucent);
 
 	}
 
@@ -51,7 +51,7 @@ public class ModelUnstainedArmor<T extends LivingEntity> extends HumanoidModel<T
 		PartDefinition partdefinition = meshdefinition.getRoot();
 		if (slot.equals(EquipmentSlot.HEAD)) {
 			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
-					.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.8F)),
+					.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1F)),
 					PartPose.offset(0.0F, 0.0F, 0.0F));
 
 		}
@@ -78,19 +78,19 @@ public class ModelUnstainedArmor<T extends LivingEntity> extends HumanoidModel<T
 							.addBox(-3.0F, -21.0F, -3.25F, 6.0F, 7.0F, 6.0F, new CubeDeformation(0.25F)),
 					PartPose.offset(0.0F, 24.0F, 0.0F));
 
-			PartDefinition tank = body.addOrReplaceChild("tank",
-					CubeListBuilder.create().texOffs(28, 62)
-							.addBox(1.0F, -24.5F, -3.75F, 3.0F, 13.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(48, 69)
-							.addBox(0.5F, -22.5F, -1.75F, 4.0F, 9.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(65, 12)
-							.addBox(1.0F, -22.5F, -1.75F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(10, 72)
-							.addBox(1.0F, -16.5F, -1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(61, 46)
-							.addBox(1.5F, -23.5F, -1.75F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(0, 59)
-							.addBox(0.0F, -24.0F, -4.0F, 5.0F, 11.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(32, 12)
-							.addBox(-4.0F, -20.0F, -4.25F, 5.0F, 2.0F, 2.0F, new CubeDeformation(0.25F)),
-					PartPose.offset(1.0F, 22.0F, 7.0F));
+			PartDefinition tank3 = body.addOrReplaceChild("tank3",
+					CubeListBuilder.create().texOffs(18, 57)
+							.addBox(8.0F, -24.5F, -3.75F, 3.0F, 13.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(62, 66)
+							.addBox(7.5F, -22.5F, -1.75F, 4.0F, 9.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(38, 62)
+							.addBox(8.0F, -22.5F, -1.75F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(0, 0)
+							.addBox(8.0F, -16.5F, -1.75F, 3.0F, 4.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(29, 41)
+							.addBox(8.5F, -23.5F, -1.75F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(48, 56)
+							.addBox(7.0F, -24.0F, -4.0F, 5.0F, 11.0F, 2.0F, new CubeDeformation(0.25F)),
+					PartPose.offset(-6.25F, 22.0F, 7.0F));
 
 			PartDefinition tank2 = body.addOrReplaceChild("tank2",
-					CubeListBuilder.create().texOffs(18, 57)
+					CubeListBuilder.create().texOffs(32, 12)
+							.addBox(2.75F, -20.0F, -4.25F, 5.0F, 2.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(18, 57)
 							.addBox(1.0F, -24.5F, -3.75F, 3.0F, 13.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(62, 66)
 							.addBox(0.5F, -22.5F, -1.75F, 4.0F, 9.0F, 1.0F, new CubeDeformation(0.25F)).texOffs(38, 62)
 							.addBox(1.0F, -22.5F, -1.75F, 3.0F, 9.0F, 2.0F, new CubeDeformation(0.25F)).texOffs(0, 0)
@@ -150,21 +150,20 @@ public class ModelUnstainedArmor<T extends LivingEntity> extends HumanoidModel<T
 
 		}
 		if (slot.equals(EquipmentSlot.LEGS)) {
-
 			PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg",
 					CubeListBuilder.create().texOffs(99, 116)
 							.addBox(-5.9F, 0.0F, -2.0F, 8.0F, 0.0F, 4.0F, new CubeDeformation(0.6F)).texOffs(25, 167)
 							.addBox(-5.9F, -1.0F, -2.0F, 8.0F, 0.0F, 4.0F, new CubeDeformation(0.8F)).texOffs(0, 32)
-							.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(51, 37)
-							.addBox(-2.0F, 0.0F, -2.5F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(19, 29)
-							.addBox(-2.0F, 3.8F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(-0.1F)),
+							.addBox(-3.0F, 0.0F, -2.0F, 5.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(51, 37)
+							.addBox(-2.0F, 0.0F, -2.5F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.2F)).texOffs(19, 29)
+							.addBox(-2.0F, 3.8F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(1.9F, 12.0F, 0.0F));
 
 			PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg",
 					CubeListBuilder.create().texOffs(35, 37)
 							.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 50)
-							.addBox(-3.0F, 0.0F, -2.5F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(32, 0)
-							.addBox(-3.0F, 3.8F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(-0.1F)),
+							.addBox(-3.0F, 0.0F, -2.5F, 5.0F, 4.0F, 5.0F, new CubeDeformation(0.2F)).texOffs(32, 0)
+							.addBox(-3.0F, 3.8F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(-1.9F, 12.0F, 0.0F));
 
 		}

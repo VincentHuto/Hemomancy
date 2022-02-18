@@ -25,6 +25,14 @@ public class RenderTypeInit extends RenderType {
 		super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
 	}
 
+	public static final RenderType RADIANT_RENDER_TYPE = create("radiant",
+			(VertexFormat) DefaultVertexFormat.POSITION_COLOR, (VertexFormat.Mode) VertexFormat.Mode.QUADS, (int) 256,
+			(boolean) false, (boolean) true,
+			(RenderType.CompositeState) RenderType.CompositeState.builder().setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setWriteMaskState(COLOR_WRITE).setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setOutputState(PARTICLES_TARGET).setCullState(NO_CULL).setDepthTestState(LEQUAL_DEPTH_TEST)
+					.createCompositeState(false));
+
 	@SuppressWarnings("unused")
 	private static final LineStateShard THICK_LINES = new LineStateShard(OptionalDouble.of(3.0D));
 

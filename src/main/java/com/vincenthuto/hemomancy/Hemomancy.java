@@ -25,7 +25,7 @@ import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
-import com.vincenthuto.hemomancy.init.RecipeTypeInit;
+import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.WorldInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -101,7 +101,7 @@ public class Hemomancy {
 		BlockInit.SPECIALBLOCKS.register(modEventBus);
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
 		FluidInit.FLUIDS.register(modEventBus);
-		RecipeTypeInit.RECIPES.register(modEventBus);
+		RecipeInit.SERIALIZERS.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);

@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.FluidInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.init.RecipeTypeInit;
+import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hutoslib.common.item.HLItemInit;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
@@ -135,7 +135,7 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		}
 	};
 	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeTypeInit.earthly_transfuser_recipe_type;
+	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeInit.earthly_transfuser_recipe_type;
 
 	public BlockEntityEarthlyTransfuser(BlockPos p_154992_, BlockState p_154993_) {
 		super(BlockEntityInit.earthly_transfuser.get(), p_154992_, p_154993_);
