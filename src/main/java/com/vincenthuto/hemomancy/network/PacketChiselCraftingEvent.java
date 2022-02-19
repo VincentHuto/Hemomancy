@@ -28,6 +28,7 @@ public class PacketChiselCraftingEvent {
 				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
 				if (container instanceof MenuChiselStation) {
 					BlockEntityChiselStation station = ((MenuChiselStation) container).getTe();
+					station.getCurrentRecipe();
 					station.craftEvent();
 				}
 			});

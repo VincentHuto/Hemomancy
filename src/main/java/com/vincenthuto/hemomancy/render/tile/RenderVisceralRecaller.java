@@ -11,7 +11,7 @@ import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -37,7 +37,7 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 		// combinedOverlayIn);
 		// renderLine(startVec, endVec, partialTicks, matrixStackIn, bufferIn,
 		// combinedOverlayIn);
-//		WorldRenderUtils.renderBeam(ClientUtils.getWorld(), ClientUtils.getPartialTicks(), matrixStackIn, bufferIn,
+//		WorldRenderUtils.renderBeam(HLClientUtils.getWorld(), HLClientUtils.getPartialTicks(), matrixStackIn, bufferIn,
 //				combinedLightIn, endVec, startVec, 1, ParticleColor.BLOOD, RenderTypeInit.RADIANT_RENDER_TYPE);
 	}
 
@@ -81,10 +81,10 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 			double displace, double detail, int combinedLightIn) {
 		if (displace < detail) {
 
-			WorldRenderUtils.renderBeam(ClientUtils.getWorld(), ClientUtils.getPartialTicks(), matrix, buffer,
+			WorldRenderUtils.renderBeam(HLClientUtils.getWorld(), HLClientUtils.getPartialTicks(), matrix, buffer,
 					combinedLightIn, to, from, 1f, color, RenderTypeInit.RADIANT_RENDER_TYPE);
 			Vec3 velo = to.subtract(from).scale(0.1);
-			ClientUtils.getWorld().addParticle(GlowParticleFactory.createData(ParticleColor.PURPLE), to.x, to.y, to.z,
+			HLClientUtils.getWorld().addParticle(GlowParticleFactory.createData(ParticleColor.PURPLE), to.x, to.y, to.z,
 					velo.x, velo.y, velo.z);
 //
 //			VertexConsumer vertexBuilder = buffer.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);

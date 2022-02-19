@@ -371,7 +371,6 @@ public class BlockEntityJuicinator extends BaseContainerBlockEntity
 							te.setRecipeUsed(recipe);
 							te.getBloodCapability().fill(100);
 							te.sendUpdates();
-							te.sendUpdates();
 						}
 						flag1 = true;
 					}

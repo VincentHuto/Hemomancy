@@ -1,23 +1,24 @@
 package com.vincenthuto.hemomancy.tile;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
-import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
+import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipeSerializer;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -25,6 +26,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,7 +35,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,10 +47,10 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	public int numPlayersUsing = 0;
 	public float lidAngle, prevLidAngle;
 	public final String TAG_RUNELIST = "RUNELIST";
-	public List<Integer> runesList;
-	public List<Integer> clientRuneList;
+	public byte[][] runesList;
+	public byte[][] clientRuneList;
 
-	RecipeChiselStation currentRecipe;
+	ChiselRecipe currentRecipe;
 
 	public BlockEntityChiselStation(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.runic_chisel_station.get(), pos, state);
@@ -57,22 +58,18 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 
 	@Override
 	public void onLoad() {
-		this.runesList = new ArrayList<Integer>();
-	}
-
-	public List<Integer> getRuneList() {
-		return runesList;
+		this.runesList = ChiselRecipe.blank();
 	}
 
 	public void cleartRuneList() {
 		this.sendUpdates();
 		if (runesList != null) {
-			runesList.clear();
+			runesList = ChiselRecipe.blank();
 		}
 	}
 
-	public void setRuneList(List<Integer> runesIn) {
-		runesList = runesIn;
+	public void setRuneList(byte[][] bs) {
+		runesList = bs;
 		this.sendUpdates();
 
 	}
@@ -98,34 +95,30 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	}
 
 	public boolean areRunesMatching() {
-		if (this.getCurrentRecipe() != null) {
-			List<Integer> currentList = clientRuneList;
-			List<Integer> recipeList = currentRecipe.getActivatedRunes();
-			Collections.sort(currentList);
-			Collections.sort(recipeList);
-			if (currentList.equals(recipeList)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
+		return this.getCurrentRecipe() != null && Arrays.deepEquals(currentRecipe.getPattern(), runesList);
 
 	}
 
-	public RecipeChiselStation getCurrentRecipe() {
-		for (RecipeChiselStation recipe : ChiselRecipes.runeRecipies) {
-			if (recipe.getInputs().size() == 1) {
-				if (recipe.getInputs().get(0).test(this.getItems().get(0))) {
+	public ChiselRecipe getCurrentRecipe() {
+
+		for (Entry<ResourceLocation, ChiselRecipe> entry : ChiselRecipeSerializer.ALL_RECIPES.entrySet()) {
+			ResourceLocation key = entry.getKey();
+			ChiselRecipe value = entry.getValue();
+			System.out.println(key);
+		}
+
+		for (ChiselRecipe recipe : ChiselRecipeSerializer.ALL_RECIPES.values()) {
+
+			if (recipe.getIngredients().size() == 1) {
+				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
 					currentRecipe = recipe;
 					return currentRecipe;
 
 				}
 			}
-			if (recipe.getInputs().size() == 2) {
-				if (recipe.getInputs().get(0).test(this.getItems().get(0))
-						&& recipe.getInputs().get(1).test(this.getItems().get(1))) {
+			if (recipe.getIngredients().size() == 2) {
+				if (recipe.getIngredients().get(0).test(this.getItems().get(0))
+						&& recipe.getIngredients().get(1).test(this.getItems().get(1))) {
 					currentRecipe = recipe;
 					return currentRecipe;
 
@@ -137,21 +130,21 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	}
 
 	public boolean hasValidRecipe() {
-		for (RecipeChiselStation recipe : ChiselRecipes.runeRecipies) {
-			if (recipe.getInputs().size() == 1) {
-				if (recipe.getInputs().get(0).test(this.getItems().get(0))) {
+		for (ChiselRecipe recipe : ChiselRecipeSerializer.ALL_RECIPES.values()) {
+			if (recipe.getIngredients().size() == 1) {
+				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
 					return true;
 
 				}
 			}
-			if (recipe.getInputs().size() == 2) {
-				if (recipe.getInputs().get(0).test(this.getItems().get(0))
-						&& recipe.getInputs().get(1).test(this.getItems().get(1))) {
+			if (recipe.getIngredients().size() == 2) {
+				if (recipe.getIngredients().get(0).test(this.getItems().get(0))
+						&& recipe.getIngredients().get(1).test(this.getItems().get(1))) {
 					return true;
-
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -161,16 +154,13 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 		super.load(compound);
 		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(compound, this.contents);
-		ListTag tagList = compound.getList(TAG_RUNELIST, Tag.TAG_COMPOUND);
+		ListTag tagList = compound.getList(TAG_RUNELIST, Tag.TAG_BYTE_ARRAY);
 		if (this.runesList != null) {
 			for (int i = 0; i < tagList.size(); i++) {
-				CompoundTag tag = tagList.getCompound(i);
-				int s = tag.getInt("ListPos " + i);
-				runesList.add(i, s);
-				runesList.set(i, s);
+				ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
+				runesList[i] = arr.getAsByteArray();
 			}
 		}
-
 	}
 
 	@Override
@@ -180,13 +170,9 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 		if (compound != null) {
 			ListTag tagList = new ListTag();
 			if (runesList != null) {
-				for (int i = 0; i < runesList.size(); i++) {
-					Integer s = runesList.get(i);
-					CompoundTag ss = new CompoundTag();
-					if (s != null) {
-						ss.putInt("Int", s);
-						tagList.add(ss);
-					}
+				for (int i = 0; i < runesList.length; i++) {
+					ByteArrayTag bye = new ByteArrayTag(runesList[i]);
+					tagList.add(bye);
 				}
 				compound.put(TAG_RUNELIST, tagList);
 			}
@@ -198,10 +184,11 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
 		if (tag != null) {
-
-			if (tag.get(TAG_RUNELIST) != null) {
-				for (int i = 0; i < runesList.size(); i++) {
-					clientRuneList.add(runesList.get(i));
+			ListTag tagList = tag.getList(TAG_RUNELIST, Tag.TAG_BYTE_ARRAY);
+			if (this.runesList != null) {
+				for (int i = 0; i < tagList.size(); i++) {
+					ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
+					runesList[i] = arr.getAsByteArray();
 				}
 			}
 		}
@@ -213,15 +200,10 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 		ContainerHelper.saveAllItems(tag, this.contents);
 		ListTag tagList = new ListTag();
 		if (runesList != null) {
-			for (int i = 0; i < runesList.size(); i++) {
-				Integer s = runesList.get(i);
-				CompoundTag ss = new CompoundTag();
-				if (s != null) {
-					ss.putInt("Int", s);
-					tagList.add(ss);
-				}
+			for (int i = 0; i < runesList.length; i++) {
+				ByteArrayTag bye = new ByteArrayTag(runesList[i]);
+				tagList.add(bye);
 			}
-
 			tag.put(TAG_RUNELIST, tagList);
 		}
 		return tag;
@@ -231,16 +213,13 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() != null) {
-			ListTag tagList = pkt.getTag().getList(TAG_RUNELIST, Tag.TAG_COMPOUND);
-			List<Integer> test = new ArrayList<Integer>();
-			for (int i = 0; i < tagList.size(); i++) {
-				CompoundTag tag = tagList.getCompound(i);
-				int s = Integer.valueOf(tag.toString().substring(5).replace("}", ""));
-				test.add(i, s);
-				test.set(i, s);
+			ListTag tagList = pkt.getTag().getList(TAG_RUNELIST, Tag.TAG_BYTE_ARRAY);
+			if (this.runesList != null) {
+				for (int i = 0; i < tagList.size(); i++) {
+					ByteArrayTag arr = (ByteArrayTag) tagList.get(i);
+					runesList[i] = arr.getAsByteArray();
+				}
 			}
-			this.runesList = test;
-			clientRuneList = test;
 		}
 	}
 
@@ -277,11 +256,7 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	}
 
 	protected void onOpenOrClose() {
-		Block block = this.getBlockState().getBlock();
-		if (block instanceof BlockChiselStation) {
-			this.level.blockEvent(this.worldPosition, block, 1, this.numPlayersUsing);
-			this.level.updateNeighborsAt(this.worldPosition, block);
-		}
+
 	}
 
 	@Override
@@ -300,84 +275,45 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 		return new MenuChiselStation(id, player, this);
 	}
 
+	public boolean canCraft() {
+
+		return false;
+	}
+
 	public void craftEvent() {
 		List<ItemStack> chestStuff = new ArrayList<ItemStack>();
 		chestStuff.add(contents.get(0));
 		chestStuff.add(contents.get(1));
-
-		RecipeChiselStation recipe = null;
-
-		if (currentRecipe != null)
-			recipe = currentRecipe;
-		else
-			for (RecipeChiselStation recipe_ : ChiselRecipes.runeRecipies) {
-
-				List<Ingredient> recipieInObjFirst = recipe_.getInputs();
-				if (recipieInObjFirst.get(0).test(chestStuff.get(0)) && recipieInObjFirst.size() == 1) {
-					recipe = recipe_;
-
-					break;
-				} else if (recipieInObjFirst.get(0).test(chestStuff.get(0))
-						&& recipieInObjFirst.get(1).test(chestStuff.get(1)) && recipieInObjFirst.size() == 2) {
-					recipe = recipe_;
-					break;
-
-				}
-			}
-
+		ChiselRecipe recipe = currentRecipe;
 		if (recipe != null && contents.get(2).isEmpty()) {
-
-			List<Ingredient> recipieInObj = recipe.getInputs();
-
-			List<Integer> list1 = recipe.getActivatedRunes();
-			List<Integer> list2 = this.getRuneList();
-			// These two make sure that even if you click the renderables in the wrong order
-			// they still work.
-			Collections.sort(list1);
-			Collections.sort(list2);
-			// Checks if the two inventories have the exact same values
+			List<Ingredient> recipieInObj = recipe.getIngredients();
 			boolean matcher = false;
 			if (recipieInObj.get(0).test(chestStuff.get(0)) && recipieInObj.size() == 1) {
-
 				matcher = true;
-			}
-
-			else if (recipieInObj.get(0).test(chestStuff.get(0)) && recipieInObj.get(1).test(chestStuff.get(1))
+			} else if (recipieInObj.get(0).test(chestStuff.get(0)) && recipieInObj.get(1).test(chestStuff.get(1))
 					&& recipieInObj.size() == 2) {
 				matcher = true;
 			}
-
-			if (list1.equals(list2) && matcher) {
-				{
-
-					ItemStack output = recipe.getOutput().copy();
-
-					if (level.isClientSide) {
-
-						level.addParticle(ParticleTypes.PORTAL, worldPosition.getX(), worldPosition.getY(),
-								worldPosition.getZ(), 0.0D, 0.0D, 0.0D);
+			if (Arrays.deepEquals(runesList, currentRecipe.getPattern()) && matcher) {
+				ItemStack output = recipe.getOutputItem().copy();
+				contents.set(0, output);
+				currentRecipe = null;
+				for (int i = 0; i < getContainerSize(); i++) {
+					contents.set(0, ItemStack.EMPTY);
+					contents.set(1, ItemStack.EMPTY);
+					contents.set(2, output);
+					ItemStack knapperIn = contents.get(3);
+					if (knapperIn.getItem() instanceof ItemKnapper) {
+						ItemStack newKnapper = knapperIn.copy();
+						newKnapper.hurt(recipe.getPattern().length, level.random, null);
+						contents.set(3, newKnapper);
 					}
-					contents.set(0, output);
-					currentRecipe = null;
-					for (int i = 0; i < getContainerSize(); i++) {
-						contents.set(0, ItemStack.EMPTY);
-						contents.set(1, ItemStack.EMPTY);
-						contents.set(2, output);
-						ItemStack knapperIn = contents.get(3);
-						if (knapperIn.getItem() instanceof ItemKnapper) {
-							ItemStack newKnapper = knapperIn.copy();
-							newKnapper.hurt(recipe.getActivatedRunes().size(), level.random, null);
-							contents.set(3, newKnapper);
-						}
-						runesList.clear();
-						this.sendUpdates();
-						VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
-
-					}
+					runesList = ChiselRecipe.blank();
+					this.sendUpdates();
+					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
 				}
 			}
 		}
-
 	}
 
 	@Override

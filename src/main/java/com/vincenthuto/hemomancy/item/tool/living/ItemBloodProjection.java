@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.render.item.RenderItemCellHand;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -87,7 +87,7 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		HitResult trace = player.pick(5.5, ClientUtils.getPartialTicks(), true);
+		HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
 		if (trace.getType() == Type.BLOCK) {
 			if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
 				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))

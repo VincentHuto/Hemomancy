@@ -30,21 +30,15 @@ import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.WorldInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
-import com.vincenthuto.hemomancy.recipe.ChiselRecipes;
-import com.vincenthuto.hemomancy.recipe.EarthlyTransfuserDataRecipe;
-import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -82,7 +76,6 @@ public class Hemomancy {
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
-		ChiselRecipes.CHISELRECIPES.register(modEventBus);
 		RecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);

@@ -2,25 +2,17 @@ package com.vincenthuto.hemomancy.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
+import com.vincenthuto.hemomancy.BoltRenderer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.init.RenderTypeInit;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodAvatar;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,11 +30,14 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.FORGE)
 public class CameraEventSubscriber {
 
-//	@SubscribeEvent
-//	public static void skybox(RenderLevelLastEvent event) {
-//		ClientLevel level = ClientUtils.getWorld();
+	@SubscribeEvent
+	public static void skybox(RenderLevelLastEvent event) {
+
+		BoltRenderer.onWorldRenderLast(event.getPartialTick(), event.getPoseStack());
+
+//		ClientLevel level = HLClientUtils.getWorld();
 //		LevelRenderer levelRenderer = event.getLevelRenderer();
-//		LocalPlayer player = (LocalPlayer) ClientUtils.getClientPlayer();
+//		LocalPlayer player = (LocalPlayer) HLClientUtils.getClientPlayer();
 //		if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemInit.sanguine_formation.get()) {
 //			level.effects().setSkyRenderHandler(new BloodMoonSkyRenderHandler());
 //			level.effects().setWeatherRenderHandler(new BloodMoonWeatherRenderHandler());
@@ -50,7 +46,7 @@ public class CameraEventSubscriber {
 //			level.effects().setWeatherRenderHandler(null);
 //		}
 
-//	}
+	}
 
 	@SubscribeEvent
 	public static void cameraVIew(EntityEvent.Size event) {

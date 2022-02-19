@@ -1,12 +1,14 @@
 package com.vincenthuto.hemomancy.recipe.serializer;
 
 import java.lang.reflect.MalformedParametersException;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -55,10 +57,10 @@ public class ChiselRecipe extends CustomRecipe {
 		}
 	}
 
-	private static final byte[][] blank() {
-		byte[][] comp = new byte[11][];
-		for (int i = 0; i < 11; ++i) {
-			comp[i] = new byte[11];
+	public static final byte[][] blank() {
+		byte[][] comp = new byte[yBound][];
+		for (int i = 0; i < comp.length; ++i) {
+			comp[i] = new byte[xBound];
 		}
 		return comp;
 	}
@@ -69,6 +71,7 @@ public class ChiselRecipe extends CustomRecipe {
 	}
 
 	public byte[][] getPattern() {
+
 		return pattern;
 	}
 
@@ -124,6 +127,14 @@ public class ChiselRecipe extends CustomRecipe {
 
 	public Ingredient getIngredient2() {
 		return ingredient2;
+	}
+
+	@Override
+	public NonNullList<Ingredient> getIngredients() {
+		NonNullList<Ingredient> list = super.getIngredients();
+		list.add(ingredient1);
+		list.add(ingredient2);
+		return list;
 	}
 
 }

@@ -12,7 +12,7 @@ import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import com.vincenthuto.hutoslib.client.screen.guide.ScreenBlockTintGetter;
@@ -121,7 +121,7 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 		matrices.mulPose(Vector3f.YP.rotationDegrees(45));
 		float structScale = 5f;
 		matrices.scale(structScale, structScale, structScale);
-		HLGuiUtils.renderMultiBlock(matrices, pattern, ClientUtils.getPartialTicks(), new ScreenBlockTintGetter(),
+		HLGuiUtils.renderMultiBlock(matrices, pattern, HLClientUtils.getPartialTicks(), new ScreenBlockTintGetter(),
 				centerX, centerY * 5);
 		matrices.popPose();
 

@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
@@ -28,14 +28,14 @@ public class KeyBindEvents {
 
 		if (ClientEventSubscriber.bloodCrafting.consumeClick()) {
 			for (RecipeBaseBloodCrafting pattern : BloodCraftingRecipes.RECIPES) {
-				if (ClientUtils.getClientPlayer().getMainHandItem().getItem() == pattern.getHeldItem()) {
+				if (HLClientUtils.getClientPlayer().getMainHandItem().getItem() == pattern.getHeldItem()) {
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-							new PacketBloodCraftingKeyPress(ClientUtils.getClientPlayer().getMainHandItem()));
+							new PacketBloodCraftingKeyPress(HLClientUtils.getClientPlayer().getMainHandItem()));
 				}
 			}
 		}
 		if (ClientEventSubscriber.bloodDraw.isDown()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketGroundBloodDraw(ClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketGroundBloodDraw(HLClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.toggleMorphlingOpenJar.consumeClick()) {
 			PacketHandler.CHANNELMAIN.sendToServer(new PacketChangeMorphKey());
@@ -45,13 +45,13 @@ public class KeyBindEvents {
 //			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
 //		}
 		if (ClientEventSubscriber.cycleSelectedManip.consumeClick()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketChangeSelectedManip(ClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketChangeSelectedManip(HLClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.useQuickManip.consumeClick()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseQuickManipKey(ClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseQuickManipKey(HLClientUtils.getPartialTicks()));
 		}
 		if (ClientEventSubscriber.useContManip.isDown()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseContManipKey(ClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseContManipKey(HLClientUtils.getPartialTicks()));
 		}
 	}
 

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.tile.BlockEntityRuneModStation;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -28,7 +28,7 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 	@Override
 	public void render(BlockEntityRuneModStation te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		Player player = ClientUtils.getClientPlayer();
+		Player player = HLClientUtils.getClientPlayer();
 		if (player.isAlive()) {
 			// GlStateManager._pushMatrix();
 			// GlStateManager._color4f(1F, 1F, 1F, 1F);

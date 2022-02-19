@@ -8,7 +8,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.recipe.RecipeChiselStation;
+import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
@@ -40,12 +40,12 @@ public class ScreenRunePattern extends Screen {
 	static TextComponent titleComponent = new TextComponent("");
 	RegistryObject<Item> icon;
 	Minecraft mc = Minecraft.getInstance();
-	RegistryObject<RecipeChiselStation> recipe;
+	ChiselRecipe recipe;
 	public GuiButtonTextured[][] runeButtonArray = new GuiButtonTextured[8][8];
 	protected List<Button> buttonList = Lists.<Button>newArrayList();
 
 	@OnlyIn(Dist.CLIENT)
-	public ScreenRunePattern(RegistryObject<Item> iconIn, RegistryObject<RecipeChiselStation> recipeIn, String textIn) {
+	public ScreenRunePattern(RegistryObject<Item> iconIn, ChiselRecipe recipeIn, String textIn) {
 		super(titleComponent);
 		this.icon = iconIn;
 		this.recipe = recipeIn;
@@ -69,8 +69,8 @@ public class ScreenRunePattern extends Screen {
 		}
 
 		matrixStack.translate(centerX + 100, centerY + 10, 0);
-		drawString(matrixStack, font, ChatFormatting.GOLD + I18n.get(recipe.get().getOutput().getDescriptionId()), -85,
-				0, 8060954);
+		drawString(matrixStack, font, ChatFormatting.GOLD + I18n.get(recipe.getOutputItem().getDescriptionId()), -85, 0,
+				8060954);
 		font.drawWordWrap(new TextComponent(ChatFormatting.BLACK + I18n.get(text)), centerX + 1 + 10, centerY + 151,
 				150, 0);
 		font.drawWordWrap(new TextComponent(ChatFormatting.GOLD + I18n.get(text)), centerX + 10, centerY + 150, 150, 0);
@@ -78,15 +78,15 @@ public class ScreenRunePattern extends Screen {
 		Lighting.setupFor3DItems();
 		Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(icon.get()), centerX + 79,
 				centerY + 17);
-		if (recipe.get().getInputs().size() == 1) {
+		if (recipe.getIngredients().size() == 1) {
 			Minecraft.getInstance().getItemRenderer()
-					.renderAndDecorateItem(recipe.get().getInputs().get(0).getItems()[0], 36, 6);
-		} else if (recipe.get().getInputs().size() == 2) {
+					.renderAndDecorateItem(recipe.getIngredients().get(0).getItems()[0], 36, 6);
+		} else if (recipe.getIngredients().size() == 2) {
 
 			Minecraft.getInstance().getItemRenderer()
-					.renderAndDecorateItem(recipe.get().getInputs().get(0).getItems()[0], centerX + 30, centerY + 70);
+					.renderAndDecorateItem(recipe.getIngredients().get(0).getItems()[0], centerX + 30, centerY + 70);
 			Minecraft.getInstance().getItemRenderer()
-					.renderAndDecorateItem(recipe.get().getInputs().get(1).getItems()[0], centerX + 30, centerY + 100);
+					.renderAndDecorateItem(recipe.getIngredients().get(1).getItems()[0], centerX + 30, centerY + 100);
 
 		}
 
@@ -102,17 +102,8 @@ public class ScreenRunePattern extends Screen {
 			for (int j = 0; j < runeButtonArray.length; j++) {
 				buttonList.add(runeButtonArray[i][j] = new GuiButtonTextured(GUI_Chisel, inc,
 						left + guiWidth - (guiWidth - 75 - (i * 8)), top + guiHeight - (163 - (j * 8)), 8, 8, 176, 0,
-						false, null, null));
+						recipe.getPattern()[i][j] == 0 ? false : true, null, null));
 				inc++;
-			}
-		}
-		for (int l = 0; l < runeButtonArray.length; l++) {
-			for (int m = 0; m < runeButtonArray.length; m++) {
-				for (int k = 0; k < recipe.get().getActivatedRunes().size(); k++) {
-					if (runeButtonArray[l][m].getId() == recipe.get().getActivatedRunes().get(k)) {
-						runeButtonArray[l][m].setState(true);
-					}
-				}
 			}
 		}
 

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.particle;
 
 import java.util.Random;
 
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.HLRenderTypeInit;
 
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -69,7 +69,7 @@ public class ParticleBloodClaw extends TextureSheetParticle {
 		this.quadSize = initScale - initScale * lifeCoeff;
 		this.alpha = initAlpha * (1.0f - lifeCoeff);
 		this.oRoll = roll;
-		roll = (float) Math.sin(ClientUtils.getWorld().getGameTime() * 0.5f);
+		roll = (float) Math.sin(HLClientUtils.getWorld().getGameTime() * 0.5f);
 	}
 
 	@Override

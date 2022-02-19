@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.recipe.serializer;
 
 import java.util.HashMap;
-import java.util.function.Function;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>>
 		implements RecipeSerializer<ChiselRecipe> {
-	public static HashMap<ResourceLocation, ChiselRecipe> ALL_RECIPES = new HashMap();
+	public static HashMap<ResourceLocation, ChiselRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ChiselRecipe>();
 
 	@Override
 	public ChiselRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
@@ -65,7 +64,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			}), c);
 		}
 
-		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, type, ingredient2, ingredient2, pattern, itemstack);
+		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, type, ingredient1, ingredient2, pattern, itemstack);
 		ALL_RECIPES.put(pRecipeId, recipe);
 		return recipe;
 	}
@@ -83,8 +82,8 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			for (int i = 0; i < len; ++i) {
 				pattern[i] = pBuffer.readByteArray();
 			}
-			ItemStack result = pBuffer.readItem();
 
+			ItemStack result = pBuffer.readItem();
 			ChiselRecipe mwpattern = new ChiselRecipe(id, tier, type, input1, input2, pattern, result);
 			mwpattern.setPatternBytes(pattern);
 			ALL_RECIPES.put(pRecipeId, mwpattern);

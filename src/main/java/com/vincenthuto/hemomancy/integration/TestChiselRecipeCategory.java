@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
+import com.vincenthuto.hutoslib.common.item.HLItemInit;
 
 //GlStateManager;
 
@@ -28,8 +29,11 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.Tags;
 
 public class TestChiselRecipeCategory implements IRecipeCategory<ChiselRecipe> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "test_runic_chisel_station");
@@ -68,6 +72,8 @@ public class TestChiselRecipeCategory implements IRecipeCategory<ChiselRecipe> {
 		List<List<ItemStack>> list = new ArrayList<>();
 		list.add(Arrays.asList(recipe.getIngredient1().getItems()));
 		list.add(Arrays.asList(recipe.getIngredient2().getItems()));
+		list.add(Arrays.asList(Ingredient.of(HLItemInit.TAG_KNAPPERS).getItems()));
+
 		ingredients.setInputLists(VanillaTypes.ITEM, list);
 		ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
 	}
@@ -107,21 +113,26 @@ public class TestChiselRecipeCategory implements IRecipeCategory<ChiselRecipe> {
 	@Override
 	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ChiselRecipe recipe,
 			@Nonnull IIngredients ingredients) {
+		
+		recipeLayout.getItemStacks().init(10, true, 3, 10);
+		recipeLayout.getItemStacks().set(10, ingredients.getInputs(VanillaTypes.ITEM).get(2));
+
 		recipeLayout.getItemStacks().init(0, true, 22, 0);
 		recipeLayout.getItemStacks().set(0, new ItemStack(BlockInit.runic_chisel_station.get()));
 		buttonList.clear();
 		int inc = 0;
 		for (int i = 0; i < runeButtonArray.length; i++) {
-			for (int j = 0; j < runeButtonArray.length; j++) {
+			for (int j = 0; j < runeButtonArray[i].length; j++) {
 				buttonList.add(runeButtonArray[i][j] = new GuiButtonTextured(GUI_Chisel, inc,
-						left + guiWidth - (guiWidth - 38 - (i * 8)), top + guiHeight - (160 - (j * 8)), 8, 8, 176, 0,
+						left + guiWidth - (guiWidth - 38 - (j * 8)), top + guiHeight - (160 - (i * 8)), 8, 8, 176, 0,
 						false, null, null));
 				inc++;
 			}
 		}
+
 		for (int l = 0; l < runeButtonArray.length; l++) {
-			for (int m = 0; m < runeButtonArray.length; m++) {
-				if(recipe.getPattern()[l][m] == 1) {
+			for (int m = 0; m < runeButtonArray[l].length; m++) {
+				if (recipe.getPattern()[l][m] == 1) {
 					runeButtonArray[l][m].setState(true);
 				}
 			}
@@ -139,8 +150,9 @@ public class TestChiselRecipeCategory implements IRecipeCategory<ChiselRecipe> {
 		} else if (ingredients.getInputs(VanillaTypes.ITEM).size() > 1) {
 			recipeLayout.getItemStacks().init(runeIn, true, 3, 32);
 			recipeLayout.getItemStacks().set(runeIn, ingredients.getInputs(VanillaTypes.ITEM).get(0));
-			recipeLayout.getItemStacks().init(secondaryIn, true, 3, 53);
+			recipeLayout.getItemStacks().init(secondaryIn, true, 3, 54);
 			recipeLayout.getItemStacks().set(secondaryIn, ingredients.getInputs(VanillaTypes.ITEM).get(1));
+
 			recipeLayout.getItemStacks().init(outputRune, false, 114, 40);
 			recipeLayout.getItemStacks().set(outputRune, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
 		}

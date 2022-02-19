@@ -75,7 +75,7 @@ public class ScreenRuneBinderViewer extends Screen {
 			if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
 				ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
 				List<Component> text = new ArrayList<Component>();
-				text.add(new TextComponent(I18n.get(pat.getRecipe().getOutput().getHoverName().getString())));
+				text.add(new TextComponent(I18n.get(pat.getRecipe().getOutputItem().getHoverName().getString())));
 				renderComponentTooltip(matrixStack, text, mouseX, mouseY);
 			}
 			// }
@@ -98,7 +98,7 @@ public class ScreenRuneBinderViewer extends Screen {
 					Lighting.setupFor3DItems();
 					if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
 						ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
-						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(pat.getRecipe().getOutput(),
+						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(pat.getRecipe().getOutputItem(),
 								(((GuiButtonTextured) renderables.get(i)).x + 2),
 								((GuiButtonTextured) renderables.get(i)).y + 2);
 					}

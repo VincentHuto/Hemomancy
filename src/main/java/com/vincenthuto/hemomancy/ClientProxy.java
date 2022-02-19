@@ -1,17 +1,20 @@
 package com.vincenthuto.hemomancy;
 
+import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.gui.guide.HemoTitlePage;
 import com.vincenthuto.hemomancy.gui.manips.ScreenChooseManip;
 import com.vincenthuto.hemomancy.gui.manips.ScreenChooseVein;
 import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRuneBinderViewer;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJarViewer;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
@@ -20,38 +23,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientProxy implements IProxy {
 
-	@Override
-	public void openGuideGui() {
-		Minecraft.getInstance().setScreen(new HemoTitlePage());
+	public void lightningFX(Vec3 vectorStart, Vec3 vectorEnd, float ticksPerMeter, long seed, int colorOuter,
+			int colorInner) {
+		BoltRenderer.INSTANCE.add(new BoltParticleOptions(vectorStart, vectorEnd).size(0.08F),
+				ClientTickHandler.partialTicks);
 	}
 
 	@Override
-	public void openBinderGui() {
-		Minecraft.getInstance().setScreen(
-				new ScreenRuneBinderViewer(new ItemStack(ItemInit.rune_binder.get()), ClientUtils.getClientPlayer()));
-	}
-
-	@Override
-	public void openJarGui() {
-		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
-				ClientUtils.getClientPlayer()));
-
-	}
-
-	@Override
-	public void openStaffGui() {
-		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
-				ClientUtils.getClientPlayer()));
-	}
-
-	@Override
-	public void openManipGui() {
-		Minecraft.getInstance().setScreen(new ScreenChooseManip(ClientUtils.getClientPlayer()));
-	}
-
-	@Override
-	public void openVeinGui() {
-		Minecraft.getInstance().setScreen(new ScreenChooseVein(ClientUtils.getClientPlayer()));
+	public void openGui(Screen gui) {
+		Minecraft.getInstance().setScreen(gui);
 	}
 
 	@Override

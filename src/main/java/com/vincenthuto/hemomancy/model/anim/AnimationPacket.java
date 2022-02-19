@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;

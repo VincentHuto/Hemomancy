@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.item;
 
 import java.util.List;
 
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ public class ItemDSD extends Item {
 		if (level.isClientSide) {
 			System.out.println("t");
 			Minecraft mc = Minecraft.getInstance();
-			mc.cameraEntity.setPos(mc.cameraEntity.getPosition(ClientUtils.getPartialTicks()).add(0, 2, 0));
+			mc.cameraEntity.setPos(mc.cameraEntity.getPosition(HLClientUtils.getPartialTicks()).add(0, 2, 0));
 		}
 		return super.use(level, player, hand);
 	}

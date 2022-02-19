@@ -7,10 +7,13 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.MenuRuneBinderInventory;
+import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRuneBinderViewer;
+import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.itemhandler.RuneBinderItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.binder.PacketToggleBinderMessage;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -76,7 +79,8 @@ public class ItemRuneBinder extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (worldIn.isClientSide) {
 			if (!playerIn.isShiftKeyDown()) {
-				Hemomancy.proxy.openBinderGui();
+				Hemomancy.proxy.openGui(new ScreenRuneBinderViewer(new ItemStack(ItemInit.rune_binder.get()),
+						HLClientUtils.getClientPlayer()));
 				playerIn.playSound(SoundEvents.BOOK_PAGE_TURN, 0.40f, 1F);
 			}
 		}
@@ -94,8 +98,8 @@ public class ItemRuneBinder extends Item {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new MenuRuneBinderInventory(windowId, p_createMenu_3_.level, p_createMenu_3_.blockPosition(),
-								p_createMenu_2_, p_createMenu_3_);
+						return new MenuRuneBinderInventory(windowId, p_createMenu_3_.level,
+								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});
 

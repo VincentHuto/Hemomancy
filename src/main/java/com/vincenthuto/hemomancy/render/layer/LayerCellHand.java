@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
 import com.vincenthuto.hemomancy.particle.factory.AbsrobedBloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.particle.util.EntityParticleUtils;
-import com.vincenthuto.hutoslib.client.ClientUtils;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -189,7 +189,7 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 				}
 
 			} else {
-				HitResult trace = player.pick(5, ClientUtils.getPartialTicks(), true);
+				HitResult trace = player.pick(5, HLClientUtils.getPartialTicks(), true);
 				if (trace.getType() == Type.BLOCK) {
 					Vec3 hitVec = trace.getLocation();
 					Vec3 finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).reverse();

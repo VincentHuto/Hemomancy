@@ -25,6 +25,12 @@ public class RenderTypeInit extends RenderType {
 		super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
 	}
 
+	static RenderType.CompositeState lightningState = RenderType.CompositeState.builder()
+			.setShaderState(POSITION_COLOR_SHADER).setTransparencyState(LIGHTNING_TRANSPARENCY)
+			.createCompositeState(false);
+	public static final RenderType LIGHTNING = create("lightning", DefaultVertexFormat.POSITION_COLOR,
+			VertexFormat.Mode.QUADS, 256, false, true, lightningState);
+
 	public static final RenderType RADIANT_RENDER_TYPE = create("radiant",
 			(VertexFormat) DefaultVertexFormat.POSITION_COLOR, (VertexFormat.Mode) VertexFormat.Mode.QUADS, (int) 256,
 			(boolean) false, (boolean) true,
