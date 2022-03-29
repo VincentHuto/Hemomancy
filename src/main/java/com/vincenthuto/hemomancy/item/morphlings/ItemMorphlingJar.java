@@ -7,12 +7,9 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
-import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJarViewer;
-import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -98,8 +95,7 @@ public class ItemMorphlingJar extends Item {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (worldIn.isClientSide) {
 			if (!playerIn.isShiftKeyDown()) {
-				Hemomancy.proxy.openGui(new ScreenMorphlingJarViewer(new ItemStack(ItemInit.morphling_jar.get()),
-						HLClientUtils.getClientPlayer()));
+				Hemomancy.proxy.openJarGui();
 				playerIn.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
 			}
 		}

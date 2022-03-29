@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,23 +23,29 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 		implements RecipeSerializer<ChiselRecipe> {
 	public static HashMap<ResourceLocation, ChiselRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ChiselRecipe>();
 
+	public static ChiselRecipe getRecipe(String path) {
+		return ALL_RECIPES.get(new ResourceLocation("hemomancy:chisel/" + path));
+	}
+
 	@Override
 	public ChiselRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"));
-		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"));
 
 		int tier = 0;
+		RuneType runeType = RuneType.OVERRIDE;
+		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"));
+		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"));
+		byte[][] pattern;
+
 		if (pJson.has("tier")) {
 			tier = pJson.get("tier").getAsInt();
 		}
-		RuneType type = RuneType.OVERRIDE;
-		if (pJson.has("runetype")) {
-			type = pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.CONTRACT.toString())
+		if (pJson.has("runeruneType")) {
+			runeType = pJson.get("runeruneType").getAsString().toUpperCase().equals(RuneType.CONTRACT.toString())
 					? RuneType.CONTRACT
-					: pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.RUNE.toString()) ? RuneType.RUNE
+					: pJson.get("runeruneType").getAsString().toUpperCase().equals(RuneType.RUNE.toString())
+							? RuneType.RUNE
 							: RuneType.OVERRIDE;
 		}
-		byte[][] pattern;
 		JsonArray arr = pJson.getAsJsonArray("pattern");
 		pattern = new byte[arr.size()][];
 		for (int i = 0; i < arr.size(); ++i) {
@@ -64,7 +71,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			}), c);
 		}
 
-		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, type, ingredient1, ingredient2, pattern, itemstack);
+		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, runeType, ingredient1, ingredient2, pattern, itemstack);
 		ALL_RECIPES.put(pRecipeId, recipe);
 		return recipe;
 	}
@@ -76,7 +83,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			Ingredient input1 = Ingredient.of(pBuffer.readItem());
 			Ingredient input2 = Ingredient.of(pBuffer.readItem());
 			int tier = pBuffer.readInt();
-			RuneType type = RuneType.valueOf(pBuffer.readUtf().toUpperCase());
+			RuneType runeType = RuneType.valueOf(pBuffer.readUtf());
 			int len = pBuffer.readInt();
 			byte[][] pattern = new byte[len][];
 			for (int i = 0; i < len; ++i) {
@@ -84,10 +91,10 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			}
 
 			ItemStack result = pBuffer.readItem();
-			ChiselRecipe mwpattern = new ChiselRecipe(id, tier, type, input1, input2, pattern, result);
-			mwpattern.setPatternBytes(pattern);
-			ALL_RECIPES.put(pRecipeId, mwpattern);
-			return mwpattern;
+			ChiselRecipe recipe = new ChiselRecipe(id, tier, runeType, input1, input2, pattern, result);
+			recipe.setPatternBytes(pattern);
+			ALL_RECIPES.put(pRecipeId, recipe);
+			return recipe;
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error reading chisel pattern recipe from packet.", (Throwable) e);
 			throw e;
@@ -99,11 +106,10 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 		try {
 
 			pBuffer.writeResourceLocation(pRecipe.getId());
-			pBuffer.writeUtf(pRecipe.getGroup());
+			pBuffer.writeItem(pRecipe.getIngredient1().getItems()[0]);
+			pBuffer.writeItem(pRecipe.getIngredient2().getItems()[0]);
 			pBuffer.writeInt(pRecipe.getTier());
-			pBuffer.writeUtf(pRecipe.type.toString().toUpperCase());
-			pBuffer.writeItem(pRecipe.ingredient1.getItems()[0]);
-			pBuffer.writeItem(pRecipe.ingredient2.getItems()[0]);
+			pBuffer.writeUtf(pRecipe.getRuneType().toString());
 			byte[][] pattern = pRecipe.getPattern();
 			pBuffer.writeInt(pattern.length);
 			for (int i = 0; i < pattern.length; ++i) {

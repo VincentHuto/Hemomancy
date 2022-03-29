@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.network.PacketChiselCraftingEvent;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.PacketUpdateChiselRunes;
-import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
@@ -116,8 +116,8 @@ public class ScreenChiselStation extends AbstractContainerScreen<MenuChiselStati
 		this.font.draw(matrixStack, this.playerInv.getDisplayName().getContents(), 8, this.imageHeight - 92, 000000);
 		if (te.hasValidRecipe()) {
 			ChiselRecipe currentRecipe = te.getCurrentRecipe();
-			this.font.draw(matrixStack, I18n.get(currentRecipe.getOutputItem().getDescriptionId()), 120, 65, 0);
-			minecraft.getItemRenderer().renderAndDecorateItem(currentRecipe.getOutputItem(), 145, 44);
+			this.font.draw(matrixStack, I18n.get(currentRecipe.getResultItem().getDescriptionId()), 120, 65, 0);
+			minecraft.getItemRenderer().renderAndDecorateItem(currentRecipe.getResultItem(), 145, 44);
 			if (te.areRunesMatching()) {
 				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
 				blit(matrixStack, 162 - 42, 45 + 32, 176, 96, 16, 16);

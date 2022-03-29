@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -31,12 +32,11 @@ public class ScreenChooseManip extends Screen {
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
-	Player player;
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook_hidden.png");
+	Player player = HLClientUtils.getClientPlayer();
 
-	public ScreenChooseManip(Player clientPlayer) {
+	public ScreenChooseManip() {
 		super(titleComponent);
-		this.player = clientPlayer;
 	}
 
 	@Override

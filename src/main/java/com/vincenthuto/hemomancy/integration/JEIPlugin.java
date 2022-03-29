@@ -8,9 +8,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
-import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
-import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
-import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.JuiceinatorRecipe;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -30,32 +30,29 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		registry.addRecipeCategories(new JuiceinatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
-	//	registry.addRecipeCategories(new ChiselRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new RecallerRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
-		registry.addRecipeCategories(new TestChiselRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ChiselRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
-		registry.addRecipes(JuiceinatorDataRecipe.getAllRecipes(world), JuiceinatorRecipeCategory.UID);
-	//	registry.addRecipes(ChiselRecipes.runeRecipies, ChiselRecipeCategory.UID);
+		registry.addRecipes(JuiceinatorRecipe.getAllRecipes(world), JuiceinatorRecipeCategory.UID);
 		registry.addRecipes(BloodCraftingRecipes.RECIPES, BloodCraftingCategory.UID);
-		registry.addRecipes(RecallerRecipes.recallerRecipies, RecallerRecipeCategory.UID);
-		registry.addRecipes(ChiselRecipe.getAllRecipes(world), TestChiselRecipeCategory.UID);
+		registry.addRecipes(RecallerRecipe.getAllRecipes(world), RecallerRecipeCategory.UID);
+		registry.addRecipes(ChiselRecipe.getAllRecipes(world), ChiselRecipeCategory.UID);
 
 	}
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.juiceinator.get()), JuiceinatorRecipeCategory.UID);
-		//registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), ChiselRecipeCategory.UID);
 		registry.addRecipeCatalyst(new ItemStack(ItemInit.sanguine_formation.get()), BloodCraftingCategory.UID);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.visceral_artificial_recaller.get()),
 				RecallerRecipeCategory.UID);
-		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), TestChiselRecipeCategory.UID);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), ChiselRecipeCategory.UID);
 
 	}
 

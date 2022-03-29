@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.model.anim.Animation;
-import com.vincenthuto.hemomancy.model.anim.AnimationPacket;
-import com.vincenthuto.hemomancy.model.anim.IAnimatable;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -16,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -39,10 +35,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityChitinite extends PathfinderMob implements IAnimatable{
+public class EntityChitinite extends PathfinderMob {
 
-	private Animation animation = NO_ANIMATION;
-	public static final Animation ROLLUP_ANIMATION = new Animation(128);
+//	private Animation animation = NO_ANIMATION;
+//	public static final Animation ROLLUP_ANIMATION = new Animation(128);
 
 	public int puffCooldown = 0;
 
@@ -99,19 +95,6 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 		}
 	}
 
-	@SuppressWarnings("unused")
-	@Override
-	public void aiStep() {
-		super.aiStep();
-		Animation animation = getAnimation();
-		int animTick = getAnimationTick();
-
-		if (puffCooldown > 0) {
-			--puffCooldown;
-		}
-
-	}
-
 	public void attackInBox(AABB box, int disabledShieldTime) {
 		List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box,
 				entity -> entity != this && !hasPassenger(entity));
@@ -131,7 +114,6 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 	@Override
 	public void tick() {
 		super.tick();
-		updateAnimations();
 		LivingEntity target = getTarget();
 		if (target == null)
 			return;
@@ -143,12 +125,6 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 			getNavigation().moveTo(target, 1.2);
 		if (isClose) {
 			yHeadRot = (float) MathUtils.getAngle(EntityChitinite.this, target) + 90f;
-		}
-		if (noAnimations()) {
-			if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityChitinite.this, target) + 90,
-					yRotO) < 30) {
-				AnimationPacket.send(EntityChitinite.this, ROLLUP_ANIMATION);
-			}
 		}
 	}
 
@@ -165,9 +141,10 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 
 	@Override
 	protected void registerGoals() {
-		//this.goalSelector.addGoal(1, new BreakBlockGoal(Blocks.OAK_WOOD, this, 1.5d, 10));
-	//	this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
-	//	this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		// this.goalSelector.addGoal(1, new BreakBlockGoal(Blocks.OAK_WOOD, this, 1.5d,
+		// 10));
+		// this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
+		// this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
@@ -175,7 +152,7 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.KNOCKBACK_RESISTANCE, 1.15D).add(Attributes.ATTACK_DAMAGE, 1.0D);
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
 	@Override
@@ -196,35 +173,6 @@ public class EntityChitinite extends PathfinderMob implements IAnimatable{
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
-	}
-
-	@Override
-	public int getAnimationTick() {
-		return animationTick;
-	}
-
-	@Override
-	public void setAnimationTick(int tick) {
-		animationTick = tick;
-
-	}
-
-	@Override
-	public Animation getAnimation() {
-		return animation;
-	}
-
-	@Override
-	public void setAnimation(Animation animation) {
-		if (animation == null)
-			animation = NO_ANIMATION;
-		setAnimationTick(0);
-		this.animation = animation;
-	}
-
-	@Override
-	public Animation[] getAnimations() {
-		return new Animation[] { ROLLUP_ANIMATION };
 	}
 
 //	@Override

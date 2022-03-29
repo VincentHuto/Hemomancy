@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.math.MathUtils;
@@ -29,12 +30,11 @@ public class ScreenChooseVein extends Screen {
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
-	Player player;
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/choose_vein.png");
+	Player player = HLClientUtils.getClientPlayer();
 
-	public ScreenChooseVein(Player clientPlayer) {
+	public ScreenChooseVein() {
 		super(titleComponent);
-		this.player = clientPlayer;
 	}
 
 	@Override

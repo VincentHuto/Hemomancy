@@ -8,9 +8,11 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.itemhandler.RuneBinderItemHandler;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
@@ -35,19 +37,17 @@ public class ScreenRuneBinderViewer extends Screen {
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;
-	ItemStack icon;
+	ItemStack icon = new ItemStack(ItemInit.rune_binder.get());
 	Minecraft mc = Minecraft.getInstance();
-	Player player;
+	Player player = HLClientUtils.getClientPlayer();
 	public RuneBinderItemHandler handler;
 
 	@OnlyIn(Dist.CLIENT)
-	public ScreenRuneBinderViewer(ItemStack currentBinderIn, Player playerIn) {
+	public ScreenRuneBinderViewer() {
 		super(new TextComponent("View All Patterns"));
-		this.icon = currentBinderIn;
-		this.player = playerIn;
+
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		int centerX = (width / 2) - guiWidth / 2;
@@ -75,7 +75,7 @@ public class ScreenRuneBinderViewer extends Screen {
 			if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
 				ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
 				List<Component> text = new ArrayList<Component>();
-				text.add(new TextComponent(I18n.get(pat.getRecipe().getOutputItem().getHoverName().getString())));
+				text.add(new TextComponent(I18n.get(pat.getRecipe().getResultItem().getHoverName().getString())));
 				renderComponentTooltip(matrixStack, text, mouseX, mouseY);
 			}
 			// }
@@ -98,7 +98,7 @@ public class ScreenRuneBinderViewer extends Screen {
 					Lighting.setupFor3DItems();
 					if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
 						ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
-						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(pat.getRecipe().getOutputItem(),
+						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(pat.getRecipe().getResultItem(),
 								(((GuiButtonTextured) renderables.get(i)).x + 2),
 								((GuiButtonTextured) renderables.get(i)).y + 2);
 					}
@@ -149,7 +149,7 @@ public class ScreenRuneBinderViewer extends Screen {
 											.getItem() instanceof ItemRunePattern) {
 										ItemRunePattern pat = (ItemRunePattern) binderHandler
 												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-										Minecraft.getInstance().setScreen(pat.getPatternGui());
+										pat.getPatternGui();
 									}
 								}
 							}));
@@ -162,7 +162,7 @@ public class ScreenRuneBinderViewer extends Screen {
 											.getItem() instanceof ItemRunePattern) {
 										ItemRunePattern pat = (ItemRunePattern) binderHandler
 												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-										Minecraft.getInstance().setScreen(pat.getPatternGui());
+										pat.getPatternGui();
 									}
 								}
 							}));
@@ -175,12 +175,13 @@ public class ScreenRuneBinderViewer extends Screen {
 											.getItem() instanceof ItemRunePattern) {
 										ItemRunePattern pat = (ItemRunePattern) binderHandler
 												.getStackInSlot(((GuiButtonTextured) press).getId()).getItem();
-										Minecraft.getInstance().setScreen(pat.getPatternGui());
+										pat.getPatternGui();
 									}
 								}
 							}));
 				}
 			}
+
 		}
 		super.init();
 	}

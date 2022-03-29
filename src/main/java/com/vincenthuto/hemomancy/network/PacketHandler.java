@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.model.anim.AnimationPacket;
 import com.vincenthuto.hemomancy.network.binder.PacketBinderTogglePickup;
 import com.vincenthuto.hemomancy.network.binder.PacketOpenRuneBinder;
 import com.vincenthuto.hemomancy.network.binder.PacketToggleBinderMessage;
@@ -43,7 +42,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -92,8 +90,6 @@ public class PacketHandler {
 				PacketUpdateLivingStaffMorph.Handler::handle);
 		CHANNELMAIN.registerMessage(networkID++, PacketClearRecallerState.class, PacketClearRecallerState::encode,
 				PacketClearRecallerState::decode, PacketClearRecallerState.Handler::handle);
-		CHANNELMAIN.messageBuilder(AnimationPacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
 
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
 				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,

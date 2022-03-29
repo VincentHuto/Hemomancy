@@ -1,0 +1,14 @@
+{
+
+  "type" : "hemomancy:recaller_recipe",
+  "animus" : 2,
+  "mortem" : 3.3,
+  "ductilis" : 4,
+  "ferric" : 5,
+  "lux" : 3,
+  "tenebris" : -2.2,
+  "flammeus" : 1,
+  "congeatio" : 0,
+  "result" : "hemomancy:sanguine_formation",
+  "count" : 8
+}

@@ -13,8 +13,8 @@ import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
 import com.vincenthuto.hemomancy.container.MenuRuneBinderInventory;
 import com.vincenthuto.hemomancy.container.MenuRunes;
 import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
-import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarDataRecipe;
-import com.vincenthuto.hemomancy.recipe.CopyRuneBinderDataRecipe;
+import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarRecipe;
+import com.vincenthuto.hemomancy.recipe.CopyRuneBinderRecipe;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -79,9 +79,9 @@ public class ContainerInit {
 
 	@SubscribeEvent
 	public static void onRecipeRegistry(final RegistryEvent.Register<RecipeSerializer<?>> event) {
-		event.getRegistry().register(new CopyRuneBinderDataRecipe.Serializer()
+		event.getRegistry().register(new CopyRuneBinderRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, "backpack_upgrade")));
-		event.getRegistry().register(new CopyMorphlingJarDataRecipe.Serializer()
+		event.getRegistry().register(new CopyMorphlingJarRecipe.Serializer()
 				.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, "morphling_jar_upgrade")));
 	}
 }

@@ -5,10 +5,8 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.gui.manips.ScreenChooseManip;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,13 +34,13 @@ public class ItemBloodStainedStone extends Item {
 				.orElseThrow(NullPointerException::new);
 		IKnownManipulations manips = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
-		
+
 		if (volCap.isActive()) {
 			if (!worldIn.isClientSide) {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketKnownManipulationServer(manips));
 			} else {
-				Hemomancy.proxy.openGui(new ScreenChooseManip(HLClientUtils.getClientPlayer()));
+				Hemomancy.proxy.openManipGui();
 			}
 		} else {
 			playerIn.displayClientMessage(new TextComponent("The stone feels warm in your hands..."), true);

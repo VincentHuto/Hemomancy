@@ -1,26 +1,11 @@
 package com.vincenthuto.hemomancy;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.phys.Vec3;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
+
+import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.RegistryObject;
 
 public interface IProxy {
-
-	default void lightningFX(Vec3 vectorStart, Vec3 vectorEnd, float ticksPerMeter, int colorOuter, int colorInner) {
-		lightningFX(vectorStart, vectorEnd, ticksPerMeter, System.nanoTime(), colorOuter, colorInner);
-	}
-
-	default void lightningFX(Vec3 vectorStart, Vec3 vectorEnd, float ticksPerMeter, long seed, int colorOuter,
-			int colorInner) {
-
-	}
-	
-
-	default void openGui(Screen gui) {
-	}
-	
-
-	default void registerHandlers() {
-	}
 
 	default void openBinderGui() {
 	}
@@ -40,6 +25,13 @@ public interface IProxy {
 	}
 
 	default void openVeinGui() {
+
+	}
+
+	default void registerHandlers() {
+	}
+
+	default void openPatternGui(RegistryObject<Item> rune, ChiselRecipe recipe) {
 
 	}
 

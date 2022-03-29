@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemBarbedShield extends Item {
 	public ItemBarbedShield(Item.Properties builder) {
@@ -113,7 +114,8 @@ public class ItemBarbedShield extends Item {
 
 	@Override
 	public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-		return ItemTags.PLANKS.contains(repair.getItem()) || super.isValidRepairItem(toRepair, repair);
+		return ForgeRegistries.ITEMS.tags().getTag(ItemTags.PLANKS).contains(repair.getItem())
+				|| super.isValidRepairItem(toRepair, repair);
 	}
 
 	public static DyeColor getColor(ItemStack stack) {

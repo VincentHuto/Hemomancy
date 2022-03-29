@@ -62,6 +62,9 @@ public class BlockVisceralRecaller extends Block implements EntityBlock {
 			BlockEntity tile = worldIn.getBlockEntity(pos);
 
 			if (tile instanceof BlockEntityVisceralRecaller te) {
+				
+				
+				
 				te.sendUpdates();
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 				NetworkHooks.openGui((ServerPlayer) player, (BlockEntityVisceralRecaller) tile, pos);

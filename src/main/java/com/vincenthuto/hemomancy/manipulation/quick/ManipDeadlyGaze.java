@@ -12,8 +12,8 @@ import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class ManipDeadlyGaze extends BloodManipulation {
 
-	public ManipDeadlyGaze(String name, double cost, double alignLevel, double xpCost,EnumManipulationType type,
+	public ManipDeadlyGaze(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
@@ -50,8 +50,8 @@ public class ManipDeadlyGaze extends BloodManipulation {
 
 					PacketHandler.sendClawParticles(end, ParticleColor.BLOOD, 64f, world.dimension());
 
-					HLPacketHandler.sendLightningSpawn(entVec, end, 64.0f, player.level.dimension(), ParticleColor.RED,
-							3, 10, 9, 1.2f);
+			
+					HutosLib.proxy.lightningFX(entVec, end, 64f, ParticleColor.BLOOD);
 
 				}
 			}

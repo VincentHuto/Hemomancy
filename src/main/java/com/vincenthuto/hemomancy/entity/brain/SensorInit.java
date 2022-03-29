@@ -6,7 +6,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,7 +16,7 @@ public class SensorInit {
 			Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<DataSerializerEntry> DATA_SERIALIZERS = DeferredRegister
-			.create(ForgeRegistries.DATA_SERIALIZERS, Hemomancy.MOD_ID);
+			.create(ForgeRegistries.Keys.DATA_SERIALIZERS, Hemomancy.MOD_ID);
 
 	public static final RegistryObject<SensorType<SecondaryBrainPoiSensor>> secondary_brain_poi = SENSORS
 			.register("secondary_brain_poi", () -> new SensorType<>(SecondaryBrainPoiSensor::new));

@@ -200,14 +200,7 @@ public class EntityLeech extends Animal {
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
 			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
 		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setLeechType(this.random.nextInt(4));
-		Level world = worldIn.getLevel();
-		if (world instanceof ServerLevel && ((ServerLevel) world).structureFeatureManager()
-				.getStructureAt(this.blockPosition(), StructureFeature.SWAMP_HUT).isValid()) {
-			this.setLeechType(1);
-			this.setPersistenceRequired();
-
-		}
+		this.setLeechType(1);
 		return spawnDataIn;
 
 	}

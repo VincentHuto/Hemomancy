@@ -8,7 +8,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
@@ -69,7 +69,7 @@ public class ScreenRunePattern extends Screen {
 		}
 
 		matrixStack.translate(centerX + 100, centerY + 10, 0);
-		drawString(matrixStack, font, ChatFormatting.GOLD + I18n.get(recipe.getOutputItem().getDescriptionId()), -85, 0,
+		drawString(matrixStack, font, ChatFormatting.GOLD + I18n.get(recipe.getResultItem().getDescriptionId()), -85, 0,
 				8060954);
 		font.drawWordWrap(new TextComponent(ChatFormatting.BLACK + I18n.get(text)), centerX + 1 + 10, centerY + 151,
 				150, 0);
@@ -101,7 +101,7 @@ public class ScreenRunePattern extends Screen {
 		for (int i = 0; i < runeButtonArray.length; i++) {
 			for (int j = 0; j < runeButtonArray.length; j++) {
 				buttonList.add(runeButtonArray[i][j] = new GuiButtonTextured(GUI_Chisel, inc,
-						left + guiWidth - (guiWidth - 75 - (i * 8)), top + guiHeight - (163 - (j * 8)), 8, 8, 176, 0,
+						left + guiWidth - (guiWidth - 75 - (j * 8)), top + guiHeight - (163 - (i * 8)), 8, 8, 176, 0,
 						recipe.getPattern()[i][j] == 0 ? false : true, null, null));
 				inc++;
 			}

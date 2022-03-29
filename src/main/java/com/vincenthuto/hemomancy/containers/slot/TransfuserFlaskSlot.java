@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.containers.slot;
 
 import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
-import com.vincenthuto.hemomancy.container.MenuJuiceinator;
 import com.vincenthuto.hutoslib.common.item.HLItemInit;
 
 import net.minecraft.world.Container;

@@ -1,0 +1,24 @@
+{
+	"type": "hemomancy:chisel_recipe",
+	"tier": 1,
+	"runetype": "RUNE",
+	"ingredient1" : {
+	    "item" : "hemomancy:rune_blank"
+	  },
+	"ingredient2" : {
+	    "item" : "minecraft:smooth_quartz"
+	  },
+	"pattern": 
+	[
+		[  0, 0, 1, 1, 1, 0, 0, 0 ],
+		[  0, 1, 0, 0, 0, 1, 0, 0 ],
+		[  1, 0, 1, 1, 1, 0, 1, 0 ],
+		[  1, 0, 0, 1, 0, 1, 1, 0 ],
+		[  1, 0, 0, 1, 0, 1, 1, 0 ],
+		[  1, 0, 1, 1, 1, 0, 1, 0 ],
+		[  0, 1, 0, 0, 0, 1, 0, 0 ],
+		[  0, 0, 1, 1, 1, 0, 0, 0 ]		
+	],
+  "result" : "hemomancy:rune_moon",
+  "count" : 1
+}

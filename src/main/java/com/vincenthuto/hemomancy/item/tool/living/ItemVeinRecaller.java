@@ -5,10 +5,8 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.gui.manips.ScreenChooseVein;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,7 +40,7 @@ public class ItemVeinRecaller extends Item implements IDispellable {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new PacketKnownManipulationServer(manips));
 			} else {
-				Hemomancy.proxy.openGui(new ScreenChooseVein(HLClientUtils.getClientPlayer()));
+				Hemomancy.proxy.openVeinGui();
 
 			}
 		} else {

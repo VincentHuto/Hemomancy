@@ -3,14 +3,13 @@ package com.vincenthuto.hemomancy.tile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipeSerializer;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
@@ -101,13 +100,7 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 
 	public ChiselRecipe getCurrentRecipe() {
 
-		for (Entry<ResourceLocation, ChiselRecipe> entry : ChiselRecipeSerializer.ALL_RECIPES.entrySet()) {
-			ResourceLocation key = entry.getKey();
-			ChiselRecipe value = entry.getValue();
-			System.out.println(key);
-		}
-
-		for (ChiselRecipe recipe : ChiselRecipeSerializer.ALL_RECIPES.values()) {
+		for (ChiselRecipe recipe : ChiselRecipe.getAllRecipes(level)) {
 
 			if (recipe.getIngredients().size() == 1) {
 				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
@@ -130,7 +123,7 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	}
 
 	public boolean hasValidRecipe() {
-		for (ChiselRecipe recipe : ChiselRecipeSerializer.ALL_RECIPES.values()) {
+		for (ChiselRecipe recipe : ChiselRecipe.getAllRecipes(level)) {
 			if (recipe.getIngredients().size() == 1) {
 				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
 					return true;
@@ -295,7 +288,7 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 				matcher = true;
 			}
 			if (Arrays.deepEquals(runesList, currentRecipe.getPattern()) && matcher) {
-				ItemStack output = recipe.getOutputItem().copy();
+				ItemStack output = recipe.getResultItem().copy();
 				contents.set(0, output);
 				currentRecipe = null;
 				for (int i = 0; i < getContainerSize(); i++) {

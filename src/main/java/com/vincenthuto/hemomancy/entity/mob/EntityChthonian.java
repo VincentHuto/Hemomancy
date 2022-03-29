@@ -76,22 +76,12 @@ public class EntityChthonian extends PathfinderMob {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
-	@Override
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.populateDefaultEquipmentSlots(difficultyIn);
-		Level world = worldIn.getLevel();
-		if (world instanceof ServerLevel && ((ServerLevel) world).structureFeatureManager()
-				.getStructureAt(this.blockPosition(), StructureFeature.SWAMP_HUT).isValid()) {
-			this.setPersistenceRequired();
-		}
-
-		return spawnDataIn;
-
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
+			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
-
 	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
 		List<Entity> list = world.getEntities(this, effectBounds);
 		for (Entity ent : list) {
@@ -187,7 +177,7 @@ public class EntityChthonian extends PathfinderMob {
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.KNOCKBACK_RESISTANCE, 1.15D).add(Attributes.ATTACK_DAMAGE, 1.0D);
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
 	@Override

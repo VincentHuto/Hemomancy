@@ -13,15 +13,16 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
-import com.vincenthuto.hemomancy.recipe.JuiceinatorDataRecipe;
+import com.vincenthuto.hemomancy.recipe.JuiceinatorRecipe;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,7 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDataRecipe> {
+public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRecipe> {
 
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "juiceinator");
 	public static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
@@ -51,7 +52,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 	public JuiceinatorRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(150, 110);
 		overlay = guiHelper.createDrawable(texture, 0, 0, 150, 110);
-		icon = guiHelper.createDrawableIngredient(new ItemStack(BlockInit.juiceinator.get()));
+		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(BlockInit.juiceinator.get()));
 		this.staticFlame = guiHelper.createDrawable(texture, 143 + 16, 0, 14, 14);
 		this.animatedFlame = guiHelper.createAnimatedDrawable(staticFlame, 300, IDrawableAnimated.StartDirection.TOP,
 				true);
@@ -72,8 +73,8 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 
 	@Nonnull
 	@Override
-	public Class<? extends JuiceinatorDataRecipe> getRecipeClass() {
-		return JuiceinatorDataRecipe.class;
+	public Class<? extends JuiceinatorRecipe> getRecipeClass() {
+		return JuiceinatorRecipe.class;
 	}
 
 	@Nonnull
@@ -94,17 +95,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 		return icon;
 	}
 
-	@Override
-	public void setIngredients(JuiceinatorDataRecipe recipe, IIngredients iIngredients) {
-		List<List<ItemStack>> list = new ArrayList<>();
-		for (Ingredient ingr : recipe.getIngredients()) {
-			list.add(Arrays.asList(ingr.getItems()));
-		}
-		iIngredients.setInputLists(VanillaTypes.ITEM, list);
-		iIngredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
-	}
-
-	protected void drawExperience(JuiceinatorDataRecipe recipe, PoseStack poseStack, int y) {
+	protected void drawExperience(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
 		float experience = recipe.getExperience();
 		if (experience > 0) {
 			TranslatableComponent experienceString = new TranslatableComponent("gui.jei.category.smelting.experience",
@@ -116,7 +107,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 		}
 	}
 
-	protected void drawCookTime(JuiceinatorDataRecipe recipe, PoseStack poseStack, int y) {
+	protected void drawCookTime(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
 		int cookTime = recipe.getCookingTime();
 		if (cookTime > 0) {
 			int cookTimeSeconds = cookTime / 20;
@@ -129,7 +120,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 		}
 	}
 
-	protected IDrawableAnimated getArrow(JuiceinatorDataRecipe recipe) {
+	protected IDrawableAnimated getArrow(JuiceinatorRecipe recipe) {
 		int cookTime = recipe.getCookingTime();
 		if (cookTime <= 0) {
 			cookTime = 200;
@@ -138,7 +129,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 	}
 
 	@Override
-	public void draw(JuiceinatorDataRecipe recipe, PoseStack PoseStack, double mouseX, double mouseY) {
+	public void draw(JuiceinatorRecipe recipe, PoseStack PoseStack, double mouseX, double mouseY) {
 		overlay.draw(PoseStack);
 		animatedFlame.draw(PoseStack, 57, 37);
 		IDrawableAnimated arrow = getArrow(recipe);
@@ -148,12 +139,14 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorDat
 	}
 
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull JuiceinatorDataRecipe recipe,
-			@Nonnull IIngredients ingredients) {
-		recipeLayout.getItemStacks().init(0, true, 116, 35);
-		recipeLayout.getItemStacks().set(0, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
-		recipeLayout.getItemStacks().init(1, true, 55, 16);
-		recipeLayout.getItemStacks().set(1, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+	public void setRecipe(IRecipeLayoutBuilder builder, JuiceinatorRecipe recipe, IFocusGroup focuses) {
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM, recipe.getResultItem());
+		List<List<ItemStack>> list = new ArrayList<>();
+		for (Ingredient ingr : recipe.getIngredients()) {
+			list.add(Arrays.asList(ingr.getItems()));
+		}
+		builder.addSlot(RecipeIngredientRole.INPUT, 56, 17).addIngredients(VanillaTypes.ITEM, list.get(0));
+
 	}
 
 }

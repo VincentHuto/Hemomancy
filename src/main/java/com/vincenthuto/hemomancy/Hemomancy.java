@@ -27,11 +27,9 @@ import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
-import com.vincenthuto.hemomancy.init.WorldInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
-import com.vincenthuto.hemomancy.recipe.RecallerRecipes;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -75,8 +72,6 @@ public class Hemomancy {
 
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-
-		RecallerRecipes.RECALLERRECIPES.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
@@ -115,7 +110,7 @@ public class Hemomancy {
 		forgeBus.register(BloodTendencyEvents.class);
 		forgeBus.register(KnownManipulationEvents.class);
 		forgeBus.register(EarthenVeinLocEvents.class);
-		forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
+		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
 
 	}
 
@@ -209,25 +204,9 @@ public class Hemomancy {
 		PacketHandler.registerChannels();
 
 		event.enqueueWork(() -> {
-			FeatureInit.setupStructures();
-			WorldInit.registerConfiguredStructures();
+			// FeatureInit.setupStructures();
+			// WorldInit.registerConfiguredStructures();
 		});
-
-//		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "juiceinator"),
-//				new RecipeType<JuiceinatorDataRecipe>() {
-//					@Override
-//					public String toString() {
-//						return "juiceinator";
-//					}
-//				});
-//
-//		Registry.register(Registry.RECIPE_TYPE, new ResourceLocation(MOD_ID, "earthly_transfuser"),
-//				new RecipeType<EarthlyTransfuserDataRecipe>() {
-//					@Override
-//					public String toString() {
-//						return "earthly_transfuser";
-//					}
-//				});
 	}
 
 	// Combined a few methods into one more generic one

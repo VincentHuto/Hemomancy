@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemChitiniteShield extends Item {
 	public ItemChitiniteShield(Item.Properties builder) {
@@ -94,9 +95,10 @@ public class ItemChitiniteShield extends Item {
 
 	@Override
 	public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-		return ItemTags.PLANKS.contains(repair.getItem()) || super.isValidRepairItem(toRepair, repair);
-	}
 
+		return ForgeRegistries.ITEMS.tags().getTag(ItemTags.PLANKS).contains(repair.getItem())
+				|| super.isValidRepairItem(toRepair, repair);
+	}
 	public static DyeColor getColor(ItemStack stack) {
 		return DyeColor.byId(stack.getOrCreateTagElement("BlockEntityTag").getInt("Base"));
 	}

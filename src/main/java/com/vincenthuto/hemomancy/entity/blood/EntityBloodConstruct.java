@@ -70,19 +70,9 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 	}
 
 	@Override
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.populateDefaultEquipmentSlots(difficultyIn);
-		Level world = worldIn.getLevel();
-		if (world instanceof ServerLevel && ((ServerLevel) world).structureFeatureManager()
-				.getStructureAt(this.blockPosition(), StructureFeature.SWAMP_HUT).isValid()) {
-			this.setPersistenceRequired();
-		}
-
-		return spawnDataIn;
-
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
+			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
@@ -148,7 +138,6 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 	protected void registerGoals() {
 	}
 
-	
 	public static AttributeSupplier.Builder setAttributes() {
 		return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
 				.add(Attributes.ATTACK_KNOCKBACK).add(Attributes.MOVEMENT_SPEED, 0f)
@@ -174,7 +163,7 @@ public class EntityBloodConstruct extends PathfinderMob implements IBloodConstru
 	public LivingEntity getCreator() {
 		return creator;
 	}
-	
+
 	public void setCreator(LivingEntity creator) {
 		this.creator = creator;
 	}

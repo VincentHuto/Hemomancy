@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.render.item.RenderChitiniteLayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderChitinite extends MobRenderer<EntityChitinite, ModelChitinite<EntityChitinite>> {

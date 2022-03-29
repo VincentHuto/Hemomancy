@@ -12,8 +12,8 @@ public class RenderBloodLaserEvent {
 	public static void renderLevelLastEvent(RenderLevelLastEvent evt) {
 		List<AbstractClientPlayer> players = Minecraft.getInstance().level.players();
 		players.forEach((p) -> {
-			// RenderBloodLaser.renderLaser(evt, player,
-			// Minecraft.getInstance().getFrameTime());
+			RenderBloodLaser.renderLaser(evt, p, Minecraft.getInstance().getFrameTime());
+
 		});
 	}
 

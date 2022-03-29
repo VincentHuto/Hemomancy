@@ -1,11 +1,8 @@
 package com.vincenthuto.hemomancy.network;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.container.MenuChiselStation;
-import com.vincenthuto.hemomancy.recipe.serializer.ChiselRecipe;
 import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
 
 import net.minecraft.network.FriendlyByteBuf;

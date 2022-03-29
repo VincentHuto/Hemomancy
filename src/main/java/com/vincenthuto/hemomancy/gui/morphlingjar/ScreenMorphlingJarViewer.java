@@ -5,11 +5,13 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphling;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.PacketUpdateLivingStaffMorph;
+import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 
 import net.minecraft.client.Minecraft;
@@ -31,16 +33,15 @@ public class ScreenMorphlingJarViewer extends Screen {
 	int guiWidth = 91;
 	int guiHeight = 130;
 	int left, top;
-	ItemStack icon;
+	ItemStack icon = new ItemStack(ItemInit.morphling_jar.get());
 	Minecraft mc = Minecraft.getInstance();
-	Player player;
 	public MorphlingJarItemHandler handler;
+	Player player = HLClientUtils.getClientPlayer();
 
 	@OnlyIn(Dist.CLIENT)
-	public ScreenMorphlingJarViewer(ItemStack currentBinderIn, Player playerIn) {
+	public ScreenMorphlingJarViewer() {
 		super(new TextComponent("View All Morphs"));
-		this.icon = currentBinderIn;
-		this.player = playerIn;
+
 	}
 
 	int x;
@@ -66,9 +67,9 @@ public class ScreenMorphlingJarViewer extends Screen {
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.setShaderTexture(0, texture);
-		      int i = (this.width - this.guiWidth) / 2;
-				int j = (this.height - this.guiHeight) / 2;
-		      this.blit(matrixStack, i, j, 0, 0, this.guiWidth, this.guiHeight);
+			int i = (this.width - this.guiWidth) / 2;
+			int j = (this.height - this.guiHeight) / 2;
+			this.blit(matrixStack, i, j, 0, 0, this.guiWidth, this.guiHeight);
 		}
 		// GlStateManager._popMatrix();
 
@@ -108,8 +109,8 @@ public class ScreenMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured)renderables.get(i)).x = x;
-							((GuiButtonTextured)renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).x = x;
+							((GuiButtonTextured) renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -120,8 +121,8 @@ public class ScreenMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 2 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured)renderables.get(i)).x = x;
-							((GuiButtonTextured)renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).x = x;
+							((GuiButtonTextured) renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -131,8 +132,8 @@ public class ScreenMorphlingJarViewer extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured)renderables.get(i)).x = x;
-							((GuiButtonTextured)renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).x = x;
+							((GuiButtonTextured) renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -142,8 +143,8 @@ public class ScreenMorphlingJarViewer extends Screen {
 							long testY = (Math.abs(Math.abs(player.level.getGameTime() % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured)renderables.get(i)).x = x;
-							((GuiButtonTextured)renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).x = x;
+							((GuiButtonTextured) renderables.get(i)).y = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -151,8 +152,9 @@ public class ScreenMorphlingJarViewer extends Screen {
 
 					}
 					if (((GuiButtonTextured) renderables.get(i)).isHoveredOrFocused()) {
-						renderTooltip(matrixStack, binderHandler.getStackInSlot(i).getItem()
-								.getName(binderHandler.getStackInSlot(i)), mouseX, mouseY);
+						renderTooltip(matrixStack,
+								binderHandler.getStackInSlot(i).getItem().getName(binderHandler.getStackInSlot(i)),
+								mouseX, mouseY);
 					}
 				}
 			}
@@ -195,8 +197,7 @@ public class ScreenMorphlingJarViewer extends Screen {
 				this.addRenderableWidget(new GuiButtonTextured(texture, i, 0, 0, 20, 20, 174, 98, null, (press) -> {
 					if (press instanceof GuiButtonTextured) {
 						player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-						ItemStack morphStack = binderHandler
-								.getStackInSlot(((GuiButtonTextured) press).getId());
+						ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
 						if (morphStack.getItem() instanceof ItemMorphling) {
 							PacketHandler.CHANNELMAIN.sendToServer(
 									new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));

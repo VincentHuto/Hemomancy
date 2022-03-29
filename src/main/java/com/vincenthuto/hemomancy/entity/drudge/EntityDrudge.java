@@ -352,20 +352,10 @@ public class EntityDrudge extends TamableAnimal {
 
 	}
 
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setDrudgeRole(this.random.nextInt(8));
-		Level world = worldIn.getLevel();
-		if (world instanceof ServerLevel && ((ServerLevel) world).structureFeatureManager()
-				.getStructureAt(this.blockPosition(), StructureFeature.SWAMP_HUT).isValid()) {
-			this.setDrudgeRole(1);
-			this.setPersistenceRequired();
-		}
-
-		return spawnDataIn;
-
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_,
+			MobSpawnType p_146748_, SpawnGroupData p_146749_, CompoundTag p_146750_) {
+		return super.finalizeSpawn(p_146746_, p_146747_, p_146748_, p_146749_, p_146750_);
 	}
 
 	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {

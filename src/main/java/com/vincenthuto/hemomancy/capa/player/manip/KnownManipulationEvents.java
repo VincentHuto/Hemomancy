@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
-import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -120,8 +119,8 @@ public class KnownManipulationEvents {
 			if (!known.isAvatarActive()) {
 				double dist = e.getEntityLiving().distanceToSqr(player);
 				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
-						trace.getLocation().y, trace.getLocation().z));
+//				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
+//						trace.getLocation().y, trace.getLocation().z));
 				e.setAmount((float) (e.getAmount() * 0));
 			}
 

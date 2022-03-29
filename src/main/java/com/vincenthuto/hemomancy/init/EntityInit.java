@@ -18,9 +18,11 @@ import com.vincenthuto.hemomancy.entity.drudge.EntityDrudge;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.entity.mob.EntityAbhorentThought;
+import com.vincenthuto.hemomancy.entity.mob.EntityBloodDrunkPuppeteer;
 import com.vincenthuto.hemomancy.entity.mob.EntityChitinite;
 import com.vincenthuto.hemomancy.entity.mob.EntityChthonian;
 import com.vincenthuto.hemomancy.entity.mob.EntityChthonianQueen;
+import com.vincenthuto.hemomancy.entity.mob.EntityEnthralledDoll;
 import com.vincenthuto.hemomancy.entity.mob.EntityFargone;
 import com.vincenthuto.hemomancy.entity.mob.EntityFungling;
 import com.vincenthuto.hemomancy.entity.mob.EntityLeech;
@@ -46,16 +48,11 @@ public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 			Hemomancy.MOD_ID);
 
-	
-	
-	
 	public static final RegistryObject<EntityType<EntityBrainTest>> brain = ENTITY_TYPES.register("brain",
 			() -> EntityType.Builder.<EntityBrainTest>of(EntityBrainTest::new, MobCategory.CREATURE).fireImmune()
 					.sized(0.9F, 1.7F).clientTrackingRange(10)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "brain").toString()));
-	
-	
-	
+
 	// Mobs
 	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<EntityLeech>of(EntityLeech::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -71,6 +68,19 @@ public class EntityInit {
 					() -> EntityType.Builder.<EntityAbhorentThought>of(EntityAbhorentThought::new, MobCategory.MONSTER)
 							.sized(1.5f, 3F)
 							.build(new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought").toString()));
+	public static final RegistryObject<EntityType<EntityBloodDrunkPuppeteer>> blood_drunk_puppeteer = ENTITY_TYPES
+			.register("blood_drunk_puppeteer",
+					() -> EntityType.Builder
+							.<EntityBloodDrunkPuppeteer>of(EntityBloodDrunkPuppeteer::new, MobCategory.MONSTER)
+							.sized(0.6F, 1.8F)
+							.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_drunk_puppeteer").toString()));
+
+	public static final RegistryObject<EntityType<EntityEnthralledDoll>> enthralled_doll = ENTITY_TYPES
+			.register("enthralled_doll",
+					() -> EntityType.Builder.<EntityEnthralledDoll>of(EntityEnthralledDoll::new, MobCategory.MONSTER)
+							.sized(0.9F, 1F)
+							.build(new ResourceLocation(Hemomancy.MOD_ID, "enthralled_doll").toString()));
+
 	public static final RegistryObject<EntityType<EntityLumpOfThought>> lump_of_thought = ENTITY_TYPES.register(
 			"lump_of_thought",
 			() -> EntityType.Builder.<EntityLumpOfThought>of(EntityLumpOfThought::new, MobCategory.MONSTER)
@@ -195,7 +205,6 @@ public class EntityInit {
 		event.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().build());
 		event.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().build());
 		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
-
 		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
 		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());
 		event.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().build());
@@ -206,8 +215,10 @@ public class EntityInit {
 		event.put(EntityInit.chthonian_queen.get(), EntityChthonianQueen.setAttributes().build());
 		event.put(EntityInit.lump_of_thought.get(), EntityLumpOfThought.setAttributes().build());
 		event.put(EntityInit.abhorent_thought.get(), EntityAbhorentThought.setAttributes().build());
+		event.put(EntityInit.blood_drunk_puppeteer.get(), EntityBloodDrunkPuppeteer.setAttributes().build());
 		event.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().build());
 		event.put(EntityInit.brain.get(), EntityBrainTest.setAttributes().build());
+		event.put(EntityInit.enthralled_doll.get(), EntityEnthralledDoll.setAttributes().build());
 
 	}
 

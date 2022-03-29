@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
@@ -19,9 +20,12 @@ import com.vincenthuto.hutoslib.client.screen.guide.ScreenBlockTintGetter;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -29,7 +33,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-
 
 public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCrafting> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "blood_crafting");
@@ -66,20 +69,20 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	@SuppressWarnings("serial")
 	@Override
 	public void setIngredients(RecipeBaseBloodCrafting recipe, IIngredients ingredients) {
-		List<List<ItemStack>> list = new ArrayList<>();
-		List<ItemStack> heldStack = new ArrayList<ItemStack>() {
-			{
-				add(new ItemStack(recipe.getHeldItem()));
-			}
-		};
-		List<ItemStack> hitStack = new ArrayList<ItemStack>() {
-			{
-				add(new ItemStack(recipe.getHitBlock().asItem()));
-			}
-		};
-		Collections.addAll(list, heldStack, hitStack);
-		ingredients.setInputLists(VanillaTypes.ITEM, list);
-		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(recipe.getCreation()));
+//		List<List<ItemStack>> list = new ArrayList<>();
+//		List<ItemStack> heldStack = new ArrayList<ItemStack>() {
+//			{
+//				add(new ItemStack(recipe.getHeldItem()));
+//			}
+//		};
+//		List<ItemStack> hitStack = new ArrayList<ItemStack>() {
+//			{
+//				add(new ItemStack(recipe.getHitBlock().asItem()));
+//			}
+//		};
+//		Collections.addAll(list, heldStack, hitStack);
+//		ingredients.setInputLists(VanillaTypes.ITEM, list);
+//		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(recipe.getCreation()));
 	}
 
 	@Nonnull
@@ -139,15 +142,31 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 	}
 
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull RecipeBaseBloodCrafting recipe,
-			@Nonnull IIngredients ingredients) {
-		if (ingredients.getInputs(VanillaTypes.ITEM).size() > 1) {
-			recipeLayout.getItemStacks().init(1, true, 4, 30);
-			recipeLayout.getItemStacks().set(1, ingredients.getInputs(VanillaTypes.ITEM).get(0));
-			recipeLayout.getItemStacks().init(2, true, 4, 50);
-			recipeLayout.getItemStacks().set(2, ingredients.getInputs(VanillaTypes.ITEM).get(1));
-			recipeLayout.getItemStacks().init(3, false, 114, 40);
-			recipeLayout.getItemStacks().set(3, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
+	public void setRecipe(IRecipeLayoutBuilder builder, RecipeBaseBloodCrafting recipe, IFocusGroup focuses) {
+
+		List<List<ItemStack>> list = new ArrayList<>();
+		List<ItemStack> heldStack = new ArrayList<ItemStack>() {
+			{
+				add(new ItemStack(recipe.getHeldItem()));
+			}
+		};
+		List<ItemStack> hitStack = new ArrayList<ItemStack>() {
+			{
+				add(new ItemStack(recipe.getHitBlock().asItem()));
+			}
+		};
+		Collections.addAll(list, heldStack, hitStack);
+		// builder.addSlot(RecipeIngredientRole.OUTPUT, 117,
+		// 36).addIngredient(VanillaTypes.ITEM, recipe.getResultItem());
+
+//		ingredients.setInputLists(VanillaTypes.ITEM, list);
+//		ingredients.setOutput(VanillaTypes.ITEM, new ItemStack(recipe.getCreation()));
+
+		if (list.size() > 1) {
+			builder.addSlot(RecipeIngredientRole.INPUT, 5, 31).addIngredients(VanillaTypes.ITEM, list.get(0));
+			builder.addSlot(RecipeIngredientRole.INPUT, 5, 51).addIngredients(VanillaTypes.ITEM, list.get(1));
+			builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 41).addIngredient(VanillaTypes.ITEM,
+					new ItemStack(recipe.getCreation()));
 		}
 	}
 

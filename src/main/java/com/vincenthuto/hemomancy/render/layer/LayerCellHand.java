@@ -48,15 +48,14 @@ public class LayerCellHand<T extends LivingEntity, M extends EntityModel<T>> ext
 
 	@SuppressWarnings("rawtypes")
 	public static ModelBloodArm model;
+	public final ResourceLocation skinTexture = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
 
 	public LayerCellHand(RenderLayerParent<T, M> rendererIn) {
 		super(rendererIn);
 		model = new ModelBloodArm<T>(Minecraft.getInstance().getEntityModels().bakeLayer((ModelBloodArm.blood_arm)));
 
 	}
-
-	public final ResourceLocation skinTexture = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/item/hardened_skin.png");
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	@Override

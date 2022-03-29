@@ -74,7 +74,7 @@ public class BloodMoonWeatherRenderHandler implements IWeatherRenderHandler {
 					double d0 = lr.rainSizeX[l1] * 0.5D;
 					double d1 = lr.rainSizeZ[l1] * 0.5D;
 					blockpos$mutableblockpos.set(k1, 0, j1);
-					Biome biome = level.getBiome(blockpos$mutableblockpos);
+					Biome biome = level.getBiome(blockpos$mutableblockpos).value();
 					if (biome.getPrecipitation() != Biome.Precipitation.NONE) {
 						int i2 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockpos$mutableblockpos)
 								.getY();

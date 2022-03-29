@@ -41,42 +41,42 @@ public class ItemVasculariumCharm extends ItemRune implements IRune {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
 		ItemStack itemstack = pPlayer.getItemInHand(pHand);
-		HitResult hitresult = getPlayerPOVHitResult(pLevel, pPlayer, ClipContext.Fluid.NONE);
-		if (hitresult.getType() == HitResult.Type.BLOCK
-				&& pLevel.getBlockState(((BlockHitResult) hitresult).getBlockPos()).is(Blocks.END_PORTAL_FRAME)) {
-			return InteractionResultHolder.pass(itemstack);
-		} else {
-			pPlayer.startUsingItem(pHand);
-			if (pLevel instanceof ServerLevel) {
-				BlockPos blockpos = ((ServerLevel) pLevel).getChunkSource().getGenerator().findNearestMapFeature(
-						(ServerLevel) pLevel, FeatureInit.blood_temple_structure.get(), pPlayer.blockPosition(), 100,
-						false);
-				if (blockpos != null) {
-					EntityFlyingCharm eyeofender = new EntityFlyingCharm(pLevel, pPlayer.getX(), pPlayer.getY(0.5D),
-							pPlayer.getZ());
-					eyeofender.setItem(itemstack);
-					eyeofender.signalTo(blockpos);
-					pLevel.addFreshEntity(eyeofender);
-					if (pPlayer instanceof ServerPlayer) {
-						CriteriaTriggers.USED_ENDER_EYE.trigger((ServerPlayer) pPlayer, blockpos);
-					}
-
-					pLevel.playSound((Player) null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(),
-							SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5F,
-							0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
-					pLevel.levelEvent((Player) null, 1003, pPlayer.blockPosition(), 0);
-					if (!pPlayer.getAbilities().instabuild) {
-						// itemstack.shrink(1);
-					}
-
-					pPlayer.awardStat(Stats.ITEM_USED.get(this));
-					pPlayer.swing(pHand, true);
-					return InteractionResultHolder.success(itemstack);
-				}
-			}
+//		HitResult hitresult = getPlayerPOVHitResult(pLevel, pPlayer, ClipContext.Fluid.NONE);
+//		if (hitresult.getType() == HitResult.Type.BLOCK
+//				&& pLevel.getBlockState(((BlockHitResult) hitresult).getBlockPos()).is(Blocks.END_PORTAL_FRAME)) {
+//			return InteractionResultHolder.pass(itemstack);
+//		} else {
+//			pPlayer.startUsingItem(pHand);
+//			if (pLevel instanceof ServerLevel) {
+//				BlockPos blockpos = ((ServerLevel) pLevel).getChunkSource().getGenerator().findNearestMapFeature(
+//						(ServerLevel) pLevel, FeatureInit.blood_temple_structure.get(), pPlayer.blockPosition(), 100,
+//						false);
+//				if (blockpos != null) {
+//					EntityFlyingCharm eyeofender = new EntityFlyingCharm(pLevel, pPlayer.getX(), pPlayer.getY(0.5D),
+//							pPlayer.getZ());
+//					eyeofender.setItem(itemstack);
+//					eyeofender.signalTo(blockpos);
+//					pLevel.addFreshEntity(eyeofender);
+//					if (pPlayer instanceof ServerPlayer) {
+//						CriteriaTriggers.USED_ENDER_EYE.trigger((ServerPlayer) pPlayer, blockpos);
+//					}
+//
+//					pLevel.playSound((Player) null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(),
+//							SoundEvents.ENDER_EYE_LAUNCH, SoundSource.NEUTRAL, 0.5F,
+//							0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
+//					pLevel.levelEvent((Player) null, 1003, pPlayer.blockPosition(), 0);
+//					if (!pPlayer.getAbilities().instabuild) {
+//						// itemstack.shrink(1);
+//					}
+//
+//					pPlayer.awardStat(Stats.ITEM_USED.get(this));
+//					pPlayer.swing(pHand, true);
+//					return InteractionResultHolder.success(itemstack);
+//				}
+//			}
 
 			return InteractionResultHolder.consume(itemstack);
-		}
+	  //}
 	}
 
 	@Override

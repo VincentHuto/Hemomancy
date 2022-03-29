@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRuneBinder;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingStaff;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingSyringe;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
+import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
@@ -29,6 +30,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -56,10 +59,11 @@ public class ClientEventSubscriber {
 	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
 			"key.hemomancy.category");
 
-
-
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
+		// Overlay
+		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.HOTBAR_ELEMENT, "blood_volume",
+				BloodVolumeOverlay.HUD_BLOODVOLUME);
 
 		// Tiles
 		BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), RenderChiselStation::new);

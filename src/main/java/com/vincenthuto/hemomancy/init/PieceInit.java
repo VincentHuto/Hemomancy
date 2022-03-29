@@ -5,7 +5,7 @@ import java.util.Locale;
 import com.vincenthuto.hemomancy.world.structure.BloodTempleStructure;
 
 import net.minecraft.core.Registry;
-import net.minecraft.world.level.levelgen.feature.StructurePieceType;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 
 public class PieceInit {
 

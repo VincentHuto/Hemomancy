@@ -12,7 +12,6 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.init.FluidInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hutoslib.common.item.HLItemInit;
@@ -23,7 +22,9 @@ import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -34,6 +35,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -61,12 +63,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
@@ -158,9 +154,14 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		return volume.getMaxBloodVolume();
 	}
 
+	/**
+	 * @deprecated Forge: get burn times by calling
+	 *             ForgeHooks#getBurnTime(ItemStack)
+	 */
 	@Deprecated
 	public static Map<Item, Integer> getFuel() {
 		Map<Item, Integer> map = Maps.newLinkedHashMap();
+		add(map, Items.LAVA_BUCKET, 20000);
 		add(map, Blocks.COAL_BLOCK, 16000);
 		add(map, Items.BLAZE_ROD, 2400);
 		add(map, Items.COAL, 1600);
@@ -225,14 +226,14 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 		return map;
 	}
 
-	private static boolean isNeverAFurnaceFuel(Item item) {
-		return ItemTags.NON_FLAMMABLE_WOOD.contains(item);
+	private static boolean isNeverAFurnaceFuel(Item pItem) {
+		return pItem.builtInRegistryHolder().is(ItemTags.NON_FLAMMABLE_WOOD);
 	}
 
-	private static void add(Map<Item, Integer> map, Tag<Item> tag, int p_58373_) {
-		for (Item item : tag.getValues()) {
-			if (!isNeverAFurnaceFuel(item)) {
-				map.put(item, p_58373_);
+	private static void add(Map<Item, Integer> pMap, TagKey<Item> pItemTag, int pBurnTime) {
+		for (Holder<Item> holder : Registry.ITEM.getTagOrEmpty(pItemTag)) {
+			if (!isNeverAFurnaceFuel(holder.value())) {
+				pMap.put(holder.value(), pBurnTime);
 			}
 		}
 
@@ -541,7 +542,7 @@ public class BlockEntityEarthlyTransfuser extends BaseContainerBlockEntity
 				stack.shrink(1);
 				if (this.items.get(2).isEmpty()) {
 					this.items.set(2, new ItemStack(ItemInit.bloody_flask.get()));
-					volume.drain (100);
+					volume.drain(100);
 					sendUpdates();
 				} else if (this.items.get(2).getItem() == ItemInit.bloody_flask.get()) {
 					this.items.get(2).grow(1);
