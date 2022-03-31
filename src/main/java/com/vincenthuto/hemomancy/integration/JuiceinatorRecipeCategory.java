@@ -40,15 +40,12 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 			"textures/gui/juiceinator_gui_overlay.png");
 
 	private final IDrawable background;
-	@SuppressWarnings("unused")
-	private final String localizedName = "Juiceinator";
 	private final IDrawable overlay;
 	private final IDrawable icon;
 	private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 	protected IDrawableStatic staticFlame;
 	protected IDrawableAnimated animatedFlame;
 
-	@SuppressWarnings("deprecation")
 	public JuiceinatorRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(150, 110);
 		overlay = guiHelper.createDrawable(texture, 0, 0, 150, 110);

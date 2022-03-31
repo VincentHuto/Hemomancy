@@ -31,7 +31,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 	public ChiselRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
 
 		int tier = 0;
-		RuneType runeType = RuneType.OVERRIDE;
+		RuneType runetype = RuneType.OVERRIDE;
 		Ingredient ingredient1 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient1"));
 		Ingredient ingredient2 = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient2"));
 		byte[][] pattern;
@@ -39,11 +39,10 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 		if (pJson.has("tier")) {
 			tier = pJson.get("tier").getAsInt();
 		}
-		if (pJson.has("runeruneType")) {
-			runeType = pJson.get("runeruneType").getAsString().toUpperCase().equals(RuneType.CONTRACT.toString())
+		if (pJson.has("runetype")) {
+			runetype = pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.CONTRACT.toString())
 					? RuneType.CONTRACT
-					: pJson.get("runeruneType").getAsString().toUpperCase().equals(RuneType.RUNE.toString())
-							? RuneType.RUNE
+					: pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.RUNE.toString()) ? RuneType.RUNE
 							: RuneType.OVERRIDE;
 		}
 		JsonArray arr = pJson.getAsJsonArray("pattern");
@@ -71,7 +70,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			}), c);
 		}
 
-		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, runeType, ingredient1, ingredient2, pattern, itemstack);
+		ChiselRecipe recipe = new ChiselRecipe(pRecipeId, tier, runetype, ingredient1, ingredient2, pattern, itemstack);
 		ALL_RECIPES.put(pRecipeId, recipe);
 		return recipe;
 	}
@@ -83,7 +82,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			Ingredient input1 = Ingredient.of(pBuffer.readItem());
 			Ingredient input2 = Ingredient.of(pBuffer.readItem());
 			int tier = pBuffer.readInt();
-			RuneType runeType = RuneType.valueOf(pBuffer.readUtf());
+			RuneType runetype = RuneType.valueOf(pBuffer.readUtf());
 			int len = pBuffer.readInt();
 			byte[][] pattern = new byte[len][];
 			for (int i = 0; i < len; ++i) {
@@ -91,7 +90,7 @@ public class ChiselRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<
 			}
 
 			ItemStack result = pBuffer.readItem();
-			ChiselRecipe recipe = new ChiselRecipe(id, tier, runeType, input1, input2, pattern, result);
+			ChiselRecipe recipe = new ChiselRecipe(id, tier, runetype, input1, input2, pattern, result);
 			recipe.setPatternBytes(pattern);
 			ALL_RECIPES.put(pRecipeId, recipe);
 			return recipe;

@@ -1,7 +1,7 @@
 {
 	"type": "hemomancy:chisel_recipe",
 	"tier": 1,
-	"runetype": "CONTRACT",
+	"runetype": "contract",
 	"ingredient1" : {
 	    "item" : "minecraft:cobblestone"
 	  },

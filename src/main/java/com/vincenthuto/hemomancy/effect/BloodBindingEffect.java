@@ -51,7 +51,6 @@ public class BloodBindingEffect extends MobEffect {
 				entity.setDeltaMovement(0, 0, 0);
 				Level level = entity.level;
 				if (level.isClientSide) {
-
 					double time = level.getGameTime();
 					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),

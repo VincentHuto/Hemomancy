@@ -1,7 +1,7 @@
 {
 	"type": "hemomancy:chisel_recipe",
 	"tier": 1,
-	"runetype": "RUNE",
+	"runetype": "rune",
 	"ingredient1" : {
 	    "item" : "hemomancy:rune_blank"
 	  },

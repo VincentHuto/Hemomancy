@@ -19,7 +19,6 @@ import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.init.EntityInit;
-import com.vincenthuto.hemomancy.init.FeatureInit;
 import com.vincenthuto.hemomancy.init.FluidInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.ManipulationInit;
@@ -27,6 +26,7 @@ import com.vincenthuto.hemomancy.init.ParticleInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
+import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
@@ -93,10 +93,9 @@ public class Hemomancy {
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
-		FeatureInit.STRUCTURES.register(modEventBus);
 		SensorInit.DATA_SERIALIZERS.register(modEventBus);
 		SensorInit.SENSORS.register(modEventBus);
-
+		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 		forgeBus.register(this);

@@ -181,6 +181,7 @@ public class ModelBloodDrunkPuppeteer<T extends LivingEntity> extends HumanoidMo
 		defaults.forEach(ModelPart::loadPose);
 //		// ticks the animation. this can be setup to take whatever parameter is desired,
 //		// ageInTicks is just an easy one for looping animations
+		//maybe use some form of attack timer for other attacks
 //		DANCE.tick(parts, pAgeInTicks);
 
 	}

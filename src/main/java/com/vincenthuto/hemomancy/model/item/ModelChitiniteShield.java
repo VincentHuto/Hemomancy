@@ -29,6 +29,7 @@ public class ModelChitiniteShield<T extends Entity> extends EntityModel<T> {
 
 	}
 
+	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

@@ -21,23 +21,23 @@ public class RenderBloodLaser {
 
 	public static void renderLaser(RenderLevelLastEvent event, Player player, float ticks) {
 		Vector3 centerVec = Vector3.fromEntityCenter(player);
-		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
-			if (player.level.isClientSide) {
-				Vector3 playerPos = Vector3.fromEntityCenter(player);
-				Vector3d playerVec = new Vector3d(playerPos.x, playerPos.y, playerPos.z);
-				Vector3d part1 = new Vector3d(centerVec.x + Math.sin(player.tickCount * 0.1 + Math.toRadians(30)),
-						centerVec.y, centerVec.z + Math.cos(player.tickCount * 0.1 + Math.toRadians(30)));
-				Vector3d part2 = new Vector3d(centerVec.x - Math.sin(player.tickCount * 0.1 + Math.toRadians(90)),
-						centerVec.y, centerVec.z - Math.cos(player.tickCount * 0.1 + Math.toRadians(90)));
-				Vector3d part3 = new Vector3d(centerVec.x - (Math.sin(player.tickCount * 0.1 + Math.toRadians(-30))),
-						centerVec.y, centerVec.z - (Math.cos(player.tickCount * 0.1 + Math.toRadians(-30))));
-
-				drawLasers(event.getPoseStack(), playerVec, part1, 255 / 255f, 255 / 255f, 0);
-				drawLasers(event.getPoseStack(), playerVec, part2, 255 / 255f, 0 / 255f, 0);
-				drawLasers(event.getPoseStack(), playerVec, part3, 255 / 255f, 0 / 255f, 255 / 255);
-
-			}
-		}
+//		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
+//			if (player.level.isClientSide) {
+//				Vector3 playerPos = Vector3.fromEntityCenter(player);
+//				Vector3d playerVec = new Vector3d(playerPos.x, playerPos.y, playerPos.z);
+//				Vector3d part1 = new Vector3d(centerVec.x + Math.sin(player.tickCount * 0.1 + Math.toRadians(30)),
+//						centerVec.y, centerVec.z + Math.cos(player.tickCount * 0.1 + Math.toRadians(30)));
+//				Vector3d part2 = new Vector3d(centerVec.x - Math.sin(player.tickCount * 0.1 + Math.toRadians(90)),
+//						centerVec.y, centerVec.z - Math.cos(player.tickCount * 0.1 + Math.toRadians(90)));
+//				Vector3d part3 = new Vector3d(centerVec.x - (Math.sin(player.tickCount * 0.1 + Math.toRadians(-30))),
+//						centerVec.y, centerVec.z - (Math.cos(player.tickCount * 0.1 + Math.toRadians(-30))));
+//
+//				drawLasers(event.getPoseStack(), playerVec, part1, 255 / 255f, 255 / 255f, 0);
+//				drawLasers(event.getPoseStack(), playerVec, part2, 255 / 255f, 0 / 255f, 0);
+//				drawLasers(event.getPoseStack(), playerVec, part3, 255 / 255f, 0 / 255f, 255 / 255);
+//
+//			}
+//		}
 	}
 
 	public static void drawLasers(PoseStack matrixStackIn, Vector3d to, Vector3d from, float r, float g, float b) {
