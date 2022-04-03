@@ -42,7 +42,6 @@ public class DrudgeExtractFromChestGoal extends MoveToBlockGoal {
 	@Override
 	public void tick() {
 		super.tick();
-		System.out.println("fe");
 		if (isReachedTarget()) {
 			if (creature.level.getBlockEntity(blockPos) != null) {
 				if (creature.level.getBlockEntity(blockPos) instanceof ChestBlockEntity) {

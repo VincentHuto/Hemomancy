@@ -70,7 +70,7 @@ public class PacketBloodCraftingKeyPressNew {
 			if (player == null)
 				return;
 			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(bloodVolume -> {
-				System.out.println("fg");
+				//System.out.println("fg");
 				List<RecipeBaseBloodCrafting> matchedPatterns = getMatchingRecipes(message.heldStack);
 				if (matchedPatterns != null) {
 					if (!matchedPatterns.isEmpty()) {

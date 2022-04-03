@@ -31,12 +31,17 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -62,14 +67,14 @@ public class Hemomancy {
 	public static IProxy proxy = new IProxy() {
 	};
 	public static boolean forcesLoaded = false;
-
+//	public static TagKey<ConfiguredStructureFeature<?, ?>> blood_temple_located = TagKey.create(
+//	Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
+//	new ResourceLocation(Hemomancy.MOD_ID, "blood_temple_located"));
 	public Hemomancy() {
-
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
-
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		ManipulationInit.MANIPS.register(modEventBus);

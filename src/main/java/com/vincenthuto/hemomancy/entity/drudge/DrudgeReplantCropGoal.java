@@ -36,7 +36,6 @@ public class DrudgeReplantCropGoal extends MoveToBlockGoal {
 	@Override
 	public void tick() {
 		super.tick();
-		System.out.println("wwwt");
 		if (this.blockPos == null || this.blockPos.closerToCenterThan(creature.position(), 1.0D)) {
 			if (creature.level instanceof ServerLevel) {
 				ServerLevel worldIn = (ServerLevel) creature.level;

@@ -102,7 +102,6 @@ public class ChiselRecipeCategory implements IRecipeCategory<ChiselRecipe> {
 		builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 22, 0).addIngredient(VanillaTypes.ITEM,
 				new ItemStack(BlockInit.runic_chisel_station.get()));
 		
-		System.out.println(recipe.getRuneType());
 		buttonList.clear();
 		int inc = 0;
 		for (int i = 0; i < runeButtonArray.length; i++) {

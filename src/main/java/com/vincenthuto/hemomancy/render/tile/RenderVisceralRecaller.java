@@ -6,6 +6,7 @@ import java.util.Random;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
@@ -16,10 +17,13 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -34,18 +38,26 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 	@Override
 	public void render(BlockEntityVisceralRecaller te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-
-		Vector3 startVec = Vector3.fromTileEntityCenter(te);
+		matrixStackIn.pushPose();
+		matrixStackIn.translate(0.5F, 1.75F, 0.5F);
+		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) te.getLevel().getGameTime())); // Edit
+		matrixStackIn.translate(0.025F, -0.5F, 0.025F);
+		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90f)); // Edit Radius Movement
+		matrixStackIn.translate(0D, 0.175D * 0.25, 0F); // Block/Item Scale
+		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+		ItemStack stack = te.contents.get(0);
+		Minecraft mc = Minecraft.getInstance();
+		if (!stack.isEmpty()) {
+			mc.getItemRenderer().renderStatic(null, stack, TransformType.FIXED, true, matrixStackIn, bufferIn, null,
+					combinedLightIn, combinedOverlayIn, 0);
+		}
+		matrixStackIn.popPose();
 		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
-		//matrixStackIn.translate(0D, (Math.sin(Math.PI * currentTime / 2 / 32) / 5) + 0.1D, 0D);
-		//matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) ticks / 2));
+		Vector3 startVec = Vector3.fromTileEntityCenter(te);
+		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+		matrixStackIn.translate(0.5f, 0.5f+Mth.sin(currentTime*0.15f)*0.15f, 0.5f);
 		drawCenter(matrixStackIn, bufferIn, te, startVec.add(0.5).toVec3(), combinedLightIn, combinedOverlayIn);
-	//	matrixStackIn.popPose();
-		// renderLine(startVec, endVec, partialTicks, matrixStackIn, bufferIn,
-		// combinedOverlayIn);
-//		WorldRenderUtils.renderBeam(HLClientUtils.getWorld(), HLClientUtils.getPartialTicks(), matrixStackIn, bufferIn,
-//				combinedLightIn, endVec, startVec, 1, ParticleColor.BLOOD, RenderTypeInit.RADIANT_RENDER_TYPE);
 	}
 
 	@SuppressWarnings("unused")
@@ -112,6 +124,8 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(-view.x, -view.y, -view.z);
 		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LASER_MAIN_CORE);
+		VertexConsumer builderBack = buffer.getBuffer(RenderTypeInit.LASER_MAIN_CORE);
+
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(to.x, to.y, to.z);
 		float diffX = (float) (from.x - to.x);
@@ -121,7 +135,13 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
 		Vector3f sortPos = new Vector3f((float) to.x, (float) to.y, (float) to.z);
 		Matrix4f positionMatrix = matrixStackIn.last().pose();
-		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.025f, v, v + diffY * -5.5, sortPos);
+		
+		
+		Vector3f backPos = new Vector3f((float) to.x, (float) to.y-.05f, (float) to.z);
+
+		drawLaser(builderBack, positionMatrix, endLaser, startLaser, 0, 0, 0, 1f, 0.075f, v, v + diffY * -5.5, backPos);
+		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.05f, v, v + diffY * -5.5, sortPos);
+
 		matrixStackIn.popPose();
 		matrixStackIn.popPose();
 
@@ -164,4 +184,6 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 	}
 
+	
+	
 }

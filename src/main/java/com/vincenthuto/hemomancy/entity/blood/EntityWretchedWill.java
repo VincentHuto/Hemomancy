@@ -51,7 +51,6 @@ public class EntityWretchedWill extends EntityBloodConstruct {
 		super.onAddedToWorld();
 		if (this.creator != null) {
 			if (creator instanceof Player player) {
-				System.out.println(creator);
 			}
 		}
 	}
@@ -59,7 +58,6 @@ public class EntityWretchedWill extends EntityBloodConstruct {
 	@Override
 	public void tick() {
 		super.tick();
-		System.out.println(creator);
 
 		if (this.creator != null) {
 			if (creator instanceof Player player) {

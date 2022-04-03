@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.entity.item;
 
 import com.vincenthuto.hemomancy.init.EntityInit;
+import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -41,7 +42,7 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 	}
 
 	public void setItem(ItemStack p_36973_) {
-		if (!p_36973_.is(Items.ENDER_EYE) || p_36973_.hasTag()) {
+		if (!p_36973_.is(ItemInit.charm_of_vascularium.get()) || p_36973_.hasTag()) {
 			this.getEntityData().set(DATA_ITEM_STACK, Util.make(p_36973_.copy(), (p_36978_) -> {
 				p_36978_.setCount(1);
 			}));
@@ -55,7 +56,7 @@ public class EntityFlyingCharm extends Entity implements ItemSupplier {
 
 	public ItemStack getItem() {
 		ItemStack itemstack = this.getItemRaw();
-		return itemstack.isEmpty() ? new ItemStack(Items.ENDER_EYE) : itemstack;
+		return itemstack.isEmpty() ? new ItemStack(ItemInit.charm_of_vascularium.get()) : itemstack;
 	}
 
 	protected void defineSynchedData() {

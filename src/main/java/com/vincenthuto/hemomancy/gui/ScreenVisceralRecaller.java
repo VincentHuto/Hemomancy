@@ -45,7 +45,6 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 	int guiWidth = 176;
 	int guiHeight = 186;
 	private int zLevel = 10;
-	private Minecraft mc = Minecraft.getInstance();
 	GuiButtonTextured forgetButton;
 	int FORGETBUTTONID = 1;
 

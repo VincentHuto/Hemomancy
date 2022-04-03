@@ -91,7 +91,7 @@ public class ItemBloodProjection extends Item implements IDispellable, ICellHand
 			if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
 				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
 						.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
-					System.out.println("hit fillable tile");
+				//	System.out.println("hit fillable tile");
 					IBloodVolume tileVolume = worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
 							.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 					tileVolume.fillFromSource(playerVolume, 100f);

@@ -25,7 +25,6 @@ public class ItemDSD extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		if (level.isClientSide) {
-			System.out.println("t");
 			Minecraft mc = Minecraft.getInstance();
 			mc.cameraEntity.setPos(mc.cameraEntity.getPosition(HLClientUtils.getPartialTicks()).add(0, 2, 0));
 		}

@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.tile;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
@@ -12,6 +14,7 @@ import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
 import com.vincenthuto.hemomancy.item.ItemEnzyme;
+import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -21,16 +24,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
-public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider,IBloodTile {
-	NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
+public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider, IBloodTile {
+	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	static final String TAG_BLOOD_TENDENCY = "tendency";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
@@ -39,16 +45,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 
 	public BlockEntityVisceralRecaller(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.visceral_artificial_recaller.get(), pos, state);
-	}
-
-	@Override
-	public boolean triggerEvent(int id, int type) {
-		return super.triggerEvent(id, type);
-	}
-
-	@Override
-	public void startOpen(Player pPlayer) {
-		super.startOpen(pPlayer);
 	}
 
 	@Override
@@ -90,9 +86,13 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 					stack.shrink(1);
 				}
 				// Adds a recycled chance
-				if (contents.get(3).isEmpty()) {
+				if (!contents.get(3).isEmpty()) {
 					if (level.random.nextInt(20) % 7 == 0) {
-						contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+						// contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+						ItemEntity recycl = new ItemEntity(level, getBlockPos().getX(), getBlockPos().getY(),
+								getBlockPos().getZ(), new ItemStack(ItemInit.recycled_enzyme.get()));
+						System.out.println("f");
+						level.addFreshEntity(recycl);
 					}
 				}
 			}
@@ -243,6 +243,52 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 	@Override
 	public void clearContent() {
 		this.contents.clear();
+	}
+
+	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
+
+		if (contents.get(1).isEmpty() && stack.getItem() instanceof ItemEnzyme) {
+			ItemStack enzymeStack = stack.copy();
+			if (enzymeStack.getItem() instanceof ItemEnzyme) {
+				ItemEnzyme enzyme = (ItemEnzyme) enzymeStack.getItem();
+				if (getTendency().get(enzyme.getTend()) < 1f) {
+					tendency.addTendencyAlignment(enzyme.getTend(), enzyme.getAmount() / 50);
+					stack.shrink(1);
+				}
+				// Adds a recycled chance
+				if (contents.get(3).isEmpty()) {
+					if (level.random.nextInt(20) % 7 == 0) {
+						contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+					}
+				}
+			}
+		}
+
+		if (contents.get(0).isEmpty() && stack.getItem() == ItemInit.hematic_memory.get()) {
+			ItemStack stackToAdd = stack.copy();
+			stackToAdd.setCount(1);
+			contents.set(0, stackToAdd);
+			if (player == null || !player.getAbilities().instabuild) {
+				stack.shrink(1);
+				if (stack.isEmpty() && player != null) {
+					player.setItemInHand(hand, ItemStack.EMPTY);
+				}
+
+			}
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+		} else if (stack.isEmpty() && !contents.get(0).isEmpty()) {
+			ItemStack copy = contents.get(0).copy();
+			player.getInventory().placeItemBackInInventory(copy);
+			contents.set(0, ItemStack.EMPTY);
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+		}
+
+		else {
+			return false;
+		}
+
 	}
 
 }

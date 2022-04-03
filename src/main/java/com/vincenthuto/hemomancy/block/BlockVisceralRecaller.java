@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -58,16 +59,23 @@ public class BlockVisceralRecaller extends Block implements EntityBlock {
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
+		ItemStack stack = player.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {
 			BlockEntity tile = worldIn.getBlockEntity(pos);
-
 			if (tile instanceof BlockEntityVisceralRecaller te) {
-				
-				
-				
-				te.sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
-				NetworkHooks.openGui((ServerPlayer) player, (BlockEntityVisceralRecaller) tile, pos);
+				if (!stack.isEmpty()) {
+					boolean resultt = te.addItem(player, stack, handIn);
+					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
+				} else if (player.isCrouching()) {
+					boolean resultt = te.addItem(player, stack, handIn);
+					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
+				} else {
+					te.sendUpdates();
+					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
+					NetworkHooks.openGui((ServerPlayer) player, (BlockEntityVisceralRecaller) tile, pos);
+				}
 			}
 		}
 		return InteractionResult.SUCCESS;
@@ -103,11 +111,6 @@ public class BlockVisceralRecaller extends Block implements EntityBlock {
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING);
-	}
-
-	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 		this.numRows = 4;
 		// te.openInventory(player);
 		// SLOTS
-		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 64, 8, 14));
+		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 1, 8, 14));
 		addSlot(new SlotSelectiveType(te, ItemEnzyme.class, 1, 64, 26, 14));
 		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26,
 				80));
