@@ -28,22 +28,17 @@ public class MenuVisceralRecaller extends AbstractContainerMenu {
 		this(windowId, playerInventory, getBlockEntity(playerInventory, data));
 	}
 
-	public MenuVisceralRecaller(final int windowId, final Inventory playerInv,
-			final BlockEntityVisceralRecaller te) {
+	public MenuVisceralRecaller(final int windowId, final Inventory playerInv, final BlockEntityVisceralRecaller te) {
 		super(ContainerInit.visceral_recaller.get(), windowId);
 		this.te = te;
 		this.numRows = 4;
-		// te.openInventory(player);
 		// SLOTS
 		addSlot(new SlotSelectiveType(te, ItemHematicMemory.class, 0, 1, 8, 14));
-		addSlot(new SlotSelectiveType(te, ItemEnzyme.class, 1, 64, 26, 14));
-		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26,
-				80));
+		addSlot(new Slot(te, 1, 26, 14));
+		addSlot(new SlotSelectiveType(te, ItemBloodyFlask.class, 2, 16, 26, 80));
 		addSlot(new SlotOutput(te, 3, 152, 14));
-
 		// output
 		addSlot(new SlotOutput(te, 4, 152, 80));
-
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +37,15 @@ public class RecallerRecipe extends CustomRecipe {
 		this.ingredient = Ingredient.EMPTY;
 		this.tendency = tends;
 		this.result = result;
+	}
+
+	public boolean matchRecipe(RecallerRecipe checkRecipe) {
+		if (getTendency().equals(checkRecipe.getTendency())) {
+			if (ingredient.equals(checkRecipe.ingredient)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Map<EnumBloodTendency, Float> getTendency() {
@@ -105,6 +115,11 @@ public class RecallerRecipe extends CustomRecipe {
 
 	public static Collection<RecallerRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe_type);
+	}
+
+	@Override
+	public String toString() {
+		return "Recaller Recipe:" + result.toString();
 	}
 
 }

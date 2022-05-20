@@ -12,13 +12,14 @@ import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
 import com.vincenthuto.hemomancy.item.ItemEnzyme;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -31,20 +32,39 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implements MenuProvider, IBloodTile {
 	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
-	static final String TAG_BLOOD_LEVEL = "bloodLevel";
-	static final String TAG_BLOOD_TENDENCY = "tendency";
+	public static final String TAG_BLOOD_LEVEL = "bloodLevel";
+	public static final String TAG_BLOOD_TENDENCY = "tendency";
+	public static final String TAG_RECIPE = "recipe";
+	String recipePath = "";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 			.orElseThrow(IllegalStateException::new);
+	RecallerRecipe curRecipe = null;
 
 	public BlockEntityVisceralRecaller(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.visceral_artificial_recaller.get(), pos, state);
+	}
+
+	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
+			BlockEntityVisceralRecaller self) {
+	}
+
+	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
+			BlockEntityVisceralRecaller self) {
+	}
+
+	public RecallerRecipe getCurRecipe() {
+		return curRecipe;
+	}
+
+	public ItemStack getResultItem() {
+		return curRecipe != null ? curRecipe.getResultItem() : ItemStack.EMPTY;
 	}
 
 	@Override
@@ -72,47 +92,6 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		return tendency.getTendency();
 	}
 
-	@Override
-	public void setItem(int pIndex, ItemStack pStack) {
-		// Absorb the enzyme
-		this.contents.set(pIndex, pStack);
-
-		if (!contents.get(1).isEmpty()) {
-			ItemStack stack = contents.get(1);
-			if (stack.getItem() instanceof ItemEnzyme) {
-				ItemEnzyme enzyme = (ItemEnzyme) stack.getItem();
-				if (getTendency().get(enzyme.getTend()) < 1f) {
-					tendency.addTendencyAlignment(enzyme.getTend(), enzyme.getAmount() / 50);
-					stack.shrink(1);
-				}
-				// Adds a recycled chance
-				if (!contents.get(3).isEmpty()) {
-					if (level.random.nextInt(20) % 7 == 0) {
-						// contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
-						ItemEntity recycl = new ItemEntity(level, getBlockPos().getX(), getBlockPos().getY(),
-								getBlockPos().getZ(), new ItemStack(ItemInit.recycled_enzyme.get()));
-						System.out.println("f");
-						level.addFreshEntity(recycl);
-					}
-				}
-			}
-		}
-
-		// Absorbs the flask
-		if (!contents.get(2).isEmpty()) {
-			ItemStack stack = contents.get(2);
-			if (stack.getItem() instanceof ItemBloodyFlask) {
-				ItemBloodyFlask flask = (ItemBloodyFlask) stack.getItem();
-				if (this.getBloodVolume() < this.getMaxBloodVolume()) {
-					volume.fill(flask.getAmount());
-					stack.shrink(1);
-				}
-			}
-		}
-		sendUpdates();
-
-	}
-
 	// NBT
 	@Override
 	public void load(CompoundTag tag) {
@@ -120,6 +99,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, this.contents);
 		if (tag != null) {
+			recipePath = tag.getString(TAG_RECIPE);
 			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
@@ -133,6 +113,8 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		ContainerHelper.saveAllItems(tag, this.contents);
 		if (tag != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+			tag.putString(TAG_RECIPE, recipePath);
+
 			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 				if (tendency.getTendency().get(key) != null) {
 					tag.putFloat(key.toString(), tendency.getTendency().get(key));
@@ -148,6 +130,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
 		if (tag != null) {
+			recipePath = tag.getString(TAG_RECIPE);
 			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
@@ -160,6 +143,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		CompoundTag tag = new CompoundTag();
 		ContainerHelper.saveAllItems(tag, this.contents);
 		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		tag.putString(TAG_RECIPE, recipePath);
 		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 			if (tendency.getTendency().get(key) != null) {
 				tag.putFloat(key.toString(), tendency.getTendency().get(key));
@@ -176,6 +160,7 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
 			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			recipePath = tag.getString(TAG_RECIPE);
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
 			}
@@ -245,25 +230,71 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		this.contents.clear();
 	}
 
+	private void checkRecipe() {
+		// this.tendency.getTendency().forEach((key, value) -> System.out.println(key +
+		// ":" + value));
+		this.tendency.getTendency();
+		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
+			if (recipe.getTendency().equals(this.tendency.getTendency())
+					&& recipe.getIngredient().test(contents.get(1))) {
+				// System.out.println("Matching Recipe: " + recipe);
+				curRecipe = recipe;
+				recipePath = recipe.getResultItem().getItem().getRegistryName().getPath();
+				break;
+			} else {
+				// System.out.println("No matching recipe found!");
+				recipePath = "";
+				curRecipe = null;
+			}
+		}
+		// System.out.println(curRecipe);
+	}
+
+	public boolean hasValidRecipe() {
+		return curRecipe != null;
+	}
+
 	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
 
-		if (contents.get(1).isEmpty() && stack.getItem() instanceof ItemEnzyme) {
+		if (stack.getItem() == ItemInit.lethian_dew.get()) {
+			if (player == null || !player.getAbilities().instabuild) {
+				stack.shrink(1);
+				if (stack.isEmpty() && player != null) {
+					player.setItemInHand(hand, ItemStack.EMPTY);
+				}
+
+			}
+			getTendCapability().setTendency(RecallerRecipe.blank());
+			checkRecipe();
+			sendUpdates();
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+
+		}
+
+		if (stack.getItem() instanceof ItemEnzyme) {
 			ItemStack enzymeStack = stack.copy();
 			if (enzymeStack.getItem() instanceof ItemEnzyme) {
 				ItemEnzyme enzyme = (ItemEnzyme) enzymeStack.getItem();
 				if (getTendency().get(enzyme.getTend()) < 1f) {
-					tendency.addTendencyAlignment(enzyme.getTend(), enzyme.getAmount() / 50);
+					tendency.addTendencyAlignment(enzyme.getTend(), 0.2f);
 					stack.shrink(1);
 				}
 				// Adds a recycled chance
 				if (contents.get(3).isEmpty()) {
 					if (level.random.nextInt(20) % 7 == 0) {
-						contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+						// contents.set(3, new ItemStack(ItemInit.recycled_enzyme.get()));
+						ItemEntity recycl = new ItemEntity(level, getBlockPos().getX(), getBlockPos().getY(),
+								getBlockPos().getZ(), new ItemStack(ItemInit.recycled_enzyme.get()));
+						level.addFreshEntity(recycl);
 					}
 				}
 			}
+			checkRecipe();
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
 		}
-
+		// Memory Slot add
 		if (contents.get(0).isEmpty() && stack.getItem() == ItemInit.hematic_memory.get()) {
 			ItemStack stackToAdd = stack.copy();
 			stackToAdd.setCount(1);
@@ -275,12 +306,41 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 				}
 
 			}
+			checkRecipe();
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 			return true;
-		} else if (stack.isEmpty() && !contents.get(0).isEmpty()) {
+
+		} // Item Slot add
+		if (contents.get(1).isEmpty() && stack.getItem() != ItemInit.hematic_memory.get() && !stack.isEmpty()) {
+			ItemStack stackToAdd = stack.copy();
+			stackToAdd.setCount(1);
+			contents.set(1, stackToAdd);
+			if (player == null || !player.getAbilities().instabuild) {
+				stack.shrink(1);
+				if (stack.isEmpty() && player != null) {
+					player.setItemInHand(hand, ItemStack.EMPTY);
+				}
+
+			}
+			checkRecipe();
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+		}
+		// Remove item
+		if (stack.isEmpty() && !contents.get(1).isEmpty()) {
+			ItemStack copy = contents.get(1).copy();
+			player.getInventory().placeItemBackInInventory(copy);
+			contents.set(1, ItemStack.EMPTY);
+			checkRecipe();
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+		}
+		// remove memory
+		if (stack.isEmpty() && !contents.get(0).isEmpty()) {
 			ItemStack copy = contents.get(0).copy();
 			player.getInventory().placeItemBackInInventory(copy);
 			contents.set(0, ItemStack.EMPTY);
+			checkRecipe();
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 			return true;
 		}
@@ -288,6 +348,12 @@ public class BlockEntityVisceralRecaller extends BaseContainerBlockEntity implem
 		else {
 			return false;
 		}
+
+	}
+
+	@Override
+	public void setItem(int pIndex, ItemStack pStack) {
+		// TODO Auto-generated method stub
 
 	}
 

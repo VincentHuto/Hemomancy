@@ -49,12 +49,11 @@ public class RenderItemCellHand extends BlockEntityWithoutLevelRenderer {
 
 	public RenderItemCellHand(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
-		// TODO Auto-generated constructor stub
 	}
 
 	public BakedModel location;
 	public final ResourceLocation skinTexture = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/item/hardened_skin.png");
+			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
 
 	@Override
 	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack,

@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
 
 import net.minecraft.core.Registry;
@@ -21,6 +22,11 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class RecallerRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>>
 		implements RecipeSerializer<RecallerRecipe> {
+	public static HashMap<ResourceLocation, RecallerRecipe> ALL_RECIPES = new HashMap<ResourceLocation, RecallerRecipe>();
+
+	public static RecallerRecipe getRecipe(String path) {
+		return ALL_RECIPES.get(new ResourceLocation("hemomancy:recaller/" + path));
+	}
 
 	@Override
 	public RecallerRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
@@ -52,9 +58,12 @@ public class RecallerRecipeSerializer extends ForgeRegistryEntry<RecipeSerialize
 					: GsonHelper.getAsJsonObject(pJson, "ingredient");
 			Ingredient ingredient = Ingredient.fromJson(jsonelement);
 			RecallerRecipe recipe = new RecallerRecipe(pRecipeId, ingredient, tendency, result);
+			ALL_RECIPES.put(pRecipeId, recipe);
 			return recipe;
 		} else {
-			RecallerRecipe recipe = new RecallerRecipe(pRecipeId, tendency, result);
+			Ingredient ingredient = Ingredient.EMPTY;
+			RecallerRecipe recipe = new RecallerRecipe(pRecipeId, ingredient, tendency, result);
+			ALL_RECIPES.put(pRecipeId, recipe);
 			return recipe;
 		}
 
@@ -64,12 +73,12 @@ public class RecallerRecipeSerializer extends ForgeRegistryEntry<RecipeSerialize
 	public RecallerRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
 		try {
 			ResourceLocation id = pBuffer.readResourceLocation();
+			Ingredient input = Ingredient.of(pBuffer.readItem());
 			Map<EnumBloodTendency, Float> tends = new HashMap<EnumBloodTendency, Float>();
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tends.put(tend, pBuffer.readFloat());
 			}
 			ItemStack output = pBuffer.readItem();
-			Ingredient input = Ingredient.of(pBuffer.readItem());
 			return new RecallerRecipe(id, input, tends, output);
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error reading recaller recipe from packet.", (Throwable) e);
@@ -80,14 +89,16 @@ public class RecallerRecipeSerializer extends ForgeRegistryEntry<RecipeSerialize
 	@Override
 	public void toNetwork(FriendlyByteBuf pBuffer, RecallerRecipe pRecipe) {
 		try {
-
 			pBuffer.writeResourceLocation(pRecipe.getId());
+			if (pRecipe.getIngredients().get(0).getItems().length > 0) {
+				pBuffer.writeItem(pRecipe.getIngredients().get(0).getItems()[0]);
+			} else {
+				pBuffer.writeItem(ItemStack.EMPTY);
+			}
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				pBuffer.writeFloat(pRecipe.getTendency().get(tend));
 			}
 			pBuffer.writeItemStack(pRecipe.getResultItem(), false);
-			pBuffer.writeItem(pRecipe.getIngredients().get(0).getItems()[0]);
-
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing recaller recipe to packet.", (Throwable) e);
 			throw e;

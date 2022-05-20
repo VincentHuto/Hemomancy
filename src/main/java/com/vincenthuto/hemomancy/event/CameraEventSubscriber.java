@@ -61,8 +61,16 @@ public class CameraEventSubscriber {
 						event.setNewEyeHeight(3.5f);
 						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
 					} else {
-						event.setNewEyeHeight(Player.DEFAULT_EYE_HEIGHT);
-						event.setNewSize(player.getDimensions(Pose.STANDING));
+						if(player.isCrouching()) {
+							//event.setNewEyeHeight(Player.CROUCH_BB_HEIGHT);
+							event.setNewSize(player.getDimensions(Pose.CROUCHING));
+			
+						}else {
+							event.setNewEyeHeight(Player.DEFAULT_EYE_HEIGHT);
+							event.setNewSize(player.getDimensions(Pose.STANDING));
+
+						}
+				
 
 					}
 				});

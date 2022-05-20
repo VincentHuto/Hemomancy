@@ -6,11 +6,12 @@ import java.util.Random;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
+import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -51,12 +52,27 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 			mc.getItemRenderer().renderStatic(null, stack, TransformType.FIXED, true, matrixStackIn, bufferIn, null,
 					combinedLightIn, combinedOverlayIn, 0);
 		}
+		
+		ItemStack stack1 = te.contents.get(1);
+		if (!stack1.isEmpty()) {
+			matrixStackIn.translate(0D, 1f, 0F); // Block/Item Scale
+			mc.getItemRenderer().renderStatic(null, stack1, TransformType.FIXED, true, matrixStackIn, bufferIn, null,
+					combinedLightIn, combinedOverlayIn, 0);
+		}
+
+		RecallerRecipe currRecipe = RecallerRecipeSerializer
+				.getRecipe(te.getUpdateTag().getString(BlockEntityVisceralRecaller.TAG_RECIPE));
+		if (currRecipe != null) {
+			matrixStackIn.translate(0D, 1f, 0F); // Block/Item Scale
+			mc.getItemRenderer().renderStatic(null, currRecipe.getResultItem(), TransformType.FIXED, true,
+					matrixStackIn, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
+		}
 		matrixStackIn.popPose();
 		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 		Vector3 startVec = Vector3.fromTileEntityCenter(te);
 		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-		matrixStackIn.translate(0.5f, 0.5f+Mth.sin(currentTime*0.15f)*0.15f, 0.5f);
+		matrixStackIn.translate(0.5f, 0.5f + Mth.sin(currentTime * 0.15f) * 0.15f, 0.5f);
 		drawCenter(matrixStackIn, bufferIn, te, startVec.add(0.5).toVec3(), combinedLightIn, combinedOverlayIn);
 	}
 
@@ -135,9 +151,8 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
 		Vector3f sortPos = new Vector3f((float) to.x, (float) to.y, (float) to.z);
 		Matrix4f positionMatrix = matrixStackIn.last().pose();
-		
-		
-		Vector3f backPos = new Vector3f((float) to.x, (float) to.y-.05f, (float) to.z);
+
+		Vector3f backPos = new Vector3f((float) to.x, (float) to.y - .05f, (float) to.z);
 
 		drawLaser(builderBack, positionMatrix, endLaser, startLaser, 0, 0, 0, 1f, 0.075f, v, v + diffY * -5.5, backPos);
 		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.05f, v, v + diffY * -5.5, sortPos);
@@ -184,6 +199,4 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 	}
 
-	
-	
 }

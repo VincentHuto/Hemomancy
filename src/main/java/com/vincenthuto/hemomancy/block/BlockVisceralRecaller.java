@@ -1,7 +1,16 @@
 package com.vincenthuto.hemomancy.block;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
+import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
+import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
@@ -21,6 +30,8 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -65,21 +76,47 @@ public class BlockVisceralRecaller extends Block implements EntityBlock {
 			if (tile instanceof BlockEntityVisceralRecaller te) {
 				if (!stack.isEmpty()) {
 					boolean resultt = te.addItem(player, stack, handIn);
+					te.sendUpdates();
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				} else if (player.isCrouching()) {
 					boolean resultt = te.addItem(player, stack, handIn);
+					te.sendUpdates();
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
-				} else {
-					te.sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
-					NetworkHooks.openGui((ServerPlayer) player, (BlockEntityVisceralRecaller) tile, pos);
 				}
+	
 			}
 		}
 		return InteractionResult.SUCCESS;
 
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		if (level.isClientSide) {
+			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
+					BlockEntityVisceralRecaller::clientTick);
+		} else {
+			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
+					BlockEntityVisceralRecaller::serverTick);
+		}
+	}
+
+	@Override
+	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
+		super.triggerEvent(state, world, pos, id, param);
+		BlockEntity tileentity = world.getBlockEntity(pos);
+		return tileentity != null && tileentity.triggerEvent(id, param);
+	}
+
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
+		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
 	}
 
 	@Override
