@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below
@@ -127,7 +128,7 @@ repositories {
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.20'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.46'
      implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
   // implementation fg.deobf("com.vincenthuto:hutoslib:3.40")
    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency

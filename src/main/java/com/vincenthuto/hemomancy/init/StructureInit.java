@@ -16,7 +16,5 @@ public class StructureInit {
 
 	public static final RegistryObject<StructureFeature<JigsawConfiguration>> blood_temple = STRUCTURES
 			.register("blood_temple", BloodTempleStructure::new);
-	// public static final TagKey<StructureSet> MYSTERIOUS_DIMENSION_STRUCTURE_SET =
-	// TagKey.create(Registry.STRUCTURE_SET_REGISTRY, RL_MYSTERIOUS_DIMENSION_SET);
 
 }

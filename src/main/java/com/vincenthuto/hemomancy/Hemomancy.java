@@ -67,9 +67,11 @@ public class Hemomancy {
 	public static IProxy proxy = new IProxy() {
 	};
 	public static boolean forcesLoaded = false;
+
 //	public static TagKey<ConfiguredStructureFeature<?, ?>> blood_temple_located = TagKey.create(
 //	Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
 //	new ResourceLocation(Hemomancy.MOD_ID, "blood_temple_located"));
+	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();
@@ -206,11 +208,6 @@ public class Hemomancy {
 		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-
-		event.enqueueWork(() -> {
-			// FeatureInit.setupStructures();
-			// WorldInit.registerConfiguredStructures();
-		});
 	}
 
 	// Combined a few methods into one more generic one
