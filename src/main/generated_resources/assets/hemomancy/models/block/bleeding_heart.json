@@ -1,6 +1,0 @@
-{
-  "parent": "hemomancy:block/shapes/cross",
-  "textures": {
-    "cross": "hemomancy:block/bleeding_heart"
-  }
-}

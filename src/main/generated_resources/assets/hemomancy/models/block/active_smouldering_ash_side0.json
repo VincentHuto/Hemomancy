@@ -1,6 +1,0 @@
-{
-    "parent": "hemomancy:block/active_smouldering_ash_side",
-    "textures": {
-        "line": "hemomancy:block/active_smouldering_ash_line0"
-    }
-}

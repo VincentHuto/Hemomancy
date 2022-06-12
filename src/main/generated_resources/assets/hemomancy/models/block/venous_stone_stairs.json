@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "hemomancy:block/venous_stone_stairs"
-  }
-}

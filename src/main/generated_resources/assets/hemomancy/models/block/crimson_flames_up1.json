@@ -1,7 +1,0 @@
-
-{
-	"parent": "minecraft:block/template_fire_up",
-	"textures": {
-		"fire": "hemomancy:block/crimson_flames"
-	}
-}
