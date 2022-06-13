@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:runic_chisel_station"
+    ]
+  },
+  "criteria": {
+    "has_venous_stone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:venous_stone"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:runic_chisel_station"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_venous_stone",
+      "has_the_recipe"
+    ]
+  ]
+}
