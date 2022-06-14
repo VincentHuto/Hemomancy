@@ -56,7 +56,6 @@ import com.vincenthuto.hemomancy.item.tool.living.ItemLivingStaff;
 import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSyringe;
 import com.vincenthuto.hemomancy.item.tool.living.ItemVeinRecaller;
 import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
-import com.vincenthuto.hutoslib.HutosLib.HutosLibItemGroup;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.item.ModSpawnEggItem;
@@ -111,17 +110,17 @@ public class ItemInit {
 			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), EnumModArmorTiers.CHITINITE,
 					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/arm_banner/chitinite_arm_banner.png")));
 
-	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("hemomancy_heart",
+	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
 			() -> new BannerPatternItem(
 					TagKey.create(Registry.BANNER_PATTERN_REGISTRY,
-							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/hemomancy_heart")),
-					new Item.Properties().tab(HutosLibItemGroup.instance)));
+							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/heart")),
+					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
-	public static final RegistryObject<Item> veins_pattern = BASEITEMS.register("hemomancy_veins",
+	public static final RegistryObject<Item> veins_pattern = BASEITEMS.register("veins_pattern",
 			() -> new BannerPatternItem(
 					TagKey.create(Registry.BANNER_PATTERN_REGISTRY,
-							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/hemomancy_veins")),
-					new Item.Properties().tab(HutosLibItemGroup.instance)));
+							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/veins")),
+					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Charm
 	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",

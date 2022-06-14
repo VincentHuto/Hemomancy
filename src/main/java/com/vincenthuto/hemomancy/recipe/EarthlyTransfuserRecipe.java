@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 public class EarthlyTransfuserRecipe extends AbstractCookingRecipe {
 	public EarthlyTransfuserRecipe(ResourceLocation resourceLocation, String group, Ingredient ingredient,
 			ItemStack result, float experience, int cookingTime) {
-		super(RecipeInit.earthly_transfuser_recipe_type, resourceLocation, group, ingredient, result, experience,
+		super(RecipeInit.earthly_transfuser.get(), resourceLocation, group, ingredient, result, experience,
 				cookingTime);
 	}
 
@@ -31,7 +31,7 @@ public class EarthlyTransfuserRecipe extends AbstractCookingRecipe {
 	}
 
 	public static Collection<EarthlyTransfuserRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.earthly_transfuser_recipe_type);
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.earthly_transfuser.get());
 	}
 
 	@Override

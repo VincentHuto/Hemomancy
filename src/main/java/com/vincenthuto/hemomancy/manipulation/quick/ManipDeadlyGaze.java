@@ -16,6 +16,7 @@ import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +42,7 @@ public class ManipDeadlyGaze extends BloodManipulation {
 				EntityHitResult entResult = (EntityHitResult) pick;
 				LivingEntity hitEntity = (LivingEntity) entResult.getEntity();
 				hitEntity.push(0, 1, 0);
-				Random rand = world.random;
+				RandomSource rand = world.random;
 				for (int i = 0; i < 10; i++) {
 					Vec3 entVec = hitEntity.position().add(rand.nextDouble() - rand.nextDouble(), 0,
 							rand.nextDouble() - rand.nextDouble());

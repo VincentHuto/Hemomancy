@@ -22,6 +22,8 @@ import com.vincenthuto.hemomancy.manipulation.quick.ManipDeadlyGaze;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipFerricTransmutation;
 import com.vincenthuto.hemomancy.manipulation.quick.ManipSummonAvatar;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -32,16 +34,19 @@ public class ManipulationInit {
 
 	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<BloodManipulation>();
 
-	public static final DeferredRegister<BloodManipulation> MANIPS = DeferredRegister.create(BloodManipulation.class,
+	public static final ResourceKey<Registry<BloodManipulation>> MANIP_KEY = ResourceKey
+			.createRegistryKey(new ResourceLocation(Hemomancy.MOD_ID, "bloodmanipulations"));
+
+	public static final DeferredRegister<BloodManipulation> MANIPS = DeferredRegister.create(MANIP_KEY,
 			Hemomancy.MOD_ID);
+
 	public static Supplier<IForgeRegistry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
-			.makeRegistry("manipulation_types", () -> new RegistryBuilder<BloodManipulation>()
-					.setMaxID(Integer.MAX_VALUE - 1).setDefaultKey(new ResourceLocation(Hemomancy.MOD_ID, "null")));
-	
+			.makeRegistry(() -> new RegistryBuilder<BloodManipulation>().setMaxID(Integer.MAX_VALUE - 1)
+					.setDefaultKey(new ResourceLocation(Hemomancy.MOD_ID, "bloodmanipulations")));
+
 	public static final RegistryObject<BloodManipulation> venous_recaller = MANIPS.register("venous_recaller",
 			() -> register(new ManipConjuration("venous_recaller", ItemInit.venous_recaller, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
-	
 
 	public static final RegistryObject<BloodManipulation> blood_shot = MANIPS.register("blood_shot",
 			() -> register(new ManipBloodShot("blood_shot", 100, 0, 0, EnumManipulationType.QUICK,
@@ -50,7 +55,7 @@ public class ManipulationInit {
 	public static final RegistryObject<BloodManipulation> deadly_gaze = MANIPS.register("deadly_gaze",
 			() -> register(new ManipDeadlyGaze("deadly_gaze", 100, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD)));
-	
+
 	public static final RegistryObject<BloodManipulation> summon_avatar = MANIPS.register("summon_avatar",
 			() -> register(new ManipSummonAvatar("summon_avatar", 100, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)));
@@ -103,17 +108,15 @@ public class ManipulationInit {
 			() -> register(new ManipConjuration("conjure_claw", ItemInit.living_baghnakh, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
-	public static final RegistryObject<BloodManipulation> conjure_blood_absorbtion = MANIPS
-			.register("conjure_blood_absorbtion",
-					() -> register(new ManipConjuration("conjure_blood_absorbtion", ItemInit.blood_absorption,
-							1000, 0, 0, EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC,
-							EnumVeinSections.RIGHTARM)));
+	public static final RegistryObject<BloodManipulation> conjure_blood_absorbtion = MANIPS.register(
+			"conjure_blood_absorbtion",
+			() -> register(new ManipConjuration("conjure_blood_absorbtion", ItemInit.blood_absorption, 1000, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
-	public static final RegistryObject<BloodManipulation> conjure_blood_projection = MANIPS
-			.register("conjure_blood_projection",
-					() -> register(new ManipConjuration("conjure_blood_projection", ItemInit.blood_projection,
-							1000, 0, 0, EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC,
-							EnumVeinSections.RIGHTARM)));
+	public static final RegistryObject<BloodManipulation> conjure_blood_projection = MANIPS.register(
+			"conjure_blood_projection",
+			() -> register(new ManipConjuration("conjure_blood_projection", ItemInit.blood_projection, 1000, 0, 0,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
 
 	public static BloodManipulation getByName(String name) {
 		for (BloodManipulation manip : MANIPULATIONS) {

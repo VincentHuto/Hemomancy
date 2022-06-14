@@ -126,7 +126,7 @@ repositories {
 
 dependencies {
    
-    minecraft 'net.minecraftforge:forge:1.19-41.0.17'
+    minecraft 'net.minecraftforge:forge:1.19-41.0.22'
    // implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
    implementation fg.deobf("com.vincenthuto:hutoslib:4.00")
 }

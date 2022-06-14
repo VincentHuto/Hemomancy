@@ -12,6 +12,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -27,7 +28,7 @@ public class ManipBloodAneurysm extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerLevel sLevel = (ServerLevel) world;
 		BlockPos pos = player.blockPosition();
-		Random random = player.level.random;
+		RandomSource random = player.level.random;
 		for (int i = 0; i < 30; i++) {
 			sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255 * random.nextFloat(), 0, 0)),
 					pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() + 1,

@@ -100,7 +100,7 @@ public class ChiselRecipe extends CustomRecipe {
 
 	@Override
 	public RecipeType<?> getType() {
-		return RecipeInit.chisel_recipe_type;
+		return RecipeInit.chisel_recipe.get();
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class ChiselRecipe extends CustomRecipe {
 	}
 
 	public static Collection<ChiselRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe_type);
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get());
 	}
 
 	public RuneType getRuneType() {

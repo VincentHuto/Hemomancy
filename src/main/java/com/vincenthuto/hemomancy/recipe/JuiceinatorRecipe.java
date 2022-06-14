@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 public class JuiceinatorRecipe extends AbstractCookingRecipe {
 	public JuiceinatorRecipe(ResourceLocation resourceLocation, String group, Ingredient ingredient, ItemStack result,
 			float experience, int cookingTime) {
-		super(RecipeInit.juiceinator_recipe_type, resourceLocation, group, ingredient, result, experience,
+		super(RecipeInit.juiceinator.get(), resourceLocation, group, ingredient, result, experience,
 				cookingTime);
 	}
 
@@ -31,7 +31,7 @@ public class JuiceinatorRecipe extends AbstractCookingRecipe {
 	}
 
 	public static Collection<JuiceinatorRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.juiceinator_recipe_type);
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.juiceinator.get());
 	}
 
 	@Override

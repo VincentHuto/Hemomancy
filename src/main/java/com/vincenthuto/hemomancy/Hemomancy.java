@@ -69,6 +69,8 @@ public class Hemomancy {
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+		BannerTypeInit.BANNERPATTERNS.register(modEventBus);
+
 		ManipulationInit.MANIPS.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
@@ -87,11 +89,11 @@ public class Hemomancy {
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
 		BlockInit.BLOCKITEMS.register(modEventBus);
 		FluidInit.FLUIDS.register(modEventBus);
+		RecipeInit.RECIPE_TYPES.register(modEventBus);
 		RecipeInit.SERIALIZERS.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
-		BannerTypeInit.BANNERPATTERNS.register(modEventBus);
 		// SensorInit.DATA_SERIALIZERS.register(modEventBus);
 		// SensorInit.SENSORS.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
@@ -111,63 +113,6 @@ public class Hemomancy {
 		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
 
 	}
-
-// Automatically Registers BlockItems
-//	@SubscribeEvent
-//	public static void onRegisterItems(final RegistryEvent.Register<Item> event) {
-//		final IForgeRegistry<Item> registry = event.getRegistry();
-//		BlockInit.BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.SLABBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.STAIRBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.COLUMNBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.CROSSBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//			final BlockItem blockItem = new BlockItem(block, properties);
-//			blockItem.setRegistryName(block.getRegistryName());
-//			registry.register(blockItem);
-//		});
-//		BlockInit.SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(block -> {
-//			if (block != BlockInit.active_befouling_ash_trail.get()
-//					&& block != BlockInit.active_smouldering_ash_trail.get()) {
-//				final Item.Properties properties = new Item.Properties().tab(HemomancyItemGroup.instance);
-//				final BlockItem blockItem = new BlockItem(block, properties);
-//				blockItem.setRegistryName(block.getRegistryName());
-//				registry.register(blockItem);
-//			}
-//		});
-//	}
 
 // Creative Tab
 	public static class HemomancyItemGroup extends CreativeModeTab {

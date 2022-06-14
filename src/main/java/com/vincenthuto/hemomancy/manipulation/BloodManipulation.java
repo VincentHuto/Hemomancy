@@ -19,9 +19,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
+public class BloodManipulation  {
 	String name;
 	double cost, alignLevel, xpCost;
 	EnumBloodTendency tend;

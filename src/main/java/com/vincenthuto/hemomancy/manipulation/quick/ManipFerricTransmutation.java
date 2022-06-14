@@ -12,6 +12,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,8 +21,9 @@ import net.minecraft.world.level.Level;
 
 public class ManipFerricTransmutation extends BloodManipulation {
 
-	public ManipFerricTransmutation(String name, double cost, double alignLevel, double xpCost,EnumManipulationType type,
-			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
+	public ManipFerricTransmutation(String name, double cost, double alignLevel, double xpCost,
+			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
+			EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
 	}
 
@@ -29,7 +31,7 @@ public class ManipFerricTransmutation extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		ServerLevel sLevel = (ServerLevel) world;
 		BlockPos pos = player.blockPosition();
-		Random random = player.level.random;
+		RandomSource random = player.level.random;
 		if (heldItemMainhand.getItem() == Items.GOLD_INGOT) {
 			heldItemMainhand.shrink(1);
 			ItemEntity iron = new ItemEntity(sLevel, pos.getX(), pos.getY(), pos.getZ(),

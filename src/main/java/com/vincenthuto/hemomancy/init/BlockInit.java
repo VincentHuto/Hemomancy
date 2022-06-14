@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.init;
 
+import java.util.function.Supplier;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
@@ -26,6 +28,7 @@ import com.vincenthuto.hemomancy.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hutoslib.common.block.HLBlockUtils;
 
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -68,245 +71,255 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 
 	// Ash
-	public static final RegistryObject<Block> smouldering_ash_trail =  HLBlockUtils.registerBlockItems("smouldering_ash_trail",
+	public static final RegistryObject<Block> smouldering_ash_trail =  registerBlockItems("smouldering_ash_trail",
 			() -> new BlockSmoulderingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> befouling_ash_trail =  HLBlockUtils.registerBlockItems("befouling_ash_trail",
+	public static final RegistryObject<Block> befouling_ash_trail =  registerBlockItems("befouling_ash_trail",
 			() -> new BlockBefoulingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> active_smouldering_ash_trail =  HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> active_smouldering_ash_trail =  registerBlockItems(
 			"active_smouldering_ash_trail",
 			() -> new BlockActiveSmoulderingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> active_befouling_ash_trail =  HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> active_befouling_ash_trail =  registerBlockItems(
 			"active_befouling_ash_trail",
 			() -> new BlockActiveBefoulingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
 	// Blocks
-	public static final RegistryObject<Block> bleeding_heart =  HLBlockUtils.registerBlockItems("bleeding_heart",
+	public static final RegistryObject<Block> bleeding_heart =  registerBlockItems("bleeding_heart",
 			() -> new BlockBleedingHeart(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), CROSSBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> sanguine_glass = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> sanguine_glass = registerBlockItems(
 			"sanguine_glass", () -> new GlassBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f)
 					.sound(SoundType.GLASS).noOcclusion()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> sanguine_pane =  HLBlockUtils.registerBlockItems("sanguine_pane",
+	public static final RegistryObject<Block> sanguine_pane =  registerBlockItems("sanguine_pane",
 			() -> new IronBarsBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f)
 					.sound(SoundType.GLASS).noOcclusion()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> venous_stone = HLBlockUtils.registerBlockItems("venous_stone",
+	public static final RegistryObject<Block> venous_stone = registerBlockItems("venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> venous_stone_slab = HLBlockUtils.registerBlockItems("venous_stone_slab",
+	public static final RegistryObject<Block> venous_stone_slab = registerBlockItems("venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5f, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SLABBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> venous_stone_stairs = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> venous_stone_stairs = registerBlockItems(
 			("venous_stone_stairs"),
 			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> gilded_venous_stone = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> gilded_venous_stone = registerBlockItems(
 			"gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone = registerBlockItems(
 			"polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone_slab = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone_slab = registerBlockItems(
 			"polished_venous_stone_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5f, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SLABBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone_stairs = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone_stairs = registerBlockItems(
 			("polished_venous_stone_stairs"),
 			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())),
 			new Item.Properties().tab(HemomancyItemGroup.instance), STAIRBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> chiseled_polished_venous_stone = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> chiseled_polished_venous_stone = registerBlockItems(
 			"chiseled_polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone_bricks = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone_bricks = registerBlockItems(
 			"polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), STAIRBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone_brick_slab = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone_brick_slab = registerBlockItems(
 			"polished_venous_stone_brick_slab",
 			() -> new SlabBlock(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5f, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SLABBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone_brick_stairs = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> polished_venous_stone_brick_stairs = registerBlockItems(
 			("polished_venous_stone_brick_stairs"),
 			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())),
 			new Item.Properties().tab(HemomancyItemGroup.instance), STAIRBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> cracked_polished_venous_stone_bricks = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> cracked_polished_venous_stone_bricks = registerBlockItems(
 			"cracked_polished_venous_stone_bricks",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> infested_venous_stone = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> infested_venous_stone = registerBlockItems(
 			"infested_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> conscious_mass = HLBlockUtils.registerBlockItems("conscious_mass",
+	public static final RegistryObject<Block> conscious_mass = registerBlockItems("conscious_mass",
 			() -> new Block(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.COLOR_PINK)
 					.sound(SoundType.WART_BLOCK).strength(0.2F, 1.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> hematic_iron_block = HLBlockUtils.registerBlockItems("hematic_iron_block",
+	public static final RegistryObject<Block> hematic_iron_block = registerBlockItems("hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> hematic_iron_pillar = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> hematic_iron_pillar = registerBlockItems(
 			"hematic_iron_pillar",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), COLUMNBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> chiseled_hematic_iron_block = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> chiseled_hematic_iron_block = registerBlockItems(
 			"chiseled_hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> blood_wood_log = HLBlockUtils.registerBlockItems("blood_wood_log",
+	public static final RegistryObject<Block> blood_wood_log = registerBlockItems("blood_wood_log",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN)
 					.strength(2.0F, 3.0F).sound(SoundType.WOOD)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), COLUMNBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> blood_wood_planks = HLBlockUtils.registerBlockItems("blood_wood_planks",
+	public static final RegistryObject<Block> blood_wood_planks = registerBlockItems("blood_wood_planks",
 			() -> new Block(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN).strength(2.0F, 3.0F)
 					.sound(SoundType.WOOD)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> infected_stem = HLBlockUtils.registerBlockItems("infected_stem",
+	public static final RegistryObject<Block> infected_stem = registerBlockItems("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
-	public static final RegistryObject<Block> infected_cap = HLBlockUtils.registerBlockItems("infected_cap",
+	public static final RegistryObject<Block> infected_cap = registerBlockItems("infected_cap",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> crimson_flames = HLBlockUtils.registerBlockItems("crimson_flames",
+	public static final RegistryObject<Block> crimson_flames = registerBlockItems("crimson_flames",
 			() -> new BlockCrimsonFlame(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
 	// Idols
-	public static final RegistryObject<Block> humane_idol = HLBlockUtils.registerBlockItems("humane_idol",
+	public static final RegistryObject<Block> humane_idol = registerBlockItems("humane_idol",
 			() -> new BlockHumaneIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> serpentine_idol = HLBlockUtils.registerBlockItems("serpentine_idol",
+	public static final RegistryObject<Block> serpentine_idol = registerBlockItems("serpentine_idol",
 			() -> new BlockSerpentineIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
 	// Tiles
-	public static final RegistryObject<Block> runic_chisel_station = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> runic_chisel_station = registerBlockItems(
 			"runic_chisel_station",
 			() -> new BlockChiselStation(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> morphling_incubator = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> morphling_incubator = registerBlockItems(
 			"morphling_incubator",
 			() -> new BlockMorphlingIncubator(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> semi_sentient_construct = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> semi_sentient_construct = registerBlockItems(
 			"semi_sentient_construct",
 			() -> new BlockSemiSentientConstruct(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> unstained_podium = HLBlockUtils.registerBlockItems("unstained_podium",
+	public static final RegistryObject<Block> unstained_podium = registerBlockItems("unstained_podium",
 			() -> new BlockUnstainedPodium(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> scrying_podium = HLBlockUtils.registerBlockItems("scrying_podium",
+	public static final RegistryObject<Block> scrying_podium = registerBlockItems("scrying_podium",
 			() -> new BlockScryingPodium(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> rune_mod_station = HLBlockUtils.registerBlockItems("rune_mod_station",
+	public static final RegistryObject<Block> rune_mod_station = registerBlockItems("rune_mod_station",
 			() -> new BlockRuneModStation(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> dendritic_distributor = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> dendritic_distributor = registerBlockItems(
 			"dendritic_distributor",
 			() -> new BlockDendriticDistributor(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> mortal_display = HLBlockUtils.registerBlockItems("mortal_display",
+	public static final RegistryObject<Block> mortal_display = registerBlockItems("mortal_display",
 			() -> new BlockMortalDisplay(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> visceral_artificial_recaller = HLBlockUtils.registerBlockItems(
+	public static final RegistryObject<Block> visceral_artificial_recaller = registerBlockItems(
 			"visceral_artificial_recaller",
 			() -> new BlockVisceralRecaller(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> earthen_vein = HLBlockUtils.registerBlockItems("earthen_vein",
+	public static final RegistryObject<Block> earthen_vein = registerBlockItems("earthen_vein",
 			() -> new BlockEarthenVein(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> iron_brazier = HLBlockUtils.registerBlockItems("iron_brazier",
+	public static final RegistryObject<Block> iron_brazier = registerBlockItems("iron_brazier",
 			() -> new BlockBrazier(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> juiceinator = HLBlockUtils.registerBlockItems("juiceinator",
+	public static final RegistryObject<Block> juiceinator = registerBlockItems("juiceinator",
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> earthly_transfuser = HLBlockUtils.registerBlockItems("earthly_transfuser",
+	public static final RegistryObject<Block> earthly_transfuser = registerBlockItems("earthly_transfuser",
 			() -> new BlockEarthlyTransfuser(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
+	
+	public static RegistryObject<Block> registerBlockItems(String name, final Supplier<? extends Block> blockSup,
+			Item.Properties itemProps, DeferredRegister<Block> blockReg, DeferredRegister<Item> itemReg) {
+		RegistryObject<Block> regBlock = blockReg.register(name, blockSup);
+		itemReg.register(name, () -> new BlockItem(regBlock.get(), itemProps));
+		return regBlock;
+
+	}
+
+	
 //
 //	@SubscribeEvent
 //	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
