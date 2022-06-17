@@ -1,8 +1,5 @@
 package com.vincenthuto.hemomancy.init;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.MenuChiselStation;
 import com.vincenthuto.hemomancy.container.MenuEarthlyTransfuser;
@@ -26,7 +23,6 @@ import net.minecraftforge.registries.RegistryObject;
 public class ContainerInit {
 	public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS,
 			Hemomancy.MOD_ID);
-	public static List<MenuType<?>> RUNECONTAINER = new ArrayList<>();
 
 	public static final RegistryObject<MenuType<MenuChiselStation>> runic_chisel_station = CONTAINERS
 			.register("runic_chisel_station", () -> IForgeMenuType.create(MenuChiselStation::new));
@@ -59,3 +55,4 @@ public class ContainerInit {
 			() -> IForgeMenuType.create(MenuRunes::new));
 
 }
+	

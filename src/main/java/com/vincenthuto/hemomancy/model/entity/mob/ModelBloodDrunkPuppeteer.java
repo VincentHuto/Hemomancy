@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.model.anim.Animation;
-import com.vincenthuto.hemomancy.model.anim.Easing;
+import com.vincenthuto.hutoslib.client.model.anim.Animation;
+import com.vincenthuto.hutoslib.client.model.anim.Easing;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

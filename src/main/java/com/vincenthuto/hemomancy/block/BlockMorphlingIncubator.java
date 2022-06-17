@@ -116,8 +116,8 @@ public class BlockMorphlingIncubator extends Block implements EntityBlock {
 	@Override
 	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
 		super.triggerEvent(state, world, pos, id, param);
-		BlockEntity tileentity = world.getBlockEntity(pos);
-		return tileentity != null && tileentity.triggerEvent(id, param);
+		BlockEntity BlockEntity = world.getBlockEntity(pos);
+		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
 	@Override

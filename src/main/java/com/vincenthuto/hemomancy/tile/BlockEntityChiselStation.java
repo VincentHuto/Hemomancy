@@ -236,9 +236,9 @@ public class BlockEntityChiselStation extends BaseContainerBlockEntity implement
 	public static int getPlayersUsing(BlockGetter reader, BlockPos pos) {
 		BlockState blockstate = reader.getBlockState(pos);
 		if (blockstate.hasBlockEntity()) {
-			BlockEntity tileentity = reader.getBlockEntity(pos);
-			if (tileentity instanceof BlockEntityChiselStation) {
-				return ((BlockEntityChiselStation) tileentity).numPlayersUsing;
+			BlockEntity BlockEntity = reader.getBlockEntity(pos);
+			if (BlockEntity instanceof BlockEntityChiselStation) {
+				return ((BlockEntityChiselStation) BlockEntity).numPlayersUsing;
 			}
 		}
 		return 0;

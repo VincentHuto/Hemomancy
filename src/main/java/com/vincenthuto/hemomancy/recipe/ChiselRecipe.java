@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.recipe;
 
 import java.lang.reflect.MalformedParametersException;
-import java.util.Collection;
+import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
@@ -108,7 +108,7 @@ public class ChiselRecipe extends CustomRecipe {
 		return RecipeInit.chisel_recipe_serializer.get();
 	}
 
-	public static Collection<ChiselRecipe> getAllRecipes(Level world) {
+	public static List<ChiselRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.chisel_recipe.get());
 	}
 

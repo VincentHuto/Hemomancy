@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.recipe;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
@@ -112,7 +112,7 @@ public class RecallerRecipe extends CustomRecipe {
 		return RecipeInit.recaller_recipe_serializer.get();
 	}
 
-	public static Collection<RecallerRecipe> getAllRecipes(Level world) {
+	public static List<RecallerRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe.get());
 	}
 
