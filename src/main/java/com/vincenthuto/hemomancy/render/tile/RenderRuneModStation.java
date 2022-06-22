@@ -30,7 +30,7 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		Player player = HLClientUtils.getClientPlayer();
 		if (player.isAlive()) {
-			// GlStateManager._pushMatrix();
+			// 
 			// GlStateManager._color4f(1F, 1F, 1F, 1F);
 
 			IRunesItemHandler runes = player.getCapability(RunesCapabilities.RUNES)
@@ -80,7 +80,7 @@ public class RenderRuneModStation implements BlockEntityRenderer<BlockEntityRune
 						matrixStackIn, bufferIn, 0);
 				matrixStackIn.popPose();
 			}
-			// GlStateManager._popMatrix();
+			// 
 		}
 	}
 }

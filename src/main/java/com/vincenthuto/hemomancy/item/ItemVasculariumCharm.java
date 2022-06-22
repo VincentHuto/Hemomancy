@@ -30,6 +30,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -52,11 +53,11 @@ public class ItemVasculariumCharm extends ItemRune implements IRune {
 			pPlayer.startUsingItem(pHand);
 			if (pLevel instanceof ServerLevel) {
 				ServerLevel serverlevel = (ServerLevel) pLevel;
-				BlockPos blockpos = serverlevel.findNearestMapStructure(
-						TagKey.create(Registry.STRUCTURE_REGISTRY,
-								new ResourceLocation(Hemomancy.MOD_ID, "blood_temple")),
-						pPlayer.blockPosition(), 100, false);
-
+				TagKey<Structure> blood_temple_location = TagKey.create(Registry.STRUCTURE_REGISTRY,
+						new ResourceLocation(Hemomancy.MOD_ID, "blood_temple"));
+				BlockPos blockpos = serverlevel.findNearestMapStructure(blood_temple_location, pPlayer.blockPosition(),
+						100, false);
+				System.out.println(blockpos);
 				if (blockpos != null) {
 					EntityFlyingCharm eyeofender = new EntityFlyingCharm(pLevel, pPlayer.getX(), pPlayer.getY(0.5D),
 							pPlayer.getZ());
@@ -79,7 +80,7 @@ public class ItemVasculariumCharm extends ItemRune implements IRune {
 					pPlayer.swing(pHand, true);
 					return InteractionResultHolder.success(itemstack);
 				} else {
-					pPlayer.displayClientMessage( Component.translatable("Could Not Find A Temple"), true);
+					pPlayer.displayClientMessage(Component.translatable("Could Not Find A Temple"), true);
 				}
 			}
 
@@ -91,9 +92,9 @@ public class ItemVasculariumCharm extends ItemRune implements IRune {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add( Component.translatable(ChatFormatting.RED + "So you've chosen the path of blood."));
-		tooltip.add( Component.translatable(ChatFormatting.RED + "Representative of your resolve."));
-		tooltip.add( Component.translatable(ChatFormatting.RED + "Leads you to a place of solace."));
+		tooltip.add(Component.translatable(ChatFormatting.RED + "So you've chosen the path of blood."));
+		tooltip.add(Component.translatable(ChatFormatting.RED + "Representative of your resolve."));
+		tooltip.add(Component.translatable(ChatFormatting.RED + "Leads you to a place of solace."));
 	}
 
 	@Override

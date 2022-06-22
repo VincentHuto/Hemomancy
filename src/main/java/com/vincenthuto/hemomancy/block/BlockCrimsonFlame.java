@@ -9,4 +9,6 @@ public class BlockCrimsonFlame extends FireBlock {
 		super(builder);
 	}
 
+	
+	
 }

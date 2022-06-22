@@ -451,9 +451,6 @@ public class ItemInit {
 			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
 
 //	// Contract Runes
-//	public static final RegistryObject<Item> rune_beast_c = BASEITEMS.register("rune_beast_c",
-//			() -> new ItemContractRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-//					EnumBloodTendency.ANIMUS, 5));
 
 	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
@@ -462,55 +459,55 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
 			"rune_pattern_transcendence",
 			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_transcendence,
-					"chisel_test2"));
+					"rune_transcendence"));
 
 	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_sol,
-//					ChiselRecipes.recipeSol));
+	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_sol,
+					"rune_sol"));
 
 	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heart,
-//					ChiselRecipes.recipeHeart));
+	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heart,
+					"rune_heart"));
 
 	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_descendence,
-//					ChiselRecipes.recipeDescendence));
+	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_descendence,
+					"rune_descendence"));
 
 	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_moon,
-//					ChiselRecipes.recipeMoon));
+	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_moon,
+					"rune_moon"));
 
 	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
-//					ChiselRecipes.recipeEye));
+	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
+					"rune_eye"));
 
 	public static final RegistryObject<Item> rune_feral = BASEITEMS.register("rune_feral",
 			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodTendency.DUCTILIS, 1));
 
-//	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
-//			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_feral,
-//					ChiselRecipes.recipeFeral));
+	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
+			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_feral,
+					"rune_feral"));
 
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",

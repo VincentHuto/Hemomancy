@@ -2,11 +2,17 @@ package com.vincenthuto.hemomancy.block;
 
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.tile.BlockEntityMortalDisplay;
+import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
@@ -14,6 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,6 +38,8 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -63,7 +72,7 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 		if (!volume.isActive()) {
 			volume.setActive(true);
 			player.displayClientMessage(
-					 Component.translatable("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
+					Component.translatable("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
 			for (int i = 0; i < 10; i++) {
 				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
 				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(
@@ -129,6 +138,25 @@ public class BlockMortalDisplay extends Block implements EntityBlock {
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
 		return new BlockEntityMortalDisplay(p_153215_, p_153216_);
+	}
+
+	@Override
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
+		super.animateTick(state, level, pos, rand);
+		double time = level.getGameTime();
+		for (int i = 0; i < 15; i++) {
+			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD), pos.getX() + Math.cos(time) + .5,
+					pos.getY() + .5, pos.getZ() + Math.sin(time) + .5, 0, 0.05, 0);
+
+		}
+
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		return type == BlockEntityInit.mortal_display.get() ? BlockEntityMortalDisplay::tick : null;
 	}
 
 }

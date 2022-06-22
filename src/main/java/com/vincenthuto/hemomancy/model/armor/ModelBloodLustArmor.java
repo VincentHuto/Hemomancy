@@ -36,9 +36,9 @@ public class ModelBloodLustArmor<T extends LivingEntity> extends HumanoidModel<T
 	public static final ModelLayerLocation BLOOD_LUST_BOOTS_LAYER = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_boots"), "main");
 	
-    public static final Lazy<ModelBloodLustArmor<LivingEntity>> helmet = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
     public static final Lazy<ModelBloodLustArmor<LivingEntity>> tengu = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_TENGU_LAYER)));
     public static final Lazy<ModelBloodLustArmor<LivingEntity>> horned = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_HORNED_LAYER)));
+    public static final Lazy<ModelBloodLustArmor<LivingEntity>> helmet = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
     public static final Lazy<ModelBloodLustArmor<LivingEntity>> chest = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_CHEST_LAYER)));
     public static final Lazy<ModelBloodLustArmor<LivingEntity>> legs = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_LEGS_LAYER)));
     public static final Lazy<ModelBloodLustArmor<LivingEntity>> boots = Lazy.of(() -> new ModelBloodLustArmor<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_BOOTS_LAYER)));

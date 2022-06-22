@@ -19,10 +19,10 @@ public class ItemRunePattern extends Item {
 	String path;
 	RegistryObject<Item> rune;
 
-	public ItemRunePattern(Properties prop, RegistryObject<Item> rune, String recipe) {
+	public ItemRunePattern(Properties prop, RegistryObject<Item> rune, String recipePath) {
 		super(prop.stacksTo(1));
 		this.rune = rune;
-		this.path = recipe;
+		this.path = recipePath;
 	}
 
 	@Override

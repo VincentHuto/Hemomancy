@@ -26,7 +26,6 @@ public class ItemBarbedArmor extends ArmorItem {
 		consumer.accept(new IItemRenderProperties() {
 			@Override
 			public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-					
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
 				if (itemStack.getItem() == ItemInit.barbed_helm.get()) {
 					return ModelBarbedArmor.helmet.get();

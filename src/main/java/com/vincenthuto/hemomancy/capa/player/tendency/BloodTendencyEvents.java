@@ -160,7 +160,7 @@ public class BloodTendencyEvents {
 					for (int i = 0; i < tendency.getTendency().keySet().size(); i++) {
 						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getTendency().keySet()
 								.toArray()[i];
-						// GlStateManager._pushMatrix();
+						// 
 						fontRenderer.draw(event.getPoseStack(), HLTextUtils.toProperCase(selectedCoven.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getPoseStack(),

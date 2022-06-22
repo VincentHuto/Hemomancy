@@ -96,7 +96,9 @@ public class Hemomancy {
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		// SensorInit.DATA_SERIALIZERS.register(modEventBus);
 		// SensorInit.SENSORS.register(modEventBus);
-		StructureInit.STRUCTURES.register(modEventBus);
+		StructureInit.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+		StructureInit.BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 		forgeBus.register(this);

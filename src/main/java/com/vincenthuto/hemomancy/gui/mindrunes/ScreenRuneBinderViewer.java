@@ -43,7 +43,7 @@ public class ScreenRuneBinderViewer extends Screen {
 
 	@OnlyIn(Dist.CLIENT)
 	public ScreenRuneBinderViewer() {
-		super( Component.translatable("View All Patterns"));
+		super(Component.translatable("View All Patterns"));
 
 	}
 
@@ -53,18 +53,16 @@ public class ScreenRuneBinderViewer extends Screen {
 		int centerY = (height / 2) - guiHeight / 2;
 		this.renderBackground(matrixStack);
 
-		// GlStateManager._pushMatrix();
-		{
-			// GlStateManager._color4f(1, 1, 1, 1);
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.setShaderTexture(0, texture);
-			HLGuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
+		//
+		// GlStateManager._color4f(1, 1, 1, 1);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, texture);
+		HLGuiUtils.drawTexturedModalRect(centerX, centerY, 0, 0, guiWidth - 1, guiHeight);
 
-		}
-		// GlStateManager._popMatrix();
+		//
 
-		// GlStateManager._pushMatrix();
+		//
 		for (int i = 0; i < renderables.size(); i++) {
 			renderables.get(i).render(matrixStack, mouseX, mouseY, 511);
 			// if (((GuiButtonTextured)renderables.get(i)).isHoveredOrFocused()) {
@@ -74,14 +72,14 @@ public class ScreenRuneBinderViewer extends Screen {
 			if (binderHandler.getStackInSlot(i).getItem() instanceof ItemRunePattern) {
 				ItemRunePattern pat = (ItemRunePattern) binderHandler.getStackInSlot(i).getItem();
 				List<Component> text = new ArrayList<Component>();
-				text.add( Component.translatable(I18n.get(pat.getRecipe().getResultItem().getHoverName().getString())));
+				text.add(Component.translatable(I18n.get(pat.getRecipe().getResultItem().getHoverName().getString())));
 				renderComponentTooltip(matrixStack, text, mouseX, mouseY);
 			}
 			// }
 		}
-		// GlStateManager._popMatrix();
+		//
 
-		// GlStateManager._pushMatrix();
+		//
 		{
 			ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemRuneBinder.class);
 			IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
@@ -104,9 +102,9 @@ public class ScreenRuneBinderViewer extends Screen {
 				}
 			}
 		}
-		// GlStateManager._popMatrix();
+		//
 
-		// GlStateManager._pushMatrix();
+		//
 		{
 			// GlStateManager._translatef(centerX, centerY, 0);
 			// GlStateManager._translatef(3, 3, 10);
@@ -115,7 +113,7 @@ public class ScreenRuneBinderViewer extends Screen {
 			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(icon, -1, -1);
 
 		}
-		// GlStateManager._popMatrix();
+		//
 
 	}
 

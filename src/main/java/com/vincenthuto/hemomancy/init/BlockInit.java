@@ -25,8 +25,9 @@ import com.vincenthuto.hemomancy.block.BlockUnstainedPodium;
 import com.vincenthuto.hemomancy.block.BlockVisceralRecaller;
 import com.vincenthuto.hemomancy.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.block.idol.BlockSerpentineIdol;
-import com.vincenthuto.hutoslib.common.block.HLBlockUtils;
 
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -42,8 +43,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -71,30 +75,30 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 
 	// Ash
-	public static final RegistryObject<Block> smouldering_ash_trail =  registerBlockItems("smouldering_ash_trail",
+	public static final RegistryObject<Block> smouldering_ash_trail = registerBlockItems("smouldering_ash_trail",
 			() -> new BlockSmoulderingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> befouling_ash_trail =  registerBlockItems("befouling_ash_trail",
+	public static final RegistryObject<Block> befouling_ash_trail = registerBlockItems("befouling_ash_trail",
 			() -> new BlockBefoulingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> active_smouldering_ash_trail =  registerBlockItems(
+	public static final RegistryObject<Block> active_smouldering_ash_trail = registerBlockItems(
 			"active_smouldering_ash_trail",
 			() -> new BlockActiveSmoulderingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> active_befouling_ash_trail =  registerBlockItems(
+	public static final RegistryObject<Block> active_befouling_ash_trail = registerBlockItems(
 			"active_befouling_ash_trail",
 			() -> new BlockActiveBefoulingAshTrail(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
 
 	// Blocks
-	public static final RegistryObject<Block> bleeding_heart =  registerBlockItems("bleeding_heart",
+	public static final RegistryObject<Block> bleeding_heart = registerBlockItems("bleeding_heart",
 			() -> new BlockBleedingHeart(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), CROSSBLOCKS, BLOCKITEMS);
@@ -104,7 +108,7 @@ public class BlockInit {
 					.sound(SoundType.GLASS).noOcclusion()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> sanguine_pane =  registerBlockItems("sanguine_pane",
+	public static final RegistryObject<Block> sanguine_pane = registerBlockItems("sanguine_pane",
 			() -> new IronBarsBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f)
 					.sound(SoundType.GLASS).noOcclusion()),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SPECIALBLOCKS, BLOCKITEMS);
@@ -119,20 +123,17 @@ public class BlockInit {
 					.requiresCorrectToolForDrops().strength(1.5f, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), SLABBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> venous_stone_stairs = registerBlockItems(
-			("venous_stone_stairs"),
+	public static final RegistryObject<Block> venous_stone_stairs = registerBlockItems(("venous_stone_stairs"),
 			() -> new StairBlock(() -> venous_stone.get().defaultBlockState(),
 					BlockBehaviour.Properties.copy(venous_stone.get())),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> gilded_venous_stone = registerBlockItems(
-			"gilded_venous_stone",
+	public static final RegistryObject<Block> gilded_venous_stone = registerBlockItems("gilded_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> polished_venous_stone = registerBlockItems(
-			"polished_venous_stone",
+	public static final RegistryObject<Block> polished_venous_stone = registerBlockItems("polished_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
@@ -179,8 +180,7 @@ public class BlockInit {
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> infested_venous_stone = registerBlockItems(
-			"infested_venous_stone",
+	public static final RegistryObject<Block> infested_venous_stone = registerBlockItems("infested_venous_stone",
 			() -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.STONE)
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
@@ -195,8 +195,7 @@ public class BlockInit {
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), BASEBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> hematic_iron_pillar = registerBlockItems(
-			"hematic_iron_pillar",
+	public static final RegistryObject<Block> hematic_iron_pillar = registerBlockItems("hematic_iron_pillar",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), COLUMNBLOCKS, BLOCKITEMS);
@@ -240,20 +239,17 @@ public class BlockInit {
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
 	// Tiles
-	public static final RegistryObject<Block> runic_chisel_station = registerBlockItems(
-			"runic_chisel_station",
+	public static final RegistryObject<Block> runic_chisel_station = registerBlockItems("runic_chisel_station",
 			() -> new BlockChiselStation(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> morphling_incubator = registerBlockItems(
-			"morphling_incubator",
+	public static final RegistryObject<Block> morphling_incubator = registerBlockItems("morphling_incubator",
 			() -> new BlockMorphlingIncubator(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> semi_sentient_construct = registerBlockItems(
-			"semi_sentient_construct",
+	public static final RegistryObject<Block> semi_sentient_construct = registerBlockItems("semi_sentient_construct",
 			() -> new BlockSemiSentientConstruct(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
@@ -273,8 +269,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	public static final RegistryObject<Block> dendritic_distributor = registerBlockItems(
-			"dendritic_distributor",
+	public static final RegistryObject<Block> dendritic_distributor = registerBlockItems("dendritic_distributor",
 			() -> new BlockDendriticDistributor(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
@@ -310,7 +305,6 @@ public class BlockInit {
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)),
 			new Item.Properties().tab(HemomancyItemGroup.instance), MODELEDBLOCKS, BLOCKITEMS);
 
-	
 	public static RegistryObject<Block> registerBlockItems(String name, final Supplier<? extends Block> blockSup,
 			Item.Properties itemProps, DeferredRegister<Block> blockReg, DeferredRegister<Item> itemReg) {
 		RegistryObject<Block> regBlock = blockReg.register(name, blockSup);
@@ -319,31 +313,25 @@ public class BlockInit {
 
 	}
 
-	
-//
-//	@SubscribeEvent
-//	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
-//		if (FMLEnvironment.dist == Dist.CLIENT) {
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_glass.get(), RenderType.translucent());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.translucent());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(),
-//					RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.translucent());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.scrying_podium.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.translucent());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(),
-//					RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
-//			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthly_transfuser.get(), RenderType.cutoutMipped());
-//
-//		}
-//	}
+	@SubscribeEvent
+	public static void registerBlocks(FMLClientSetupEvent event) {
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_glass.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.scrying_podium.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.earthly_transfuser.get(), RenderType.cutoutMipped());
+
+	}
 
 }

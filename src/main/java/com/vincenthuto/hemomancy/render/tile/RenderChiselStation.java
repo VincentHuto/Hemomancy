@@ -26,11 +26,11 @@ public class RenderChiselStation implements BlockEntityRenderer<BlockEntityChise
 	public void render(BlockEntityChiselStation te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		// Add items above block
-		// GlStateManager._pushMatrix();
+		// 
 		// GlStateManager._color4f(1F, 1F, 1F, 1F);
 		// GlStateManager._translatef(te.getBlockPos().getX(), te.getBlockPos().getY(),
 		// te.getBlockPos().getZ());
-		// GlStateManager._popMatrix();
+		// 
 		Minecraft.getInstance().textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
 

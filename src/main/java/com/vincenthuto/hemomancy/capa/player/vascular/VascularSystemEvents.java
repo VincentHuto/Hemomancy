@@ -133,7 +133,7 @@ public class VascularSystemEvents {
 					for (int i = 0; i < section.getVascularSystem().keySet().size(); i++) {
 						EnumVeinSections selectedSection = (EnumVeinSections) section.getVascularSystem().keySet()
 								.toArray()[i];
-						// GlStateManager._pushMatrix();
+						// 
 						fontRenderer.draw(event.getPoseStack(), HLTextUtils.toProperCase(selectedSection.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getPoseStack(),
@@ -142,7 +142,7 @@ public class VascularSystemEvents {
 						fontRenderer.draw(event.getPoseStack(),
 								String.valueOf(section.getBloodFlowBySection(selectedSection)), point.x, point.y + 40,
 								new Color(255, 0, 0, 255).getRGB());
-						// GlStateManager._popMatrix();
+						// 
 						/*
 						 * if (selectedSection.equals(EnumVeinSections.SELF)) { renderItem =
 						 * Items.CRAFTING_TABLE; } else if
@@ -157,7 +157,7 @@ public class VascularSystemEvents {
 						 * (selectedSection.equals(EnumVeinSections.BEAST)) { renderItem =
 						 * ItemInit.breath_of_the_beast.get(); } else { renderItem = Items.BARRIER; }
 						 */
-						// GlStateManager._pushMatrix();
+						// 
 						//// GlStateManager._enableAlphaTest();
 						// GlStateManager._enableBlend();
 						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(renderItem),
@@ -165,7 +165,7 @@ public class VascularSystemEvents {
 						// GuiUtil.drawScaledTexturedModalRect(point.x, point.y, 0, 0, 16, 16, 0.062f);
 						// GlStateManager._disableBlend();
 						// GlStateManager._disableAlphaTest();
-						// GlStateManager._popMatrix();
+						// 
 						point = rotatePointAbout(point, center, angleBetweenEach);
 					}
 				}
