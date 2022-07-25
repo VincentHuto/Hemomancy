@@ -55,7 +55,7 @@ public class BloodBindingEffect extends MobEffect {
 					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
-							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05),0, 0f, 0.0f);
+							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
 					level.addParticle(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
 							centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
@@ -69,6 +69,30 @@ public class BloodBindingEffect extends MobEffect {
 							centerVec.y + Math.sin(time * 0.1) * 0.55f,
 							centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 0, 0f, 0.0f);
 				}
+//				if (!level.isClientSide) {
+//					if (level instanceof ServerLevel sr) {
+//						double time = level.getGameTime();
+//						sr.sendParticles(SerpentParticleFactory.createData(new ParticleColor(50, 50, 50)),
+//								centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+//								centerVec.y + Math.sin(time * 0.1) * 0.55,
+//								centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 1, 0, 0, 0.0, 0);
+//
+//						sr.sendParticles(SerpentParticleFactory.createData(new ParticleColor(100, 0, 0)),
+//								centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+//								centerVec.y + Math.sin(time * 0.1) * 0.55,
+//								centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 1, 0, 0, 0.0, 0);
+//
+//						sr.sendParticles(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+//								centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+//								centerVec.y + Math.sin(time * 0.1) * 0.55,
+//								centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 1, 0, 0, 0.0, 0);
+//
+//						sr.sendParticles(SerpentParticleFactory.createData(new ParticleColor(255, 0, 0)),
+//								centerVec.x + Math.sin(time * 0.3) * (0.50 + Math.sin(time) * 0.05),
+//								centerVec.y + Math.sin(time * 0.1) * 0.55,
+//								centerVec.z + Math.cos(time * 0.3) * (0.50 + Math.sin(time) * 0.05), 1, 0, 0, 0.0, 0);
+//					}
+//				}
 			}
 		}
 

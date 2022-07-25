@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
 import com.vincenthuto.hemomancy.network.particle.PacketAirBloodDraw;
 import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
 import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
+import com.vincenthuto.hemomancy.network.particle.PacketSpawnAvatarParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
@@ -153,6 +154,9 @@ public class PacketHandler {
 		CHANNELPARTICLES.messageBuilder(PacketSpawnFlaskParticles.class, networkID++)
 				.decoder(PacketSpawnFlaskParticles::decode).encoder(PacketSpawnFlaskParticles::encode)
 				.consumer(PacketSpawnFlaskParticles::handle).add();
+		CHANNELPARTICLES.messageBuilder(PacketSpawnAvatarParticles.class, networkID++)
+				.decoder(PacketSpawnAvatarParticles::decode).encoder(PacketSpawnAvatarParticles::encode)
+				.consumer(PacketSpawnAvatarParticles::handle).add();
 		CHANNELPARTICLES.messageBuilder(PacketSpawnBloodClawParticles.class, networkID++)
 				.decoder(PacketSpawnBloodClawParticles::decode).encoder(PacketSpawnBloodClawParticles::encode)
 				.consumer(PacketSpawnBloodClawParticles::handle).add();
@@ -186,6 +190,13 @@ public class PacketHandler {
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenStaff.class, PacketOpenStaff::encode,
 				PacketOpenStaff::decode, PacketOpenStaff::handle);
 
+	}
+
+	public static void sendAvatarHitParticles(Vec3 pos, ParticleColor color, double radius,
+			ResourceKey<Level> dimension) {
+		PacketSpawnAvatarParticles msg = new PacketSpawnAvatarParticles(pos, color);
+		CHANNELPARTICLES.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
 	public static void sendBloodFlaskParticles(Vec3 pos, ParticleColor color, double radius,

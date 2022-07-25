@@ -117,28 +117,7 @@ public class BloodCraftingCategory implements IRecipeCategory<RecipeBaseBloodCra
 
 	public static void renderPatternInGUI(PoseStack matrices, Minecraft mc, MultiblockPattern pattern, double xOff,
 			double yOff) {
-		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
-		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
-		matrices.pushPose();
-		matrices.mulPose(Vector3f.XN.rotationDegrees(-45));
-		matrices.mulPose(Vector3f.YP.rotationDegrees(45));
-		float structScale = 5f;
-		matrices.scale(structScale, structScale, structScale);
-		HLGuiUtils.renderMultiBlock(matrices, pattern, HLClientUtils.getPartialTicks(), new ScreenBlockTintGetter(),
-				centerX, centerY * 5);
-		matrices.popPose();
-
-//		PoseStack viewModelPose = RenderSystem.getModelViewStack();
-//		viewModelPose.pushPose();
-//		Lighting.setupFor3DItems();
-//		List<BlockPosBlockPair> patternList = pattern.getBlockPosBlockList();
-//		viewModelPose.scale(0.5f, 0.5f, -1f);
-//		viewModelPose.mulPose(new Quaternion(Vector3f.YP, -5, true));
-//		for (BlockPosBlockPair pair : patternList) {
-//			HemoGuiUtils.renderItemStackInGui(matrices, new ItemStack(pair.getBlock()), pair.getPos().getX() * -16,
-//					pair.getPos().getZ() * 16);
-//		}
-//		viewModelPose.popPose();
+		HLGuiUtils.renderMultiBlock(matrices, pattern, 1, new ScreenBlockTintGetter(), 1, 1 * 5);
 	}
 
 	@Override

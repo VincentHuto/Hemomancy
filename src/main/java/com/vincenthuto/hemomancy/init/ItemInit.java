@@ -184,7 +184,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-
+	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
 			() -> new ItemEnzyme(EnumBloodTendency.ANIMUS, 10));

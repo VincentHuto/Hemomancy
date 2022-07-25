@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockActiveSmoulderingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockBleedingHeart;
+import com.vincenthuto.hemomancy.block.BlockBloodCrystal;
 import com.vincenthuto.hemomancy.block.BlockBrazier;
 import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
@@ -210,15 +211,20 @@ public class BlockInit {
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-	
+
 	public static final RegistryObject<Block> earthly_transfuser = MODELEDBLOCKS.register("earthly_transfuser",
 			() -> new BlockEarthlyTransfuser(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-	
+
+	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
+			() -> new BlockBloodCrystal(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
+					.sound(SoundType.METAL)));
 
 	@SubscribeEvent
 	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
 		if (FMLEnvironment.dist == Dist.CLIENT) {
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_crystal.get(), RenderType.translucent());
+
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_glass.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());

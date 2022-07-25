@@ -5,8 +5,11 @@ import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
+import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +24,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor.PacketTarget;
 
 public class KnownManipulationEvents {
 	@SubscribeEvent
@@ -119,12 +123,13 @@ public class KnownManipulationEvents {
 			if (!known.isAvatarActive()) {
 				double dist = e.getEntityLiving().distanceToSqr(player);
 				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-//				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
-//						trace.getLocation().y, trace.getLocation().z));
-				e.setAmount((float) (e.getAmount() * 0));
-			}
+				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
+						e.getEntityLiving().level.dimension());
 
+			}
+			e.setAmount((float) (e.getAmount() * 0));
 		}
+
 	}
 
 }
