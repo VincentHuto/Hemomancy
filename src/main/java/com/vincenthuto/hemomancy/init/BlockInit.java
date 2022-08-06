@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.init;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockActiveSmoulderingAshTrail;
@@ -66,6 +70,19 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
+
+	public static List<Block> getAllBlockEntries() {
+		List<Block> blocks = new ArrayList<Block>();
+		BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		SLABBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		STAIRBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		COLUMNBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		CROSSBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		return blocks;
+	}
 
 	// Ash
 	public static final RegistryObject<Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",

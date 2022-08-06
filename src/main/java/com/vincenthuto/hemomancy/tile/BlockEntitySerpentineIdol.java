@@ -31,7 +31,7 @@ public class BlockEntitySerpentineIdol extends BlockEntity {
 
 			if (state.getValue(BlockSerpentineIdol.ACTIVE)) {
 
-				Vector3 centerVec = Vector3.fromTileEntityCenter(te).add(0, 0.125, 0);
+				Vector3 centerVec = Vector3.fromBlockEntityCenter(te).add(0, 0.125, 0);
 				AABB bb = new AABB(pos).inflate(4);
 				List<LivingEntity> ents = level.getEntitiesOfClass(LivingEntity.class, bb);
 				ents.forEach(e -> {

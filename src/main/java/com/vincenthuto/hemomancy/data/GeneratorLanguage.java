@@ -12,11 +12,12 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.registries.RegistryObject;
 
 public class GeneratorLanguage extends LanguageProvider {
-	public GeneratorLanguage(DataGenerator gen) {
+	public GeneratorLanguage(DataGenerator gen, ExistingFileHelper helper) {
 		super(gen, Hemomancy.MOD_ID, "en_us");
 	}
 
@@ -41,11 +42,10 @@ public class GeneratorLanguage extends LanguageProvider {
 		add("item.hemomancy.veins_pattern.desc", "Vein Border");
 		addKeyBindTranslations();
 
-		add("itemGroup.hemomancy", "Hemomancy; Sanguine Mastery");
+		add("itemGroup.hemomancy", "Hemomancy the Sanguis Noctis");
 
 		add("fluid.hemomancy.blood", "Blood");
 
-		
 		for (RegistryObject<EntityType<?>> e : EntityInit.ENTITY_TYPES.getEntries()) {
 			addEntityType(e,
 					HLTextUtils.convertInitToLang(e.get().getDescriptionId().replace("entity.hemomancy.", "")));
@@ -85,6 +85,10 @@ public class GeneratorLanguage extends LanguageProvider {
 			addBlock(b,
 					HLTextUtils.convertInitToLang(b.get().asItem().getDescriptionId().replace("block.hemomancy.", "")));
 		}
+		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
+			addItem(i,
+					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
+		}
 		for (RegistryObject<Item> i : ItemInit.HANDHELDITEMS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
@@ -94,10 +98,6 @@ public class GeneratorLanguage extends LanguageProvider {
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}
 		for (RegistryObject<Item> i : ItemInit.SPAWNEGGS.getEntries()) {
-			addItem(i,
-					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
-		}
-		for (RegistryObject<Item> i : ItemInit.BASEITEMS.getEntries()) {
 			addItem(i,
 					HLTextUtils.convertInitToLang(i.get().asItem().getDescriptionId().replace("item.hemomancy.", "")));
 		}

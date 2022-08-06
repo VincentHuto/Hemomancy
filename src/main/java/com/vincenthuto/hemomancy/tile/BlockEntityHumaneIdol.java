@@ -18,7 +18,7 @@ public class BlockEntityHumaneIdol extends BlockEntity {
 	float count = 0.5f;
 
 	public void tick() {
-		Vector3 centerVec = Vector3.fromTileEntityCenter(this).add(0, -1, 0);
+		Vector3 centerVec = Vector3.fromBlockEntityCenter(this).add(0, -1, 0);
 		double time = level.getGameTime();
 		if (level.isClientSide) {
 			int globalPartCount = 90;

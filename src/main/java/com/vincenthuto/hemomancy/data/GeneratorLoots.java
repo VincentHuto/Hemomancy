@@ -17,16 +17,18 @@ import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class GeneratorLoots extends LootTableProvider {
-	public GeneratorLoots(DataGenerator dataGeneratorIn) {
+	public GeneratorLoots(DataGenerator dataGeneratorIn, ExistingFileHelper helper) {
 		super(dataGeneratorIn);
 	}
 
@@ -53,31 +55,7 @@ public class GeneratorLoots extends LootTableProvider {
 			 * this.registerLootTable(ModBlocks.GOO_BLOCK_TERRAIN.get(),
 			 * LootTable.builder().addLootPool(builder2));
 			 */
-
-			for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.OBJBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
-			for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
-				this.dropSelf(b.get());
-			}
+			BlockInit.getAllBlockEntries().stream().forEach(b->dropSelf(b));
 
 		}
 

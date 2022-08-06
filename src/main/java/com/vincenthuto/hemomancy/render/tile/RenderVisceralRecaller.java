@@ -70,7 +70,7 @@ public class RenderVisceralRecaller implements BlockEntityRenderer<BlockEntityVi
 		matrixStackIn.popPose();
 		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
-		Vector3 startVec = Vector3.fromTileEntityCenter(te);
+		Vector3 startVec = Vector3.fromBlockEntityCenter(te);
 		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 		matrixStackIn.translate(0.5f, 0.5f + Mth.sin(currentTime * 0.15f) * 0.15f, 0.5f);
 		drawCenter(matrixStackIn, bufferIn, te, startVec.add(0.5).toVec3(), combinedLightIn, combinedOverlayIn);

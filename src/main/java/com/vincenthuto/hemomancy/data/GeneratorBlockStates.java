@@ -38,8 +38,6 @@ public class GeneratorBlockStates extends BlockStateProvider {
 				String path = BlockInit.sanguine_pane.get().getRegistryName().getPath();
 				paneBlock((IronBarsBlock) b.get(), b.get().getRegistryName().getPath(), modLoc("block/" + path),
 						modLoc("block/" + path + "_top"));
-			} else {
-
 			}
 		}
 
