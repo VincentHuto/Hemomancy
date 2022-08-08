@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.model.entity.mob.ModelBloodDrunkPuppeteer;
 import com.vincenthuto.hemomancy.render.layer.LayerPuppteerGlow;
 
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

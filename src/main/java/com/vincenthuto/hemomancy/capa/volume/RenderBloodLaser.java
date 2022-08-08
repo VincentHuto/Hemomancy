@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3d;
 import com.mojang.math.Vector3f;
-import com.vincenthuto.hemomancy.init.PotionInit;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 

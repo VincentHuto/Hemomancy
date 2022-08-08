@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.init.ItemInit;
 
 import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -15,7 +16,7 @@ public enum EnumModToolTiers implements Tier {
 	}), CHITINITE(5, 1024, 10.0F, 5.0F, 25, () -> {
 		return Ingredient.of(ItemInit.chitinous_husk.get());
 	}), LIVING(5, 1024, 10.0F, 5.0F, 25, () -> {
-		return Ingredient.of(ItemInit.shred_of_animus.get());
+		return Ingredient.of(Items.ROTTEN_FLESH);
 	});
 
 	private final int harvestLevel;

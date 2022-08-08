@@ -1,22 +1,15 @@
 package com.vincenthuto.hemomancy.block;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
-import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +33,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 
 public class BlockVisceralRecaller extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

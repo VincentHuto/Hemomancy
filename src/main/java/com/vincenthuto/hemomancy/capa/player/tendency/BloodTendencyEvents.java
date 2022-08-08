@@ -151,7 +151,7 @@ public class BloodTendencyEvents {
 				Item item = stack.getItem();
 
 				// Allegiance Identifier overlay
-				if (item == ItemInit.self_reflection_mirror.get()) {
+				if (item == ItemInit.sanguine_conduit.get()) {
 					Item renderItem = ItemInit.sanguine_formation.get();
 					int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) - 15;

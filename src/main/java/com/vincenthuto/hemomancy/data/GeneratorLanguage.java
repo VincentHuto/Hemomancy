@@ -28,12 +28,6 @@ public class GeneratorLanguage extends LanguageProvider {
 		add("hemomancy.jei.chisel_station", "Chisel Station");
 
 		// Banner
-
-		addArmBannerTranslation("leather");
-		addArmBannerTranslation("iron");
-		addArmBannerTranslation("gold");
-		addArmBannerTranslation("diamond");
-		addArmBannerTranslation("netherite");
 		addArmBannerTranslation("chitinite");
 
 		addBannerTranslation("hemomancy_heart", "Vascularium");

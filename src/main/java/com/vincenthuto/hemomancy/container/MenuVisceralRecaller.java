@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.containers.slot.SlotOutput;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
-import com.vincenthuto.hemomancy.item.ItemEnzyme;
 import com.vincenthuto.hemomancy.item.memories.ItemHematicMemory;
 import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;

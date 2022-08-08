@@ -16,12 +16,10 @@
     "hemomancy:polished_venous_stone_brick_stairs",
     "hemomancy:humane_idol",
     "hemomancy:serpentine_idol",
-    "hemomancy:runic_chisel_station",
     "hemomancy:morphling_incubator",
     "hemomancy:semi_sentient_construct",
     "hemomancy:unstained_podium",
     "hemomancy:scrying_podium",
-    "hemomancy:rune_mod_station",
     "hemomancy:dendritic_distributor",
     "hemomancy:mortal_display",
     "hemomancy:visceral_artificial_recaller",
@@ -31,7 +29,6 @@
     "hemomancy:hematic_iron_pillar",
     "hemomancy:iron_brazier",
     "hemomancy:juiceinator",
-    "hemomancy:earthly_transfuser",
     "hemomancy:blood_crystal"
   ]
 }

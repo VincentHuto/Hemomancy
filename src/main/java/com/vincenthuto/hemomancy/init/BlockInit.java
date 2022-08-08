@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.init;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
@@ -11,15 +10,12 @@ import com.vincenthuto.hemomancy.block.BlockBefoulingAshTrail;
 import com.vincenthuto.hemomancy.block.BlockBleedingHeart;
 import com.vincenthuto.hemomancy.block.BlockBloodCrystal;
 import com.vincenthuto.hemomancy.block.BlockBrazier;
-import com.vincenthuto.hemomancy.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
 import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
 import com.vincenthuto.hemomancy.block.BlockEarthenVein;
-import com.vincenthuto.hemomancy.block.BlockEarthlyTransfuser;
 import com.vincenthuto.hemomancy.block.BlockJuiceinator;
 import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
 import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
-import com.vincenthuto.hemomancy.block.BlockRuneModStation;
 import com.vincenthuto.hemomancy.block.BlockScryingPodium;
 import com.vincenthuto.hemomancy.block.BlockSemiSentientConstruct;
 import com.vincenthuto.hemomancy.block.BlockSmoulderingAshTrail;
@@ -187,9 +183,6 @@ public class BlockInit {
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	// Tiles
-	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
-			() -> new BlockChiselStation(
-					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new BlockMorphlingIncubator(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -205,9 +198,6 @@ public class BlockInit {
 			() -> new BlockScryingPodium(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
-	public static final RegistryObject<Block> rune_mod_station = MODELEDBLOCKS.register("rune_mod_station",
-			() -> new BlockRuneModStation(
-					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new BlockDendriticDistributor(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -229,9 +219,7 @@ public class BlockInit {
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
 
-	public static final RegistryObject<Block> earthly_transfuser = MODELEDBLOCKS.register("earthly_transfuser",
-			() -> new BlockEarthlyTransfuser(
-					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
 
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BlockBloodCrystal(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
@@ -249,7 +237,6 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(),
 					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.rune_mod_station.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.scrying_podium.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
@@ -259,7 +246,6 @@ public class BlockInit {
 					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthly_transfuser.get(), RenderType.cutoutMipped());
 
 		}
 	}

@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.block.vein.IEarthenVeinLoc;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.capa.player.rune.IRune;
-import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
@@ -23,8 +21,6 @@ public class CapabilityInit {
 		event.register(IVascularSystem.class);
 		event.register(IBloodVolume.class);
 		event.register(IKnownManipulations.class);
-		event.register(IRune.class);
-		event.register(IRunesItemHandler.class);
 		event.register(IEarthenVeinLoc.class);
 
 	}

@@ -7,7 +7,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
-import com.vincenthuto.hemomancy.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
 
 import net.minecraft.core.Registry;

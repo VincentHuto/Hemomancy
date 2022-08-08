@@ -13,8 +13,6 @@ import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronWall;
-import com.vincenthuto.hemomancy.entity.brain.EntityBrainTest;
-import com.vincenthuto.hemomancy.entity.drudge.EntityDrudge;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.entity.item.EntityMorphlingPolypItem;
 import com.vincenthuto.hemomancy.entity.mob.EntityAbhorentThought;
@@ -47,11 +45,6 @@ import net.minecraftforge.registries.RegistryObject;
 public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 			Hemomancy.MOD_ID);
-
-	public static final RegistryObject<EntityType<EntityBrainTest>> brain = ENTITY_TYPES.register("brain",
-			() -> EntityType.Builder.<EntityBrainTest>of(EntityBrainTest::new, MobCategory.CREATURE).fireImmune()
-					.sized(0.9F, 1.7F).clientTrackingRange(10)
-					.build(new ResourceLocation(Hemomancy.MOD_ID, "brain").toString()));
 
 	// Mobs
 	public static final RegistryObject<EntityType<EntityLeech>> leech = ENTITY_TYPES.register("leech",
@@ -90,10 +83,6 @@ public class EntityInit {
 			() -> EntityType.Builder.<EntityMorphlingPolyp>of(EntityMorphlingPolyp::new, MobCategory.MONSTER)
 					.sized(1F, 1F).build(new ResourceLocation(Hemomancy.MOD_ID, "morphling_polyp").toString()));
 
-	public static final RegistryObject<EntityType<EntityDrudge>> drudge = ENTITY_TYPES.register("drudge",
-			() -> EntityType.Builder.<EntityDrudge>of(EntityDrudge::new, MobCategory.CREATURE).fireImmune()
-					.sized(0.9F, 1.7F).clientTrackingRange(10)
-					.build(new ResourceLocation(Hemomancy.MOD_ID, "drudge").toString()));
 	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
 			() -> EntityType.Builder.<EntityFungling>of(EntityFungling::new, MobCategory.CREATURE).sized(1F, 1F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
@@ -207,8 +196,6 @@ public class EntityInit {
 		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
 		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
 		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());
-		event.put(EntityInit.drudge.get(), EntityDrudge.setAttributes().build());
-		event.put(EntityInit.fungling.get(), EntityFungling.setAttributes().build());
 		event.put(EntityInit.thirster.get(), EntityThirster.setAttributes().build());
 		event.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().build());
 		event.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().build());
@@ -217,7 +204,6 @@ public class EntityInit {
 		event.put(EntityInit.abhorent_thought.get(), EntityAbhorentThought.setAttributes().build());
 		event.put(EntityInit.blood_drunk_puppeteer.get(), EntityBloodDrunkPuppeteer.setAttributes().build());
 		event.put(EntityInit.morphling_polyp.get(), EntityMorphlingPolyp.setAttributes().build());
-		event.put(EntityInit.brain.get(), EntityBrainTest.setAttributes().build());
 		event.put(EntityInit.enthralled_doll.get(), EntityEnthralledDoll.setAttributes().build());
 
 	}

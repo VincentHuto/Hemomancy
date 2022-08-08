@@ -2,17 +2,17 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "hemomancy:rune_binder"
+      "hemomancy:dried_leech"
     ]
   },
   "criteria": {
-    "has_rune_pattern": {
+    "has_swollen_leech": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "hemomancy:rune_pattern"
+              "hemomancy:swollen_leech"
             ]
           }
         ]
@@ -21,13 +21,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "hemomancy:rune_binder"
+        "recipe": "hemomancy:dried_leech"
       }
     }
   },
   "requirements": [
     [
-      "has_rune_pattern",
+      "has_swollen_leech",
       "has_the_recipe"
     ]
   ]

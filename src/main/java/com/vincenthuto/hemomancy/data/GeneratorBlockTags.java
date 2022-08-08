@@ -10,7 +10,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.RegistryObject;
 
 public class GeneratorBlockTags extends BlockTagsProvider {
 	public GeneratorBlockTags(DataGenerator gen, ExistingFileHelper exFileHelper) {

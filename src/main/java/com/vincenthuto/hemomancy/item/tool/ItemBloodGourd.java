@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.item.tool;
 import java.util.List;
 import java.util.Random;
 
-import com.vincenthuto.hemomancy.capa.player.rune.IRune;
-import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -24,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class ItemBloodGourd extends Item implements IRune {
+public class ItemBloodGourd extends Item {
 
 	public static String TAG_STATE = "state";
 	EnumBloodGourdTiers tier;
@@ -119,11 +117,6 @@ public class ItemBloodGourd extends Item implements IRune {
 
 	public double getMaxBlood() {
 		return tier.getMaxVolume();
-	}
-
-	@Override
-	public RuneType getRuneType() {
-		return RuneType.GOURD;
 	}
 
 }

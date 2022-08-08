@@ -45,7 +45,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
 public class EntityLeech extends Animal {
 

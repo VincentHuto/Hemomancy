@@ -54,7 +54,6 @@ import com.vincenthuto.hemomancy.render.entity.mob.RenderBloodDrunkPuppeteer;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderChitinite;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderChthonian;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderChthonianQueen;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderDrudge;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderEnthralledDoll;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderFargone;
 import com.vincenthuto.hemomancy.render.entity.mob.RenderFungling;
@@ -100,7 +99,6 @@ public class EntityEventSubscriber {
 		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
 		event.registerEntityRenderer(EntityInit.fargone.get(), RenderFargone::new);
 		event.registerEntityRenderer(EntityInit.thirster.get(), RenderThirster::new);
-		event.registerEntityRenderer(EntityInit.drudge.get(), RenderDrudge::new);
 		event.registerEntityRenderer(EntityInit.fungling.get(), RenderFungling::new);
 		event.registerEntityRenderer(EntityInit.chitinite.get(), RenderChitinite::new);
 		event.registerEntityRenderer(EntityInit.chthonian.get(), RenderChthonian::new);

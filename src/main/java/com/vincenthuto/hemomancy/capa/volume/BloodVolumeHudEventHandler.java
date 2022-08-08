@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.capa.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
-import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,13 +31,9 @@ public class BloodVolumeHudEventHandler {
 		switch (event.getType()) {
 		case ALL:
 			if (entityPlayerSP.isAlive()) {
-				IRunesItemHandler runes = entityPlayerSP.getCapability(RunesCapabilities.RUNES)
-						.orElseThrow(NullPointerException::new);
-				if (!runes.getStackInSlot(4).isEmpty()) {
-					BloodVolumeHud BloodVolumeHud = new BloodVolumeHud(entityPlayerSP, mc);
-					BloodVolumeHud.renderStatusBar(event.getMatrixStack(), event.getWindow().getGuiScaledWidth(),
-							event.getWindow().getGuiScaledHeight(), entityPlayerSP.level, entityPlayerSP);
-				}
+				BloodVolumeHud BloodVolumeHud = new BloodVolumeHud(entityPlayerSP, mc);
+				BloodVolumeHud.renderStatusBar(event.getMatrixStack(), event.getWindow().getGuiScaledWidth(),
+						event.getWindow().getGuiScaledHeight(), entityPlayerSP.level, entityPlayerSP);
 			}
 		default:
 			break;

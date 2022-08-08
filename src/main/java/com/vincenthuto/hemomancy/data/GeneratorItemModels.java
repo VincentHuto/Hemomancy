@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.data;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.Item;
@@ -49,12 +48,7 @@ public class GeneratorItemModels extends ItemModelProvider {
 
 	private void registerBasicItem(Item item) {
 		String path = item.getRegistryName().getPath();
-		if (!(item instanceof ItemRunePattern)) {
-			singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
-		} else {
-			singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/rune_pattern"));
-
-		}
+		singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
 
 	}
 

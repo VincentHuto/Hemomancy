@@ -54,9 +54,9 @@ public class BlockUnstainedPodium extends Block implements EntityBlock {
 		ItemStack stack = player.getItemInHand(handIn);
 		if (!player.isShiftKeyDown()) {
 			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
-				worldIn.destroyBlock(pos, false);
+			//	worldIn.destroyBlock(pos, false);
 				stack.shrink(1);
-				worldIn.setBlockAndUpdate(pos, BlockInit.rune_mod_station.get().defaultBlockState());
+			//	worldIn.setBlockAndUpdate(pos, BlockInit.rune_mod_station.get().defaultBlockState());
 			}
 
 			if (stack.getItem() == ItemInit.scrying_dish.get()) {

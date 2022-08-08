@@ -3,24 +3,18 @@ package com.vincenthuto.hemomancy.event;
 import org.lwjgl.glfw.GLFW;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.gui.ScreenEarthlyTransfuser;
 import com.vincenthuto.hemomancy.gui.ScreenJuiceinator;
 import com.vincenthuto.hemomancy.gui.ScreenVisceralRecaller;
-import com.vincenthuto.hemomancy.gui.mindrunes.ScreenChiselStation;
-import com.vincenthuto.hemomancy.gui.mindrunes.ScreenPlayerExpanded;
-import com.vincenthuto.hemomancy.gui.mindrunes.ScreenRuneBinder;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingStaff;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingSyringe;
 import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.render.tile.RenderChiselStation;
 import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
 import com.vincenthuto.hemomancy.render.tile.RenderMorphlingIncubator;
 import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
-import com.vincenthuto.hemomancy.render.tile.RenderRuneModStation;
 import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
 
@@ -66,8 +60,6 @@ public class ClientEventSubscriber {
 				BloodVolumeOverlay.HUD_BLOODVOLUME);
 
 		// Tiles
-		BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), RenderChiselStation::new);
-		BlockEntityRenderers.register(BlockEntityInit.rune_mod_station.get(), RenderRuneModStation::new);
 		BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), RenderMorphlingIncubator::new);
 		BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), RenderUnstainedPodium::new);
 		BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(), RenderDendriticDistributor::new);
@@ -75,15 +67,11 @@ public class ClientEventSubscriber {
 		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), RenderVisceralRecaller::new);
 		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), RenderEarthenVein::new);
 
-		MenuScreens.register(ContainerInit.runic_chisel_station.get(), ScreenChiselStation::new);
 		MenuScreens.register(ContainerInit.visceral_recaller.get(), ScreenVisceralRecaller::new);
-		MenuScreens.register(ContainerInit.rune_binder.get(), ScreenRuneBinder::new);
 		MenuScreens.register(ContainerInit.morphling_jar.get(), ScreenMorphlingJar::new);
 		MenuScreens.register(ContainerInit.living_syringe.get(), ScreenLivingSyringe::new);
 		MenuScreens.register(ContainerInit.living_staff.get(), ScreenLivingStaff::new);
-		MenuScreens.register(ContainerInit.playerrunes, ScreenPlayerExpanded::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), ScreenJuiceinator::new);
-		MenuScreens.register(ContainerInit.earthly_transfuser.get(), ScreenEarthlyTransfuser::new);
 
 		// Keybinds
 		keyBinds.add(0, toggleRuneBinderPickup);

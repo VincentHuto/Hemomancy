@@ -1,9 +1,6 @@
 package com.vincenthuto.hemomancy.network;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.network.binder.PacketBinderTogglePickup;
-import com.vincenthuto.hemomancy.network.binder.PacketOpenRuneBinder;
-import com.vincenthuto.hemomancy.network.binder.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyClient;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
 import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeClient;
@@ -20,12 +17,8 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
-import com.vincenthuto.hemomancy.network.capa.runes.PacketCurvedHornAnimation;
-import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenNormalInv;
-import com.vincenthuto.hemomancy.network.capa.runes.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
-import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
 import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
 import com.vincenthuto.hemomancy.network.morphling.PacketOpenJar;
 import com.vincenthuto.hemomancy.network.morphling.PacketOpenStaff;
@@ -80,12 +73,6 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
-		CHANNELMAIN.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
-				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
-		CHANNELMAIN.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
-				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
-		CHANNELMAIN.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
-				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
 		CHANNELMAIN.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class,
 				PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode,
 				PacketUpdateLivingStaffMorph.Handler::handle);
@@ -163,23 +150,6 @@ public class PacketHandler {
 		CHANNELPARTICLES.messageBuilder(PacketSpawnLivingToolParticles.class, networkID++)
 				.decoder(PacketSpawnLivingToolParticles::decode).encoder(PacketSpawnLivingToolParticles::encode)
 				.consumer(PacketSpawnLivingToolParticles::handle).add();
-
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
-				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
-				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
-				PacketRuneSync::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
-				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
-
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketBinderTogglePickup.class, PacketBinderTogglePickup::encode,
-				PacketBinderTogglePickup::decode, PacketBinderTogglePickup::handle);
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketOpenRuneBinder.class, PacketOpenRuneBinder::encode,
-				PacketOpenRuneBinder::decode, PacketOpenRuneBinder::handle);
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketToggleBinderMessage.class,
-				PacketToggleBinderMessage::encode, PacketToggleBinderMessage::decode,
-				PacketToggleBinderMessage::handle);
 
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketJarTogglePickup.class, PacketJarTogglePickup::encode,
 				PacketJarTogglePickup::decode, PacketJarTogglePickup::handle);

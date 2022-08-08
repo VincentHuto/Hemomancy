@@ -6,13 +6,13 @@
     ]
   },
   "criteria": {
-    "has_nether_wart": {
+    "has_foul_paste": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:nether_wart"
+              "hemomancy:foul_paste"
             ]
           }
         ]
@@ -27,7 +27,7 @@
   },
   "requirements": [
     [
-      "has_nether_wart",
+      "has_foul_paste",
       "has_the_recipe"
     ]
   ]

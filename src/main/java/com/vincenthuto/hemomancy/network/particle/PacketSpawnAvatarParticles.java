@@ -4,8 +4,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.particle.factory.BloodAvatarHitParticleFactory;
-import com.vincenthuto.hemomancy.particle.factory.HitGlowParticleFactory;
-import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.client.multiplayer.ClientLevel;

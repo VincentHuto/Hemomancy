@@ -23,7 +23,6 @@ public class BloodCraftingRecipes {
 
 	public static RecipeSacrificialBloodCrafting liber_sanguinum_recipe;
 	public static RecipeBaseBloodCrafting living_staff_recipe;
-	public static RecipeBaseBloodCrafting living_grip_recipe;
 	public static RecipeBaseBloodCrafting ssc_recipe;
 	public static RecipeBaseBloodCrafting hematic_iron_recipe;
 	public static RecipeBaseBloodCrafting unstained_pillar_recipe;
@@ -34,8 +33,7 @@ public class BloodCraftingRecipes {
 				ItemInit.sanguine_formation.get(), Blocks.BOOKSHELF, liber_sanguinum_pattern, 10));
 		living_staff_recipe = registerRecipe(new RecipeBaseBloodCrafting(ItemInit.living_staff.get(), 150,
 				ItemInit.sanguine_formation.get(), Blocks.IRON_BARS, living_staff_pattern));
-		living_grip_recipe = registerRecipe(new RecipeBaseBloodCrafting(ItemInit.living_grasp.get(), 150, Items.BUCKET,
-				BlockInit.venous_stone.get(), living_grip_pattern));
+
 		ssc_recipe = registerRecipe(new RecipeBaseBloodCrafting(BlockInit.semi_sentient_construct.get(), 250,
 				BlockInit.befouling_ash_trail.get().asItem(), BlockInit.conscious_mass.get(), ssc_pattern));
 		hematic_iron_recipe = registerRecipe(new RecipeBaseBloodCrafting(BlockInit.hematic_iron_block.get(), 50,
@@ -50,7 +48,6 @@ public class BloodCraftingRecipes {
 	static List<MultiblockPattern> BUNDELDPATTERNS = new ArrayList<>();
 	static MultiblockPattern liber_sanguinum_pattern;
 	static MultiblockPattern living_staff_pattern;
-	static MultiblockPattern living_grip_pattern;
 	static MultiblockPattern ssc_pattern;
 	static MultiblockPattern hematic_iron_pattern;
 	static MultiblockPattern unstained_pillar_pattern;
@@ -59,7 +56,6 @@ public class BloodCraftingRecipes {
 	public static void initPatterns() {
 		liber_sanguinum_pattern = registerPattern(generateBlockPatternFromArray(bookSymbolList, bookPatternArray));
 		living_staff_pattern = registerPattern(generateBlockPatternFromArray(staffSymbolList, staffPatternArray));
-		living_grip_pattern = registerPattern(generateBlockPatternFromArray(gripSymbolList, gripPatternArray));
 		ssc_pattern = registerPattern(generateBlockPatternFromArray(sscSymbolList, sscArray));
 		hematic_iron_pattern = registerPattern(generateBlockPatternFromArray(tIronSymbolList, tIronPatternArray));
 		unstained_pillar_pattern = registerPattern(
@@ -70,7 +66,7 @@ public class BloodCraftingRecipes {
 
 	// Morphling Incubator Block Pattern
 	@SuppressWarnings("serial")
-	 static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
+	static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
 		{
 			put('G', BlockInit.sanguine_glass.get());
 			put('T', BlockInit.hematic_iron_block.get());
@@ -78,7 +74,7 @@ public class BloodCraftingRecipes {
 			put('A', Blocks.AIR);
 		}
 	};
-	 static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
+	static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
 			{ "TGT", "TGT", "AAA" } };
 
 	// Unstained Pillar Block Pattern
@@ -122,17 +118,6 @@ public class BloodCraftingRecipes {
 	static String[][] sscArray = { { "AAAAAA", "SSSSSS" }, { "AABBAA", "SBTTBS" }, { "ABCCBA", "STVVTS" },
 			{ "ABCCBA", "STVVTS" }, { "AABBAA", "SBTTBS" }, { "AAAAAA", "SSSSSS" } };
 
-	// Grip Pattern
-	@SuppressWarnings("serial")
-	static HashMap<Character, Block> gripSymbolList = new HashMap<Character, Block>() {
-		{
-			put('R', BlockInit.active_befouling_ash_trail.get());
-			put('V', BlockInit.venous_stone.get());
-			put('A', Blocks.AIR);
-		}
-	};
-	static String[][] gripPatternArray = { { "AAAAA", "ARRRA" }, { "AVAVA", "RVRVR" }, { "AAVAA", "RRRRR" },
-			{ "AVAVA", "RVRVR" }, { "AAAAA", "ARRRA" } };
 
 	// Book Pattern
 	@SuppressWarnings("serial")
@@ -204,6 +189,5 @@ public class BloodCraftingRecipes {
 		return distinct;
 
 	}
-
 
 }

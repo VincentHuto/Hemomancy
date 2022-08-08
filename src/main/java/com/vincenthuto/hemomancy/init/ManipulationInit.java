@@ -83,25 +83,10 @@ public class ManipulationInit {
 			() -> register(new ManipSanguineWard("sanguine_ward", 5, 0, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)));
 
-	public static final RegistryObject<BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
-			() -> register(new ManipConjuration("conjure_blade", ItemInit.living_blade, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
-
-	public static final RegistryObject<BloodManipulation> conjure_axe = MANIPS.register("conjure_axe",
-			() -> register(new ManipConjuration("conjure_axe", ItemInit.living_axe, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
-
-	public static final RegistryObject<BloodManipulation> conjure_spear = MANIPS.register("conjure_spear",
-			() -> register(new ManipConjuration("conjure_spear", ItemInit.living_spear, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
-
-	public static final RegistryObject<BloodManipulation> conjure_crossbow = MANIPS.register("conjure_crossbow",
-			() -> register(new ManipConjuration("conjure_crossbow", ItemInit.living_crossbow, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
-
-	public static final RegistryObject<BloodManipulation> conjure_claws = MANIPS.register("conjure_claws",
-			() -> register(new ManipConjuration("conjure_claw", ItemInit.living_baghnakh, 1000, 0, 0,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
+//	public static final RegistryObject<BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",
+//			() -> register(new ManipConjuration("conjure_blade", ItemInit.living_blade, 1000, 0, 0,
+//					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)));
+//
 
 	public static final RegistryObject<BloodManipulation> conjure_blood_absorbtion = MANIPS
 			.register("conjure_blood_absorbtion",

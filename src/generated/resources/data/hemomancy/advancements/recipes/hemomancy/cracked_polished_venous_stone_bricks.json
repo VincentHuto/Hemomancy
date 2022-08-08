@@ -2,17 +2,17 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "hemomancy:self_reflection_mirror"
+      "hemomancy:cracked_polished_venous_stone_bricks"
     ]
   },
   "criteria": {
-    "has_rune_mod_station": {
+    "has_polished_venous_stone_bricks": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "hemomancy:rune_mod_station"
+              "hemomancy:polished_venous_stone_bricks"
             ]
           }
         ]
@@ -21,13 +21,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "hemomancy:self_reflection_mirror"
+        "recipe": "hemomancy:cracked_polished_venous_stone_bricks"
       }
     }
   },
   "requirements": [
     [
-      "has_rune_mod_station",
+      "has_polished_venous_stone_bricks",
       "has_the_recipe"
     ]
   ]

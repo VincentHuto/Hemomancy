@@ -11,10 +11,8 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class GeneratorRecipes extends RecipeProvider {
@@ -25,11 +23,19 @@ public class GeneratorRecipes extends RecipeProvider {
 	@Override
 	protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 
-		SimpleCookingRecipeBuilder.smelting(Ingredient.of(ItemInit.foul_paste.get()),
-				BlockInit.befouling_ash_trail.get(), 1f, 200);
+		SimpleCookingRecipeBuilder
+				.smelting(Ingredient.of(ItemInit.swollen_leech.get()), ItemInit.dried_leech.get(), 1f, 200)
+				.unlockedBy("has_swollen_leech", has(ItemInit.swollen_leech.get())).save(consumer);
 
-		SimpleCookingRecipeBuilder.smelting(Ingredient.of(BlockInit.polished_venous_stone_bricks.get()),
-				BlockInit.cracked_polished_venous_stone_bricks.get(), 1f, 200);
+		SimpleCookingRecipeBuilder
+				.smelting(Ingredient.of(ItemInit.foul_paste.get()), BlockInit.befouling_ash_trail.get(), 1f, 200)
+				.unlockedBy("has_foul_paste", has(ItemInit.foul_paste.get())).save(consumer);
+
+		SimpleCookingRecipeBuilder
+				.smelting(Ingredient.of(BlockInit.polished_venous_stone_bricks.get()),
+						BlockInit.cracked_polished_venous_stone_bricks.get(), 1f, 200)
+				.unlockedBy("has_polished_venous_stone_bricks", has(BlockInit.polished_venous_stone_bricks.get()))
+				.save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(ItemInit.hematic_iron_scrap.get(), 4)
 				.requires(BlockInit.hematic_iron_block.get())
@@ -37,10 +43,6 @@ public class GeneratorRecipes extends RecipeProvider {
 
 		ShapelessRecipeBuilder.shapeless(BlockInit.blood_wood_planks.get(), 4).requires(BlockInit.blood_wood_log.get())
 				.unlockedBy("has_blood_wood_log", has(BlockInit.blood_wood_log.get())).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(BlockInit.befouling_ash_trail.get(), 3).requires(Items.NETHER_WART)
-				.requires(Items.GUNPOWDER).requires(Items.BONE_MEAL)
-				.unlockedBy("has_nether_wart", has(Items.NETHER_WART)).save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(BlockInit.infested_venous_stone.get(), 1)
 				.requires(BlockInit.venous_stone.get()).requires(Items.NETHER_WART).requires(Items.BROWN_MUSHROOM)
@@ -50,34 +52,6 @@ public class GeneratorRecipes extends RecipeProvider {
 		ShapelessRecipeBuilder.shapeless(BlockInit.smouldering_ash_trail.get(), 3).requires(Items.BLAZE_POWDER)
 				.requires(Items.GUNPOWDER).requires(Items.BONE_MEAL)
 				.unlockedBy("has_blaze_powder", has(Items.BLAZE_POWDER)).save(consumer);
-
-		ShapelessRecipeBuilder.shapeless(ItemInit.rune_pattern.get()).requires(Items.PAPER)
-				.requires(ItemInit.rune_blank.get()).unlockedBy("has_rune_blank", has(ItemInit.rune_blank.get()))
-				.save(consumer);
-
-		ShapedRecipeBuilder.shaped(ItemInit.rune_blank.get()).define('N', Blocks.OBSIDIAN).define('O', Blocks.SNOW)
-				.define('P', Items.REDSTONE).pattern("NON").pattern("OPO").pattern("NON")
-				.unlockedBy("has_obsidian", has(Blocks.OBSIDIAN)).save(consumer);
-
-		ShapedRecipeBuilder.shaped(ItemInit.mind_spike.get()).define('B', Items.IRON_INGOT).define('E', Items.REDSTONE)
-				.define('N', Items.STICK).pattern("  N").pattern("EBE").pattern("BBE")
-				.unlockedBy("has_redstone", has(Items.REDSTONE)).save(consumer);
-
-		ShapedRecipeBuilder.shaped(ItemInit.rune_binder.get()).define('R', ItemInit.rune_pattern.get())
-				.define('G', ItemInit.sanguine_formation.get()).pattern("GGG").pattern("GRG").pattern("GGG")
-				.unlockedBy("has_rune_pattern", has(ItemInit.rune_pattern.get())).save(consumer);
-
-		ShapedRecipeBuilder.shaped(ItemInit.self_reflection_mirror.get()).define('G', Items.GOLD_INGOT)
-				.define('A', Items.GOLD_INGOT).define('L', Ingredient.of(ItemTags.LOGS))
-				.define('M', BlockInit.rune_mod_station.get()).pattern("AGA").pattern("GMG").pattern("ALA")
-				.unlockedBy("has_rune_mod_station", has(BlockInit.rune_mod_station.get())).save(consumer);
-
-		ShapedRecipeBuilder.shaped(BlockInit.runic_chisel_station.get())
-				.define('C', BlockInit.chiseled_hematic_iron_block.get())
-				.define('T', BlockInit.hematic_iron_block.get()).define('V', BlockInit.venous_stone.get())
-				.define('P', Ingredient.of(ItemTags.PLANKS)).define('L', Ingredient.of(ItemTags.LOGS)).pattern("PVP")
-				.pattern("LCL").pattern("LTL").unlockedBy("has_venous_stone", has(BlockInit.venous_stone.get()))
-				.save(consumer);
 
 		ShapedRecipeBuilder.shaped(BlockInit.chiseled_hematic_iron_block.get(), 4)
 				.define('T', BlockInit.hematic_iron_block.get()).pattern("TT").pattern("TT")
