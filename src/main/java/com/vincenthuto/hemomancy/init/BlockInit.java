@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.block.BlockBrazier;
 import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
 import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
 import com.vincenthuto.hemomancy.block.BlockEarthenVein;
+import com.vincenthuto.hemomancy.block.BlockInfectedFungus;
 import com.vincenthuto.hemomancy.block.BlockJuiceinator;
 import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
 import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
@@ -166,6 +167,9 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN).strength(2.0F, 3.0F)
 					.sound(SoundType.WOOD)));
 
+	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
+			() -> new BlockInfectedFungus(MobEffects.CONFUSION, 12,
+					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
@@ -219,8 +223,6 @@ public class BlockInit {
 			() -> new BlockJuiceinator(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
 
-	
-
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BlockBloodCrystal(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
 					.sound(SoundType.METAL)));
@@ -242,6 +244,7 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(),
 					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());

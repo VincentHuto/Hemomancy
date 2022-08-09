@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy;
 
+import java.util.OptionalInt;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +32,8 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -38,6 +42,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.featuresize.ThreeLayersFeatureSize;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.DarkOakFoliagePlacer;
+import net.minecraft.world.level.levelgen.feature.trunkplacers.DarkOakTrunkPlacer;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -115,15 +122,21 @@ public class Hemomancy {
 
 	}
 
-    private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
-		WorldGenEvents.BLEEDING_HEART_FEATURE = WorldGenEvents.flower("bleeding_heart", 64,
-				BlockInit.bleeding_heart);
+	private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
+		WorldGenEvents.BLEEDING_HEART_FEATURE = WorldGenEvents.flower("bleeding_heart", 64, BlockInit.bleeding_heart);
 		WorldGenEvents.BLEEDING_HEART_PLACEMENT = WorldGenEvents.flowerPlacement("aum",
 				WorldGenEvents.BLEEDING_HEART_FEATURE, 32);
-        WorldGenEvents.VENOUS_FEATURE = WorldGenEvents.netherOre("venous_ore", BlockInit.venous_stone,BlockInit.gilded_venous_stone, 27, 0.25F);
+		// Ores
+		WorldGenEvents.VENOUS_FEATURE = WorldGenEvents.netherOre("venous_ore", BlockInit.venous_stone,
+				BlockInit.gilded_venous_stone, 27, 0.25F);
 
-		WorldGenEvents.VENOUS_PLACEMENT = WorldGenEvents.orePlacement("venous_ore", WorldGenEvents.VENOUS_FEATURE, 56, HeightRangePlacement.triangle(VerticalAnchor.absolute(0), VerticalAnchor.absolute(36)));
+		WorldGenEvents.VENOUS_PLACEMENT = WorldGenEvents.orePlacement("venous_ore", WorldGenEvents.VENOUS_FEATURE, 56,
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(0), VerticalAnchor.absolute(36)));
 
+		// Trees
+		   WorldGenEvents.WITCHWOOD_TREE_FEATURE = WorldGenEvents.tree("infected_fungus", BlockInit.infected_stem, new DarkOakTrunkPlacer(9, 3, 1), BlockInit.infected_cap, new DarkOakFoliagePlacer(ConstantInt.of(1), ConstantInt.of(1)), new ThreeLayersFeatureSize(1, 2, 1, 1, 2, OptionalInt.empty()));
+	        WorldGenEvents.WITCHWOOD_TREE_PLACEMENT = WorldGenEvents.treePlacement("infected_fungus", WorldGenEvents.WITCHWOOD_TREE_FEATURE, BlockInit.infected_fungus);
+	        WorldGenEvents.WITCHWOOD_TREE_VEGETATION = WorldGenEvents.treeVegetation("infected_fungus", WorldGenEvents.WITCHWOOD_TREE_FEATURE, PlacementUtils.countExtra(1, 0.1F, 0), 8, BlockInit.infected_fungus);
 	}
 
 // Automatically Registers BlockItems

@@ -117,14 +117,15 @@ public class KnownManipulationEvents {
 			Player player = (Player) e.getEntityLiving();
 			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
-			if (!known.isAvatarActive()) {
+			if (known.isAvatarActive()) {
 				double dist = e.getEntityLiving().distanceToSqr(player);
 				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
 				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
 						e.getEntityLiving().level.dimension());
+				e.setAmount((float) (e.getAmount() * 0));
+
 
 			}
-			e.setAmount((float) (e.getAmount() * 0));
 		}
 
 	}
