@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.entity.WorldGenEvents;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
@@ -35,9 +36,13 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -96,6 +101,7 @@ public class Hemomancy {
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
+		modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
 		forgeBus.register(this);
 		forgeBus.addListener(MorphlingJarEvents::pickupEvent);
 		forgeBus.addListener(MorphlingJarEvents::onClientTick);
@@ -106,6 +112,17 @@ public class Hemomancy {
 		forgeBus.register(KnownManipulationEvents.class);
 		forgeBus.register(EarthenVeinLocEvents.class);
 		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
+
+	}
+
+    private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
+		WorldGenEvents.BLEEDING_HEART_FEATURE = WorldGenEvents.flower("bleeding_heart", 64,
+				BlockInit.bleeding_heart);
+		WorldGenEvents.BLEEDING_HEART_PLACEMENT = WorldGenEvents.flowerPlacement("aum",
+				WorldGenEvents.BLEEDING_HEART_FEATURE, 32);
+        WorldGenEvents.VENOUS_FEATURE = WorldGenEvents.netherOre("venous_ore", BlockInit.venous_stone,BlockInit.gilded_venous_stone, 27, 0.25F);
+
+		WorldGenEvents.VENOUS_PLACEMENT = WorldGenEvents.orePlacement("venous_ore", WorldGenEvents.VENOUS_FEATURE, 56, HeightRangePlacement.triangle(VerticalAnchor.absolute(0), VerticalAnchor.absolute(36)));
 
 	}
 

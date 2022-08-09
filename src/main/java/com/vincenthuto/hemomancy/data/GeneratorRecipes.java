@@ -37,6 +37,13 @@ public class GeneratorRecipes extends RecipeProvider {
 				.unlockedBy("has_polished_venous_stone_bricks", has(BlockInit.polished_venous_stone_bricks.get()))
 				.save(consumer);
 
+		ShapelessRecipeBuilder.shapeless(ItemInit.dicentra_sap.get(), 3).requires(BlockInit.bleeding_heart.get())
+				.unlockedBy("has_bleeding_heart", has(BlockInit.bleeding_heart.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(ItemInit.foul_paste.get(), 3).requires(Items.NETHER_WART)
+				.requires(Items.GUNPOWDER).requires(Items.BONE_MEAL)
+				.unlockedBy("has_nether_wart", has(Items.NETHER_WART)).save(consumer);
+
 		ShapelessRecipeBuilder.shapeless(ItemInit.hematic_iron_scrap.get(), 4)
 				.requires(BlockInit.hematic_iron_block.get())
 				.unlockedBy("has_hematic_iron_block", has(BlockInit.hematic_iron_block.get())).save(consumer);

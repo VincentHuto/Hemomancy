@@ -1,9 +1,9 @@
 {
   "type" : "minecraft:smelting",
   "ingredient" : {
-    "item" : "hemomancy:foul_paste"
+    "item" : "hemomancy:polished_venous_stone_bricks"
   },
-  "result" : "hemomancy:befouling_ash_trail",
+  "result" : "hemomancy:cracked_polished_venous_stone_bricks",
   "experience" : 1.0,
   "cookingtime" : 200
 }

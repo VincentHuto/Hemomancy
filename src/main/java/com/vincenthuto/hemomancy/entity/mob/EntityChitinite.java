@@ -31,6 +31,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
@@ -65,6 +66,12 @@ public class EntityChitinite extends PathfinderMob {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
+	
+	@Override
+	public boolean checkSpawnRules(LevelAccessor pLevel, MobSpawnType pSpawnReason) {
+		return super.checkSpawnRules(pLevel, pSpawnReason);
+	}
+	
 	@Override
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
