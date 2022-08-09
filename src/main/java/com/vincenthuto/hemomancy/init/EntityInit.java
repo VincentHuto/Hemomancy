@@ -86,6 +86,7 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EntityFungling>> fungling = ENTITY_TYPES.register("fungling",
 			() -> EntityType.Builder.<EntityFungling>of(EntityFungling::new, MobCategory.CREATURE).sized(1F, 1F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
+	
 	public static final RegistryObject<EntityType<EntityChitinite>> chitinite = ENTITY_TYPES.register("chitinite",
 			() -> EntityType.Builder.<EntityChitinite>of(EntityChitinite::new, MobCategory.CREATURE).sized(1F, 1F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "chitinite").toString()));
@@ -196,6 +197,7 @@ public class EntityInit {
 		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
 		event.put(EntityInit.leech.get(), EntityLeech.setAttributes().build());
 		event.put(EntityInit.fargone.get(), EntityFargone.setAttributes().build());
+		event.put(EntityInit.fungling.get(), EntityFargone.setAttributes().build());
 		event.put(EntityInit.thirster.get(), EntityThirster.setAttributes().build());
 		event.put(EntityInit.chitinite.get(), EntityChitinite.setAttributes().build());
 		event.put(EntityInit.chthonian.get(), EntityChthonian.setAttributes().build());
