@@ -25,7 +25,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-      mappings channel: 'parchment', version: "2022.03.13-1.18.2"
+      mappings channel: 'parchment', version: "2022.08.07-1.18.2"
 	   
      accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -128,7 +128,7 @@ repositories {
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.69'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
      implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
   // implementation fg.deobf("com.vincenthuto:hutoslib:3.40")
    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency

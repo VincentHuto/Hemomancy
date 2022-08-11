@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
+import com.vincenthuto.hemomancy.init.KeyBindInit;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
@@ -33,7 +34,7 @@ public class MorphlingJarEvents {
 	}
 
 	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if (ClientEventSubscriber.keyBinds.get(4).consumeClick())
+		if (KeyBindInit.toggleMorphlingJarPickup.consumeClick())
 			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new PacketJarTogglePickup());
 	}
 

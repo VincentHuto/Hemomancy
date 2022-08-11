@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.entity;
+package com.vincenthuto.hemomancy.event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
@@ -53,9 +54,10 @@ public class WorldGenEvents {
 	public static Holder<PlacedFeature> BLEEDING_HEART_PLACEMENT;
 	public static Holder<PlacedFeature> VENOUS_PLACEMENT;
 	public static Holder<ConfiguredFeature<OreConfiguration, ?>> VENOUS_FEATURE;
-    public static Holder<ConfiguredFeature<TreeConfiguration, ?>> WITCHWOOD_TREE_FEATURE;
-    public static Holder<PlacedFeature> WITCHWOOD_TREE_PLACEMENT;
-    public static Holder<PlacedFeature> WITCHWOOD_TREE_VEGETATION;
+	public static Holder<ConfiguredFeature<TreeConfiguration, ?>> WITCHWOOD_TREE_FEATURE;
+	public static Holder<PlacedFeature> WITCHWOOD_TREE_PLACEMENT;
+	public static Holder<PlacedFeature> WITCHWOOD_TREE_VEGETATION;
+
 	private static <T extends FeatureConfiguration> Holder<ConfiguredFeature<T, ?>> feature(String name,
 			Feature<T> feature, T configuration) {
 		return FeatureUtils.register(Hemomancy.MOD_ID + ":" + name, feature, configuration);
@@ -203,11 +205,19 @@ public class WorldGenEvents {
 
 			if (category == Biome.BiomeCategory.UNDERGROUND) {
 				spawn.addSpawn(MobCategory.AMBIENT,
-						new MobSpawnSettings.SpawnerData(EntityInit.chitinite.get(), 2, 15, 25));
+						new MobSpawnSettings.SpawnerData(EntityInit.chitinite.get(), 10, 8, 8));
+
+				spawn.addSpawn(MobCategory.MONSTER,
+						new MobSpawnSettings.SpawnerData(EntityInit.chthonian_queen.get(), 100, 4, 4));
+
+				spawn.addSpawn(MobCategory.MONSTER,
+						new MobSpawnSettings.SpawnerData(EntityInit.chthonian.get(), 100, 4, 4));
+
 			}
-		    if (biome != null && BiomeDictionary.getTypes(ResourceKey.create(Registry.BIOME_REGISTRY, biome)).contains(BiomeDictionary.Type.SWAMP)) {
-                builder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WITCHWOOD_TREE_VEGETATION);
-            }
+			if (biome != null && BiomeDictionary.getTypes(ResourceKey.create(Registry.BIOME_REGISTRY, biome))
+					.contains(BiomeDictionary.Type.SWAMP)) {
+				builder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, WITCHWOOD_TREE_VEGETATION);
+			}
 		}
 
 	}

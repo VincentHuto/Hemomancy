@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.event;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.gui.ScreenJuiceinator;
 import com.vincenthuto.hemomancy.gui.ScreenVisceralRecaller;
@@ -18,12 +16,9 @@ import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
 import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.core.NonNullList;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,25 +28,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientEventSubscriber {
-	public static NonNullList<KeyMapping> keyBinds = NonNullList.create();
-	public static final KeyMapping toggleRuneBinderPickup = new KeyMapping("key.hemomancy.runebinderpickup.desc",
-			GLFW.GLFW_KEY_B, "key.hemomancy.category");
-	public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
-			"key.hemomancy.category");
-	public static final KeyMapping bloodCrafting = new KeyMapping("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
-			"key.hemomancy.category");
-	public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
-			"key.hemomancy.category");
-	public static final KeyMapping toggleMorphlingJarPickup = new KeyMapping("key.hemomancy.morphjarpickup.desc",
-			GLFW.GLFW_KEY_LEFT_CONTROL, "key.hemomancy.category");
-	public static final KeyMapping toggleMorphlingOpenJar = new KeyMapping("key.hemomancy.openjar.desc",
-			GLFW.GLFW_KEY_F, "key.hemomancy.category");
-	public static final KeyMapping cycleSelectedManip = new KeyMapping("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
-			"key.hemomancy.category");
-	public static final KeyMapping useQuickManip = new KeyMapping("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
-			"key.hemomancy.category");
-	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
-			"key.hemomancy.category");
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
@@ -73,20 +49,6 @@ public class ClientEventSubscriber {
 		MenuScreens.register(ContainerInit.living_staff.get(), ScreenLivingStaff::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), ScreenJuiceinator::new);
 
-		// Keybinds
-		keyBinds.add(0, toggleRuneBinderPickup);
-		keyBinds.add(1, bloodFormation);
-		keyBinds.add(2, bloodCrafting);
-		keyBinds.add(3, bloodDraw);
-		keyBinds.add(4, toggleMorphlingJarPickup);
-		keyBinds.add(5, toggleMorphlingOpenJar);
-		keyBinds.add(6, cycleSelectedManip);
-		keyBinds.add(7, useQuickManip);
-		keyBinds.add(8, useContManip);
-		for (KeyMapping bind : keyBinds) {
-			ClientRegistry.registerKeyBinding(bind);
-
-		}
 	}
 
 }

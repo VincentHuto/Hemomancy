@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.item.tool.living;
+package com.vincenthuto.hemomancy.item.memories;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;

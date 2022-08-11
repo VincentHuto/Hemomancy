@@ -32,10 +32,12 @@ import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -73,9 +75,7 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
-		CHANNELMAIN.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class,
-				PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode,
-				PacketUpdateLivingStaffMorph.Handler::handle);
+		
 		CHANNELMAIN.registerMessage(networkID++, PacketClearRecallerState.class, PacketClearRecallerState::encode,
 				PacketClearRecallerState::decode, PacketClearRecallerState.Handler::handle);
 

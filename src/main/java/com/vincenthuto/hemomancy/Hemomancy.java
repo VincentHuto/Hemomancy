@@ -12,9 +12,9 @@ import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
-import com.vincenthuto.hemomancy.entity.WorldGenEvents;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
+import com.vincenthuto.hemomancy.event.WorldGenEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
@@ -134,9 +134,15 @@ public class Hemomancy {
 				HeightRangePlacement.triangle(VerticalAnchor.absolute(0), VerticalAnchor.absolute(36)));
 
 		// Trees
-		   WorldGenEvents.WITCHWOOD_TREE_FEATURE = WorldGenEvents.tree("infected_fungus", BlockInit.infected_stem, new DarkOakTrunkPlacer(9, 3, 1), BlockInit.infected_cap, new DarkOakFoliagePlacer(ConstantInt.of(1), ConstantInt.of(1)), new ThreeLayersFeatureSize(1, 2, 1, 1, 2, OptionalInt.empty()));
-	        WorldGenEvents.WITCHWOOD_TREE_PLACEMENT = WorldGenEvents.treePlacement("infected_fungus", WorldGenEvents.WITCHWOOD_TREE_FEATURE, BlockInit.infected_fungus);
-	        WorldGenEvents.WITCHWOOD_TREE_VEGETATION = WorldGenEvents.treeVegetation("infected_fungus", WorldGenEvents.WITCHWOOD_TREE_FEATURE, PlacementUtils.countExtra(1, 0.1F, 0), 8, BlockInit.infected_fungus);
+		WorldGenEvents.WITCHWOOD_TREE_FEATURE = WorldGenEvents.tree("infected_fungus", BlockInit.infected_stem,
+				new DarkOakTrunkPlacer(9, 3, 1), BlockInit.infected_cap,
+				new DarkOakFoliagePlacer(ConstantInt.of(1), ConstantInt.of(1)),
+				new ThreeLayersFeatureSize(1, 2, 1, 1, 2, OptionalInt.empty()));
+		WorldGenEvents.WITCHWOOD_TREE_PLACEMENT = WorldGenEvents.treePlacement("infected_fungus",
+				WorldGenEvents.WITCHWOOD_TREE_FEATURE, BlockInit.infected_fungus);
+		WorldGenEvents.WITCHWOOD_TREE_VEGETATION = WorldGenEvents.treeVegetation("infected_fungus",
+				WorldGenEvents.WITCHWOOD_TREE_FEATURE, PlacementUtils.countExtra(1, 0.1F, 0), 8,
+				BlockInit.infected_fungus);
 	}
 
 // Automatically Registers BlockItems
