@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.radial.finder;
+package com.vincenthuto.hemomancy.radial;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;

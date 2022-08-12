@@ -6,8 +6,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.vincenthuto.hemomancy.ConfigData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.radial.finder.CharmFinder;
-import com.vincenthuto.hemomancy.radial.finder.PacketOpenCharm;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -26,10 +24,11 @@ public class RadialClientEvents {
 
 	public static KeyMapping OPEN_BELT_SLOT_KEYBIND;
 	public static KeyMapping OPEN_CHARM_SLOT_KEYBIND;
+    public static final KeyMapping radialMenuOpen = new KeyMapping("key.spellbookopen", 90, "key.categories.mna");
 
 	public static void wipeOpen() {
 		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-		while (OPEN_TOOL_MENU_KEYBIND.consumeClick()) {
+		while (radialMenuOpen.consumeClick()) {
 		}
 	}
 
@@ -47,6 +46,7 @@ public class RadialClientEvents {
 				OPEN_BELT_SLOT_KEYBIND = new KeyMapping("key.toolbelt.slot", GLFW.GLFW_KEY_V, "key.toolbelt.category"));
 		ClientRegistry.registerKeyBinding(OPEN_CHARM_SLOT_KEYBIND = new KeyMapping("key.charm_slot.slot",
 				GLFW.GLFW_KEY_B, "key.hemomancy.category"));
+        ClientRegistry.registerKeyBinding(radialMenuOpen);
 
 	}
 
@@ -64,15 +64,14 @@ public class RadialClientEvents {
 			}
 		}
 		if (mc.screen == null) {
-			boolean toolMenuKeyIsDown = OPEN_TOOL_MENU_KEYBIND.isDown();
+			boolean toolMenuKeyIsDown = radialMenuOpen.isDown();
 			if (toolMenuKeyIsDown && !toolMenuKeyWasDown) {
-				while (OPEN_TOOL_MENU_KEYBIND.consumeClick()) {
+				while (radialMenuOpen.consumeClick()) {
 					if (mc.screen == null) {
 						ItemStack inHand = mc.player.getMainHandItem();
-						System.out.println("hit that shit");
 						if (ConfigData.isItemStackAllowed(inHand)) {
 							CharmFinder.findCharm(mc.player)
-								.ifPresent((getter) -> mc.setScreen(new RadialMenuScreen(getter)));
+								.ifPresent((getter) -> mc.setScreen(new CharmRadialMenuScreen(getter)));
 						}
 					}
 				}
@@ -81,14 +80,6 @@ public class RadialClientEvents {
 		} else {
 			toolMenuKeyWasDown = true;
 		}
-
-//		if (ConfigData.customBeltSlotEnabled) {
-//			while (OPEN_BELT_SLOT_KEYBIND.consumeClick()) {
-//				if (mc.screen == null) {
-//					Hemomancy.channel.sendToServer(new OpenBeltSlotInventory());
-//				}
-//			}
-//		}
 	}
 
 	public static boolean isKeyDown(KeyMapping keybind) {

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.radial.finder;
+package com.vincenthuto.hemomancy.radial;
 
 import com.google.common.collect.ImmutableSet;
 

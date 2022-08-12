@@ -29,11 +29,11 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.radial.CharmExtensionSlot;
+import com.vincenthuto.hemomancy.radial.CharmFinderCharmSlot;
+import com.vincenthuto.hemomancy.radial.CharmSlotContainer;
+import com.vincenthuto.hemomancy.radial.CharmSlotScreen;
 import com.vincenthuto.hemomancy.radial.RadialClientEvents;
-import com.vincenthuto.hemomancy.radial.finder.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.radial.finder.CharmFinderCharmSlot;
-import com.vincenthuto.hemomancy.radial.finder.CharmSlotContainer;
-import com.vincenthuto.hemomancy.radial.finder.CharmSlotScreen;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 

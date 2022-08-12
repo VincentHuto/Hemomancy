@@ -1,9 +1,6 @@
-package com.vincenthuto.hemomancy.radial.finder;
+package com.vincenthuto.hemomancy.radial;
 
 import java.util.function.Supplier;
-
-import com.vincenthuto.hutoslib.common.container.BannerExtensionSlot;
-import com.vincenthuto.hutoslib.common.container.BannerSlotItemHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -14,16 +11,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
-public class PacketSyncBannerSlotContents {
+public class PacketSyncCharmSlotContents {
 	public final NonNullList<ItemStack> stacks = NonNullList.create();
 	public int entityId;
 
-	public PacketSyncBannerSlotContents(Player player, BannerExtensionSlot extension) {
+	public PacketSyncCharmSlotContents(Player player, CharmExtensionSlot extension) {
 		this.entityId = player.getId();
-		extension.getSlots().stream().map(BannerSlotItemHandler::getContents).forEach(stacks::add);
+		extension.getSlots().stream().map(CharmSlotItemHandler::getContents).forEach(stacks::add);
 	}
 
-	public PacketSyncBannerSlotContents(FriendlyByteBuf buf) {
+	public PacketSyncCharmSlotContents(FriendlyByteBuf buf) {
 		entityId = buf.readVarInt();
 		int numStacks = buf.readVarInt();
 		for (int i = 0; i < numStacks; i++) {
@@ -44,7 +41,7 @@ public class PacketSyncBannerSlotContents {
 		minecraft.execute(() -> {
 			Entity entity = minecraft.level.getEntity(this.entityId);
 			if (entity instanceof Player) {
-				BannerExtensionSlot.get((LivingEntity) entity).ifPresent((slot) -> slot.setAll(this.stacks));
+				CharmExtensionSlot.get((LivingEntity) entity).ifPresent((slot) -> slot.setAll(this.stacks));
 			}
 		});
 		return true;

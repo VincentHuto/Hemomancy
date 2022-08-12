@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.radial.finder;
+package com.vincenthuto.hemomancy.radial;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;

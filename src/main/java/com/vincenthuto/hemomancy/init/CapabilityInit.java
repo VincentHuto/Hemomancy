@@ -6,9 +6,9 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.radial.finder.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.radial.finder.CharmSlotCapability;
-import com.vincenthuto.hemomancy.radial.finder.ICharmSlotItem;
+import com.vincenthuto.hemomancy.radial.CharmExtensionSlot;
+import com.vincenthuto.hemomancy.radial.CharmSlotCapability;
+import com.vincenthuto.hemomancy.radial.ICharmSlotItem;
 
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

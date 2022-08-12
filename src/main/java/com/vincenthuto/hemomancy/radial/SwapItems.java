@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.radial;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.ConfigData;
-import com.vincenthuto.hemomancy.radial.finder.CharmFinder;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;

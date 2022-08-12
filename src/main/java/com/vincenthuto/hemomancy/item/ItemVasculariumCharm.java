@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
-import com.vincenthuto.hemomancy.radial.finder.CharmInventory;
-import com.vincenthuto.hemomancy.radial.finder.ICharmSlotItem;
+import com.vincenthuto.hemomancy.radial.CharmInventory;
+import com.vincenthuto.hemomancy.radial.ICharmSlotItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -47,8 +47,10 @@ import net.minecraftforge.items.IItemHandler;
 
 public class ItemVasculariumCharm extends Item implements ICharmSlotItem {
 
-	public static final Capability<ICharmSlotItem> CHARM_SLOT_ITEM=CapabilityManager.get(new CapabilityToken<>(){});
-    public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>(){});
+	public static final Capability<ICharmSlotItem> CHARM_SLOT_ITEM = CapabilityManager.get(new CapabilityToken<>() {
+	});
+	public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>() {
+	});
 
 	public ItemVasculariumCharm(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
 		super(properties.stacksTo(1));
@@ -105,16 +107,16 @@ public class ItemVasculariumCharm extends Item implements ICharmSlotItem {
 	@Override
 	public ICapabilityProvider initCapabilities(final ItemStack stack, CompoundTag nbt) {
 		return new ICapabilityProvider() {
-            final CharmInventory itemHandler = new CharmInventory(stack);
+			final CharmInventory itemHandler = new CharmInventory(stack);
 
 			final LazyOptional<ICharmSlotItem> extensionSlotInstance = LazyOptional.of(() -> ItemVasculariumCharm.this);
-            final LazyOptional<IItemHandler> itemHandlerInstance = LazyOptional.of(() -> itemHandler);
+			final LazyOptional<IItemHandler> itemHandlerInstance = LazyOptional.of(() -> itemHandler);
 
 			@Override
 			@Nonnull
 			public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable Direction side) {
-				   if (cap == ITEM_HANDLER)
-	                    return itemHandlerInstance.cast();
+				if (cap == ITEM_HANDLER)
+					return itemHandlerInstance.cast();
 				if (cap == CHARM_SLOT_ITEM)
 					return extensionSlotInstance.cast();
 				return LazyOptional.empty();
@@ -139,6 +141,18 @@ public class ItemVasculariumCharm extends Item implements ICharmSlotItem {
 	public boolean isFoil(ItemStack stack) {
 
 		return true;
+	}
+
+	public static enum Commands {
+		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
+
+		private final ResourceLocation iconTexture = new ResourceLocation(Hemomancy.MOD_ID,
+				"textures/gui/command_icons/" + this.toString().toLowerCase() + ".png");
+
+		public ResourceLocation getIcon() {
+			return this.iconTexture;
+		}
+
 	}
 
 }

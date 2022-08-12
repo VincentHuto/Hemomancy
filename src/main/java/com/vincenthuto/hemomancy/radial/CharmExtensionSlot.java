@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.radial.finder;
+package com.vincenthuto.hemomancy.radial;
 
 import java.util.Collection;
 import java.util.List;

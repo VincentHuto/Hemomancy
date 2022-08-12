@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.ConfigData;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.radial.finder.CharmFinder;
 import com.vincenthuto.hemomancy.radial.gui.GenericRadialMenu;
 import com.vincenthuto.hemomancy.radial.gui.IRadialMenuHost;
 import com.vincenthuto.hemomancy.radial.gui.ItemStackRadialMenuItem;
@@ -17,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -80,6 +80,12 @@ public class RadialMenuScreen extends Screen
             {
                 return RadialMenuScreen.this.getItemRenderer();
             }
+
+			@Override
+			public void renderTooltip(PoseStack matrixStack, Component component, int mouseX, int mouseY) {
+                RadialMenuScreen.this.renderTooltip(matrixStack, component, mouseX, mouseY);
+
+			}
         })
         {
             @Override

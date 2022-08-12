@@ -31,11 +31,12 @@ import com.vincenthuto.hemomancy.network.particle.PacketSpawnAvatarParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
+import com.vincenthuto.hemomancy.radial.PacketCharmChange;
+import com.vincenthuto.hemomancy.radial.PacketCharmContainerSlot;
+import com.vincenthuto.hemomancy.radial.PacketOpenCharm;
+import com.vincenthuto.hemomancy.radial.PacketSyncCharmSlotContents;
+import com.vincenthuto.hemomancy.radial.RadialInventorySlotChangeMessage;
 import com.vincenthuto.hemomancy.radial.SwapItems;
-import com.vincenthuto.hemomancy.radial.finder.PacketCharmChange;
-import com.vincenthuto.hemomancy.radial.finder.PacketCharmContainerSlot;
-import com.vincenthuto.hemomancy.radial.finder.PacketOpenCharm;
-import com.vincenthuto.hemomancy.radial.finder.PacketSyncCharmSlotContents;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
 
@@ -77,6 +78,10 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, RadialInventorySlotChangeMessage.class,
+				RadialInventorySlotChangeMessage::encode, RadialInventorySlotChangeMessage::decode,
+				ServerMessageHandler::handleRadialInventorySlotChangeMessage);
+
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
 				PacketSpawnLightningParticle::handle);
@@ -99,7 +104,6 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.messageBuilder(PacketCharmChange.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
 				.encoder(PacketCharmChange::encode).decoder(PacketCharmChange::new).consumer(PacketCharmChange::handle)
 				.add();
-
 
 		CHANNELKNOWNMANIPS.messageBuilder(SwapItems.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
 				.encoder(SwapItems::encode).decoder(SwapItems::new).consumer(SwapItems::handle).add();
