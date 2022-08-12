@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.block.idol;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.tile.BlockEntitySerpentineIdol;
+import com.vincenthuto.hemomancy.tile.SerpentineIdolBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,7 +45,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
-		return type == BlockEntityInit.serpentine_idol.get() ? BlockEntitySerpentineIdol::tick : null;
+		return type == BlockEntityInit.serpentine_idol.get() ? SerpentineIdolBlockEntity::tick : null;
 	}
 
 	@Override
@@ -105,6 +105,6 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntitySerpentineIdol(p_153215_, p_153216_);
+		return new SerpentineIdolBlockEntity(p_153215_, p_153216_);
 	}
 }

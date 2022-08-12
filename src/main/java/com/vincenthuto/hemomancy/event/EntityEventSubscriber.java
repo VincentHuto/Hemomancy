@@ -2,68 +2,68 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.EntityInit;
-import com.vincenthuto.hemomancy.model.armor.ModelBarbedArmor;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodAvatar;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodGourd;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
-import com.vincenthuto.hemomancy.model.armor.ModelChitiniteArmor;
-import com.vincenthuto.hemomancy.model.armor.ModelCurvedHorn;
-import com.vincenthuto.hemomancy.model.armor.ModelUnstainedArmor;
-import com.vincenthuto.hemomancy.model.block.ModelEarthenVein;
-import com.vincenthuto.hemomancy.model.block.ModelFloatingHeart;
-import com.vincenthuto.hemomancy.model.entity.ModelBloodBullet;
-import com.vincenthuto.hemomancy.model.entity.ModelIronPillar;
-import com.vincenthuto.hemomancy.model.entity.ModelIronSpike;
-import com.vincenthuto.hemomancy.model.entity.ModelIronWall;
-import com.vincenthuto.hemomancy.model.entity.ModelWretchedWill;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelAbhorentThought;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelBloodDrunkPuppeteer;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelChitinite;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelChthonian;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelChthonianQueen;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelDrudge;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelEnthralledDoll;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelFargone;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelFungling;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelLeech;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelLumpOfThought;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelMorphlingPolyp;
-import com.vincenthuto.hemomancy.model.entity.mob.ModelThirster;
-import com.vincenthuto.hemomancy.model.item.ModelBarbedShield;
-import com.vincenthuto.hemomancy.model.item.ModelBloodArm;
-import com.vincenthuto.hemomancy.model.item.ModelChitiniteShield;
-import com.vincenthuto.hemomancy.model.item.ModelLivingAxe;
-import com.vincenthuto.hemomancy.model.item.ModelLivingBladeHandTame;
-import com.vincenthuto.hemomancy.model.item.ModelLivingBladeUnleashed;
-import com.vincenthuto.hemomancy.model.item.ModelLivingSpear;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBolt;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodBullet;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloud;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodCloudCarrier;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodNeedle;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbDirected;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodOrbTracking;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderBloodShot;
-import com.vincenthuto.hemomancy.render.entity.blood.RenderWretchedWill;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronPillar;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronSpike;
-import com.vincenthuto.hemomancy.render.entity.blood.iron.RenderIronWall;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderAbhorentThought;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderBloodDrunkPuppeteer;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderChitinite;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderChthonian;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderChthonianQueen;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderEnthralledDoll;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderFargone;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderFungling;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderLeech;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderLumpOfThought;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderMorphlingPolyp;
-import com.vincenthuto.hemomancy.render.entity.mob.RenderThirster;
-import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingPests;
-import com.vincenthuto.hemomancy.render.entity.projectile.RenderTrackingSerpent;
-import com.vincenthuto.hemomancy.render.item.RenderItemMorphlingPolyp;
+import com.vincenthuto.hemomancy.model.armor.BarbedArmorModel;
+import com.vincenthuto.hemomancy.model.armor.BloodAvatarModel;
+import com.vincenthuto.hemomancy.model.armor.BloodGourdModel;
+import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel;
+import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
+import com.vincenthuto.hemomancy.model.armor.ChitiniteArmorModel;
+import com.vincenthuto.hemomancy.model.armor.CurvedHornModel;
+import com.vincenthuto.hemomancy.model.armor.UnstainedArmorModel;
+import com.vincenthuto.hemomancy.model.block.EarthenVeinModel;
+import com.vincenthuto.hemomancy.model.block.FloatingHeartModel;
+import com.vincenthuto.hemomancy.model.entity.BloodBulletModel;
+import com.vincenthuto.hemomancy.model.entity.IronPillarModel;
+import com.vincenthuto.hemomancy.model.entity.IronSpikeModel;
+import com.vincenthuto.hemomancy.model.entity.IronWallModel;
+import com.vincenthuto.hemomancy.model.entity.WretchedWillModel;
+import com.vincenthuto.hemomancy.model.entity.mob.AbhorentThoughtModel;
+import com.vincenthuto.hemomancy.model.entity.mob.BloodDrunkPuppeteerModel;
+import com.vincenthuto.hemomancy.model.entity.mob.ChitiniteModel;
+import com.vincenthuto.hemomancy.model.entity.mob.ChthonianModel;
+import com.vincenthuto.hemomancy.model.entity.mob.ChthonianQueenModel;
+import com.vincenthuto.hemomancy.model.entity.mob.DrudgeModel;
+import com.vincenthuto.hemomancy.model.entity.mob.EnthralledDollModel;
+import com.vincenthuto.hemomancy.model.entity.mob.FargoneModel;
+import com.vincenthuto.hemomancy.model.entity.mob.FunglingModel;
+import com.vincenthuto.hemomancy.model.entity.mob.LeechModel;
+import com.vincenthuto.hemomancy.model.entity.mob.LumpOfThoughtModel;
+import com.vincenthuto.hemomancy.model.entity.mob.MorphlingPolypModel;
+import com.vincenthuto.hemomancy.model.entity.mob.ThirsterModel;
+import com.vincenthuto.hemomancy.model.item.BarbedShieldModel;
+import com.vincenthuto.hemomancy.model.item.BloodArmModel;
+import com.vincenthuto.hemomancy.model.item.ChitiniteShieldModel;
+import com.vincenthuto.hemomancy.model.item.LivingAxeModel;
+import com.vincenthuto.hemomancy.model.item.LivingBladeHandTameModel;
+import com.vincenthuto.hemomancy.model.item.LivingBladeUnleashedModel;
+import com.vincenthuto.hemomancy.model.item.LivingSpearModel;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodBoltRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodBulletRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodCloudRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodCloudCarrierRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodNeedleRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodOrbDirectedRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodOrbTrackingRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.BloodShotRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.WretchedWillRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.iron.IronPillarRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.iron.IronSpikeRenderer;
+import com.vincenthuto.hemomancy.render.entity.blood.iron.IronWallRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.AbhorentThoughtRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.BloodDrunkPuppeteerRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.ChitiniteRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.ChthonianRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.ChthonianQueenRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.EnthralledDollRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.FargoneRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.FunglingRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.LeechRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.LumpOfThoughtRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.MorphlingPolypRenderer;
+import com.vincenthuto.hemomancy.render.entity.mob.ThirsterRenderer;
+import com.vincenthuto.hemomancy.render.entity.projectile.TrackingPestsRenderer;
+import com.vincenthuto.hemomancy.render.entity.projectile.TrackingSerpentRenderer;
+import com.vincenthuto.hemomancy.render.item.MorphlingPolypItemRenderer;
 
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -78,115 +78,115 @@ public class EntityEventSubscriber {
 
 	@SubscribeEvent
 	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), RenderBloodOrbDirected::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), RenderBloodCloudCarrier::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud.get(), RenderBloodCloud::new);
-		event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), RenderBloodOrbTracking::new);
-		event.registerEntityRenderer(EntityInit.tracking_snake.get(), RenderTrackingSerpent::new);
-		event.registerEntityRenderer(EntityInit.tracking_pests.get(), RenderTrackingPests::new);
-		event.registerEntityRenderer(EntityInit.blood_bolt.get(), RenderBloodBolt::new);
-		event.registerEntityRenderer(EntityInit.blood_needle.get(), RenderBloodNeedle::new);
-		event.registerEntityRenderer(EntityInit.blood_shot.get(), RenderBloodShot::new);
-		event.registerEntityRenderer(EntityInit.blood_bullet.get(), RenderBloodBullet::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), RenderItemMorphlingPolyp::new);
-		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
-		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
-		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
-		event.registerEntityRenderer(EntityInit.wretched_will.get(), RenderWretchedWill::new);
-		event.registerEntityRenderer(EntityInit.leech.get(), RenderLeech::new);
-		event.registerEntityRenderer(EntityInit.iron_pillar.get(), RenderIronPillar::new);
-		event.registerEntityRenderer(EntityInit.iron_spike.get(), RenderIronSpike::new);
-		event.registerEntityRenderer(EntityInit.iron_wall.get(), RenderIronWall::new);
-		event.registerEntityRenderer(EntityInit.fargone.get(), RenderFargone::new);
-		event.registerEntityRenderer(EntityInit.thirster.get(), RenderThirster::new);
-		event.registerEntityRenderer(EntityInit.fungling.get(), RenderFungling::new);
-		event.registerEntityRenderer(EntityInit.chitinite.get(), RenderChitinite::new);
-		event.registerEntityRenderer(EntityInit.chthonian.get(), RenderChthonian::new);
-		event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), RenderBloodDrunkPuppeteer::new);
-		event.registerEntityRenderer(EntityInit.enthralled_doll.get(), RenderEnthralledDoll::new);
-		event.registerEntityRenderer(EntityInit.lump_of_thought.get(), RenderLumpOfThought::new);
-		event.registerEntityRenderer(EntityInit.chthonian_queen.get(), RenderChthonianQueen::new);
-		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), RenderAbhorentThought::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), RenderMorphlingPolyp::new);
+		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), BloodOrbDirectedRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), BloodCloudCarrierRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_cloud.get(), BloodCloudRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), BloodOrbTrackingRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
+		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
+		event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
+		event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
+		event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
+		event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
+		event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
+		event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
+		event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
+		event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
+		event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
+		event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
+		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
+		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
 		event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
 
 	}
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-		event.registerLayerDefinition(ModelAbhorentThought.abhorent_thought, ModelAbhorentThought::createLayers);
-		event.registerLayerDefinition(ModelLivingBladeHandTame.living_blade_tame,
-				ModelLivingBladeHandTame::createLayers);
-		event.registerLayerDefinition(ModelLivingBladeUnleashed.living_blade_unleashed,
-				ModelLivingBladeUnleashed::createLayers);
-		event.registerLayerDefinition(ModelLivingAxe.living_axe, ModelLivingAxe::createLayers);
-		event.registerLayerDefinition(ModelLivingSpear.living_spear, ModelLivingSpear::createLayers);
-		event.registerLayerDefinition(ModelFloatingHeart.mortal_display, ModelFloatingHeart::createBodyLayer);
-		event.registerLayerDefinition(ModelBarbedShield.barbed_shield, ModelBarbedShield::createLayers);
-		event.registerLayerDefinition(ModelChitiniteShield.chitinite_shield, ModelChitiniteShield::createBodyLayer);
-		event.registerLayerDefinition(ModelIronWall.iron_wall, ModelIronWall::createBodyLayer);
-		event.registerLayerDefinition(ModelIronSpike.iron_spike, ModelIronSpike::createBodyLayer);
-		event.registerLayerDefinition(ModelIronPillar.iron_pillar, ModelIronPillar::createBodyLayer);
-		event.registerLayerDefinition(ModelBloodBullet.blood_bullet, ModelBloodBullet::createBodyLayer);
-		event.registerLayerDefinition(ModelEarthenVein.earth_vein, ModelEarthenVein::createBodyLayer);
-		event.registerLayerDefinition(ModelWretchedWill.wretched_will, ModelWretchedWill::createBodyLayer);
-		event.registerLayerDefinition(ModelBloodGourd.blood_gourd, ModelBloodGourd::createBodyLayer);
-		event.registerLayerDefinition(ModelCurvedHorn.curved_horn, ModelCurvedHorn::createBodyLayer);
-		event.registerLayerDefinition(ModelChthonian.LAYER_LOCATION, ModelChthonian::createBodyLayer);
-		event.registerLayerDefinition(ModelChthonianQueen.LAYER_LOCATION, ModelChthonianQueen::createBodyLayer);
-		event.registerLayerDefinition(ModelChitinite.LAYER_LOCATION, ModelChitinite::createBodyLayer);
-		event.registerLayerDefinition(ModelDrudge.LAYER_LOCATION, ModelDrudge::createBodyLayer);
-		event.registerLayerDefinition(ModelFargone.LAYER_LOCATION, ModelFargone::createBodyLayer);
-		event.registerLayerDefinition(ModelFungling.LAYER_LOCATION, ModelFungling::createBodyLayer);
-		event.registerLayerDefinition(ModelLeech.LAYER_LOCATION, ModelLeech::createBodyLayer);
-		event.registerLayerDefinition(ModelLumpOfThought.LAYER_LOCATION, ModelLumpOfThought::createBodyLayer);
-		event.registerLayerDefinition(ModelBloodDrunkPuppeteer.LAYER_LOCATION,
-				ModelBloodDrunkPuppeteer::createbodyLayer);
-		event.registerLayerDefinition(ModelEnthralledDoll.LAYER_LOCATION, ModelEnthralledDoll::createBodyLayer);
-		event.registerLayerDefinition(ModelMorphlingPolyp.LAYER_LOCATION, ModelMorphlingPolyp::createBodyLayer);
-		event.registerLayerDefinition(ModelThirster.LAYER_LOCATION, ModelThirster::createBodyLayer);
-		event.registerLayerDefinition(ModelBloodArm.blood_arm, ModelBloodArm::createHeadLayer);
+		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createLayers);
+		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
+				LivingBladeHandTameModel::createLayers);
+		event.registerLayerDefinition(LivingBladeUnleashedModel.living_blade_unleashed,
+				LivingBladeUnleashedModel::createLayers);
+		event.registerLayerDefinition(LivingAxeModel.living_axe, LivingAxeModel::createLayers);
+		event.registerLayerDefinition(LivingSpearModel.living_spear, LivingSpearModel::createLayers);
+		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
+		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
+		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);
+		event.registerLayerDefinition(IronWallModel.iron_wall, IronWallModel::createBodyLayer);
+		event.registerLayerDefinition(IronSpikeModel.iron_spike, IronSpikeModel::createBodyLayer);
+		event.registerLayerDefinition(IronPillarModel.iron_pillar, IronPillarModel::createBodyLayer);
+		event.registerLayerDefinition(BloodBulletModel.blood_bullet, BloodBulletModel::createBodyLayer);
+		event.registerLayerDefinition(EarthenVeinModel.earth_vein, EarthenVeinModel::createBodyLayer);
+		event.registerLayerDefinition(WretchedWillModel.wretched_will, WretchedWillModel::createBodyLayer);
+		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
+		event.registerLayerDefinition(CurvedHornModel.curved_horn, CurvedHornModel::createBodyLayer);
+		event.registerLayerDefinition(ChthonianModel.LAYER_LOCATION, ChthonianModel::createBodyLayer);
+		event.registerLayerDefinition(ChthonianQueenModel.LAYER_LOCATION, ChthonianQueenModel::createBodyLayer);
+		event.registerLayerDefinition(ChitiniteModel.LAYER_LOCATION, ChitiniteModel::createBodyLayer);
+		event.registerLayerDefinition(DrudgeModel.LAYER_LOCATION, DrudgeModel::createBodyLayer);
+		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
+		event.registerLayerDefinition(FunglingModel.LAYER_LOCATION, FunglingModel::createBodyLayer);
+		event.registerLayerDefinition(LeechModel.LAYER_LOCATION, LeechModel::createBodyLayer);
+		event.registerLayerDefinition(LumpOfThoughtModel.LAYER_LOCATION, LumpOfThoughtModel::createBodyLayer);
+		event.registerLayerDefinition(BloodDrunkPuppeteerModel.LAYER_LOCATION,
+				BloodDrunkPuppeteerModel::createbodyLayer);
+		event.registerLayerDefinition(EnthralledDollModel.LAYER_LOCATION, EnthralledDollModel::createBodyLayer);
+		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
+		event.registerLayerDefinition(ThirsterModel.LAYER_LOCATION, ThirsterModel::createBodyLayer);
+		event.registerLayerDefinition(BloodArmModel.blood_arm, BloodArmModel::createHeadLayer);
 
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_LAYER,
-				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_TENGU_LAYER,
-				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.TENGU));
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_HEAD_HORNED_LAYER,
-				() -> ModelBloodLustArmor.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.HORNED));
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_CHEST_LAYER,
-				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.CHEST));
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_LEGS_LAYER,
-				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.LEGS));
-		event.registerLayerDefinition(ModelBloodLustArmor.BLOOD_LUST_BOOTS_LAYER,
-				() -> ModelBloodLustArmor.createBodyLayer(EquipmentSlot.FEET));
-		event.registerLayerDefinition(ModelBloodAvatar.layer, ModelBloodAvatar::createLayer);
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_LAYER,
+				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_TENGU_LAYER,
+				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.TENGU));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_HORNED_LAYER,
+				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.HORNED));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_CHEST_LAYER,
+				() -> BloodLustArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_LEGS_LAYER,
+				() -> BloodLustArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_BOOTS_LAYER,
+				() -> BloodLustArmorModel.createBodyLayer(EquipmentSlot.FEET));
+		event.registerLayerDefinition(BloodAvatarModel.layer, BloodAvatarModel::createLayer);
 
-		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_HELMET_LAYER,
-				() -> ModelChitiniteArmor.createHeadLayer(EquipmentSlot.HEAD));
-		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_CHEST_LAYER,
-				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.CHEST));
-		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_LEGS_LAYER,
-				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.LEGS));
-		event.registerLayerDefinition(ModelChitiniteArmor.CHITINITE_FEET_LAYER,
-				() -> ModelChitiniteArmor.createBodyLayer(EquipmentSlot.FEET));
+		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_HELMET_LAYER,
+				() -> ChitiniteArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_CHEST_LAYER,
+				() -> ChitiniteArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_LEGS_LAYER,
+				() -> ChitiniteArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(ChitiniteArmorModel.CHITINITE_FEET_LAYER,
+				() -> ChitiniteArmorModel.createBodyLayer(EquipmentSlot.FEET));
 
-		event.registerLayerDefinition(ModelBarbedArmor.BARBED_HELMET_LAYER,
-				() -> ModelBarbedArmor.createHeadLayer(EquipmentSlot.HEAD));
-		event.registerLayerDefinition(ModelBarbedArmor.BARBED_CHEST_LAYER,
-				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.CHEST));
-		event.registerLayerDefinition(ModelBarbedArmor.BARBED_LEGS_LAYER,
-				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.LEGS));
-		event.registerLayerDefinition(ModelBarbedArmor.BARBED_FEET_LAYER,
-				() -> ModelBarbedArmor.createBodyLayer(EquipmentSlot.FEET));
+		event.registerLayerDefinition(BarbedArmorModel.BARBED_HELMET_LAYER,
+				() -> BarbedArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(BarbedArmorModel.BARBED_CHEST_LAYER,
+				() -> BarbedArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(BarbedArmorModel.BARBED_LEGS_LAYER,
+				() -> BarbedArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(BarbedArmorModel.BARBED_FEET_LAYER,
+				() -> BarbedArmorModel.createBodyLayer(EquipmentSlot.FEET));
 
-		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_HELMET_LAYER,
-				() -> ModelUnstainedArmor.createHeadLayer(EquipmentSlot.HEAD));
-		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_CHEST_LAYER,
-				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.CHEST));
-		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_LEGS_LAYER,
-				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.LEGS));
-		event.registerLayerDefinition(ModelUnstainedArmor.UNSTAINED_FEET_LAYER,
-				() -> ModelUnstainedArmor.createBodyLayer(EquipmentSlot.FEET));
+		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_HELMET_LAYER,
+				() -> UnstainedArmorModel.createHeadLayer(EquipmentSlot.HEAD));
+		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_CHEST_LAYER,
+				() -> UnstainedArmorModel.createBodyLayer(EquipmentSlot.CHEST));
+		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_LEGS_LAYER,
+				() -> UnstainedArmorModel.createBodyLayer(EquipmentSlot.LEGS));
+		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_FEET_LAYER,
+				() -> UnstainedArmorModel.createBodyLayer(EquipmentSlot.FEET));
 
 	}
 

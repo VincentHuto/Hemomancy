@@ -4,24 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.block.BlockActiveBefoulingAshTrail;
-import com.vincenthuto.hemomancy.block.BlockActiveSmoulderingAshTrail;
-import com.vincenthuto.hemomancy.block.BlockBefoulingAshTrail;
-import com.vincenthuto.hemomancy.block.BlockBleedingHeart;
-import com.vincenthuto.hemomancy.block.BlockBloodCrystal;
-import com.vincenthuto.hemomancy.block.BlockBrazier;
-import com.vincenthuto.hemomancy.block.BlockCrimsonFlame;
-import com.vincenthuto.hemomancy.block.BlockDendriticDistributor;
-import com.vincenthuto.hemomancy.block.BlockEarthenVein;
-import com.vincenthuto.hemomancy.block.BlockInfectedFungus;
-import com.vincenthuto.hemomancy.block.BlockJuiceinator;
-import com.vincenthuto.hemomancy.block.BlockMorphlingIncubator;
-import com.vincenthuto.hemomancy.block.BlockMortalDisplay;
-import com.vincenthuto.hemomancy.block.BlockScryingPodium;
-import com.vincenthuto.hemomancy.block.BlockSemiSentientConstruct;
-import com.vincenthuto.hemomancy.block.BlockSmoulderingAshTrail;
-import com.vincenthuto.hemomancy.block.BlockUnstainedPodium;
-import com.vincenthuto.hemomancy.block.BlockVisceralRecaller;
+import com.vincenthuto.hemomancy.block.ActiveBefoulingAshTrailBlock;
+import com.vincenthuto.hemomancy.block.ActiveSmoulderingAshTrailBlock;
+import com.vincenthuto.hemomancy.block.BefoulingAshTrailBlock;
+import com.vincenthuto.hemomancy.block.BleedingHeartBlock;
+import com.vincenthuto.hemomancy.block.BloodCrystalBlock;
+import com.vincenthuto.hemomancy.block.BrazierBlock;
+import com.vincenthuto.hemomancy.block.CrimsonFlameBlock;
+import com.vincenthuto.hemomancy.block.DendriticDistributorBlock;
+import com.vincenthuto.hemomancy.block.EarthenVeinBlock;
+import com.vincenthuto.hemomancy.block.InfectedFungusBlock;
+import com.vincenthuto.hemomancy.block.JuiceinatorBlock;
+import com.vincenthuto.hemomancy.block.MorphlingIncubatorBlock;
+import com.vincenthuto.hemomancy.block.MortalDisplayBlock;
+import com.vincenthuto.hemomancy.block.ScryingPodiumBlock;
+import com.vincenthuto.hemomancy.block.SemiSentientConstructBlock;
+import com.vincenthuto.hemomancy.block.SmoulderingAshTrailBlock;
+import com.vincenthuto.hemomancy.block.UnstainedPodiumBlock;
+import com.vincenthuto.hemomancy.block.VisceralRecallerBlockS;
 import com.vincenthuto.hemomancy.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.block.idol.BlockSerpentineIdol;
 
@@ -83,22 +83,22 @@ public class BlockInit {
 
 	// Ash
 	public static final RegistryObject<Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
-			() -> new BlockSmoulderingAshTrail(
+			() -> new SmoulderingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
 	public static final RegistryObject<Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
-			() -> new BlockBefoulingAshTrail(
+			() -> new BefoulingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
 
 	public static final RegistryObject<Block> active_smouldering_ash_trail = SPECIALBLOCKS
-			.register("active_smouldering_ash_trail", () -> new BlockActiveSmoulderingAshTrail(
+			.register("active_smouldering_ash_trail", () -> new ActiveSmoulderingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
 	public static final RegistryObject<Block> active_befouling_ash_trail = SPECIALBLOCKS
-			.register("active_befouling_ash_trail", () -> new BlockActiveBefoulingAshTrail(
+			.register("active_befouling_ash_trail", () -> new ActiveBefoulingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
 
 	// Blocks
 	public static final RegistryObject<Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
-			() -> new BlockBleedingHeart(MobEffects.ABSORPTION, 12,
+			() -> new BleedingHeartBlock(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f).sound(SoundType.GLASS)
@@ -168,14 +168,14 @@ public class BlockInit {
 					.sound(SoundType.WOOD)));
 
 	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
-			() -> new BlockInfectedFungus(MobEffects.CONFUSION, 12,
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> crimson_flames = MODELEDBLOCKS.register("crimson_flames",
-			() -> new BlockCrimsonFlame(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
+			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
 
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
@@ -188,43 +188,43 @@ public class BlockInit {
 
 	// Tiles
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
-			() -> new BlockMorphlingIncubator(
+			() -> new MorphlingIncubatorBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
-			.register("semi_sentient_construct", () -> new BlockSemiSentientConstruct(
+			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
-			() -> new BlockUnstainedPodium(
+			() -> new UnstainedPodiumBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
-			() -> new BlockScryingPodium(
+			() -> new ScryingPodiumBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
-			() -> new BlockDendriticDistributor(
+			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
-			() -> new BlockMortalDisplay(
+			() -> new MortalDisplayBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
-			.register("visceral_artificial_recaller", () -> new BlockVisceralRecaller(
+			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlockS(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
-			() -> new BlockEarthenVein(
+			() -> new EarthenVeinBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
-			() -> new BlockBrazier(
+			() -> new BrazierBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
-			() -> new BlockJuiceinator(
+			() -> new JuiceinatorBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
-			() -> new BlockBloodCrystal(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
+			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
 					.sound(SoundType.METAL)));
 
 	@SubscribeEvent

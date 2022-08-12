@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy;
 
 import com.vincenthuto.hemomancy.gui.guide.HemoTitlePage;
-import com.vincenthuto.hemomancy.gui.manips.ScreenChooseManip;
-import com.vincenthuto.hemomancy.gui.manips.ScreenChooseVein;
-import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJarViewer;
+import com.vincenthuto.hemomancy.gui.manips.ChooseManipScreen;
+import com.vincenthuto.hemomancy.gui.manips.ChooseVeinScreen;
+import com.vincenthuto.hemomancy.gui.morphlingjar.MorphlingJarViewerScreen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
@@ -23,23 +23,23 @@ public class ClientProxy implements IProxy {
 
 	@Override
 	public void openJarGui() {
-		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer());
+		Minecraft.getInstance().setScreen(new MorphlingJarViewerScreen());
 
 	}
 
 	@Override
 	public void openStaffGui() {
-		Minecraft.getInstance().setScreen(new ScreenMorphlingJarViewer());
+		Minecraft.getInstance().setScreen(new MorphlingJarViewerScreen());
 	}
 
 	@Override
 	public void openManipGui() {
-		Minecraft.getInstance().setScreen(new ScreenChooseManip());
+		Minecraft.getInstance().setScreen(new ChooseManipScreen());
 	}
 
 	@Override
 	public void openVeinGui() {
-		Minecraft.getInstance().setScreen(new ScreenChooseVein());
+		Minecraft.getInstance().setScreen(new ChooseVeinScreen());
 	}
 
 	@Override

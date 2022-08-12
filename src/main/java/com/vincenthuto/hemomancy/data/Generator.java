@@ -22,15 +22,15 @@ public class Generator {
 	@SuppressWarnings("unused")
 	private static void registerServerProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		 generator.addProvider(new GeneratorLoots(generator,helper));
-		 generator.addProvider(new GeneratorBlockTags(generator, helper));
-		generator.addProvider(new GeneratorRecipes(generator,helper));
+		 generator.addProvider(new LootGenerator(generator,helper));
+		 generator.addProvider(new BlockTagGenerator(generator, helper));
+		generator.addProvider(new RecipeGenerator(generator,helper));
 	}
 
 	private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		generator.addProvider(new GeneratorBlockStates(generator, helper));
-		generator.addProvider(new GeneratorItemModels(generator, helper));
-		generator.addProvider(new GeneratorLanguage(generator,helper));
+		generator.addProvider(new BlockStateGenerator(generator, helper));
+		generator.addProvider(new ItemModelGenerator(generator, helper));
+		generator.addProvider(new LanguageGenerator(generator,helper));
 	}
 }

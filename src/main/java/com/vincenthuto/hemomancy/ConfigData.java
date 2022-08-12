@@ -9,7 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;
+import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
@@ -232,7 +232,7 @@ public class ConfigData
         if (blackList.stream().anyMatch((s) -> ItemStack.isSame(s, stack)))
             return false;
 
-        if (stack.getItem() instanceof ItemVasculariumCharm)
+        if (stack.getItem() instanceof VasculariumCharmItem)
             return false;
 
         if (stack.getMaxStackSize() != 1)

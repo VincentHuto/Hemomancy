@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.particle.factory;
 
 import com.vincenthuto.hemomancy.init.ParticleInit;
-import com.vincenthuto.hemomancy.particle.ParticleSerpent;
+import com.vincenthuto.hemomancy.particle.SerpentParticle;
 import com.vincenthuto.hemomancy.particle.data.SerpentParticleData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -22,7 +22,7 @@ public class SerpentParticleFactory implements ParticleProvider<SerpentParticleD
 	@Override
 	public Particle createParticle(SerpentParticleData data, ClientLevel worldIn, double x, double y, double z,
 			double xSpeed, double ySpeed, double zSpeed) {
-		return new ParticleSerpent(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(),
+		return new SerpentParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(),
 				data.color.getBlue(), 3.0f, .15f, 106, this.spriteSet);
 	}
 

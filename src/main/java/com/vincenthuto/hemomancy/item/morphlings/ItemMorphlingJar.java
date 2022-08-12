@@ -6,10 +6,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
+import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
 import com.vincenthuto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
+import com.vincenthuto.hemomancy.network.morphling.ToggleMorphlingJarMessagePacket;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -113,7 +113,7 @@ public class ItemMorphlingJar extends Item {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new MenuMorphlingJar(windowId, p_createMenu_3_.level,
+						return new MorphlingJarMenu(windowId, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});
@@ -172,7 +172,7 @@ public class ItemMorphlingJar extends Item {
 		nbt.putBoolean("Pickup", Pickup);
 		if (playerEntity instanceof ServerPlayer)
 			PacketHandler.CHANNELMORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
-					new PacketToggleJarMessage(Pickup));
+					new ToggleMorphlingJarMessagePacket(Pickup));
 		else
 			playerEntity.displayClientMessage(new TextComponent(
 					I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
@@ -180,7 +180,7 @@ public class ItemMorphlingJar extends Item {
 	}
 
 	public boolean filterItem(ItemStack item, ItemStack packItem) {
-		return item.getItem() instanceof ItemMorphling ? true : false;
+		return item.getItem() instanceof MorphlingItem ? true : false;
 
 	}
 

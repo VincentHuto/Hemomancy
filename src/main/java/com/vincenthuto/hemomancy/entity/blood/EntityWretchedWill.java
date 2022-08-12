@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityWretchedWill extends EntityBloodConstruct {
+public class EntityWretchedWill extends BloodConstructEntity {
 	public float deathTicks = 1;
 
 	public EntityWretchedWill(EntityType<? extends EntityWretchedWill> type, Level worldIn) {

@@ -6,14 +6,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.vincenthuto.hemomancy.capa.block.vein.EarthenVeinLocEvents;
+import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
+import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotScreen;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.container.CharmSlotMenu;
+import com.vincenthuto.hemomancy.containers.slot.CharmFinderCharmSlot;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
+import com.vincenthuto.hemomancy.event.RadialClientEvents;
 import com.vincenthuto.hemomancy.event.WorldGenEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
@@ -29,11 +34,6 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.radial.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.radial.CharmFinderCharmSlot;
-import com.vincenthuto.hemomancy.radial.CharmSlotContainer;
-import com.vincenthuto.hemomancy.radial.CharmSlotScreen;
-import com.vincenthuto.hemomancy.radial.RadialClientEvents;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
@@ -259,13 +259,13 @@ public class Hemomancy {
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
 		event.enqueueWork(() -> {
-			MenuScreens.register(CharmSlotContainer.TYPE, CharmSlotScreen::new);
+			MenuScreens.register(CharmSlotMenu.TYPE, CharmSlotScreen::new);
 		});
 
 	}
 	public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
 		event.getRegistry()
-				.registerAll(new MenuType<>(CharmSlotContainer::new).setRegistryName("charm_slot_container"));
+				.registerAll(new MenuType<>(CharmSlotMenu::new).setRegistryName("charm_slot_container"));
 	}
 	private void commonSetup(final FMLCommonSetupEvent event) {
 

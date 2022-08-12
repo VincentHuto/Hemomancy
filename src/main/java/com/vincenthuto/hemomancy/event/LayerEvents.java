@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.render.layer.LayerBloodAvatar;
-import com.vincenthuto.hemomancy.render.layer.LayerBloodGourd;
-import com.vincenthuto.hemomancy.render.layer.LayerCellHand;
+import com.vincenthuto.hemomancy.render.layer.player.BloodAvatarLayer;
+import com.vincenthuto.hemomancy.render.layer.player.BloodGourdLayer;
+import com.vincenthuto.hemomancy.render.layer.player.CellHandLayer;
 import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
 import net.minecraft.client.Minecraft;
@@ -63,9 +63,9 @@ public class LayerEvents {
 	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
 		EntityRenderer<? extends Player> render = event.getSkin(skinName);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
-			livingRenderer.addLayer(new LayerBloodGourd<>(livingRenderer));
-			livingRenderer.addLayer(new LayerBloodAvatar(livingRenderer));
-			livingRenderer.addLayer(new LayerCellHand(livingRenderer));
+			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
+			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
+			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
 
 
 		}
@@ -76,9 +76,9 @@ public class LayerEvents {
 			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
 		R renderer = event.getRenderer(entityType);
 		if (renderer != null) {
-			renderer.addLayer(new LayerBloodGourd(renderer));
-			renderer.addLayer(new LayerBloodAvatar(renderer));
-			renderer.addLayer(new LayerCellHand(renderer));
+			renderer.addLayer(new BloodGourdLayer(renderer));
+			renderer.addLayer(new BloodAvatarLayer(renderer));
+			renderer.addLayer(new CellHandLayer(renderer));
 
 		}
 	}

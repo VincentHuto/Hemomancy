@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuJuiceinator;
-import com.vincenthuto.hemomancy.container.MenuLivingStaff;
-import com.vincenthuto.hemomancy.container.MenuLivingSyringe;
-import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
-import com.vincenthuto.hemomancy.container.MenuVisceralRecaller;
+import com.vincenthuto.hemomancy.container.JuiceinatorMenu;
+import com.vincenthuto.hemomancy.container.LivingStaffMenu;
+import com.vincenthuto.hemomancy.container.LivingSyringeMenu;
+import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
+import com.vincenthuto.hemomancy.container.VisceralRecallerMenu;
 
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -23,19 +23,19 @@ public class ContainerInit {
 			Hemomancy.MOD_ID);
 	public static List<MenuType<?>> RUNECONTAINER = new ArrayList<>();
 
-	public static final RegistryObject<MenuType<MenuVisceralRecaller>> visceral_recaller = CONTAINERS
-			.register("visceral_recaller", () -> IForgeMenuType.create(MenuVisceralRecaller::new));
+	public static final RegistryObject<MenuType<VisceralRecallerMenu>> visceral_recaller = CONTAINERS
+			.register("visceral_recaller", () -> IForgeMenuType.create(VisceralRecallerMenu::new));
 
-	public static final RegistryObject<MenuType<MenuJuiceinator>> juiceinator = CONTAINERS.register("juiceinator",
-			() -> IForgeMenuType.create(MenuJuiceinator::new));
+	public static final RegistryObject<MenuType<JuiceinatorMenu>> juiceinator = CONTAINERS.register("juiceinator",
+			() -> IForgeMenuType.create(JuiceinatorMenu::new));
 
-	public static final RegistryObject<MenuType<MenuMorphlingJar>> morphling_jar = CONTAINERS.register("morphling_jar",
-			() -> IForgeMenuType.create(MenuMorphlingJar::new));
+	public static final RegistryObject<MenuType<MorphlingJarMenu>> morphling_jar = CONTAINERS.register("morphling_jar",
+			() -> IForgeMenuType.create(MorphlingJarMenu::new));
 
-	public static final RegistryObject<MenuType<MenuLivingStaff>> living_staff = CONTAINERS.register("living_staff",
-			() -> IForgeMenuType.create(MenuLivingStaff::new));
+	public static final RegistryObject<MenuType<LivingStaffMenu>> living_staff = CONTAINERS.register("living_staff",
+			() -> IForgeMenuType.create(LivingStaffMenu::new));
 
-	public static final RegistryObject<MenuType<MenuLivingSyringe>> living_syringe = CONTAINERS
-			.register("living_syringe", () -> IForgeMenuType.create(MenuLivingSyringe::new));
+	public static final RegistryObject<MenuType<LivingSyringeMenu>> living_syringe = CONTAINERS
+			.register("living_syringe", () -> IForgeMenuType.create(LivingSyringeMenu::new));
 
 }

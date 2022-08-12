@@ -1,22 +1,22 @@
 package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.gui.ScreenJuiceinator;
-import com.vincenthuto.hemomancy.gui.ScreenVisceralRecaller;
-import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingStaff;
-import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenLivingSyringe;
-import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
+import com.vincenthuto.hemomancy.containers.slot.CharmSlot;
+import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
+import com.vincenthuto.hemomancy.gui.VisceralRecallerScreen;
+import com.vincenthuto.hemomancy.gui.morphlingjar.LivingStaffScreen;
+import com.vincenthuto.hemomancy.gui.morphlingjar.LivingSyringeScreen;
+import com.vincenthuto.hemomancy.gui.morphlingjar.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.radial.CharmSlot;
-import com.vincenthuto.hemomancy.radial.LayerCharm;
-import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
-import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
-import com.vincenthuto.hemomancy.render.tile.RenderMorphlingIncubator;
-import com.vincenthuto.hemomancy.render.tile.RenderMortalDisplay;
-import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
-import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
+import com.vincenthuto.hemomancy.render.layer.player.VascCharmLayer;
+import com.vincenthuto.hemomancy.render.tile.DendriticDistributorRenderer;
+import com.vincenthuto.hemomancy.render.tile.EarthenVeinRenderer;
+import com.vincenthuto.hemomancy.render.tile.MorphlingIncubatorRenderer;
+import com.vincenthuto.hemomancy.render.tile.MortalDisplayRenderer;
+import com.vincenthuto.hemomancy.render.tile.UnstainedPodiumRenderer;
+import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.HumanoidModel;
@@ -47,18 +47,18 @@ public class ClientEventSubscriber {
 				BloodVolumeOverlay.HUD_BLOODVOLUME);
 
 		// Tiles
-		BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), RenderMorphlingIncubator::new);
-		BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), RenderUnstainedPodium::new);
-		BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(), RenderDendriticDistributor::new);
-		BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), RenderMortalDisplay::new);
-		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), RenderVisceralRecaller::new);
-		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), RenderEarthenVein::new);
+		BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(), DendriticDistributorRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), VisceralRecallerRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 
-		MenuScreens.register(ContainerInit.visceral_recaller.get(), ScreenVisceralRecaller::new);
-		MenuScreens.register(ContainerInit.morphling_jar.get(), ScreenMorphlingJar::new);
-		MenuScreens.register(ContainerInit.living_syringe.get(), ScreenLivingSyringe::new);
-		MenuScreens.register(ContainerInit.living_staff.get(), ScreenLivingStaff::new);
-		MenuScreens.register(ContainerInit.juiceinator.get(), ScreenJuiceinator::new);
+		MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);
+		MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
+		MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
+		MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
+		MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
 
 	}
 
@@ -87,7 +87,7 @@ public class ClientEventSubscriber {
 	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
 		EntityRenderer<? extends Player> render = event.getSkin(skinName);
 		if (render instanceof LivingEntityRenderer livingRenderer) {
-			livingRenderer.addLayer(new LayerCharm<>(livingRenderer));
+			livingRenderer.addLayer(new VascCharmLayer<>(livingRenderer));
 		}
 	}
 
@@ -96,6 +96,6 @@ public class ClientEventSubscriber {
 			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
 		R renderer = event.getRenderer(entityType);
 		if (renderer != null)
-			renderer.addLayer(new LayerCharm(renderer));
+			renderer.addLayer(new VascCharmLayer(renderer));
 	}
 }

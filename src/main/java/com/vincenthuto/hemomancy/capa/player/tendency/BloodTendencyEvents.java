@@ -7,8 +7,8 @@ import java.util.Map;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
-import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hemomancy.network.capa.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.tile.VisceralRecallerBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -48,14 +48,14 @@ public class BloodTendencyEvents {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodTendencyServer(BloodTendency));
+				new BloodTendencyServerPacket(BloodTendency));
 //		player.displayClientMessage(
 //				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof BlockEntityVisceralRecaller) {
+		if (event.getObject() instanceof VisceralRecallerBlockEntity) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodtendancy"), new BloodTendencyProvider());
 		}
 	}
@@ -65,7 +65,7 @@ public class BloodTendencyEvents {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodTendencyServer(BloodTendency));
+				new BloodTendencyServerPacket(BloodTendency));
 //		player.displayClientMessage(
 //				new TextComponent("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
@@ -127,7 +127,7 @@ public class BloodTendencyEvents {
 				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketBloodTendencyServer(tendency.getTendency()));
+						new BloodTendencyServerPacket(tendency.getTendency()));
 			}
 		}
 	}

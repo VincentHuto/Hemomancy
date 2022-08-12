@@ -1,50 +1,61 @@
 package com.vincenthuto.hemomancy.network;
 
+import java.util.function.Supplier;
+
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyClient;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeClient;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
-import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemClient;
-import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketChangeSelectedManip;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketDisplayKnownManips;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationClient;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketTeleportToVein;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentManip;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUpdateCurrentVein;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
-import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
-import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
-import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
-import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
-import com.vincenthuto.hemomancy.network.morphling.PacketOpenJar;
-import com.vincenthuto.hemomancy.network.morphling.PacketOpenStaff;
-import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
-import com.vincenthuto.hemomancy.network.particle.PacketAirBloodDraw;
-import com.vincenthuto.hemomancy.network.particle.PacketEntityHitParticle;
-import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
-import com.vincenthuto.hemomancy.network.particle.PacketSpawnAvatarParticles;
-import com.vincenthuto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
-import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
-import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
-import com.vincenthuto.hemomancy.radial.PacketCharmChange;
-import com.vincenthuto.hemomancy.radial.PacketCharmContainerSlot;
-import com.vincenthuto.hemomancy.radial.PacketOpenCharm;
-import com.vincenthuto.hemomancy.radial.PacketSyncCharmSlotContents;
-import com.vincenthuto.hemomancy.radial.RadialInventorySlotChangeMessage;
-import com.vincenthuto.hemomancy.radial.SwapItems;
+import com.vincenthuto.hemomancy.gui.radial.BaseMessage;
+import com.vincenthuto.hemomancy.gui.radial.IRadialInventorySelect;
+import com.vincenthuto.hemomancy.network.capa.BloodTendencyClientPacket;
+import com.vincenthuto.hemomancy.network.capa.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeClientPacket;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.network.capa.VascularSystemClientPacket;
+import com.vincenthuto.hemomancy.network.capa.VascularSystemServerPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.ChangeSelectedManipPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.DisplayKnownManipsPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationClientPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.SyncTrackingAvatarPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.TeleportToVeinPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentManipPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentVeinPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UseContManipKeyPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UseQuickManipKeyPacket;
+import com.vincenthuto.hemomancy.network.charm.CharmChangePacket;
+import com.vincenthuto.hemomancy.network.charm.CharmContainerSlotPacket;
+import com.vincenthuto.hemomancy.network.charm.OpenCharmPacket;
+import com.vincenthuto.hemomancy.network.charm.RadialInventorySlotChangePacket;
+import com.vincenthuto.hemomancy.network.charm.PacketSwapItems;
+import com.vincenthuto.hemomancy.network.charm.PacketSyncCharmSlotContents;
+import com.vincenthuto.hemomancy.network.keybind.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.network.morphling.ChangeMorphKeyPacket;
+import com.vincenthuto.hemomancy.network.morphling.JarTogglePickupPacket;
+import com.vincenthuto.hemomancy.network.morphling.OpenMorphlingJarPacket;
+import com.vincenthuto.hemomancy.network.morphling.OpenLivingStaffPacket;
+import com.vincenthuto.hemomancy.network.morphling.ToggleMorphlingJarMessagePacket;
+import com.vincenthuto.hemomancy.network.morphling.PacketUpdateLivingStaffMorph;
+import com.vincenthuto.hemomancy.network.particle.AirBloodDrawPacket;
+import com.vincenthuto.hemomancy.network.particle.EntityHitParticlePacket;
+import com.vincenthuto.hemomancy.network.particle.GroundBloodDrawPacket;
+import com.vincenthuto.hemomancy.network.particle.SpawnAvatarParticlesPacket;
+import com.vincenthuto.hemomancy.network.particle.SpawnBloodClawParticlesPacket;
+import com.vincenthuto.hemomancy.network.particle.SpawnFlaskParticlesPacket;
+import com.vincenthuto.hemomancy.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -78,9 +89,9 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, RadialInventorySlotChangeMessage.class,
-				RadialInventorySlotChangeMessage::encode, RadialInventorySlotChangeMessage::decode,
-				ServerMessageHandler::handleRadialInventorySlotChangeMessage);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, RadialInventorySlotChangePacket.class,
+				RadialInventorySlotChangePacket::encode, RadialInventorySlotChangePacket::decode,
+				PacketHandler::handleRadialInventorySlotChangeMessage);
 
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
@@ -91,138 +102,176 @@ public class PacketHandler {
 				.encoder(PacketSyncCharmSlotContents::encode).decoder(PacketSyncCharmSlotContents::new)
 				.consumer(PacketSyncCharmSlotContents::handle).add();
 
-		CHANNELKNOWNMANIPS.messageBuilder(PacketOpenCharm.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(PacketOpenCharm::encode).decoder(PacketOpenCharm::new).consumer(PacketOpenCharm::handle).add();
+		CHANNELKNOWNMANIPS.messageBuilder(OpenCharmPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(OpenCharmPacket::encode).decoder(OpenCharmPacket::new).consumer(OpenCharmPacket::handle).add();
 
-		CHANNELKNOWNMANIPS.messageBuilder(PacketOpenCharm.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(PacketOpenCharm::encode).decoder(PacketOpenCharm::new).consumer(PacketOpenCharm::handle).add();
+		CHANNELKNOWNMANIPS.messageBuilder(OpenCharmPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(OpenCharmPacket::encode).decoder(OpenCharmPacket::new).consumer(OpenCharmPacket::handle).add();
 
-		CHANNELKNOWNMANIPS.messageBuilder(PacketCharmContainerSlot.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(PacketCharmContainerSlot::encode).decoder(PacketCharmContainerSlot::new)
-				.consumer(PacketCharmContainerSlot::handle).add();
+		CHANNELKNOWNMANIPS.messageBuilder(CharmContainerSlotPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(CharmContainerSlotPacket::encode).decoder(CharmContainerSlotPacket::new)
+				.consumer(CharmContainerSlotPacket::handle).add();
 
-		CHANNELKNOWNMANIPS.messageBuilder(PacketCharmChange.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(PacketCharmChange::encode).decoder(PacketCharmChange::new).consumer(PacketCharmChange::handle)
+		CHANNELKNOWNMANIPS.messageBuilder(CharmChangePacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
+				.encoder(CharmChangePacket::encode).decoder(CharmChangePacket::new).consumer(CharmChangePacket::handle)
 				.add();
 
-		CHANNELKNOWNMANIPS.messageBuilder(SwapItems.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(SwapItems::encode).decoder(SwapItems::new).consumer(SwapItems::handle).add();
+		CHANNELKNOWNMANIPS.messageBuilder(PacketSwapItems.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(PacketSwapItems::encode).decoder(PacketSwapItems::new).consumer(PacketSwapItems::handle).add();
 
-		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
-				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,
-				PacketBloodTendencyClient::handle);
-		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyServer.class,
-				PacketBloodTendencyServer::encode, PacketBloodTendencyServer::decode,
-				PacketBloodTendencyServer::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyClientPacket.class,
+				BloodTendencyClientPacket::encode, BloodTendencyClientPacket::decode,
+				BloodTendencyClientPacket::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyServerPacket.class,
+				BloodTendencyServerPacket::encode, BloodTendencyServerPacket::decode,
+				BloodTendencyServerPacket::handle);
 
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketKnownManipulationClient.class,
-				PacketKnownManipulationClient::encode, PacketKnownManipulationClient::decode,
-				PacketKnownManipulationClient::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketKnownManipulationServer.class,
-				PacketKnownManipulationServer::encode, PacketKnownManipulationServer::decode,
-				PacketKnownManipulationServer::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketDisplayKnownManips.class,
-				PacketDisplayKnownManips::encode, PacketDisplayKnownManips::decode, PacketDisplayKnownManips::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketChangeSelectedManip.class,
-				PacketChangeSelectedManip::encode, PacketChangeSelectedManip::decode,
-				PacketChangeSelectedManip::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseQuickManipKey.class, PacketUseQuickManipKey::encode,
-				PacketUseQuickManipKey::decode, PacketUseQuickManipKey::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUseContManipKey.class, PacketUseContManipKey::encode,
-				PacketUseContManipKey::decode, PacketUseContManipKey::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentManip.class,
-				PacketUpdateCurrentManip::encode, PacketUpdateCurrentManip::decode,
-				PacketUpdateCurrentManip.Handler::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketTeleportToVein.class, PacketTeleportToVein::encode,
-				PacketTeleportToVein::decode, PacketTeleportToVein.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, KnownManipulationClientPacket.class,
+				KnownManipulationClientPacket::encode, KnownManipulationClientPacket::decode,
+				KnownManipulationClientPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, KnownManipulationServerPacket.class,
+				KnownManipulationServerPacket::encode, KnownManipulationServerPacket::decode,
+				KnownManipulationServerPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, DisplayKnownManipsPacket.class,
+				DisplayKnownManipsPacket::encode, DisplayKnownManipsPacket::decode, DisplayKnownManipsPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, ChangeSelectedManipPacket.class,
+				ChangeSelectedManipPacket::encode, ChangeSelectedManipPacket::decode,
+				ChangeSelectedManipPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, UseQuickManipKeyPacket.class, UseQuickManipKeyPacket::encode,
+				UseQuickManipKeyPacket::decode, UseQuickManipKeyPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, UseContManipKeyPacket.class, UseContManipKeyPacket::encode,
+				UseContManipKeyPacket::decode, UseContManipKeyPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, UpdateCurrentManipPacket.class,
+				UpdateCurrentManipPacket::encode, UpdateCurrentManipPacket::decode,
+				UpdateCurrentManipPacket.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, TeleportToVeinPacket.class, TeleportToVeinPacket::encode,
+				TeleportToVeinPacket::decode, TeleportToVeinPacket.Handler::handle);
 
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSyncTrackingAvatar.class,
-				PacketSyncTrackingAvatar::toBytes, PacketSyncTrackingAvatar::new, PacketSyncTrackingAvatar::handle);
-		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketUpdateCurrentVein.class, PacketUpdateCurrentVein::encode,
-				PacketUpdateCurrentVein::decode, PacketUpdateCurrentVein.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, SyncTrackingAvatarPacket.class,
+				SyncTrackingAvatarPacket::toBytes, SyncTrackingAvatarPacket::new, SyncTrackingAvatarPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, UpdateCurrentVeinPacket.class, UpdateCurrentVeinPacket::encode,
+				UpdateCurrentVeinPacket::decode, UpdateCurrentVeinPacket.Handler::handle);
 
-		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemClient.class,
-				PacketVascularSystemClient::encode, PacketVascularSystemClient::decode,
-				PacketVascularSystemClient::handle);
-		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketVascularSystemServer.class,
-				PacketVascularSystemServer::encode, PacketVascularSystemServer::decode,
-				PacketVascularSystemServer::handle);
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemClientPacket.class,
+				VascularSystemClientPacket::encode, VascularSystemClientPacket::decode,
+				VascularSystemClientPacket::handle);
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemServerPacket.class,
+				VascularSystemServerPacket::encode, VascularSystemServerPacket::decode,
+				VascularSystemServerPacket::handle);
 
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodVolumeClient.class, PacketBloodVolumeClient::encode,
-				PacketBloodVolumeClient::decode, PacketBloodVolumeClient::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodVolumeServer.class, PacketBloodVolumeServer::encode,
-				PacketBloodVolumeServer::decode, PacketBloodVolumeServer::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodFormationKeyPress.class,
-				PacketBloodFormationKeyPress::encode, PacketBloodFormationKeyPress::decode,
-				PacketBloodFormationKeyPress::handle);
-		CHANNELBLOODVOLUME.registerMessage(networkID++, PacketBloodCraftingKeyPress.class,
-				PacketBloodCraftingKeyPress::encode, PacketBloodCraftingKeyPress::decode,
-				PacketBloodCraftingKeyPress::handle);
-		CHANNELBLOODVOLUME.messageBuilder(PacketGroundBloodDraw.class, networkID++)
-				.decoder(PacketGroundBloodDraw::decode).encoder(PacketGroundBloodDraw::encode)
-				.consumer(PacketGroundBloodDraw::handle).add();
-		CHANNELBLOODVOLUME.messageBuilder(PacketEntityHitParticle.class, networkID++)
-				.decoder(PacketEntityHitParticle::decode).encoder(PacketEntityHitParticle::encode)
-				.consumer(PacketEntityHitParticle::handle).add();
-		CHANNELBLOODVOLUME.messageBuilder(PacketAirBloodDraw.class, networkID++).decoder(PacketAirBloodDraw::decode)
-				.encoder(PacketAirBloodDraw::encode).consumer(PacketAirBloodDraw::handle).add();
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumeClientPacket.class, BloodVolumeClientPacket::encode,
+				BloodVolumeClientPacket::decode, BloodVolumeClientPacket::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumeServerPacket.class, BloodVolumeServerPacket::encode,
+				BloodVolumeServerPacket::decode, BloodVolumeServerPacket::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodFormationKeyPressPacket.class,
+				BloodFormationKeyPressPacket::encode, BloodFormationKeyPressPacket::decode,
+				BloodFormationKeyPressPacket::handle);
+		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodCraftingKeyPressPacket.class,
+				BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode,
+				BloodCraftingKeyPressPacket::handle);
+		CHANNELBLOODVOLUME.messageBuilder(GroundBloodDrawPacket.class, networkID++)
+				.decoder(GroundBloodDrawPacket::decode).encoder(GroundBloodDrawPacket::encode)
+				.consumer(GroundBloodDrawPacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(EntityHitParticlePacket.class, networkID++)
+				.decoder(EntityHitParticlePacket::decode).encoder(EntityHitParticlePacket::encode)
+				.consumer(EntityHitParticlePacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(AirBloodDrawPacket.class, networkID++).decoder(AirBloodDrawPacket::decode)
+				.encoder(AirBloodDrawPacket::encode).consumer(AirBloodDrawPacket::handle).add();
 
-		CHANNELPARTICLES.messageBuilder(PacketSpawnFlaskParticles.class, networkID++)
-				.decoder(PacketSpawnFlaskParticles::decode).encoder(PacketSpawnFlaskParticles::encode)
-				.consumer(PacketSpawnFlaskParticles::handle).add();
-		CHANNELPARTICLES.messageBuilder(PacketSpawnAvatarParticles.class, networkID++)
-				.decoder(PacketSpawnAvatarParticles::decode).encoder(PacketSpawnAvatarParticles::encode)
-				.consumer(PacketSpawnAvatarParticles::handle).add();
-		CHANNELPARTICLES.messageBuilder(PacketSpawnBloodClawParticles.class, networkID++)
-				.decoder(PacketSpawnBloodClawParticles::decode).encoder(PacketSpawnBloodClawParticles::encode)
-				.consumer(PacketSpawnBloodClawParticles::handle).add();
-		CHANNELPARTICLES.messageBuilder(PacketSpawnLivingToolParticles.class, networkID++)
-				.decoder(PacketSpawnLivingToolParticles::decode).encoder(PacketSpawnLivingToolParticles::encode)
-				.consumer(PacketSpawnLivingToolParticles::handle).add();
+		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
+				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)
+				.consumer(SpawnFlaskParticlesPacket::handle).add();
+		CHANNELPARTICLES.messageBuilder(SpawnAvatarParticlesPacket.class, networkID++)
+				.decoder(SpawnAvatarParticlesPacket::decode).encoder(SpawnAvatarParticlesPacket::encode)
+				.consumer(SpawnAvatarParticlesPacket::handle).add();
+		CHANNELPARTICLES.messageBuilder(SpawnBloodClawParticlesPacket.class, networkID++)
+				.decoder(SpawnBloodClawParticlesPacket::decode).encoder(SpawnBloodClawParticlesPacket::encode)
+				.consumer(SpawnBloodClawParticlesPacket::handle).add();
+		CHANNELPARTICLES.messageBuilder(SpawnLivingToolParticlesPacket.class, networkID++)
+				.decoder(SpawnLivingToolParticlesPacket::decode).encoder(SpawnLivingToolParticlesPacket::encode)
+				.consumer(SpawnLivingToolParticlesPacket::handle).add();
 
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketJarTogglePickup.class, PacketJarTogglePickup::encode,
-				PacketJarTogglePickup::decode, PacketJarTogglePickup::handle);
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenJar.class, PacketOpenJar::encode,
-				PacketOpenJar::decode, PacketOpenJar::handle);
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketToggleJarMessage.class, PacketToggleJarMessage::encode,
-				PacketToggleJarMessage::decode, PacketToggleJarMessage::handle);
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenStaff.class, PacketOpenStaff::encode,
-				PacketOpenStaff::decode, PacketOpenStaff::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, JarTogglePickupPacket.class, JarTogglePickupPacket::encode,
+				JarTogglePickupPacket::decode, JarTogglePickupPacket::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, OpenMorphlingJarPacket.class, OpenMorphlingJarPacket::encode,
+				OpenMorphlingJarPacket::decode, OpenMorphlingJarPacket::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, ToggleMorphlingJarMessagePacket.class, ToggleMorphlingJarMessagePacket::encode,
+				ToggleMorphlingJarMessagePacket::decode, ToggleMorphlingJarMessagePacket::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, OpenLivingStaffPacket.class, OpenLivingStaffPacket::encode,
+				OpenLivingStaffPacket::decode, OpenLivingStaffPacket::handle);
 
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class,
 				PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode,
 				PacketUpdateLivingStaffMorph.Handler::handle);
 
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
-				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, ChangeMorphKeyPacket.class, ChangeMorphKeyPacket::encode,
+				ChangeMorphKeyPacket::decode, ChangeMorphKeyPacket.Handler::handle);
 
 	}
 
 	public static void sendAvatarHitParticles(Vec3 pos, ParticleColor color, double radius,
 			ResourceKey<Level> dimension) {
-		PacketSpawnAvatarParticles msg = new PacketSpawnAvatarParticles(pos, color);
+		SpawnAvatarParticlesPacket msg = new SpawnAvatarParticlesPacket(pos, color);
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
 	public static void sendBloodFlaskParticles(Vec3 pos, ParticleColor color, double radius,
 			ResourceKey<Level> dimension) {
-		PacketSpawnFlaskParticles msg = new PacketSpawnFlaskParticles(pos, color);
+		SpawnFlaskParticlesPacket msg = new SpawnFlaskParticlesPacket(pos, color);
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
 	public static void sendClawParticles(Vec3 pos, ParticleColor color, double radius, ResourceKey<Level> dimension) {
-		PacketSpawnBloodClawParticles msg = new PacketSpawnBloodClawParticles(pos, color);
+		SpawnBloodClawParticlesPacket msg = new SpawnBloodClawParticlesPacket(pos, color);
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
 	public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
 			ResourceKey<Level> dimension) {
-		PacketSpawnLivingToolParticles msg = new PacketSpawnLivingToolParticles(pos, color);
+		SpawnLivingToolParticlesPacket msg = new SpawnLivingToolParticlesPacket(pos, color);
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
-
+	public static void sendRadialInventorySlotChange(int slot, boolean offhand) {
+		PacketHandler.CHANNELKNOWNMANIPS.sendTo(new RadialInventorySlotChangePacket(slot, offhand),
+				Minecraft.getInstance().getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
+	}
+	
+	  private static <T extends BaseMessage> boolean validateBasics(T message, NetworkEvent.Context ctx) {
+	        LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+	        ctx.setPacketHandled(true);
+	        if (sideReceived != LogicalSide.SERVER) {
+	            Hemomancy.LOGGER.error(message.getClass().getName() + " received on wrong side: " + sideReceived);
+	            return false;
+	        }
+	        if (!message.isMessageValid()) {
+	            Hemomancy.LOGGER.error(message.getClass().getName() + " was invalid: " + message);
+	            return false;
+	        }
+	        return true;
+	    }
+	
+	public static void handleRadialInventorySlotChangeMessage(RadialInventorySlotChangePacket message,
+			Supplier<NetworkEvent.Context> ctxSupplier) {
+		NetworkEvent.Context ctx = ctxSupplier.get();
+		if (!PacketHandler.validateBasics(message, ctx)) {
+			return;
+		}
+		ServerPlayer sendingPlayer = ctx.getSender();
+		if (sendingPlayer == null) {
+			Hemomancy.LOGGER.error("EntityPlayerMP was null when RadialInventorySlotChangeMessage was received");
+			return;
+		}
+		ctx.enqueueWork(() -> {
+			ItemStack stack;
+			ItemStack itemStack = stack = message.isOffhand() ? sendingPlayer.getOffhandItem() : sendingPlayer.getMainHandItem();
+			if (stack.getItem() instanceof IRadialInventorySelect) {
+				((IRadialInventorySelect) stack.getItem()).setSlot((Player) sendingPlayer, stack, message.getSlot(),
+						message.isOffhand(), false);
+			}
+		});
+	}
 }

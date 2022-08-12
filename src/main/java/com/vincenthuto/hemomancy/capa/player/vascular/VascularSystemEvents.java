@@ -7,7 +7,7 @@ import java.util.Map;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
+import com.vincenthuto.hemomancy.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.client.Minecraft;
@@ -42,7 +42,7 @@ public class VascularSystemEvents {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketVascularSystemServer(BloodFlow));
+				new VascularSystemServerPacket(BloodFlow));
 //		player.displayClientMessage(
 //				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
@@ -52,7 +52,7 @@ public class VascularSystemEvents {
 		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketVascularSystemServer(BloodFlow));
+				new VascularSystemServerPacket(BloodFlow));
 //		player.displayClientMessage(
 //				new TextComponent("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
@@ -79,7 +79,7 @@ public class VascularSystemEvents {
 				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketVascularSystemServer(section.getVascularSystem()));
+						new VascularSystemServerPacket(section.getVascularSystem()));
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public class VascularSystemEvents {
 						system.setVascularSectionHealth(section, -player.level.random.nextFloat() * 3f);
 						PacketHandler.CHANNELVASCULARSYSTEM.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new PacketVascularSystemServer(system.getVascularSystem()));
+								new VascularSystemServerPacket(system.getVascularSystem()));
 					}
 				}
 			}

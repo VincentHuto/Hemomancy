@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -56,7 +56,7 @@ public class BloodManipulation extends ForgeRegistryEntry<BloodManipulation> {
 						volume.drain(cost);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new PacketBloodVolumeServer(volume));
+								new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);
 					} else {
 						player.displayClientMessage(new TextComponent("Not Enough Alignment for Manipulation!")

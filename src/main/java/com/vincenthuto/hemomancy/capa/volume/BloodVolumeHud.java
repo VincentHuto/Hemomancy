@@ -10,7 +10,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeClient;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeClientPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -87,7 +87,7 @@ public class BloodVolumeHud extends Screen {
 				if (bloodCap.isActive()) {
 
 					matrix.pushPose();
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodVolumeClient());
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
 					bloodVolume = bloodCap.getBloodVolume();
 					bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 					String m = String.valueOf(bloodVolume);

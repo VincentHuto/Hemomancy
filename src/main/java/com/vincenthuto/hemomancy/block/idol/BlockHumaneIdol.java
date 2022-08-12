@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.block.idol;
 
-import com.vincenthuto.hemomancy.tile.BlockEntityHumaneIdol;
+import com.vincenthuto.hemomancy.tile.HumaneIdolBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -85,6 +85,6 @@ public class BlockHumaneIdol extends Block implements EntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new BlockEntityHumaneIdol(p_153215_, p_153216_);
+		return new HumaneIdolBlockEntity(p_153215_, p_153216_);
 	}
 }

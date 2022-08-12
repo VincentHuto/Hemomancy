@@ -5,8 +5,8 @@ import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
+import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +38,7 @@ public class KnownManipulationEvents {
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new KnownManipulationServerPacket(known));
 
 	}
 
@@ -70,7 +70,7 @@ public class KnownManipulationEvents {
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new KnownManipulationServerPacket(known));
 	}
 
 	@SubscribeEvent
@@ -85,7 +85,7 @@ public class KnownManipulationEvents {
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
-		PacketSyncTrackingAvatar pkt = new PacketSyncTrackingAvatar(player.getId(), isAvatarActive);
+		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
 		for (Player receiver : receivers) {
 			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
 		}

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.capa.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.tile.IBloodTile;
 
 import net.minecraft.ChatFormatting;
@@ -32,7 +32,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
-		if (event.getObject().getItem() instanceof ItemBloodGourd) {
+		if (event.getObject().getItem() instanceof BloodGourdItem) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}
@@ -50,7 +50,7 @@ public class BloodVolumeEvents {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume));
+				new BloodVolumeServerPacket(volume));
 		player.displayClientMessage(
 				new TextComponent("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
 		player.displayClientMessage(
@@ -68,7 +68,7 @@ public class BloodVolumeEvents {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume));
+				new BloodVolumeServerPacket(volume));
 		player.displayClientMessage(
 				new TextComponent(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
@@ -82,7 +82,7 @@ public class BloodVolumeEvents {
 			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalStateException::new);
 			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playernew),
-					new PacketBloodVolumeServer(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
+					new BloodVolumeServerPacket(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
 							bloodVolumeNew.getBloodVolume(), bloodVolumeNew.getBloodLine()));
 		}
 	}

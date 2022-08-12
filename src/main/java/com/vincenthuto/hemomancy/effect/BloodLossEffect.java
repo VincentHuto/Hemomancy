@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -58,7 +58,7 @@ public class BloodLossEffect extends MobEffect {
 						.orElseThrow(NullPointerException::new);
 				playerVolume.drain(0.5f*amplifier);
 				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new PacketBloodVolumeServer(playerVolume));
+						new BloodVolumeServerPacket(playerVolume));
 			}
 		} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
 			entity.hurt(ItemInit.bloodLoss, 0.5F);

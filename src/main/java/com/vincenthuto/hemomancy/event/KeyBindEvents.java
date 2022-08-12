@@ -3,13 +3,13 @@ package com.vincenthuto.hemomancy.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketChangeSelectedManip;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
-import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
-import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
-import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
-import com.vincenthuto.hemomancy.network.particle.PacketGroundBloodDraw;
+import com.vincenthuto.hemomancy.network.capa.manips.ChangeSelectedManipPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UseContManipKeyPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.UseQuickManipKeyPacket;
+import com.vincenthuto.hemomancy.network.keybind.BloodCraftingKeyPressPacket;
+import com.vincenthuto.hemomancy.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.network.morphling.ChangeMorphKeyPacket;
+import com.vincenthuto.hemomancy.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -24,22 +24,22 @@ public class KeyBindEvents {
 	public static void onClientTick(ClientTickEvent event) {
 
 		if (KeyBindInit.bloodFormation.consumeClick()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodFormationKeyPress());
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodFormationKeyPressPacket());
 		}
 
 		if (KeyBindInit.bloodCrafting.consumeClick()) {
 			for (RecipeBaseBloodCrafting pattern : BloodCraftingRecipes.RECIPES) {
 				if (HLClientUtils.getClientPlayer().getMainHandItem().getItem() == pattern.getHeldItem()) {
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-							new PacketBloodCraftingKeyPress(HLClientUtils.getClientPlayer().getMainHandItem()));
+							new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
 				}
 			}
 		}
 		if (KeyBindInit.bloodDraw.isDown()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketGroundBloodDraw(HLClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (KeyBindInit.toggleMorphlingOpenJar.consumeClick()) {
-			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new PacketChangeMorphKey());
+			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
 
 		}
 //		if (KeyBindInit.displayKnownManips.isPressed()) {
@@ -47,13 +47,13 @@ public class KeyBindEvents {
 //		}
 		if (KeyBindInit.cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
-					.sendToServer(new PacketChangeSelectedManip(HLClientUtils.getPartialTicks()));
+					.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (KeyBindInit.useQuickManip.consumeClick()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseQuickManipKey(HLClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UseQuickManipKeyPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (KeyBindInit.useContManip.isDown()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketUseContManipKey(HLClientUtils.getPartialTicks()));
+			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UseContManipKeyPacket(HLClientUtils.getPartialTicks()));
 		}
 	}
 
