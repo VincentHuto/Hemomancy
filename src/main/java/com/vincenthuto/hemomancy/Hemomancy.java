@@ -29,13 +29,20 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.radial.RadialClientEvents;
+import com.vincenthuto.hemomancy.radial.finder.CharmExtensionSlot;
+import com.vincenthuto.hemomancy.radial.finder.CharmFinderCharmSlot;
+import com.vincenthuto.hemomancy.radial.finder.CharmSlotContainer;
+import com.vincenthuto.hemomancy.radial.finder.CharmSlotScreen;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -54,11 +61,16 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -108,6 +120,9 @@ public class Hemomancy {
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
+		modEventBus.addListener(this::loadComplete);
+		modEventBus.addGenericListener(MenuType.class, this::registerContainers);
+
 		modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
 		forgeBus.register(this);
 		forgeBus.addListener(MorphlingJarEvents::pickupEvent);
@@ -120,6 +135,27 @@ public class Hemomancy {
 		forgeBus.register(EarthenVeinLocEvents.class);
 		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
 
+		ModLoadingContext modLoadingContext = ModLoadingContext.get();
+		modEventBus.addListener(this::modConfig);
+		modLoadingContext.registerConfig(ModConfig.Type.SERVER, ConfigData.SERVER_SPEC);
+		modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigData.CLIENT_SPEC);
+		modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigData.COMMON_SPEC);
+
+	}
+
+	public void modConfig(ModConfigEvent event) {
+		ModConfig config = event.getConfig();
+		if (config.getSpec() == ConfigData.CLIENT_SPEC)
+			ConfigData.refreshClient();
+		else if (config.getSpec() == ConfigData.SERVER_SPEC)
+			ConfigData.refreshServer();
+	}
+
+	public void loadComplete(FMLLoadCompleteEvent event) {
+		event.enqueueWork(() -> {
+			if (FMLEnvironment.dist == Dist.CLIENT)
+				RadialClientEvents.initKeybinds();
+		});
 	}
 
 	private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
@@ -222,9 +258,15 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
+		event.enqueueWork(() -> {
+			MenuScreens.register(CharmSlotContainer.TYPE, CharmSlotScreen::new);
+		});
 
 	}
-
+	public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
+		event.getRegistry()
+				.registerAll(new MenuType<>(CharmSlotContainer::new).setRegistryName("charm_slot_container"));
+	}
 	private void commonSetup(final FMLCommonSetupEvent event) {
 
 		HemoEntityPredicates.init();
@@ -233,6 +275,9 @@ public class Hemomancy {
 		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
+		CharmExtensionSlot.register();
+		CharmFinderCharmSlot.initFinder();
+		
 	}
 
 	// Combined a few methods into one more generic one

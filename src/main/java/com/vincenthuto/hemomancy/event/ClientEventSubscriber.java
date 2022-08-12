@@ -9,6 +9,8 @@ import com.vincenthuto.hemomancy.gui.morphlingjar.ScreenMorphlingJar;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
+import com.vincenthuto.hemomancy.radial.finder.CharmSlot;
+import com.vincenthuto.hemomancy.radial.finder.LayerCharm;
 import com.vincenthuto.hemomancy.render.tile.RenderDendriticDistributor;
 import com.vincenthuto.hemomancy.render.tile.RenderEarthenVein;
 import com.vincenthuto.hemomancy.render.tile.RenderMorphlingIncubator;
@@ -17,8 +19,17 @@ import com.vincenthuto.hemomancy.render.tile.RenderUnstainedPodium;
 import com.vincenthuto.hemomancy.render.tile.RenderVisceralRecaller;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,4 +62,40 @@ public class ClientEventSubscriber {
 
 	}
 
+	@SubscribeEvent
+	public static void constructLayers(EntityRenderersEvent.AddLayers event) {
+
+		addLayerToEntity(event, EntityType.ARMOR_STAND);
+		addLayerToEntity(event, EntityType.ZOMBIE);
+		addLayerToEntity(event, EntityType.SKELETON);
+		addLayerToEntity(event, EntityType.HUSK);
+		addLayerToEntity(event, EntityType.DROWNED);
+		addLayerToEntity(event, EntityType.STRAY);
+		addLayerToPlayerSkin(event, "default");
+		addLayerToPlayerSkin(event, "slim");
+
+	}
+
+	@SubscribeEvent
+	public static void textureStitch(TextureStitchEvent.Pre event) {
+		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
+			event.addSprite(CharmSlot.SLOT_BACKGROUND);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
+		EntityRenderer<? extends Player> render = event.getSkin(skinName);
+		if (render instanceof LivingEntityRenderer livingRenderer) {
+			livingRenderer.addLayer(new LayerCharm<>(livingRenderer));
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
+			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
+		R renderer = event.getRenderer(entityType);
+		if (renderer != null)
+			renderer.addLayer(new LayerCharm(renderer));
+	}
 }

@@ -39,7 +39,7 @@ public class KeyBindEvents {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketGroundBloodDraw(HLClientUtils.getPartialTicks()));
 		}
 		if (KeyBindInit.toggleMorphlingOpenJar.consumeClick()) {
-			PacketHandler.CHANNELMAIN.sendToServer(new PacketChangeMorphKey());
+			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new PacketChangeMorphKey());
 
 		}
 //		if (KeyBindInit.displayKnownManips.isPressed()) {

@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.network.capa.manips.PacketUseContManipKey;
 import com.vincenthuto.hemomancy.network.capa.manips.PacketUseQuickManipKey;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodCraftingKeyPress;
 import com.vincenthuto.hemomancy.network.keybind.PacketBloodFormationKeyPress;
+import com.vincenthuto.hemomancy.network.morphling.PacketChangeMorphKey;
 import com.vincenthuto.hemomancy.network.morphling.PacketJarTogglePickup;
 import com.vincenthuto.hemomancy.network.morphling.PacketOpenJar;
 import com.vincenthuto.hemomancy.network.morphling.PacketOpenStaff;
@@ -30,9 +31,14 @@ import com.vincenthuto.hemomancy.network.particle.PacketSpawnAvatarParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnBloodClawParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnFlaskParticles;
 import com.vincenthuto.hemomancy.network.particle.PacketSpawnLivingToolParticles;
+import com.vincenthuto.hemomancy.radial.SwapItems;
+import com.vincenthuto.hemomancy.radial.finder.PacketCharmChange;
+import com.vincenthuto.hemomancy.radial.finder.PacketCharmContainerSlot;
+import com.vincenthuto.hemomancy.radial.finder.PacketOpenCharm;
+import com.vincenthuto.hemomancy.radial.finder.PacketSyncCharmSlotContents;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -54,10 +60,6 @@ public class PacketHandler {
 	public static final SimpleChannel CHANNELBLOODVOLUME = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "bloodvolumechannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
-	public static final SimpleChannel CHANNELMAIN = NetworkRegistry.ChannelBuilder
-			.named(new ResourceLocation(Hemomancy.MOD_ID + ("main_channel")))
-			.clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
-			.networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -75,9 +77,32 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
-		
-		CHANNELMAIN.registerMessage(networkID++, PacketClearRecallerState.class, PacketClearRecallerState::encode,
-				PacketClearRecallerState::decode, PacketClearRecallerState.Handler::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSpawnLightningParticle.class,
+				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
+				PacketSpawnLightningParticle::handle);
+
+		CHANNELKNOWNMANIPS
+				.messageBuilder(PacketSyncCharmSlotContents.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
+				.encoder(PacketSyncCharmSlotContents::encode).decoder(PacketSyncCharmSlotContents::new)
+				.consumer(PacketSyncCharmSlotContents::handle).add();
+
+		CHANNELKNOWNMANIPS.messageBuilder(PacketOpenCharm.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(PacketOpenCharm::encode).decoder(PacketOpenCharm::new).consumer(PacketOpenCharm::handle).add();
+
+		CHANNELKNOWNMANIPS.messageBuilder(PacketOpenCharm.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(PacketOpenCharm::encode).decoder(PacketOpenCharm::new).consumer(PacketOpenCharm::handle).add();
+
+		CHANNELKNOWNMANIPS.messageBuilder(PacketCharmContainerSlot.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(PacketCharmContainerSlot::encode).decoder(PacketCharmContainerSlot::new)
+				.consumer(PacketCharmContainerSlot::handle).add();
+
+		CHANNELKNOWNMANIPS.messageBuilder(PacketCharmChange.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
+				.encoder(PacketCharmChange::encode).decoder(PacketCharmChange::new).consumer(PacketCharmChange::handle)
+				.add();
+
+
+		CHANNELKNOWNMANIPS.messageBuilder(SwapItems.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
+				.encoder(SwapItems::encode).decoder(SwapItems::new).consumer(SwapItems::handle).add();
 
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketBloodTendencyClient.class,
 				PacketBloodTendencyClient::encode, PacketBloodTendencyClient::decode,
@@ -159,6 +184,13 @@ public class PacketHandler {
 				PacketToggleJarMessage::decode, PacketToggleJarMessage::handle);
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketOpenStaff.class, PacketOpenStaff::encode,
 				PacketOpenStaff::decode, PacketOpenStaff::handle);
+
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketUpdateLivingStaffMorph.class,
+				PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode,
+				PacketUpdateLivingStaffMorph.Handler::handle);
+
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, PacketChangeMorphKey.class, PacketChangeMorphKey::encode,
+				PacketChangeMorphKey::decode, PacketChangeMorphKey.Handler::handle);
 
 	}
 

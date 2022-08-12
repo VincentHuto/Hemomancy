@@ -167,7 +167,7 @@ public class ScreenVisceralRecaller extends AbstractContainerScreen<MenuVisceral
 		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, leftPos + 152,
 				topPos + 47, 16, 16, 176, 0, null, (press) -> {
 					if (press instanceof GuiButtonTextured) {
-						PacketHandler.CHANNELMAIN.sendToServer(new PacketClearRecallerState());
+						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketClearRecallerState());
 					}
 				}));
 

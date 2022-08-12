@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.init;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.KeyMapping;
@@ -14,8 +15,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class KeyBindInit {
-	public static final KeyMapping toggleRuneBinderPickup = new KeyMapping("key.hemomancy.runebinderpickup.desc",
-			GLFW.GLFW_KEY_B, "key.hemomancy.category");
 	public static final KeyMapping bloodFormation = new KeyMapping("key.hemomancy.bloodformation.desc", GLFW.GLFW_KEY_F,
 			"key.hemomancy.category");
 	public static final KeyMapping bloodCrafting = new KeyMapping("key.hemomancy.bloodcrafting.desc", GLFW.GLFW_KEY_C,
@@ -32,12 +31,9 @@ public class KeyBindInit {
 			"key.hemomancy.category");
 	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
 			"key.hemomancy.category");
-    public static final KeyMapping radialMenuOpen = new KeyMapping("key.hemomancy.spellbookopen", 90, "key.categories.mna");
 
-	
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
-		ClientRegistry.registerKeyBinding(toggleRuneBinderPickup);
 		ClientRegistry.registerKeyBinding(bloodFormation);
 		ClientRegistry.registerKeyBinding(bloodCrafting);
 		ClientRegistry.registerKeyBinding(bloodDraw);
@@ -46,9 +42,7 @@ public class KeyBindInit {
 		ClientRegistry.registerKeyBinding(cycleSelectedManip);
 		ClientRegistry.registerKeyBinding(useQuickManip);
 		ClientRegistry.registerKeyBinding(useContManip);
-		
-        ClientRegistry.registerKeyBinding(radialMenuOpen);
-
+		ClientRegistry.registerKeyBinding(useContManip);
 
 	}
 }

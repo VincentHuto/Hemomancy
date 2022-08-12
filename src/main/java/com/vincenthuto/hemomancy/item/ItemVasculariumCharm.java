@@ -2,14 +2,21 @@ package com.vincenthuto.hemomancy.item;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
+import com.vincenthuto.hemomancy.radial.finder.CharmInventory;
+import com.vincenthuto.hemomancy.radial.finder.ICharmSlotItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -31,12 +38,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 
-public class ItemVasculariumCharm extends Item {
+public class ItemVasculariumCharm extends Item implements ICharmSlotItem {
+
+	public static final Capability<ICharmSlotItem> CHARM_SLOT_ITEM=CapabilityManager.get(new CapabilityToken<>(){});
+    public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>(){});
 
 	public ItemVasculariumCharm(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
 		super(properties.stacksTo(1));
-
 	}
 
 	@Override
@@ -88,6 +103,26 @@ public class ItemVasculariumCharm extends Item {
 	}
 
 	@Override
+	public ICapabilityProvider initCapabilities(final ItemStack stack, CompoundTag nbt) {
+		return new ICapabilityProvider() {
+            final CharmInventory itemHandler = new CharmInventory(stack);
+
+			final LazyOptional<ICharmSlotItem> extensionSlotInstance = LazyOptional.of(() -> ItemVasculariumCharm.this);
+            final LazyOptional<IItemHandler> itemHandlerInstance = LazyOptional.of(() -> itemHandler);
+
+			@Override
+			@Nonnull
+			public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable Direction side) {
+				   if (cap == ITEM_HANDLER)
+	                    return itemHandlerInstance.cast();
+				if (cap == CHARM_SLOT_ITEM)
+					return extensionSlotInstance.cast();
+				return LazyOptional.empty();
+			}
+		};
+	}
+
+	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		tooltip.add(new TextComponent(ChatFormatting.RED + "So you've chosen the path of blood."));
@@ -105,6 +140,5 @@ public class ItemVasculariumCharm extends Item {
 
 		return true;
 	}
-
 
 }

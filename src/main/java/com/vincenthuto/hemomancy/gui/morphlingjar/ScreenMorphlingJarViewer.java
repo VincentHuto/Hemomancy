@@ -199,7 +199,7 @@ public class ScreenMorphlingJarViewer extends Screen {
 						player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
 						ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
 						if (morphStack.getItem() instanceof ItemMorphling) {
-							PacketHandler.CHANNELMAIN.sendToServer(
+							PacketHandler.CHANNELMORPHLINGJAR.sendToServer(
 									new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
 						}
 

@@ -37,7 +37,5 @@ public class ContainerInit {
 
 	public static final RegistryObject<MenuType<MenuLivingSyringe>> living_syringe = CONTAINERS
 			.register("living_syringe", () -> IForgeMenuType.create(MenuLivingSyringe::new));
-	
+
 }
-
-

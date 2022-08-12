@@ -6,6 +6,9 @@ import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.radial.finder.CharmExtensionSlot;
+import com.vincenthuto.hemomancy.radial.finder.CharmSlotCapability;
+import com.vincenthuto.hemomancy.radial.finder.ICharmSlotItem;
 
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +25,9 @@ public class CapabilityInit {
 		event.register(IBloodVolume.class);
 		event.register(IKnownManipulations.class);
 		event.register(IEarthenVeinLoc.class);
+		event.register(ICharmSlotItem.class);
+		event.register(CharmExtensionSlot.class);
+		CharmSlotCapability.register(event);
 
 	}
 
