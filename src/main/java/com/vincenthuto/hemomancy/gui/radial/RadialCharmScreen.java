@@ -4,12 +4,21 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.charm.CharmFinder;
+import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.event.RadialClientEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
+import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentManipPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,6 +27,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -139,28 +149,34 @@ public class RadialCharmScreen extends Screen {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
-			VasculariumCharmItem.Commands[] values = VasculariumCharmItem.Commands.values();
-			for (int i = 0; i < values.length; ++i) {
-				VasculariumCharmItem.Commands c = values[i];
-				final int index = i;
+			IBloodVolume volCap = mc.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+			IKnownManipulations manips = mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(NullPointerException::new);
 
-				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, i, c.getIcon(), 0, 0, 16, 16, 16, 16,
-						new TranslatableComponent("mna.construct.command.incidental." + c.toString().toLowerCase())) {
+			for (int i = 0; i < manips.getKnownManips().size(); i++) {
+				BloodManipulation c = (BloodManipulation) manips.getKnownManips().keySet().toArray()[i];
+				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, i,
+						new ResourceLocation(Hemomancy.MOD_ID, "textures/item/memory_" + c.getName() + ".png"), 0, 0,
+						16, 16, 16, 16, new TranslatableComponent(c.getProperName())) {
 					@Override
 					public boolean onClick() {
+						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentManipPacket(getSlot()));
+
 						RadialCharmScreen.this.menu.close();
 						return true;
 					}
 				};
 				item.setVisible(true);
-			this.cachedMenuItems.add(item);
+				this.cachedMenuItems.add(item);
 			}
 			this.menu.clear();
 			this.menu.addAll(this.cachedMenuItems);
 			this.needsRecheckStacks = false;
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			this.menu.setCentralText((Component) new TranslatableComponent("gui.mna.spellbook.empty"));
+			this.menu.setCentralText((Component) new TranslatableComponent("No Known Manipulations")
+					.append(new TranslatableComponent("\ntest")));
 		} else {
 			this.menu.setCentralText(null);
 		}

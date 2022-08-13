@@ -4,7 +4,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
-import com.vincenthuto.hemomancy.entity.blood.EntityBloodShot;
+import com.vincenthuto.hemomancy.entity.blood.BloodShotEntity;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
@@ -29,7 +29,7 @@ public class BloodShotManip extends BloodManipulation {
 		Vec3 vector3d = player.getViewVector(1.0F);
 		Vector3f vector3f = new Vector3f(vector3d);
 		vector3f.transform(quaternion);
-		EntityBloodShot shot = new EntityBloodShot(world, player);
+		BloodShotEntity shot = new BloodShotEntity(world, player);
 		shot.shoot(vector3f.x(), vector3f.y(), vector3f.z(), 4.5F, 1.0f);
 		world.addFreshEntity(shot);
 	}

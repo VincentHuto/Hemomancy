@@ -52,8 +52,8 @@ public class UseContManipKeyPacket {
 						.orElseThrow(NullPointerException::new);
 				if (volume.isActive()) {
 					if (known.getSelectedManip() != null) {
-						BloodManipulation selectedManip = ManipulationInit
-								.getByName(known.getSelectedManip().getName());
+						BloodManipulation selectedManip = known.getSelectedManip();
+
 						if (selectedManip != null) {
 							// Continuous and Charged
 							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS

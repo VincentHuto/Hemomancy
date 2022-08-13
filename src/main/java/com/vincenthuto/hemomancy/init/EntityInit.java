@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.entity.blood.BloodCloudCarrierEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.entity.blood.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.entity.blood.TrackingBloodOrbEntity;
-import com.vincenthuto.hemomancy.entity.blood.EntityBloodShot;
+import com.vincenthuto.hemomancy.entity.blood.BloodShotEntity;
 import com.vincenthuto.hemomancy.entity.blood.EntityWretchedWill;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronPillar;
 import com.vincenthuto.hemomancy.entity.blood.iron.EntityIronSpike;
@@ -172,8 +172,8 @@ public class EntityInit {
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet").toString()));
 
-	public static final RegistryObject<EntityType<EntityBloodShot>> blood_shot = ENTITY_TYPES.register("blood_shot",
-			() -> EntityType.Builder.<EntityBloodShot>of(EntityBloodShot::new, MobCategory.MISC).sized(0.5F, 0.5F)
+	public static final RegistryObject<EntityType<BloodShotEntity>> blood_shot = ENTITY_TYPES.register("blood_shot",
+			() -> EntityType.Builder.<BloodShotEntity>of(BloodShotEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "blood_shot").toString()));
 
@@ -183,8 +183,8 @@ public class EntityInit {
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "wretched_will").toString()));
 
-	public static final RegistryObject<EntityType<EntityBloodShot>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
-			() -> EntityType.Builder.<EntityBloodShot>of(EntityBloodShot::new, MobCategory.MISC).sized(0.5F, 0.5F)
+	public static final RegistryObject<EntityType<BloodShotEntity>> dark_arrow = ENTITY_TYPES.register("dark_arrow",
+			() -> EntityType.Builder.<BloodShotEntity>of(BloodShotEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "dark_arrow").toString()));
 

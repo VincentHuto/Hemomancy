@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/memory_blood_absorbtion"
+    "layer0": "hemomancy:item/memory_ferric_transmutation"
   }
 }

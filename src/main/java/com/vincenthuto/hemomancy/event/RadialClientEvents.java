@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RadialClientEvents {
 
-
 	public static void wipeOpen() {
 		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
 		while (KeyBindInit.openVascCharmMenu.consumeClick()) {
@@ -53,11 +52,8 @@ public class RadialClientEvents {
 			if (toolMenuKeyIsDown && !toolMenuKeyWasDown) {
 				while (KeyBindInit.openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
-						ItemStack inHand = mc.player.getMainHandItem();
-						if (ConfigData.isItemStackAllowed(inHand)) {
-							CharmFinder.findCharm(mc.player)
-									.ifPresent((getter) -> mc.setScreen(new RadialCharmScreen(getter)));
-						}
+						CharmFinder.findCharm(mc.player)
+								.ifPresent((getter) -> mc.setScreen(new RadialCharmScreen(getter)));
 					}
 				}
 			}

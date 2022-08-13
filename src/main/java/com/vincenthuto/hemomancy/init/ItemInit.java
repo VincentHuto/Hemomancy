@@ -187,19 +187,19 @@ public class ItemInit {
 			() -> new HematicMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blood_absorbtion));
+					ManipulationInit.blood_absorbtion));
 	public static final RegistryObject<Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blood_projection));
+					ManipulationInit.blood_projection));
 	public static final RegistryObject<Item> memory_venous_travel = BASEITEMS.register("memory_venous_travel",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.venous_recaller));
+					ManipulationInit.venous_travel));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
 	public static final RegistryObject<Item> memory_blood_aneurysm = BASEITEMS.register("memory_blood_aneurysm",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.aneurysm));
+					ManipulationInit.blood_aneurysm));
 	public static final RegistryObject<Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_rush));
@@ -225,7 +225,10 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.summon_avatar));
-
+	public static final RegistryObject<Item> memory_ferric_transmutation = BASEITEMS.register(
+			"memory_ferric_transmutation",
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.ferric_transmutation));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
@@ -372,7 +375,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
 			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
 
-
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
 			() -> new ModSpawnEggItem(EntityInit.leech, 7761777, 4206080,
@@ -410,8 +412,8 @@ public class ItemInit {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
 				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
 				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
-				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster,
-				ItemInit.spawn_egg_fargone, ItemInit.spawn_egg_leech);
+				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
+				ItemInit.spawn_egg_leech);
 	}
 
 	@SuppressWarnings("unchecked")
