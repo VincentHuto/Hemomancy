@@ -1,8 +1,9 @@
-package com.vincenthuto.hemomancy.capa.player.charm;
+package com.vincenthuto.hemomancy.container;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.container.ICharmMenu;
+import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotCapability;
+import com.vincenthuto.hemomancy.capa.player.charm.ICharmSlot;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -53,8 +54,8 @@ public class CharmSlotItemHandler implements ICharmSlot {
 	}
 
 	@Override
-	public void onContentsChanged() {
-		owner.onContentsChanged(this);
+	public void onCharmContentsChanged() {
+		owner.onCharmContentsChanged(this);
 	}
 
 	private void notifyEquip(ItemStack stack) {

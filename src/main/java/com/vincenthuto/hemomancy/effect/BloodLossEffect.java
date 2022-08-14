@@ -51,25 +51,34 @@ public class BloodLossEffect extends MobEffect {
 	@Override
 	public void applyEffectTick(LivingEntity entity, int amplifier) {
 		// Entities without blood cant lose any...
-		if (entity instanceof Player) {
-			if (!entity.level.isClientSide) {
-				Player playerIn = (Player) entity;
-				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-						.orElseThrow(NullPointerException::new);
-				playerVolume.drain(0.5f*amplifier);
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new BloodVolumeServerPacket(playerVolume));
-			}
-		} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
-			entity.hurt(ItemInit.bloodLoss, 0.5F);
-			if (entity.level.random.nextDouble() > 0.999) {
+
+		if (entity != null) {
+
+			if (entity instanceof Player) {
 				if (!entity.level.isClientSide) {
-					ServerLevel sLevel = (ServerLevel) entity.level;
-					sLevel.addFreshEntity(new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(),
-							new ItemStack(ItemInit.sanguine_formation.get())));
+					Player playerIn = (Player) entity;
+					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+							.orElseThrow(NullPointerException::new);
+					if (playerVolume != null) {
+						playerVolume.drain(0.5f * amplifier);
+						PacketHandler.CHANNELBLOODVOLUME.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
+								new BloodVolumeServerPacket(playerVolume));
+					}
+
+				}
+			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
+				entity.hurt(ItemInit.bloodLoss, 0.5F);
+				if (entity.level.random.nextDouble() > 0.999) {
+					if (!entity.level.isClientSide) {
+						ServerLevel sLevel = (ServerLevel) entity.level;
+						sLevel.addFreshEntity(new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(),
+								new ItemStack(ItemInit.sanguine_formation.get())));
+					}
 				}
 			}
 		}
+
 	}
 
 }

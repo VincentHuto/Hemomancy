@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.container.CharmSlotItemHandler;
 import com.vincenthuto.hemomancy.container.ICharmMenu;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.charm.PacketSyncCharmSlotContents;
@@ -70,7 +71,7 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 				event.addCapability(CAPABILITY_ID, new ICapabilitySerializable<CompoundTag>() {
 					final CharmExtensionSlot extensionContainer = new CharmExtensionSlot((LivingEntity) entity) {
 						@Override
-						public void onContentsChanged(CharmSlotItemHandler slot) {
+						public void onCharmContentsChanged(CharmSlotItemHandler slot) {
 							if (!getOwner().level.isClientSide)
 								syncTo(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(this::getOwner));
 						}
@@ -142,11 +143,11 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 			LivingEntity entity = event.getEntityLiving();
 
 			get(entity).ifPresent((instance) -> {
-				CharmSlotItemHandler banner = instance.getCharm();
-				ItemStack stack = banner.getContents();
+				CharmSlotItemHandler charm = instance.getCharm();
+				ItemStack stack = charm.getContents();
 				if (EnchantmentHelper.hasVanishingCurse(stack)) {
 					stack = ItemStack.EMPTY;
-					banner.setContents(stack);
+					charm.setContents(stack);
 				}
 				if (stack.getCount() > 0) {
 					if (entity instanceof Player player) {
@@ -155,11 +156,11 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 							Collection<ItemEntity> old = entity.captureDrops(event.getDrops());
 							player.drop(stack, true, false);
 							entity.captureDrops(old);
-							banner.setContents(ItemStack.EMPTY);
+							charm.setContents(ItemStack.EMPTY);
 						}
 					} else {
 						entity.spawnAtLocation(stack);
-						banner.setContents(ItemStack.EMPTY);
+						charm.setContents(ItemStack.EMPTY);
 					}
 				}
 			});
@@ -207,11 +208,11 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 		@Override
 		protected void onContentsChanged(int slot) {
 			super.onContentsChanged(slot);
-			banner.onContentsChanged();
+			charm.onCharmContentsChanged();
 		}
 	};
-	private final CharmSlotItemHandler banner = new CharmSlotItemHandler(this, CHARM, inventory, 0);
-	private final ImmutableList<CharmSlotItemHandler> slots = ImmutableList.of(banner);
+	private final CharmSlotItemHandler charm = new CharmSlotItemHandler(this, CHARM, inventory, 0);
+	private final ImmutableList<CharmSlotItemHandler> slots = ImmutableList.of(charm);
 
 	private CharmExtensionSlot(LivingEntity owner) {
 		this.owner = owner;
@@ -225,18 +226,18 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 
 	@Nonnull
 	@Override
-	public ImmutableList<CharmSlotItemHandler> getSlots() {
+	public ImmutableList<CharmSlotItemHandler> getCharmSlots() {
 		return slots;
 	}
 
 	@Override
-	public void onContentsChanged(CharmSlotItemHandler slot) {
+	public void onCharmContentsChanged(CharmSlotItemHandler slot) {
 
 	}
 
 	@Nonnull
 	public CharmSlotItemHandler getCharm() {
-		return banner;
+		return charm;
 	}
 
 	private void tickAllSlots() {
@@ -246,7 +247,7 @@ public class CharmExtensionSlot implements ICharmMenu, INBTSerializable<Compound
 	}
 
 	public void setAll(NonNullList<ItemStack> stacks) {
-		List<CharmSlotItemHandler> slots = getSlots();
+		List<CharmSlotItemHandler> slots = getCharmSlots();
 		for (int i = 0; i < slots.size(); i++) {
 			slots.get(i).setContents(stacks.get(i));
 		}

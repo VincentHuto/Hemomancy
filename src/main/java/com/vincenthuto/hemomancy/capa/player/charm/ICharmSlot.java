@@ -22,7 +22,7 @@ public interface ICharmSlot {
 
 	void setContents(@Nonnull ItemStack stack);
 
-	void onContentsChanged();
+	void onCharmContentsChanged();
 
 	default boolean canEquip(@Nonnull ItemStack stack) {
 		return stack.getCapability(CharmSlotCapability.INSTANCE, null)

@@ -38,7 +38,6 @@ import net.minecraftforge.items.IItemHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialCharmScreen extends Screen {
-	private final CharmFinder.CharmGetter getter;
 	private ItemStack stackEquipped;
 	private IItemHandler inventory;
 	private Minecraft mc;
@@ -54,13 +53,12 @@ public class RadialCharmScreen extends Screen {
 		return itemRenderer;
 	}
 
-	public RadialCharmScreen(CharmFinder.CharmGetter getter) {
+	public RadialCharmScreen(ItemStack getter) {
 		super(new TextComponent("RADIAL MENU"));
 
 		this.mc = Minecraft.getInstance();
 
-		this.getter = getter;
-		this.stackEquipped = getter.getCharm();
+		this.stackEquipped = getter;
 		inventory = stackEquipped.getCount() > 0
 				? stackEquipped.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(null)
 				: null;

@@ -85,26 +85,28 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
 		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
+		if (worldIn.isClientSide) {
 
-		HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
-		if (trace.getType() == Type.BLOCK) {
-			if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
-				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
-						.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
-				//	System.out.println("hit fillable tile");
-					IBloodVolume tileVolume = worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
-							.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
-					tileVolume.fillFromSource(playerVolume, 100f);
+			HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
+			if (trace.getType() == Type.BLOCK) {
+				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
+					if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+							.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
+						// System.out.println("hit fillable tile");
+						IBloodVolume tileVolume = worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+								.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+						tileVolume.fillFromSource(playerVolume, 100f);
 
+					}
 				}
-			}
-			if (!worldIn.isClientSide) {
 
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new BloodVolumeServerPacket(playerVolume));
 			}
 		}
+		if (!worldIn.isClientSide) {
 
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+					new BloodVolumeServerPacket(playerVolume));
+		}
 	}
 
 	@Override

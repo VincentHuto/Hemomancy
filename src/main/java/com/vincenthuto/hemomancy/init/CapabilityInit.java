@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
 import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotCapability;
 import com.vincenthuto.hemomancy.capa.player.charm.ICharmSlotItem;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.capa.player.rune.IRune;
+import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.player.tendency.IBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
@@ -25,6 +27,8 @@ public class CapabilityInit {
 		event.register(IBloodVolume.class);
 		event.register(IKnownManipulations.class);
 		event.register(IEarthenVeinLoc.class);
+		event.register(IRune.class);
+		event.register(IRunesItemHandler.class);
 		event.register(ICharmSlotItem.class);
 		event.register(CharmExtensionSlot.class);
 		CharmSlotCapability.register(event);

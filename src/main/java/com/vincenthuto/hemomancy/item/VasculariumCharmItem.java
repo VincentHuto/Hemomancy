@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.charm.ICharmSlotItem;
+import com.vincenthuto.hemomancy.capa.player.rune.IRune;
+import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.itemhandler.CharmItemHandler;
@@ -45,7 +47,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 
-public class VasculariumCharmItem extends Item implements ICharmSlotItem {
+public class VasculariumCharmItem extends Item implements IRune, ICharmSlotItem {
 
 	public static final Capability<ICharmSlotItem> CHARM_SLOT_ITEM = CapabilityManager.get(new CapabilityToken<>() {
 	});
@@ -153,6 +155,12 @@ public class VasculariumCharmItem extends Item implements ICharmSlotItem {
 			return this.iconTexture;
 		}
 
+	}
+
+	@Override
+	public RuneType getRuneType() {
+		// TODO Auto-generated method stub
+		return RuneType.VASC;
 	}
 
 }

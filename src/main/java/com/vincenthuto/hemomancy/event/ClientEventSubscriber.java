@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.event;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotScreen;
+import com.vincenthuto.hemomancy.container.CharmSlotMenu;
 import com.vincenthuto.hemomancy.containers.slot.CharmSlot;
 import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
+import com.vincenthuto.hemomancy.gui.ScreenPlayerExpanded;
 import com.vincenthuto.hemomancy.gui.VisceralRecallerScreen;
 import com.vincenthuto.hemomancy.gui.morphlingjar.LivingStaffScreen;
 import com.vincenthuto.hemomancy.gui.morphlingjar.LivingSyringeScreen;
@@ -53,13 +56,16 @@ public class ClientEventSubscriber {
 		BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), VisceralRecallerRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
+		MenuScreens.register(ContainerInit.playerrunes, ScreenPlayerExpanded::new);
 
 		MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);
 		MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
 		MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 		MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
-
+		event.enqueueWork(() -> {
+			MenuScreens.register(CharmSlotMenu.TYPE, CharmSlotScreen::new);
+		});
 	}
 
 	@SubscribeEvent

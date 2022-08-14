@@ -258,9 +258,7 @@ public class Hemomancy {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
-		event.enqueueWork(() -> {
-			MenuScreens.register(CharmSlotMenu.TYPE, CharmSlotScreen::new);
-		});
+
 
 	}
 	public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {

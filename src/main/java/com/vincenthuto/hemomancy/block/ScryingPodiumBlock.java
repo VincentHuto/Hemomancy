@@ -5,6 +5,8 @@ import java.util.stream.Stream;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hemomancy.network.PacketHandler;
+import com.vincenthuto.hemomancy.network.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.tile.ScryingPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -55,7 +57,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				//PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
+				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {

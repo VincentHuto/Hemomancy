@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.network.charm;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotItemHandler;
+import com.vincenthuto.hemomancy.container.CharmSlotItemHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -20,7 +20,7 @@ public class PacketSyncCharmSlotContents {
 
 	public PacketSyncCharmSlotContents(Player player, CharmExtensionSlot extension) {
 		this.entityId = player.getId();
-		extension.getSlots().stream().map(CharmSlotItemHandler::getContents).forEach(stacks::add);
+		extension.getCharmSlots().stream().map(CharmSlotItemHandler::getContents).forEach(stacks::add);
 	}
 
 	public PacketSyncCharmSlotContents(FriendlyByteBuf buf) {

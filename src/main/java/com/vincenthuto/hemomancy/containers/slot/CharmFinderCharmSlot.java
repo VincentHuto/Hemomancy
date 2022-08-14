@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
 import com.vincenthuto.hemomancy.capa.player.charm.CharmFinder;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotItemHandler;
+import com.vincenthuto.hemomancy.container.CharmSlotItemHandler;
 import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.charm.CharmChangePacket;
@@ -29,7 +29,7 @@ public class CharmFinderCharmSlot extends CharmFinder {
 
 		@Override
 		protected Optional<CharmGetter> getSlotFromId(Player player, JsonElement packetData) {
-			return CharmExtensionSlot.get(player).resolve().map(CharmExtensionSlot::getSlots)
+			return CharmExtensionSlot.get(player).resolve().map(CharmExtensionSlot::getCharmSlots)
 					.map(slots -> slots.get(packetData.getAsInt()))
 					.map(slot -> new ExtensionSlotCharmGetter(player, slot));
 		}
@@ -42,7 +42,7 @@ public class CharmFinderCharmSlot extends CharmFinder {
 		@Override
 		public Optional<? extends CharmGetter> findStack(LivingEntity player, boolean allowCosmetic) {
 			return CharmExtensionSlot.get(player).resolve()
-					.flatMap(ext -> ext.getSlots().stream()
+					.flatMap(ext -> ext.getCharmSlots().stream()
 							.filter(slot -> slot.getContents().getItem() instanceof VasculariumCharmItem)
 							.map(slot -> new ExtensionSlotCharmGetter(player, slot)).findFirst());
 		}

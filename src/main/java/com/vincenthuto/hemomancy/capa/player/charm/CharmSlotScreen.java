@@ -26,8 +26,10 @@ import net.minecraft.world.inventory.Slot;
 
 public class CharmSlotScreen extends EffectRenderingInventoryScreen<CharmSlotMenu>
 		implements RecipeUpdateListener {
-	private static final ResourceLocation SCREEN_BACKGROUND = new ResourceLocation(Hemomancy.MOD_ID,
+	private static final ResourceLocation charm_background = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/charm_slot.png");
+	private static final ResourceLocation gourd_background = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/gui/gourd_slot.png");
 	private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation(
 			"textures/gui/recipe_button.png");
 	private float oldMouseX;
@@ -95,7 +97,7 @@ public class CharmSlotScreen extends EffectRenderingInventoryScreen<CharmSlotMen
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, SCREEN_BACKGROUND);
+		RenderSystem.setShaderTexture(0, charm_background);
 
 		int i = this.leftPos;
 		int j = this.topPos;

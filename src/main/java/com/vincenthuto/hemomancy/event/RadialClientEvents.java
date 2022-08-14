@@ -6,8 +6,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.vincenthuto.hemomancy.ConfigData;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.charm.CharmFinder;
+import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.gui.radial.RadialCharmScreen;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
+import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.charm.OpenCharmPacket;
 
@@ -52,8 +54,15 @@ public class RadialClientEvents {
 			if (toolMenuKeyIsDown && !toolMenuKeyWasDown) {
 				while (KeyBindInit.openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
-						CharmFinder.findCharm(mc.player)
-								.ifPresent((getter) -> mc.setScreen(new RadialCharmScreen(getter)));
+						mc.player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+							if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
+								
+								mc.setScreen(new RadialCharmScreen(inv.getStackInSlot(4)));
+							}
+						});
+						
+//						CharmFinder.findCharm(mc.player)
+//								.ifPresent((getter) -> mc.setScreen(new RadialCharmScreen(getter)));
 					}
 				}
 			}

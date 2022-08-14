@@ -89,6 +89,17 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
+		
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
+				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
+				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
+				PacketRuneSync::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
+				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
+
+		
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, RadialInventorySlotChangePacket.class,
 				RadialInventorySlotChangePacket::encode, RadialInventorySlotChangePacket::decode,
 				PacketHandler::handleRadialInventorySlotChangeMessage);
@@ -101,9 +112,6 @@ public class PacketHandler {
 				.messageBuilder(PacketSyncCharmSlotContents.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
 				.encoder(PacketSyncCharmSlotContents::encode).decoder(PacketSyncCharmSlotContents::new)
 				.consumer(PacketSyncCharmSlotContents::handle).add();
-
-		CHANNELKNOWNMANIPS.messageBuilder(OpenCharmPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(OpenCharmPacket::encode).decoder(OpenCharmPacket::new).consumer(OpenCharmPacket::handle).add();
 
 		CHANNELKNOWNMANIPS.messageBuilder(OpenCharmPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
 				.encoder(OpenCharmPacket::encode).decoder(OpenCharmPacket::new).consumer(OpenCharmPacket::handle).add();
