@@ -9,6 +9,8 @@ import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -22,8 +24,9 @@ import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-public class MenuRunes extends AbstractContainerMenu {
+public class CharmGourdMenu extends AbstractContainerMenu {
 
 	public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[] {
 			InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS,
@@ -32,14 +35,25 @@ public class MenuRunes extends AbstractContainerMenu {
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
 	private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
-	public final boolean isLocalLevel;
 	private final Player player;
+	public final static int GOURD_SLOT_INDEX=5;
+	public final static int CHARM_SLOT_INDEX=4;
 
 	public IRunesItemHandler runes;
 
-	public MenuRunes(int id, Inventory playerInventory, boolean localLevel) {
-		super(ContainerInit.playerrunes, id);
-		this.isLocalLevel = localLevel;
+	
+	
+	public CharmGourdMenu(final int windowId, final Inventory playerInventory) {
+		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
+				playerInventory.player);
+	}
+	public CharmGourdMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
+		this(windowId, playerInventory);
+	}
+
+	public CharmGourdMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
+			Player playerEntity) {
+		super(ContainerInit.gourd_charm_inventory.get(), windowId);
 		this.player = playerInventory.player;
 
 		this.runes = this.player.getCapability(RunesCapabilities.RUNES).orElseThrow(NullPointerException::new);
@@ -56,12 +70,9 @@ public class MenuRunes extends AbstractContainerMenu {
 			final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];
 			this.addSlot(new SlotRuneArmor(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
-//		this.addSlot(new SlotSelectiveRuneType(player, ItemContractRune.class, runes, 0, 77, 8));
-//		this.addSlot(new SlotRune(player, runes, 1, 77 + 1 * 18, 8));
-//		this.addSlot(new SlotRune(player, runes, 2, 77 + 2 * 18, 8));
-//		this.addSlot(new SlotRune(player, runes, 3, 77 + 3 * 18, 8));
-		this.addSlot(new SlotSelectiveRuneType(player, VasculariumCharmItem.class, runes, 4, 77, 26));
-		this.addSlot(new SlotSelectiveRuneType(player, BloodGourdItem.class, runes, 5, 77, 44));
+
+		this.addSlot(new SlotSelectiveRuneType(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26));
+		this.addSlot(new SlotSelectiveRuneType(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {

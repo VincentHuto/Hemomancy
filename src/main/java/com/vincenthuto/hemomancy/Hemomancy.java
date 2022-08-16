@@ -6,19 +6,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.vincenthuto.hemomancy.capa.block.vein.EarthenVeinLocEvents;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotScreen;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.capa.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
-import com.vincenthuto.hemomancy.container.CharmSlotMenu;
-import com.vincenthuto.hemomancy.containers.slot.CharmFinderCharmSlot;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
-import com.vincenthuto.hemomancy.event.RadialClientEvents;
 import com.vincenthuto.hemomancy.event.WorldGenEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
@@ -37,12 +32,10 @@ import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -68,9 +61,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -120,9 +111,6 @@ public class Hemomancy {
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
-		modEventBus.addListener(this::loadComplete);
-		modEventBus.addGenericListener(MenuType.class, this::registerContainers);
-
 		modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
 		forgeBus.register(this);
 		forgeBus.addListener(MorphlingJarEvents::pickupEvent);
@@ -136,27 +124,9 @@ public class Hemomancy {
 		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
 
 		ModLoadingContext modLoadingContext = ModLoadingContext.get();
-		modEventBus.addListener(this::modConfig);
-		modLoadingContext.registerConfig(ModConfig.Type.SERVER, ConfigData.SERVER_SPEC);
-		modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigData.CLIENT_SPEC);
-		modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigData.COMMON_SPEC);
 
 	}
 
-	public void modConfig(ModConfigEvent event) {
-		ModConfig config = event.getConfig();
-		if (config.getSpec() == ConfigData.CLIENT_SPEC)
-			ConfigData.refreshClient();
-		else if (config.getSpec() == ConfigData.SERVER_SPEC)
-			ConfigData.refreshServer();
-	}
-
-	public void loadComplete(FMLLoadCompleteEvent event) {
-		event.enqueueWork(() -> {
-			if (FMLEnvironment.dist == Dist.CLIENT)
-				RadialClientEvents.initKeybinds();
-		});
-	}
 
 	private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
 		WorldGenEvents.BLEEDING_HEART_FEATURE = WorldGenEvents.flower("bleeding_heart", 64, BlockInit.bleeding_heart);
@@ -261,20 +231,13 @@ public class Hemomancy {
 
 
 	}
-	public void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
-		event.getRegistry()
-				.registerAll(new MenuType<>(CharmSlotMenu::new).setRegistryName("charm_slot_container"));
-	}
 	private void commonSetup(final FMLCommonSetupEvent event) {
-
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
 		BloodCraftingRecipes.initPatterns();
 		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-		CharmExtensionSlot.register();
-		CharmFinderCharmSlot.initFinder();
 		
 	}
 

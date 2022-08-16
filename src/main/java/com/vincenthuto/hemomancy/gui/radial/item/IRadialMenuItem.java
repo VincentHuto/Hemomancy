@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 public interface IRadialMenuItem {
     default public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-        String txt = I18n.get(KeyBindInit.OPEN_TOOL_MENU_KEYBIND.getKey().getDisplayName().getString());
-        tooltip.add(new TranslatableComponent("item.mna.item-with-gui.radial-open", txt).withStyle(ChatFormatting.AQUA));
+        String txt = I18n.get(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND.getKey().getDisplayName().getString());
+        tooltip.add(new TranslatableComponent("item-with-gui.radial-open", txt).withStyle(ChatFormatting.AQUA));
 	}
 }

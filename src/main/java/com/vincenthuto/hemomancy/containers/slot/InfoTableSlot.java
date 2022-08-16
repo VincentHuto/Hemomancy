@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.kinds.Applicative;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 

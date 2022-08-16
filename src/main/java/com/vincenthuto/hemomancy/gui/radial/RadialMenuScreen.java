@@ -1,18 +1,15 @@
 package com.vincenthuto.hemomancy.gui.radial;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.ConfigData;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmFinder;
 import com.vincenthuto.hemomancy.event.RadialClientEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.ItemStackRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.TextRadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
-import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.charm.PacketSwapItems;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -32,7 +29,6 @@ import net.minecraftforge.items.IItemHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
-	private final CharmFinder.CharmGetter getter;
 	private ItemStack stackEquipped;
 	private IItemHandler inventory;
 
@@ -48,14 +44,14 @@ public class RadialMenuScreen extends Screen {
 		return itemRenderer;
 	}
 
-	public RadialMenuScreen(CharmFinder.CharmGetter getter) {
+	public RadialMenuScreen(ItemStack getter) {
 		super(new TextComponent("RADIAL MENU"));
 
-		this.getter = getter;
-		this.stackEquipped = getter.getCharm();
+		this.stackEquipped = getter;
 		inventory = stackEquipped.getCount() > 0
 				? stackEquipped.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(null)
 				: null;
+		this.insertMenuItem = null;
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
 			@Override
 			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
@@ -83,16 +79,12 @@ public class RadialMenuScreen extends Screen {
 
 			}
 		}) {
+
 			@Override
 			public void onClickOutside() {
 				close();
 			}
-		};
-		insertMenuItem = new TextRadialMenuItem(menu, new TranslatableComponent("text.toolbelt.insert")) {
-			@Override
-			public boolean onClick() {
-				return RadialMenuScreen.this.trySwap(-1, ItemStack.EMPTY);
-			}
+
 		};
 	}
 
@@ -127,31 +119,11 @@ public class RadialMenuScreen extends Screen {
 		}
 
 		ItemStack inHand = minecraft.player.getMainHandItem();
-		if (!ConfigData.isItemStackAllowed(inHand)) {
-			inventory = null;
-		} else {
-			ItemStack stack = getter.getCharm();
-			if (stack.getCount() <= 0) {
-				inventory = null;
-				stackEquipped = null;
-			}
-			// Reference comparison intended
-			else if (stackEquipped != stack) {
-				stackEquipped = stack;
-				inventory = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-						.orElseThrow(() -> new RuntimeException("No inventory?"));
-				needsRecheckStacks = true;
-			}
-		}
 
 		if (inventory == null) {
 			Minecraft.getInstance().setScreen(null);
-		} else if (!RadialClientEvents.isKeyDown(KeyBindInit.OPEN_TOOL_MENU_KEYBIND)) {
-			if (ConfigData.releaseToSwap) {
-				processClick(false);
-			} else {
-				menu.close();
-			}
+		} else if (!RadialClientEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
+			menu.close();
 		}
 	}
 
@@ -175,8 +147,6 @@ public class RadialMenuScreen extends Screen {
 			return;
 
 		ItemStack inHand = minecraft.player.getMainHandItem();
-		if (!ConfigData.isItemStackAllowed(inHand))
-			return;
 
 		if (needsRecheckStacks) {
 			cachedMenuItems.clear();
@@ -184,23 +154,7 @@ public class RadialMenuScreen extends Screen {
 				ItemStack inSlot = inventory.getStackInSlot(i);
 				ItemStackRadialMenuItem item = new ItemStackRadialMenuItem(menu, i, inSlot,
 						new TranslatableComponent("text.toolbelt.empty")) {
-					@Override
-					public boolean onClick() {
-						return RadialMenuScreen.this.trySwap(getSlot(), getStack());
-					}
 				};
-				item.setVisible(inSlot.getCount() > 0 || ConfigData.displayEmptySlots);
-				if (inHand.getCount() > 0) {
-					if (inSlot.getCount() > 0)
-						item.setCentralText(new TranslatableComponent("text.toolbelt.swap"));
-					else
-						item.setCentralText(new TranslatableComponent("text.toolbelt.insert"));
-				} else {
-					if (inSlot.getCount() > 0)
-						item.setCentralText(new TranslatableComponent("text.toolbelt.extract"));
-					else
-						item.setCentralText(new TranslatableComponent("text.toolbelt.empty"));
-				}
 				cachedMenuItems.add(item);
 			}
 
@@ -212,33 +166,16 @@ public class RadialMenuScreen extends Screen {
 		}
 
 		boolean hasAddButton = false;
-		if (!ConfigData.displayEmptySlots && !cachedMenuItems.stream().allMatch(RadialMenuItem::isVisible)
-				&& inHand.getCount() > 0) {
-			hasAddButton = true;
-		}
 		insertMenuItem.setVisible(hasAddButton);
 
 		if (cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			menu.setCentralText(new TranslatableComponent("text.toolbelt.empty"));
+			List<Component> textComponents = new ArrayList<Component>();
+			textComponents.add(new TranslatableComponent("text.toolbelt.empty"));
 		} else {
 			menu.setCentralText(null);
 		}
 
 		menu.draw(matrixStack, partialTicks, mouseX, mouseY);
-	}
-
-	private boolean trySwap(int slotNumber, ItemStack itemMouseOver) {
-		ItemStack inHand = minecraft.player.getMainHandItem();
-		if (!ConfigData.isItemStackAllowed(inHand))
-			return false;
-
-		if (inHand.getCount() > 0 || itemMouseOver.getCount() > 0) {
-			PacketSwapItems.swapItem(slotNumber, minecraft.player);
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketSwapItems(slotNumber));
-		}
-
-		menu.close();
-		return true;
 	}
 
 	@Override // isPauseScreen

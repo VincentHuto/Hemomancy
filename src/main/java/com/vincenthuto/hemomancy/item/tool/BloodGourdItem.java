@@ -18,13 +18,15 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public class BloodGourdItem extends Item  implements IRune{
+public class BloodGourdItem extends Item implements IRune {
 
 	public static String TAG_STATE = "state";
 	EnumBloodGourdTiers tier;
@@ -104,7 +106,6 @@ public class BloodGourdItem extends Item  implements IRune{
 					.orElseThrow(NullPointerException::new);
 			tooltip.add(new TranslatableComponent("Max Blood Volume: " + tier.getMaxVolume())
 					.withStyle(ChatFormatting.GOLD));
-
 			if (stack.hasTag()) {
 				tooltip.add(new TranslatableComponent("Blood Volume: " + bloodVolume.getBloodVolume())
 						.withStyle(ChatFormatting.RED));
@@ -121,6 +122,11 @@ public class BloodGourdItem extends Item  implements IRune{
 		return tier.getMaxVolume();
 	}
 
+	@Override
+	public boolean willAutoSync(LivingEntity player) {
+		return true;
+	}
+	
 	@Override
 	public RuneType getRuneType() {
 		return RuneType.GOURD;

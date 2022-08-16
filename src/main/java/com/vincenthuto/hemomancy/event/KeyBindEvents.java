@@ -42,9 +42,7 @@ public class KeyBindEvents {
 			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
 
 		}
-//		if (KeyBindInit.displayKnownManips.isPressed()) {
-//			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new PacketDisplayKnownManips());
-//		}
+
 		if (KeyBindInit.cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
 					.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));

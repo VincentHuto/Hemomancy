@@ -2,9 +2,6 @@ package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.block.vein.IEarthenVeinLoc;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmExtensionSlot;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmSlotCapability;
-import com.vincenthuto.hemomancy.capa.player.charm.ICharmSlotItem;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
@@ -29,9 +26,6 @@ public class CapabilityInit {
 		event.register(IEarthenVeinLoc.class);
 		event.register(IRune.class);
 		event.register(IRunesItemHandler.class);
-		event.register(ICharmSlotItem.class);
-		event.register(CharmExtensionSlot.class);
-		CharmSlotCapability.register(event);
 
 	}
 

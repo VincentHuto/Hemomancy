@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.init;
 
 import org.lwjgl.glfw.GLFW;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.KeyMapping;
@@ -31,11 +30,9 @@ public class KeyBindInit {
 			"key.hemomancy.category");
 	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_V,
 			"key.hemomancy.category");
-	public static final KeyMapping OPEN_TOOL_MENU_KEYBIND = new KeyMapping("key.toolbelt.open", GLFW.GLFW_KEY_R,
-			"key.toolbelt.category");
 	public static final KeyMapping OPEN_CHARM_SLOT_KEYBIND = new KeyMapping("key.charm_slot.slot", GLFW.GLFW_KEY_B,
 			"key.hemomancy.category");
-	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.spellbookopen", 90, "key.categories.mna");
+	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90, "key.categories.mna");
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
@@ -48,7 +45,6 @@ public class KeyBindInit {
 		ClientRegistry.registerKeyBinding(useQuickManip);
 		ClientRegistry.registerKeyBinding(useContManip);
 		ClientRegistry.registerKeyBinding(useContManip);
-		ClientRegistry.registerKeyBinding(OPEN_TOOL_MENU_KEYBIND);
 		ClientRegistry.registerKeyBinding(OPEN_CHARM_SLOT_KEYBIND);
 		ClientRegistry.registerKeyBinding(openVascCharmMenu);
 

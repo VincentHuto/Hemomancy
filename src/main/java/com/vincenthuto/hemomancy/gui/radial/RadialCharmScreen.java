@@ -1,21 +1,23 @@
 package com.vincenthuto.hemomancy.gui.radial;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.player.charm.CharmFinder;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.container.CharmGourdMenu;
 import com.vincenthuto.hemomancy.event.RadialClientEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
-import com.vincenthuto.hemomancy.init.ManipulationInit;
 import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentManipPacket;
@@ -33,17 +35,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialCharmScreen extends Screen {
-	private ItemStack stackEquipped;
-	private IItemHandler inventory;
+	private ItemStack vascCharmEquipped;
+	private BloodGourdItem gourdEquipped;
+	private IRunesItemHandler inv;
 	private Minecraft mc;
-
-	private boolean keyCycleBeforeL = false;
-	private boolean keyCycleBeforeR = false;
 
 	private boolean needsRecheckStacks = true;
 	private final List<BlitRadialMenuItem> cachedMenuItems = Lists.newArrayList();
@@ -53,15 +51,16 @@ public class RadialCharmScreen extends Screen {
 		return itemRenderer;
 	}
 
-	public RadialCharmScreen(ItemStack getter) {
+	public RadialCharmScreen(IRunesItemHandler invIn) {
 		super(new TextComponent("RADIAL MENU"));
-
+		inv = invIn;
 		this.mc = Minecraft.getInstance();
 
-		this.stackEquipped = getter;
-		inventory = stackEquipped.getCount() > 0
-				? stackEquipped.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(null)
-				: null;
+		this.vascCharmEquipped = inv.getStackInSlot(CharmGourdMenu.CHARM_SLOT_INDEX);
+		if (inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX).getItem() instanceof BloodGourdItem gourd) {
+			this.gourdEquipped = gourd;
+		}
+
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
 			@Override
 			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
@@ -124,7 +123,7 @@ public class RadialCharmScreen extends Screen {
 		if (!menu.isReady()) {
 			return;
 		}
-		if (!(stackEquipped.getItem() instanceof VasculariumCharmItem)) {
+		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
 			Minecraft.getInstance().setScreen(null);
 		}
 		if (!RadialClientEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
@@ -173,10 +172,24 @@ public class RadialCharmScreen extends Screen {
 			this.needsRecheckStacks = false;
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			this.menu.setCentralText((Component) new TranslatableComponent("No Known Manipulations")
-					.append(new TranslatableComponent("\ntest")));
+			List<Component> textComponents = new ArrayList<Component>();
+			textComponents.add(new TranslatableComponent("No Known Manipulations"));
+			textComponents.add(new TranslatableComponent("No Known Manipuladdwddwtions"));
+
+			this.menu.setCentralText(textComponents);
+		} else if (gourdEquipped != null) {
+
+			List<Component> textComponents = new ArrayList<Component>();
+			if (inv != null) {
+				IBloodVolume bloodVolume = inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX)
+						.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
+				textComponents.add(new TranslatableComponent(Double.toString(bloodVolume.getBloodVolume())));
+
+			}
+			this.menu.setCentralText(textComponents);
 		} else {
 			this.menu.setCentralText(null);
+
 		}
 		this.menu.draw(matrixStack, partialTicks, mouseX, mouseY);
 	}

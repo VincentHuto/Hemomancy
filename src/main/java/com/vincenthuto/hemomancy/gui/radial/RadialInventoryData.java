@@ -24,7 +24,7 @@ public class RadialInventoryData<T extends IExtendedItemHandler> extends SavedDa
 	private int size;
 
 	public static String ID(UUID id) {
-		return "mna-inventory-" + id.toString();
+		return "inventory-" + id.toString();
 	}
 
 	public RadialInventoryData(UUID id, int size, Function<Integer, T> builder) {
@@ -47,7 +47,7 @@ public class RadialInventoryData<T extends IExtendedItemHandler> extends SavedDa
 		if (this.inventory != null) {
 			compound.put("inventory", (Tag) this.inventory.serialize());
 		} else {
-			Hemomancy.LOGGER.error("MAInventoryData inventory is null - writing empty inventory.");
+			Hemomancy.LOGGER.error("InventoryData inventory is null - writing empty inventory.");
 			compound.put("inventory", (Tag) new CompoundTag());
 		}
 		return compound;

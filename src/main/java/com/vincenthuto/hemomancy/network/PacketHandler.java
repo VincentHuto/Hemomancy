@@ -3,12 +3,16 @@ package com.vincenthuto.hemomancy.network;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.gui.radial.BaseMessage;
 import com.vincenthuto.hemomancy.gui.radial.IRadialInventorySelect;
 import com.vincenthuto.hemomancy.network.capa.BloodTendencyClientPacket;
 import com.vincenthuto.hemomancy.network.capa.BloodTendencyServerPacket;
 import com.vincenthuto.hemomancy.network.capa.BloodVolumeClientPacket;
 import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.network.capa.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.network.capa.PacketGourdRuneSync;
+import com.vincenthuto.hemomancy.network.capa.PacketOpenNormalInv;
+import com.vincenthuto.hemomancy.network.capa.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.network.capa.PacketRuneSync;
 import com.vincenthuto.hemomancy.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.ChangeSelectedManipPacket;
@@ -21,20 +25,15 @@ import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentManipPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentVeinPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.UseContManipKeyPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.UseQuickManipKeyPacket;
-import com.vincenthuto.hemomancy.network.charm.CharmChangePacket;
-import com.vincenthuto.hemomancy.network.charm.CharmContainerSlotPacket;
-import com.vincenthuto.hemomancy.network.charm.OpenCharmPacket;
-import com.vincenthuto.hemomancy.network.charm.RadialInventorySlotChangePacket;
-import com.vincenthuto.hemomancy.network.charm.PacketSwapItems;
-import com.vincenthuto.hemomancy.network.charm.PacketSyncCharmSlotContents;
 import com.vincenthuto.hemomancy.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.network.keybind.RadialInventorySlotChangePacket;
 import com.vincenthuto.hemomancy.network.morphling.ChangeMorphKeyPacket;
 import com.vincenthuto.hemomancy.network.morphling.JarTogglePickupPacket;
-import com.vincenthuto.hemomancy.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.network.morphling.OpenLivingStaffPacket;
-import com.vincenthuto.hemomancy.network.morphling.ToggleMorphlingJarMessagePacket;
+import com.vincenthuto.hemomancy.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.network.morphling.PacketUpdateLivingStaffMorph;
+import com.vincenthuto.hemomancy.network.morphling.ToggleMorphlingJarMessagePacket;
 import com.vincenthuto.hemomancy.network.particle.AirBloodDrawPacket;
 import com.vincenthuto.hemomancy.network.particle.EntityHitParticlePacket;
 import com.vincenthuto.hemomancy.network.particle.GroundBloodDrawPacket;
@@ -89,17 +88,18 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
-		
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
 				PacketRuneSync::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketGourdRuneSync.class, PacketGourdRuneSync::toBytes, PacketGourdRuneSync::new,
+				PacketGourdRuneSync::handle);
+		
 		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
 
-		
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, RadialInventorySlotChangePacket.class,
 				RadialInventorySlotChangePacket::encode, RadialInventorySlotChangePacket::decode,
 				PacketHandler::handleRadialInventorySlotChangeMessage);
@@ -107,25 +107,6 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
 				PacketSpawnLightningParticle::handle);
-
-		CHANNELKNOWNMANIPS
-				.messageBuilder(PacketSyncCharmSlotContents.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(PacketSyncCharmSlotContents::encode).decoder(PacketSyncCharmSlotContents::new)
-				.consumer(PacketSyncCharmSlotContents::handle).add();
-
-		CHANNELKNOWNMANIPS.messageBuilder(OpenCharmPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(OpenCharmPacket::encode).decoder(OpenCharmPacket::new).consumer(OpenCharmPacket::handle).add();
-
-		CHANNELKNOWNMANIPS.messageBuilder(CharmContainerSlotPacket.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(CharmContainerSlotPacket::encode).decoder(CharmContainerSlotPacket::new)
-				.consumer(CharmContainerSlotPacket::handle).add();
-
-		CHANNELKNOWNMANIPS.messageBuilder(CharmChangePacket.class, networkID++, NetworkDirection.PLAY_TO_CLIENT)
-				.encoder(CharmChangePacket::encode).decoder(CharmChangePacket::new).consumer(CharmChangePacket::handle)
-				.add();
-
-		CHANNELKNOWNMANIPS.messageBuilder(PacketSwapItems.class, networkID++, NetworkDirection.PLAY_TO_SERVER)
-				.encoder(PacketSwapItems::encode).decoder(PacketSwapItems::new).consumer(PacketSwapItems::handle).add();
 
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyClientPacket.class,
 				BloodTendencyClientPacket::encode, BloodTendencyClientPacket::decode,
@@ -203,8 +184,9 @@ public class PacketHandler {
 				JarTogglePickupPacket::decode, JarTogglePickupPacket::handle);
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, OpenMorphlingJarPacket.class, OpenMorphlingJarPacket::encode,
 				OpenMorphlingJarPacket::decode, OpenMorphlingJarPacket::handle);
-		CHANNELMORPHLINGJAR.registerMessage(networkID++, ToggleMorphlingJarMessagePacket.class, ToggleMorphlingJarMessagePacket::encode,
-				ToggleMorphlingJarMessagePacket::decode, ToggleMorphlingJarMessagePacket::handle);
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, ToggleMorphlingJarMessagePacket.class,
+				ToggleMorphlingJarMessagePacket::encode, ToggleMorphlingJarMessagePacket::decode,
+				ToggleMorphlingJarMessagePacket::handle);
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, OpenLivingStaffPacket.class, OpenLivingStaffPacket::encode,
 				OpenLivingStaffPacket::decode, OpenLivingStaffPacket::handle);
 
@@ -243,25 +225,27 @@ public class PacketHandler {
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
+
 	public static void sendRadialInventorySlotChange(int slot, boolean offhand) {
 		PacketHandler.CHANNELKNOWNMANIPS.sendTo(new RadialInventorySlotChangePacket(slot, offhand),
 				Minecraft.getInstance().getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
 	}
-	
-	  private static <T extends BaseMessage> boolean validateBasics(T message, NetworkEvent.Context ctx) {
-	        LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-	        ctx.setPacketHandled(true);
-	        if (sideReceived != LogicalSide.SERVER) {
-	            Hemomancy.LOGGER.error(message.getClass().getName() + " received on wrong side: " + sideReceived);
-	            return false;
-	        }
-	        if (!message.isMessageValid()) {
-	            Hemomancy.LOGGER.error(message.getClass().getName() + " was invalid: " + message);
-	            return false;
-	        }
-	        return true;
-	    }
-	
+
+	private static <T extends RadialInventorySlotChangePacket> boolean validateBasics(T message,
+			NetworkEvent.Context ctx) {
+		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+		ctx.setPacketHandled(true);
+		if (sideReceived != LogicalSide.SERVER) {
+			Hemomancy.LOGGER.error(message.getClass().getName() + " received on wrong side: " + sideReceived);
+			return false;
+		}
+		if (!message.isMessageValid()) {
+			Hemomancy.LOGGER.error(message.getClass().getName() + " was invalid: " + message);
+			return false;
+		}
+		return true;
+	}
+
 	public static void handleRadialInventorySlotChangeMessage(RadialInventorySlotChangePacket message,
 			Supplier<NetworkEvent.Context> ctxSupplier) {
 		NetworkEvent.Context ctx = ctxSupplier.get();
@@ -275,7 +259,7 @@ public class PacketHandler {
 		}
 		ctx.enqueueWork(() -> {
 			ItemStack stack;
-			ItemStack itemStack = stack = message.isOffhand() ? sendingPlayer.getOffhandItem() : sendingPlayer.getMainHandItem();
+			stack = message.isOffhand() ? sendingPlayer.getOffhandItem() : sendingPlayer.getMainHandItem();
 			if (stack.getItem() instanceof IRadialInventorySelect) {
 				((IRadialInventorySelect) stack.getItem()).setSlot((Player) sendingPlayer, stack, message.getSlot(),
 						message.isOffhand(), false);

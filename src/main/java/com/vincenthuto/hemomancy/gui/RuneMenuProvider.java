@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.gui;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.container.MenuRunes;
+import com.vincenthuto.hemomancy.container.CharmGourdMenu;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -21,6 +21,6 @@ public class RuneMenuProvider implements MenuProvider {
 	@Nullable
 	@Override
 	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-		return new MenuRunes(id, playerInventory, !playerEntity.level.isClientSide);
+		return new CharmGourdMenu(id, playerInventory);
 	}
 }

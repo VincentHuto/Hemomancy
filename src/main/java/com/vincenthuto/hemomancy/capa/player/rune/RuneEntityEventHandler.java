@@ -4,11 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
-import com.vincenthuto.hemomancy.network.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.PacketRuneSync;
+import com.vincenthuto.hemomancy.network.capa.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.network.capa.PacketGourdRuneSync;
+import com.vincenthuto.hemomancy.network.capa.PacketRuneSync;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -120,10 +124,24 @@ public class RuneEntityEventHandler {
 	}
 
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
-		PacketRuneSync pkt = new PacketRuneSync(player.getId(), slot, stack);
-		for (Player receiver : receivers) {
-			PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+		
+		if (stack.getItem() instanceof BloodGourdItem gourd) {
+			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+			System.out.println( gourd +" "+ bloodVolume.getBloodVolume());
+			PacketGourdRuneSync pkt = new PacketGourdRuneSync(player.getId(), slot, stack, bloodVolume.getBloodVolume());
+			for (Player receiver : receivers) {
+				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+			}
+		}else {
+			PacketRuneSync pkt = new PacketRuneSync(player.getId(), slot, stack);
+			for (Player receiver : receivers) {
+				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+			}
 		}
+
+		
+	
 	}
 
 	@SubscribeEvent

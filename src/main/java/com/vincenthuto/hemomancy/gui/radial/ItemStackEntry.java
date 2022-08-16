@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.gui.radial;
 
 import java.util.Optional;
 
-import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.kinds.Applicative;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;

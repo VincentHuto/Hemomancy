@@ -2,23 +2,16 @@ package com.vincenthuto.hemomancy.item;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.capa.player.charm.ICharmSlotItem;
 import com.vincenthuto.hemomancy.capa.player.rune.IRune;
 import com.vincenthuto.hemomancy.capa.player.rune.RuneType;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.entity.item.EntityFlyingCharm;
-import com.vincenthuto.hemomancy.itemhandler.CharmItemHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -40,19 +33,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 
-public class VasculariumCharmItem extends Item implements IRune, ICharmSlotItem {
-
-	public static final Capability<ICharmSlotItem> CHARM_SLOT_ITEM = CapabilityManager.get(new CapabilityToken<>() {
-	});
-	public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>() {
-	});
+public class VasculariumCharmItem extends Item implements IRune {
 
 	public VasculariumCharmItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
 		super(properties.stacksTo(1));
@@ -104,26 +86,6 @@ public class VasculariumCharmItem extends Item implements IRune, ICharmSlotItem 
 			return InteractionResultHolder.consume(itemstack);
 		}
 
-	}
-
-	@Override
-	public ICapabilityProvider initCapabilities(final ItemStack stack, CompoundTag nbt) {
-		return new ICapabilityProvider() {
-			final CharmItemHandler itemHandler = new CharmItemHandler(stack);
-
-			final LazyOptional<ICharmSlotItem> extensionSlotInstance = LazyOptional.of(() -> VasculariumCharmItem.this);
-			final LazyOptional<IItemHandler> itemHandlerInstance = LazyOptional.of(() -> itemHandler);
-
-			@Override
-			@Nonnull
-			public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable Direction side) {
-				if (cap == ITEM_HANDLER)
-					return itemHandlerInstance.cast();
-				if (cap == CHARM_SLOT_ITEM)
-					return extensionSlotInstance.cast();
-				return LazyOptional.empty();
-			}
-		};
 	}
 
 	@Override

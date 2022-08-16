@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.gui.radial.item;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.gui.radial.DrawingContext;
@@ -10,7 +12,7 @@ import net.minecraft.network.chat.Component;
 public abstract class RadialMenuItem
 {
     private final GenericRadialMenu owner;
-    private Component centralText;
+    private List<Component>  centralText;
     private boolean visible;
     private boolean hovered;
 
@@ -31,12 +33,12 @@ public abstract class RadialMenuItem
     }
 
     @Nullable
-    public Component getCentralText()
+    public List<Component>  getCentralText()
     {
         return centralText;
     }
 
-    public void setCentralText(@Nullable Component centralText)
+    public void setCentralText(@Nullable List<Component>  centralText)
     {
         this.centralText = centralText;
     }

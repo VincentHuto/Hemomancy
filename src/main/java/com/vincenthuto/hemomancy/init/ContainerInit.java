@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.JuiceinatorMenu;
 import com.vincenthuto.hemomancy.container.LivingStaffMenu;
 import com.vincenthuto.hemomancy.container.LivingSyringeMenu;
-import com.vincenthuto.hemomancy.container.MenuRunes;
+import com.vincenthuto.hemomancy.container.CharmGourdMenu;
 import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
 import com.vincenthuto.hemomancy.container.VisceralRecallerMenu;
 
@@ -45,20 +45,8 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<LivingSyringeMenu>> living_syringe = CONTAINERS
 			.register("living_syringe", () -> IForgeMenuType.create(LivingSyringeMenu::new));
 
-	@ObjectHolder("hemomancy:playerrunes")
-	public static MenuType<MenuRunes> playerrunes = createRuneContainer("playerrunes",
-			(id, inv, data) -> new MenuRunes(id, inv, !inv.player.level.isClientSide));
+	public static final  RegistryObject<MenuType<CharmGourdMenu>> gourd_charm_inventory =  CONTAINERS.register("gourd_charm_inventory", () -> IForgeMenuType.create(CharmGourdMenu::new));
 
-	private static <T extends AbstractContainerMenu> MenuType<T> createRuneContainer(String name,
-			IContainerFactory<T> factory) {
-		MenuType<T> containerType = IForgeMenuType.create(factory);
-		containerType.setRegistryName(new ResourceLocation(Hemomancy.MOD_ID, name));
-		RUNECONTAINER.add(containerType);
-		return containerType;
-	}
 
-	@SubscribeEvent
-	public static void onContainerRegister(final RegistryEvent.Register<MenuType<?>> event) {
-		event.getRegistry().registerAll(RUNECONTAINER.toArray(new MenuType[0]));
-	}
+
 }
