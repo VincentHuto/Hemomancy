@@ -24,14 +24,12 @@ public class LivingStaffItemHandler extends ItemStackHandler {
 	@Nonnull
 	@Override
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		// check for some other modded inventories
 		if (stack.hasTag()) {
 			CompoundTag tag = stack.getTag();
 			if (tag.contains("Items") || tag.contains("Inventory"))
 				return stack;
 		}
 
-		// check for itemhandler capability
 		if (stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent())
 			return stack;
 		dirty = true;

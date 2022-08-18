@@ -128,7 +128,7 @@ public class RuneEntityEventHandler {
 		if (stack.getItem() instanceof BloodGourdItem gourd) {
 			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-			System.out.println( gourd +" "+ bloodVolume.getBloodVolume());
+		//	System.out.println( gourd +" "+ bloodVolume.getBloodVolume());
 			PacketGourdRuneSync pkt = new PacketGourdRuneSync(player.getId(), slot, stack, bloodVolume.getBloodVolume());
 			for (Player receiver : receivers) {
 				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);

@@ -44,10 +44,6 @@ public class PacketGourdRuneSync {
 
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			System.out.println("Amount: " + amount);
-
-			
-			
 			if (mindrune.getItem() instanceof BloodGourdItem gourd) {
 				IBloodVolume bloodVolume = mindrune.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 						.orElseThrow(NullPointerException::new);

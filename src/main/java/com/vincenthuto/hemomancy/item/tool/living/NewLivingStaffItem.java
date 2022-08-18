@@ -28,7 +28,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
@@ -39,12 +38,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -52,28 +48,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.PacketDistributor;
 
-public class LivingStaffItem extends LivingItemItem {
+public class NewLivingStaffItem extends LivingItemItem {
 
-	public static Capability<IItemHandler> ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>() {
-	});
-
-	public LivingStaffItem(Properties properties) {
+	public NewLivingStaffItem(Properties properties) {
 		super(properties);
-	}
-
-	private static int getSlotFor(Inventory inv, ItemStack stack) {
-		if (inv.getSelected() == stack)
-			return inv.selected;
-
-		for (int i = 0; i < inv.items.size(); ++i) {
-			ItemStack invStack = inv.items.get(i);
-			if (invStack == stack) {
-				return i;
-			}
-		}
-
-		// Couldn't find the exact instance, can not ensure we have the right slot.
-		return -1;
 	}
 
 	@Override
@@ -132,8 +110,8 @@ public class LivingStaffItem extends LivingItemItem {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new LivingStaffMenu(windowId, p_createMenu_3_.level, p_createMenu_3_.blockPosition(),
-								p_createMenu_2_, p_createMenu_3_);
+						return new LivingStaffMenu(windowId, p_createMenu_3_.level,
+								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});
 
