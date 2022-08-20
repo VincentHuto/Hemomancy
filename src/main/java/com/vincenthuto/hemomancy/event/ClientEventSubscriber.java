@@ -10,24 +10,17 @@ import com.vincenthuto.hemomancy.gui.morphlingjar.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hemomancy.render.tile.DendriticDistributorRenderer;
 import com.vincenthuto.hemomancy.render.tile.EarthenVeinRenderer;
 import com.vincenthuto.hemomancy.render.tile.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.render.tile.MortalDisplayRenderer;
 import com.vincenthuto.hemomancy.render.tile.UnstainedPodiumRenderer;
+import com.vincenthuto.hemomancy.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
 
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,7 +42,9 @@ public class ClientEventSubscriber {
 		BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(), DendriticDistributorRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
-		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(), VisceralRecallerRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.vial_centrifuge.get(), VialCentrifugeRenderer::new);
+		BlockEntityRenderers.register(BlockEntityInit.visceral_artificial_recaller.get(),
+				VisceralRecallerRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 		MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
 		MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);

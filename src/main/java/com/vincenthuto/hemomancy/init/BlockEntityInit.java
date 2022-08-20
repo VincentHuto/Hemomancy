@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.tile.ScryingPodiumBlockEntity;
 import com.vincenthuto.hemomancy.tile.SemiSentientConstructBlockEntity;
 import com.vincenthuto.hemomancy.tile.SerpentineIdolBlockEntity;
 import com.vincenthuto.hemomancy.tile.UnstainedPodiumBlockEntity;
+import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
 import com.vincenthuto.hemomancy.tile.VisceralRecallerBlockEntity;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -68,4 +69,9 @@ public class BlockEntityInit {
 			"juiceinator",
 			() -> BlockEntityType.Builder.of(JuicinatorBlockEntity::new, BlockInit.juiceinator.get()).build(null));
 
+	
+	
+	public static final RegistryObject<BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES.register(
+			"vial_centrifuge",
+			() -> BlockEntityType.Builder.of(VialCentrifugeBlockEntity::new, BlockInit.vial_centrifuge.get()).build(null));
 }

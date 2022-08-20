@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class VisceralRecallerBlockS extends Block implements EntityBlock {
+public class VisceralRecallerBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE_N = Stream
 			.of(Block.box(1.5, 5, 3.25, 2.5, 6, 12.75), Block.box(0.75, 0.1, 0.75, 3.25, 14.1, 3.25),
@@ -53,7 +53,7 @@ public class VisceralRecallerBlockS extends Block implements EntityBlock {
 					Block.box(12.5, 8.5, 0.5, 15.5, 15.5, 3.5))
 			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
-	public VisceralRecallerBlockS(Properties properties) {
+	public VisceralRecallerBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
 

@@ -187,7 +187,7 @@ public class ItemInit {
 			() -> new HematicMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.blood_absorbtion));
+					ManipulationInit.blood_absorption));
 	public static final RegistryObject<Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
 			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_projection));

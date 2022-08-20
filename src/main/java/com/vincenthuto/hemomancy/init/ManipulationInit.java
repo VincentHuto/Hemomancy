@@ -86,8 +86,8 @@ public class ManipulationInit {
 //					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 //
 
-	public static final RegistryObject<BloodManipulation> blood_absorbtion = MANIPS.register("blood_absorbtion",
-			() -> new ConjurationManip("blood_absorbtion", ItemInit.blood_absorption, 1000, 0, 0,
+	public static final RegistryObject<BloodManipulation> blood_absorption = MANIPS.register("blood_absorption",
+			() -> new ConjurationManip("blood_absorption", ItemInit.blood_absorption, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 
 	public static final RegistryObject<BloodManipulation> blood_projection = MANIPS.register("blood_projection",

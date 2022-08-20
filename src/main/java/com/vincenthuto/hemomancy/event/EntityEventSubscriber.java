@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel.EnumBloodLustMa
 import com.vincenthuto.hemomancy.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.model.armor.CurvedHornModel;
 import com.vincenthuto.hemomancy.model.armor.UnstainedArmorModel;
+import com.vincenthuto.hemomancy.model.block.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.model.block.EarthenVeinModel;
 import com.vincenthuto.hemomancy.model.block.FloatingHeartModel;
 import com.vincenthuto.hemomancy.model.entity.BloodBulletModel;
@@ -122,6 +123,8 @@ public class EntityEventSubscriber {
 		event.registerLayerDefinition(LivingAxeModel.living_axe, LivingAxeModel::createLayers);
 		event.registerLayerDefinition(LivingSpearModel.living_spear, LivingSpearModel::createLayers);
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
+		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
+
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);
 		event.registerLayerDefinition(IronWallModel.iron_wall, IronWallModel::createBodyLayer);

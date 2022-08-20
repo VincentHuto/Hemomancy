@@ -21,7 +21,8 @@ import com.vincenthuto.hemomancy.block.ScryingPodiumBlock;
 import com.vincenthuto.hemomancy.block.SemiSentientConstructBlock;
 import com.vincenthuto.hemomancy.block.SmoulderingAshTrailBlock;
 import com.vincenthuto.hemomancy.block.UnstainedPodiumBlock;
-import com.vincenthuto.hemomancy.block.VisceralRecallerBlockS;
+import com.vincenthuto.hemomancy.block.VialCentrifugeBlock;
+import com.vincenthuto.hemomancy.block.VisceralRecallerBlock;
 import com.vincenthuto.hemomancy.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.block.idol.BlockSerpentineIdol;
 
@@ -209,7 +210,7 @@ public class BlockInit {
 			() -> new MortalDisplayBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
-			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlockS(
+			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
 			() -> new EarthenVeinBlock(
@@ -223,6 +224,10 @@ public class BlockInit {
 			() -> new JuiceinatorBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
 
+	public static final RegistryObject<Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
+			() -> new VialCentrifugeBlock(
+					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
+	
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
 					.sound(SoundType.METAL)));
@@ -248,6 +253,7 @@ public class BlockInit {
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(),
 					RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
+			ItemBlockRenderTypes.setRenderLayer(BlockInit.vial_centrifuge.get(), RenderType.cutoutMipped());
 			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
 
 		}
