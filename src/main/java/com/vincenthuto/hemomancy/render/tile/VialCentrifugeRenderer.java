@@ -37,7 +37,7 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		double offset = (negA * scale) + toA;
 		double finalNumber = (sourceNumber * scale) + offset;
 		int calcScale = (int) Math.pow(10, decimalPrecision);
-		return (double) Math.round(finalNumber * calcScale) / calcScale;
+		return finalNumber;
 	}
 
 	@Override
@@ -47,9 +47,10 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5D, 1.95D, 0.5D);
 		matrixStackIn.mulPose(new Quaternion(Vector3f.XN, 180, true));
-		float spinSpeed = (int) mapOneRangeToAnother(te.dataAccess.get(0), 0, 200, 0, 8, 2);
-		//System.out.println(spinSpeed);
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) ticks * spinSpeed));
+		float spinSpeed = (float) mapOneRangeToAnother(te.dataAccess.get(0), 0, 200, 0, 8, 10);
+		float spinMod = spinSpeed < 1 && spinSpeed > 0 ? 0 : spinSpeed;
+	//	System.out.println(spinMod);
+		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) ticks * spinMod));
 		// Displaying vials in slots
 		arms.vial1.visible = !te.inventory.get(2).isEmpty() && te.inventory.get(2).hasTag();
 		arms.vial1Empty.visible = !te.inventory.get(2).isEmpty() && !te.inventory.get(2).hasTag();
