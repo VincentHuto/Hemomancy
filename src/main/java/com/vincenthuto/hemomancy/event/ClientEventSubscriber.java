@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.event;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.gui.CharmGourdScreen;
 import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
+import com.vincenthuto.hemomancy.gui.VialCentrifugeScreen;
 import com.vincenthuto.hemomancy.gui.VisceralRecallerScreen;
 import com.vincenthuto.hemomancy.gui.morphlingjar.LivingStaffScreen;
 import com.vincenthuto.hemomancy.gui.morphlingjar.LivingSyringeScreen;
@@ -47,10 +48,12 @@ public class ClientEventSubscriber {
 				VisceralRecallerRenderer::new);
 		BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 		MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
+		MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
 		MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);
 		MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
 		MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 		MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
+		
 	}
 }

@@ -77,7 +77,6 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				}
-	
 			}
 		}
 		return InteractionResult.SUCCESS;

@@ -407,18 +407,18 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public ItemStack getItem(int p_58328_) {
-		return this.items.get(p_58328_);
+	public ItemStack getItem(int pSlot) {
+		return this.items.get(pSlot);
 	}
 
 	@Override
-	public ItemStack removeItem(int p_58330_, int p_58331_) {
-		return ContainerHelper.removeItem(this.items, p_58330_, p_58331_);
+	public ItemStack removeItem(int pSlot, int pAmount) {
+		return ContainerHelper.removeItem(this.items, pSlot, pAmount );
 	}
 
 	@Override
-	public ItemStack removeItemNoUpdate(int p_58387_) {
-		return ContainerHelper.takeItem(this.items, p_58387_);
+	public ItemStack removeItemNoUpdate(int pSlot) {
+		return ContainerHelper.takeItem(this.items, pSlot);
 	}
 
 	@Override

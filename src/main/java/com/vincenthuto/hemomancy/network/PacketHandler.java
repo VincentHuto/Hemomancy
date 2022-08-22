@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.DisplayKnownManipsPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationClientPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.TeleportToVeinPacket;
 import com.vincenthuto.hemomancy.network.capa.manips.UpdateCurrentManipPacket;
@@ -94,9 +95,9 @@ public class PacketHandler {
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
 				PacketRuneSync::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketGourdRuneSync.class, PacketGourdRuneSync::toBytes, PacketGourdRuneSync::new,
-				PacketGourdRuneSync::handle);
-		
+		CHANNELRUNES.registerMessage(networkID++, PacketGourdRuneSync.class, PacketGourdRuneSync::toBytes,
+				PacketGourdRuneSync::new, PacketGourdRuneSync::handle);
+
 		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
 
@@ -140,7 +141,9 @@ public class PacketHandler {
 				SyncTrackingAvatarPacket::toBytes, SyncTrackingAvatarPacket::new, SyncTrackingAvatarPacket::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, UpdateCurrentVeinPacket.class, UpdateCurrentVeinPacket::encode,
 				UpdateCurrentVeinPacket::decode, UpdateCurrentVeinPacket.Handler::handle);
-
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, StartCentrifugeButtonPacket.class,
+				StartCentrifugeButtonPacket::encode, StartCentrifugeButtonPacket::decode,
+				StartCentrifugeButtonPacket.Handler::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemClientPacket.class,
 				VascularSystemClientPacket::encode, VascularSystemClientPacket::decode,
 				VascularSystemClientPacket::handle);
