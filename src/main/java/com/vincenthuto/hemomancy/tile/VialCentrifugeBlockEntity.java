@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		implements StackedContentsCompatible, IBloodTile {
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(11, ItemStack.EMPTY);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(12, ItemStack.EMPTY);
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	int spinningProgress;

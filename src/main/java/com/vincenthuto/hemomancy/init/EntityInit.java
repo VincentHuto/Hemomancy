@@ -30,7 +30,9 @@ import com.vincenthuto.hemomancy.entity.mob.ThirsterEntity;
 import com.vincenthuto.hemomancy.entity.projectile.TrackingPestsEntity;
 import com.vincenthuto.hemomancy.entity.projectile.TrackingSerpentEntity;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -45,7 +47,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 			Hemomancy.MOD_ID);
-
+	public static final TagKey<EntityType<?>> INFECTED = TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
+			new ResourceLocation(Hemomancy.MOD_ID,"infected"));
 	// Mobs
 	public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<LeechEntity>of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -86,7 +89,7 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<FunglingEntity>> fungling = ENTITY_TYPES.register("fungling",
 			() -> EntityType.Builder.<FunglingEntity>of(FunglingEntity::new, MobCategory.CREATURE).sized(1F, 1F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "fungling").toString()));
-	
+
 	public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
 			() -> EntityType.Builder.<ChitiniteEntity>of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 1F)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "chitinite").toString()));

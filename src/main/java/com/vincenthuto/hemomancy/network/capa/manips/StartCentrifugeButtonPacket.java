@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.NetworkEvent;
 
 public class StartCentrifugeButtonPacket {
@@ -15,25 +16,23 @@ public class StartCentrifugeButtonPacket {
 	}
 
 	public static void encode(StartCentrifugeButtonPacket msg, FriendlyByteBuf buf) {
-
 	}
 
 	public static StartCentrifugeButtonPacket decode(FriendlyByteBuf buf) {
 		return new StartCentrifugeButtonPacket();
 	}
 
-	public static class Handler {
-
-		public static void handle(final StartCentrifugeButtonPacket msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
-				if (container instanceof VialCentrifugeMenu) {
-					VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
+	public static void handle(final StartCentrifugeButtonPacket msg, Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			AbstractContainerMenu container = ctx.get().getSender().containerMenu;
+			if (container instanceof VialCentrifugeMenu) {
+				VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
+				System.out.println(station.dataAccess.get(0));
+				if (station.dataAccess.get(0) <= 0) {
 					station.dataAccess.set(0, 200);
-					
 				}
-			});
-			ctx.get().setPacketHandled(true);
-		}
+			}
+		});
+		ctx.get().setPacketHandled(true);
 	}
 }

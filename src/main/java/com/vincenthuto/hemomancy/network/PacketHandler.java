@@ -143,7 +143,7 @@ public class PacketHandler {
 				UpdateCurrentVeinPacket::decode, UpdateCurrentVeinPacket.Handler::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, StartCentrifugeButtonPacket.class,
 				StartCentrifugeButtonPacket::encode, StartCentrifugeButtonPacket::decode,
-				StartCentrifugeButtonPacket.Handler::handle);
+				StartCentrifugeButtonPacket::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemClientPacket.class,
 				VascularSystemClientPacket::encode, VascularSystemClientPacket::decode,
 				VascularSystemClientPacket::handle);

@@ -61,6 +61,8 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 		// output
 		addSlot(new OutputSlot(te, 10, 152, 80));
+		addSlot(new OutputSlot(te, 11, 152, 8));
+
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {

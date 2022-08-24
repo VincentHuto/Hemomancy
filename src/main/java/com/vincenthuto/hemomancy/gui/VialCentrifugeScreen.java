@@ -140,7 +140,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
 		this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
-		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 20, 60, 0000);
 		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
 
 	}
