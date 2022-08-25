@@ -47,8 +47,18 @@ import net.minecraftforge.registries.RegistryObject;
 public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 			Hemomancy.MOD_ID);
-	public static final TagKey<EntityType<?>> INFECTED = TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
-			new ResourceLocation(Hemomancy.MOD_ID,"infected"));
+	
+	public static final TagKey<EntityType<?>> FUNGAL = createTag("fungal");
+	public static final TagKey<EntityType<?>> UMBRAL = createTag("umbral");
+	public static final TagKey<EntityType<?>> INCANDESCENT = createTag("incandescent");
+	public static final TagKey<EntityType<?>> FERRIC = createTag("ferric");
+	public static final TagKey<EntityType<?>> VIVACIOUS = createTag("vivacious");
+	public static final TagKey<EntityType<?>> RUINOUS = createTag("ruinous");
+	public static final TagKey<EntityType<?>> NEUROTIC = createTag("neurotic");
+	public static final TagKey<EntityType<?>> FERVENT = createTag("fervent");
+	public static final TagKey<EntityType<?>> FRIGID = createTag("FRIGID");
+
+	
 	// Mobs
 	public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<LeechEntity>of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -213,4 +223,9 @@ public class EntityInit {
 
 	}
 
+	public static TagKey<EntityType<?>> createTag(String name){
+		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
+				new ResourceLocation(Hemomancy.MOD_ID,name));
+	}
+	
 }

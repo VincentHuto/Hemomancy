@@ -261,5 +261,6 @@ b1c80ccc0a3ad7822195a28dd56f24d618702e87 data/hemomancy/recipes/polished_venous_
 6cdaf381ce6989137b26ef451e838785fc1e5418 data/hemomancy/recipes/smouldering_ash_trail.json
 23a46485a54fef1e4436020b8d21f076c4a405f4 data/hemomancy/recipes/venous_stone_slab.json
 6a1282f9a5a7c4dc1f49ab79ee5dc8299495d18e data/hemomancy/recipes/venous_stone_stairs.json
+7d6668f1e5ebc18576e2b159477c9ed121497b32 data/hemomancy/tags/entity_types/fungal.json
 cdbe0ebab8eb8038f57b595c7db7fee74e7cc2a2 data/minecraft/tags/blocks/mineable/axe.json
 a92c719d3d28def69e58850d7164a37abb628212 data/minecraft/tags/blocks/mineable/pickaxe.json

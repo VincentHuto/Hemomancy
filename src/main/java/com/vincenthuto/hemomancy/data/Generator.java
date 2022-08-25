@@ -25,6 +25,7 @@ public class Generator {
 		 generator.addProvider(new LootGenerator(generator,helper));
 		 generator.addProvider(new BlockTagGenerator(generator, helper));
 		generator.addProvider(new RecipeGenerator(generator,helper));
+		generator.addProvider(new EntityTagGenerator(generator, helper));
 	}
 
 	private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
