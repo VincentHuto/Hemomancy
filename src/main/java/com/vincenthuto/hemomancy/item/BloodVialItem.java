@@ -25,7 +25,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BloodVialItem extends Item {
 
-	String TAG_ENTITY_TYPE = "entity_type";
+	public static String TAG_ENTITY_TYPE = "entity_type";
 	public static String TAG_STATE = "state";
 
 	public BloodVialItem(Properties prop) {
@@ -55,13 +55,13 @@ public class BloodVialItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 		ItemStack curr = pPlayer.getItemInHand(pUsedHand);
 		if (curr.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
-			EntityType type = Registry.ENTITY_TYPE
+			@SuppressWarnings("deprecation")
+			EntityType<?> type = Registry.ENTITY_TYPE
 					.get(new ResourceLocation(curr.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
 			if (ForgeRegistries.ENTITIES.getValue(type.getRegistryName()).is(EntityInit.FUNGAL)) {
 			}
-			System.out.println(type);
+			System.out.println(getEntityType(curr));
 		}
-
 		return super.use(pLevel, pPlayer, pUsedHand);
 	}
 
@@ -69,8 +69,20 @@ public class BloodVialItem extends Item {
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		if (stack.hasTag()) {
-			tooltip.add(new TextComponent(I18n.get(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE))));
+			tooltip.add(new TextComponent(I18n.get(getEntityType(stack).getDescriptionId())));
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static EntityType<?> getEntityType(ItemStack stack) {
+		if (stack.hasTag()) {
+			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
+				EntityType<?> type = Registry.ENTITY_TYPE
+						.get(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
+				return type;
+			}
+		}
+		return null;
 	}
 
 }

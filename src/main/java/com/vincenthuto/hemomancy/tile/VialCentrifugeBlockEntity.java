@@ -28,15 +28,15 @@ import net.minecraft.world.level.block.state.BlockState;
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		implements StackedContentsCompatible, IBloodTile {
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(12, ItemStack.EMPTY);
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(19, ItemStack.EMPTY);
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	int spinningProgress;
 	int spinningTotalTime;
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
-		public int get(int p_58431_) {
-			switch (p_58431_) {
+		public int get(int index) {
+			switch (index) {
 			case 0:
 				return spinningProgress;
 			case 1:
@@ -47,13 +47,13 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 
 		@Override
-		public void set(int p_58433_, int p_58434_) {
-			switch (p_58433_) {
+		public void set(int index, int val) {
+			switch (index) {
 			case 0:
-				spinningProgress = p_58434_;
+				spinningProgress = val;
 				break;
 			case 1:
-				spinningTotalTime = p_58434_;
+				spinningTotalTime = val;
 			}
 		}
 

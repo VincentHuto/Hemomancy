@@ -83,7 +83,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		matrix.pushPose();
 		double bloodVolume = te.getBloodVolume();
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
-		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
+		float newBarWidth = (int) ((bloodVolume) / 61.25) - 8;
 		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
 		matrix.popPose();
@@ -97,7 +97,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, fill_texture);
 		matrix.mulPose(new Quaternion(Vector3f.ZP, 45, true));
-		drawFlippedTexturedModalRect(-12 + screenWidth + 5, 60 + screenHeight + 32, 23 + textureUShift, textureVShift,
+		drawFlippedTexturedModalRect(-12 + screenWidth + 6, 60 + screenHeight + 14, 23 + textureUShift, textureVShift,
 				6, heightShift - newBarWidth);
 		matrix.popPose();
 
@@ -108,16 +108,15 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, frame); // Cap
-		GuiUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 5, 51 + screenHeight + 32, 9, 244, 13, 12,
+		GuiUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 7, 51 + screenHeight + 16, 9, 244, 13, 12,
 				heightShift);
-		GuiUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 5, 1 + screenHeight + 32, 1, 0, 12, 51, heightShift);
+		GuiUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 7, 1 + screenHeight + 25, 1, 0, 12, 42, heightShift);
 		matrix.popPose();
 	}
 
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
-
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		int centerX = (width / 2) - guiWidth / 2;
 		int centerY = (height / 2) - guiHeight / 2;
@@ -139,8 +138,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
-		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 20, 60, 0000);
+		//this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 26, 85, 0000);
 		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
 
 	}
@@ -154,14 +153,14 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		HLGuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 		int l = this.menu.getSpinProgress();
 		if (l < 24)
-			this.blit(matrixStack, this.leftPos + 127, this.topPos + 80, 177, 33, l, 16);
+			this.blit(matrixStack, this.leftPos + 118, this.topPos + 80, 177, 33, l, 16);
 	}
 
 	@Override
 	protected void init() {
 		super.init();
 		renderables.clear();
-		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_CENTRIFUGE, FORGETBUTTONID, leftPos + 90,
+		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_CENTRIFUGE, FORGETBUTTONID, leftPos + 90-28,
 				topPos + 44, 16, 16, 176, 0, null, (press) -> {
 					if (press instanceof GuiButtonTextured) {
 						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new StartCentrifugeButtonPacket());

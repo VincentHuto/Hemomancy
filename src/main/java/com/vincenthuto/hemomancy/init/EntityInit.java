@@ -56,7 +56,7 @@ public class EntityInit {
 	public static final TagKey<EntityType<?>> RUINOUS = createTag("ruinous");
 	public static final TagKey<EntityType<?>> NEUROTIC = createTag("neurotic");
 	public static final TagKey<EntityType<?>> FERVENT = createTag("fervent");
-	public static final TagKey<EntityType<?>> FRIGID = createTag("FRIGID");
+	public static final TagKey<EntityType<?>> FRIGID = createTag("frigid");
 
 	
 	// Mobs

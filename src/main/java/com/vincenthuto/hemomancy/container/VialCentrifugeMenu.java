@@ -44,24 +44,33 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 		// SLOTS
 		// Input side
-		addSlot(new Slot(te, 0, 26, 14));
+		addSlot(new Slot(te, 0, 8, 8));
 		// Blood
-		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, 1, 16, 26, 80));
+		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, 1, 16, 8, 81));
 		// vials
 		// Clockwise
-		addSlot(new Slot(te, 2, 90, 8));
-		addSlot(new Slot(te, 3, 108, 26));
-		addSlot(new Slot(te, 4, 126, 44));
-		addSlot(new Slot(te, 5, 108, 62));
+		addSlot(new Slot(te, 2, 62, 8));
+		addSlot(new Slot(te, 3, 80, 26));
+		addSlot(new Slot(te, 4, 98, 44));
+		addSlot(new Slot(te, 5, 80, 62));
 
-		addSlot(new Slot(te, 6, 90, 80));
-		addSlot(new Slot(te, 7, 72, 62));
-		addSlot(new Slot(te, 8, 54, 44));
-		addSlot(new Slot(te, 9, 72, 26));
+		addSlot(new Slot(te, 6, 62, 80));
+		addSlot(new Slot(te, 7, 44, 62));
+		addSlot(new Slot(te, 8, 26, 44));
+		addSlot(new Slot(te, 9, 44, 26));
 
-		// output
-		addSlot(new OutputSlot(te, 10, 152, 80));
+		//Main Outputs
+		addSlot(new OutputSlot(te, 10, 134, 8));
 		addSlot(new OutputSlot(te, 11, 152, 8));
+		addSlot(new OutputSlot(te, 12, 134, 26));
+		addSlot(new OutputSlot(te, 13, 154, 26));
+		addSlot(new OutputSlot(te, 14, 134, 44));
+		addSlot(new OutputSlot(te, 15, 154,44));
+		addSlot(new OutputSlot(te, 16, 134, 62));
+		addSlot(new OutputSlot(te, 17, 154,62));
+		
+		//Aux Output
+		addSlot(new OutputSlot(te, 18, 144, 80));
 
 
 		// INVENTORY
