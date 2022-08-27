@@ -69,7 +69,7 @@ public class BloodVialItem extends Item {
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		if (stack.hasTag()) {
-			tooltip.add(new TextComponent(I18n.get(getEntityType(stack).getDescriptionId())));
+			tooltip.add(new TextComponent(I18n.get(getEntityType(stack).getDescriptionId())).append(" Blood"));
 		}
 	}
 

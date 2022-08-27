@@ -27,7 +27,6 @@ public class StartCentrifugeButtonPacket {
 			AbstractContainerMenu container = ctx.get().getSender().containerMenu;
 			if (container instanceof VialCentrifugeMenu) {
 				VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
-				System.out.println(station.dataAccess.get(0));
 				if (station.dataAccess.get(0) <= 0) {
 					station.dataAccess.set(0, 200);
 				}

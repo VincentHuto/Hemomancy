@@ -1,11 +1,13 @@
 package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyBloodGourdRecipe;
 import com.vincenthuto.hemomancy.recipe.CopyMorphlingJarRecipe;
 import com.vincenthuto.hemomancy.recipe.FillBloodGourdRecipe;
 import com.vincenthuto.hemomancy.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
+import com.vincenthuto.hemomancy.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.recipe.serializer.JuiceinatorSerializer;
 import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 
@@ -27,6 +29,7 @@ public class RecipeInit {
 
 	public static RecipeType<JuiceinatorRecipe> juiceinator_recipe_type;
 	public static RecipeType<RecallerRecipe> recaller_recipe_type;
+	public static RecipeType<BloodStructureRecipe> blood_structure_recipe_type;
 
 	public static final RegistryObject<RecipeSerializer<?>> juiceinator_serializer = SERIALIZERS.register("juiceinator",
 			JuiceinatorSerializer::new);
@@ -42,6 +45,9 @@ public class RecipeInit {
 
 	public static final RegistryObject<RecipeSerializer<?>> recaller_recipe_serializer = SERIALIZERS
 			.register("recaller_recipe", RecallerRecipeSerializer::new);
+
+	public static final RegistryObject<RecipeSerializer<?>> blood_structure_recipe_serializer = SERIALIZERS
+			.register("blood_structure_recipe", BloodStructureRecipeSerializer::new);
 
 	@SubscribeEvent
 	public static void setup(FMLCommonSetupEvent event) {
@@ -65,6 +71,15 @@ public class RecipeInit {
 				new RecipeType<RecallerRecipe>() {
 					public String toString() {
 						return recaller_recipe.toString();
+					}
+				});
+
+		final ResourceLocation blood_structure_recipe = new ResourceLocation(Hemomancy.MOD_ID,
+				"blood_structure_recipe");
+		blood_structure_recipe_type = (RecipeType<BloodStructureRecipe>) Registry.register(Registry.RECIPE_TYPE,
+				recaller_recipe, new RecipeType<BloodStructureRecipe>() {
+					public String toString() {
+						return blood_structure_recipe.toString();
 					}
 				});
 	}
