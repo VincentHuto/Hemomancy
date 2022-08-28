@@ -63,7 +63,7 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 	public void toNetwork(FriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
 
 	}
-
+	
 	/**
 	 * Returns a key json object as a Java HashMap.
 	 */
