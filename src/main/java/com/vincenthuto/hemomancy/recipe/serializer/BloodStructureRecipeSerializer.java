@@ -37,9 +37,12 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 
 	@Override
 	public BloodStructureRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-		float cost = GsonHelper.getAsFloat(pJson, "bloodCount");
+		float cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		Map<String, Ingredient> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
+		for(String[] s : pattern) {
+			System.out.println("row: " + Arrays.toString(s));
+		}
 		ItemStack result;
 		if (pJson.get("result").isJsonObject())
 			result = itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"), true, true);
@@ -197,12 +200,9 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		for (int i = 0; i < pPatternArray.size(); i++) {
 			String[] row = GSON.fromJson(pPatternArray.get(i), String[].class);
 			pattern.add(row);
-			System.out.println(Arrays.toString(row));
 		}
 		String[][] matrix = new String[pattern.size()][];
 		matrix = pattern.toArray(matrix);
-		System.out.println(Arrays.toString(matrix));
-
 		return matrix;
 	}
 }

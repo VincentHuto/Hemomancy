@@ -66,12 +66,12 @@ public class BloodCraftingRecipes {
 
 	// Morphling Incubator Block Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> morphIncSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> morphIncSymbolList = new HashMap<String, Block>() {
 		{
-			put('G', BlockInit.sanguine_glass.get());
-			put('T', BlockInit.hematic_iron_block.get());
-			put('I', BlockInit.infested_venous_stone.get());
-			put('A', Blocks.AIR);
+			put("G", BlockInit.sanguine_glass.get());
+			put("T", BlockInit.hematic_iron_block.get());
+			put("I", BlockInit.infested_venous_stone.get());
+			put("A", Blocks.AIR);
 		}
 	};
 	static String[][] morphIncPatternArray = { { "TGT", "TGT", "AAA" }, { "GGG", "GIG", "ATA" },
@@ -79,12 +79,12 @@ public class BloodCraftingRecipes {
 
 	// Unstained Pillar Block Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> unsPillarSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> unsPillarSymbolList = new HashMap<String, Block>() {
 		{
-			put('P', Blocks.QUARTZ_PILLAR);
-			put('S', Blocks.QUARTZ_BLOCK);
-			put('T', BlockInit.hematic_iron_block.get());
-			put('A', Blocks.AIR);
+			put("P", Blocks.QUARTZ_PILLAR);
+			put("S", Blocks.QUARTZ_BLOCK);
+			put("T", BlockInit.hematic_iron_block.get());
+			put("A", Blocks.AIR);
 
 		}
 	};
@@ -93,48 +93,47 @@ public class BloodCraftingRecipes {
 
 	// Tainted Iron Block Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> tIronSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> tIronSymbolList = new HashMap<String, Block>() {
 		{
-			put('B', BlockInit.active_befouling_ash_trail.get());
-			put('I', Blocks.IRON_BLOCK);
-			put('A', Blocks.AIR);
+			put("B", BlockInit.befouling_ash_trail.get());
+			put("I", Blocks.IRON_BLOCK);
+			put("A", Blocks.AIR);
 		}
 	};
 	static String[][] tIronPatternArray = { { "AAA", "BBB" }, { "ABA", "BIB" }, { "AAA", "BBB" } };
 
 	// SSC Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> sscSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> sscSymbolList = new HashMap<String, Block>() {
 		{
-			put('V', BlockInit.venous_stone.get());
-			put('A', Blocks.AIR);
-			put('T', BlockInit.hematic_iron_block.get());
-			put('B', BlockInit.active_befouling_ash_trail.get());
-			put('S', BlockInit.active_smouldering_ash_trail.get());
-			put('C', BlockInit.conscious_mass.get());
+			put("V", BlockInit.venous_stone.get());
+			put("A", Blocks.AIR);
+			put("T", BlockInit.hematic_iron_block.get());
+			put("B", BlockInit.befouling_ash_trail.get());
+			put("S", BlockInit.smouldering_ash_trail.get());
+			put("C", BlockInit.conscious_mass.get());
 
 		}
 	};
 	static String[][] sscArray = { { "AAAAAA", "SSSSSS" }, { "AABBAA", "SBTTBS" }, { "ABCCBA", "STVVTS" },
 			{ "ABCCBA", "STVVTS" }, { "AABBAA", "SBTTBS" }, { "AAAAAA", "SSSSSS" } };
 
-
 	// Book Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> bookSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> bookSymbolList = new HashMap<String, Block>() {
 		{
-			put('R', BlockInit.befouling_ash_trail.get());
-			put('B', Blocks.BOOKSHELF);
+			put("R", BlockInit.befouling_ash_trail.get());
+			put("B", Blocks.BOOKSHELF);
 		}
 	};
 	static String[][] bookPatternArray = { { "RRR" }, { "RBR" }, { "RRR" } };
 
 	// Living Staff Pattern
 	@SuppressWarnings("serial")
-	static HashMap<Character, Block> staffSymbolList = new HashMap<Character, Block>() {
+	static HashMap<String, Block> staffSymbolList = new HashMap<String, Block>() {
 		{
-			put('I', Blocks.IRON_BARS);
-			put('V', BlockInit.venous_stone.get());
+			put("I", Blocks.IRON_BARS);
+			put("V", BlockInit.venous_stone.get());
 
 		}
 	};
@@ -155,7 +154,7 @@ public class BloodCraftingRecipes {
 		return pattern;
 	}
 
-	public static MultiblockPattern generateBlockPatternFromArray(HashMap<Character, Block> symbolList,
+	public static MultiblockPattern generateBlockPatternFromArray(HashMap<String, Block> symbolList,
 			String[][] schematic) {
 		BlockPatternBuilder builder = null;
 		if (builder == null) {
@@ -163,9 +162,9 @@ public class BloodCraftingRecipes {
 			for (int aisle = 0; aisle < schematic.length; aisle++) {
 				builder.aisle(schematic[aisle]);
 				for (int z = 0; z < schematic[aisle].length; z++) {
-					List<Character> distinct = getDistinctChars(schematic[aisle][z]);
+					List<String> distinct = getDistinctChars(schematic[aisle][z]);
 					for (int c = 0; c < distinct.size(); c++) {
-						builder.where(distinct.get(c), blockPredFromHash(symbolList, distinct.get(c)));
+						builder.where(distinct.get(c).toCharArray()[0], blockPredFromHash(symbolList, distinct.get(c)));
 					}
 				}
 
@@ -175,15 +174,15 @@ public class BloodCraftingRecipes {
 		return new MultiblockPattern(pattern, symbolList, schematic);
 	}
 
-	static Predicate<BlockInWorld> blockPredFromHash(HashMap<Character, Block> hash, char c) {
-		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(hash.get(c))));
+	static Predicate<BlockInWorld> blockPredFromHash(HashMap<String, Block> symbolList, String string) {
+		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(symbolList.get(string))));
 	}
 
-	public static List<Character> getDistinctChars(String chars) {
-		List<Character> distinct = new ArrayList<Character>();
+	public static List<String> getDistinctChars(String chars) {
+		List<String> distinct = new ArrayList<String>();
 		for (int i = 0; i < chars.length(); i++) {
-			if (!distinct.contains(chars.charAt(i))) {
-				distinct.add(chars.charAt(i));
+			if (!distinct.contains(String.valueOf(chars.charAt(i)))) {
+				distinct.add(String.valueOf(chars.charAt(i)));
 			}
 		}
 		return distinct;
