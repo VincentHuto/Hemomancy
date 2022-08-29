@@ -167,7 +167,6 @@ public class BloodCraftingRecipes {
 						builder.where(distinct.get(c).toCharArray()[0], blockPredFromHash(symbolList, distinct.get(c)));
 					}
 				}
-
 			}
 		}
 		BlockPattern pattern = builder.build();

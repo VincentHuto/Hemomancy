@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.recipe;
 import java.util.Collection;
 
 import com.vincenthuto.hemomancy.init.RecipeInit;
+import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -13,17 +14,22 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 public class BloodStructureRecipe extends CustomRecipe {
 
 	protected float bloodCost;
-	protected Ingredient heldItem = null;
-	protected Ingredient hitBlock = null;
+	protected ItemStack heldItem = null;
+	protected Block hitBlock = null;
+	protected MultiblockPattern pattern;
 	protected ItemStack result = null;
 
-	public BloodStructureRecipe(ResourceLocation pId, Ingredient ingredient, ItemStack result) {
+	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
+			Block hitBlock, ItemStack result) {
 		super(pId);
-		this.heldItem = ingredient;
+		this.bloodCost = bloodCost;
+		this.heldItem = heldItem;
+		this.hitBlock = hitBlock;
 		this.result = result;
 	}
 
@@ -37,7 +43,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 	@Override
 	public NonNullList<Ingredient> getIngredients() {
 		NonNullList<Ingredient> ing = super.getIngredients();
-		ing.add(heldItem);
 		return ing;
 	}
 
@@ -78,6 +83,46 @@ public class BloodStructureRecipe extends CustomRecipe {
 	@Override
 	public String toString() {
 		return "Blood Structure Recipe:" + result.toString();
+	}
+
+	public float getBloodCost() {
+		return bloodCost;
+	}
+
+	public void setBloodCost(float bloodCost) {
+		this.bloodCost = bloodCost;
+	}
+
+	public ItemStack getHeldItem() {
+		return heldItem;
+	}
+
+	public void setHeldItem(ItemStack heldItem) {
+		this.heldItem = heldItem;
+	}
+
+	public Block getHitBlock() {
+		return hitBlock;
+	}
+
+	public void setHitBlock(Block hitBlock) {
+		this.hitBlock = hitBlock;
+	}
+
+	public MultiblockPattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(MultiblockPattern pattern) {
+		this.pattern = pattern;
+	}
+
+	public ItemStack getResult() {
+		return result;
+	}
+
+	public void setResult(ItemStack result) {
+		this.result = result;
 	}
 
 }

@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.recipe.serializer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -14,20 +14,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
+import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.block.state.pattern.BlockPattern;
+import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
+import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -35,167 +38,86 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		implements RecipeSerializer<BloodStructureRecipe> {
 	private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
+	// Serialization
 	@Override
 	public BloodStructureRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
+		//Deserialization
 		float cost = GsonHelper.getAsFloat(pJson, "bloodCost");
-		Map<String, Ingredient> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
+		ItemStack heldItem = getItemFromJson(GsonHelper.getAsString(pJson, "heldItem"));
+		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
+		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
-		for(String[] s : pattern) {
-			System.out.println("row: " + Arrays.toString(s));
-		}
-		ItemStack result;
-		if (pJson.get("result").isJsonObject())
-			result = itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"), true, true);
-		return null;
-	}
-
-	public static void formStructureFromJson(String[][] pPattern, JsonObject pJson) {
-		for (int i = 0; i < pPattern.length; ++i) {
-			for (int j = 0; j < pPattern[i].length; ++j) {
-
-			}
-		}
+		ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+		//Building
+		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
+		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
+		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
+		return recipe;
 	}
 
 	@Override
 	public BloodStructureRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+		float cost =  pBuffer.readFloat();
+
 		return null;
 	}
 
 	@Override
 	public void toNetwork(FriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
-
+		pBuffer.writeFloat(pRecipe.getBloodCost());
+		
 	}
-	
-	/**
-	 * Returns a key json object as a Java HashMap.
-	 */
-	protected static Map<String, Ingredient> keyFromJson(JsonObject pKeyEntry) {
-		Map<String, Ingredient> map = Maps.newHashMap();
+	// Json Helpers
 
+	private static ItemStack getItemFromJson(String itemName) {
+		ResourceLocation itemKey = new ResourceLocation(itemName);
+		if (!ForgeRegistries.ITEMS.containsKey(itemKey))
+			throw new JsonSyntaxException("Unknown item '" + itemName + "'");
+		Item item = ForgeRegistries.ITEMS.getValue(itemKey);
+		return new ItemStack(Objects.requireNonNull(item));
+	}
+
+	private static Block blockFromString(String s) {
+		Block block = Registry.BLOCK.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
+			return new JsonSyntaxException("Unknown block '" + s + "'");
+		});
+		if (block == Blocks.AIR) {
+			throw new JsonSyntaxException("Invalid block: " + s);
+		} else {
+			return block;
+		}
+	}
+
+	private static Block blockFromJson(JsonObject pItemObject) {
+		String s = GsonHelper.getAsString(pItemObject, "block");
+		Block block = Registry.BLOCK.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
+			return new JsonSyntaxException("Unknown block '" + s + "'");
+		});
+		if (block == Blocks.AIR) {
+			throw new JsonSyntaxException("Invalid block: " + s);
+		} else {
+			return block;
+		}
+	}
+
+	private static Map<String, Block> keyFromJson(JsonObject pKeyEntry) {
+		Map<String, Block> map = Maps.newHashMap();
 		for (Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {
 			if (entry.getKey().length() != 1) {
 				throw new JsonSyntaxException("Invalid key entry: '" + (String) entry.getKey()
 						+ "' is an invalid symbol (must be 1 character only).");
 			}
-
 			if (" ".equals(entry.getKey())) {
 				throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 			}
 
-			map.put(entry.getKey(), Ingredient.fromJson(entry.getValue()));
+			map.put(entry.getKey(), blockFromJson(entry.getValue().getAsJsonObject()));
 		}
-
-		map.put(" ", Ingredient.EMPTY);
+		map.put(" ", Blocks.AIR);
 		return map;
 	}
 
-	public static ItemStack itemStackFromJson(JsonObject json, boolean readNBT, boolean disallowsAirInRecipe) {
-		String itemName = GsonHelper.getAsString(json, "item");
-		Item item = getItem(itemName, disallowsAirInRecipe);
-		if (readNBT && json.has("nbt")) {
-			CompoundTag nbt = getNBT(json.get("nbt"));
-			CompoundTag tmp = new CompoundTag();
-			if (nbt.contains("ForgeCaps")) {
-				tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
-				nbt.remove("ForgeCaps");
-			}
-
-			tmp.put("tag", nbt);
-			tmp.putString("id", itemName);
-			tmp.putInt("Count", GsonHelper.getAsInt(json, "count", 1));
-
-			return ItemStack.of(tmp);
-		}
-
-		return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
-	}
-
-	public static Item getItem(String itemName, boolean disallowsAirInRecipe) {
-		ResourceLocation itemKey = new ResourceLocation(itemName);
-		if (!ForgeRegistries.ITEMS.containsKey(itemKey))
-			throw new JsonSyntaxException("Unknown item '" + itemName + "'");
-
-		Item item = ForgeRegistries.ITEMS.getValue(itemKey);
-		if (disallowsAirInRecipe && item == Items.AIR)
-			throw new JsonSyntaxException("Invalid item: " + itemName);
-		return Objects.requireNonNull(item);
-	}
-
-	public static CompoundTag getNBT(JsonElement element) {
-		try {
-			if (element.isJsonObject())
-				return TagParser.parseTag(GSON.toJson(element));
-			else
-				return TagParser.parseTag(GsonHelper.convertToString(element, "nbt"));
-		} catch (CommandSyntaxException e) {
-			throw new JsonSyntaxException("Invalid NBT Entry: " + e);
-		}
-	}
-
-	public static Item itemFromJson(JsonObject pItemObject) {
-		String s = GsonHelper.getAsString(pItemObject, "item");
-		Item item = Registry.ITEM.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
-			return new JsonSyntaxException("Unknown item '" + s + "'");
-		});
-		if (item == Items.AIR) {
-			throw new JsonSyntaxException("Invalid item: " + s);
-		} else {
-			return item;
-		}
-	}
-
-	static String[] shrink(String... pToShrink) {
-		int i = Integer.MAX_VALUE;
-		int j = 0;
-		int k = 0;
-		int l = 0;
-
-		for (int i1 = 0; i1 < pToShrink.length; ++i1) {
-			String s = pToShrink[i1];
-			i = Math.min(i, firstNonSpace(s));
-			int j1 = lastNonSpace(s);
-			j = Math.max(j, j1);
-			if (j1 < 0) {
-				if (k == i1) {
-					++k;
-				}
-				++l;
-			} else {
-				l = 0;
-			}
-		}
-
-		if (pToShrink.length == l) {
-			return new String[0];
-		} else {
-			String[] astring = new String[pToShrink.length - l - k];
-
-			for (int k1 = 0; k1 < astring.length; ++k1) {
-				astring[k1] = pToShrink[k1 + k].substring(i, j + 1);
-			}
-
-			return astring;
-		}
-	}
-
-	private static int firstNonSpace(String pEntry) {
-		int i;
-		for (i = 0; i < pEntry.length() && pEntry.charAt(i) == ' '; ++i) {
-		}
-
-		return i;
-	}
-
-	private static int lastNonSpace(String pEntry) {
-		int i;
-		for (i = pEntry.length() - 1; i >= 0 && pEntry.charAt(i) == ' '; --i) {
-		}
-
-		return i;
-	}
-
-	static String[][] patternFromJson(JsonArray pPatternArray) {
+	private static String[][] patternFromJson(JsonArray pPatternArray) {
 		List<String[]> pattern = new ArrayList<String[]>();
 		for (int i = 0; i < pPatternArray.size(); i++) {
 			String[] row = GSON.fromJson(pPatternArray.get(i), String[].class);
@@ -204,5 +126,39 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		String[][] matrix = new String[pattern.size()][];
 		matrix = pattern.toArray(matrix);
 		return matrix;
+	}
+
+	// Structure Helpers
+	private static BlockPattern generateBlockPatternFromArray(Map<String, Block> symbolList, String[][] schematic) {
+		BlockPatternBuilder builder = null;
+		if (builder == null) {
+			builder = BlockPatternBuilder.start();
+			for (int aisle = 0; aisle < schematic.length; aisle++) {
+				builder.aisle(schematic[aisle]);
+				for (int z = 0; z < schematic[aisle].length; z++) {
+					List<String> distinct = getDistinctChars(schematic[aisle][z]);
+					for (int c = 0; c < distinct.size(); c++) {
+						builder.where(distinct.get(c).toCharArray()[0], blockPredFromHash(symbolList, distinct.get(c)));
+					}
+				}
+			}
+		}
+		BlockPattern pattern = builder.build();
+		return pattern;
+	}
+
+	private static Predicate<BlockInWorld> blockPredFromHash(Map<String, Block> symbolList, String string) {
+		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(symbolList.get(string))));
+	}
+
+	private static List<String> getDistinctChars(String chars) {
+		List<String> distinct = new ArrayList<String>();
+		for (int i = 0; i < chars.length(); i++) {
+			if (!distinct.contains(String.valueOf(chars.charAt(i)))) {
+				distinct.add(String.valueOf(chars.charAt(i)));
+			}
+		}
+		return distinct;
+
 	}
 }
