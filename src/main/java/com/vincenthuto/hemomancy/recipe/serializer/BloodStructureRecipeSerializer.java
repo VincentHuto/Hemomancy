@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.recipe.serializer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,14 +42,14 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 	// Serialization
 	@Override
 	public BloodStructureRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-		//Deserialization
+		// Deserialization
 		float cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		ItemStack heldItem = getItemFromJson(GsonHelper.getAsString(pJson, "heldItem"));
 		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
-		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
+		Map<String, Block> keyMap = keyFromJson(GsonHelper.getAsJsonObject(pJson, "key"));
 		ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
-		//Building
+		// Building
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
@@ -57,15 +58,96 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 
 	@Override
 	public BloodStructureRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-		float cost =  pBuffer.readFloat();
+		float cost = pBuffer.readFloat();
+		ItemStack heldItem = pBuffer.readItem();
+		Block hitBlock = Block.byItem(pBuffer.readItem().getItem());
+		// pattern reading
+		int length = pBuffer.readInt();
+		List<List<String>> patternList = new ArrayList<List<String>>();
+		for (int i = 0; i < length; i++) {
+			List<String> row = new ArrayList<String>();
+			int width = pBuffer.readInt();
+			for (int j = 0; j < width; j++) {
+				row.add(pBuffer.readUtf());
+			}
+			patternList.add(row);
+		}
+		String[][] pattern = new String[patternList.size()][];
+		pattern = patternList.toArray(pattern);
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
+		System.out.println("fromNetwork");
 
+		
 		return null;
 	}
 
 	@Override
 	public void toNetwork(FriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
 		pBuffer.writeFloat(pRecipe.getBloodCost());
-		
+		pBuffer.writeItem(pRecipe.getHeldItem());
+		pBuffer.writeItem(new ItemStack(pRecipe.getHitBlock().asItem()));
+		// pattern writing
+		pBuffer.writeInt(pRecipe.getPattern().getPatternArray().length);
+		for (int i = 0; i < pRecipe.getPattern().getPatternArray().length; i++) {
+			pBuffer.writeInt(pRecipe.getPattern().getPatternArray()[i].length);
+			for (int j = 0; j < pRecipe.getPattern().getPatternArray()[i].length; j++) {
+				pBuffer.writeUtf(pRecipe.getPattern().getPatternArray()[i][j]);
+			}
+		}
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+		System.out.println("toNetwork");
+
 	}
 	// Json Helpers
 

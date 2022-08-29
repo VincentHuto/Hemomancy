@@ -32,7 +32,8 @@ public class KeyBindInit {
 			"key.hemomancy.category");
 	public static final KeyMapping OPEN_CHARM_SLOT_KEYBIND = new KeyMapping("key.charm_slot.slot", GLFW.GLFW_KEY_B,
 			"key.hemomancy.category");
-	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90, "key.categories.mna");
+	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90,
+			"key.hemomancy.category");
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {
