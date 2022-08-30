@@ -47,18 +47,14 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	private final String localizedName;
 	private final IDrawable overlay;
 	private final IDrawable icon;
-	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/recaller_overlay.png");
 	IGuiHelper guiHelper;
-	int guiWidth = 170;
-	int guiHeight = 100;
 
 	public BloodStructureRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(150, 110);
 		localizedName = I18n.get("hemomancy.jei.blood_crafting");
 		overlay = guiHelper.createDrawable(new ResourceLocation("hemomancy", "textures/gui/bloodcraftingoverlay.png"),
 				0, 0, 150, 110);
-		icon = guiHelper.createDrawableIngredient(new ItemStack(ItemInit.sanguine_formation.get()));
+		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(ItemInit.sanguine_formation.get()));
 		this.guiHelper = guiHelper;
 	}
 
