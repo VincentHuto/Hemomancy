@@ -5,8 +5,6 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.containers.slot.OutputSlot;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.item.memories.HematicMemoryItem;
-import com.vincenthuto.hemomancy.tile.JuicinatorBlockEntity;
 import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 

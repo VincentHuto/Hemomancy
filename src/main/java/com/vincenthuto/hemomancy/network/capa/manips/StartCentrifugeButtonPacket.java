@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.NetworkEvent;
 
 public class StartCentrifugeButtonPacket {

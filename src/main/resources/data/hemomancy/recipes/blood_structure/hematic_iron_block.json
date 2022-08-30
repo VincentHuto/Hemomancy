@@ -1,12 +1,12 @@
 {
   "type": "hemomancy:blood_structure_recipe",
-  "bloodCost": 200,
+  "bloodCost": 50,
   "heldItem": "minecraft:ink_sac",
   "hitBlock": "minecraft:iron_block",
   "pattern": [
-  	 ["BBB", "   "],
-     ["BIB", " B "],
- 	 ["BBB", "   "]
+  	 ["   ", "BBB"],
+     [" B ", "BIB"],
+ 	 ["   ", "BBB"]
   ],
   "key": {
     "I": {

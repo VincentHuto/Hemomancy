@@ -28,6 +28,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 			Block hitBlock, ItemStack result) {
 		super(pId);
 		this.bloodCost = bloodCost;
+		this.pattern = pattern;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
 		this.result = result;
@@ -76,8 +77,18 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return RecipeInit.blood_structure_recipe_serializer.get();
 	}
 
+	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
+		//Example new ResourceLocation("hemomancy:blood_structure/living_staff_recipe")
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type).stream()
+				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
+	}
+
 	public static Collection<BloodStructureRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type);
+
+		Collection<BloodStructureRecipe> collection = world.getRecipeManager()
+				.getAllRecipesFor(RecipeInit.blood_structure_recipe_type);
+
+		return collection;
 	}
 
 	@Override

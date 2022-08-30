@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.recipe.serializer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,6 +52,7 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
+
 		return recipe;
 	}
 
@@ -61,47 +61,40 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		float cost = pBuffer.readFloat();
 		ItemStack heldItem = pBuffer.readItem();
 		Block hitBlock = Block.byItem(pBuffer.readItem().getItem());
-		// pattern reading
+		//Pattern reading
 		int length = pBuffer.readInt();
-		List<List<String>> patternList = new ArrayList<List<String>>();
+		List<String[]> patternList = new ArrayList<String[]>();
 		for (int i = 0; i < length; i++) {
 			List<String> row = new ArrayList<String>();
 			int width = pBuffer.readInt();
 			for (int j = 0; j < width; j++) {
 				row.add(pBuffer.readUtf());
 			}
-			patternList.add(row);
+			String[] rowArray = new String[row.size()];
+			rowArray = row.toArray(rowArray);
+			patternList.add(rowArray);
 		}
 		String[][] pattern = new String[patternList.size()][];
 		pattern = patternList.toArray(pattern);
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
-		System.out.println("fromNetwork");
+		// Reading symbol key
+		Map<String, Block> map = Maps.newHashMap();
+		int symbolListLength = pBuffer.readInt();
+		for (int i = 0; i < symbolListLength; i++) {
+			String key = pBuffer.readUtf();
+			ResourceLocation blockLoc = pBuffer.readResourceLocation();
+			Block block = Registry.BLOCK.getOptional(blockLoc).orElseThrow(() -> {
+				return new JsonSyntaxException("Unknown block '" + blockLoc + "'");
+			});
+			map.put(key, block);
+		}
+		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
+		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
+		ItemStack result = pBuffer.readItem();
 
 		
-		return null;
+		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
+
+		return recipe;
 	}
 
 	@Override
@@ -109,7 +102,7 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		pBuffer.writeFloat(pRecipe.getBloodCost());
 		pBuffer.writeItem(pRecipe.getHeldItem());
 		pBuffer.writeItem(new ItemStack(pRecipe.getHitBlock().asItem()));
-		// pattern writing
+		//Pattern writing
 		pBuffer.writeInt(pRecipe.getPattern().getPatternArray().length);
 		for (int i = 0; i < pRecipe.getPattern().getPatternArray().length; i++) {
 			pBuffer.writeInt(pRecipe.getPattern().getPatternArray()[i].length);
@@ -117,36 +110,14 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 				pBuffer.writeUtf(pRecipe.getPattern().getPatternArray()[i][j]);
 			}
 		}
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
-		System.out.println("toNetwork");
+		//Writing symbol key
+
+		pBuffer.writeInt(pRecipe.getPattern().getSymbolList().size());
+		pRecipe.getPattern().getSymbolList().forEach((k, v) -> {
+			pBuffer.writeUtf(k);
+			pBuffer.writeResourceLocation(v.getRegistryName());
+		});
+		pBuffer.writeItem(pRecipe.getResult());
 
 	}
 	// Json Helpers
@@ -207,6 +178,7 @@ public class BloodStructureRecipeSerializer extends ForgeRegistryEntry<RecipeSer
 		}
 		String[][] matrix = new String[pattern.size()][];
 		matrix = pattern.toArray(matrix);
+
 		return matrix;
 	}
 

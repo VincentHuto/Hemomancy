@@ -1,18 +1,13 @@
 package com.vincenthuto.hemomancy.network.capa.manips;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
-import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 public class DisplayKnownManipsPacket {
@@ -27,16 +22,6 @@ public class DisplayKnownManipsPacket {
 
 	public static void encode(final DisplayKnownManipsPacket message, final FriendlyByteBuf buffer) {
 		buffer.writeByte(0);
-	}
-
-	public static List<RecipeBaseBloodCrafting> getMatchingRecipes(ItemStack stack) {
-		List<RecipeBaseBloodCrafting> matchedRecipes = new ArrayList<RecipeBaseBloodCrafting>();
-		for (RecipeBaseBloodCrafting recipe : BloodCraftingRecipes.RECIPES) {
-			if (recipe.getHeldItem() == stack.getItem()) {
-				matchedRecipes.add(recipe);
-			}
-		}
-		return matchedRecipes;
 	}
 
 	public static void handle(final DisplayKnownManipsPacket message, final Supplier<NetworkEvent.Context> ctx) {

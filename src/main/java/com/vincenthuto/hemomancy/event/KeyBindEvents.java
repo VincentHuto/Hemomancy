@@ -10,8 +10,7 @@ import com.vincenthuto.hemomancy.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.network.morphling.ChangeMorphKeyPacket;
 import com.vincenthuto.hemomancy.network.particle.GroundBloodDrawPacket;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
-import com.vincenthuto.hemomancy.recipe.RecipeBaseBloodCrafting;
+import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,13 +27,11 @@ public class KeyBindEvents {
 		}
 
 		if (KeyBindInit.bloodCrafting.consumeClick()) {
-			for (RecipeBaseBloodCrafting pattern : BloodCraftingRecipes.RECIPES) {
-				if (HLClientUtils.getClientPlayer().getMainHandItem().getItem() == pattern.getHeldItem()) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-							new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
-				}
-			}
+
+			PacketHandler.CHANNELBLOODVOLUME
+					.sendToServer(new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
 		}
+
 		if (KeyBindInit.bloodDraw.isDown()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
 		}

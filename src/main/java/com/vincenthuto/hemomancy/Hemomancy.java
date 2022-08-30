@@ -29,7 +29,6 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -57,8 +56,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -76,9 +73,7 @@ public class Hemomancy {
 	};
 	public static boolean forcesLoaded = false;
 
-//	public static TagKey<ConfiguredStructureFeature<?, ?>> blood_temple_located = TagKey.create(
-//	Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
-//	new ResourceLocation(Hemomancy.MOD_ID, "blood_temple_located"));
+
 	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
@@ -234,8 +229,6 @@ public class Hemomancy {
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
-		BloodCraftingRecipes.initPatterns();
-		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
 		
