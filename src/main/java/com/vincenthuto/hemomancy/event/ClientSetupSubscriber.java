@@ -5,9 +5,9 @@ import com.vincenthuto.hemomancy.gui.CharmGourdScreen;
 import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
 import com.vincenthuto.hemomancy.gui.VialCentrifugeScreen;
 import com.vincenthuto.hemomancy.gui.VisceralRecallerScreen;
-import com.vincenthuto.hemomancy.gui.morphlingjar.LivingStaffScreen;
-import com.vincenthuto.hemomancy.gui.morphlingjar.LivingSyringeScreen;
-import com.vincenthuto.hemomancy.gui.morphlingjar.MorphlingJarScreen;
+import com.vincenthuto.hemomancy.gui.living.LivingStaffScreen;
+import com.vincenthuto.hemomancy.gui.living.LivingSyringeScreen;
+import com.vincenthuto.hemomancy.gui.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
-public class ClientEventSubscriber {
+public class ClientSetupSubscriber {
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event) {

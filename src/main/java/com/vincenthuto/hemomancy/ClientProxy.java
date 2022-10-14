@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy;
 
 import com.vincenthuto.hemomancy.gui.guide.HemoTitlePage;
+import com.vincenthuto.hemomancy.gui.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.gui.manips.ChooseManipScreen;
 import com.vincenthuto.hemomancy.gui.manips.ChooseVeinScreen;
-import com.vincenthuto.hemomancy.gui.morphlingjar.MorphlingJarViewerScreen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;

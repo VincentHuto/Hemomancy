@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 import org.lwjgl.BufferUtils;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -101,6 +102,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		ms.translate(8, 16, 0);
 		ScreenArea scissorBounds = new ScreenArea(scissorX, scissorY, 70, 70);
 		AABB dims = new AABB(0, 0, 0, 0, 0, 0);
+		Lighting.setupForFlatItems();
 		renderRecipe(recipe, ms, dims, guiScaleFactor, scissorBounds);
 	}
 
@@ -114,6 +116,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			final Matrix4f matrix = mx.last().pose();
 			final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
 			matrix.store(buf);
+			Lighting.setupLevel(matrix);
+			
 			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
 			scissorBounds.x *= scale;
 			scissorBounds.y *= scale;
@@ -129,19 +133,37 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			mx.translate(27 + (35), scissorBounds.y + (35), 100);
 			Vec3 dimsVec = new Vec3(dims.getXsize(), dims.getYsize(), dims.getZsize());
 			float recipeAvgDim = (float) dimsVec.length();
-			double explodeMulti = 1.0;
+
+			int layerCount = recipe.getPattern().getBlockPattern().getHeight() ;
+
+			double explodeMulti = 1.5;
+
 			float previewScale = (float) ((2 + Math.exp(2 - (recipeAvgDim / 5))) / explodeMulti);
 			mx.scale(previewScale, -previewScale, previewScale);
 			double test = Math.toDegrees(HLClientUtils.getWorld().getGameTime()) / 15;
-			mx.mulPose(new Quaternion(35f, (float) -test, 0, true));
+			mx.mulPose(new Quaternion(35f, (float) test, 0, true));
+			mx.mulPose(new Quaternion(0, 35f, 0, true));
+
 			recipe.getPattern().getBlockPosBlockList().forEach((box) -> {
-				mx.pushPose();
-				mx.translate((box.getPos().getX() - (recipe.getPattern().getBlockPattern().getWidth() / 2)) - 0.5,
-						(box.getPos().getY() - (recipe.getPattern().getBlockPattern().getHeight() / 2)) - 0.5,
-						(box.getPos().getZ() - (recipe.getPattern().getBlockPattern().getDepth() / 2)) - 0.5);
-				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(box.getBlock().defaultBlockState(), mx,
-						buffers, 0x00F000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-				mx.popPose();
+				if (box.getPos().getY() < layerCount) {
+					mx.pushPose();
+
+					mx.translate(
+							explodeMulti
+									* (box.getPos().getX() - (recipe.getPattern().getBlockPattern().getWidth() / 2))
+									- 0.5,
+							explodeMulti
+									* (box.getPos().getY() - (recipe.getPattern().getBlockPattern().getHeight() / 2))
+									- 0.5,
+							explodeMulti
+									* (box.getPos().getZ() - (recipe.getPattern().getBlockPattern().getDepth() / 2))
+									- 0.5);
+
+
+					Minecraft.getInstance().getBlockRenderer().renderSingleBlock(box.getBlock().defaultBlockState(), mx,
+							buffers, 15728880, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+					mx.popPose();
+				}
 			});
 			mx.popPose();
 			buffers.endBatch();

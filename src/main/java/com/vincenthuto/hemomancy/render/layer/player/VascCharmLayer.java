@@ -31,7 +31,6 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
-
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
 				if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();

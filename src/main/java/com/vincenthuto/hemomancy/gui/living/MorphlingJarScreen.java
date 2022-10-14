@@ -1,10 +1,10 @@
-package com.vincenthuto.hemomancy.gui.morphlingjar;
+package com.vincenthuto.hemomancy.gui.living;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.LivingStaffMenu;
+import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -13,12 +13,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> {
-	public LivingStaffScreen(LivingStaffMenu container, Inventory playerInventory, Component name) {
+public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
+	public MorphlingJarScreen(MorphlingJarMenu container, Inventory playerInventory, Component name) {
 		super(container, playerInventory, name);
 
 		switch (container.slotcount) {
-		case 1:
+		case 4:
 			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_gui.png");
 			imageWidth = 176;
 			imageHeight = 228;
@@ -30,7 +30,7 @@ public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> 
 			break;
 		case 12:
 			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_max.png");
-			imageWidth = 176;
+			imageWidth = 176;  
 			imageHeight = 184;
 			break;
 		default:
@@ -56,7 +56,6 @@ public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> 
 		RenderSystem.setShaderTexture(0, GUI);
 		HLGuiUtils.drawTexturedModalRect(getGuiLeft(), getGuiTop(), 0, 0, imageWidth, imageHeight);
 	}
-
 
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {

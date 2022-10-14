@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.item.tool.EnumModToolTiers;
 import com.vincenthuto.hemomancy.item.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.item.tool.living.BloodBoltItem;
 import com.vincenthuto.hemomancy.item.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.item.tool.living.LivingBladeItem;
 import com.vincenthuto.hemomancy.item.tool.living.LivingCrossbowItem;
 import com.vincenthuto.hemomancy.item.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.item.tool.living.LivingSyringeItem;
@@ -245,9 +246,9 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
 			() -> new LivingStaffItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-//	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-//			() -> new ItemLivingBlade(25f, 3, EnumModToolTiers.LIVING,
-//					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
+			() -> new LivingBladeItem(25f, 3, EnumModToolTiers.LIVING,
+					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new LivingCrossbowItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",

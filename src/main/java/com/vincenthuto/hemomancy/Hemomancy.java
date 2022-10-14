@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
-import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
 import com.vincenthuto.hemomancy.event.WorldGenEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
@@ -108,8 +107,6 @@ public class Hemomancy {
 		modEventBus.addListener(this::clientSetup);
 		modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
 		forgeBus.register(this);
-		forgeBus.addListener(MorphlingJarEvents::pickupEvent);
-		forgeBus.addListener(MorphlingJarEvents::onClientTick);
 		forgeBus.addListener(KeyBindEvents::onClientTick);
 		forgeBus.register(BloodVolumeEvents.class);
 		forgeBus.register(VascularSystemEvents.class);

@@ -1,10 +1,10 @@
-package com.vincenthuto.hemomancy.gui.morphlingjar;
+package com.vincenthuto.hemomancy.gui.living;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
+import com.vincenthuto.hemomancy.container.LivingSyringeMenu;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -13,30 +13,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
-	public MorphlingJarScreen(MorphlingJarMenu container, Inventory playerInventory, Component name) {
+public class LivingSyringeScreen extends AbstractContainerScreen<LivingSyringeMenu> {
+	public LivingSyringeScreen(LivingSyringeMenu container, Inventory playerInventory, Component name) {
 		super(container, playerInventory, name);
 
 		switch (container.slotcount) {
-		case 4:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_gui.png");
+		case 1:
+			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/living_syringe_gui.png");
 			imageWidth = 176;
-			imageHeight = 228;
-			break;
-		case 8:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_large.png");
-			imageWidth = 176;
-			imageHeight = 168;
-			break;
-		case 12:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_max.png");
-			imageWidth = 176;  
-			imageHeight = 184;
+			imageHeight = 127;
 			break;
 		default:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar.png");
-			imageWidth = 212;
-			imageHeight = 276;
+			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/living_syringe_gui.png");
+			imageWidth = 176;
+			imageHeight = 127;
 			break;
 		}
 	}
@@ -52,10 +42,11 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.getModelViewMatrix().translate(new Vector3f(0, 78, 0));
+		RenderSystem.getModelViewMatrix().translate(new Vector3f(0, 50, 0));
 		RenderSystem.setShaderTexture(0, GUI);
 		HLGuiUtils.drawTexturedModalRect(getGuiLeft(), getGuiTop(), 0, 0, imageWidth, imageHeight);
 	}
+
 
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {

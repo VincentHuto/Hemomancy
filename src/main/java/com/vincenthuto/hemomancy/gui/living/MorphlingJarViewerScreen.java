@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.gui.morphlingjar;
+package com.vincenthuto.hemomancy.gui.living;
 
 //GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;

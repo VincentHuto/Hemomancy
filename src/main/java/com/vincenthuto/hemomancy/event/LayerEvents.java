@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.render.layer.player.BloodAvatarLayer;
 import com.vincenthuto.hemomancy.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.render.layer.player.CellHandLayer;
+import com.vincenthuto.hemomancy.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hutoslib.common.container.BannerSlot;
 
 import net.minecraft.client.Minecraft;
@@ -66,7 +67,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
 			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
-
+			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 
 		}
 	}
@@ -79,6 +80,7 @@ public class LayerEvents {
 			renderer.addLayer(new BloodGourdLayer(renderer));
 			renderer.addLayer(new BloodAvatarLayer(renderer));
 			renderer.addLayer(new CellHandLayer(renderer));
+			renderer.addLayer(new VascCharmLayer<T, M>(renderer));
 
 		}
 	}

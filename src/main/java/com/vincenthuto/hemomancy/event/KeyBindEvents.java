@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.network.capa.manips.UseQuickManipKeyPacket;
 import com.vincenthuto.hemomancy.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.network.morphling.ChangeMorphKeyPacket;
+import com.vincenthuto.hemomancy.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
@@ -39,7 +40,9 @@ public class KeyBindEvents {
 			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
 
 		}
-
+		if (KeyBindInit.toggleMorphlingJarPickup.consumeClick()) {
+			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new JarTogglePickupPacket());
+		}
 		if (KeyBindInit.cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
 					.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
