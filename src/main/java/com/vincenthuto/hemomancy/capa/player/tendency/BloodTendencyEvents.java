@@ -7,8 +7,8 @@ import java.util.Map;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodTendencyServer;
-import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hemomancy.network.capa.BloodTendencyServerPacket;
+import com.vincenthuto.hemomancy.tile.VisceralRecallerBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.MathUtils;
 
@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -45,29 +45,29 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodTendencyServer(BloodTendency));
+				new BloodTendencyServerPacket(BloodTendency));
 //		player.displayClientMessage(
-//				 Component.translatable("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
+//				Component.literal("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof BlockEntityVisceralRecaller) {
+		if (event.getObject() instanceof VisceralRecallerBlockEntity) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodtendancy"), new BloodTendencyProvider());
 		}
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
 		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodTendencyServer(BloodTendency));
+				new BloodTendencyServerPacket(BloodTendency));
 //		player.displayClientMessage(
-//				 Component.translatable("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
+//				Component.literal("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent
@@ -107,7 +107,7 @@ public class BloodTendencyEvents {
 	public static void playerDeath(PlayerEvent.Clone event) {
 
 		Player peorig = event.getOriginal();
-		Player playernew = event.getPlayer();
+		Player playernew = event.getEntity();
 		if (event.isWasDeath()) {
 			peorig.reviveCaps();
 			IBloodTendency bloodTendencyNew = playernew.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
@@ -127,7 +127,7 @@ public class BloodTendencyEvents {
 				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketBloodTendencyServer(tendency.getTendency()));
+						new BloodTendencyServerPacket(tendency.getTendency()));
 			}
 		}
 	}
@@ -137,7 +137,7 @@ public class BloodTendencyEvents {
 	@SuppressWarnings({ "deprecation", "unused" })
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent(receiveCanceled = true)
-	public static void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
+	public static void onRenderGameOverlay(RenderGuiOverlayEvent.Post event) {
 
 		if (fontRenderer == null) {
 			fontRenderer = Minecraft.getInstance().font;
@@ -151,7 +151,7 @@ public class BloodTendencyEvents {
 				Item item = stack.getItem();
 
 				// Allegiance Identifier overlay
-				if (item == ItemInit.self_reflection_mirror.get()) {
+				if (item == ItemInit.sanguine_conduit.get()) {
 					Item renderItem = ItemInit.sanguine_formation.get();
 					int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) - 15;
@@ -160,7 +160,7 @@ public class BloodTendencyEvents {
 					for (int i = 0; i < tendency.getTendency().keySet().size(); i++) {
 						EnumBloodTendency selectedCoven = (EnumBloodTendency) tendency.getTendency().keySet()
 								.toArray()[i];
-						// 
+						// GlStateManager._pushMatrix();
 						fontRenderer.draw(event.getPoseStack(), HLTextUtils.toProperCase(selectedCoven.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getPoseStack(),

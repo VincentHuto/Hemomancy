@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public class HemoTitlePage extends GuiGuideTitlePage {
 
 	public HemoTitlePage() {
-		super( Component.translatable("Hemomancy"), new ItemStack(ItemInit.sanguine_formation.get()), HemoLib.chapters,
+		super(Component.literal("Hemomancy"), new ItemStack(ItemInit.sanguine_formation.get()), HemoLib.chapters,
 				new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/hemo_overlay.png"));
 	}
 

@@ -1,9 +1,0 @@
-{
-  "type" : "minecraft:smelting",
-  "ingredient" : {
-    "item" : "hemomancy:foul_paste"
-  },
-  "result" : "hemomancy:befouling_ash_trail",
-  "experience" : 1.0,
-  "cookingtime" : 200
-}

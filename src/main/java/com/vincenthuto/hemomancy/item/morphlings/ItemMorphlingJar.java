@@ -6,10 +6,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.container.MenuMorphlingJar;
+import com.vincenthuto.hemomancy.container.MorphlingJarMenu;
 import com.vincenthuto.hemomancy.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.morphling.PacketToggleJarMessage;
+import com.vincenthuto.hemomancy.network.morphling.ToggleMorphlingJarMessagePacket;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -80,6 +80,9 @@ public class ItemMorphlingJar extends Item {
 		return rarity;
 	}
 
+	public ItemMorphlingJar setName() {
+		return this;
+	}
 
 	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
@@ -108,7 +111,7 @@ public class ItemMorphlingJar extends Item {
 					@Override
 					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
-						return new MenuMorphlingJar(windowId, p_createMenu_3_.level,
+						return new MorphlingJarMenu(windowId, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
 					}
 				});
@@ -167,15 +170,15 @@ public class ItemMorphlingJar extends Item {
 		nbt.putBoolean("Pickup", Pickup);
 		if (playerEntity instanceof ServerPlayer)
 			PacketHandler.CHANNELMORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
-					new PacketToggleJarMessage(Pickup));
+					new ToggleMorphlingJarMessagePacket(Pickup));
 		else
-			playerEntity.displayClientMessage( Component.translatable(
+			playerEntity.displayClientMessage(Component.literal(
 					I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
 
 	}
 
 	public boolean filterItem(ItemStack item, ItemStack packItem) {
-		return item.getItem() instanceof ItemMorphling ? true : false;
+		return item.getItem() instanceof MorphlingItem ? true : false;
 
 	}
 
@@ -231,9 +234,9 @@ public class ItemMorphlingJar extends Item {
 
 		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
 		if (pickupEnabled)
-			tooltip.add( Component.translatable(I18n.get("hemomancy.autopickupenabled")));
+			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupenabled")));
 		else
-			tooltip.add( Component.translatable(I18n.get("hemomancy.autopickupdisabled")));
+			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupdisabled")));
 
 		if (Screen.hasShiftDown()) {
 			IItemHandler jarHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
@@ -256,7 +259,7 @@ public class ItemMorphlingJar extends Item {
 			}
 
 		} else {
-			tooltip.add( Component.translatable(fallbackString("hemomancy.shift", "Press <�6�oShift�r> for info.")));
+			tooltip.add(Component.literal(fallbackString("hemomancy.shift", "Press <�6�oShift�r> for info.")));
 		}
 	}
 }

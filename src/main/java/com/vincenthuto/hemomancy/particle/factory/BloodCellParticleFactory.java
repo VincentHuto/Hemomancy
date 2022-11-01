@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.particle.factory;
 
 import com.vincenthuto.hemomancy.init.ParticleInit;
-import com.vincenthuto.hemomancy.particle.ParticleBloodCell;
+import com.vincenthuto.hemomancy.particle.BloodCellParticle;
 import com.vincenthuto.hemomancy.particle.data.BloodCellData;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -22,7 +22,7 @@ public class BloodCellParticleFactory implements ParticleProvider<BloodCellData>
 	@Override
 	public Particle createParticle(BloodCellData data, ClientLevel worldIn, double x, double y, double z, double xSpeed,
 			double ySpeed, double zSpeed) {
-		return new ParticleBloodCell(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
+		return new BloodCellParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, .025f, 50, this.spriteSet);
 
 	}

@@ -7,7 +7,7 @@ import java.util.Map;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketVascularSystemServer;
+import com.vincenthuto.hemomancy.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -39,28 +39,28 @@ public class VascularSystemEvents {
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketVascularSystemServer(BloodFlow));
+				new VascularSystemServerPacket(BloodFlow));
 //		player.displayClientMessage(
-//				 Component.translatable("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketVascularSystemServer(BloodFlow));
+				new VascularSystemServerPacket(BloodFlow));
 //		player.displayClientMessage(
-//				 Component.translatable("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
 		Player peorig = event.getOriginal();
-		Player playernew = event.getPlayer();
+		Player playernew = event.getEntity();
 		if (event.isWasDeath()) {
 			peorig.reviveCaps();
 			IVascularSystem bloodVolumeNew = playernew.getCapability(VascularSystemProvider.VASCULAR_CAPA)
@@ -79,14 +79,14 @@ public class VascularSystemEvents {
 				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new PacketVascularSystemServer(section.getVascularSystem()));
+						new VascularSystemServerPacket(section.getVascularSystem()));
 			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerDamage(LivingDamageEvent e) {
-		if (e.getEntityLiving() instanceof Player) {
+		if (e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
 			if (!player.getCommandSenderWorld().isClientSide) {
 
@@ -98,7 +98,7 @@ public class VascularSystemEvents {
 						system.setVascularSectionHealth(section, -player.level.random.nextFloat() * 3f);
 						PacketHandler.CHANNELVASCULARSYSTEM.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new PacketVascularSystemServer(system.getVascularSystem()));
+								new VascularSystemServerPacket(system.getVascularSystem()));
 					}
 				}
 			}
@@ -110,7 +110,7 @@ public class VascularSystemEvents {
 	@SuppressWarnings({ "deprecation", "unused" })
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent(receiveCanceled = true)
-	public static void onRenderGameOverlay(RenderGameOverlayEvent.Post event) {
+	public static void onRenderGameOverlay(RenderGuiOverlayEvent.Post event) {
 
 		if (fontRenderer == null) {
 			fontRenderer = Minecraft.getInstance().font;
@@ -124,8 +124,8 @@ public class VascularSystemEvents {
 				Item item = stack.getItem();
 
 				// Allegiance Identifier overlay
-				if (item == ItemInit.mind_spike.get()) {
-					Item renderItem = ItemInit.mind_spike.get();
+				if (item == ItemInit.sanguine_conduit.get()) {
+					Item renderItem = ItemInit.sanguine_conduit.get();
 					int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) - 15;
 					double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
@@ -133,7 +133,7 @@ public class VascularSystemEvents {
 					for (int i = 0; i < section.getVascularSystem().keySet().size(); i++) {
 						EnumVeinSections selectedSection = (EnumVeinSections) section.getVascularSystem().keySet()
 								.toArray()[i];
-						// 
+						// GlStateManager._pushMatrix();
 						fontRenderer.draw(event.getPoseStack(), HLTextUtils.toProperCase(selectedSection.toString()),
 								point.x, point.y + 20, new Color(255, 0, 0, 255).getRGB());
 						fontRenderer.draw(event.getPoseStack(),
@@ -142,7 +142,7 @@ public class VascularSystemEvents {
 						fontRenderer.draw(event.getPoseStack(),
 								String.valueOf(section.getBloodFlowBySection(selectedSection)), point.x, point.y + 40,
 								new Color(255, 0, 0, 255).getRGB());
-						// 
+						// GlStateManager._popMatrix();
 						/*
 						 * if (selectedSection.equals(EnumVeinSections.SELF)) { renderItem =
 						 * Items.CRAFTING_TABLE; } else if
@@ -157,7 +157,7 @@ public class VascularSystemEvents {
 						 * (selectedSection.equals(EnumVeinSections.BEAST)) { renderItem =
 						 * ItemInit.breath_of_the_beast.get(); } else { renderItem = Items.BARRIER; }
 						 */
-						// 
+						// GlStateManager._pushMatrix();
 						//// GlStateManager._enableAlphaTest();
 						// GlStateManager._enableBlend();
 						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(renderItem),
@@ -165,7 +165,7 @@ public class VascularSystemEvents {
 						// GuiUtil.drawScaledTexturedModalRect(point.x, point.y, 0, 0, 16, 16, 0.062f);
 						// GlStateManager._disableBlend();
 						// GlStateManager._disableAlphaTest();
-						// 
+						// GlStateManager._popMatrix();
 						point = rotatePointAbout(point, center, angleBetweenEach);
 					}
 				}

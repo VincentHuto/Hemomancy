@@ -5,28 +5,20 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.render.handler.BloodMoonWeatherRenderHandler;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -36,20 +28,20 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
 public class CameraEventSubscriber {
 
-	@SubscribeEvent
-	public static void skybox(RenderLevelLastEvent event) {
-		ClientLevel level = HLClientUtils.getWorld();
-		LevelRenderer levelRenderer = event.getLevelRenderer();
-		LocalPlayer player = (LocalPlayer) HLClientUtils.getClientPlayer();
-		if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemInit.sanguine_formation.get()) {
-			//level.effects().setSkyRenderHandler(new BloodMoonSkyRenderHandler());
-			level.effects().setWeatherRenderHandler(new BloodMoonWeatherRenderHandler());
-		} else {
-			level.effects().setSkyRenderHandler(null);
-			level.effects().setWeatherRenderHandler(null);
-		}
-
-	}
+//	@SubscribeEvent
+//	public static void skybox(RenderLevelLastEvent event) {
+//		ClientLevel level = HLClientUtils.getWorld();
+//		LevelRenderer levelRenderer = event.getLevelRenderer();
+//		LocalPlayer player = (LocalPlayer) HLClientUtils.getClientPlayer();
+//		if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemInit.sanguine_formation.get()) {
+//			//level.effects().setSkyRenderHandler(new BloodMoonSkyRenderHandler());
+//			level.effects().setWeatherRenderHandler(new BloodMoonWeatherRenderHandler());
+//		} else {
+//			level.effects().setSkyRenderHandler(null);
+//			level.effects().setWeatherRenderHandler(null);
+//		}
+//
+//	}
 
 	@SubscribeEvent
 	public static void cameraVIew(EntityEvent.Size event) {
@@ -60,16 +52,15 @@ public class CameraEventSubscriber {
 						event.setNewEyeHeight(3.5f);
 						event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
 					} else {
-						if(player.isCrouching()) {
-							//event.setNewEyeHeight(Player.CROUCH_BB_HEIGHT);
+						if (player.isCrouching()) {
+							// event.setNewEyeHeight(Player.CROUCH_BB_HEIGHT);
 							event.setNewSize(player.getDimensions(Pose.CROUCHING));
-			
-						}else {
+
+						} else {
 							event.setNewEyeHeight(Player.DEFAULT_EYE_HEIGHT);
 							event.setNewSize(player.getDimensions(Pose.STANDING));
 
 						}
-				
 
 					}
 				});
@@ -81,7 +72,7 @@ public class CameraEventSubscriber {
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent(receiveCanceled = true)
-	public static void onRenderGameOverlay(RenderGameOverlayEvent.Text event) {
+	public static void onRenderGameOverlay(RenderGuiOverlayEvent.Pre event) {
 
 		if (fontRenderer == null) {
 			fontRenderer = Minecraft.getInstance().font;
@@ -204,20 +195,17 @@ public class CameraEventSubscriber {
 
 	@SubscribeEvent
 	public static void renderPlayerSize(RenderPlayerEvent event) {
-		if (event.getEntity() instanceof Player player) {
-			if (player.isAddedToWorld()) {
-				player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
-					// System.out.println(manip.isAvatarActive());
-					if (manip.isAvatarActive()) {
-						// event.getPoseStack().scale(2, 2, 2);
-						event.getPoseStack().translate(0, 2, 0);
-					} else {
-						// event.getPoseStack().scale(1, 1, 1);
-					}
-				});
+		if (event.getEntity().isAddedToWorld()) {
+			event.getEntity().getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+				// System.out.println(manip.isAvatarActive());
+				if (manip.isAvatarActive()) {
+					// event.getPoseStack().scale(2, 2, 2);
+					event.getPoseStack().translate(0, 2, 0);
+				} else {
+					// event.getPoseStack().scale(1, 1, 1);
+				}
+			});
 
-			}
 		}
 	}
-
 }

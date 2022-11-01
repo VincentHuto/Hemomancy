@@ -4,11 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.PacketRuneSync;
-import com.vincenthuto.hemomancy.network.capa.runes.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.network.capa.PacketCurvedHornAnimation;
+import com.vincenthuto.hemomancy.network.capa.PacketGourdRuneSync;
+import com.vincenthuto.hemomancy.network.capa.PacketRuneSync;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -60,7 +64,7 @@ public class RuneEntityEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void playerJoin(EntityJoinWorldEvent event) {
+	public static void playerJoin(EntityJoinLevelEvent event) {
 		Entity entity = event.getEntity();
 		if (entity instanceof ServerPlayer) {
 			ServerPlayer player = (ServerPlayer) entity;
@@ -72,14 +76,14 @@ public class RuneEntityEventHandler {
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
 		Entity target = event.getTarget();
 		if (target instanceof ServerPlayer) {
-			syncSlots((ServerPlayer) target, Collections.singletonList(event.getPlayer()));
+			syncSlots((ServerPlayer) target, Collections.singletonList(event.getEntity()));
 		}
 	}
 
 	@SubscribeEvent
 	public static void playerHurt(LivingDeathEvent event) {
 
-		if (event.getEntityLiving()instanceof Player player && !event.getEntityLiving().level.isClientSide) {
+		if (event.getEntity()instanceof Player player && !event.getEntity().level.isClientSide) {
 
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
 				// player events
@@ -120,10 +124,24 @@ public class RuneEntityEventHandler {
 	}
 
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
-		PacketRuneSync pkt = new PacketRuneSync(player.getId(), slot, stack);
-		for (Player receiver : receivers) {
-			PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+		
+		if (stack.getItem() instanceof BloodGourdItem gourd) {
+			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+		//	System.out.println( gourd +" "+ bloodVolume.getBloodVolume());
+			PacketGourdRuneSync pkt = new PacketGourdRuneSync(player.getId(), slot, stack, bloodVolume.getBloodVolume());
+			for (Player receiver : receivers) {
+				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+			}
+		}else {
+			PacketRuneSync pkt = new PacketRuneSync(player.getId(), slot, stack);
+			for (Player receiver : receivers) {
+				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+			}
 		}
+
+		
+	
 	}
 
 	@SubscribeEvent

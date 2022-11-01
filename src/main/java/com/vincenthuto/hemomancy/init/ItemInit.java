@@ -3,59 +3,42 @@ package com.vincenthuto.hemomancy.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
+import com.vincenthuto.hemomancy.item.BloodVialItem;
+import com.vincenthuto.hemomancy.item.BloodyBookItem;
+import com.vincenthuto.hemomancy.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.item.EnumBloodGourdTiers;
-import com.vincenthuto.hemomancy.item.ItemBloodVial;
-import com.vincenthuto.hemomancy.item.ItemBloodyBook;
-import com.vincenthuto.hemomancy.item.ItemBloodyFlask;
-import com.vincenthuto.hemomancy.item.ItemDSD;
-import com.vincenthuto.hemomancy.item.ItemEnzyme;
-import com.vincenthuto.hemomancy.item.ItemRecycledEnzyme;
-import com.vincenthuto.hemomancy.item.ItemTendencyBook;
-import com.vincenthuto.hemomancy.item.ItemTendencyHiddenBook;
-import com.vincenthuto.hemomancy.item.ItemVasculariumCharm;
+import com.vincenthuto.hemomancy.item.EnzymeItem;
+import com.vincenthuto.hemomancy.item.RecycledEnzymeItem;
+import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.item.armor.BarbedArmorItem;
+import com.vincenthuto.hemomancy.item.armor.BarbedShieldItem;
+import com.vincenthuto.hemomancy.item.armor.BloodLustArmorItem;
+import com.vincenthuto.hemomancy.item.armor.ChitiniteArmorItem;
+import com.vincenthuto.hemomancy.item.armor.ChitiniteShieldItem;
 import com.vincenthuto.hemomancy.item.armor.EnumModArmorTiers;
-import com.vincenthuto.hemomancy.item.armor.ItemBarbedArmor;
-import com.vincenthuto.hemomancy.item.armor.ItemBarbedShield;
-import com.vincenthuto.hemomancy.item.armor.ItemBloodLustArmor;
-import com.vincenthuto.hemomancy.item.armor.ItemChitiniteArmor;
-import com.vincenthuto.hemomancy.item.armor.ItemChitiniteShield;
-import com.vincenthuto.hemomancy.item.armor.ItemUnstainedArmor;
-import com.vincenthuto.hemomancy.item.bloodline.ItemUnsignedLedger;
-import com.vincenthuto.hemomancy.item.memories.ItemBloodMemory;
-import com.vincenthuto.hemomancy.item.memories.ItemFerventHusk;
-import com.vincenthuto.hemomancy.item.memories.ItemHematicMemory;
-import com.vincenthuto.hemomancy.item.memories.ItemLethianBrew;
-import com.vincenthuto.hemomancy.item.memories.ItemLethianDew;
-import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingChitinite;
-import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingFungal;
+import com.vincenthuto.hemomancy.item.armor.UnstainedArmorItem;
+import com.vincenthuto.hemomancy.item.bloodline.UnsignedLedgerItem;
+import com.vincenthuto.hemomancy.item.memories.BloodMemoryItem;
+import com.vincenthuto.hemomancy.item.memories.BloodStainedStoneItem;
+import com.vincenthuto.hemomancy.item.memories.FerventHuskItem;
+import com.vincenthuto.hemomancy.item.memories.HematicMemoryItem;
+import com.vincenthuto.hemomancy.item.memories.LethianBrewItem;
+import com.vincenthuto.hemomancy.item.memories.LethianDewItem;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingLeech;
-import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingPest;
 import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingPolyp;
-import com.vincenthuto.hemomancy.item.morphlings.ItemMorphlingSerpent;
-import com.vincenthuto.hemomancy.item.rune.ItemRune;
-import com.vincenthuto.hemomancy.item.rune.ItemRuneBinder;
-import com.vincenthuto.hemomancy.item.rune.ItemSelfReflectionMirror;
-import com.vincenthuto.hemomancy.item.rune.pattern.ItemRunePattern;
+import com.vincenthuto.hemomancy.item.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.item.tool.CurvedHornItem;
 import com.vincenthuto.hemomancy.item.tool.EnumModToolTiers;
-import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
-import com.vincenthuto.hemomancy.item.tool.ItemCurvedHorn;
-import com.vincenthuto.hemomancy.item.tool.ItemDrudgeElectrode;
-import com.vincenthuto.hemomancy.item.tool.living.ItemBloodAbsorption;
-import com.vincenthuto.hemomancy.item.tool.living.ItemBloodBolt;
-import com.vincenthuto.hemomancy.item.tool.living.ItemBloodProjection;
-import com.vincenthuto.hemomancy.item.tool.living.ItemBloodStainedStone;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingAxe;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBaghnakh;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingBlade;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingCrossbow;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingGrasp;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingPistol;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSpear;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingStaff;
-import com.vincenthuto.hemomancy.item.tool.living.ItemLivingSyringe;
-import com.vincenthuto.hemomancy.item.tool.living.ItemVeinRecaller;
-import com.vincenthuto.hemomancy.model.armor.ModelBloodLustArmor.EnumBloodLustMaskTypes;
+import com.vincenthuto.hemomancy.item.tool.living.BloodAbsorptionItem;
+import com.vincenthuto.hemomancy.item.tool.living.BloodBoltItem;
+import com.vincenthuto.hemomancy.item.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.item.tool.living.LivingBladeItem;
+import com.vincenthuto.hemomancy.item.tool.living.LivingCrossbowItem;
+import com.vincenthuto.hemomancy.item.tool.living.LivingStaffItem;
+import com.vincenthuto.hemomancy.item.tool.living.LivingSyringeItem;
+import com.vincenthuto.hemomancy.item.tool.living.VeinRecallerItem;
+import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.item.ModSpawnEggItem;
@@ -84,7 +67,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -110,6 +93,7 @@ public class ItemInit {
 			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), EnumModArmorTiers.CHITINITE,
 					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/arm_banner/chitinite_arm_banner.png")));
 
+
 	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
 			() -> new BannerPatternItem(
 					TagKey.create(Registry.BANNER_PATTERN_REGISTRY,
@@ -124,25 +108,16 @@ public class ItemInit {
 
 	// Charm
 	public static final RegistryObject<Item> charm_of_vascularium = BASEITEMS.register("charm_of_vascularium",
-			() -> new ItemVasculariumCharm(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new VasculariumCharmItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					EnumBloodTendency.ANIMUS, 0));
 
 	// Book
 
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
-			() -> new ItemBloodyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+			() -> new BloodyBookItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_sanguinum.png")));
-
-	public static final RegistryObject<Item> liber_inclinatio = SPECIALITEMS.register("liber_inclinatio",
-			() -> new ItemTendencyBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio.png")));
-
-	public static final RegistryObject<Item> liber_inclinatio_hidden = SPECIALITEMS.register("liber_inclinatio_hidden",
-			() -> new ItemTendencyHiddenBook(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_inclinatio_hidden.png")));
-
 	public static final RegistryObject<Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
-			() -> new ItemUnsignedLedger(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new UnsignedLedgerItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
@@ -159,9 +134,7 @@ public class ItemInit {
 			() -> new ItemNameBlockItem(BlockInit.active_befouling_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> hematic_iron_scrap = BASEITEMS.register("hematic_iron_scrap",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> living_will = BASEITEMS.register("living_will",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> shred_of_animus = BASEITEMS.register("shred_of_animus",
+	public static final RegistryObject<Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> serpent_scale = BASEITEMS.register("serpent_scale",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
@@ -176,136 +149,120 @@ public class ItemInit {
 	public static final RegistryObject<Item> scrying_dish = BASEITEMS.register("scrying_dish",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
-			() -> new ItemBloodStainedStone(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> drudge_submission_device = BASEITEMS.register("drudge_submission_device",
-			() -> new ItemDSD(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new BloodStainedStoneItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> dicentra_sap = BASEITEMS.register("dicentra_sap",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> living_stent = BASEITEMS.register("living_stent",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
+			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+
+	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> hemolytic_plating = BASEITEMS.register("hemolytic_plating",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> puppeteering_thread = BASEITEMS.register("puppeteering_thread",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.ANIMUS, 10));
+			() -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));
 	public static final RegistryObject<Item> ruinous_enzyme = BASEITEMS.register("ruinous_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.MORTEM, 10));
+			() -> new EnzymeItem(EnumBloodTendency.MORTEM, 10));
 	public static final RegistryObject<Item> neurotic_enzyme = BASEITEMS.register("neurotic_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.DUCTILIS, 10));
+			() -> new EnzymeItem(EnumBloodTendency.DUCTILIS, 10));
 	public static final RegistryObject<Item> ferric_enzyme = BASEITEMS.register("ferric_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.FERRIC, 10));
+			() -> new EnzymeItem(EnumBloodTendency.FERRIC, 10));
 	public static final RegistryObject<Item> fervent_enzyme = BASEITEMS.register("fervent_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.FLAMMEUS, 10));
+			() -> new EnzymeItem(EnumBloodTendency.FLAMMEUS, 10));
 	public static final RegistryObject<Item> frigid_enzyme = BASEITEMS.register("frigid_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.CONGEATIO, 10));
+			() -> new EnzymeItem(EnumBloodTendency.CONGEATIO, 10));
 	public static final RegistryObject<Item> incandescent_enzyme = BASEITEMS.register("incandescent_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.LUX, 10));
+			() -> new EnzymeItem(EnumBloodTendency.LUX, 10));
 	public static final RegistryObject<Item> umbral_enzyme = BASEITEMS.register("umbral_enzyme",
-			() -> new ItemEnzyme(EnumBloodTendency.TENEBRIS, 10));
+			() -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
 	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
-			() -> new ItemRecycledEnzyme());
+			() -> new RecycledEnzymeItem());
+
 	// Hematic Memories
 	public static final RegistryObject<Item> lethian_dew = BASEITEMS.register("lethian_dew",
-			() -> new ItemLethianDew(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new LethianDewItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> lethian_brew = BASEITEMS.register("lethian_brew",
-			() -> new ItemLethianBrew(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new LethianBrewItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> fervent_husk = BASEITEMS.register("fervent_husk",
-			() -> new ItemFerventHusk(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new FerventHuskItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
-			() -> new ItemHematicMemory(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new HematicMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> memory_blood_absorption = BASEITEMS.register("memory_blood_absorption",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blood_absorbtion));
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.blood_absorption));
 	public static final RegistryObject<Item> memory_blood_projection = BASEITEMS.register("memory_blood_projection",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blood_projection));
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.blood_projection));
 	public static final RegistryObject<Item> memory_venous_travel = BASEITEMS.register("memory_venous_travel",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.venous_recaller));
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.venous_travel));
 	public static final RegistryObject<Item> memory_blood_shot = BASEITEMS.register("memory_blood_shot",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_shot));
 	public static final RegistryObject<Item> memory_blood_aneurysm = BASEITEMS.register("memory_blood_aneurysm",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.aneurysm));
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.blood_aneurysm));
 	public static final RegistryObject<Item> memory_blood_rush = BASEITEMS.register("memory_blood_rush",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_rush));
 	public static final RegistryObject<Item> memory_deadly_gaze = BASEITEMS.register("memory_deadly_gaze",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.deadly_gaze));
 	public static final RegistryObject<Item> memory_blood_needle = BASEITEMS.register("memory_blood_needle",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_needle));
 	public static final RegistryObject<Item> memory_blood_cloud = BASEITEMS.register("memory_blood_cloud",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.blood_cloud));
 	public static final RegistryObject<Item> memory_activation_potential = BASEITEMS.register(
 			"memory_activation_potential",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.activation_potential));
 	public static final RegistryObject<Item> memory_sanguine_ward = BASEITEMS.register("memory_sanguine_ward",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.sanguine_ward));
-	public static final RegistryObject<Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_blade));
-	public static final RegistryObject<Item> memory_living_axe = BASEITEMS.register("memory_living_axe",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_axe));
-	public static final RegistryObject<Item> memory_living_spear = BASEITEMS.register("memory_living_spear",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_spear));
-	public static final RegistryObject<Item> memory_living_claws = BASEITEMS.register("memory_living_claws",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_claws));
-	public static final RegistryObject<Item> memory_living_crossbow = BASEITEMS.register("memory_living_crossbow",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
-					ManipulationInit.conjure_crossbow));
+//	public static final RegistryObject<Item> memory_living_blade = BASEITEMS.register("memory_living_blade",
+//			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+//					ManipulationInit.conjure_blade));
 	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
-			() -> new ItemBloodMemory(new Item.Properties().tab(HemomancyItemGroup.instance),
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
 					ManipulationInit.summon_avatar));
-
+	public static final RegistryObject<Item> memory_ferric_transmutation = BASEITEMS.register(
+			"memory_ferric_transmutation",
+			() -> new BloodMemoryItem(new Item.Properties().tab(HemomancyItemGroup.instance),
+					ManipulationInit.ferric_transmutation));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
-			() -> new ItemBloodAbsorption(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new BloodAbsorptionItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> blood_projection = SPECIALITEMS.register("blood_projection",
-			() -> new ItemBloodProjection(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new BloodProjectionItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
+
 	public static final RegistryObject<Item> venous_recaller = SPECIALITEMS.register("venous_recaller",
-			() -> new ItemVeinRecaller(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new VeinRecallerItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
+
 	public static final RegistryObject<Item> living_syringe = SPECIALITEMS.register("living_syringe",
-			() -> new ItemLivingSyringe(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new LivingSyringeItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+
 	public static final RegistryObject<Item> living_staff = SPECIALITEMS.register("living_staff",
-			() -> new ItemLivingStaff(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> living_grasp = SPECIALITEMS.register("living_grasp",
-			() -> new ItemLivingGrasp(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new LivingStaffItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> living_blade = SPECIALITEMS.register("living_blade",
-			() -> new ItemLivingBlade(25f, 3, EnumModToolTiers.LIVING,
+			() -> new LivingBladeItem(25f, 3, EnumModToolTiers.LIVING,
 					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> living_axe = SPECIALITEMS.register("living_axe",
-			() -> new ItemLivingAxe(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
-			() -> new ItemLivingSpear(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
-			() -> new ItemLivingBaghnakh(25f, 1, EnumModToolTiers.LIVING,
-					new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> living_pistol = SPECIALITEMS.register("living_pistol",
-			() -> new ItemLivingPistol(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
-			() -> new ItemLivingCrossbow(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new LivingCrossbowItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
-			() -> new ItemBloodBolt(new Item.Properties().tab(HemomancyItemGroup.instance)));
+			() -> new BloodBoltItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
@@ -313,42 +270,42 @@ public class ItemInit {
 	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-			() -> new ItemMorphlingFungal(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new MorphlingItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
-			() -> new ItemMorphlingLeech(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new MorphlingItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> morphling_chitinite = BASEITEMS.register("morphling_chitinite",
-			() -> new ItemMorphlingChitinite(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new MorphlingItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-			() -> new ItemMorphlingSerpent(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new MorphlingItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
-			() -> new ItemMorphlingPest(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+			() -> new MorphlingItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
-			() -> new ItemBloodGourd(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+			() -> new BloodGourdItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodGourdTiers.SIMPLE));
 	public static final RegistryObject<Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",
-			() -> new ItemBloodGourd(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+			() -> new BloodGourdItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodGourdTiers.CRIMSON));
 	public static final RegistryObject<Item> blood_gourd_black = SPECIALITEMS.register("blood_gourd_black",
-			() -> new ItemBloodGourd(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
+			() -> new BloodGourdItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
 					EnumBloodGourdTiers.ASHEN));
 	public static final RegistryObject<Item> curved_horn = SPECIALITEMS.register("curved_horn",
-			() -> new ItemCurvedHorn(EnumBloodGourdTiers.HORN));
+			() -> new CurvedHornItem(EnumBloodGourdTiers.HORN));
 
-	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
-			() -> new ItemBloodVial(new Item.Properties().tab(HemomancyItemGroup.instance)));
 	// Flasks
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
-			() -> new ItemBloodyFlask(new Item.Properties().tab(HemomancyItemGroup.instance), 250));
+			() -> new BloodyFlaskItem(new Item.Properties().tab(HemomancyItemGroup.instance), 250));
 	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",
-			() -> new ItemBloodyFlask(new Item.Properties().tab(HemomancyItemGroup.instance), 2500));
+			() -> new BloodyFlaskItem(new Item.Properties().tab(HemomancyItemGroup.instance), 2500));
 	public static final RegistryObject<Item> stabilized_sanguine_formation = BASEITEMS.register(
 			"stabilized_sanguine_formation",
-			() -> new ItemBloodyFlask(new Item.Properties().tab(HemomancyItemGroup.instance), 5000));
+			() -> new BloodyFlaskItem(new Item.Properties().tab(HemomancyItemGroup.instance), 5000));
+	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
+			() -> new BloodVialItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Equipment
-	// Tainted
+	// Hematic
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
 			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.HEAD,
 					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
@@ -361,54 +318,12 @@ public class ItemInit {
 	public static final RegistryObject<Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
 			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.FEET,
 					(new Item.Properties()).tab(HemomancyItemGroup.instance).fireResistant()));
-	public static final RegistryObject<Item> drudge_electrode = SPECIALITEMS.register("drudge_electrode",
-			() -> new ItemDrudgeElectrode(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",
 			() -> new ItemKnapper(42f, 1, 0, EnumModToolTiers.HEMATIC_IRON,
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
-
-	// Barbed/Barbed
-	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
-			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
-					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
-			() -> new ItemBarbedShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> barbed_helm = BASEITEMS.register("barbed_helm",
-			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.HEAD));
-	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.CHEST));
-	public static final RegistryObject<Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
-			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.LEGS));
-	public static final RegistryObject<Item> barbed_boots = BASEITEMS.register("barbed_boots",
-			() -> new ItemBarbedArmor(EnumModArmorTiers.BARBED, EquipmentSlot.FEET));
-
-	// Chitinite
-	public static final RegistryObject<Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
-			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
-					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
-	public static final RegistryObject<Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
-			() -> new ItemChitiniteShield(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
-			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.HEAD));
-	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
-			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.CHEST));
-	public static final RegistryObject<Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
-			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.LEGS));
-	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
-			() -> new ItemChitiniteArmor(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
-
-	// Unstained
-	public static final RegistryObject<Item> unstained_helm = BASEITEMS.register("unstained_helm",
-			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.HEAD));
-	public static final RegistryObject<Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
-			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.CHEST));
-	public static final RegistryObject<Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
-			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.LEGS));
-	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
-			() -> new ItemUnstainedArmor(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
 
 	// Blood Lust
 	// Masks
@@ -418,96 +333,60 @@ public class ItemInit {
 			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
 					EnumBloodLustMaskTypes.TENGU));
 	public static final RegistryObject<Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
 					EnumBloodLustMaskTypes.HORNED));
 	public static final RegistryObject<Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.CHEST,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.CHEST,
 					EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_legs = BASEITEMS.register("blood_lust_legs",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.LEGS, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.LEGS, EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
-			() -> new ItemBloodLustArmor(EnumModArmorTiers.BLOODLUST, EquipmentSlot.FEET, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.FEET, EnumBloodLustMaskTypes.NONE));
 
-	// Runes
-	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
-			() -> new ItemSelfReflectionMirror(
-					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> mind_spike = BASEITEMS.register("mind_spike",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-	public static final RegistryObject<Item> rune_blank = BASEITEMS.register("rune_blank",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
-			() -> new Item(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	// Barbed/Barbed
+	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
+			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
+					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+	public static final RegistryObject<Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
+			() -> new BarbedShieldItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> barbed_helm = BASEITEMS.register("barbed_helm",
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.HEAD));
+	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.CHEST));
+	public static final RegistryObject<Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.LEGS));
+	public static final RegistryObject<Item> barbed_boots = BASEITEMS.register("barbed_boots",
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.FEET));
 
-	public static final RegistryObject<Item> rune_binder = BASEITEMS.register("rune_binder",
-			() -> new ItemRuneBinder("rune_binder", 18, Rarity.UNCOMMON));
-	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
-			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
+	// Chitinite
+	public static final RegistryObject<Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
+			() -> new SwordItem(EnumModToolTiers.LIVING, 3, 25f,
+					new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1)));
+	public static final RegistryObject<Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
+			() -> new ChitiniteShieldItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
+	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.HEAD));
+	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.CHEST));
+	public static final RegistryObject<Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.LEGS));
+	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
 
-//	// Contract Runes
-
-	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
-			"rune_pattern_transcendence",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_transcendence,
-					"rune_transcendence"));
-
-	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_sol,
-					"rune_sol"));
-
-	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_heart,
-					"rune_heart"));
-
-	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_descendence,
-					"rune_descendence"));
-
-	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_moon,
-					"rune_moon"));
-
-	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_eye,
-					"rune_eye"));
-
-	public static final RegistryObject<Item> rune_feral = BASEITEMS.register("rune_feral",
-			() -> new ItemRune(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
-			() -> new ItemRunePattern(new Item.Properties().tab(HemomancyItemGroup.instance), rune_feral,
-					"rune_feral"));
+	// Unstained
+	public static final RegistryObject<Item> unstained_helm = BASEITEMS.register("unstained_helm",
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.HEAD));
+	public static final RegistryObject<Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.CHEST));
+	public static final RegistryObject<Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.LEGS));
+	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
 
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
@@ -518,9 +397,6 @@ public class ItemInit {
 					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
 			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
-					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_drudge = SPAWNEGGS.register("spawn_egg_drudge",
-			() -> new ModSpawnEggItem(EntityInit.drudge, 8718848, 9515521,
 					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
 			() -> new ModSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
@@ -545,12 +421,12 @@ public class ItemInit {
 					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 
 	@SubscribeEvent
-	public static void registerItemColorHandlers(ColorHandlerEvent.Item event) {
+	public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
 		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
 				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
 				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
-				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_drudge, ItemInit.spawn_egg_thirster,
-				ItemInit.spawn_egg_fargone, ItemInit.spawn_egg_leech);
+				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
+				ItemInit.spawn_egg_leech);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -591,18 +467,6 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(living_pistol.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							return stack.getTag().getInt("mode");
-						} else {
-							return 0;
-						}
-					}
-				});
-
 		ItemProperties.register(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
 				new ItemPropertyFunction() {
 					@Override
@@ -633,24 +497,24 @@ public class ItemInit {
 					if (ent == null) {
 						return 0.0F;
 					} else {
-						return ItemLivingCrossbow.isCharged(stack) ? 0.0F
+						return LivingCrossbowItem.isCharged(stack) ? 0.0F
 								: (float) (stack.getUseDuration() - ent.getUseItemRemainingTicks())
-										/ (float) ItemLivingCrossbow.getChargeTime(stack);
+										/ (float) LivingCrossbowItem.getChargeTime(stack);
 					}
 				});
 		ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("pulling"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
 					return ent != null && ent.isUsingItem() && ent.getUseItem() == stack
-							&& !ItemLivingCrossbow.isCharged(stack) ? 1.0F : 0.0F;
+							&& !LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
 				});
 		ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("charged"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-					return stack != null && ItemLivingCrossbow.isCharged(stack) ? 1.0F : 0.0F;
+					return stack != null && LivingCrossbowItem.isCharged(stack) ? 1.0F : 0.0F;
 				});
 		ItemProperties.register(ItemInit.living_crossbow.get(), new ResourceLocation("firework"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
-					return ent != null && ItemLivingCrossbow.isCharged(stack)
-							&& ItemLivingCrossbow.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
+					return ent != null && LivingCrossbowItem.isCharged(stack)
+							&& LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
 				});
 
 		ItemProperties.register(living_syringe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
@@ -668,65 +532,20 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(drudge_electrode.get(), new ResourceLocation(Hemomancy.MOD_ID, "mode"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							if (stack.getTag().getBoolean("mode")) {
-								return 1;
-							} else {
-								return 0;
-							}
-						}
-						return 0;
-					}
-				});
-
-		ItemProperties.register(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							if (stack.getTag().getBoolean("state")) {
-								return 1;
-							} else {
-								return 0;
-							}
-						}
-						return 0;
-					}
-				});
-
-		ItemProperties.register(living_axe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							if (stack.getTag().getBoolean("state")) {
-								return 1;
-							} else {
-								return 0;
-							}
-						}
-						return 0;
-					}
-				});
-
-		ItemProperties.register(living_spear.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							if (stack.getTag().getBoolean("state")) {
-								return 1;
-							} else {
-								return 0;
-							}
-						}
-						return 0;
-					}
-				});
+//		ItemProperties.register(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+//				new ItemPropertyFunction() {
+//					@Override
+//					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
+//						if (stack.hasTag()) {
+//							if (stack.getTag().getBoolean("state")) {
+//								return 1;
+//							} else {
+//								return 0;
+//							}
+//						}
+//						return 0;
+//					}
+//				});
 
 		ItemProperties.register(curved_horn.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
 				new ItemPropertyFunction() {

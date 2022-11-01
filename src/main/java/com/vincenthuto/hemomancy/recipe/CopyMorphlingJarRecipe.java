@@ -48,8 +48,7 @@ public class CopyMorphlingJarRecipe extends ShapedRecipe {
 		return craftingResult;
 	}
 
-	public static class Serializer 
-			implements RecipeSerializer<CopyMorphlingJarRecipe> {
+	public static class Serializer implements RecipeSerializer<CopyMorphlingJarRecipe> {
 		@Nullable
 		@Override
 		public CopyMorphlingJarRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {

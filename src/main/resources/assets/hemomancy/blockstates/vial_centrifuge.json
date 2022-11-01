@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/vial_centrifuge"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/vial_centrifuge",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/vial_centrifuge",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/vial_centrifuge",
+			"y": 90
+		}
+	}
+}

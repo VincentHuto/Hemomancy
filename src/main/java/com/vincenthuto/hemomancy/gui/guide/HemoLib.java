@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hutoslib.client.screen.guide.GuiGuidePage;
 import com.vincenthuto.hutoslib.client.screen.guide.GuiGuideTitlePage;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeCategoryTab.TabColor;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeChapter;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeLib;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -53,25 +54,30 @@ public class HemoLib extends TomeLib {
 		multiblockPages.add(new HemoGuideTOC("Multiblocks"));
 		multiblockPages.add(new HemoGuideBloodStructurePage(1, "Multiblocks", "Liber Sanguinum", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(ItemInit.liber_sanguinum.get()), BloodCraftingRecipes.liber_sanguinum_recipe));
+				new ItemStack(ItemInit.liber_sanguinum.get()),
+				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/liber_sanguinum")));
+
 		multiblockPages.add(new HemoGuideBloodStructurePage(2, "Multiblocks", "Living Staff", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(ItemInit.living_staff.get()), BloodCraftingRecipes.living_staff_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "Living Grasp", "",
+				new ItemStack(ItemInit.living_staff.get()),
+				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/living_staff")));
+
+		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "S.S.C", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(ItemInit.living_grasp.get()), BloodCraftingRecipes.living_grip_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "S.S.C", "",
+				new ItemStack(BlockInit.semi_sentient_construct.get()),
+				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/semi_sentient_construct")));
+		
+		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "Hematic Iron", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.semi_sentient_construct.get()), BloodCraftingRecipes.ssc_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Hematic Iron", "Bloody Book",
+				new ItemStack(BlockInit.hematic_iron_block.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/hematic_iron_block")));
+		
+		
+		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Unstained Pillar", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.hematic_iron_block.get()), BloodCraftingRecipes.hematic_iron_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Unstained Pillar", "",
+				new ItemStack(BlockInit.unstained_podium.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/unstained_pillar")));
+		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Morphling Incubator", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.unstained_podium.get()), BloodCraftingRecipes.unstained_pillar_recipe));
-		multiblockPages.add(new HemoGuideBloodStructurePage(7, "Multiblocks", "Morphling Incubator", "",
-				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.morphling_incubator.get()), BloodCraftingRecipes.morphling_incubator_recipe));
+				new ItemStack(BlockInit.morphling_incubator.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/morphling_incubator")));
 
 		registerChapters();
 	}

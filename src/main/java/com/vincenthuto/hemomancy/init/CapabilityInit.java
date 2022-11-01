@@ -23,9 +23,9 @@ public class CapabilityInit {
 		event.register(IVascularSystem.class);
 		event.register(IBloodVolume.class);
 		event.register(IKnownManipulations.class);
+		event.register(IEarthenVeinLoc.class);
 		event.register(IRune.class);
 		event.register(IRunesItemHandler.class);
-		event.register(IEarthenVeinLoc.class);
 
 	}
 

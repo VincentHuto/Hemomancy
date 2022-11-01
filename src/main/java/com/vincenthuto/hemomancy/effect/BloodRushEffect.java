@@ -15,7 +15,7 @@ public class BloodRushEffect extends MobEffect {
 
 	@Override
 	public Component getDisplayName() {
-		return  Component.translatable("Blood Rush");
+		return Component.literal("Blood Rush");
 	}
 
 	@Override

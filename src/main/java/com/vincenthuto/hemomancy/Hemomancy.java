@@ -11,10 +11,7 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
-import com.vincenthuto.hemomancy.event.MorphlingJarEvents;
-import com.vincenthuto.hemomancy.event.RuneBinderEvents;
 import com.vincenthuto.hemomancy.gui.guide.HemoLib;
-import com.vincenthuto.hemomancy.init.BannerTypeInit;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
@@ -28,7 +25,6 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.recipe.BloodCraftingRecipes;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
 import net.minecraft.world.entity.player.Inventory;
@@ -41,6 +37,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -58,9 +55,7 @@ public class Hemomancy {
 	};
 	public static boolean forcesLoaded = false;
 
-//	public static TagKey<ConfiguredStructureFeature<?, ?>> blood_temple_located = TagKey.create(
-//	Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY,
-//	new ResourceLocation(Hemomancy.MOD_ID, "blood_temple_located"));
+
 	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
@@ -69,8 +64,6 @@ public class Hemomancy {
 		instance = this;
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-		BannerTypeInit.BANNERPATTERNS.register(modEventBus);
-
 		ManipulationInit.MANIPS.register(modEventBus);
 		ParticleInit.PARTICLE_TYPES.register(modEventBus);
 		PotionInit.EFFECTS.register(modEventBus);
@@ -87,25 +80,16 @@ public class Hemomancy {
 		BlockInit.OBJBLOCKS.register(modEventBus);
 		BlockInit.SPECIALBLOCKS.register(modEventBus);
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
-		BlockInit.BLOCKITEMS.register(modEventBus);
 		FluidInit.FLUIDS.register(modEventBus);
-		RecipeInit.RECIPE_TYPES.register(modEventBus);
 		RecipeInit.SERIALIZERS.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
-		// SensorInit.DATA_SERIALIZERS.register(modEventBus);
-		// SensorInit.SENSORS.register(modEventBus);
-		StructureInit.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
-		StructureInit.BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
-
+		//StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
+		//modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
 		forgeBus.register(this);
-		forgeBus.addListener(RuneBinderEvents::pickupEvent);
-		forgeBus.addListener(RuneBinderEvents::onClientTick);
-		forgeBus.addListener(MorphlingJarEvents::pickupEvent);
-		forgeBus.addListener(MorphlingJarEvents::onClientTick);
 		forgeBus.addListener(KeyBindEvents::onClientTick);
 		forgeBus.register(BloodVolumeEvents.class);
 		forgeBus.register(VascularSystemEvents.class);
@@ -114,7 +98,12 @@ public class Hemomancy {
 		forgeBus.register(EarthenVeinLocEvents.class);
 		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
 
+		ModLoadingContext modLoadingContext = ModLoadingContext.get();
+
 	}
+
+
+
 
 // Creative Tab
 	public static class HemomancyItemGroup extends CreativeModeTab {
@@ -137,16 +126,14 @@ public class Hemomancy {
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
 
+
 	}
-
 	private void commonSetup(final FMLCommonSetupEvent event) {
-
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
-		BloodCraftingRecipes.initPatterns();
-		BloodCraftingRecipes.initRecipes();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
+		
 	}
 
 	// Combined a few methods into one more generic one

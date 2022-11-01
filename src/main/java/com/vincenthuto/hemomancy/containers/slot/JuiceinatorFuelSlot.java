@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.containers.slot;
 
-import com.vincenthuto.hemomancy.container.MenuJuiceinator;
+import com.vincenthuto.hemomancy.container.JuiceinatorMenu;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
@@ -8,9 +8,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class JuiceinatorFuelSlot extends Slot {
-	private final MenuJuiceinator menu;
+	private final JuiceinatorMenu menu;
 
-	public JuiceinatorFuelSlot(MenuJuiceinator p_39520_, Container p_39521_, int p_39522_, int p_39523_, int p_39524_) {
+	public JuiceinatorFuelSlot(JuiceinatorMenu p_39520_, Container p_39521_, int p_39522_, int p_39523_, int p_39524_) {
 		super(p_39521_, p_39522_, p_39523_, p_39524_);
 		this.menu = p_39520_;
 	}

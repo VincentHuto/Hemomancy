@@ -1,9 +1,0 @@
-{
-  "type" : "minecraft:smelting",
-  "ingredient" : {
-    "item" : "hemomancy:polished_venous_stone_bricks"
-  },
-  "result" : "hemomancy:cracked_polished_venous_stone_bricks",
-  "experience" : 1.0,
-  "cookingtime" : 200
-}

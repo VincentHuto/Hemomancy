@@ -4,9 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Generator {
@@ -22,15 +22,16 @@ public class Generator {
 	@SuppressWarnings("unused")
 	private static void registerServerProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		// generator.addProvider(new GeneratorLoots(generator));
-		// generator.addProvider(new GeneratorBlockTags(generator, helper));
-		//generator.addProvider(new GeneratorRecipes(generator));
+		 generator.addProvider(true,new LootGenerator(generator,helper));
+		 generator.addProvider(true,new BlockTagGenerator(generator, helper));
+		generator.addProvider(true,new RecipeGenerator(generator,helper));
+		generator.addProvider(true,new EntityTagGenerator(generator, helper));
 	}
 
 	private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-//		generator.addProvider(new GeneratorBlockStates(generator, helper));
-//		generator.addProvider(new GeneratorItemModels(generator, helper));
-//		generator.addProvider(new GeneratorLanguage(generator));
+		generator.addProvider(true,new BlockStateGenerator(generator, helper));
+		generator.addProvider(true,new ItemModelGenerator(generator, helper));
+		generator.addProvider(true, new LanguageGenerator(generator,helper));
 	}
 }

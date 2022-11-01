@@ -1,7 +1,0 @@
-{
-  "parent" : "minecraft:block/cube_column_horizontal",
-  "textures" : {
-    "end" : "hemomancy:block/hematic_iron_pillar_top",
-    "side" : "hemomancy:block/hematic_iron_pillar"
-  }
-}

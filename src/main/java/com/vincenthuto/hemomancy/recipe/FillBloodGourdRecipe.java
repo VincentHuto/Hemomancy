@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -36,18 +36,18 @@ public class FillBloodGourdRecipe extends ShapedRecipe {
 		if (!craftingResult.isEmpty()) {
 			for (int i = 0; i < inv.getContainerSize(); i++) {
 				final ItemStack item = inv.getItem(i);
-				if (!item.isEmpty() && item.getItem() instanceof ItemBloodGourd) {
+				if (!item.isEmpty() && item.getItem() instanceof BloodGourdItem) {
 
 					dataSource = item;
 					break;
 				}
 			}
-			if (dataSource.getItem()instanceof ItemBloodGourd gourd1) {
+			if (dataSource.getItem() instanceof BloodGourdItem gourd1) {
 				if (!dataSource.isEmpty() && dataSource.hasTag()) {
 					craftingResult.setTag(dataSource.getTag().copy());
 					IBloodVolume bloodVolume = dataSource.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
-					if (craftingResult.getItem()instanceof ItemBloodGourd gourd2) {
+					if (craftingResult.getItem() instanceof BloodGourdItem gourd2) {
 						IBloodVolume resultVolume = craftingResult.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 								.orElseThrow(NullPointerException::new);
 
@@ -64,8 +64,7 @@ public class FillBloodGourdRecipe extends ShapedRecipe {
 		return craftingResult;
 	}
 
-	public static class Serializer 
-			implements RecipeSerializer<FillBloodGourdRecipe> {
+	public static class Serializer implements RecipeSerializer<FillBloodGourdRecipe> {
 		@Nullable
 		@Override
 		public FillBloodGourdRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {

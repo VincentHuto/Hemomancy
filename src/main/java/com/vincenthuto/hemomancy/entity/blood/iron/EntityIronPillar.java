@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.entity.blood.iron;
 
-import com.vincenthuto.hemomancy.entity.blood.EntityBloodConstruct;
+import com.vincenthuto.hemomancy.entity.blood.BloodConstructEntity;
 
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-public class EntityIronPillar extends EntityBloodConstruct {
+public class EntityIronPillar extends BloodConstructEntity {
 	public float deathTicks = 1;
 
 	public EntityIronPillar(EntityType<? extends EntityIronPillar> type, Level worldIn) {

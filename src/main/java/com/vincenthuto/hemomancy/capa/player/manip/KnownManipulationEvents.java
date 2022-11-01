@@ -5,8 +5,9 @@ import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketKnownManipulationServer;
-import com.vincenthuto.hemomancy.network.capa.manips.PacketSyncTrackingAvatar;
+import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hemomancy.network.capa.manips.SyncTrackingAvatarPacket;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -33,18 +34,18 @@ public class KnownManipulationEvents {
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new KnownManipulationServerPacket(known));
 
 	}
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
 		Player peorig = event.getOriginal();
-		Player playernew = event.getPlayer();
+		Player playernew = event.getEntity();
 		if (event.isWasDeath()) {
 			peorig.reviveCaps();
 			IKnownManipulations bloodTendencyNew = playernew.getCapability(KnownManipulationProvider.MANIP_CAPA)
@@ -65,11 +66,11 @@ public class KnownManipulationEvents {
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketKnownManipulationServer(known));
+				new KnownManipulationServerPacket(known));
 	}
 
 	@SubscribeEvent
@@ -84,14 +85,14 @@ public class KnownManipulationEvents {
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
-		PacketSyncTrackingAvatar pkt = new PacketSyncTrackingAvatar(player.getId(), isAvatarActive);
+		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
 		for (Player receiver : receivers) {
 			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
 		}
 	}
 
 	@SubscribeEvent
-	public static void playerJoin(EntityJoinWorldEvent event) {
+	public static void playerJoin(EntityJoinLevelEvent event) {
 		Entity entity = event.getEntity();
 		if (entity instanceof ServerPlayer) {
 			ServerPlayer player = (ServerPlayer) entity;
@@ -104,7 +105,7 @@ public class KnownManipulationEvents {
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
 		Entity target = event.getTarget();
 		if (target instanceof ServerPlayer) {
-			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getPlayer()));
+			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getEntity()));
 		}
 	}
 
@@ -112,19 +113,21 @@ public class KnownManipulationEvents {
 	public static void onPlayerDamage(LivingDamageEvent e) {
 
 		// Radiant Protection
-		if (e.getEntityLiving() instanceof Player) {
-			Player player = (Player) e.getEntityLiving();
+		if (e.getEntity() instanceof Player) {
+			Player player = (Player) e.getEntity();
 			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
-			if (!known.isAvatarActive()) {
-				double dist = e.getEntityLiving().distanceToSqr(player);
-				HitResult trace = e.getEntityLiving().pick(dist, 0, false);
-//				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketEntityHitParticle(trace.getLocation().x,
-//						trace.getLocation().y, trace.getLocation().z));
+			if (known.isAvatarActive()) {
+				double dist = e.getEntity().distanceToSqr(player);
+				HitResult trace = e.getEntity().pick(dist, 0, false);
+				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
+						e.getEntity().level.dimension());
 				e.setAmount((float) (e.getAmount() * 0));
-			}
 
+
+			}
 		}
+
 	}
 
 }

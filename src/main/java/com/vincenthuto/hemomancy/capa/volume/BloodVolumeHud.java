@@ -10,7 +10,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeClient;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeClientPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.ScreenUtils;
 
 @OnlyIn(Dist.CLIENT)
 public class BloodVolumeHud extends Screen {
@@ -32,7 +32,7 @@ public class BloodVolumeHud extends Screen {
 	LocalPlayer player;
 
 	public BloodVolumeHud(LocalPlayer playerIn, Minecraft mcI) {
-		super( Component.translatable(""));
+		super(Component.literal(""));
 		this.player = playerIn;
 		this.mc = mcI;
 
@@ -87,7 +87,7 @@ public class BloodVolumeHud extends Screen {
 				if (bloodCap.isActive()) {
 
 					matrix.pushPose();
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodVolumeClient());
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
 					bloodVolume = bloodCap.getBloodVolume();
 					bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 					String m = String.valueOf(bloodVolume);
@@ -117,8 +117,8 @@ public class BloodVolumeHud extends Screen {
 					RenderSystem.setShader(GameRenderer::getPositionTexShader);
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 					RenderSystem.setShaderTexture(0, frame); // Cap
-					GuiUtils.drawTexturedModalRect(matrix, 1, 0 + 106, 9, 244, 13, 12, heightShift);
-					GuiUtils.drawTexturedModalRect(matrix, 1, 0, 1, 0, 12, 106, heightShift);
+					ScreenUtils.drawTexturedModalRect(matrix, 1, 0 + 106, 9, 244, 13, 12, heightShift);
+					ScreenUtils.drawTexturedModalRect(matrix, 1, 0, 1, 0, 12, 106, heightShift);
 					matrix.popPose();
 		
 

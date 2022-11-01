@@ -1,21 +1,19 @@
 package com.vincenthuto.hemomancy.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.tile.BlockEntityChiselStation;
-import com.vincenthuto.hemomancy.tile.BlockEntityDendriticDistributor;
-import com.vincenthuto.hemomancy.tile.BlockEntityEarthenVein;
-import com.vincenthuto.hemomancy.tile.BlockEntityEarthlyTransfuser;
-import com.vincenthuto.hemomancy.tile.BlockEntityHumaneIdol;
-import com.vincenthuto.hemomancy.tile.BlockEntityIronBrazier;
-import com.vincenthuto.hemomancy.tile.BlockEntityJuicinator;
-import com.vincenthuto.hemomancy.tile.BlockEntityMorphlingIncubator;
-import com.vincenthuto.hemomancy.tile.BlockEntityMortalDisplay;
-import com.vincenthuto.hemomancy.tile.BlockEntityRuneModStation;
-import com.vincenthuto.hemomancy.tile.BlockEntityScryingPodium;
-import com.vincenthuto.hemomancy.tile.BlockEntitySemiSentientConstruct;
-import com.vincenthuto.hemomancy.tile.BlockEntitySerpentineIdol;
-import com.vincenthuto.hemomancy.tile.BlockEntityUnstainedPodium;
-import com.vincenthuto.hemomancy.tile.BlockEntityVisceralRecaller;
+import com.vincenthuto.hemomancy.tile.DendriticDistributorBlockEntity;
+import com.vincenthuto.hemomancy.tile.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.tile.HumaneIdolBlockEntity;
+import com.vincenthuto.hemomancy.tile.IronBrazierBlockEntity;
+import com.vincenthuto.hemomancy.tile.JuicinatorBlockEntity;
+import com.vincenthuto.hemomancy.tile.MorphlingIncubatorBlockEntity;
+import com.vincenthuto.hemomancy.tile.MortalDisplayBlockEntity;
+import com.vincenthuto.hemomancy.tile.ScryingPodiumBlockEntity;
+import com.vincenthuto.hemomancy.tile.SemiSentientConstructBlockEntity;
+import com.vincenthuto.hemomancy.tile.SerpentineIdolBlockEntity;
+import com.vincenthuto.hemomancy.tile.UnstainedPodiumBlockEntity;
+import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.tile.VisceralRecallerBlockEntity;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,63 +22,56 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
-			.create(ForgeRegistries.BLOCK_ENTITIES, Hemomancy.MOD_ID);
+			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<BlockEntityType<BlockEntityChiselStation>> runic_chisel_station = TILES
-			.register("runic_chisel_station", () -> BlockEntityType.Builder
-					.of(BlockEntityChiselStation::new, BlockInit.runic_chisel_station.get()).build(null));
-	public static final RegistryObject<BlockEntityType<BlockEntityRuneModStation>> rune_mod_station = TILES
-			.register("rune_mod_station", () -> BlockEntityType.Builder
-					.of(BlockEntityRuneModStation::new, BlockInit.rune_mod_station.get()).build(null));
-	public static final RegistryObject<BlockEntityType<BlockEntitySemiSentientConstruct>> semi_sentient_construct = TILES
+	public static final RegistryObject<BlockEntityType<SemiSentientConstructBlockEntity>> semi_sentient_construct = TILES
 			.register("semi_sentient_construct", () -> BlockEntityType.Builder
-					.of(BlockEntitySemiSentientConstruct::new, BlockInit.semi_sentient_construct.get()).build(null));
-	public static final RegistryObject<BlockEntityType<BlockEntityMorphlingIncubator>> morphling_incubator = TILES
+					.of(SemiSentientConstructBlockEntity::new, BlockInit.semi_sentient_construct.get()).build(null));
+	public static final RegistryObject<BlockEntityType<MorphlingIncubatorBlockEntity>> morphling_incubator = TILES
 			.register("morphling_incubator", () -> BlockEntityType.Builder
-					.of(BlockEntityMorphlingIncubator::new, BlockInit.morphling_incubator.get()).build(null));
-	
-	
-	public static final RegistryObject<BlockEntityType<BlockEntityUnstainedPodium>> unstained_podium = TILES
+					.of(MorphlingIncubatorBlockEntity::new, BlockInit.morphling_incubator.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<UnstainedPodiumBlockEntity>> unstained_podium = TILES
 			.register("unstained_podium", () -> BlockEntityType.Builder
-					.of(BlockEntityUnstainedPodium::new, BlockInit.unstained_podium.get()).build(null));
-	
-	public static final RegistryObject<BlockEntityType<BlockEntityScryingPodium>> scrying_podium = TILES
+					.of(UnstainedPodiumBlockEntity::new, BlockInit.unstained_podium.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<ScryingPodiumBlockEntity>> scrying_podium = TILES
 			.register("scrying_podium", () -> BlockEntityType.Builder
-					.of(BlockEntityScryingPodium::new, BlockInit.scrying_podium.get()).build(null));
-	
-	public static final RegistryObject<BlockEntityType<BlockEntityDendriticDistributor>> dendritic_distributor = TILES
+					.of(ScryingPodiumBlockEntity::new, BlockInit.scrying_podium.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<DendriticDistributorBlockEntity>> dendritic_distributor = TILES
 			.register("dendritic_distributor", () -> BlockEntityType.Builder
-					.of(BlockEntityDendriticDistributor::new, BlockInit.dendritic_distributor.get()).build(null));
+					.of(DendriticDistributorBlockEntity::new, BlockInit.dendritic_distributor.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<BlockEntitySerpentineIdol>> serpentine_idol = TILES
+	public static final RegistryObject<BlockEntityType<SerpentineIdolBlockEntity>> serpentine_idol = TILES
 			.register("serpentine_idol", () -> BlockEntityType.Builder
-					.of(BlockEntitySerpentineIdol::new, BlockInit.serpentine_idol.get()).build(null));
+					.of(SerpentineIdolBlockEntity::new, BlockInit.serpentine_idol.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<BlockEntityHumaneIdol>> humane_idol = TILES.register(
+	public static final RegistryObject<BlockEntityType<HumaneIdolBlockEntity>> humane_idol = TILES.register(
 			"humane_idol",
-			() -> BlockEntityType.Builder.of(BlockEntityHumaneIdol::new, BlockInit.humane_idol.get()).build(null));
+			() -> BlockEntityType.Builder.of(HumaneIdolBlockEntity::new, BlockInit.humane_idol.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<BlockEntityEarthenVein>> earthen_vein = TILES.register(
+	public static final RegistryObject<BlockEntityType<EarthenVeinBlockEntity>> earthen_vein = TILES.register(
 			"earthen_vein",
-			() -> BlockEntityType.Builder.of(BlockEntityEarthenVein::new, BlockInit.earthen_vein.get()).build(null));
-	public static final RegistryObject<BlockEntityType<BlockEntityIronBrazier>> iron_brazier = TILES.register(
+			() -> BlockEntityType.Builder.of(EarthenVeinBlockEntity::new, BlockInit.earthen_vein.get()).build(null));
+	public static final RegistryObject<BlockEntityType<IronBrazierBlockEntity>> iron_brazier = TILES.register(
 			"iron_brazier",
-			() -> BlockEntityType.Builder.of(BlockEntityIronBrazier::new, BlockInit.iron_brazier.get()).build(null));
+			() -> BlockEntityType.Builder.of(IronBrazierBlockEntity::new, BlockInit.iron_brazier.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<BlockEntityMortalDisplay>> mortal_display = TILES
+	public static final RegistryObject<BlockEntityType<MortalDisplayBlockEntity>> mortal_display = TILES
 			.register("mortal_display", () -> BlockEntityType.Builder
-					.of(BlockEntityMortalDisplay::new, BlockInit.mortal_display.get()).build(null));
-	public static final RegistryObject<BlockEntityType<BlockEntityVisceralRecaller>> visceral_artificial_recaller = TILES
+					.of(MortalDisplayBlockEntity::new, BlockInit.mortal_display.get()).build(null));
+	public static final RegistryObject<BlockEntityType<VisceralRecallerBlockEntity>> visceral_artificial_recaller = TILES
 			.register("visceral_artificial_recaller", () -> BlockEntityType.Builder
-					.of(BlockEntityVisceralRecaller::new, BlockInit.visceral_artificial_recaller.get()).build(null));
+					.of(VisceralRecallerBlockEntity::new, BlockInit.visceral_artificial_recaller.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<BlockEntityJuicinator>> juiceinator = TILES
-			.register("juiceinator", () -> BlockEntityType.Builder
-					.of(BlockEntityJuicinator::new, BlockInit.juiceinator.get()).build(null));
+	public static final RegistryObject<BlockEntityType<JuicinatorBlockEntity>> juiceinator = TILES.register(
+			"juiceinator",
+			() -> BlockEntityType.Builder.of(JuicinatorBlockEntity::new, BlockInit.juiceinator.get()).build(null));
+
 	
 	
-	public static final RegistryObject<BlockEntityType<BlockEntityEarthlyTransfuser>> earthly_transfuser = TILES
-			.register("earthly_transfuser", () -> BlockEntityType.Builder
-					.of(BlockEntityEarthlyTransfuser::new, BlockInit.earthly_transfuser.get()).build(null));
-	
+	public static final RegistryObject<BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES.register(
+			"vial_centrifuge",
+			() -> BlockEntityType.Builder.of(VialCentrifugeBlockEntity::new, BlockInit.vial_centrifuge.get()).build(null));
 }

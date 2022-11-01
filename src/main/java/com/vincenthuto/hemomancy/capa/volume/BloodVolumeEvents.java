@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.capa.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.item.tool.ItemBloodGourd;
+import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
-import com.vincenthuto.hemomancy.network.capa.PacketBloodVolumeServer;
+import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.tile.IBloodTile;
 
 import net.minecraft.ChatFormatting;
@@ -32,7 +32,7 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
-		if (event.getObject().getItem() instanceof ItemBloodGourd) {
+		if (event.getObject().getItem() instanceof BloodGourdItem) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
 		}
 	}
@@ -46,43 +46,43 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume));
+				new BloodVolumeServerPacket(volume));
 		player.displayClientMessage(
-				 Component.translatable("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
+				Component.literal("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
 		player.displayClientMessage(
-				 Component.translatable(
+				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
 		player.displayClientMessage(
-				 Component.translatable("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
+				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
 				false);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new PacketBloodVolumeServer(volume));
+				new BloodVolumeServerPacket(volume));
 		player.displayClientMessage(
-				 Component.translatable(
+				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
 	}
 
 	@SubscribeEvent
 	public static void playerRespawn(PlayerRespawnEvent event) {
-		Player playernew = event.getPlayer();
+		Player playernew = event.getEntity();
 		if (!playernew.level.isClientSide) {
 			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalStateException::new);
 			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playernew),
-					new PacketBloodVolumeServer(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
+					new BloodVolumeServerPacket(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
 							bloodVolumeNew.getBloodVolume(), bloodVolumeNew.getBloodLine()));
 		}
 	}
@@ -95,7 +95,7 @@ public class BloodVolumeEvents {
 			IBloodVolume bloodVolumeOld = peorig.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(IllegalStateException::new);
 
-			Player playernew = event.getPlayer();
+			Player playernew = event.getEntity();
 			peorig.reviveCaps();
 
 			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
