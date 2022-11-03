@@ -52,7 +52,7 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 			final ContainerData containerData) {
 		super(ContainerInit.juiceinator.get(), windowId);
 		this.te = container;
-		this.recipeType = RecipeInit.juiceinator_recipe_type;
+		this.recipeType = RecipeInit.juiceinator_recipe_type.get();
 		checkContainerSize(container, 4);
 		checkContainerDataCount(containerData, 4);
 		this.container = container;

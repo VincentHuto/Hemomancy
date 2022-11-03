@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:befouling_ash_trail"
+    ]
+  },
+  "criteria": {
+    "has_foul_paste": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:foul_paste"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:befouling_ash_trail"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_foul_paste",
+      "has_the_recipe"
+    ]
+  ]
+}

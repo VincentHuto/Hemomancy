@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "hemomancy:dried_leech"
+    ]
+  },
+  "criteria": {
+    "has_swollen_leech": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:swollen_leech"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "hemomancy:dried_leech"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_swollen_leech",
+      "has_the_recipe"
+    ]
+  ]
+}

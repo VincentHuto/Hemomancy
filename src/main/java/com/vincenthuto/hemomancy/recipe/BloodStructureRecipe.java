@@ -64,7 +64,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	@Override
 	public RecipeType<?> getType() {
-		return RecipeInit.blood_structure_recipe_type;
+		return RecipeInit.blood_structure_recipe_type.get();
 	}
 
 	@Override
@@ -79,14 +79,14 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
 		//Example new ResourceLocation("hemomancy:blood_structure/living_staff_recipe")
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type).stream()
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}
 
 	public static Collection<BloodStructureRecipe> getAllRecipes(Level world) {
 
 		Collection<BloodStructureRecipe> collection = world.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.blood_structure_recipe_type);
+				.getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get());
 
 		return collection;
 	}

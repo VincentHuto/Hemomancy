@@ -27,10 +27,33 @@ public class RecipeInit {
 	public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister
 			.create(ForgeRegistries.RECIPE_SERIALIZERS, Hemomancy.MOD_ID);
 
-	public static RecipeType<JuiceinatorRecipe> juiceinator_recipe_type;
-	public static RecipeType<RecallerRecipe> recaller_recipe_type;
-	public static RecipeType<BloodStructureRecipe> blood_structure_recipe_type;
+	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister
+			.create(ForgeRegistries.RECIPE_TYPES, Hemomancy.MOD_ID);
 
+	// Types
+
+	public static final RegistryObject<RecipeType<JuiceinatorRecipe>> juiceinator_recipe_type = RECIPE_TYPES
+			.register("juiceinator_recipe_type", () -> new RecipeType<JuiceinatorRecipe>() {
+				public String toString() {
+					return new ResourceLocation(Hemomancy.MOD_ID, "juiceinator").toString();
+				}
+			});
+
+	public static final RegistryObject<RecipeType<RecallerRecipe>> recaller_recipe_type = RECIPE_TYPES
+			.register("recaller_recipe_type", () -> new RecipeType<RecallerRecipe>() {
+				public String toString() {
+					return new ResourceLocation(Hemomancy.MOD_ID, "recaller_recipe").toString();
+				}
+			});
+
+	public static final RegistryObject<RecipeType<BloodStructureRecipe>> blood_structure_recipe_type = RECIPE_TYPES
+			.register("blood_structure_recipe", () -> new RecipeType<BloodStructureRecipe>() {
+				public String toString() {
+					return new ResourceLocation(Hemomancy.MOD_ID, "blood_structure_recipe").toString();
+				}
+			});
+
+	// Serialize
 	public static final RegistryObject<RecipeSerializer<?>> juiceinator_serializer = SERIALIZERS.register("juiceinator",
 			JuiceinatorSerializer::new);
 
@@ -48,40 +71,5 @@ public class RecipeInit {
 
 	public static final RegistryObject<RecipeSerializer<?>> blood_structure_recipe_serializer = SERIALIZERS
 			.register("blood_structure_recipe", BloodStructureRecipeSerializer::new);
-
-	@SubscribeEvent
-	public static void setup(FMLCommonSetupEvent event) {
-		event.enqueueWork(() -> {
-			RecipeInit.initRecipeTypes();
-		});
-	}
-
-	private static void initRecipeTypes() {
-
-		final ResourceLocation juiceinator_recipe = new ResourceLocation(Hemomancy.MOD_ID, "juiceinator");
-		juiceinator_recipe_type = (RecipeType<JuiceinatorRecipe>) Registry.register(Registry.RECIPE_TYPE,
-				juiceinator_recipe, new RecipeType<JuiceinatorRecipe>() {
-					public String toString() {
-						return juiceinator_recipe.toString();
-					}
-				});
-
-		final ResourceLocation recaller_recipe = new ResourceLocation(Hemomancy.MOD_ID, "recaller_recipe");
-		recaller_recipe_type = (RecipeType<RecallerRecipe>) Registry.register(Registry.RECIPE_TYPE, recaller_recipe,
-				new RecipeType<RecallerRecipe>() {
-					public String toString() {
-						return recaller_recipe.toString();
-					}
-				});
-
-		final ResourceLocation blood_structure_recipe = new ResourceLocation(Hemomancy.MOD_ID,
-				"blood_structure_recipe");
-		blood_structure_recipe_type = (RecipeType<BloodStructureRecipe>) Registry.register(Registry.RECIPE_TYPE,
-				recaller_recipe, new RecipeType<BloodStructureRecipe>() {
-					public String toString() {
-						return blood_structure_recipe.toString();
-					}
-				});
-	}
 
 }

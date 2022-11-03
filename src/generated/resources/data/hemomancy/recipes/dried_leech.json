@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "hemomancy:swollen_leech"
+  },
+  "result": "hemomancy:dried_leech",
+  "experience": 1.0,
+  "cookingtime": 200
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "hemomancy:venous_stone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:venous_stone_slab",
+    "count": 6
+  }
+}

@@ -99,7 +99,7 @@ public class RecallerRecipe extends CustomRecipe {
 
 	@Override
 	public RecipeType<?> getType() {
-		return RecipeInit.recaller_recipe_type;
+		return RecipeInit.recaller_recipe_type.get();
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class RecallerRecipe extends CustomRecipe {
 	}
 
 	public static Collection<RecallerRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe_type);
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe_type.get());
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.capa.block.vein.EarthenVeinLocEvents;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyEvents;
@@ -26,15 +27,20 @@ import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -43,6 +49,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod("hemomancy")
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
@@ -54,7 +63,6 @@ public class Hemomancy {
 	public static IProxy proxy = new IProxy() {
 	};
 	public static boolean forcesLoaded = false;
-
 
 	@SuppressWarnings("deprecation")
 	public Hemomancy() {
@@ -82,13 +90,16 @@ public class Hemomancy {
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
 		FluidInit.FLUIDS.register(modEventBus);
 		RecipeInit.SERIALIZERS.register(modEventBus);
+		RecipeInit.RECIPE_TYPES.register(modEventBus);
+
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
-		//modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST, Hemomancy::registerFeature);
+		// modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST,
+		// Hemomancy::registerFeature);
 		forgeBus.register(this);
 		forgeBus.addListener(KeyBindEvents::onClientTick);
 		forgeBus.register(BloodVolumeEvents.class);
@@ -101,9 +112,6 @@ public class Hemomancy {
 		ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
 	}
-
-
-
 
 // Creative Tab
 	public static class HemomancyItemGroup extends CreativeModeTab {
@@ -121,19 +129,38 @@ public class Hemomancy {
 
 	}
 
+	@SubscribeEvent
+	public static void onRegisterItems(final RegisterEvent event) {
+		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+			return;
+		}
+
+		BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId())).map(t -> createItemBlock(t))
+				.forEach(item -> registerBlockItem(event, item));
+	}
+
+	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
+		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
+	}
+
+	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
+		return Pair.of(block.getSecond(),
+				new BlockItem((Block) block.getFirst(), new Item.Properties().tab(HemomancyItemGroup.instance)));
+	}
+
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
 		hemo.registerTome();
 
-
 	}
+
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-		
+
 	}
 
 	// Combined a few methods into one more generic one

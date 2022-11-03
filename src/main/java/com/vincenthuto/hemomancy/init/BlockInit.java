@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.init;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.block.ActiveBefoulingAshTrailBlock;
@@ -45,7 +47,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -80,6 +81,16 @@ public class BlockInit {
 		MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 		SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 		return blocks;
+	}
+
+	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
+
+		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
+				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
+				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
+				.flatMap(Collection::stream);
+
+		return combinedStream;
 	}
 
 	// Ash
@@ -227,32 +238,30 @@ public class BlockInit {
 	public static final RegistryObject<Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
 			() -> new VialCentrifugeBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-	
+
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
 					.sound(SoundType.METAL)));
 
 	@SubscribeEvent
 	public static void registerBlocks(FMLClientSetupEvent event) {
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_crystal.get(), RenderType.translucent());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_glass.get(), RenderType.translucent());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.translucent());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(),
-					RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.scrying_podium.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.translucent());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(),
-					RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.vial_centrifuge.get(), RenderType.cutoutMipped());
-			ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.blood_crystal.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_glass.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.sanguine_pane.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.scrying_podium.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.semi_sentient_construct.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.morphling_incubator.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.crimson_flames.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.visceral_artificial_recaller.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.vial_centrifuge.get(), RenderType.cutoutMipped());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutoutMipped());
 
 	}
 
