@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.recipe;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
@@ -83,9 +84,9 @@ public class BloodStructureRecipe extends CustomRecipe {
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}
 
-	public static Collection<BloodStructureRecipe> getAllRecipes(Level world) {
+	public static List<BloodStructureRecipe> getAllRecipes(Level world) {
 
-		Collection<BloodStructureRecipe> collection = world.getRecipeManager()
+		List<BloodStructureRecipe> collection = world.getRecipeManager()
 				.getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get());
 
 		return collection;

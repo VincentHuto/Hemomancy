@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.recipe;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.RecipeInit;
@@ -30,7 +30,7 @@ public class JuiceinatorRecipe extends AbstractCookingRecipe {
 		return RecipeInit.juiceinator_serializer.get();
 	}
 
-	public static Collection<JuiceinatorRecipe> getAllRecipes(Level world) {
+	public static List<JuiceinatorRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.juiceinator_recipe_type.get());
 	}
 
