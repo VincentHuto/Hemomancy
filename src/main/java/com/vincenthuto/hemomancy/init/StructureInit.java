@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.world.structure.BloodTempleStructure;
 
 import net.minecraft.core.Registry;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.registries.DeferredRegister;
@@ -30,15 +31,14 @@ public class StructureInit {
 //					PlacedFeature.CODEC.fieldOf("feature").forGetter(ExampleBiomeModifier::feature)
 //			// declare constructor
 //			).apply(builder, ExampleBiomeModifier::new)));
-
-	/**
-	 * Registers the base structure itself and sets what its path is. In this case,
-	 * this base structure will have the resourcelocation of
-	 * hemomancy:sky_structures.
-	 */
-
+	
 	public static final RegistryObject<StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
-			.register("blood_temple", () -> () -> BloodTempleStructure.CODEC);
+			.register("blood_temple", () -> explicitStructureTypeTyping(BloodTempleStructure.CODEC));
+
+	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(Codec<T> structureCodec) {
+		return () -> structureCodec;
+	}
+
 //	private static void registerFeature(RegistryEvent.Register<Feature<?>> event) {
 //		WorldGenEvents.BLEEDING_HEART_FEATURE = WorldGenEvents.flower("bleeding_heart", 64, BlockInit.bleeding_heart);
 //		WorldGenEvents.BLEEDING_HEART_PLACEMENT = WorldGenEvents.flowerPlacement("aum",
