@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.item.tool.living;
 
 import java.util.function.Consumer;
 
+import com.vincenthuto.hemomancy.ClientProxy;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
@@ -10,10 +11,12 @@ import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.render.item.CellHandItemRenderer;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,17 +40,17 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		super(prop.stacksTo(1));
 	}
 
-//	@Override
-//	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-//		consumer.accept(new IClientItemExtensions() {
-//			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
-//
-//			@Override
-//			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-//				return myRenderer;
-//			}
-//		});
-//	}
+	@Override
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return myRenderer;
+			}
+		});
+	}
 
 	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
@@ -121,8 +124,9 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		return true;
 	}
 
-	/*
-	 * @Override public BakedModel getBakedModel() { return
-	 * ClientProxy.bloodProjectionModel; }
-	 */
+	@Override
+	public BakedModel getBakedModel() {
+		return ClientProxy.bloodProjectionModel;
+	}
+
 }

@@ -6,7 +6,15 @@ import com.vincenthuto.hemomancy.gui.manips.ChooseManipScreen;
 import com.vincenthuto.hemomancy.gui.manips.ChooseVeinScreen;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.ModelEvent.BakingCompleted;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class ClientProxy implements IProxy {
 
 	@Override
@@ -35,27 +43,21 @@ public class ClientProxy implements IProxy {
 		Minecraft.getInstance().setScreen(new ChooseVeinScreen());
 	}
 
-//	@Override
-//	public void registerHandlers() {
-//		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-//		modBus.addListener(this::onModelRegister);
-//		modBus.addListener(this::onModelBake);
-//	}
-//
-//	public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
-//
-//	public void onModelRegister(RegisterGeometryLoaders evt) {
-//		ForgeModelBakery.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
-//		ForgeModelBakery.addSpecialModel(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
-//
-//	}
-//
-//	public void onModelBake(BakingCompleted evt) {
-//		bloodAbsorptionModel = evt.getModelRegistry()
-//				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
-//		bloodProjectionModel = evt.getModelRegistry()
-//				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
-//
-//	}
+	public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
+
+	@SubscribeEvent
+	public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
+		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+
+	}
+	@SubscribeEvent
+	public static void onModelBake(BakingCompleted evt) {
+		bloodAbsorptionModel = evt.getModels()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		bloodProjectionModel = evt.getModels()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+
+	}
 
 }

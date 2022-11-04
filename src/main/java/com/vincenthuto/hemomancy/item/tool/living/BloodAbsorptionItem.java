@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.vincenthuto.hemomancy.ClientProxy;
 import com.vincenthuto.hemomancy.capa.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.player.tendency.BloodTendencyProvider;
@@ -12,9 +13,11 @@ import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.render.item.CellHandItemRenderer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -44,17 +47,17 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		return 0;
 	}
 
-//	@Override
-//	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-//		consumer.accept(new IClientItemExtensions() {
-//			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
-//
-//			@Override
-//			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-//				return myRenderer;
-//			}
-//		});
-//	}
+	@Override
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return myRenderer;
+			}
+		});
+	}
 
 	public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving) {
 		if (entityLiving instanceof Player) {
@@ -142,10 +145,10 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 
-//	@Override
-//	public BakedModel getBakedModel() {
-//		// TODO Auto-generated method stub
-//		return ClientProxy.bloodAbsorptionModel;
-//	}
+	@Override
+	public BakedModel getBakedModel() {
+		// TODO Auto-generated method stub
+		return ClientProxy.bloodAbsorptionModel;
+	}
 
 }

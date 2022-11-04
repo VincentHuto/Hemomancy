@@ -83,7 +83,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 	protected void drawExperience(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
 		float experience = recipe.getExperience();
 		if (experience > 0) {
-			MutableComponent experienceString = Component.literal("XP"+experience);
+			MutableComponent experienceString = Component.literal("XP" + experience);
 			Minecraft minecraft = Minecraft.getInstance();
 			Font fontRenderer = minecraft.font;
 			int stringWidth = fontRenderer.width(experienceString);
@@ -95,7 +95,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 		int cookTime = recipe.getCookingTime();
 		if (cookTime > 0) {
 			int cookTimeSeconds = cookTime / 20;
-			MutableComponent timeString = Component.literal("Cooking Time " +cookTimeSeconds + " sec");
+			MutableComponent timeString = Component.literal("Cooking Time " + cookTimeSeconds + " sec");
 			Minecraft minecraft = Minecraft.getInstance();
 			Font fontRenderer = minecraft.font;
 			int stringWidth = fontRenderer.width(timeString);
@@ -124,7 +124,8 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, JuiceinatorRecipe recipe, IFocusGroup focuses) {
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItem());
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM_STACK,
+				recipe.getResultItem());
 		List<List<ItemStack>> list = new ArrayList<>();
 		for (Ingredient ingr : recipe.getIngredients()) {
 			list.add(Arrays.asList(ingr.getItems()));

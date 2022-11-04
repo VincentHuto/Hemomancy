@@ -55,7 +55,6 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 		this.guiHelper = guiHelper;
 	}
 
-
 	@Override
 	public IDrawable getIcon() {
 		return icon;
@@ -74,7 +73,8 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 	}
 
 	@Override
-	public void draw(RecallerRecipe recipe,IRecipeSlotsView recipeSlotsView, PoseStack ms, double mouseX, double mouseY) {
+	public void draw(RecallerRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack ms, double mouseX,
+			double mouseY) {
 		overlay.draw(ms);
 		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
 		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
@@ -131,7 +131,8 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 		if (list.size() > 0) {
 			builder.addSlot(RecipeIngredientRole.INPUT, 23, 11).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
 		}
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 149, 77).addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItem());
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 149, 77).addIngredient(VanillaTypes.ITEM_STACK,
+				recipe.getResultItem());
 
 	}
 
@@ -141,6 +142,5 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 	public RecipeType<RecallerRecipe> getRecipeType() {
 		return JEIPlugin.recaller_recipe_type;
 	}
-
 
 }
