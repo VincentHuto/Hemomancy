@@ -1,6 +1,6 @@
 {
-  "block.hemomancy.active_befouling_ash_trail": "Item.hemomancy.active Befouling Ash",
-  "block.hemomancy.active_smouldering_ash_trail": "Item.hemomancy.active Smouldering Ash",
+  "block.hemomancy.active_befouling_ash_trail": "Active Befouling Ash Trail",
+  "block.hemomancy.active_smouldering_ash_trail": "Active Smouldering Ash Trail",
   "block.hemomancy.befouling_ash_trail": "Befouling Ash Trail",
   "block.hemomancy.bleeding_heart": "Bleeding Heart",
   "block.hemomancy.blood_crystal": "Blood Crystal",
@@ -188,6 +188,7 @@
   "item.hemomancy.lethian_brew": "Lethian Brew",
   "item.hemomancy.lethian_dew": "Lethian Dew",
   "item.hemomancy.liber_sanguinum": "Liber Sanguinum",
+  "item.hemomancy.living_blade": "Living Blade",
   "item.hemomancy.living_crossbow": "Living Crossbow",
   "item.hemomancy.living_staff": "Living Staff",
   "item.hemomancy.living_stent": "Living Stent",

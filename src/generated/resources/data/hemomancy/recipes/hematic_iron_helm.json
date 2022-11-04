@@ -1,14 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "RRR",
-    "R R"
-  ],
   "key": {
     "R": {
       "item": "hemomancy:hematic_iron_scrap"
     }
   },
+  "pattern": [
+    "RRR",
+    "R R"
+  ],
   "result": {
     "item": "hemomancy:hematic_iron_helm"
   }

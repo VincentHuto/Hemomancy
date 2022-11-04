@@ -6,7 +6,7 @@
     }
   ],
   "result": {
-    "item": "hemomancy:hematic_iron_scrap",
-    "count": 4
+    "count": 4,
+    "item": "hemomancy:hematic_iron_scrap"
   }
 }

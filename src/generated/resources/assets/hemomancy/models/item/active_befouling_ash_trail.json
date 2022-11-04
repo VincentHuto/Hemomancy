@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/active_smouldering_ash"
+    "layer0": "hemomancy:item/active_befouling_ash_trail"
   }
 }

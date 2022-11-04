@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/template_glass_pane_side_alt",
   "textures": {
-    "pane": "hemomancy:block/sanguine_pane",
-    "edge": "hemomancy:block/sanguine_pane_top"
+    "edge": "hemomancy:block/sanguine_pane_top",
+    "pane": "hemomancy:block/sanguine_pane"
   }
 }
