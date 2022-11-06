@@ -56,6 +56,12 @@ public class LeechEntity extends Animal {
 		p_213410_0_.put(2, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_brown.png"));
 	});
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.15F);
+	}
+
+	int timer = 0;
+
 	public LeechEntity(EntityType<? extends LeechEntity> type, Level worldIn) {
 		super(type, worldIn);
 	}
@@ -65,7 +71,118 @@ public class LeechEntity extends Animal {
 		return true;
 	}
 
-	int timer = 0;
+	@Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define(SLUG_TYPE, random.nextInt(3));
+	}
+
+	@Override
+	@Nullable
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
+			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		this.setLeechType(1);
+		return spawnDataIn;
+
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return SoundEvents.BAT_AMBIENT;
+	}
+
+	/*
+	 * public InteractionResult mobInteract(Player p_230254_1_, InteractionHand
+	 * p_230254_2_) { ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_); if
+	 * (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
+	 * p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F); ItemStack
+	 * itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
+	 * ItemInit.bucket_leech.get().getDefaultInstance());
+	 * p_230254_1_.setHeldItem(p_230254_2_, itemstack1); this.
+	 * this.remove(RemovalReason.KILLED); float f = (this.rand.nextFloat() - 0.5F) *
+	 * 2.0F; float f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
+	 * this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f,
+	 * this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
+	 * 0.0D, 0.0D);
+	 *
+	 * return InteractionResult.sidedSuccess(this.world.isRemote); } else { return
+	 * super.mobInteract(p_230254_1_, p_230254_2_); } }
+	 */
+	@Override
+	public LeechEntity getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
+		LeechEntity catentity = EntityInit.leech.get().create(p_241840_1_);
+		if (p_241840_2_ instanceof LeechEntity) {
+			if (this.random.nextBoolean()) {
+				catentity.setLeechType(this.getLeechType());
+			} else {
+				catentity.setLeechType(((LeechEntity) p_241840_2_).getLeechType());
+			}
+
+		}
+		return catentity;
+
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.BAT_DEATH;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.BAT_HURT;
+	}
+
+	public int getLeechType() {
+		return this.entityData.get(SLUG_TYPE);
+	}
+
+	public ResourceLocation getLeechTypeName() {
+		return TEXTURE_BY_ID.getOrDefault(this.getLeechType(), TEXTURE_BY_ID.get(0));
+	}
+
+	/**
+	 * Returns the volume for the sounds this mob makes.
+	 */
+	@Override
+	protected float getSoundVolume() {
+		return 0.2F;
+	}
+
+	@Override
+	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+		return this.isBaby() ? sizeIn.height * 0.1F : 1F;
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new PanicGoal(this, 1.4D));
+		this.goalSelector.addGoal(0, new MoveToBlockGoal(this, 1.5f, 10) {
+			@Override
+			protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
+				if (worldIn.getBlockState(pos).getBlock() instanceof CropBlock) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.SUGAR), false));
+		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.75D));
+
+	}
+
+	public void setLeechType(int type) {
+		if (type <= 0 || type >= 3) {
+			type = this.random.nextInt(4);
+		}
+
+		this.entityData.set(SLUG_TYPE, type);
+	}
 
 	@Override
 	public void tick() {
@@ -90,122 +207,5 @@ public class LeechEntity extends Animal {
 				}
 			}
 		}
-	}
-
-	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(1, new PanicGoal(this, 1.4D));
-		this.goalSelector.addGoal(0, new MoveToBlockGoal(this, 1.5f, 10) {
-			@Override
-			protected boolean isValidTarget(LevelReader worldIn, BlockPos pos) {
-				if (worldIn.getBlockState(pos).getBlock() instanceof CropBlock) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-		this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, Ingredient.of(Items.SUGAR), false));
-		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
-		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-		this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.75D));
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 2.0D).add(Attributes.MOVEMENT_SPEED, 0.15F);
-	}
-
-	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.BAT_AMBIENT;
-	}
-
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.BAT_HURT;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.BAT_DEATH;
-	}
-
-	/**
-	 * Returns the volume for the sounds this mob makes.
-	 */
-	@Override
-	protected float getSoundVolume() {
-		return 0.2F;
-	}
-
-	/*
-	 * public InteractionResult mobInteract(Player p_230254_1_, InteractionHand
-	 * p_230254_2_) { ItemStack itemstack = p_230254_1_.getHeldItem(p_230254_2_); if
-	 * (itemstack.getItem() == Items.BUCKET && !this.isChild()) {
-	 * p_230254_1_.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F); ItemStack
-	 * itemstack1 = DrinkHelper.fill(itemstack, p_230254_1_,
-	 * ItemInit.bucket_leech.get().getDefaultInstance());
-	 * p_230254_1_.setHeldItem(p_230254_2_, itemstack1); this.
-	 * this.remove(RemovalReason.KILLED); float f = (this.rand.nextFloat() - 0.5F) *
-	 * 2.0F; float f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F;
-	 * this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double) f,
-	 * this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-	 * 0.0D, 0.0D);
-	 * 
-	 * return InteractionResult.sidedSuccess(this.world.isRemote); } else { return
-	 * super.mobInteract(p_230254_1_, p_230254_2_); } }
-	 */
-	@Override
-	public LeechEntity getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
-		LeechEntity catentity = EntityInit.leech.get().create(p_241840_1_);
-		if (p_241840_2_ instanceof LeechEntity) {
-			if (this.random.nextBoolean()) {
-				catentity.setLeechType(this.getLeechType());
-			} else {
-				catentity.setLeechType(((LeechEntity) p_241840_2_).getLeechType());
-			}
-
-		}
-		return catentity;
-
-	}
-
-	public ResourceLocation getLeechTypeName() {
-		return TEXTURE_BY_ID.getOrDefault(this.getLeechType(), TEXTURE_BY_ID.get(0));
-	}
-
-	public int getLeechType() {
-		return this.entityData.get(SLUG_TYPE);
-	}
-
-	public void setLeechType(int type) {
-		if (type <= 0 || type >= 3) {
-			type = this.random.nextInt(4);
-		}
-
-		this.entityData.set(SLUG_TYPE, type);
-	}
-
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(SLUG_TYPE, random.nextInt(3));
-	}
-
-	@Override
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.setLeechType(1);
-		return spawnDataIn;
-
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-		return this.isBaby() ? sizeIn.height * 0.1F : 1F;
 	}
 }

@@ -37,25 +37,6 @@ public class VisceralRecallerScreen extends AbstractContainerScreen<VisceralReca
 	static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 	static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_fill_tiled.png");
-	final Inventory playerInv;
-	final VisceralRecallerBlockEntity te;
-	int left, top;
-	int guiWidth = 176;
-	int guiHeight = 186;
-	private int zLevel = 10;
-	GuiButtonTextured forgetButton;
-	int FORGETBUTTONID = 1;
-
-	public VisceralRecallerScreen(VisceralRecallerMenu screenContainer, Inventory inv, Component titleIn) {
-		super(screenContainer, inv, titleIn);
-		this.leftPos = 0;
-		this.topPos = 0;
-		this.imageWidth = 176;
-		this.imageHeight = 186;
-		this.playerInv = inv;
-		this.te = screenContainer.getTe();
-	}
-
 	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
 			float height) {
 
@@ -79,6 +60,119 @@ public class VisceralRecallerScreen extends AbstractContainerScreen<VisceralReca
 				.endVertex();
 
 		tessellator.end();
+	}
+	final Inventory playerInv;
+	final VisceralRecallerBlockEntity te;
+	int left, top;
+	int guiWidth = 176;
+	int guiHeight = 186;
+	private int zLevel = 10;
+	GuiButtonTextured forgetButton;
+
+	int FORGETBUTTONID = 1;
+
+	public VisceralRecallerScreen(VisceralRecallerMenu screenContainer, Inventory inv, Component titleIn) {
+		super(screenContainer, inv, titleIn);
+		this.leftPos = 0;
+		this.topPos = 0;
+		this.imageWidth = 176;
+		this.imageHeight = 186;
+		this.playerInv = inv;
+		this.te = screenContainer.getTe();
+	}
+
+	private void drawCenter(PoseStack stack, int xOff, int yOff) {
+		Map<EnumBloodTendency, Float> affs = te.getTendency();
+		int centerOffset = 8;
+		int cx = 0, cy = 0;
+		float rotAngle = -90f;
+		int iconDiameter = 65;
+		int diameter = 15;
+		float spikeBaseWidth = 23.5f;
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 90;
+			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
+			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 47;
+			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 47;
+			double depthDist = ((iconDiameter - diameter) * affs.get(tend) * 0.5 + diameter);
+			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
+			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 47;
+			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
+					/ 2f);
+			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
+					this.zLevel, tend.getColor(), displace, 1.1);
+			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
+					this.zLevel, tend.getColor(), displace, 1.1);
+			HLGuiUtils.fracLine(stack, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
+					tend.getColor(), displace, 0.8);
+			HLGuiUtils.fracLine(stack, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
+					this.zLevel, tend.getColor(), displace, 0.8);
+			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
+			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
+			HLGuiUtils.renderItemStackInGui(stack, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
+					newX + xOff + 90, newY + yOff + 47);
+			rotAngle += 45;
+		}
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		renderables.clear();
+		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, leftPos + 152,
+				topPos + 47, 16, 16, 176, 0, null, (press) -> {
+					if (press instanceof GuiButtonTextured) {
+						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new ClearRecallerStatePacket());
+					}
+				}));
+
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+
+	@Override
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		int centerX = (width / 2) - guiWidth / 2;
+		int centerY = (height / 2) - guiHeight / 2;
+		renderVolumeBar(matrixStack, centerX, centerY, te.getLevel());
+
+		drawCenter(matrixStack, centerX, centerY);
+		this.renderTooltip(matrixStack, mouseX, mouseY);
+		if (forgetButton.isHoveredOrFocused()) {
+			List<Component> ClosePage = new ArrayList<>();
+			ClosePage.add(Component.literal(I18n.get("Forget Current State")));
+			if (forgetButton.isHoveredOrFocused()) {
+				renderComponentTooltip(matrixStack, ClosePage, mouseX, mouseY);
+			}
+		}
+
+	}
+
+	@Override
+	public void renderBackground(PoseStack matrixStack) {
+		super.renderBackground(matrixStack);
+	}
+
+	@Override
+	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+		this.renderBackground(matrixStack);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, GUI_RECALLER);
+		HLGuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+	}
+
+	@Override
+	protected void renderLabels(PoseStack matrixStack, int x, int y) {
+		this.font.draw(matrixStack, "Visceral Recaller", 8, 4, 0);
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
+		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
+
 	}
 
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
@@ -115,100 +209,6 @@ public class VisceralRecallerScreen extends AbstractContainerScreen<VisceralReca
 				heightShift);
 		ScreenUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 5, 1 + screenHeight + 32, 1, 0, 12, 51, heightShift);
 		matrix.popPose();
-	}
-
-	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		int centerX = (width / 2) - guiWidth / 2;
-		int centerY = (height / 2) - guiHeight / 2;
-		renderVolumeBar(matrixStack, centerX, centerY, te.getLevel());
-
-		drawCenter(matrixStack, centerX, centerY);
-		this.renderTooltip(matrixStack, mouseX, mouseY);
-		if (forgetButton.isHoveredOrFocused()) {
-			List<Component> ClosePage = new ArrayList<Component>();
-			ClosePage.add(Component.literal(I18n.get("Forget Current State")));
-			if (forgetButton.isHoveredOrFocused()) {
-				renderComponentTooltip(matrixStack, ClosePage, mouseX, mouseY);
-			}
-		}
-
-	}
-
-	@Override
-	public void renderBackground(PoseStack matrixStack) {
-		super.renderBackground(matrixStack);
-	}
-
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		this.font.draw(matrixStack, "Visceral Recaller", 8, 4, 0);
-		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
-		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
-
-	}
-
-	@Override
-	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-		this.renderBackground(matrixStack);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, GUI_RECALLER);
-		HLGuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		renderables.clear();
-		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_RECALLER, FORGETBUTTONID, leftPos + 152,
-				topPos + 47, 16, 16, 176, 0, null, (press) -> {
-					if (press instanceof GuiButtonTextured) {
-						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new ClearRecallerStatePacket());
-					}
-				}));
-
-	}
-
-	@Override
-	public boolean isPauseScreen() {
-		return false;
-	}
-
-	private void drawCenter(PoseStack stack, int xOff, int yOff) {
-		Map<EnumBloodTendency, Float> affs = te.getTendency();
-		int centerOffset = 8;
-		int cx = 0, cy = 0;
-		float rotAngle = -90f;
-		int iconDiameter = 65;
-		int diameter = 15;
-		float spikeBaseWidth = 23.5f;
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 90;
-			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
-			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 47;
-			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 47;
-			double depthDist = ((iconDiameter - diameter) * affs.get(tend) * 0.5 + diameter);
-			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
-			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 47;
-			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
-					/ 2f);
-			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
-					this.zLevel, tend.getColor(), displace, 1.1);
-			HLGuiUtils.fracLine(stack, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
-					this.zLevel, tend.getColor(), displace, 1.1);
-			HLGuiUtils.fracLine(stack, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
-					tend.getColor(), displace, 0.8);
-			HLGuiUtils.fracLine(stack, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
-					this.zLevel, tend.getColor(), displace, 0.8);
-			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			HLGuiUtils.renderItemStackInGui(stack, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
-					newX + xOff + 90, newY + yOff + 47);
-			rotAngle += 45;
-		}
 	}
 
 }

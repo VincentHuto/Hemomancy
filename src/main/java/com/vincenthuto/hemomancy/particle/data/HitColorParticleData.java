@@ -19,17 +19,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class HitColorParticleData implements ParticleOptions {
 
-	private ParticleType<HitColorParticleData> type;
 	public static final Codec<HitColorParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 			.apply(instance, HitColorParticleData::new));
-
-	public ParticleColor color;
-
 	@SuppressWarnings("deprecation")
-	public static final Deserializer<HitColorParticleData> DESERIALIZER = new Deserializer<HitColorParticleData>() {
+	public static final Deserializer<HitColorParticleData> DESERIALIZER = new Deserializer<>() {
 		@Override
 		public HitColorParticleData fromCommand(ParticleType<HitColorParticleData> type, StringReader reader)
 				throws CommandSyntaxException {
@@ -42,6 +38,10 @@ public class HitColorParticleData implements ParticleOptions {
 			return new HitColorParticleData(type, ParticleColor.deserialize(buffer.readUtf()));
 		}
 	};
+
+	private ParticleType<HitColorParticleData> type;
+
+	public ParticleColor color;
 
 	public HitColorParticleData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);

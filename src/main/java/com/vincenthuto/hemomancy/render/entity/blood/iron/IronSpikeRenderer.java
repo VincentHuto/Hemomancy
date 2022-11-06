@@ -20,8 +20,13 @@ public class IronSpikeRenderer extends MobRenderer<EntityIronSpike, IronSpikeMod
 		super(p_174447_, new IronSpikeModel<EntityIronSpike>(p_174447_.bakeLayer(IronSpikeModel.iron_spike)), 0.5F);
 
 	}
-	
-	
+
+
+	@Override
+	public ResourceLocation getTextureLocation(EntityIronSpike p_114482_) {
+		return texture;
+	}
+
 	@Override
 	protected void scale(EntityIronSpike entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 		super.scale(entitylivingbaseIn, matrixStackIn, partialTickTime);
@@ -43,10 +48,5 @@ public class IronSpikeRenderer extends MobRenderer<EntityIronSpike, IronSpikeMod
 			matrixStackIn.scale(d, d, d);
 
 		}
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(EntityIronSpike p_114482_) {
-		return texture;
 	}
 }

@@ -18,53 +18,6 @@ import net.minecraftforge.client.event.RenderLevelLastEvent;
 
 public class RenderBloodLaser {
 
-	public static void renderLaser(RenderLevelLastEvent event, Player player, float ticks) {
-		Vector3 centerVec = Vector3.fromEntityCenter(player);
-//		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
-//			if (player.level.isClientSide) {
-//				Vector3 playerPos = Vector3.fromEntityCenter(player);
-//				Vector3d playerVec = new Vector3d(playerPos.x, playerPos.y, playerPos.z);
-//				Vector3d part1 = new Vector3d(centerVec.x + Math.sin(player.tickCount * 0.1 + Math.toRadians(30)),
-//						centerVec.y, centerVec.z + Math.cos(player.tickCount * 0.1 + Math.toRadians(30)));
-//				Vector3d part2 = new Vector3d(centerVec.x - Math.sin(player.tickCount * 0.1 + Math.toRadians(90)),
-//						centerVec.y, centerVec.z - Math.cos(player.tickCount * 0.1 + Math.toRadians(90)));
-//				Vector3d part3 = new Vector3d(centerVec.x - (Math.sin(player.tickCount * 0.1 + Math.toRadians(-30))),
-//						centerVec.y, centerVec.z - (Math.cos(player.tickCount * 0.1 + Math.toRadians(-30))));
-//
-//				drawLasers(event.getPoseStack(), playerVec, part1, 255 / 255f, 255 / 255f, 0);
-//				drawLasers(event.getPoseStack(), playerVec, part2, 255 / 255f, 0 / 255f, 0);
-//				drawLasers(event.getPoseStack(), playerVec, part3, 255 / 255f, 0 / 255f, 255 / 255);
-//
-//			}
-//		}
-	}
-
-	public static void drawLasers(PoseStack matrixStackIn, Vector3d to, Vector3d from, float r, float g, float b) {
-		final Minecraft mc = Minecraft.getInstance();
-		Level world = mc.level;
-		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-		long gameTime = world.getGameTime();
-		double v = gameTime * 0.04;
-		Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(-view.x, -view.y, -view.z);
-		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LASER_MAIN_ADDITIVE);
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(from.x, from.y, from.z);
-		float diffX = (float) (to.x - from.x);
-		float diffY = (float) (to.y - from.y);
-		float diffZ = (float) (to.z - from.z);
-		Vector3f startLaser = new Vector3f(0, 0, 0);
-		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
-		Vector3f sortPos = new Vector3f((float) from.x, (float) from.y, (float) from.z);
-		Matrix4f positionMatrix = matrixStackIn.last().pose();
-		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.025f, v, v + diffY * -5.5, sortPos);
-		matrixStackIn.popPose();
-
-		matrixStackIn.popPose();
-		buffer.endBatch(RenderTypeInit.LASER_MAIN_ADDITIVE);
-	}
-
 	public static Vector3f adjustBeamToEyes(Vector3f from, Vector3f to, Vector3f sortPos) {
 		Player player = Minecraft.getInstance().player;
 		Vector3f P = new Vector3f((float) player.getX() - sortPos.x(), (float) player.getEyeY() - sortPos.y(),
@@ -102,6 +55,53 @@ public class RenderBloodLaser {
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+	}
+
+	public static void drawLasers(PoseStack matrixStackIn, Vector3d to, Vector3d from, float r, float g, float b) {
+		final Minecraft mc = Minecraft.getInstance();
+		Level world = mc.level;
+		MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+		long gameTime = world.getGameTime();
+		double v = gameTime * 0.04;
+		Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
+		matrixStackIn.pushPose();
+		matrixStackIn.translate(-view.x, -view.y, -view.z);
+		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LASER_MAIN_ADDITIVE);
+		matrixStackIn.pushPose();
+		matrixStackIn.translate(from.x, from.y, from.z);
+		float diffX = (float) (to.x - from.x);
+		float diffY = (float) (to.y - from.y);
+		float diffZ = (float) (to.z - from.z);
+		Vector3f startLaser = new Vector3f(0, 0, 0);
+		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
+		Vector3f sortPos = new Vector3f((float) from.x, (float) from.y, (float) from.z);
+		Matrix4f positionMatrix = matrixStackIn.last().pose();
+		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.025f, v, v + diffY * -5.5, sortPos);
+		matrixStackIn.popPose();
+
+		matrixStackIn.popPose();
+		buffer.endBatch(RenderTypeInit.LASER_MAIN_ADDITIVE);
+	}
+
+	public static void renderLaser(RenderLevelLastEvent event, Player player, float ticks) {
+		Vector3 centerVec = Vector3.fromEntityCenter(player);
+//		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
+//			if (player.level.isClientSide) {
+//				Vector3 playerPos = Vector3.fromEntityCenter(player);
+//				Vector3d playerVec = new Vector3d(playerPos.x, playerPos.y, playerPos.z);
+//				Vector3d part1 = new Vector3d(centerVec.x + Math.sin(player.tickCount * 0.1 + Math.toRadians(30)),
+//						centerVec.y, centerVec.z + Math.cos(player.tickCount * 0.1 + Math.toRadians(30)));
+//				Vector3d part2 = new Vector3d(centerVec.x - Math.sin(player.tickCount * 0.1 + Math.toRadians(90)),
+//						centerVec.y, centerVec.z - Math.cos(player.tickCount * 0.1 + Math.toRadians(90)));
+//				Vector3d part3 = new Vector3d(centerVec.x - (Math.sin(player.tickCount * 0.1 + Math.toRadians(-30))),
+//						centerVec.y, centerVec.z - (Math.cos(player.tickCount * 0.1 + Math.toRadians(-30))));
+//
+//				drawLasers(event.getPoseStack(), playerVec, part1, 255 / 255f, 255 / 255f, 0);
+//				drawLasers(event.getPoseStack(), playerVec, part2, 255 / 255f, 0 / 255f, 0);
+//				drawLasers(event.getPoseStack(), playerVec, part3, 255 / 255f, 0 / 255f, 255 / 255);
+//
+//			}
+//		}
 	}
 
 }

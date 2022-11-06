@@ -22,7 +22,10 @@ import net.minecraftforge.common.util.Lazy;
 
 public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 
-	
+
+	public static enum EnumBloodLustMaskTypes {
+		NONE, HORNED, TENGU
+	}
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_LAYER = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_TENGU_LAYER = new ModelLayerLocation(
@@ -33,273 +36,17 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_chest"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_LEGS_LAYER = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_legs"), "main");
-	public static final ModelLayerLocation BLOOD_LUST_BOOTS_LAYER = new ModelLayerLocation(
+
+    public static final ModelLayerLocation BLOOD_LUST_BOOTS_LAYER = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_boots"), "main");
-	
     public static final Lazy<BloodLustArmorModel<LivingEntity>> helmet = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> tengu = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_TENGU_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> horned = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_HORNED_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> chest = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_CHEST_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> legs = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_LEGS_LAYER)));
-    public static final Lazy<BloodLustArmorModel<LivingEntity>> boots = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_BOOTS_LAYER)));
 
-	
-	public BloodLustArmorModel(ModelPart root) {
-		super(root, RenderType::entityTranslucent);
 
-	}
-
-	public static enum EnumBloodLustMaskTypes {
-		NONE, HORNED, TENGU
-	}
-
-	@SuppressWarnings("unused")
-	public static LayerDefinition createHeadLayer(EquipmentSlot slot, EnumBloodLustMaskTypes maskType) {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
-		PartDefinition partdefinition = meshdefinition.getRoot();
-		// Helmet
-		if (slot.equals(EquipmentSlot.HEAD)) {
-			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create(),
-					PartPose.offset(0.0F, 0.0F, 0.0F));
-
-			PartDefinition base = head.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 96)
-					.addBox(-3.0F, 1.75F, -4.45F, 6.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-					.addBox(-3.0F, 2.0F, -4.25F, 6.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(141, 50)
-					.addBox(-4.9F, 3.0F, -4.35F, 2.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(100, 177)
-					.addBox(-4.7F, 1.5F, -3.35F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(32, 72)
-					.addBox(-5.0F, 3.0F, 1.75F, 10.0F, 3.0F, 3.0F, new CubeDeformation(-0.02F)).texOffs(22, 81)
-					.addBox(-5.0F, 1.25F, 1.35F, 10.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(22, 81)
-					.addBox(-4.0F, 1.25F, -2.65F, 8.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(44, 95)
-					.addBox(0.0F, -2.0F, -3.1F, 0.0F, 10.0F, 10.0F, new CubeDeformation(0.0F)).texOffs(23, 90)
-					.addBox(-5.0F, 6.0F, 2.25F, 10.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 109)
-					.addBox(4.2184F, 7.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-					.addBox(4.2184F, 6.1107F, -0.4862F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(66, 106)
-					.addBox(4.2184F, 5.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(95, 172)
-					.addBox(2.9684F, 1.0F, -4.4862F, 2.0F, 5.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 109)
-					.addBox(-5.2184F, 7.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-					.addBox(-5.2184F, 6.1107F, -0.4862F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(66, 106)
-					.addBox(-5.2184F, 5.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
-					PartPose.offset(0.0F, -8.9F, 0.15F));
-
-			PartDefinition hat = head.addOrReplaceChild("hat",
-					CubeListBuilder.create().texOffs(59, 158)
-							.addBox(-4.5F, -1.0F, -4.5F, 9.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(49, 137)
-							.addBox(-5.5F, 0.0F, -5.5F, 11.0F, 1.0F, 11.0F, new CubeDeformation(0.0F)).texOffs(0, 146)
-							.addBox(-3.5F, -2.0F, -3.5F, 7.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-							.addBox(-0.5F, -3.0F, -1.5F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-							.addBox(-0.5F, -2.0F, 1.5F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-							.addBox(-0.5F, -1.0F, -2.5F, 1.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-							.addBox(-0.5F, 0.0F, -2.5F, 1.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(0, 155)
-							.addBox(-6.5F, 1.0F, -6.5F, 13.0F, 1.0F, 13.0F, new CubeDeformation(0.0F)).texOffs(31, 204)
-							.addBox(-7.5F, 2.0F, -7.5F, 15.0F, 0.0F, 15.0F, new CubeDeformation(0.05F)),
-					PartPose.offsetAndRotation(0.0F, -8.9F, 0.15F, 0.1745F, 0.0436F, -0.1745F));
-
-			PartDefinition brim = hat.addOrReplaceChild("brim", CubeListBuilder.create().texOffs(48, 209)
-					.addBox(-5.0F, -28.9F, -6.35F, 13.0F, 0.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(52, 205)
-					.addBox(-7.0F, -28.9F, -3.35F, 1.0F, 0.0F, 11.0F, new CubeDeformation(0.05F)).texOffs(52, 205)
-					.addBox(9.0F, -28.9F, -3.35F, 1.0F, 0.0F, 11.0F, new CubeDeformation(0.05F)).texOffs(48, 209)
-					.addBox(-5.0F, -28.9F, 9.65F, 13.0F, 0.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(-1.5F, 31.0F, -2.15F));
-
-			PartDefinition tassle = hat.addOrReplaceChild("tassle", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(7.0F, 2.1333F, -7.0F));
-
-			PartDefinition tassle2 = hat.addOrReplaceChild("tassle2", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(-7.0F, 2.1333F, -7.0F));
-
-			PartDefinition tassle3 = hat.addOrReplaceChild("tassle3", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(-7.0F, 2.1333F, 7.0F));
-
-			PartDefinition tassle4 = hat.addOrReplaceChild("tassle4", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(7.0F, 2.1333F, 7.0F));
-
-			PartDefinition tassle5 = hat.addOrReplaceChild("tassle5", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(7.0F, 2.1333F, 0.0F));
-
-			PartDefinition tassle6 = hat.addOrReplaceChild("tassle6", CubeListBuilder.create().texOffs(41, 197)
-					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
-					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
-					PartPose.offset(-7.0F, 2.1333F, 0.0F));
-
-			if (maskType == EnumBloodLustMaskTypes.TENGU) {
-				PartDefinition mask = head.addOrReplaceChild("mask", CubeListBuilder.create(),
-						PartPose.offset(-1.0F, 21.0F, 1.0F));
-
-				PartDefinition nose = mask.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 96)
-						.addBox(1.0F, -24.9F, -8.1F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(1.0F, -25.9F, -7.1F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.5F, -25.9F, -6.1F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.5F, -26.9F, -5.85F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(48, 110)
-						.addBox(1.5F, -31.9F, -8.85F, 0.0F, 10.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.5F, -27.9F, -4.85F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.5F, -26.9F, -4.1F, 2.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)),
-						PartPose.offset(-0.5F, 0.0F, -1.0F));
-
-				PartDefinition chin = mask.addOrReplaceChild("chin", CubeListBuilder.create().texOffs(12, 86)
-						.addBox(1.0F, -19.8F, -8.45F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.0F, -21.1F, -6.35F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)),
-						PartPose.offset(-0.5F, -1.0F, 0.0F));
-
-				PartDefinition lBrow = mask.addOrReplaceChild("lBrow",
-						CubeListBuilder.create().texOffs(123, 203).addBox(-1.7F, 0.25F, -0.25F, 3.0F, 3.0F, 0.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(2.5F, -26.65F, -4.8F, 0.0F, 0.0F, -0.4363F));
-
-				PartDefinition rBrow = mask.addOrReplaceChild("rBrow",
-						CubeListBuilder.create().texOffs(0, 96).addBox(-1.5F, 0.25F, -0.25F, 3.0F, 1.0F, 1.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-0.5F, -26.65F, -4.8F, 0.0F, 0.0F, 0.4363F));
-
-				PartDefinition lCheek = mask.addOrReplaceChild("lCheek", CubeListBuilder.create().texOffs(0, 96)
-						.addBox(-0.7328F, 0.3306F, -1.7627F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(-0.7328F, -1.639F, -1.4154F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(-0.8F, -0.7F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(5.5309F, -23.0F, -3.4437F, 0.1745F, 0.3491F, 0.0F));
-
-				PartDefinition lChin = lCheek.addOrReplaceChild("lChin", CubeListBuilder.create().texOffs(0, 115)
-						.addBox(-2.421F, 5.2531F, -1.3545F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 115)
-						.addBox(-2.1754F, 3.2835F, -1.1089F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(-1.0583F, 4.124F, -1.071F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-1.1F, -4.9F, -1.1F, 0.0F, -0.7854F, 0.0F));
-
-				PartDefinition lCheek2 = mask.addOrReplaceChild("lCheek2", CubeListBuilder.create().texOffs(0, 96)
-						.addBox(-0.3142F, 0.3335F, -1.7459F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(-0.3142F, -1.6361F, -1.3986F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-						.texOffs(0, 96).addBox(-0.3F, -0.7F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-3.4809F, -23.0F, -3.4437F, 0.1745F, -0.3491F, 0.0F));
-
-				PartDefinition rChin = lCheek2.addOrReplaceChild("rChin", CubeListBuilder.create().texOffs(0, 115)
-						.addBox(-0.4474F, 5.2561F, -1.199F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 115)
-						.addBox(-0.6929F, 3.2864F, -0.9534F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
-						.addBox(0.2351F, 4.124F, -0.8943F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.85F, -4.9F, -1.1F, 0.0F, 0.7854F, 0.0F));
-
-			}
-			if (maskType == EnumBloodLustMaskTypes.HORNED) {
-				PartDefinition mask2 = head.addOrReplaceChild("mask2",
-						CubeListBuilder.create().texOffs(85, 202)
-								.addBox(-2.0316F, -27.2893F, -6.5862F, 6.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
-								.texOffs(66, 189)
-								.addBox(-4.2816F, -26.2893F, -6.3362F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-								.texOffs(50, 186)
-								.addBox(3.2184F, -28.2893F, -6.3362F, 3.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
-								.texOffs(103, 201)
-								.addBox(-3.8316F, -24.2893F, -5.9862F, 2.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
-								.texOffs(87, 193).addBox(3.8684F, -24.2893F, -5.9862F, 2.0F, 3.0F, 4.0F,
-										new CubeDeformation(0.0F)),
-						PartPose.offset(-1.0F, 21.0F, 1.0F));
-
-				PartDefinition bone9 = mask2.addOrReplaceChild("bone9",
-						CubeListBuilder.create().texOffs(88, 212).addBox(-2.5F, -0.317F, -0.6797F, 6.0F, 3.0F, 1.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.4684F, -22.2893F, -5.8362F, 0.4363F, 0.0F, 0.0F));
-
-				PartDefinition horn = mask2.addOrReplaceChild("horn",
-						CubeListBuilder.create().texOffs(76, 197)
-								.addBox(-1.0F, 0.1F, 1.2F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(62, 195)
-								.addBox(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-0.7816F, -27.6393F, -7.5362F, -0.6109F, 0.0F, 0.0F));
-
-				PartDefinition horn2 = horn.addOrReplaceChild("horn2",
-						CubeListBuilder.create().texOffs(63, 196).addBox(-0.5F, -1.9026F, -1.1465F, 1.0F, 1.0F, 3.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F, -0.6981F, 0.0F, 0.0F));
-
-				PartDefinition bone10 = horn2.addOrReplaceChild("bone10",
-						CubeListBuilder.create().texOffs(63, 196).addBox(-0.5F, -1.4508F, -1.4845F, 1.0F, 1.0F, 3.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, -1.4026F, -2.6465F, -0.6109F, 0.0F, 0.0F));
-
-				PartDefinition bone = horn2.addOrReplaceChild("bone",
-						CubeListBuilder.create().texOffs(64, 197).addBox(0.2709F, -2.4705F, 0.2063F, 1.0F, 1.0F, 2.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.6404F, -0.284F, -0.2058F));
-
-				PartDefinition bone12 = bone.addOrReplaceChild("bone12",
-						CubeListBuilder.create().texOffs(62, 195).addBox(-0.3967F, 5.5F, -3.6956F, 1.0F, 1.0F, 4.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.7709F, -7.9705F, 0.2063F, 0.0F, -0.6545F, 0.0F));
-
-				PartDefinition bone2 = horn2.addOrReplaceChild("bone2",
-						CubeListBuilder.create().texOffs(64, 197).addBox(-1.9806F, -2.4705F, -0.9908F, 1.0F, 1.0F, 2.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
-
-				PartDefinition bone11 = bone2.addOrReplaceChild("bone11",
-						CubeListBuilder.create().texOffs(63, 196).addBox(-1.8208F, -0.5F, -1.1089F, 1.0F, 1.0F, 3.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-1.4806F, -1.9705F, -2.9908F, 0.0F, 0.6545F, 0.0F));
-
-				PartDefinition horn3 = mask2.addOrReplaceChild("horn3",
-						CubeListBuilder.create().texOffs(76, 197).addBox(-1.0F, -1.1956F, -1.4927F, 2.0F, 2.0F, 2.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(5.2184F, -25.4674F, -4.9138F, -3.0046F, -0.8823F, 2.7071F));
-
-				PartDefinition bone5 = horn3
-						.addOrReplaceChild("bone5",
-								CubeListBuilder.create().texOffs(62, 195).addBox(2.9684F, -26.0393F, -10.3362F, 1.0F,
-										1.0F, 4.0F, new CubeDeformation(0.0F)),
-								PartPose.offset(-3.4684F, 25.2437F, 5.8435F));
-
-				PartDefinition horn4 = bone5.addOrReplaceChild("horn4",
-						CubeListBuilder.create().texOffs(63, 196).addBox(-0.25F, -1.9026F, -1.1465F, 1.0F, 1.0F, 3.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(3.4684F, -25.5393F, -12.3362F, -0.6981F, 0.0F, 0.0F));
-
-				PartDefinition bone3 = horn4.addOrReplaceChild("bone3",
-						CubeListBuilder.create().texOffs(64, 197).addBox(0.2709F, -2.4705F, 0.2063F, 1.0F, 1.0F, 2.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.6404F, -0.284F, -0.2058F));
-
-				PartDefinition bone4 = horn4.addOrReplaceChild("bone4", CubeListBuilder.create(),
-						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
-
-				PartDefinition bone6 = horn3.addOrReplaceChild("bone6",
-						CubeListBuilder.create().texOffs(62, 195).addBox(-1.9253F, -6.6638F, -7.3647F, 1.0F, 1.0F, 4.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 5.7044F, -2.4927F, 0.0F, -0.5672F, 0.0F));
-
-				PartDefinition horn5 = bone6.addOrReplaceChild("horn5",
-						CubeListBuilder.create().texOffs(63, 196)
-								.addBox(-1.4253F, -2.942F, -9.8609F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
-								.texOffs(63, 196)
-								.addBox(-1.6753F, -4.942F, -7.6109F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F, -0.6981F, 0.0F, 0.0F));
-
-				PartDefinition bone7 = horn5.addOrReplaceChild("bone7",
-						CubeListBuilder.create().texOffs(64, 197).addBox(-0.5F, -0.5F, -1.0F, 1.0F, 1.0F, 2.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(-1.1135F, -2.0915F, -7.2038F, 0.6404F, -0.284F, -0.2058F));
-
-				PartDefinition bone13 = horn5.addOrReplaceChild("bone13",
-						CubeListBuilder.create().texOffs(62, 195).addBox(-0.5F, -0.079F, -2.1556F, 1.0F, 1.0F, 4.0F,
-								new CubeDeformation(0.0F)),
-						PartPose.offsetAndRotation(0.1421F, -1.9325F, -9.1679F, 0.4542F, -0.6484F, -0.5593F));
-
-				PartDefinition bone8 = horn5.addOrReplaceChild("bone8", CubeListBuilder.create(),
-						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
-			}
-
-		}
-		return LayerDefinition.create(meshdefinition, 256, 256);
-
-	}
+	public static final Lazy<BloodLustArmorModel<LivingEntity>> boots = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_BOOTS_LAYER)));
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
@@ -624,10 +371,257 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+	@SuppressWarnings("unused")
+	public static LayerDefinition createHeadLayer(EquipmentSlot slot, EnumBloodLustMaskTypes maskType) {
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		// Helmet
+		if (slot.equals(EquipmentSlot.HEAD)) {
+			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create(),
+					PartPose.offset(0.0F, 0.0F, 0.0F));
+
+			PartDefinition base = head.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 96)
+					.addBox(-3.0F, 1.75F, -4.45F, 6.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+					.addBox(-3.0F, 2.0F, -4.25F, 6.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(141, 50)
+					.addBox(-4.9F, 3.0F, -4.35F, 2.0F, 3.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(100, 177)
+					.addBox(-4.7F, 1.5F, -3.35F, 1.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(32, 72)
+					.addBox(-5.0F, 3.0F, 1.75F, 10.0F, 3.0F, 3.0F, new CubeDeformation(-0.02F)).texOffs(22, 81)
+					.addBox(-5.0F, 1.25F, 1.35F, 10.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(22, 81)
+					.addBox(-4.0F, 1.25F, -2.65F, 8.0F, 2.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(44, 95)
+					.addBox(0.0F, -2.0F, -3.1F, 0.0F, 10.0F, 10.0F, new CubeDeformation(0.0F)).texOffs(23, 90)
+					.addBox(-5.0F, 6.0F, 2.25F, 10.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 109)
+					.addBox(4.2184F, 7.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+					.addBox(4.2184F, 6.1107F, -0.4862F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(66, 106)
+					.addBox(4.2184F, 5.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(95, 172)
+					.addBox(2.9684F, 1.0F, -4.4862F, 2.0F, 5.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 109)
+					.addBox(-5.2184F, 7.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+					.addBox(-5.2184F, 6.1107F, -0.4862F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(66, 106)
+					.addBox(-5.2184F, 5.0107F, -1.4862F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
+					PartPose.offset(0.0F, -8.9F, 0.15F));
+
+			PartDefinition hat = head.addOrReplaceChild("hat",
+					CubeListBuilder.create().texOffs(59, 158)
+							.addBox(-4.5F, -1.0F, -4.5F, 9.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(49, 137)
+							.addBox(-5.5F, 0.0F, -5.5F, 11.0F, 1.0F, 11.0F, new CubeDeformation(0.0F)).texOffs(0, 146)
+							.addBox(-3.5F, -2.0F, -3.5F, 7.0F, 1.0F, 7.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+							.addBox(-0.5F, -3.0F, -1.5F, 1.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+							.addBox(-0.5F, -2.0F, 1.5F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+							.addBox(-0.5F, -1.0F, -2.5F, 1.0F, 1.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+							.addBox(-0.5F, 0.0F, -2.5F, 1.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)).texOffs(0, 155)
+							.addBox(-6.5F, 1.0F, -6.5F, 13.0F, 1.0F, 13.0F, new CubeDeformation(0.0F)).texOffs(31, 204)
+							.addBox(-7.5F, 2.0F, -7.5F, 15.0F, 0.0F, 15.0F, new CubeDeformation(0.05F)),
+					PartPose.offsetAndRotation(0.0F, -8.9F, 0.15F, 0.1745F, 0.0436F, -0.1745F));
+
+			PartDefinition brim = hat.addOrReplaceChild("brim", CubeListBuilder.create().texOffs(48, 209)
+					.addBox(-5.0F, -28.9F, -6.35F, 13.0F, 0.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(52, 205)
+					.addBox(-7.0F, -28.9F, -3.35F, 1.0F, 0.0F, 11.0F, new CubeDeformation(0.05F)).texOffs(52, 205)
+					.addBox(9.0F, -28.9F, -3.35F, 1.0F, 0.0F, 11.0F, new CubeDeformation(0.05F)).texOffs(48, 209)
+					.addBox(-5.0F, -28.9F, 9.65F, 13.0F, 0.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(-1.5F, 31.0F, -2.15F));
+
+			PartDefinition tassle = hat.addOrReplaceChild("tassle", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(7.0F, 2.1333F, -7.0F));
+
+			PartDefinition tassle2 = hat.addOrReplaceChild("tassle2", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(-7.0F, 2.1333F, -7.0F));
+
+			PartDefinition tassle3 = hat.addOrReplaceChild("tassle3", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(-7.0F, 2.1333F, 7.0F));
+
+			PartDefinition tassle4 = hat.addOrReplaceChild("tassle4", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(7.0F, 2.1333F, 7.0F));
+
+			PartDefinition tassle5 = hat.addOrReplaceChild("tassle5", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(7.0F, 2.1333F, 0.0F));
+
+			PartDefinition tassle6 = hat.addOrReplaceChild("tassle6", CubeListBuilder.create().texOffs(41, 197)
+					.addBox(-0.5F, 0.9167F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(-0.5F, -0.0833F, 0.0F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F)).texOffs(42, 192)
+					.addBox(0.0F, -0.0833F, -0.5F, 0.0F, 1.0F, 1.0F, new CubeDeformation(0.05F)),
+					PartPose.offset(-7.0F, 2.1333F, 0.0F));
+
+			if (maskType == EnumBloodLustMaskTypes.TENGU) {
+				PartDefinition mask = head.addOrReplaceChild("mask", CubeListBuilder.create(),
+						PartPose.offset(-1.0F, 21.0F, 1.0F));
+
+				PartDefinition nose = mask.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 96)
+						.addBox(1.0F, -24.9F, -8.1F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(1.0F, -25.9F, -7.1F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.5F, -25.9F, -6.1F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.5F, -26.9F, -5.85F, 2.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(48, 110)
+						.addBox(1.5F, -31.9F, -8.85F, 0.0F, 10.0F, 8.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.5F, -27.9F, -4.85F, 2.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.5F, -26.9F, -4.1F, 2.0F, 3.0F, 1.0F, new CubeDeformation(0.0F)),
+						PartPose.offset(-0.5F, 0.0F, -1.0F));
+
+				PartDefinition chin = mask.addOrReplaceChild("chin", CubeListBuilder.create().texOffs(12, 86)
+						.addBox(1.0F, -19.8F, -8.45F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.0F, -21.1F, -6.35F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)),
+						PartPose.offset(-0.5F, -1.0F, 0.0F));
+
+				PartDefinition lBrow = mask.addOrReplaceChild("lBrow",
+						CubeListBuilder.create().texOffs(123, 203).addBox(-1.7F, 0.25F, -0.25F, 3.0F, 3.0F, 0.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(2.5F, -26.65F, -4.8F, 0.0F, 0.0F, -0.4363F));
+
+				PartDefinition rBrow = mask.addOrReplaceChild("rBrow",
+						CubeListBuilder.create().texOffs(0, 96).addBox(-1.5F, 0.25F, -0.25F, 3.0F, 1.0F, 1.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-0.5F, -26.65F, -4.8F, 0.0F, 0.0F, 0.4363F));
+
+				PartDefinition lCheek = mask.addOrReplaceChild("lCheek", CubeListBuilder.create().texOffs(0, 96)
+						.addBox(-0.7328F, 0.3306F, -1.7627F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(-0.7328F, -1.639F, -1.4154F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(-0.8F, -0.7F, -0.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(5.5309F, -23.0F, -3.4437F, 0.1745F, 0.3491F, 0.0F));
+
+				PartDefinition lChin = lCheek.addOrReplaceChild("lChin", CubeListBuilder.create().texOffs(0, 115)
+						.addBox(-2.421F, 5.2531F, -1.3545F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 115)
+						.addBox(-2.1754F, 3.2835F, -1.1089F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(-1.0583F, 4.124F, -1.071F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-1.1F, -4.9F, -1.1F, 0.0F, -0.7854F, 0.0F));
+
+				PartDefinition lCheek2 = mask.addOrReplaceChild("lCheek2", CubeListBuilder.create().texOffs(0, 96)
+						.addBox(-0.3142F, 0.3335F, -1.7459F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(-0.3142F, -1.6361F, -1.3986F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+						.texOffs(0, 96).addBox(-0.3F, -0.7F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-3.4809F, -23.0F, -3.4437F, 0.1745F, -0.3491F, 0.0F));
+
+				PartDefinition rChin = lCheek2.addOrReplaceChild("rChin", CubeListBuilder.create().texOffs(0, 115)
+						.addBox(-0.4474F, 5.2561F, -1.199F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 115)
+						.addBox(-0.6929F, 3.2864F, -0.9534F, 3.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(0, 96)
+						.addBox(0.2351F, 4.124F, -0.8943F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.85F, -4.9F, -1.1F, 0.0F, 0.7854F, 0.0F));
+
+			}
+			if (maskType == EnumBloodLustMaskTypes.HORNED) {
+				PartDefinition mask2 = head.addOrReplaceChild("mask2",
+						CubeListBuilder.create().texOffs(85, 202)
+								.addBox(-2.0316F, -27.2893F, -6.5862F, 6.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
+								.texOffs(66, 189)
+								.addBox(-4.2816F, -26.2893F, -6.3362F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+								.texOffs(50, 186)
+								.addBox(3.2184F, -28.2893F, -6.3362F, 3.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+								.texOffs(103, 201)
+								.addBox(-3.8316F, -24.2893F, -5.9862F, 2.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
+								.texOffs(87, 193).addBox(3.8684F, -24.2893F, -5.9862F, 2.0F, 3.0F, 4.0F,
+										new CubeDeformation(0.0F)),
+						PartPose.offset(-1.0F, 21.0F, 1.0F));
+
+				PartDefinition bone9 = mask2.addOrReplaceChild("bone9",
+						CubeListBuilder.create().texOffs(88, 212).addBox(-2.5F, -0.317F, -0.6797F, 6.0F, 3.0F, 1.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.4684F, -22.2893F, -5.8362F, 0.4363F, 0.0F, 0.0F));
+
+				PartDefinition horn = mask2.addOrReplaceChild("horn",
+						CubeListBuilder.create().texOffs(76, 197)
+								.addBox(-1.0F, 0.1F, 1.2F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)).texOffs(62, 195)
+								.addBox(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 4.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-0.7816F, -27.6393F, -7.5362F, -0.6109F, 0.0F, 0.0F));
+
+				PartDefinition horn2 = horn.addOrReplaceChild("horn2",
+						CubeListBuilder.create().texOffs(63, 196).addBox(-0.5F, -1.9026F, -1.1465F, 1.0F, 1.0F, 3.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F, -0.6981F, 0.0F, 0.0F));
+
+				PartDefinition bone10 = horn2.addOrReplaceChild("bone10",
+						CubeListBuilder.create().texOffs(63, 196).addBox(-0.5F, -1.4508F, -1.4845F, 1.0F, 1.0F, 3.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, -1.4026F, -2.6465F, -0.6109F, 0.0F, 0.0F));
+
+				PartDefinition bone = horn2.addOrReplaceChild("bone",
+						CubeListBuilder.create().texOffs(64, 197).addBox(0.2709F, -2.4705F, 0.2063F, 1.0F, 1.0F, 2.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.6404F, -0.284F, -0.2058F));
+
+				PartDefinition bone12 = bone.addOrReplaceChild("bone12",
+						CubeListBuilder.create().texOffs(62, 195).addBox(-0.3967F, 5.5F, -3.6956F, 1.0F, 1.0F, 4.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.7709F, -7.9705F, 0.2063F, 0.0F, -0.6545F, 0.0F));
+
+				PartDefinition bone2 = horn2.addOrReplaceChild("bone2",
+						CubeListBuilder.create().texOffs(64, 197).addBox(-1.9806F, -2.4705F, -0.9908F, 1.0F, 1.0F, 2.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
+
+				PartDefinition bone11 = bone2.addOrReplaceChild("bone11",
+						CubeListBuilder.create().texOffs(63, 196).addBox(-1.8208F, -0.5F, -1.1089F, 1.0F, 1.0F, 3.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-1.4806F, -1.9705F, -2.9908F, 0.0F, 0.6545F, 0.0F));
+
+				PartDefinition horn3 = mask2.addOrReplaceChild("horn3",
+						CubeListBuilder.create().texOffs(76, 197).addBox(-1.0F, -1.1956F, -1.4927F, 2.0F, 2.0F, 2.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(5.2184F, -25.4674F, -4.9138F, -3.0046F, -0.8823F, 2.7071F));
+
+				PartDefinition bone5 = horn3
+						.addOrReplaceChild("bone5",
+								CubeListBuilder.create().texOffs(62, 195).addBox(2.9684F, -26.0393F, -10.3362F, 1.0F,
+										1.0F, 4.0F, new CubeDeformation(0.0F)),
+								PartPose.offset(-3.4684F, 25.2437F, 5.8435F));
+
+				PartDefinition horn4 = bone5.addOrReplaceChild("horn4",
+						CubeListBuilder.create().texOffs(63, 196).addBox(-0.25F, -1.9026F, -1.1465F, 1.0F, 1.0F, 3.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(3.4684F, -25.5393F, -12.3362F, -0.6981F, 0.0F, 0.0F));
+
+				PartDefinition bone3 = horn4.addOrReplaceChild("bone3",
+						CubeListBuilder.create().texOffs(64, 197).addBox(0.2709F, -2.4705F, 0.2063F, 1.0F, 1.0F, 2.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.6404F, -0.284F, -0.2058F));
+
+				PartDefinition bone4 = horn4.addOrReplaceChild("bone4", CubeListBuilder.create(),
+						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
+
+				PartDefinition bone6 = horn3.addOrReplaceChild("bone6",
+						CubeListBuilder.create().texOffs(62, 195).addBox(-1.9253F, -6.6638F, -7.3647F, 1.0F, 1.0F, 4.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 5.7044F, -2.4927F, 0.0F, -0.5672F, 0.0F));
+
+				PartDefinition horn5 = bone6.addOrReplaceChild("horn5",
+						CubeListBuilder.create().texOffs(63, 196)
+								.addBox(-1.4253F, -2.942F, -9.8609F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F))
+								.texOffs(63, 196)
+								.addBox(-1.6753F, -4.942F, -7.6109F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F, -0.6981F, 0.0F, 0.0F));
+
+				PartDefinition bone7 = horn5.addOrReplaceChild("bone7",
+						CubeListBuilder.create().texOffs(64, 197).addBox(-0.5F, -0.5F, -1.0F, 1.0F, 1.0F, 2.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(-1.1135F, -2.0915F, -7.2038F, 0.6404F, -0.284F, -0.2058F));
+
+				PartDefinition bone13 = horn5.addOrReplaceChild("bone13",
+						CubeListBuilder.create().texOffs(62, 195).addBox(-0.5F, -0.079F, -2.1556F, 1.0F, 1.0F, 4.0F,
+								new CubeDeformation(0.0F)),
+						PartPose.offsetAndRotation(0.1421F, -1.9325F, -9.1679F, 0.4542F, -0.6484F, -0.5593F));
+
+				PartDefinition bone8 = horn5.addOrReplaceChild("bone8", CubeListBuilder.create(),
+						PartPose.offsetAndRotation(0.0F, 1.5974F, 0.8535F, 0.8281F, 0.6783F, 0.5996F));
+			}
+
+		}
+		return LayerDefinition.create(meshdefinition, 256, 256);
+
+	}
+
+	public BloodLustArmorModel(ModelPart root) {
+		super(root, RenderType::entityTranslucent);
+
 	}
 
 	@Override
@@ -640,6 +634,12 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 
 }

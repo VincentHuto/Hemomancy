@@ -18,15 +18,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class IronPillarModel<T extends Entity> extends EntityModel<EntityIronPillar> {
-	
+
 	public static final ModelLayerLocation iron_pillar = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar"), "main");
-	
-	private final ModelPart whole;
-
-	public IronPillarModel(ModelPart root) {
-		this.whole = root.getChild("whole");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -44,15 +38,21 @@ public class IronPillarModel<T extends Entity> extends EntityModel<EntityIronPil
 		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
 
-	@Override
-	public void setupAnim(EntityIronPillar entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
+	private final ModelPart whole;
 
+	public IronPillarModel(ModelPart root) {
+		this.whole = root.getChild("whole");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		whole.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(EntityIronPillar entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
 	}
 }

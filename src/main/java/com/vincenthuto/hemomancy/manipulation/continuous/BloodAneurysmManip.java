@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.manipulation.continuous;
 
-import java.util.Random;
-
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.capa.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.manipulation.BloodManipulation;

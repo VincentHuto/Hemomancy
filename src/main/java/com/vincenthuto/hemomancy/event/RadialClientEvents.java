@@ -19,13 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RadialClientEvents {
 
-	public static void wipeOpen() {
-		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-		
-		while (KeyBindInit.openVascCharmMenu.consumeClick()) {
-		}
-	}
-
 	private static boolean menuKey = false;
 
 	@SubscribeEvent
@@ -66,6 +59,13 @@ public class RadialClientEvents {
 		};
 		return isDown && keybind.getKeyConflictContext().isActive()
 				&& keybind.getKeyModifier().isActive(keybind.getKeyConflictContext());
+	}
+
+	public static void wipeOpen() {
+		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
+
+		while (KeyBindInit.openVascCharmMenu.consumeClick()) {
+		}
 	}
 
 }

@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.gui.VisceralRecallerScreen;
 import com.vincenthuto.hemomancy.gui.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.gui.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.gui.living.MorphlingJarScreen;
-import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
 import com.vincenthuto.hemomancy.render.tile.DendriticDistributorRenderer;
@@ -22,8 +21,6 @@ import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -54,6 +51,6 @@ public class ClientSetupSubscriber {
 		MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 		MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 		MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
-		
+
 	}
 }

@@ -12,8 +12,12 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 
 public class AbsrobedBloodCellParticleFactory implements ParticleProvider<AbsorbedBloodCellData> {
-	private final SpriteSet spriteSet;
 	public static final String NAME = "absorbed_blood_cell";
+	public static ParticleOptions createData(ParticleColor color) {
+		return new AbsorbedBloodCellData(ParticleInit.absorbed_blood_cell.get(), color);
+	}
+
+	private final SpriteSet spriteSet;
 
 	public AbsrobedBloodCellParticleFactory(SpriteSet sprite) {
 		this.spriteSet = sprite;
@@ -25,10 +29,6 @@ public class AbsrobedBloodCellParticleFactory implements ParticleProvider<Absorb
 		return new AbsorbedBloodCellParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, .025f, 20, this.spriteSet);
 
-	}
-
-	public static ParticleOptions createData(ParticleColor color) {
-		return new AbsorbedBloodCellData(ParticleInit.absorbed_blood_cell.get(), color);
 	}
 
 }

@@ -32,17 +32,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class TeleportToVeinPacket {
 
-	public TeleportToVeinPacket() {
-
-	}
-
-	public static void encode(TeleportToVeinPacket msg, FriendlyByteBuf buf) {
-	}
-
-	public static TeleportToVeinPacket decode(FriendlyByteBuf buf) {
-		return new TeleportToVeinPacket();
-	}
-
 	public static class Handler {
 		public static void handle(final TeleportToVeinPacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
@@ -106,5 +95,16 @@ public class TeleportToVeinPacket {
 				ctx.get().setPacketHandled(true);
 			});
 		}
+	}
+
+	public static TeleportToVeinPacket decode(FriendlyByteBuf buf) {
+		return new TeleportToVeinPacket();
+	}
+
+	public static void encode(TeleportToVeinPacket msg, FriendlyByteBuf buf) {
+	}
+
+	public TeleportToVeinPacket() {
+
 	}
 }

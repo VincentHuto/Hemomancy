@@ -19,16 +19,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class AbsorbedBloodCellData implements ParticleOptions {
 
-	private ParticleType<AbsorbedBloodCellData> type;
 	public static final Codec<AbsorbedBloodCellData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 			.apply(instance, AbsorbedBloodCellData::new));
-
-	public ParticleColor color;
-
-	public static final Deserializer<AbsorbedBloodCellData> DESERIALIZER = new Deserializer<AbsorbedBloodCellData>() {
+	public static final Deserializer<AbsorbedBloodCellData> DESERIALIZER = new Deserializer<>() {
 		@Override
 		public AbsorbedBloodCellData fromCommand(ParticleType<AbsorbedBloodCellData> type, StringReader reader)
 				throws CommandSyntaxException {
@@ -41,6 +37,10 @@ public class AbsorbedBloodCellData implements ParticleOptions {
 			return new AbsorbedBloodCellData(type, ParticleColor.deserialize(buffer.readUtf()));
 		}
 	};
+
+	private ParticleType<AbsorbedBloodCellData> type;
+
+	public ParticleColor color;
 
 	public AbsorbedBloodCellData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);

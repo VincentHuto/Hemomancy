@@ -15,25 +15,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 
 public class SpawnLivingToolParticlesPacket {
-	Vec3 pos;
-	ParticleColor color;
-
-	public SpawnLivingToolParticlesPacket() {
-	}
-
-	public SpawnLivingToolParticlesPacket(Vec3 pos, ParticleColor color) {
-		this.pos = pos;
-		this.color = color;
-	}
-
-	public Vec3 getPos() {
-		return pos;
-	}
-
-	public ParticleColor getColor() {
-		return color;
-	}
-
 	public static SpawnLivingToolParticlesPacket decode(FriendlyByteBuf buf) {
 		SpawnLivingToolParticlesPacket msg = new SpawnLivingToolParticlesPacket();
 		try {
@@ -45,7 +26,6 @@ public class SpawnLivingToolParticlesPacket {
 		}
 		return msg;
 	}
-
 	public static void encode(SpawnLivingToolParticlesPacket msg, FriendlyByteBuf buf) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
@@ -59,7 +39,7 @@ public class SpawnLivingToolParticlesPacket {
 	public static void handle(SpawnLivingToolParticlesPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
 		NetworkEvent.Context ctx = ctxSupplier.get();
 		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = (Optional<?>) LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
+		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
 		if (!clientLevel.isPresent()) {
 			return;
 		}
@@ -70,5 +50,25 @@ public class SpawnLivingToolParticlesPacket {
 					HLParticleUtils.inRange(-3, 3) * 0.015f);
 		}
 		ctxSupplier.get().setPacketHandled(true);
+	}
+
+	Vec3 pos;
+
+	ParticleColor color;
+
+	public SpawnLivingToolParticlesPacket() {
+	}
+
+	public SpawnLivingToolParticlesPacket(Vec3 pos, ParticleColor color) {
+		this.pos = pos;
+		this.color = color;
+	}
+
+	public ParticleColor getColor() {
+		return color;
+	}
+
+	public Vec3 getPos() {
+		return pos;
 	}
 }

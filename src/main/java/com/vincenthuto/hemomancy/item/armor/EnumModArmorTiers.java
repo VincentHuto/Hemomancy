@@ -61,13 +61,13 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	}
 
 	@Override
-	public int getDurabilityForSlot(EquipmentSlot slotIn) {
-		return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
+	public int getDefenseForSlot(EquipmentSlot slotIn) {
+		return this.damageReductionAmountArray[slotIn.getIndex()];
 	}
 
 	@Override
-	public int getDefenseForSlot(EquipmentSlot slotIn) {
-		return this.damageReductionAmountArray[slotIn.getIndex()];
+	public int getDurabilityForSlot(EquipmentSlot slotIn) {
+		return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
 	}
 
 	@Override
@@ -81,8 +81,8 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	}
 
 	@Override
-	public Ingredient getRepairIngredient() {
-		return this.repairMaterial.get();
+	public float getKnockbackResistance() {
+		return this.knockbackResistance;
 	}
 
 	@Override
@@ -92,13 +92,13 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	}
 
 	@Override
-	public float getToughness() {
-		return this.toughness;
+	public Ingredient getRepairIngredient() {
+		return this.repairMaterial.get();
 	}
 
 	@Override
-	public float getKnockbackResistance() {
-		return this.knockbackResistance;
+	public float getToughness() {
+		return this.toughness;
 	}
 
 }

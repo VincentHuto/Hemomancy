@@ -19,15 +19,9 @@ import net.minecraft.world.entity.Entity;
 
 
 public class IronSpikeModel<T extends Entity> extends EntityModel<EntityIronSpike> {
-	
+
 	public static final ModelLayerLocation iron_spike = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "iron_spike"), "main");
-	
-	private final ModelPart whole;
-
-	public IronSpikeModel(ModelPart root) {
-		this.whole = root.getChild("whole");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -47,13 +41,19 @@ public class IronSpikeModel<T extends Entity> extends EntityModel<EntityIronSpik
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	@Override
-	public void setupAnim(EntityIronSpike entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	private final ModelPart whole;
 
+	public IronSpikeModel(ModelPart root) {
+		this.whole = root.getChild("whole");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		whole.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(EntityIronSpike entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

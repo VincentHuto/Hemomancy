@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.render.item.ChitiniteShieldItemRenderer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
@@ -33,21 +32,25 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ChitiniteShieldItem extends Item {
+	public static DyeColor getColor(ItemStack stack) {
+		return DyeColor.byId(stack.getOrCreateTagElement("BlockEntityTag").getInt("Base"));
+	}
+
 	public ChitiniteShieldItem(Item.Properties builder) {
 		super(builder.durability(1024));
 		DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
 	}
 
 	@Override
-	public String getDescriptionId(ItemStack stack) {
-		return stack.getTagElement("BlockEntityTag") != null ? this.getDescriptionId() + '.' + getColor(stack).getName()
-				: super.getDescriptionId(stack);
-	}
-
-	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		BannerItem.appendHoverTextFromBannerBlockEntityTag(stack, tooltip);
+	}
+
+	@Override
+	public String getDescriptionId(ItemStack stack) {
+		return stack.getTagElement("BlockEntityTag") != null ? this.getDescriptionId() + '.' + getColor(stack).getName()
+				: super.getDescriptionId(stack);
 	}
 
 	@Override
@@ -61,8 +64,10 @@ public class ChitiniteShieldItem extends Item {
 	}
 
 	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return false;
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		super.initializeClient(consumer);
+		consumer.accept(RenderPropChitiniteShield.INSTANCE);
+
 	}
 
 	@Override
@@ -87,27 +92,21 @@ public class ChitiniteShieldItem extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		playerIn.startUsingItem(handIn);
-		return InteractionResultHolder.consume(itemstack);
-	}
-
-	@Override
 	public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
 
 		return ForgeRegistries.ITEMS.tags().getTag(ItemTags.PLANKS).contains(repair.getItem())
 				|| super.isValidRepairItem(toRepair, repair);
 	}
-	public static DyeColor getColor(ItemStack stack) {
-		return DyeColor.byId(stack.getOrCreateTagElement("BlockEntityTag").getInt("Base"));
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return false;
 	}
 
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropChitiniteShield.INSTANCE);
-
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack itemstack = playerIn.getItemInHand(handIn);
+		playerIn.startUsingItem(handIn);
+		return InteractionResultHolder.consume(itemstack);
 	}
 }
 

@@ -20,6 +20,11 @@ public class RunesContainerProvider implements INBTSerializable<CompoundTag>, IC
 		this.opt = LazyOptional.of(() -> inner);
 	}
 
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		this.inner.deserializeNBT(nbt);
+	}
+
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
@@ -31,10 +36,5 @@ public class RunesContainerProvider implements INBTSerializable<CompoundTag>, IC
 		return this.inner.serializeNBT();
 	}
 
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		this.inner.deserializeNBT(nbt);
-	}
-	
-	
+
 }

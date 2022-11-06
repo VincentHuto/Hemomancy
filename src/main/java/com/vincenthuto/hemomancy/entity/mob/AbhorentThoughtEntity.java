@@ -25,6 +25,11 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class AbhorentThoughtEntity extends Monster{
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
 	public int puffCooldown = 0;
 	//private int animationTick;
 
@@ -34,62 +39,13 @@ public class AbhorentThoughtEntity extends Monster{
 	}
 
 	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
 	}
 
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-
-	}
-
-	@Override
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
-			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
-		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-		this.populateDefaultEquipmentSlots(random, difficultyIn);
-
-		return spawnDataIn;
-
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-
-		/*
-		 * // Particle MobEffects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float
-		 * f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if
-		 * (this.ticksExisted < 2) { this.world.addParticle(ParticleTypes.POOF,
-		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); }
-		 * 
-		 * if (this.ticksExisted > 2 && this.ticksExisted < 20) {
-		 * 
-		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D); }
-		 * 
-		 * if (this.ticksExisted > 180 && this.ticksExisted < 220) {
-		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D);
-		 * 
-		 * } if (this.ticksExisted == 220) { this.world.addParticle(ParticleTypes.POOF,
-		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
-		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.world.isRemote) {
-		 * this.setHealth(0); } else { if (!world.isRemote) {
-		 * world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
-		 * SoundEvents.BLOCK_SNOW_BREAK, SoundSource.HOSTILE, 3f, 1.2f, false); } } }
-		 */
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
 
 	}
 
@@ -104,22 +60,14 @@ public class AbhorentThoughtEntity extends Monster{
 	}
 
 	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+	@Nullable
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
+			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
+		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		this.populateDefaultEquipmentSlots(random, difficultyIn);
 
-	}
+		return spawnDataIn;
 
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
 	}
 
 	@Override
@@ -135,6 +83,58 @@ public class AbhorentThoughtEntity extends Monster{
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+
+		/*
+		 * // Particle MobEffects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float
+		 * f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if
+		 * (this.ticksExisted < 2) { this.world.addParticle(ParticleTypes.POOF,
+		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
+		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); }
+		 *
+		 * if (this.ticksExisted > 2 && this.ticksExisted < 20) {
+		 *
+		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
+		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
+		 * 0.0D, 0.0D); }
+		 *
+		 * if (this.ticksExisted > 180 && this.ticksExisted < 220) {
+		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
+		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
+		 * 0.0D, 0.0D);
+		 *
+		 * } if (this.ticksExisted == 220) { this.world.addParticle(ParticleTypes.POOF,
+		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
+		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.world.isRemote) {
+		 * this.setHealth(0); } else { if (!world.isRemote) {
+		 * world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
+		 * SoundEvents.BLOCK_SNOW_BREAK, SoundSource.HOSTILE, 3f, 1.2f, false); } } }
+		 */
 	}
 
 //	@Override

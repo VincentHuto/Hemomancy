@@ -70,33 +70,11 @@ public class BlockInit {
 	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
 
-	public static List<Block> getAllBlockEntries() {
-		List<Block> blocks = new ArrayList<Block>();
-		BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		SLABBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		STAIRBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		COLUMNBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		CROSSBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		return blocks;
-	}
-
-	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
-
-		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
-				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
-				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
-				.flatMap(Collection::stream);
-
-		return combinedStream;
-	}
-
 	// Ash
 	public static final RegistryObject<Block> smouldering_ash_trail = SPECIALBLOCKS.register("smouldering_ash_trail",
 			() -> new SmoulderingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
+
 	public static final RegistryObject<Block> befouling_ash_trail = SPECIALBLOCKS.register("befouling_ash_trail",
 			() -> new BefoulingAshTrailBlock(
 					BlockBehaviour.Properties.of(Material.DECORATION).noCollission().instabreak()));
@@ -115,6 +93,7 @@ public class BlockInit {
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f).sound(SoundType.GLASS)
 					.noOcclusion()));
+
 	public static final RegistryObject<Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
 			() -> new IronBarsBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.1f, 1f)
 					.sound(SoundType.GLASS).noOcclusion()));
@@ -170,11 +149,9 @@ public class BlockInit {
 			"chiseled_hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL)
 					.requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
-
 	public static final RegistryObject<Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN)
 					.strength(2.0F, 3.0F).sound(SoundType.WOOD)));
-
 	public static final RegistryObject<Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
 			() -> new Block(BlockBehaviour.Properties.of(Material.WOOD, MaterialColor.COLOR_BROWN).strength(2.0F, 3.0F)
 					.sound(SoundType.WOOD)));
@@ -182,18 +159,18 @@ public class BlockInit {
 	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of(Material.PLANT).noCollission().instabreak().sound(SoundType.GRASS)));
+
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)));
+
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
 			() -> new Block(BlockBehaviour.Properties.of(Material.PLANT).strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> crimson_flames = MODELEDBLOCKS.register("crimson_flames",
 			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
-
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
 			() -> new BlockHumaneIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-
 	public static final RegistryObject<Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
 			() -> new BlockSerpentineIdol(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -206,6 +183,7 @@ public class BlockInit {
 	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
 			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
 			() -> new UnstainedPodiumBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
@@ -213,24 +191,23 @@ public class BlockInit {
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new ScryingPodiumBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
 			() -> new MortalDisplayBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
 			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
 			() -> new EarthenVeinBlock(
 					BlockBehaviour.Properties.of(Material.STONE).strength(50f, 1500f).sound(SoundType.STONE)));
-
 	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
 			() -> new BrazierBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
-
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
 			() -> new JuiceinatorBlock(
 					BlockBehaviour.Properties.of(Material.METAL).strength(50f, 1500f).sound(SoundType.METAL)));
@@ -242,6 +219,29 @@ public class BlockInit {
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().strength(50f, 1500f)
 					.sound(SoundType.METAL)));
+
+	public static List<Block> getAllBlockEntries() {
+		List<Block> blocks = new ArrayList<>();
+		BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		SLABBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		STAIRBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		COLUMNBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		CROSSBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		return blocks;
+	}
+
+	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
+
+		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
+				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
+				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
+				.flatMap(Collection::stream);
+
+		return combinedStream;
+	}
 
 	@SubscribeEvent
 	public static void registerBlocks(FMLClientSetupEvent event) {

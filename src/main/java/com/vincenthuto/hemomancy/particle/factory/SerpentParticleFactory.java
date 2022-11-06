@@ -12,8 +12,12 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 
 public class SerpentParticleFactory implements ParticleProvider<SerpentParticleData> {
-	private final SpriteSet spriteSet;
 	public static final String NAME = "serpent";
+	public static ParticleOptions createData(ParticleColor color) {
+		return new SerpentParticleData(ParticleInit.serpent.get(), color);
+	}
+
+	private final SpriteSet spriteSet;
 
 	public SerpentParticleFactory(SpriteSet sprite) {
 		this.spriteSet = sprite;
@@ -24,10 +28,6 @@ public class SerpentParticleFactory implements ParticleProvider<SerpentParticleD
 			double xSpeed, double ySpeed, double zSpeed) {
 		return new SerpentParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(), data.color.getGreen(),
 				data.color.getBlue(), 3.0f, .15f, 106, this.spriteSet);
-	}
-
-	public static ParticleOptions createData(ParticleColor color) {
-		return new SerpentParticleData(ParticleInit.serpent.get(), color);
 	}
 
 }

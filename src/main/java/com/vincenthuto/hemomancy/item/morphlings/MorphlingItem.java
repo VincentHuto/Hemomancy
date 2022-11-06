@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class MorphlingItem extends Item implements IMorphling {
 
 	public int bloodCost;
-	
+
 	public MorphlingItem(Properties prop) {
 		super(prop);
 		prop.stacksTo(1);
@@ -26,15 +26,15 @@ public class MorphlingItem extends Item implements IMorphling {
 	}
 
 	@Override
+	public int getBloodCost() {
+		return 0;
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-	}
-
-	@Override
-	public int getBloodCost() {
-		return 0;
 	}
 
 	@Override

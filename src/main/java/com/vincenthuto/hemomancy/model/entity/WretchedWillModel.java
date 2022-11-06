@@ -20,12 +20,6 @@ public class WretchedWillModel<T extends Entity> extends EntityModel<T> {
 
 	public static final ModelLayerLocation wretched_will = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelwretchedwill"), "main");
-	
-	private final ModelPart whole;
-
-	public WretchedWillModel(ModelPart root) {
-		this.whole = root.getChild("whole");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -109,16 +103,22 @@ public class WretchedWillModel<T extends Entity> extends EntityModel<T> {
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-	      this.whole.yRot = netHeadYaw * ((float)Math.PI / 180F);
-	      this.whole.xRot = headPitch * ((float)Math.PI / 180F);
+	private final ModelPart whole;
+
+	public WretchedWillModel(ModelPart root) {
+		this.whole = root.getChild("whole");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		whole.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+	      this.whole.yRot = netHeadYaw * ((float)Math.PI / 180F);
+	      this.whole.xRot = headPitch * ((float)Math.PI / 180F);
 	}
 }

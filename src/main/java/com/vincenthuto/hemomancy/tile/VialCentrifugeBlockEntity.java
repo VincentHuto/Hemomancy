@@ -27,11 +27,24 @@ import net.minecraft.world.level.block.state.BlockState;
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		implements StackedContentsCompatible, IBloodTile {
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(19, ItemStack.EMPTY);
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
+	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
+			VialCentrifugeBlockEntity self) {
+	}
+	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, VialCentrifugeBlockEntity te) {
+	//	System.out.println(te.spinningProgress);
+		if (te.spinningProgress > 0) {
+			te.spinningProgress--;
+			te.sendUpdates();
+			setChanged(level, pos, p_155016_);
+		}
+	}
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(19, ItemStack.EMPTY);
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	int spinningProgress;
+
 	int spinningTotalTime;
+
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
 		public int get(int index) {
@@ -46,6 +59,11 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 
 		@Override
+		public int getCount() {
+			return 2;
+		}
+
+		@Override
 		public void set(int index, int val) {
 			switch (index) {
 			case 0:
@@ -55,34 +73,28 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				spinningTotalTime = val;
 			}
 		}
-
-		@Override
-		public int getCount() {
-			return 2;
-		}
 	};
 
 	public VialCentrifugeBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.vial_centrifuge.get(), pos, state);
 	}
 
-	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, VialCentrifugeBlockEntity te) {
-	//	System.out.println(te.spinningProgress);
-		if (te.spinningProgress > 0) {
-			te.spinningProgress--;
-			te.sendUpdates();
-			setChanged(level, pos, p_155016_);
-		}
-	}
+	@Override
+	public void clearContent() {
+		this.inventory.clear();
 
-	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
-			VialCentrifugeBlockEntity self) {
 	}
 
 	@Override
-	public void onLoad() {
-		volume.setActive(true);
-		volume.setMaxBloodVolume(2000f);
+	protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
+		return new VialCentrifugeMenu(pContainerId, pInventory, this, this.dataAccess);
+	}
+
+	@Override
+	public void fillStackedContents(StackedContents pHelper) {
+		for (ItemStack itemstack : this.inventory) {
+			pHelper.accountStack(itemstack);
+		}
 	}
 
 	public IBloodVolume getBloodCapability() {
@@ -93,20 +105,58 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		return volume.getBloodVolume();
 	}
 
+	// CONTAINER
+	@Override
+	public int getContainerSize() {
+		return this.inventory.size();
+	}
+
+	@Override
+	protected Component getDefaultName() {
+		return Component.literal("container.hemomancy.vialcentrifuge");
+	}
+
+	@Override
+	public ItemStack getItem(int pSlot) {
+		return this.inventory.get(pSlot);
+	}
+
 	public double getMaxBloodVolume() {
 		return volume.getMaxBloodVolume();
 	}
 
-	// NBT and Data
 	@Override
-	protected void saveAdditional(CompoundTag pTag) {
-		super.saveAdditional(pTag);
-		pTag.putInt("SpinTime", this.spinningProgress);
-		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
-		ContainerHelper.saveAllItems(pTag, this.inventory);
-		if (pTag != null) {
-			pTag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public CompoundTag getUpdateTag() {
+		CompoundTag tag = new CompoundTag();
+		tag.putInt("SpinTime", this.spinningProgress);
+		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
+		ContainerHelper.saveAllItems(tag, this.inventory);
+		CompoundTag compoundtag = new CompoundTag();
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		return tag;
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		if (tag != null) {
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 		}
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemstack : this.inventory) {
+			if (!itemstack.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -122,25 +172,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		if (tag != null) {
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		}
-	}
-
-	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = new CompoundTag();
-		tag.putInt("SpinTime", this.spinningProgress);
-		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
-		ContainerHelper.saveAllItems(tag, this.inventory);
-		CompoundTag compoundtag = new CompoundTag();
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		return tag;
-	}
-
-	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() != null) {
@@ -151,40 +182,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public void setChanged() {
-		super.setChanged();
-	}
-
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	// CONTAINER
-	@Override
-	public int getContainerSize() {
-		return this.inventory.size();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		for (ItemStack itemstack : this.inventory) {
-			if (!itemstack.isEmpty()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public ItemStack getItem(int pSlot) {
-		return this.inventory.get(pSlot);
+	public void onLoad() {
+		volume.setActive(true);
+		volume.setMaxBloodVolume(2000f);
 	}
 
 	@Override
@@ -195,6 +195,29 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public ItemStack removeItemNoUpdate(int pSlot) {
 		return ContainerHelper.takeItem(this.inventory, pSlot);
+	}
+
+	// NBT and Data
+	@Override
+	protected void saveAdditional(CompoundTag pTag) {
+		super.saveAdditional(pTag);
+		pTag.putInt("SpinTime", this.spinningProgress);
+		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
+		ContainerHelper.saveAllItems(pTag, this.inventory);
+		if (pTag != null) {
+			pTag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		}
+	}
+
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
+	}
+
+	@Override
+	public void setChanged() {
+		super.setChanged();
 	}
 
 	@Override
@@ -221,29 +244,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
 				: pPlayer.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
 						this.worldPosition.getZ() + 0.5D) <= 64.0D;
-	}
-
-	@Override
-	public void clearContent() {
-		this.inventory.clear();
-
-	}
-
-	@Override
-	protected Component getDefaultName() {
-		return Component.literal("container.hemomancy.vialcentrifuge");
-	}
-
-	@Override
-	protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
-		return new VialCentrifugeMenu(pContainerId, pInventory, this, this.dataAccess);
-	}
-
-	@Override
-	public void fillStackedContents(StackedContents pHelper) {
-		for (ItemStack itemstack : this.inventory) {
-			pHelper.accountStack(itemstack);
-		}
 	}
 
 }

@@ -8,10 +8,10 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class PacketOpenNormalInv {
 
-	public PacketOpenNormalInv(FriendlyByteBuf buf) {
+	public PacketOpenNormalInv() {
 	}
 
-	public PacketOpenNormalInv() {
+	public PacketOpenNormalInv(FriendlyByteBuf buf) {
 	}
 
 	public void decode(FriendlyByteBuf buf) {

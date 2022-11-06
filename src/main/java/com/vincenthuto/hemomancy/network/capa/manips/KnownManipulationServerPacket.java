@@ -17,10 +17,66 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class KnownManipulationServerPacket {
 
-	private List<VeinLocation> veinList = new ArrayList<VeinLocation>();
-	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<BloodManipulation, ManipLevel>();
+	public static KnownManipulationServerPacket decode(final FriendlyByteBuf buf) {
+		BloodManipulation sel = BloodManipulation.deserialize(buf.readNbt());
+		VeinLocation selvein = VeinLocation.deserializeToLoc(buf.readNbt());
+		int count = buf.readInt();
+		LinkedHashMap<BloodManipulation, ManipLevel> manips = new LinkedHashMap<>();
+		for (int i = 0; i < count; ++i) {
+			BloodManipulation currManip = BloodManipulation.deserialize(buf.readNbt());
+			manips.put(currManip, ManipLevel.deserialize(buf.readNbt()));
+		}
+		int veincount = buf.readInt();
+		List<VeinLocation> veinList = new ArrayList<>();
+		for (int i = 0; i < veincount; ++i) {
+			veinList.add(VeinLocation.deserializeToLoc(buf.readNbt()));
+		}
+		boolean avatarActive = buf.readBoolean();
+
+		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive);
+	}
+	public static void encode(final KnownManipulationServerPacket msg, final FriendlyByteBuf buf) {
+		if (msg.selected != null) {
+			buf.writeNbt(msg.selected.serialize());
+		}
+		if (msg.selectedVein != null) {
+			buf.writeNbt(msg.selectedVein.serializeNBT());
+		}
+
+		buf.writeInt(msg.known.size());
+		for (int i = 0; i < msg.known.size(); ++i) {
+			if (msg.known.keySet().toArray()[i] != null) {
+				buf.writeNbt(((BloodManipulation) msg.known.keySet().toArray()[i]).serialize());
+				buf.writeNbt(((ManipLevel) msg.known.values().toArray()[i]).serialize());
+			}
+		}
+		buf.writeInt(msg.veinList.size());
+		for (VeinLocation element : msg.veinList) {
+			if (element != null) {
+				buf.writeNbt(element.serializeNBT());
+			}
+		}
+		buf.writeBoolean(msg.avatarActive);
+	}
+	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			IKnownManipulations known = Minecraft.getInstance().player
+					.getCapability(KnownManipulationProvider.MANIP_CAPA).orElseThrow(IllegalStateException::new);
+			known.setKnownManips(msg.known);
+			known.setSelectedManip(msg.selected);
+			known.setVeinList(msg.veinList);
+			known.setSelectedVein(msg.selectedVein);
+			known.setAvatarActive(msg.avatarActive);
+		});
+		ctx.get().setPacketHandled(true);
+	}
+	private List<VeinLocation> veinList = new ArrayList<>();
+	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<>();
+
 	private BloodManipulation selected;
+
 	private VeinLocation selectedVein;
+
 	private boolean avatarActive;
 
 	public KnownManipulationServerPacket(IKnownManipulations known) {
@@ -39,61 +95,5 @@ public class KnownManipulationServerPacket {
 		this.selectedVein = selectedVein;
 		this.avatarActive = avatarActive;
 
-	}
-
-	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			IKnownManipulations known = Minecraft.getInstance().player
-					.getCapability(KnownManipulationProvider.MANIP_CAPA).orElseThrow(IllegalStateException::new);
-			known.setKnownManips(msg.known);
-			known.setSelectedManip(msg.selected);
-			known.setVeinList(msg.veinList);
-			known.setSelectedVein(msg.selectedVein);
-			known.setAvatarActive(msg.avatarActive);
-		});
-		ctx.get().setPacketHandled(true);
-	}
-
-	public static void encode(final KnownManipulationServerPacket msg, final FriendlyByteBuf buf) {
-		if (msg.selected != null) {
-			buf.writeNbt(msg.selected.serialize());
-		}
-		if (msg.selectedVein != null) {
-			buf.writeNbt(msg.selectedVein.serializeNBT());
-		}
-
-		buf.writeInt(msg.known.size());
-		for (int i = 0; i < msg.known.size(); ++i) {
-			if (msg.known.keySet().toArray()[i] != null) {
-				buf.writeNbt(((BloodManipulation) msg.known.keySet().toArray()[i]).serialize());
-				buf.writeNbt(((ManipLevel) msg.known.values().toArray()[i]).serialize());
-			}
-		}
-		buf.writeInt(msg.veinList.size());
-		for (int i = 0; i < msg.veinList.size(); ++i) {
-			if (msg.veinList.get(i) != null) {
-				buf.writeNbt(msg.veinList.get(i).serializeNBT());
-			}
-		}
-		buf.writeBoolean(msg.avatarActive);
-	}
-
-	public static KnownManipulationServerPacket decode(final FriendlyByteBuf buf) {
-		BloodManipulation sel = BloodManipulation.deserialize(buf.readNbt());
-		VeinLocation selvein = VeinLocation.deserializeToLoc(buf.readNbt());
-		int count = buf.readInt();
-		LinkedHashMap<BloodManipulation, ManipLevel> manips = new LinkedHashMap<BloodManipulation, ManipLevel>();
-		for (int i = 0; i < count; ++i) {
-			BloodManipulation currManip = BloodManipulation.deserialize(buf.readNbt());
-			manips.put(currManip, ManipLevel.deserialize(buf.readNbt()));
-		}
-		int veincount = buf.readInt();
-		List<VeinLocation> veinList = new ArrayList<VeinLocation>();
-		for (int i = 0; i < veincount; ++i) {
-			veinList.add(VeinLocation.deserializeToLoc(buf.readNbt()));
-		}
-		boolean avatarActive = buf.readBoolean();
-
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive);
 	}
 }

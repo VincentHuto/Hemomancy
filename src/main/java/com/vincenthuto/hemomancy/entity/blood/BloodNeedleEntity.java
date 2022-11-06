@@ -35,13 +35,56 @@ public class BloodNeedleEntity extends AbstractArrow {
 		super(EntityInit.blood_needle.get(), shooter, worldIn);
 	}
 
+	@Override
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+
+	}
+
+
+	@Override
+	protected void doPostHurtEffects(LivingEntity living) {
+		super.doPostHurtEffects(living);
+		Entity entity = living;
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
+
+		}
+
+	}
+
 	@Nonnull
 	@Override
 	public Packet<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
-	
+	@Override
+	protected ItemStack getPickupItem() {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
+		super.onHitEntity(p_213868_1_);
+		Entity entity = p_213868_1_.getEntity();
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
+
+		}
+
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+	}
+
+	@Override
+	public void setSoundEvent(SoundEvent soundIn) {
+		super.setSoundEvent(soundIn);
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
@@ -59,49 +102,6 @@ public class BloodNeedleEntity extends AbstractArrow {
 			this.remove(RemovalReason.KILLED);
 		}
 
-	}
-
-	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		super.addAdditionalSaveData(compound);
-
-	}
-
-	@Override
-	public void setSoundEvent(SoundEvent soundIn) {
-		super.setSoundEvent(soundIn);
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-	}
-
-	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_) {
-		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
-
-		}
-
-	}
-
-	@Override
-	protected void doPostHurtEffects(LivingEntity living) {
-		super.doPostHurtEffects(living);
-		Entity entity = living;
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
-
-		}
-
-	}
-
-	@Override
-	protected ItemStack getPickupItem() {
-		return ItemStack.EMPTY;
 	}
 
 }

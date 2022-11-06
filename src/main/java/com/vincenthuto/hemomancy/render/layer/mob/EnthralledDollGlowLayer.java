@@ -29,6 +29,7 @@ public class EnthralledDollGlowLayer<T extends LivingEntity> extends EyesLayer<T
 				pAgeInTicks, pNetHeadYaw, pHeadPitch);
 	}
 
+	@Override
 	public RenderType renderType() {
 		return GLOW;
 	}

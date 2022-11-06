@@ -35,28 +35,8 @@ public class CellHandBakedModel implements BakedModel {
 
 	@Nonnull
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction side, @Nonnull RandomSource rand) {
-		return ImmutableList.of();
-	}
-
-	@Override
-	public boolean useAmbientOcclusion() {
-		return false;
-	}
-
-	@Override
-	public boolean isGui3d() {
-		return false;
-	}
-
-	@Override
-	public boolean isCustomRenderer() {
-		return false;
-	}
-
-	@Override
-	public boolean usesBlockLight() {
-		return original.usesBlockLight();
+	public ItemOverrides getOverrides() {
+		return original.getOverrides();
 	}
 
 	@Nonnull
@@ -67,13 +47,33 @@ public class CellHandBakedModel implements BakedModel {
 
 	@Nonnull
 	@Override
-	public ItemTransforms getTransforms() {
-		return ItemTransforms.NO_TRANSFORMS;
+	public List<BakedQuad> getQuads(BlockState state, Direction side, @Nonnull RandomSource rand) {
+		return ImmutableList.of();
 	}
 
 	@Nonnull
 	@Override
-	public ItemOverrides getOverrides() {
-		return original.getOverrides();
+	public ItemTransforms getTransforms() {
+		return ItemTransforms.NO_TRANSFORMS;
+	}
+
+	@Override
+	public boolean isCustomRenderer() {
+		return false;
+	}
+
+	@Override
+	public boolean isGui3d() {
+		return false;
+	}
+
+	@Override
+	public boolean useAmbientOcclusion() {
+		return false;
+	}
+
+	@Override
+	public boolean usesBlockLight() {
+		return original.usesBlockLight();
 	}
 }

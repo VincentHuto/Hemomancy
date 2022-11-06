@@ -78,42 +78,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class EntityEventSubscriber {
 
 	@SubscribeEvent
-	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), BloodOrbDirectedRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), BloodCloudCarrierRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_cloud.get(), BloodCloudRenderer::new);
-		event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), BloodOrbTrackingRenderer::new);
-		event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
-		event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
-		event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
-		event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
-		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
-		event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
-		event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
-		event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
-		event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
-		event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
-		event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
-		event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
-		event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
-		event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
-		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
-		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
-		event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
-
-	}
-
-	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
 		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createLayers);
 		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
@@ -190,6 +154,42 @@ public class EntityEventSubscriber {
 				() -> UnstainedArmorModel.createBodyLayer(EquipmentSlot.LEGS));
 		event.registerLayerDefinition(UnstainedArmorModel.UNSTAINED_FEET_LAYER,
 				() -> UnstainedArmorModel.createBodyLayer(EquipmentSlot.FEET));
+
+	}
+
+	@SubscribeEvent
+	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
+		event.registerEntityRenderer(EntityInit.directed_blood_orb.get(), BloodOrbDirectedRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_cloud_carrier.get(), BloodCloudCarrierRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_cloud.get(), BloodCloudRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_blood_orb.get(), BloodOrbTrackingRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_snake.get(), TrackingSerpentRenderer::new);
+		event.registerEntityRenderer(EntityInit.tracking_pests.get(), TrackingPestsRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_bolt.get(), BloodBoltRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_needle.get(), BloodNeedleRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
+		event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
+		event.registerEntityRenderer(EntityInit.wretched_will.get(), WretchedWillRenderer::new);
+		event.registerEntityRenderer(EntityInit.leech.get(), LeechRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
+		event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);
+		event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
+		event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
+		event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
+		event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
+		event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
+		event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
+		event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
+		event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
+		event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
+		event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
+		event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
+		event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
 
 	}
 

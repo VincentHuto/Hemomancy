@@ -21,7 +21,13 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class BloodConstructEntity extends PathfinderMob implements IBloodConstruct {
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
+				.add(Attributes.ATTACK_KNOCKBACK).add(Attributes.MOVEMENT_SPEED, 0f)
+				.add(Attributes.KNOCKBACK_RESISTANCE, 1000);
+	}
 	public float deathTicks = 1;
+
 	public LivingEntity creator;
 
 	protected BloodConstructEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {
@@ -29,34 +35,8 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 	}
 
 	@Override
-	public boolean isPickable() {
-		return true;
-	}
-
-	@Override
-	public boolean isAttackable() {
-		return false;
-	}
-
-	@Override
-	public boolean isPushable() {
-		return false;
-	}
-
-	// Later implement a potion of dispelling that will remove them
-	@Override
-	public boolean isAffectedByPotions() {
-		return false;
-	}
-
-	@Override
 	public boolean canBeLeashed(Player player) {
 		return false;
-	}
-
-	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
 	}
 
 	@Override
@@ -69,6 +49,65 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
 			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
 		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return SoundEvents.IRON_GOLEM_DAMAGE;
+	}
+
+	@Override
+	public LivingEntity getCreator() {
+		return creator;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.IRON_GOLEM_DAMAGE;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.IRON_GOLEM_DAMAGE;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	// Later implement a potion of dispelling that will remove them
+	@Override
+	public boolean isAffectedByPotions() {
+		return false;
+	}
+
+	@Override
+	public boolean isAttackable() {
+		return false;
+	}
+
+	@Override
+	public boolean isInvulnerableTo(DamageSource source) {
+		return true;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return true;
+	}
+
+	@Override
+	public boolean isPushable() {
+		return false;
+	}
+
+	@Override
+	protected void registerGoals() {
+	}
+
+	public void setCreator(LivingEntity creator) {
+		this.creator = creator;
 	}
 
 	@Override
@@ -123,45 +162,6 @@ public class BloodConstructEntity extends PathfinderMob implements IBloodConstru
 			this.remove(RemovalReason.KILLED);
 		}
 
-	}
-
-	@Override
-	public boolean isInvulnerableTo(DamageSource source) {
-		return true;
-	}
-
-	@Override
-	protected void registerGoals() {
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return LivingEntity.createLivingAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
-				.add(Attributes.ATTACK_KNOCKBACK).add(Attributes.MOVEMENT_SPEED, 0f)
-				.add(Attributes.KNOCKBACK_RESISTANCE, 1000);
-	}
-
-	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.IRON_GOLEM_DAMAGE;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.IRON_GOLEM_DAMAGE;
-	}
-
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.IRON_GOLEM_DAMAGE;
-	}
-
-	@Override
-	public LivingEntity getCreator() {
-		return creator;
-	}
-
-	public void setCreator(LivingEntity creator) {
-		this.creator = creator;
 	}
 
 }

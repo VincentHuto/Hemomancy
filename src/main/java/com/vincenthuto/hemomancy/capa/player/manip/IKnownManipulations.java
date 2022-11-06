@@ -11,42 +11,42 @@ import net.minecraft.core.BlockPos;
 
 public interface IKnownManipulations {
 
-	public LinkedHashMap<BloodManipulation, ManipLevel> getKnownManips();
-
-	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips);
-
-	public BloodManipulation getSelectedManip();
-
-	public void setSelectedManip(BloodManipulation selectedManip);
-
 	public boolean doesListContainName(LinkedHashMap<BloodManipulation, ManipLevel> knownList, BloodManipulation manip);
 
-	public List<BloodManipulation> getManipList();
-
-	public ManipLevel getManipLevel(BloodManipulation manip);
+	public LinkedHashMap<BloodManipulation, ManipLevel> getKnownManips();
 
 	public List<ManipLevel> getLevelList();
 
+	public ManipLevel getManipLevel(BloodManipulation manip);
+
+	public List<BloodManipulation> getManipList();
+
+	public BloodManipulation getSelectedManip();
+
 	public ManipLevel getSelectedManipLevel();
-
-	public void setSelectedManipLevel(int level);
-
-	public void incrSelectedManipLevel(int incr);
 
 	public VeinLocation getSelectedVein();
 
-	public void setSelectedVein(VeinLocation selectedVein);
+	public List<BlockPos> getVeinBlockList();
 
 	public List<VeinLocation> getVeinList();
 
-	public List<BlockPos> getVeinBlockList();
-
 	public List<String> getVeinNameList();
 
-	public void setVeinList(List<VeinLocation> dimPos);
+	public void incrSelectedManipLevel(int incr);
 
 	public boolean isAvatarActive();
 
 	public void setAvatarActive(boolean avatarActive);
+
+	public void setKnownManips(LinkedHashMap<BloodManipulation, ManipLevel> knownManips);
+
+	public void setSelectedManip(BloodManipulation selectedManip);
+
+	public void setSelectedManipLevel(int level);
+
+	public void setSelectedVein(VeinLocation selectedVein);
+
+	public void setVeinList(List<VeinLocation> dimPos);
 
 }

@@ -6,15 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class ManipLevel {
 
-	int currentLevel;
-	double xp;
 	public static ManipLevel BLANK = new ManipLevel(0, 0);
-
-	public ManipLevel(int currentLevel, double xp) {
-		this.currentLevel = currentLevel;
-		this.xp = xp;
-	}
-
 	public static ManipLevel deserialize(CompoundTag nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
 			if (nbt.contains("level") && nbt.contains("xpcost")) {
@@ -24,6 +16,22 @@ public class ManipLevel {
 		}
 		return null;
 	}
+	int currentLevel;
+
+	double xp;
+
+	public ManipLevel(int currentLevel, double xp) {
+		this.currentLevel = currentLevel;
+		this.xp = xp;
+	}
+
+	public int getCurrentLevel() {
+		return currentLevel;
+	}
+
+	public double getXp() {
+		return xp;
+	}
 
 	public CompoundTag serialize() {
 		CompoundTag nbt = new CompoundTag();
@@ -32,16 +40,8 @@ public class ManipLevel {
 		return nbt;
 	}
 
-	public int getCurrentLevel() {
-		return currentLevel;
-	}
-
 	public void setCurrentLevel(int currentLevel) {
 		this.currentLevel = currentLevel;
-	}
-
-	public double getXp() {
-		return xp;
 	}
 
 	public void setXp(double xp) {

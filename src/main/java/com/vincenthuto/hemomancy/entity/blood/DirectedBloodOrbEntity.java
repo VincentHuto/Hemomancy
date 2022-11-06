@@ -37,35 +37,23 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 		super(TYPE, thrower, thrower.level);
 	}
 
-	@Nonnull
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-		if (level.isClientSide) {
-			level.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
-					getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-					getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-			level.addParticle(ParticleTypes.ASH, this.getX() + (Math.random() - 0.5) * 0.4,
-					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
-			level.addParticle(DustParticleOptions.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,
-					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
-
-		}
-	}
-
 	@Override
 	public void addAdditionalSaveData(CompoundTag cmp) {
 		super.addAdditionalSaveData(cmp);
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag cmp) {
-		super.readAdditionalSaveData(cmp);
+	protected void defineSynchedData() {
+	}
+
+	@Nonnull
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	private float getHorizontalDistanceSqr(Vec3 vec3) {
+		return (float) (vec3.x * vec3.x + vec3.z * vec3.z);
 	}
 
 	@Override
@@ -94,6 +82,11 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 		}
 	}
 
+	@Override
+	public void readAdditionalSaveData(CompoundTag cmp) {
+		super.readAdditionalSaveData(cmp);
+	}
+
 	/**
 	 * Similar to setArrowHeading, it's point the throwable entity to a x, y, z
 	 * direction.
@@ -111,10 +104,6 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 		this.xRotO = (float) this.xo;
 	}
 
-	private float getHorizontalDistanceSqr(Vec3 vec3) {
-		return (float) (vec3.x * vec3.x + vec3.z * vec3.z);
-	}
-
 	@Override
 	public void shootFromRotation(Entity p_234612_1_, float p_234612_2_, float p_234612_3_, float p_234612_4_,
 			float p_234612_5_, float p_234612_6_) {
@@ -128,7 +117,18 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {
+	public void tick() {
+		super.tick();
+		if (level.isClientSide) {
+			level.addParticle(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+					getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+					getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
+			level.addParticle(ParticleTypes.ASH, this.getX() + (Math.random() - 0.5) * 0.4,
+					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
+			level.addParticle(DustParticleOptions.REDSTONE, this.getX() + (Math.random() - 0.5) * 0.4,
+					this.getY() + (Math.random() - 0.5) * 0.4, this.getZ() + (Math.random() - 0.5) * 0.4, 0, 0, 0);
+
+		}
 	}
 
 }

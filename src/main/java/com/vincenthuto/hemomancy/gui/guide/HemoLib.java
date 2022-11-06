@@ -19,14 +19,36 @@ import net.minecraft.world.item.Items;
 
 public class HemoLib extends TomeLib {
 
-	public static List<TomeChapter> chapters = new ArrayList<TomeChapter>();;
-	public static List<GuiGuidePage> introPages = new ArrayList<GuiGuidePage>();
-	public static List<GuiGuidePage> vasuclarPages = new ArrayList<GuiGuidePage>();
-	public static List<GuiGuidePage> tendencyPages = new ArrayList<GuiGuidePage>();
-	public static List<GuiGuidePage> manipPages = new ArrayList<GuiGuidePage>();
-	public static List<GuiGuidePage> multiblockPages = new ArrayList<GuiGuidePage>();
+	public static List<TomeChapter> chapters = new ArrayList<>();
+	public static List<GuiGuidePage> introPages = new ArrayList<>();
+	public static List<GuiGuidePage> vasuclarPages = new ArrayList<>();
+	public static List<GuiGuidePage> tendencyPages = new ArrayList<>();
+	public static List<GuiGuidePage> manipPages = new ArrayList<>();
+	public static List<GuiGuidePage> multiblockPages = new ArrayList<>();
 
 	public static TomeChapter introChapter, vasuclarChapter, tendencyChapter, manipChapter, multiblockChapter;
+
+	@Override
+	public List<TomeChapter> getChapters() {
+		return chapters;
+	}
+
+	@Override
+	public GuiGuideTitlePage getTitle() {
+		return new HemoTitlePage();
+	}
+
+	@Override
+	public void registerChapters() {
+		introChapter = new TomeChapter("Intro", TabColor.BLACK, new HemoGuideTOC("Intro"), introPages);
+		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED, new HemoGuideTOC("Vascularity"), vasuclarPages);
+		manipChapter = new TomeChapter("Manips", TabColor.BLACK, new HemoGuideTOC("Manips"), manipPages);
+		tendencyChapter = new TomeChapter("Tendency", TabColor.RED, new HemoGuideTOC("Tendency"), tendencyPages);
+		multiblockChapter = new TomeChapter("Multiblocks", TabColor.PURPLE, new HemoGuideTOC("Multiblocks"),
+				multiblockPages);
+		Collections.addAll(chapters, introChapter, vasuclarChapter, manipChapter, tendencyChapter, multiblockChapter);
+
+	}
 
 	@Override
 	public void registerTome() {
@@ -66,12 +88,12 @@ public class HemoLib extends TomeLib {
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.semi_sentient_construct.get()),
 				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/semi_sentient_construct")));
-		
+
 		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "Hematic Iron", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.hematic_iron_block.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/hematic_iron_block")));
-		
-		
+
+
 		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Unstained Pillar", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.unstained_podium.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/unstained_pillar")));
@@ -80,28 +102,6 @@ public class HemoLib extends TomeLib {
 				new ItemStack(BlockInit.morphling_incubator.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/morphling_incubator")));
 
 		registerChapters();
-	}
-
-	@Override
-	public void registerChapters() {
-		introChapter = new TomeChapter("Intro", TabColor.BLACK, new HemoGuideTOC("Intro"), introPages);
-		vasuclarChapter = new TomeChapter("Vascularity", TabColor.RED, new HemoGuideTOC("Vascularity"), vasuclarPages);
-		manipChapter = new TomeChapter("Manips", TabColor.BLACK, new HemoGuideTOC("Manips"), manipPages);
-		tendencyChapter = new TomeChapter("Tendency", TabColor.RED, new HemoGuideTOC("Tendency"), tendencyPages);
-		multiblockChapter = new TomeChapter("Multiblocks", TabColor.PURPLE, new HemoGuideTOC("Multiblocks"),
-				multiblockPages);
-		Collections.addAll(chapters, introChapter, vasuclarChapter, manipChapter, tendencyChapter, multiblockChapter);
-
-	}
-
-	@Override
-	public GuiGuideTitlePage getTitle() {
-		return new HemoTitlePage();
-	}
-
-	@Override
-	public List<TomeChapter> getChapters() {
-		return chapters;
 	}
 
 }

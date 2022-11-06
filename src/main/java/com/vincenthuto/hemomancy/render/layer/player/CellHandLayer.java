@@ -171,8 +171,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 			if (player.getItemInHand(activeHand).getItem() instanceof BloodAbsorptionItem) {
 				List<Entity> targets = player.level.getEntities(player, player.getBoundingBox().inflate(5.0));
 				if (targets.size() > 0) {
-					for (int i = 0; i < targets.size(); ++i) {
-						Entity target = targets.get(i);
+					for (Entity target : targets) {
 						if (target instanceof LivingEntity) {
 							LivingEntity livingTarget = (LivingEntity) target;
 							Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);

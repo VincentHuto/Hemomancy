@@ -31,9 +31,9 @@ public class ActivationPotentialManip extends BloodManipulation {
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		List<Entity> targets = player.level.getEntities(player, player.getBoundingBox().inflate(5.0));
 		if (targets.size() > 0) {
-			for (int i = 0; i < targets.size(); ++i) {
-				if (targets.get(i) instanceof LivingEntity) {
-					LivingEntity target = (LivingEntity) targets.get(i);
+			for (Entity target2 : targets) {
+				if (target2 instanceof LivingEntity) {
+					LivingEntity target = (LivingEntity) target2;
 					Vec3 translation = new Vec3(0, 1, 0);
 					Vec3 speedVec = new Vec3(target.blockPosition().getX(),
 							target.blockPosition().getY() + target.getBbHeight() / 2.0f, target.blockPosition().getZ());

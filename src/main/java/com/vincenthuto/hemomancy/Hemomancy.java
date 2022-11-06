@@ -27,7 +27,6 @@ import com.vincenthuto.hemomancy.init.SkillPointInit;
 import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -51,18 +50,68 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
 
 @Mod("hemomancy")
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 
 public class Hemomancy {
+	// Creative Tab
+	public static class HemomancyItemGroup extends CreativeModeTab {
+		public static final HemomancyItemGroup instance = new HemomancyItemGroup(CreativeModeTab.TABS.length,
+				"hemomancy");
+
+		public HemomancyItemGroup(int index, String label) {
+			super(index, label);
+		}
+
+		@Override
+		public ItemStack makeIcon() {
+			return new ItemStack(ItemInit.sanguine_formation.get());
+		}
+
+	}
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String MOD_ID = "hemomancy";
 	public static Hemomancy instance;
 	public static IProxy proxy = new IProxy() {
 	};
+
 	public static boolean forcesLoaded = false;
+
+public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
+		return Pair.of(block.getSecond(),
+				new BlockItem(block.getFirst(), new Item.Properties().tab(HemomancyItemGroup.instance)));
+	}
+
+	// Combined a few methods into one more generic one
+	public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
+		if (item.isInstance(player.getOffhandItem().getItem()))
+			return player.getMainHandItem();
+		if (item.isInstance(player.getOffhandItem().getItem()))
+			return player.getOffhandItem();
+		Inventory inventory = player.getInventory();
+		for (int i = 0; i <= 35; i++) {
+			ItemStack stack = inventory.getItem(i);
+			if (item.isInstance(stack.getItem()))
+				return stack;
+		}
+		return ItemStack.EMPTY;
+
+	}
+
+	@SubscribeEvent
+	public static void onRegisterItems(final RegisterEvent event) {
+		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+			return;
+		}
+
+		BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId())).map(t -> createItemBlock(t))
+				.forEach(item -> registerBlockItem(event, item));
+	}
+
+	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
+		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
+	}
 
 	@SuppressWarnings("deprecation")
 	public Hemomancy() {
@@ -113,41 +162,6 @@ public class Hemomancy {
 
 	}
 
-// Creative Tab
-	public static class HemomancyItemGroup extends CreativeModeTab {
-		public static final HemomancyItemGroup instance = new HemomancyItemGroup(CreativeModeTab.TABS.length,
-				"hemomancy");
-
-		public HemomancyItemGroup(int index, String label) {
-			super(index, label);
-		}
-
-		@Override
-		public ItemStack makeIcon() {
-			return new ItemStack(ItemInit.sanguine_formation.get());
-		}
-
-	}
-
-	@SubscribeEvent
-	public static void onRegisterItems(final RegisterEvent event) {
-		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
-			return;
-		}
-
-		BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId())).map(t -> createItemBlock(t))
-				.forEach(item -> registerBlockItem(event, item));
-	}
-
-	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
-		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
-	}
-
-	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
-		return Pair.of(block.getSecond(),
-				new BlockItem((Block) block.getFirst(), new Item.Properties().tab(HemomancyItemGroup.instance)));
-	}
-
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 		HemoLib hemo = new HemoLib();
@@ -160,22 +174,6 @@ public class Hemomancy {
 		SkillPointInit.init();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-
-	}
-
-	// Combined a few methods into one more generic one
-	public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
-		if (item.isInstance(player.getOffhandItem().getItem()))
-			return player.getMainHandItem();
-		if (item.isInstance(player.getOffhandItem().getItem()))
-			return player.getOffhandItem();
-		Inventory inventory = player.getInventory();
-		for (int i = 0; i <= 35; i++) {
-			ItemStack stack = inventory.getItem(i);
-			if (item.isInstance(stack.getItem()))
-				return stack;
-		}
-		return ItemStack.EMPTY;
 
 	}
 

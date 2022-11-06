@@ -27,8 +27,8 @@ public class InfoTableSlot {
 		info.stream().map(InfoBaseSlot::fromNBT).forEach(this::add);
 	}
 
-	public boolean isEmpty() {
-		return this.info.isEmpty();
+	public void add(InfoBaseSlot<?> value) {
+		this.info.put(value.getKey(), value);
 	}
 
 	@Nullable
@@ -36,7 +36,7 @@ public class InfoTableSlot {
 		return this.info.get(key);
 	}
 
-	public void add(InfoBaseSlot<?> value) {
-		this.info.put(value.getKey(), value);
+	public boolean isEmpty() {
+		return this.info.isEmpty();
 	}
 }

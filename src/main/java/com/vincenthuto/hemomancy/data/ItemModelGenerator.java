@@ -19,6 +19,27 @@ public class ItemModelGenerator extends ItemModelProvider {
 	}
 
 	@Override
+	public String getName() {
+		return "Item Models";
+	}
+
+	private void registerBasicItem(Item item) {
+		String path = ForgeRegistries.ITEMS.getKey( item).getPath();
+		singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
+
+	}
+
+	private void registerBlockModel(Block block) {
+		String path = ForgeRegistries.BLOCKS.getKey( block).getPath();
+		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
+	}
+
+	private void registerHandheldItem(Item item) {
+		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
+		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
+	}
+
+	@Override
 	protected void registerModels() {
 		// Our block items
 
@@ -42,29 +63,8 @@ public class ItemModelGenerator extends ItemModelProvider {
 		}
 	}
 
-	private void registerBlockModel(Block block) {
-		String path = ForgeRegistries.BLOCKS.getKey( block).getPath();
-		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
-	}
-
-	private void registerBasicItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey( item).getPath();
-		singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
-
-	}
-
-	private void registerHandheldItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
-		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
-	}
-
 	private void registerSpawnEggItem(Item item) {
 		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
 		withExistingParent(path, mcLoc("item/template_spawn_egg"));
-	}
-
-	@Override
-	public String getName() {
-		return "Item Models";
 	}
 }

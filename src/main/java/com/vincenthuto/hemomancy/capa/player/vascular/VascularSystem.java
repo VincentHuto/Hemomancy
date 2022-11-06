@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class VascularSystem implements IVascularSystem {
 	@SuppressWarnings("serial")
-	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<EnumVeinSections, Float>() {
+	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>() {
 		{
 			put(EnumVeinSections.HEAD, 100f);
 			put(EnumVeinSections.HEART, 100f);
@@ -17,30 +17,7 @@ public class VascularSystem implements IVascularSystem {
 		}
 	};
 
-	public Map<EnumVeinSections, Float> getVascularSystem() {
-		return vascularSystem;
-	}
-
-	public void setVascularSystem(Map<EnumVeinSections, Float> vascularSystem) {
-		this.vascularSystem = vascularSystem;
-	}
-
-	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value) {
-		if (vascularSystem != null) {
-			Map<EnumVeinSections, Float> newVasc = vascularSystem;
-			newVasc.put(sectionIn, getHealthBySection(sectionIn) + value);
-			setVascularSystem(newVasc);
-		}
-	}
-
-	public float getHealthBySection(EnumVeinSections sectionIn) {
-		if (vascularSystem != null && vascularSystem.get(sectionIn) != null) {
-			return vascularSystem.get(sectionIn);
-		} else {
-			return 100;
-		}
-	}
-
+	@Override
 	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn) {
 		if (vascularSystem.get(sectionIn) >= 90) {
 			return EnumBloodFlow.RAGING;
@@ -59,6 +36,34 @@ public class VascularSystem implements IVascularSystem {
 			return EnumBloodFlow.DEAD;
 		}
 		return EnumBloodFlow.STABLE;
+	}
+
+	@Override
+	public float getHealthBySection(EnumVeinSections sectionIn) {
+		if (vascularSystem != null && vascularSystem.get(sectionIn) != null) {
+			return vascularSystem.get(sectionIn);
+		} else {
+			return 100;
+		}
+	}
+
+	@Override
+	public Map<EnumVeinSections, Float> getVascularSystem() {
+		return vascularSystem;
+	}
+
+	@Override
+	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value) {
+		if (vascularSystem != null) {
+			Map<EnumVeinSections, Float> newVasc = vascularSystem;
+			newVasc.put(sectionIn, getHealthBySection(sectionIn) + value);
+			setVascularSystem(newVasc);
+		}
+	}
+
+	@Override
+	public void setVascularSystem(Map<EnumVeinSections, Float> vascularSystem) {
+		this.vascularSystem = vascularSystem;
 	}
 
 }

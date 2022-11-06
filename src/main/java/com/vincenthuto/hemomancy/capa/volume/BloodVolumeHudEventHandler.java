@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.capa.volume;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -13,10 +12,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
 public class BloodVolumeHudEventHandler {
-
-	public BloodVolumeHudEventHandler() {
-
-	}
 
 	static Minecraft mc = Minecraft.getInstance();
 
@@ -38,6 +33,10 @@ public class BloodVolumeHudEventHandler {
 //		default:
 //			break;
 //		}
+	}
+
+	public BloodVolumeHudEventHandler() {
+
 	}
 
 }

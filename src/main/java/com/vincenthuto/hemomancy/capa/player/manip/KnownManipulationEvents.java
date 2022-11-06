@@ -33,13 +33,46 @@ public class KnownManipulationEvents {
 	}
 
 	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new KnownManipulationServerPacket(known));
+	}
 
+	@SubscribeEvent
+	public static void onDimensionChange(PlayerTickEvent event) {
+		event.player.refreshDimensions();
+	}
+
+	@SubscribeEvent
+	public static void onPlayerDamage(LivingDamageEvent e) {
+
+		// Radiant Protection
+		if (e.getEntity() instanceof Player) {
+			Player player = (Player) e.getEntity();
+			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.orElseThrow(NullPointerException::new);
+			if (known.isAvatarActive()) {
+				double dist = e.getEntity().distanceToSqr(player);
+				HitResult trace = e.getEntity().pick(dist, 0, false);
+				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
+						e.getEntity().level.dimension());
+				e.setAmount(e.getAmount() * 0);
+
+
+			}
+		}
+
+	}
+
+	@SubscribeEvent
+	public static void onStartTracking(PlayerEvent.StartTracking event) {
+		Entity target = event.getTarget();
+		if (target instanceof ServerPlayer) {
+			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getEntity()));
+		}
 	}
 
 	@SubscribeEvent
@@ -65,33 +98,6 @@ public class KnownManipulationEvents {
 	}
 
 	@SubscribeEvent
-	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(IllegalStateException::new);
-		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new KnownManipulationServerPacket(known));
-	}
-
-	@SubscribeEvent
-	public static void onDimensionChange(PlayerTickEvent event) {
-		event.player.refreshDimensions();
-	}
-
-	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
-			syncAvatar(player, receivers, manips.isAvatarActive());
-		});
-	}
-
-	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
-		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
-		for (Player receiver : receivers) {
-			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
-		}
-	}
-
-	@SubscribeEvent
 	public static void playerJoin(EntityJoinLevelEvent event) {
 		Entity entity = event.getEntity();
 		if (entity instanceof ServerPlayer) {
@@ -102,32 +108,26 @@ public class KnownManipulationEvents {
 	}
 
 	@SubscribeEvent
-	public static void onStartTracking(PlayerEvent.StartTracking event) {
-		Entity target = event.getTarget();
-		if (target instanceof ServerPlayer) {
-			syncAvatars((ServerPlayer) target, Collections.singletonList(event.getEntity()));
+	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
+				new KnownManipulationServerPacket(known));
+
+	}
+
+	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
+		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
+		for (Player receiver : receivers) {
+			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
 		}
 	}
 
-	@SubscribeEvent
-	public static void onPlayerDamage(LivingDamageEvent e) {
-
-		// Radiant Protection
-		if (e.getEntity() instanceof Player) {
-			Player player = (Player) e.getEntity();
-			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
-					.orElseThrow(NullPointerException::new);
-			if (known.isAvatarActive()) {
-				double dist = e.getEntity().distanceToSqr(player);
-				HitResult trace = e.getEntity().pick(dist, 0, false);
-				PacketHandler.sendAvatarHitParticles(trace.getLocation(), ParticleColor.WHITE, 16f,
-						e.getEntity().level.dimension());
-				e.setAmount((float) (e.getAmount() * 0));
-
-
-			}
-		}
-
+	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
+		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+			syncAvatar(player, receivers, manips.isAvatarActive());
+		});
 	}
 
 }

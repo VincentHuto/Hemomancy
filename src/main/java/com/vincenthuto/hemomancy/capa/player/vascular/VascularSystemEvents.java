@@ -30,21 +30,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 public class VascularSystemEvents {
+	private static Font fontRenderer;
+
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "vascularsystem"), new VascularSystemProvider());
 		}
-	}
-
-	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
-		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
-				new VascularSystemServerPacket(BloodFlow));
-//		player.displayClientMessage(
-//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent
@@ -55,33 +47,6 @@ public class VascularSystemEvents {
 				new VascularSystemServerPacket(BloodFlow));
 //		player.displayClientMessage(
 //				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
-	}
-
-	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-		Player peorig = event.getOriginal();
-		Player playernew = event.getEntity();
-		if (event.isWasDeath()) {
-			peorig.reviveCaps();
-			IVascularSystem bloodVolumeNew = playernew.getCapability(VascularSystemProvider.VASCULAR_CAPA)
-					.orElseThrow(IllegalStateException::new);
-			bloodVolumeNew.setVascularSystem(peorig.getCapability(VascularSystemProvider.VASCULAR_CAPA)
-					.orElseThrow(IllegalArgumentException::new).getVascularSystem());
-			peorig.invalidateCaps();
-		}
-	}
-
-	@SubscribeEvent
-	public static void respawn(PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
-			if (!player.getCommandSenderWorld().isClientSide) {
-				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
-						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new VascularSystemServerPacket(section.getVascularSystem()));
-			}
-		}
 	}
 
 	@SubscribeEvent
@@ -104,8 +69,6 @@ public class VascularSystemEvents {
 			}
 		}
 	}
-
-	private static Font fontRenderer;
 
 	@SuppressWarnings({ "deprecation", "unused" })
 	@OnlyIn(Dist.CLIENT)
@@ -215,14 +178,14 @@ public class VascularSystemEvents {
 						 * Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
 						 * .bindForSetupTexture(new ResourceLocation("minecraft",
 						 * "textures/gui/icons.png")); break;
-						 * 
+						 *
 						 * case MACHINE: AbstractGui.fill(event.getPoseStack(), 0, 0,
 						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(218,
 						 * 96, 28, devoMult).getRGB()); fontRenderer.drawString(event.getPoseStack(),
 						 * "Machine View", 5, 5, new Color(255, 0, 0, 15).getRGB());
 						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
 						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break;
-						 * 
+						 *
 						 * case SELF: fontRenderer.drawString(event.getPoseStack(), "Self Devotee", 5,
 						 * 5, new Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
 						 * .bindForSetupTexture(new ResourceLocation("minecraft",
@@ -241,6 +204,43 @@ public class VascularSystemEvents {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerDeath(PlayerEvent.Clone event) {
+		Player peorig = event.getOriginal();
+		Player playernew = event.getEntity();
+		if (event.isWasDeath()) {
+			peorig.reviveCaps();
+			IVascularSystem bloodVolumeNew = playernew.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodVolumeNew.setVascularSystem(peorig.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getVascularSystem());
+			peorig.invalidateCaps();
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
+		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
+				new VascularSystemServerPacket(BloodFlow));
+//		player.displayClientMessage(
+//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+	}
+
+	@SubscribeEvent
+	public static void respawn(PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof Player) {
+			Player player = event.getEntity();
+			if (!player.getCommandSenderWorld().isClientSide) {
+				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+						.orElseThrow(IllegalArgumentException::new);
+				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+						new VascularSystemServerPacket(section.getVascularSystem()));
 			}
 		}
 	}

@@ -22,49 +22,6 @@ public class LivingSpearModel extends Model {
 	public static final ModelLayerLocation living_spear = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "living_spear"), "main");
 
-	private final List<ModelPart> parts = new ArrayList<ModelPart>();
-
-	public LivingSpearModel(ModelPart part) {
-		super(RenderType::entityTranslucent);
-		for (int i = 0; i < 13; i++) {
-			ModelPart grip = part.getChild(Integer.toString(i));
-			grip.setPos(0, -14, 0);
-			parts.add(grip);
-		}
-		for (int i = 13; i < 28; i++) {
-			ModelPart grip2 = part.getChild(Integer.toString(i));
-			grip2.setPos(0, -1, 0);
-			parts.add(grip2);
-
-		}
-
-		for (int i = 27; i < 33; i++) {
-			ModelPart pommel = part.getChild(Integer.toString(i));
-			pommel.setPos(0, 2, 0);
-			parts.add(pommel);
-
-		}
-		for (int i = 33; i < 57; i++) {
-			ModelPart swell = part.getChild(Integer.toString(i));
-			swell.setPos(0, -23, 0);
-			parts.add(swell);
-		}
-		ModelPart grip3 = part.getChild("143");
-		grip3.setPos(0, -23, 0);
-		parts.add(grip3);
-		for (int i = 57; i < 59; i++) {
-			ModelPart blade = part.getChild(Integer.toString(i));
-			blade.setPos(0, -3, -11);
-			parts.add(blade);
-
-		}
-		for (int i = 59; i < 61; i++) {
-			ModelPart blade2 = part.getChild(Integer.toString(i));
-			blade2.setPos(0, -3, -11);
-			parts.add(blade2);
-		}
-	}
-
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition grip = mesh.getRoot();
@@ -266,6 +223,49 @@ public class LivingSpearModel extends Model {
 				PartPose.ZERO);
 
 		return LayerDefinition.create(mesh, 64, 64);
+	}
+
+	private final List<ModelPart> parts = new ArrayList<>();
+
+	public LivingSpearModel(ModelPart part) {
+		super(RenderType::entityTranslucent);
+		for (int i = 0; i < 13; i++) {
+			ModelPart grip = part.getChild(Integer.toString(i));
+			grip.setPos(0, -14, 0);
+			parts.add(grip);
+		}
+		for (int i = 13; i < 28; i++) {
+			ModelPart grip2 = part.getChild(Integer.toString(i));
+			grip2.setPos(0, -1, 0);
+			parts.add(grip2);
+
+		}
+
+		for (int i = 27; i < 33; i++) {
+			ModelPart pommel = part.getChild(Integer.toString(i));
+			pommel.setPos(0, 2, 0);
+			parts.add(pommel);
+
+		}
+		for (int i = 33; i < 57; i++) {
+			ModelPart swell = part.getChild(Integer.toString(i));
+			swell.setPos(0, -23, 0);
+			parts.add(swell);
+		}
+		ModelPart grip3 = part.getChild("143");
+		grip3.setPos(0, -23, 0);
+		parts.add(grip3);
+		for (int i = 57; i < 59; i++) {
+			ModelPart blade = part.getChild(Integer.toString(i));
+			blade.setPos(0, -3, -11);
+			parts.add(blade);
+
+		}
+		for (int i = 59; i < 61; i++) {
+			ModelPart blade2 = part.getChild(Integer.toString(i));
+			blade2.setPos(0, -3, -11);
+			parts.add(blade2);
+		}
 	}
 
 	@Override

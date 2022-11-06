@@ -24,19 +24,6 @@ import net.minecraft.world.entity.Entity;
 public class FargoneModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modelfargone"), "main");
-	private final ModelPart Body;
-	private final ModelPart RightArm;
-	private final ModelPart RightLeg;
-	private final ModelPart LeftLeg;
-	private final ModelPart LeftArm;
-
-	public FargoneModel(ModelPart root) {
-		this.Body = root.getChild("Body");
-		this.RightArm = root.getChild("RightArm");
-		this.RightLeg = root.getChild("RightLeg");
-		this.LeftLeg = root.getChild("LeftLeg");
-		this.LeftArm = root.getChild("LeftArm");
-	}
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
@@ -93,10 +80,18 @@ public class FargoneModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart Body;
+	private final ModelPart RightArm;
+	private final ModelPart RightLeg;
+	private final ModelPart LeftLeg;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+	private final ModelPart LeftArm;
+	public FargoneModel(ModelPart root) {
+		this.Body = root.getChild("Body");
+		this.RightArm = root.getChild("RightArm");
+		this.RightLeg = root.getChild("RightLeg");
+		this.LeftLeg = root.getChild("LeftLeg");
+		this.LeftArm = root.getChild("LeftArm");
 	}
 
 	@Override
@@ -106,5 +101,10 @@ public class FargoneModel<T extends Entity> extends EntityModel<T> {
 		RightLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		LeftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		LeftArm.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

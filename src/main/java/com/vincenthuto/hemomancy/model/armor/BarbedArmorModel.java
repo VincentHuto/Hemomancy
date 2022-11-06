@@ -40,80 +40,6 @@ public class BarbedArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 	public static final Lazy<BarbedArmorModel<LivingEntity>> boots = Lazy
 			.of(() -> new BarbedArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BARBED_FEET_LAYER)));
 
-	public BarbedArmorModel(ModelPart root) {
-		super(root, RenderType::entityTranslucent);
-
-	}
-
-	@SuppressWarnings("unused")
-	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
-		PartDefinition partdefinition = meshdefinition.getRoot();
-		if (slot.equals(EquipmentSlot.HEAD)) {
-			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
-					.addBox(-4.0F, -8.0F, -3.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.0F)),
-					PartPose.offset(0.0F, 0.0F, 0.0F));
-
-			PartDefinition spike5 = head.addOrReplaceChild("spike5", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
-
-			PartDefinition spike11 = head.addOrReplaceChild("spike11", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
-					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-0.1667F, -9.5F, -3.6667F, 0.0F, 2.7053F, -1.5708F));
-
-			PartDefinition spike12 = head.addOrReplaceChild("spike12", CubeListBuilder.create().texOffs(116, 73)
-					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(13, 78)
-					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
-					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-2.1667F, -9.5F, -3.4167F, 0.0F, 2.7053F, -2.0071F));
-
-			PartDefinition spike15 = head.addOrReplaceChild("spike15", CubeListBuilder.create().texOffs(116, 73)
-					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(13, 78)
-					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
-					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(1.8333F, -9.5F, -3.4167F, 0.0F, 2.7053F, -1.1345F));
-
-			PartDefinition spike8 = head.addOrReplaceChild("spike8", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-1.0151F, -2.6499F, -2.9383F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-1.0151F, -2.1499F, -1.9383F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(110, 141)
-					.addBox(-2.0151F, -2.1499F, -2.9383F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
-
-			PartDefinition spike10 = head.addOrReplaceChild("spike10", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-0.6175F, -4.7712F, -5.2496F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-0.6175F, -4.2712F, -4.2496F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-1.6175F, -4.2712F, -5.2496F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-5.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
-
-			PartDefinition spike6 = head.addOrReplaceChild("spike6", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-6.4148F, 8.2496F, 6.5168F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-6.4148F, 8.7496F, 7.5168F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
-					.addBox(-7.4148F, 8.7496F, 6.5168F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
-
-			PartDefinition spike7 = head.addOrReplaceChild("spike7", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-6.0172F, 10.3709F, 4.2055F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-6.0172F, 10.8709F, 5.2055F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
-					.addBox(-7.0172F, 10.8709F, 4.2055F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
-
-			PartDefinition spike9 = head.addOrReplaceChild("spike9", CubeListBuilder.create().texOffs(13, 78)
-					.addBox(-5.6197F, 12.4922F, 1.8943F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-5.6197F, 12.9922F, 2.8943F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
-					.addBox(-6.6197F, 12.9922F, 1.8943F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-					PartPose.offsetAndRotation(-7.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
-
-		}
-
-		return LayerDefinition.create(meshdefinition, 256, 256);
-
-	}
-
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
@@ -299,10 +225,78 @@ public class BarbedArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+	@SuppressWarnings("unused")
+	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		if (slot.equals(EquipmentSlot.HEAD)) {
+			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
+					.addBox(-4.0F, -8.0F, -3.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.0F)),
+					PartPose.offset(0.0F, 0.0F, 0.0F));
+
+			PartDefinition spike5 = head.addOrReplaceChild("spike5", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
+
+			PartDefinition spike11 = head.addOrReplaceChild("spike11", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
+					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-0.1667F, -9.5F, -3.6667F, 0.0F, 2.7053F, -1.5708F));
+
+			PartDefinition spike12 = head.addOrReplaceChild("spike12", CubeListBuilder.create().texOffs(116, 73)
+					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(13, 78)
+					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
+					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-2.1667F, -9.5F, -3.4167F, 0.0F, 2.7053F, -2.0071F));
+
+			PartDefinition spike15 = head.addOrReplaceChild("spike15", CubeListBuilder.create().texOffs(116, 73)
+					.addBox(-1.4127F, -0.5286F, -0.627F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(13, 78)
+					.addBox(-1.4127F, -0.0286F, 0.373F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
+					.addBox(-2.4127F, -0.0286F, -0.627F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(1.8333F, -9.5F, -3.4167F, 0.0F, 2.7053F, -1.1345F));
+
+			PartDefinition spike8 = head.addOrReplaceChild("spike8", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-1.0151F, -2.6499F, -2.9383F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-1.0151F, -2.1499F, -1.9383F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(110, 141)
+					.addBox(-2.0151F, -2.1499F, -2.9383F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
+
+			PartDefinition spike10 = head.addOrReplaceChild("spike10", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-0.6175F, -4.7712F, -5.2496F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-0.6175F, -4.2712F, -4.2496F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-1.6175F, -4.2712F, -5.2496F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-5.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -2.3562F));
+
+			PartDefinition spike6 = head.addOrReplaceChild("spike6", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-6.4148F, 8.2496F, 6.5168F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-6.4148F, 8.7496F, 7.5168F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
+					.addBox(-7.4148F, 8.7496F, 6.5168F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
+
+			PartDefinition spike7 = head.addOrReplaceChild("spike7", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-6.0172F, 10.3709F, 4.2055F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-6.0172F, 10.8709F, 5.2055F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(213, 136)
+					.addBox(-7.0172F, 10.8709F, 4.2055F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-6.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
+
+			PartDefinition spike9 = head.addOrReplaceChild("spike9", CubeListBuilder.create().texOffs(13, 78)
+					.addBox(-5.6197F, 12.4922F, 1.8943F, 4.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-5.6197F, 12.9922F, 2.8943F, 4.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)).texOffs(116, 73)
+					.addBox(-6.6197F, 12.9922F, 1.8943F, 6.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
+					PartPose.offsetAndRotation(-7.1667F, -9.5F, -1.6667F, 0.0F, 2.1817F, -0.7854F));
+
+		}
+
+		return LayerDefinition.create(meshdefinition, 256, 256);
+
+	}
+
+	public BarbedArmorModel(ModelPart root) {
+		super(root, RenderType::entityTranslucent);
+
 	}
 
 	@Override
@@ -315,5 +309,11 @@ public class BarbedArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 }

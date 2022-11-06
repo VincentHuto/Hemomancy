@@ -32,25 +32,6 @@ public class BloodLustArmorItem extends ArmorItem {
 		return maskType;
 	}
 
-	public void setMaskType(EnumBloodLustMaskTypes maskType) {
-		this.maskType = maskType;
-	}
-
-	@Override
-	public void onArmorTick(ItemStack stack, Level world, Player player) {
-		if (world.isClientSide) {
-			for (int i = 0; i < 1; ++i) {
-				if (i % 2 == 0) {
-					world.addParticle(DustParticleOptions.REDSTONE, player.getRandomX(0.5D), player.getY(),
-							player.getRandomZ(0.5D), (world.random.nextDouble() - 0.5D) * 2.0D,
-							-world.random.nextDouble(), (world.random.nextDouble() - 0.5D) * 2.0D);
-				}
-			}
-		}
-
-		super.onArmorTick(stack, world, player);
-	}
-
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
@@ -73,6 +54,25 @@ public class BloodLustArmorItem extends ArmorItem {
 				return IClientItemExtensions.super.getHumanoidArmorModel(entityLiving, itemStack, armorSlot, _default);
 			}
 		});
+	}
+
+	@Override
+	public void onArmorTick(ItemStack stack, Level world, Player player) {
+		if (world.isClientSide) {
+			for (int i = 0; i < 1; ++i) {
+				if (i % 2 == 0) {
+					world.addParticle(DustParticleOptions.REDSTONE, player.getRandomX(0.5D), player.getY(),
+							player.getRandomZ(0.5D), (world.random.nextDouble() - 0.5D) * 2.0D,
+							-world.random.nextDouble(), (world.random.nextDouble() - 0.5D) * 2.0D);
+				}
+			}
+		}
+
+		super.onArmorTick(stack, world, player);
+	}
+
+	public void setMaskType(EnumBloodLustMaskTypes maskType) {
+		this.maskType = maskType;
 	}
 
 }

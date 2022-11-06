@@ -9,7 +9,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 public class BloodTendency implements IBloodTendency {
 	@SuppressWarnings("serial")
-	private Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>() {
+	private Map<EnumBloodTendency, Float> tendency = new HashMap<>() {
 		{
 			put(EnumBloodTendency.ANIMUS, 0f);
 			put(EnumBloodTendency.MORTEM, 0f);
@@ -22,27 +22,6 @@ public class BloodTendency implements IBloodTendency {
 
 		}
 	};
-
-	@Override
-	public Map<EnumBloodTendency, Float> getTendency() {
-		return tendency;
-	}
-
-	@Override
-	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
-		this.tendency = tendency;
-	}
-
-	@Override
-	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
-		if (tendency != null) {
-			if (getOpposingTendency(tendencyIn) != null) {
-				Map<EnumBloodTendency, Float> newDevo = tendency;
-				newDevo.put(tendencyIn, value);
-				setTendency(newDevo);
-			}
-		}
-	}
 
 	@Override
 	public void addTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
@@ -65,26 +44,8 @@ public class BloodTendency implements IBloodTendency {
 	}
 
 	@Override
-	public float getPercentByTendency(EnumBloodTendency tendencyIn) {
-		float total = getTotalAlignment();
-		float current = getAlignmentByTendency(tendencyIn);
-		float per = (current / total) * 100;
-		return per;
-	}
-
-	@Override
-	public float getTotalAlignment() {
-		float runningTotal = 0;
-		for (EnumBloodTendency key : EnumBloodTendency.values()) {
-			runningTotal += tendency.get(key);
-		}
-		return runningTotal;
-
-	}
-
-	@Override
 	public ParticleColor getAvgBloodColor() {
-		List<ParticleColor> colors = new ArrayList<ParticleColor>();
+		List<ParticleColor> colors = new ArrayList<>();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			float percent = getPercentByTendency(tend);
 			colors.add(new ParticleColor(tend.getColor().getRed() * percent, tend.getColor().getBlue() * percent,
@@ -115,6 +76,45 @@ public class BloodTendency implements IBloodTendency {
 			return EnumBloodTendency.FLAMMEUS;
 		default:
 			return null;
+		}
+	}
+
+	@Override
+	public float getPercentByTendency(EnumBloodTendency tendencyIn) {
+		float total = getTotalAlignment();
+		float current = getAlignmentByTendency(tendencyIn);
+		float per = (current / total) * 100;
+		return per;
+	}
+
+	@Override
+	public Map<EnumBloodTendency, Float> getTendency() {
+		return tendency;
+	}
+
+	@Override
+	public float getTotalAlignment() {
+		float runningTotal = 0;
+		for (EnumBloodTendency key : EnumBloodTendency.values()) {
+			runningTotal += tendency.get(key);
+		}
+		return runningTotal;
+
+	}
+
+	@Override
+	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
+		this.tendency = tendency;
+	}
+
+	@Override
+	public void setTendencyAlignment(EnumBloodTendency tendencyIn, float value) {
+		if (tendency != null) {
+			if (getOpposingTendency(tendencyIn) != null) {
+				Map<EnumBloodTendency, Float> newDevo = tendency;
+				newDevo.put(tendencyIn, value);
+				setTendency(newDevo);
+			}
 		}
 	}
 

@@ -21,6 +21,22 @@ public class SkillPoint {
 		this.parent = parent;
 	}
 
+	public double getCost() {
+		return cost;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public SkillPoint getParent() {
+		return parent;
+	}
+
+	public EnumSkillStates getState() {
+		return state;
+	}
+
 	/*
 	 * Writes a NBT tag from this manipulation
 	 */
@@ -33,36 +49,20 @@ public class SkillPoint {
 		return nbt;
 	}
 
-	public String getName() {
-		return name;
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public double getCost() {
-		return cost;
-	}
-
-	public void setCost(double cost) {
-		this.cost = cost;
-	}
-
-	public EnumSkillStates getState() {
-		return state;
+	public void setParent(SkillPoint parent) {
+		this.parent = parent;
 	}
 
 	public void setState(EnumSkillStates state) {
 		this.state = state;
-	}
-
-	public SkillPoint getParent() {
-		return parent;
-	}
-
-	public void setParent(SkillPoint parent) {
-		this.parent = parent;
 	}
 
 }

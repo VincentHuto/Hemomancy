@@ -18,13 +18,13 @@ public class BloodBulletRenderer extends EntityRenderer<BloodBulletEntity> {
 	}
 
 	@Override
-	public void render(BloodBulletEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int packedLightIn) {
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+	public ResourceLocation getTextureLocation(BloodBulletEntity entity) {
+		return TEXTURE;
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(BloodBulletEntity entity) {
-		return TEXTURE;
+	public void render(BloodBulletEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
+		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 }

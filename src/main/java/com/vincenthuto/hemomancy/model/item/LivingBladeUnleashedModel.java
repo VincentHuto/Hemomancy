@@ -22,15 +22,6 @@ public class LivingBladeUnleashedModel extends Model {
 
 	public static final ModelLayerLocation living_blade_unleashed = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "living_blade_unleashed"), "main");
-	private final List<ModelPart> parts = new ArrayList<ModelPart>();
-
-	public LivingBladeUnleashedModel(ModelPart part) {
-		super(RenderType::entityTranslucent);
-		for (int i = 0; i < 40; i++) {
-			parts.add(part.getChild(Integer.toString(i)));
-		}
-	}
-
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition part = mesh.getRoot();
@@ -155,6 +146,15 @@ public class LivingBladeUnleashedModel extends Model {
 				CubeListBuilder.create().texOffs(0, 0).addBox(-2.5029F, -5.4441F, -2.5147F, 5.0F, 1.0F, 5.0F, false),
 				PartPose.ZERO);
 		return LayerDefinition.create(mesh, 64, 64);
+	}
+
+	private final List<ModelPart> parts = new ArrayList<>();
+
+	public LivingBladeUnleashedModel(ModelPart part) {
+		super(RenderType::entityTranslucent);
+		for (int i = 0; i < 40; i++) {
+			parts.add(part.getChild(Integer.toString(i)));
+		}
 	}
 
 	@Override

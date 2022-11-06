@@ -41,6 +41,11 @@ public class ChitiniteEntity extends PathfinderMob {
 //	private Animation animation = NO_ANIMATION;
 //	public static final Animation ROLLUP_ANIMATION = new Animation(128);
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
 	public int puffCooldown = 0;
 
 	private int animationTick;
@@ -50,9 +55,31 @@ public class ChitiniteEntity extends PathfinderMob {
 
 	}
 
+	public void attackInBox(AABB box, int disabledShieldTime) {
+		List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box,
+				entity -> entity != this && !hasPassenger(entity));
+		for (LivingEntity attacking : attackables) {
+			doHurtTarget(attacking);
+			if (disabledShieldTime > 0 && attacking instanceof Player) {
+				Player player = ((Player) attacking);
+				if (player.isUsingItem()) {
+					player.getCooldowns().addCooldown(Items.SHIELD, disabledShieldTime);
+					player.stopUsingItem();
+					level.broadcastEntityEvent(player, (byte) 9);
+				}
+			}
+		}
+	}
+
 	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
+	}
+
+
+	@Override
+	public boolean checkSpawnRules(LevelAccessor pLevel, MobSpawnType pSpawnReason) {
+		return super.checkSpawnRules(pLevel, pSpawnReason);
 	}
 
 	@Override
@@ -62,16 +89,10 @@ public class ChitiniteEntity extends PathfinderMob {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
+	protected void doPush(Entity entityIn) {
+		super.doPush(entityIn);
 	}
 
-	
-	@Override
-	public boolean checkSpawnRules(LevelAccessor pLevel, MobSpawnType pSpawnReason) {
-		return super.checkSpawnRules(pLevel, pSpawnReason);
-	}
-	
 	@Override
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor worldIn, DifficultyInstance difficultyIn,
@@ -80,6 +101,48 @@ public class ChitiniteEntity extends PathfinderMob {
 		this.populateDefaultEquipmentSlots(random, difficultyIn);
 
 		return spawnDataIn;
+
+	}
+
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return SoundEvents.WOLF_AMBIENT;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.WOLF_DEATH;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		// this.goalSelector.addGoal(1, new BreakBlockGoal(Blocks.OAK_WOOD, this, 1.5d,
+		// 10));
+		// this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
+		// this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 
 	}
 
@@ -102,22 +165,6 @@ public class ChitiniteEntity extends PathfinderMob {
 		}
 	}
 
-	public void attackInBox(AABB box, int disabledShieldTime) {
-		List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box,
-				entity -> entity != this && !hasPassenger(entity));
-		for (LivingEntity attacking : attackables) {
-			doHurtTarget(attacking);
-			if (disabledShieldTime > 0 && attacking instanceof Player) {
-				Player player = ((Player) attacking);
-				if (player.isUsingItem()) {
-					player.getCooldowns().addCooldown(Items.SHIELD, disabledShieldTime);
-					player.stopUsingItem();
-					level.broadcastEntityEvent(player, (byte) 9);
-				}
-			}
-		}
-	}
-
 	@Override
 	public void tick() {
 		super.tick();
@@ -133,53 +180,6 @@ public class ChitiniteEntity extends PathfinderMob {
 		if (isClose) {
 			yHeadRot = (float) MathUtils.getAngle(ChitiniteEntity.this, target) + 90f;
 		}
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
-	}
-
-	@Override
-	protected void registerGoals() {
-		// this.goalSelector.addGoal(1, new BreakBlockGoal(Blocks.OAK_WOOD, this, 1.5d,
-		// 10));
-		// this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
-		// this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
-		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
-	}
-
-	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
-	}
-
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
 	}
 
 //	@Override

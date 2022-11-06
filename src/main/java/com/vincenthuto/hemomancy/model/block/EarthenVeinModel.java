@@ -19,13 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 public class EarthenVeinModel extends Model  {
 	public static final ModelLayerLocation earth_vein = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelearthenvein"), "main");
-	
-	private final ModelPart base;
-
-	public EarthenVeinModel(ModelPart root) {
-		super(RenderType::entityTranslucent);
-		this.base = root.getChild("base");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -148,10 +141,17 @@ public class EarthenVeinModel extends Model  {
 				PartPose.offsetAndRotation(-2.5131F, -1.9503F, 0.0F, 0.0F, 0.0F, 0.0436F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
-	
+
 	}
 
-	
+	private final ModelPart base;
+
+	public EarthenVeinModel(ModelPart root) {
+		super(RenderType::entityTranslucent);
+		this.base = root.getChild("base");
+	}
+
+
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {

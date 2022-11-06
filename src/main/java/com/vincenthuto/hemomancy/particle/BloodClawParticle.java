@@ -44,18 +44,23 @@ public class BloodClawParticle extends TextureSheetParticle {
 	}
 
 	@Override
+	public int getLightColor(float pTicks) {
+		return 255;
+	}
+
+	@Override
 	public ParticleRenderType getRenderType() {
 		return HLRenderTypeInit.DARK_GLOW_RENDER;
 	}
 
 	@Override
-	public boolean shouldCull() {
-		return false;
+	public boolean isAlive() {
+		return this.age < this.lifetime;
 	}
 
 	@Override
-	public int getLightColor(float pTicks) {
-		return 255;
+	public boolean shouldCull() {
+		return false;
 	}
 
 	@Override
@@ -70,10 +75,5 @@ public class BloodClawParticle extends TextureSheetParticle {
 		this.alpha = initAlpha * (1.0f - lifeCoeff);
 		this.oRoll = roll;
 		roll = (float) Math.sin(HLClientUtils.getWorld().getGameTime() * 0.5f);
-	}
-
-	@Override
-	public boolean isAlive() {
-		return this.age < this.lifetime;
 	}
 }

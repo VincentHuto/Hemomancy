@@ -14,16 +14,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class EarthenVeinBlockEntity extends BlockEntity {
-	IEarthenVeinLoc locCap = getCapability(EarthenVeinLocProvider.VEIN_CAPA).orElseThrow(IllegalStateException::new);
 	static final String TAG_VEIN_LOC = "veinlocation";
 	static final String TAG_NAME = "name";
-	String name = "";
-	boolean hasTicked = false;
-
-	public EarthenVeinBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.earthen_vein.get(), pos, state);
-	}
-
 	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
 		if (level.getBlockEntity(pos)instanceof EarthenVeinBlockEntity te) {
 			if (!te.hasTicked) {
@@ -43,6 +35,47 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		}
 
 	}
+	IEarthenVeinLoc locCap = getCapability(EarthenVeinLocProvider.VEIN_CAPA).orElseThrow(IllegalStateException::new);
+	String name = "";
+
+	boolean hasTicked = false;
+
+	public EarthenVeinBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityInit.earthen_vein.get(), pos, state);
+	}
+
+	public VeinLocation getLoc() {
+		return locCap.getVeinLocation();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public CompoundTag getUpdateTag() {
+		CompoundTag compound = super.getUpdateTag();
+		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
+		compound.putString(TAG_NAME, getName());
+		return compound;
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
+		name = tag.getString(TAG_NAME);
+
+	}
+
+	public boolean isHasTicked() {
+		return hasTicked;
+	}
 
 	// NBT JUNK
 	@Override
@@ -50,13 +83,6 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		super.load(tag);
 		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
 		name = tag.getString(TAG_NAME);
-	}
-
-	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
-		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
-		compound.putString(TAG_NAME, getName());
 	}
 
 	@Override
@@ -69,24 +95,10 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag compound = super.getUpdateTag();
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
 		compound.put(TAG_VEIN_LOC, locCap.getVeinLocation().serializeNBT());
 		compound.putString(TAG_NAME, getName());
-		return compound;
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		locCap.setVeinLoc(VeinLocation.deserializeToLoc(tag.getCompound(TAG_VEIN_LOC)));
-		name = tag.getString(TAG_NAME);
-
 	}
 
 	public void sendUpdates() {
@@ -95,28 +107,16 @@ public class EarthenVeinBlockEntity extends BlockEntity {
 		setChanged();
 	}
 
-	public boolean isHasTicked() {
-		return hasTicked;
-	}
-
 	public void setHasTicked(boolean hasTicked) {
 		this.hasTicked = hasTicked;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setLoc(VeinLocation locCap) {
 		this.locCap.setVeinLoc(locCap);
 	}
 
-	public VeinLocation getLoc() {
-		return locCap.getVeinLocation();
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

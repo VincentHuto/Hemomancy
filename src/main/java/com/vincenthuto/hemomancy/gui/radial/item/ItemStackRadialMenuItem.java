@@ -13,16 +13,6 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
     private final int slot;
     private final ItemStack stack;
 
-    public int getSlot()
-    {
-        return slot;
-    }
-
-    public ItemStack getStack()
-    {
-        return stack;
-    }
-
     public ItemStackRadialMenuItem(GenericRadialMenu owner, int slot, ItemStack stack, Component altText)
     {
         super(owner, altText, 0x7FFFFFFF);
@@ -62,5 +52,15 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
         {
             super.drawTooltips(context);
         }
+    }
+
+    public int getSlot()
+    {
+        return slot;
+    }
+
+    public ItemStack getStack()
+    {
+        return stack;
     }
 }

@@ -420,32 +420,6 @@ public class ItemInit {
 			.register("spawn_egg_morphling_polyp", () -> new ModSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
 					new Item.Properties().tab(CreativeModeTab.TAB_MISC).tab(HemomancyItemGroup.instance)));
 
-	@SubscribeEvent
-	public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
-				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
-				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
-				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
-				ItemInit.spawn_egg_leech);
-	}
-
-	@SuppressWarnings("unchecked")
-
-	@SafeVarargs
-	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ModSpawnEggItem>... spawnEggs) {
-		for (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
-			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static void registerItemColorHandler(ItemColors colors, ItemColor itemColor,
-			RegistryObject<ModSpawnEggItem>... items) {
-		for (RegistryObject<ModSpawnEggItem> itemProvider : items) {
-			colors.register(itemColor, itemProvider.get());
-		}
-	}
-
 	// Item Property Override
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent
@@ -630,7 +604,7 @@ public class ItemInit {
 							if (items != null) {
 								if (items.contains("Items", 9)) {
 									@SuppressWarnings("static-access")
-									ItemStack selectedStack = stack.of(((ListTag) items.get("Items")).getCompound(0));
+									ItemStack selectedStack = ItemStack.of(((ListTag) items.get("Items")).getCompound(0));
 									if (selectedStack.getItem() == ItemInit.morphling_serpent.get()) {
 										return 1;
 									} else if (selectedStack.getItem() == ItemInit.morphling_leeches.get()) {
@@ -658,6 +632,32 @@ public class ItemInit {
 					}
 				});
 
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void registerItemColorHandler(ItemColors colors, ItemColor itemColor,
+			RegistryObject<ModSpawnEggItem>... items) {
+		for (RegistryObject<ModSpawnEggItem> itemProvider : items) {
+			colors.register(itemColor, itemProvider.get());
+		}
+	}
+
+	@SubscribeEvent
+	public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
+		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
+				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
+				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
+				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
+				ItemInit.spawn_egg_leech);
+	}
+
+	@SuppressWarnings("unchecked")
+
+	@SafeVarargs
+	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ModSpawnEggItem>... spawnEggs) {
+		for (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
+			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
+		}
 	}
 
 }

@@ -24,6 +24,8 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class DarkArrowEntity extends AbstractArrow {
 
+	LivingEntity shooter;
+
 	public DarkArrowEntity(EntityType<? extends DarkArrowEntity> type, Level worldIn) {
 		super(type, worldIn);
 	}
@@ -32,11 +34,26 @@ public class DarkArrowEntity extends AbstractArrow {
 		super(EntityInit.dark_arrow.get(), x, y, z, worldIn);
 	}
 
-	LivingEntity shooter;
-
 	public DarkArrowEntity(Level worldIn, LivingEntity shooter) {
 		super(EntityInit.dark_arrow.get(), shooter, worldIn);
 		this.shooter = shooter;
+	}
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+	}
+
+	@Override
+	protected void doPostHurtEffects(LivingEntity living) {
+		super.doPostHurtEffects(living);
+
 	}
 
 	@Nonnull
@@ -46,8 +63,26 @@ public class DarkArrowEntity extends AbstractArrow {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected ItemStack getPickupItem() {
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
+		super.onHitEntity(p_213868_1_);
+		Entity entity = p_213868_1_.getEntity();
+		if (entity instanceof LivingEntity) {
+			// ((LivingEntity) entity).addPotionEffect(new
+			// MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
+
+		}
+
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+
 	}
 
 	@Override
@@ -75,41 +110,6 @@ public class DarkArrowEntity extends AbstractArrow {
 			}
 		}
 
-	}
-
-	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		super.addAdditionalSaveData(compound);
-
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-
-	}
-
-	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_) {
-		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			// ((LivingEntity) entity).addPotionEffect(new
-			// MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
-
-		}
-
-	}
-
-	@Override
-	protected void doPostHurtEffects(LivingEntity living) {
-		super.doPostHurtEffects(living);
-
-	}
-
-	@Override
-	protected ItemStack getPickupItem() {
-		return ItemStack.EMPTY;
 	}
 
 }

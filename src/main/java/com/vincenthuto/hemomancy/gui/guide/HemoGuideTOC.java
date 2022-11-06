@@ -13,14 +13,14 @@ public class HemoGuideTOC extends GuiGuidePageTOC {
 	}
 
 	@Override
-	public List<GuiGuidePage> getPages() {
-		return getOwnerTome().getMatchingChapters(getCatagory()).pages;
-
+	public TomeLib getOwnerTome() {
+		return new HemoLib();
 	}
 
 	@Override
-	public TomeLib getOwnerTome() {
-		return new HemoLib();
+	public List<GuiGuidePage> getPages() {
+		return getOwnerTome().getMatchingChapters(getCatagory()).pages;
+
 	}
 
 }

@@ -4,10 +4,15 @@ import net.minecraft.world.entity.LivingEntity;
 
 public interface IRune {
 
-	RuneType getRuneType();
-
-	default void onWornTick(LivingEntity player) {
+	default boolean canEquip(LivingEntity player) {
+		return true;
 	}
+
+	default boolean canUnequip(LivingEntity player) {
+		return true;
+	}
+
+	RuneType getRuneType();
 
 	default void onEquipped(LivingEntity player) {
 	}
@@ -15,12 +20,7 @@ public interface IRune {
 	default void onUnequipped(LivingEntity player) {
 	}
 
-	default boolean canEquip(LivingEntity player) {
-		return true;
-	}
-
-	default boolean canUnequip(LivingEntity player) {
-		return true;
+	default void onWornTick(LivingEntity player) {
 	}
 
 	default boolean willAutoSync(LivingEntity player) {

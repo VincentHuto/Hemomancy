@@ -19,10 +19,10 @@ import net.minecraft.world.item.ItemStack;
 
 public class ChitiniteShieldItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	@SuppressWarnings("rawtypes")
-	private final ChitiniteShieldModel modelShield;
 	public static final Material LOCATION_SHIELD = new Material(TextureAtlas.LOCATION_BLOCKS,
 			new ResourceLocation(Hemomancy.MOD_ID, "entity/chitinite_shield/model_chitinite_shield"));
+	@SuppressWarnings("rawtypes")
+	private final ChitiniteShieldModel modelShield;
 
 	@SuppressWarnings("rawtypes")
 	public ChitiniteShieldItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {

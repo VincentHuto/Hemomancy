@@ -38,20 +38,19 @@ public class LivingBladeItem extends LivingToolItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getMainHandItem();
-		if (stack.getItem() instanceof LivingBladeItem) {
-			CompoundTag compound = stack.getOrCreateTag();
-			if (!compound.getBoolean(TAG_STATE)) {
-				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
-				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag()) {
+			if (stack.getTag().getBoolean(TAG_STATE)) {
+				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
+				tooltip.add(Component.literal("+20 Blood Damage").withStyle(ChatFormatting.RED));
+
 			} else {
-				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
-				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.literal("+5 Blood Damage").withStyle(ChatFormatting.RED));
+
 			}
-			stack.setTag(compound);
 		}
-		return super.use(worldIn, playerIn, handIn);
 	}
 
 	@Override
@@ -87,26 +86,27 @@ public class LivingBladeItem extends LivingToolItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
-				tooltip.add(Component.literal("+20 Blood Damage").withStyle(ChatFormatting.RED));
-
-			} else {
-				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
-				tooltip.add(Component.literal("+5 Blood Damage").withStyle(ChatFormatting.RED));
-
-			}
-		}
-	}
-
-	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		super.initializeClient(consumer);
 		consumer.accept(RenderPropLivingBlade.INSTANCE);
 
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack stack = playerIn.getMainHandItem();
+		if (stack.getItem() instanceof LivingBladeItem) {
+			CompoundTag compound = stack.getOrCreateTag();
+			if (!compound.getBoolean(TAG_STATE)) {
+				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
+				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+			} else {
+				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
+				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+			}
+			stack.setTag(compound);
+		}
+		return super.use(worldIn, playerIn, handIn);
 	}
 }
 

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.gui.manips;
 
 import java.awt.Point;
-import java.awt.TextComponent;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,8 +26,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 
 public class ChooseVeinScreen extends Screen {
-	int left, top;
 	static MutableComponent titleComponent = Component.literal("");
+	int left, top;
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
@@ -37,6 +36,79 @@ public class ChooseVeinScreen extends Screen {
 
 	public ChooseVeinScreen() {
 		super(titleComponent);
+	}
+
+	@Override
+	protected void init() {
+		renderables.clear();
+		IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(NullPointerException::new);
+		VeinLocation selected = manips.getSelectedVein();
+		List<VeinLocation> known = manips.getVeinList();
+		double angleBetweenEach = 360.0 / known.size();
+		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 - 48, mc.getWindow().getGuiScaledHeight() / 2),
+				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
+		if (!known.isEmpty()) {
+
+			this.addRenderableWidget(new GuiButtonTextured(texture, 69, mc.getWindow().getGuiScaledWidth() / 2,
+					mc.getWindow().getGuiScaledHeight() / 2, 16, 16, 209, 32, null, (press) -> {
+						if (press instanceof GuiButtonTextured) {
+							player.playSound(SoundEvents.PORTAL_TRAVEL, 0.20f, 0.1F);
+							PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new TeleportToVeinPacket());
+						}
+						onClose();
+
+					}));
+
+			for (int i = 0; i < known.size(); i++) {
+				VeinLocation current = known.get(i);
+				if (current.getName().equals(selected.getName())) {
+					this.addRenderableWidget(
+							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+									player.displayClientMessage(
+											Component.literal("Vein Already Selected").withStyle(ChatFormatting.RED),
+											true);
+								}
+								onClose();
+							}));
+				} else {
+					this.addRenderableWidget(
+							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 209, 0, null, (press) -> {
+								if (press instanceof GuiButtonTextured) {
+									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+									int id = ((GuiButtonTextured) press).getId();
+									manips.setSelectedVein(known.get(id));
+									PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentVeinPacket(id));
+								}
+								onClose();
+
+							}));
+				}
+				point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
+			}
+		} else {
+
+			onClose();
+		}
+
+		super.init();
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
@@ -111,11 +183,11 @@ public class ChooseVeinScreen extends Screen {
 //							font.drawShadow(matrixStack, known.get(j).getName(),
 //									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 //									(float) ((GuiButtonTextured) renderables.get(i)).y - 20, 0xffffff);
-//	
+//
 //							font.drawShadow(matrixStack, HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
 //									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 //									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
-//							
+//
 //							font.drawShadow(matrixStack,known.get(j).getPosition().toShortString(),
 //									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
 //									(float) ((GuiButtonTextured) renderables.get(i)).y - 0, 0xffffff);
@@ -125,79 +197,6 @@ public class ChooseVeinScreen extends Screen {
 			}
 		}
 
-	}
-
-	@Override
-	protected void init() {
-		renderables.clear();
-		IKnownManipulations manips = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(NullPointerException::new);
-		VeinLocation selected = manips.getSelectedVein();
-		List<VeinLocation> known = manips.getVeinList();
-		double angleBetweenEach = 360.0 / known.size();
-		Point point = new Point(mc.getWindow().getGuiScaledWidth() / 2 - 48, mc.getWindow().getGuiScaledHeight() / 2),
-				center = new Point(mc.getWindow().getGuiScaledWidth() / 2, mc.getWindow().getGuiScaledHeight() / 2);
-		if (!known.isEmpty()) {
-
-			this.addRenderableWidget(new GuiButtonTextured(texture, 69, mc.getWindow().getGuiScaledWidth() / 2,
-					mc.getWindow().getGuiScaledHeight() / 2, 16, 16, 209, 32, null, (press) -> {
-						if (press instanceof GuiButtonTextured) {
-							player.playSound(SoundEvents.PORTAL_TRAVEL, 0.20f, 0.1F);
-							PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new TeleportToVeinPacket());
-						}
-						onClose();
-
-					}));
-
-			for (int i = 0; i < known.size(); i++) {
-				VeinLocation current = known.get(i);
-				if (current.getName().equals(selected.getName())) {
-					this.addRenderableWidget(
-							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 225, 0, null, (press) -> {
-								if (press instanceof GuiButtonTextured) {
-									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-									player.displayClientMessage(
-											Component.literal("Vein Already Selected").withStyle(ChatFormatting.RED),
-											true);
-								}
-								onClose();
-							}));
-				} else {
-					this.addRenderableWidget(
-							new GuiButtonTextured(texture, i, point.x, point.y, 16, 16, 209, 0, null, (press) -> {
-								if (press instanceof GuiButtonTextured) {
-									player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-									int id = ((GuiButtonTextured) press).getId();
-									manips.setSelectedVein(known.get(id));
-									PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentVeinPacket(id));
-								}
-								onClose();
-
-							}));
-				}
-				point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);
-			}
-		} else {
-
-			onClose();
-		}
-
-		super.init();
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-		return super.mouseClicked(mouseX, mouseY, mouseButton);
-	}
-
-	@Override
-	public boolean isPauseScreen() {
-		return false;
 	}
 
 }

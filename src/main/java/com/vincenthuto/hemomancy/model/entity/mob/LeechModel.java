@@ -24,21 +24,6 @@ import net.minecraft.world.entity.Entity;
 public class LeechModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modelleech"), "main");
-	private final ModelPart Head;
-	private final ModelPart headTop;
-	private final ModelPart Body;
-	private final ModelPart bodyTop;
-	private final ModelPart Tail;
-	private final ModelPart tailTop;
-
-	public LeechModel(ModelPart root) {
-		this.Head = root.getChild("Head");
-		this.headTop = root.getChild("headTop");
-		this.Body = root.getChild("Body");
-		this.bodyTop = root.getChild("bodyTop");
-		this.Tail = root.getChild("Tail");
-		this.tailTop = root.getChild("tailTop");
-	}
 	@SuppressWarnings("unused")
 
 	public static LayerDefinition createBodyLayer() {
@@ -62,10 +47,20 @@ public class LeechModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 16, 16);
 	}
+	private final ModelPart Head;
+	private final ModelPart headTop;
+	private final ModelPart Body;
+	private final ModelPart bodyTop;
+	private final ModelPart Tail;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+	private final ModelPart tailTop;
+	public LeechModel(ModelPart root) {
+		this.Head = root.getChild("Head");
+		this.headTop = root.getChild("headTop");
+		this.Body = root.getChild("Body");
+		this.bodyTop = root.getChild("bodyTop");
+		this.Tail = root.getChild("Tail");
+		this.tailTop = root.getChild("tailTop");
 	}
 
 	@Override
@@ -76,5 +71,10 @@ public class LeechModel<T extends Entity> extends EntityModel<T> {
 		bodyTop.render(poseStack, buffer, packedLight, packedOverlay);
 		Tail.render(poseStack, buffer, packedLight, packedOverlay);
 		tailTop.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

@@ -41,6 +41,14 @@ import net.minecraftforge.network.PacketDistributor;
 public class RuneEntityEventHandler {
 
 	@SubscribeEvent
+	public static void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
+		if (event.getObject() instanceof Player) {
+			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "runecontainer"),
+					new RunesContainerProvider((Player) event.getObject()));
+		}
+	}
+
+	@SubscribeEvent
 	public static void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
 		try {
 			event.getOriginal().getCapability(RunesCapabilities.RUNES).ifPresent(bco -> {
@@ -55,21 +63,18 @@ public class RuneEntityEventHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public static void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof Player) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "runecontainer"),
-					new RunesContainerProvider((Player) event.getObject()));
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerJoin(EntityJoinLevelEvent event) {
-		Entity entity = event.getEntity();
-		if (entity instanceof ServerPlayer) {
-			ServerPlayer player = (ServerPlayer) entity;
-			syncSlots(player, Collections.singletonList(player));
-		}
+	private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
+		player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+			for (int i = 0; i < runes.getSlots(); ++i) {
+				if (!runes.getStackInSlot(i).isEmpty()) {
+					ItemEntity ei = new ItemEntity(player.level, player.getX(), player.getY() + player.getEyeHeight(),
+							player.getZ(), runes.getStackInSlot(i).copy());
+					ei.setPickUpDelay(40);
+					drops.add(ei);
+					runes.setStackInSlot(i, ItemStack.EMPTY);
+				}
+			}
+		});
 	}
 
 	@SubscribeEvent
@@ -77,6 +82,14 @@ public class RuneEntityEventHandler {
 		Entity target = event.getTarget();
 		if (target instanceof ServerPlayer) {
 			syncSlots((ServerPlayer) target, Collections.singletonList(event.getEntity()));
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerDeath(LivingDropsEvent event) {
+		if (event.getEntity() instanceof Player && !event.getEntity().level.isClientSide
+				&& !event.getEntity().level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+			dropItemsAt((Player) event.getEntity(), event.getDrops());
 		}
 	}
 
@@ -108,6 +121,15 @@ public class RuneEntityEventHandler {
 	}
 
 	@SubscribeEvent
+	public static void playerJoin(EntityJoinLevelEvent event) {
+		Entity entity = event.getEntity();
+		if (entity instanceof ServerPlayer) {
+			ServerPlayer player = (ServerPlayer) entity;
+			syncSlots(player, Collections.singletonList(player));
+		}
+	}
+
+	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
 		if (event.phase == TickEvent.Phase.END) {
@@ -115,16 +137,8 @@ public class RuneEntityEventHandler {
 		}
 	}
 
-	private static void syncSlots(Player player, Collection<? extends Player> receivers) {
-		player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-			for (byte i = 0; i < runes.getSlots(); i++) {
-				syncSlot(player, i, runes.getStackInSlot(i), receivers);
-			}
-		});
-	}
-
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
-		
+
 		if (stack.getItem() instanceof BloodGourdItem gourd) {
 			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
@@ -140,28 +154,14 @@ public class RuneEntityEventHandler {
 			}
 		}
 
-		
-	
+
+
 	}
 
-	@SubscribeEvent
-	public static void playerDeath(LivingDropsEvent event) {
-		if (event.getEntity() instanceof Player && !event.getEntity().level.isClientSide
-				&& !event.getEntity().level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
-			dropItemsAt((Player) event.getEntity(), event.getDrops());
-		}
-	}
-
-	private static void dropItemsAt(Player player, Collection<ItemEntity> drops) {
+	private static void syncSlots(Player player, Collection<? extends Player> receivers) {
 		player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-			for (int i = 0; i < runes.getSlots(); ++i) {
-				if (!runes.getStackInSlot(i).isEmpty()) {
-					ItemEntity ei = new ItemEntity(player.level, player.getX(), player.getY() + player.getEyeHeight(),
-							player.getZ(), runes.getStackInSlot(i).copy());
-					ei.setPickUpDelay(40);
-					drops.add(ei);
-					runes.setStackInSlot(i, ItemStack.EMPTY);
-				}
+			for (byte i = 0; i < runes.getSlots(); i++) {
+				syncSlot(player, i, runes.getStackInSlot(i), receivers);
 			}
 		});
 	}

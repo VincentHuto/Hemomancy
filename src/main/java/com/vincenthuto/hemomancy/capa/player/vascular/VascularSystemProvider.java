@@ -16,21 +16,12 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 public class VascularSystemProvider implements ICapabilitySerializable<Tag> {
 	//@CapabilityInject(IVascularSystem.class)
-	public static final Capability<IVascularSystem> VASCULAR_CAPA = CapabilityManager.get(new CapabilityToken<IVascularSystem>() {});;
+	public static final Capability<IVascularSystem> VASCULAR_CAPA = CapabilityManager.get(new CapabilityToken<IVascularSystem>() {});
+	public static Map<EnumVeinSections, Float> getPlayerVascularSystem(Player player) {
+		return player.getCapability(VASCULAR_CAPA).orElseThrow(IllegalStateException::new).getVascularSystem();
+	}
+
 	private LazyOptional<IVascularSystem> instance = LazyOptional.of(VascularSystem::new);
-
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		return VASCULAR_CAPA.orEmpty(cap, instance);
-
-	}
-
-	@Override
-	public Tag serializeNBT() {
-		return writeNBT(VASCULAR_CAPA,
-				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
-	}
 
 	@Override
 	public void deserializeNBT(Tag nbt) {
@@ -39,8 +30,27 @@ public class VascularSystemProvider implements ICapabilitySerializable<Tag> {
 
 	}
 
-	public static Map<EnumVeinSections, Float> getPlayerVascularSystem(Player player) {
-		return player.getCapability(VASCULAR_CAPA).orElseThrow(IllegalStateException::new).getVascularSystem();
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		return VASCULAR_CAPA.orEmpty(cap, instance);
+
+	}
+
+	public void readNBT(Capability<IVascularSystem> capability, IVascularSystem instance, Direction side, Tag nbt) {
+		if (!(instance instanceof VascularSystem))
+			throw new IllegalArgumentException(
+					"Can not deserialize to an instance that isn't the default implementation");
+		CompoundTag test = (CompoundTag) nbt;
+		for (EnumVeinSections key : EnumVeinSections.values()) {
+			instance.getVascularSystem().put(key, test.getFloat(key.toString()));
+		}
+	}
+
+	@Override
+	public Tag serializeNBT() {
+		return writeNBT(VASCULAR_CAPA,
+				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
 	}
 
 	public CompoundTag writeNBT(Capability<IVascularSystem> capability, IVascularSystem instance, Direction side) {
@@ -54,16 +64,6 @@ public class VascularSystemProvider implements ICapabilitySerializable<Tag> {
 			}
 		}
 		return covenTag;
-	}
-
-	public void readNBT(Capability<IVascularSystem> capability, IVascularSystem instance, Direction side, Tag nbt) {
-		if (!(instance instanceof VascularSystem))
-			throw new IllegalArgumentException(
-					"Can not deserialize to an instance that isn't the default implementation");
-		CompoundTag test = (CompoundTag) nbt;
-		for (EnumVeinSections key : EnumVeinSections.values()) {
-			instance.getVascularSystem().put(key, test.getFloat(key.toString()));
-		}
 	}
 
 }

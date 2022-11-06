@@ -24,18 +24,18 @@ public class HematicMemoryItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal("Used to recall ancient whispers"));
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.DARK_RED);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Used to recall ancient whispers"));
 	}
 
 	@Override

@@ -23,53 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 public class CentrifugeArmsModel extends Model {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelcentrifugemodel"), "main");
-	public final ModelPart crossBrace2;
-	public final ModelPart crossBrace;
-	public final ModelPart center;
-	public final ModelPart nonCardinalArms;
-	public final ModelPart cardinalArms;
-	public final ModelPart vial1;
-	public final ModelPart vial1Empty;
-	public final ModelPart vial2;
-	public final ModelPart vial2Empty;
-	public final ModelPart vial3;
-	public final ModelPart vial3Empty;
-	public final ModelPart vial4;
-	public final ModelPart vial4Empty;
-	public final ModelPart vial5;
-	public final ModelPart vial5Empty;
-	public final ModelPart vial6;
-	public final ModelPart vial6Empty;
-	public final ModelPart vial7;
-	public final ModelPart vial7Empty;
-	public final ModelPart vial8;
-	public final ModelPart vial8Empty;
-
-	public CentrifugeArmsModel(ModelPart root) {
-		super(RenderType::entityTranslucent);
-		this.crossBrace2 = root.getChild("crossBrace2");
-		this.crossBrace = root.getChild("crossBrace");
-		this.center = root.getChild("center");
-		this.nonCardinalArms = root.getChild("nonCardinalArms");
-		this.cardinalArms = root.getChild("cardinalArms");
-		this.vial1 = root.getChild("vial1");
-		this.vial1Empty = root.getChild("vial1Empty");
-		this.vial2 = root.getChild("vial2");
-		this.vial2Empty = root.getChild("vial2Empty");
-		this.vial3 = root.getChild("vial3");
-		this.vial3Empty = root.getChild("vial3Empty");
-		this.vial4 = root.getChild("vial4");
-		this.vial4Empty = root.getChild("vial4Empty");
-		this.vial5 = root.getChild("vial5");
-		this.vial5Empty = root.getChild("vial5Empty");
-		this.vial6 = root.getChild("vial6");
-		this.vial6Empty = root.getChild("vial6Empty");
-		this.vial7 = root.getChild("vial7");
-		this.vial7Empty = root.getChild("vial7Empty");
-		this.vial8 = root.getChild("vial8");
-		this.vial8Empty = root.getChild("vial8Empty");
-	}
-
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -213,6 +166,53 @@ public class CentrifugeArmsModel extends Model {
 				PartPose.offsetAndRotation(-5.25F, 19.0F, -6.75F, 0.0F, 0.7854F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 32, 32);
+	}
+	public final ModelPart crossBrace2;
+	public final ModelPart crossBrace;
+	public final ModelPart center;
+	public final ModelPart nonCardinalArms;
+	public final ModelPart cardinalArms;
+	public final ModelPart vial1;
+	public final ModelPart vial1Empty;
+	public final ModelPart vial2;
+	public final ModelPart vial2Empty;
+	public final ModelPart vial3;
+	public final ModelPart vial3Empty;
+	public final ModelPart vial4;
+	public final ModelPart vial4Empty;
+	public final ModelPart vial5;
+	public final ModelPart vial5Empty;
+	public final ModelPart vial6;
+	public final ModelPart vial6Empty;
+	public final ModelPart vial7;
+	public final ModelPart vial7Empty;
+	public final ModelPart vial8;
+
+	public final ModelPart vial8Empty;
+
+	public CentrifugeArmsModel(ModelPart root) {
+		super(RenderType::entityTranslucent);
+		this.crossBrace2 = root.getChild("crossBrace2");
+		this.crossBrace = root.getChild("crossBrace");
+		this.center = root.getChild("center");
+		this.nonCardinalArms = root.getChild("nonCardinalArms");
+		this.cardinalArms = root.getChild("cardinalArms");
+		this.vial1 = root.getChild("vial1");
+		this.vial1Empty = root.getChild("vial1Empty");
+		this.vial2 = root.getChild("vial2");
+		this.vial2Empty = root.getChild("vial2Empty");
+		this.vial3 = root.getChild("vial3");
+		this.vial3Empty = root.getChild("vial3Empty");
+		this.vial4 = root.getChild("vial4");
+		this.vial4Empty = root.getChild("vial4Empty");
+		this.vial5 = root.getChild("vial5");
+		this.vial5Empty = root.getChild("vial5Empty");
+		this.vial6 = root.getChild("vial6");
+		this.vial6Empty = root.getChild("vial6Empty");
+		this.vial7 = root.getChild("vial7");
+		this.vial7Empty = root.getChild("vial7Empty");
+		this.vial8 = root.getChild("vial8");
+		this.vial8Empty = root.getChild("vial8Empty");
 	}
 
 	@Override

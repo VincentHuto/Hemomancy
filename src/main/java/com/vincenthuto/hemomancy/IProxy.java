@@ -2,18 +2,18 @@ package com.vincenthuto.hemomancy;
 
 public interface IProxy {
 
-	default void openJarGui() {
+	default void openGuideGui() {
+
 	}
 
-	default void openStaffGui() {
+	default void openJarGui() {
 	}
 
 	default void openManipGui() {
 
 	}
 
-	default void openGuideGui() {
-
+	default void openStaffGui() {
 	}
 
 	default void openVeinGui() {

@@ -20,28 +20,6 @@ public class BloodBindingEffect extends MobEffect {
 	}
 
 	@Override
-	public Component getDisplayName() {
-		return Component.literal("Blood Binding");
-	}
-
-	@Override
-	public boolean isBeneficial() {
-		return false;
-	}
-
-	@Override
-	public boolean isDurationEffectTick(int duration, int amplifier) {
-		return true;
-	}
-
-	@Override
-	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
-			int amplifier, double health) {
-		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
-
-	}
-
-	@Override
 	public void applyEffectTick(LivingEntity entity, int amplifier) {
 		super.applyEffectTick(entity, amplifier);
 		if (entity != null) {
@@ -95,6 +73,28 @@ public class BloodBindingEffect extends MobEffect {
 			}
 		}
 
+	}
+
+	@Override
+	public void applyInstantenousEffect(Entity source, Entity indirectSource, LivingEntity entityLivingBaseIn,
+			int amplifier, double health) {
+		super.applyInstantenousEffect(source, indirectSource, entityLivingBaseIn, amplifier, health);
+
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return Component.literal("Blood Binding");
+	}
+
+	@Override
+	public boolean isBeneficial() {
+		return false;
+	}
+
+	@Override
+	public boolean isDurationEffectTick(int duration, int amplifier) {
+		return true;
 	}
 
 }

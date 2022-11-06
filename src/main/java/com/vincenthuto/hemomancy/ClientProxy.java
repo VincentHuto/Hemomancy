@@ -17,6 +17,24 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class ClientProxy implements IProxy {
 
+	public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
+
+	@SubscribeEvent
+	public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
+		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+
+	}
+
+	@SubscribeEvent
+	public static void onModelBake(BakingCompleted evt) {
+		bloodAbsorptionModel = evt.getModels()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+		bloodProjectionModel = evt.getModels()
+				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+
+	}
+
 	@Override
 	public void openGuideGui() {
 		Minecraft.getInstance().setScreen(new HemoTitlePage());
@@ -29,35 +47,17 @@ public class ClientProxy implements IProxy {
 	}
 
 	@Override
-	public void openStaffGui() {
-		Minecraft.getInstance().setScreen(new MorphlingJarViewerScreen());
-	}
-
-	@Override
 	public void openManipGui() {
 		Minecraft.getInstance().setScreen(new ChooseManipScreen());
 	}
 
 	@Override
+	public void openStaffGui() {
+		Minecraft.getInstance().setScreen(new MorphlingJarViewerScreen());
+	}
+	@Override
 	public void openVeinGui() {
 		Minecraft.getInstance().setScreen(new ChooseVeinScreen());
-	}
-
-	public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
-
-	@SubscribeEvent
-	public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
-		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
-		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
-
-	}
-	@SubscribeEvent
-	public static void onModelBake(BakingCompleted evt) {
-		bloodAbsorptionModel = evt.getModels()
-				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
-		bloodProjectionModel = evt.getModels()
-				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
-
 	}
 
 }

@@ -53,110 +53,6 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 				Minecraft.getInstance().getEntityModels().bakeLayer(BloodAvatarModel.layer));
 	}
 
-	@SuppressWarnings("unused")
-	@Override
-	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
-			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
-		if (ent instanceof Player player) {
-			player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
-
-				if (manip.isAvatarActive()) {
-					float f = (float) ent.tickCount + pPartialTicks;
-					EntityModel<T> originalModel = this.getParentModel();
-					modelBloodAvatar.prepareMobModel(ent, pLimbSwing, pLimbSwingAmount, pPartialTicks);
-					this.getParentModel().copyPropertiesTo(modelBloodAvatar);
-					ms.pushPose();
-					ms.scale(2.75f, 2.75f, 2.75f);
-					VertexConsumer swirlConsumer = pBuffer
-							.getBuffer(RenderType.energySwirl(glowTexture, this.xOffset(f) % 4.0F, f * .01F % 2.0F));
-					modelBloodAvatar.setupAnim(ent, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
-					modelBloodAvatar.renderToBuffer(ms, swirlConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 0.5F,
-							0.5F, 0.5F, 0.3F);
-					ms.popPose();
-
-					if (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.MAIN_HAND),
-								TransformType.FIRST_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, ms, pBuffer, pPackedLight);
-					}
-					if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
-						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.OFF_HAND),
-								TransformType.FIRST_PERSON_LEFT_HAND, HumanoidArm.LEFT, ms, pBuffer, pPackedLight);
-					}
-
-				}
-			});
-		}
-	}
-
-	protected float xOffset(float p_116683_) {
-		return p_116683_ * 0.01F;
-	}
-
-	protected void renderArmWithItemPlayer(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
-			int pCombinedLight) {
-		if (stack.is(Items.SPYGLASS) && entity.getUseItem() == stack && entity.swingTime == 0) {
-			this.renderArmWithSpyglass(entity, swirlConsumer, stack, arm, poseStack, buffer, pCombinedLight);
-		} else {
-			renderArmWithItem(entity, swirlConsumer, stack, transform, arm, poseStack, buffer, pCombinedLight);
-		}
-
-	}
-
-	protected void renderArmWithItem(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
-			int pCombinedLight) {
-		if (!stack.isEmpty()) {
-			poseStack.pushPose();
-			this.getParentModel().translateToHand(arm, poseStack);
-			poseStack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-			poseStack.scale(2, 2, 2);
-			boolean flag = arm == HumanoidArm.LEFT;
-			poseStack.translate((double) ((float) (flag ? -1 : 1) / 4.0F), 0.125D, 1.5 * -0.625D);
-			renderItem(entity, swirlConsumer, stack, transform, flag, poseStack, buffer, pCombinedLight);
-			poseStack.popPose();
-		}
-	}
-
-	private void renderArmWithSpyglass(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight) {
-		poseStack.pushPose();
-		ModelPart modelpart = this.getParentModel().getHead();
-		float f = modelpart.xRot;
-		modelpart.xRot = Mth.clamp(modelpart.xRot, (-(float) Math.PI / 6F), ((float) Math.PI / 2F));
-		modelpart.translateAndRotate(poseStack);
-		modelpart.xRot = f;
-		CustomHeadLayer.translateToHead(poseStack, false);
-		boolean flag = arm == HumanoidArm.LEFT;
-		poseStack.translate((double) ((flag ? -2.5F : 2.5F) / 16.0F), -0.0625D, 0.0D);
-		renderItem(entity, swirlConsumer, stack, ItemTransforms.TransformType.HEAD, false, poseStack, buffer,
-				pCombinedLight);
-		poseStack.popPose();
-	}
-
-	public void renderItem(LivingEntity pLivingEntity, VertexConsumer swirlConsumer, ItemStack pItemStack,
-			ItemTransforms.TransformType pTransformType, boolean pLeftHand, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pCombinedLight) {
-		if (!pItemStack.isEmpty()) {
-			renderStatic(pLivingEntity, swirlConsumer, pItemStack, pTransformType, pLeftHand, pMatrixStack, pBuffer,
-					pLivingEntity.level, pCombinedLight, OverlayTexture.NO_OVERLAY,
-					pLivingEntity.getId() + pTransformType.ordinal());
-
-		}
-	}
-
-	public void renderStatic(@Nullable LivingEntity p_174243_, VertexConsumer swirlConsumer, ItemStack p_174244_,
-			ItemTransforms.TransformType p_174245_, boolean p_174246_, PoseStack p_174247_, MultiBufferSource p_174248_,
-			@Nullable Level p_174249_, int p_174250_, int p_174251_, int p_174252_) {
-		if (!p_174244_.isEmpty()) {
-			BakedModel bakedmodel = Minecraft.getInstance().getItemRenderer().getModel(p_174244_, p_174249_, p_174243_,
-					p_174252_);
-			this.render(p_174244_, swirlConsumer, p_174245_, p_174246_, p_174247_, p_174248_, p_174250_, p_174251_,
-					bakedmodel);
-		}
-	}
-
 	public void render(ItemStack pItemStack, VertexConsumer swirlConsumer, ItemTransforms.TransformType pTransformType,
 			boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
 			int pCombinedOverlay, BakedModel pModel) {
@@ -186,6 +82,95 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		}
 	}
 
+	@SuppressWarnings("unused")
+	@Override
+	public void render(PoseStack ms, MultiBufferSource pBuffer, int pPackedLight, T ent, float pLimbSwing,
+			float pLimbSwingAmount, float pPartialTicks, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch) {
+		if (ent instanceof Player player) {
+			player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
+
+				if (manip.isAvatarActive()) {
+					float f = ent.tickCount + pPartialTicks;
+					EntityModel<T> originalModel = this.getParentModel();
+					modelBloodAvatar.prepareMobModel(ent, pLimbSwing, pLimbSwingAmount, pPartialTicks);
+					this.getParentModel().copyPropertiesTo(modelBloodAvatar);
+					ms.pushPose();
+					ms.scale(2.75f, 2.75f, 2.75f);
+					VertexConsumer swirlConsumer = pBuffer
+							.getBuffer(RenderType.energySwirl(glowTexture, this.xOffset(f) % 4.0F, f * .01F % 2.0F));
+					modelBloodAvatar.setupAnim(ent, pLimbSwing, pLimbSwingAmount, pAgeInTicks, pNetHeadYaw, pHeadPitch);
+					modelBloodAvatar.renderToBuffer(ms, swirlConsumer, pPackedLight, OverlayTexture.NO_OVERLAY, 0.5F,
+							0.5F, 0.5F, 0.3F);
+					ms.popPose();
+
+					if (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
+						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.MAIN_HAND),
+								TransformType.FIRST_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, ms, pBuffer, pPackedLight);
+					}
+					if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
+						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.OFF_HAND),
+								TransformType.FIRST_PERSON_LEFT_HAND, HumanoidArm.LEFT, ms, pBuffer, pPackedLight);
+					}
+
+				}
+			});
+		}
+	}
+
+	protected void renderArmWithItem(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
+			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
+			int pCombinedLight) {
+		if (!stack.isEmpty()) {
+			poseStack.pushPose();
+			this.getParentModel().translateToHand(arm, poseStack);
+			poseStack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+			poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+			poseStack.scale(2, 2, 2);
+			boolean flag = arm == HumanoidArm.LEFT;
+			poseStack.translate((flag ? -1 : 1) / 4.0F, 0.125D, 1.5 * -0.625D);
+			renderItem(entity, swirlConsumer, stack, transform, flag, poseStack, buffer, pCombinedLight);
+			poseStack.popPose();
+		}
+	}
+
+	protected void renderArmWithItemPlayer(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
+			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
+			int pCombinedLight) {
+		if (stack.is(Items.SPYGLASS) && entity.getUseItem() == stack && entity.swingTime == 0) {
+			this.renderArmWithSpyglass(entity, swirlConsumer, stack, arm, poseStack, buffer, pCombinedLight);
+		} else {
+			renderArmWithItem(entity, swirlConsumer, stack, transform, arm, poseStack, buffer, pCombinedLight);
+		}
+
+	}
+
+	private void renderArmWithSpyglass(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
+			HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer, int pCombinedLight) {
+		poseStack.pushPose();
+		ModelPart modelpart = this.getParentModel().getHead();
+		float f = modelpart.xRot;
+		modelpart.xRot = Mth.clamp(modelpart.xRot, (-(float) Math.PI / 6F), ((float) Math.PI / 2F));
+		modelpart.translateAndRotate(poseStack);
+		modelpart.xRot = f;
+		CustomHeadLayer.translateToHead(poseStack, false);
+		boolean flag = arm == HumanoidArm.LEFT;
+		poseStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625D, 0.0D);
+		renderItem(entity, swirlConsumer, stack, ItemTransforms.TransformType.HEAD, false, poseStack, buffer,
+				pCombinedLight);
+		poseStack.popPose();
+	}
+
+	public void renderItem(LivingEntity pLivingEntity, VertexConsumer swirlConsumer, ItemStack pItemStack,
+			ItemTransforms.TransformType pTransformType, boolean pLeftHand, PoseStack pMatrixStack,
+			MultiBufferSource pBuffer, int pCombinedLight) {
+		if (!pItemStack.isEmpty()) {
+			renderStatic(pLivingEntity, swirlConsumer, pItemStack, pTransformType, pLeftHand, pMatrixStack, pBuffer,
+					pLivingEntity.level, pCombinedLight, OverlayTexture.NO_OVERLAY,
+					pLivingEntity.getId() + pTransformType.ordinal());
+
+		}
+	}
+
 	private void renderModelLists(BakedModel pModel, ItemStack pStack, int pCombinedLight, int pCombinedOverlay,
 			PoseStack pMatrixStack, VertexConsumer pBuffer) {
 		RandomSource random = RandomSource.create();
@@ -211,11 +196,26 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 			if (flag && bakedquad.isTinted()) {
 			}
 
-			float f = (float) (i >> 16 & 255) / 255.0F;
-			float f1 = (float) (i >> 8 & 255) / 255.0F;
-			float f2 = (float) (i & 255) / 255.0F;
+			float f = (i >> 16 & 255) / 255.0F;
+			float f1 = (i >> 8 & 255) / 255.0F;
+			float f2 = (i & 255) / 255.0F;
 			pBuffer.putBulkData(posestack$pose, bakedquad, f, f1, f2, pCombinedLight, pCombinedOverlay);
 		}
 
+	}
+
+	public void renderStatic(@Nullable LivingEntity p_174243_, VertexConsumer swirlConsumer, ItemStack p_174244_,
+			ItemTransforms.TransformType p_174245_, boolean p_174246_, PoseStack p_174247_, MultiBufferSource p_174248_,
+			@Nullable Level p_174249_, int p_174250_, int p_174251_, int p_174252_) {
+		if (!p_174244_.isEmpty()) {
+			BakedModel bakedmodel = Minecraft.getInstance().getItemRenderer().getModel(p_174244_, p_174249_, p_174243_,
+					p_174252_);
+			this.render(p_174244_, swirlConsumer, p_174245_, p_174246_, p_174247_, p_174248_, p_174250_, p_174251_,
+					bakedmodel);
+		}
+	}
+
+	protected float xOffset(float p_116683_) {
+		return p_116683_ * 0.01F;
 	}
 }

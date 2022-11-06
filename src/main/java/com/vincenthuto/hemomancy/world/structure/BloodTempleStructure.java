@@ -34,11 +34,17 @@ public class BloodTempleStructure extends Structure {
 					.apply(instance, BloodTempleStructure::new))
 			.codec();
 
+	private static boolean extraSpawningChecks(Structure.GenerationContext context) {
+		ChunkPos chunkpos = context.chunkPos();
+		return context.chunkGenerator().getFirstOccupiedHeight(chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, context.heightAccessor(), context.randomState()) < 150;
+	}
 	private final Holder<StructureTemplatePool> startPool;
 	private final Optional<ResourceLocation> startJigsawName;
 	private final int size;
 	private final HeightProvider startHeight;
 	private final Optional<Heightmap.Types> projectStartToHeightmap;
+
 	private final int maxDistanceFromCenter;
 
 	public BloodTempleStructure(Structure.StructureSettings config, Holder<StructureTemplatePool> startPool,
@@ -51,12 +57,6 @@ public class BloodTempleStructure extends Structure {
 		this.startHeight = startHeight;
 		this.projectStartToHeightmap = projectStartToHeightmap;
 		this.maxDistanceFromCenter = maxDistanceFromCenter;
-	}
-
-	private static boolean extraSpawningChecks(Structure.GenerationContext context) {
-		ChunkPos chunkpos = context.chunkPos();
-		return context.chunkGenerator().getFirstOccupiedHeight(chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),
-				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, context.heightAccessor(), context.randomState()) < 150;
 	}
 
 	@Override

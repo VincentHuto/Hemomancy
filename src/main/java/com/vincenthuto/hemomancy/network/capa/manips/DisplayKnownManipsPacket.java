@@ -12,9 +12,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class DisplayKnownManipsPacket {
 
-	public DisplayKnownManipsPacket() {
-	}
-
 	public static DisplayKnownManipsPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new DisplayKnownManipsPacket();
@@ -40,5 +37,8 @@ public class DisplayKnownManipsPacket {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public DisplayKnownManipsPacket() {
 	}
 }

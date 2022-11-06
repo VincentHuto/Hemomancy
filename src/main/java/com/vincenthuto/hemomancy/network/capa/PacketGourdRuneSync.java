@@ -35,13 +35,6 @@ public class PacketGourdRuneSync {
 		this.amount = amount;
 	}
 
-	public void toBytes(FriendlyByteBuf buf) {
-		buf.writeInt(this.playerId);
-		buf.writeByte(this.slot);
-		buf.writeItem(this.mindrune);
-		buf.writeDouble(this.amount);
-	}
-
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			if (mindrune.getItem() instanceof BloodGourdItem gourd) {
@@ -58,5 +51,12 @@ public class PacketGourdRuneSync {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public void toBytes(FriendlyByteBuf buf) {
+		buf.writeInt(this.playerId);
+		buf.writeByte(this.slot);
+		buf.writeItem(this.mindrune);
+		buf.writeDouble(this.amount);
 	}
 }

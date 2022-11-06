@@ -20,14 +20,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifugeBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private final CentrifugeArmsModel arms;
 	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_centrifuge_arms.png");
-
-	public VialCentrifugeRenderer(BlockEntityRendererProvider.Context p_173636_) {
-		arms = new CentrifugeArmsModel(p_173636_.bakeLayer(CentrifugeArmsModel.LAYER_LOCATION));
-	}
-
 	public static double mapOneRangeToAnother(double sourceNumber, double fromA, double fromB, double toA, double toB,
 			int decimalPrecision) {
 		double deltaA = fromB - fromA;
@@ -38,6 +32,12 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		double finalNumber = (sourceNumber * scale) + offset;
 		int calcScale = (int) Math.pow(10, decimalPrecision);
 		return finalNumber;
+	}
+
+	private final CentrifugeArmsModel arms;
+
+	public VialCentrifugeRenderer(BlockEntityRendererProvider.Context p_173636_) {
+		arms = new CentrifugeArmsModel(p_173636_.bakeLayer(CentrifugeArmsModel.LAYER_LOCATION));
 	}
 
 	@Override

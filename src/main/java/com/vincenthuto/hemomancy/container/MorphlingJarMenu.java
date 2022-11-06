@@ -18,15 +18,26 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class MorphlingJarMenu extends AbstractContainerMenu {
+	public int slotcount = 0;
+
+	private int slotID;
+
+	public String itemKey = "";
+
+	private Inventory playerInv;
+
+	public MorphlingJarItemHandler handler;
+	public MorphlingJarMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
+			Player playerEntity) {
+		this(windowId, world, pos, playerInventory, playerEntity);
+	}
 	public MorphlingJarMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
-
 	public MorphlingJarMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
-
 	public MorphlingJarMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(ContainerInit.morphling_jar.get(), windowId);
@@ -53,31 +64,26 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			playerEntity.closeContainer();
 	}
 
-	public MorphlingJarMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
-			Player playerEntity) {
-		this(windowId, world, pos, playerInventory, playerEntity);
-	}
+	private void addMySlots(ItemStack stack) {
+		if (handler == null)
+			return;
 
-	public int slotcount = 0;
-	private int slotID;
-	public String itemKey = "";
-	private Inventory playerInv;
-	public MorphlingJarItemHandler handler;
+		int cols = slotcount % 2 == 0 ? 2 : 10;
+		int rows = slotcount / cols;
+		int slotindex = 0;
 
-	@Override
-	public boolean stillValid(Player playerIn) {
-		if (slotID == -106)
-			return playerIn.getOffhandItem().getItem() instanceof ItemMorphlingJar;
-		return playerIn.getInventory().getItem(slotID).getItem() instanceof ItemMorphlingJar;
-	}
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				int x = 70 + col * 18;
+				int y = 95 + row * 18;
 
-	@Override
-	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-		super.clicked(slot, dragType, clickTypeIn, player);
-		if (slot >= 0 && clickTypeIn != ClickType.SWAP
-				&& !(getSlot(slot).getItem().getItem() instanceof ItemMorphlingJar)) {
-			getSlot(slot).container.setChanged();
+				this.addSlot(new MorphlingJarSlot(handler, slotindex, x + 1, y + 1));
+				slotindex++;
+				if (slotindex >= slotcount)
+					break;
+			}
 		}
+
 	}
 
 	private void addPlayerSlots(Inventory playerInventory) {
@@ -115,50 +121,13 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		}
 	}
 
-	private void addMySlots(ItemStack stack) {
-		if (handler == null)
-			return;
-
-		int cols = slotcount % 2 == 0 ? 2 : 10;
-		int rows = slotcount / cols;
-		int slotindex = 0;
-
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				int x = 70 + col * 18;
-				int y = 95 + row * 18;
-
-				this.addSlot(new MorphlingJarSlot(handler, slotindex, x + 1, y + 1));
-				slotindex++;
-				if (slotindex >= slotcount)
-					break;
-			}
-		}
-
-	}
-
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
-			ItemStack itemstack1 = slot.getItem();
-			if (itemstack1.getCount() < 1) {
-				itemstack = itemstack1.copy();
-				if (index < bagslotcount) {
-					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
-						return ItemStack.EMPTY;
-				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
-					return ItemStack.EMPTY;
-				}
-				if (itemstack1.isEmpty())
-					slot.set(ItemStack.EMPTY);
-				else
-					slot.setChanged();
-			}
+	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slot, dragType, clickTypeIn, player);
+		if (slot >= 0 && clickTypeIn != ClickType.SWAP
+				&& !(getSlot(slot).getItem().getItem() instanceof ItemMorphlingJar)) {
+			getSlot(slot).container.setChanged();
 		}
-		return itemstack;
 	}
 
 	private ItemStack findMorphlingJar(Player playerEntity) {
@@ -185,5 +154,36 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			}
 		}
 		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		Slot slot = this.slots.get(index);
+		if (slot != null && slot.hasItem()) {
+			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
+			ItemStack itemstack1 = slot.getItem();
+			if (itemstack1.getCount() < 1) {
+				itemstack = itemstack1.copy();
+				if (index < bagslotcount) {
+					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
+						return ItemStack.EMPTY;
+				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+					return ItemStack.EMPTY;
+				}
+				if (itemstack1.isEmpty())
+					slot.set(ItemStack.EMPTY);
+				else
+					slot.setChanged();
+			}
+		}
+		return itemstack;
+	}
+
+	@Override
+	public boolean stillValid(Player playerIn) {
+		if (slotID == -106)
+			return playerIn.getOffhandItem().getItem() instanceof ItemMorphlingJar;
+		return playerIn.getInventory().getItem(slotID).getItem() instanceof ItemMorphlingJar;
 	}
 }

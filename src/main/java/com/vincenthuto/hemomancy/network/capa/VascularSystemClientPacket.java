@@ -13,7 +13,11 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class VascularSystemClientPacket {
 
-	public VascularSystemClientPacket() {
+	public static VascularSystemClientPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new VascularSystemClientPacket();
+	}
+
+	public static void encode(final VascularSystemClientPacket msg, final FriendlyByteBuf packetBuffer) {
 
 	}
 
@@ -30,11 +34,7 @@ public class VascularSystemClientPacket {
 		ctx.get().setPacketHandled(true);
 	}
 
-	public static void encode(final VascularSystemClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public VascularSystemClientPacket() {
 
-	}
-
-	public static VascularSystemClientPacket decode(final FriendlyByteBuf packetBuffer) {
-		return new VascularSystemClientPacket();
 	}
 }

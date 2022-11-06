@@ -19,18 +19,6 @@ import net.minecraft.world.entity.Entity;
 public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelenthralleddoll"), "main");
-	private final ModelPart head;
-	private final ModelPart body;
-	private final ModelPart leftArm;
-	private final ModelPart rightArm;
-
-	public EnthralledDollModel(ModelPart root) {
-		this.head = root.getChild("head");
-		this.body = root.getChild("body");
-		this.leftArm = root.getChild("leftArm");
-		this.rightArm = root.getChild("rightArm");
-	}
-
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -82,11 +70,17 @@ public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart head;
+	private final ModelPart body;
+	private final ModelPart leftArm;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
+	private final ModelPart rightArm;
 
+	public EnthralledDollModel(ModelPart root) {
+		this.head = root.getChild("head");
+		this.body = root.getChild("body");
+		this.leftArm = root.getChild("leftArm");
+		this.rightArm = root.getChild("rightArm");
 	}
 
 	@Override
@@ -96,5 +90,11 @@ public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 		body.render(poseStack, buffer, packedLight, packedOverlay);
 		leftArm.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
 	}
 }

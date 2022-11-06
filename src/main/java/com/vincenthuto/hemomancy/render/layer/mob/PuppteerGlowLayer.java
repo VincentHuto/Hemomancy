@@ -27,6 +27,7 @@ public class PuppteerGlowLayer<T extends LivingEntity> extends EyesLayer<T, Bloo
 				pAgeInTicks, pNetHeadYaw, pHeadPitch);
 	}
 
+	@Override
 	public RenderType renderType() {
 		return GLOW;
 	}

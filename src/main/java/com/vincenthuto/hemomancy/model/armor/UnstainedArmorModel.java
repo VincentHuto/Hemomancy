@@ -40,26 +40,6 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 	public static final Lazy<UnstainedArmorModel<LivingEntity>> boots = Lazy.of(
 			() -> new UnstainedArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(UNSTAINED_FEET_LAYER)));
 
-	public UnstainedArmorModel(ModelPart root) {
-		super(root, RenderType::entityTranslucent);
-
-	}
-
-	@SuppressWarnings("unused")
-	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
-		PartDefinition partdefinition = meshdefinition.getRoot();
-		if (slot.equals(EquipmentSlot.HEAD)) {
-			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
-					.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1F)),
-					PartPose.offset(0.0F, 0.0F, 0.0F));
-
-		}
-
-		return LayerDefinition.create(meshdefinition, 256, 256);
-
-	}
-
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
@@ -186,10 +166,24 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+	@SuppressWarnings("unused")
+	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		if (slot.equals(EquipmentSlot.HEAD)) {
+			PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0)
+					.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1F)),
+					PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		}
+
+		return LayerDefinition.create(meshdefinition, 256, 256);
+
+	}
+
+	public UnstainedArmorModel(ModelPart root) {
+		super(root, RenderType::entityTranslucent);
+
 	}
 
 	@Override
@@ -202,5 +196,11 @@ public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 }

@@ -17,12 +17,36 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 		this.itemStack = itemStack;
 	}
 
-	private CompoundTag getTag() {
-		CompoundTag tag;
-		tag = itemStack.getTag();
-		if (tag == null)
-			itemStack.setTag(tag = new CompoundTag());
-		return tag;
+	@Override
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+		if (amount == 0)
+			return ItemStack.EMPTY;
+
+		validateSlotIndex(slot);
+
+		ItemStack existing = getStackInSlot(slot);
+
+		if (existing.getCount() <= 0)
+			return ItemStack.EMPTY;
+
+		int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+		if (existing.getCount() <= toExtract) {
+			if (!simulate) {
+				setStackInSlot(slot, ItemStack.EMPTY);
+			}
+			return existing;
+		} else {
+			if (!simulate) {
+				setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+			}
+			return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+		}
+	}
+
+	@Override
+	public int getSlotLimit(int slot) {
+		return 64;
 	}
 
 	// Ensure that the serialization is always compatible, even if it were to change
@@ -47,35 +71,12 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 		return ItemStack.EMPTY;
 	}
 
-	@Override
-	public void setStackInSlot(int slot, ItemStack stack) {
-		validateSlotIndex(slot);
-
-		CompoundTag itemTag = null;
-		boolean hasStack = stack.getCount() > 0;
-		if (hasStack) {
-			itemTag = new CompoundTag();
-			itemTag.putInt("Slot", slot);
-			stack.save(itemTag);
-		}
-
-		ListTag tagList = getTag().getList("Items", Tag.TAG_COMPOUND);
-		for (int i = 0; i < tagList.size(); i++) {
-			CompoundTag existing = tagList.getCompound(i);
-			if (existing.getInt("Slot") != slot)
-				continue;
-
-			if (hasStack)
-				tagList.set(i, itemTag);
-			else
-				tagList.remove(i);
-			return;
-		}
-
-		if (hasStack)
-			tagList.add(itemTag);
-
-		getTag().put("Items", tagList);
+	private CompoundTag getTag() {
+		CompoundTag tag;
+		tag = itemStack.getTag();
+		if (tag == null)
+			itemStack.setTag(tag = new CompoundTag());
+		return tag;
 	}
 
 	@Override
@@ -115,40 +116,39 @@ public class CharmItemHandler implements IItemHandlerModifiable {
 	}
 
 	@Override
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (amount == 0)
-			return ItemStack.EMPTY;
-
-		validateSlotIndex(slot);
-
-		ItemStack existing = getStackInSlot(slot);
-
-		if (existing.getCount() <= 0)
-			return ItemStack.EMPTY;
-
-		int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-		if (existing.getCount() <= toExtract) {
-			if (!simulate) {
-				setStackInSlot(slot, ItemStack.EMPTY);
-			}
-			return existing;
-		} else {
-			if (!simulate) {
-				setStackInSlot(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
-			}
-			return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
-		}
-	}
-
-	@Override
-	public int getSlotLimit(int slot) {
-		return 64;
-	}
-
-	@Override
 	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 		return false;
+	}
+
+	@Override
+	public void setStackInSlot(int slot, ItemStack stack) {
+		validateSlotIndex(slot);
+
+		CompoundTag itemTag = null;
+		boolean hasStack = stack.getCount() > 0;
+		if (hasStack) {
+			itemTag = new CompoundTag();
+			itemTag.putInt("Slot", slot);
+			stack.save(itemTag);
+		}
+
+		ListTag tagList = getTag().getList("Items", Tag.TAG_COMPOUND);
+		for (int i = 0; i < tagList.size(); i++) {
+			CompoundTag existing = tagList.getCompound(i);
+			if (existing.getInt("Slot") != slot)
+				continue;
+
+			if (hasStack)
+				tagList.set(i, itemTag);
+			else
+				tagList.remove(i);
+			return;
+		}
+
+		if (hasStack)
+			tagList.add(itemTag);
+
+		getTag().put("Items", tagList);
 	}
 
 	private void validateSlotIndex(int slot) {

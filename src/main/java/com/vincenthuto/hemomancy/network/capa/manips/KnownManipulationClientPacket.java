@@ -13,7 +13,11 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class KnownManipulationClientPacket {
 
-	public KnownManipulationClientPacket() {
+	public static KnownManipulationClientPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new KnownManipulationClientPacket();
+	}
+
+	public static void encode(final KnownManipulationClientPacket msg, final FriendlyByteBuf packetBuffer) {
 
 	}
 
@@ -30,11 +34,7 @@ public class KnownManipulationClientPacket {
 		ctx.get().setPacketHandled(true);
 	}
 
-	public static void encode(final KnownManipulationClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public KnownManipulationClientPacket() {
 
-	}
-
-	public static KnownManipulationClientPacket decode(final FriendlyByteBuf packetBuffer) {
-		return new KnownManipulationClientPacket();
 	}
 }

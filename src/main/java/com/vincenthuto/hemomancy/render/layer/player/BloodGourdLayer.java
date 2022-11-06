@@ -27,14 +27,19 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 	public static ResourceLocation black = getGourdTexture("black");
 	public static ResourceLocation curved = getGourdTexture("curved_horn");
 
+	public static ResourceLocation getGourdTexture(String path) {
+		return new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/blood_gourd/" + path + ".png");
+
+	}
 	private final BloodGourdModel<T> modelBloodGourd;
+
 	private final CurvedHornModel<T> modelCurvedHorn;
 
 	public BloodGourdLayer(LivingEntityRenderer<T, M> owner) {
 		super(owner);
-		modelBloodGourd = new BloodGourdModel<T>(
+		modelBloodGourd = new BloodGourdModel<>(
 				Minecraft.getInstance().getEntityModels().bakeLayer(BloodGourdModel.blood_gourd));
-		modelCurvedHorn = new CurvedHornModel<T>(
+		modelCurvedHorn = new CurvedHornModel<>(
 				Minecraft.getInstance().getEntityModels().bakeLayer(CurvedHornModel.curved_horn));
 	}
 
@@ -74,10 +79,5 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 
 	private void translateToBody(PoseStack matrixStack) {
 		this.getParentModel().body.translateAndRotate(matrixStack);
-	}
-
-	public static ResourceLocation getGourdTexture(String path) {
-		return new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/blood_gourd/" + path + ".png");
-
 	}
 }

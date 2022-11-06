@@ -17,17 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 public class AbhorentThoughtModel<EntityAbhorentThought extends Entity> extends EntityModel<EntityAbhorentThought> {
-	
+
 	public static final ModelLayerLocation abhorent_thought = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought"), "main");
-	
-	private final ModelPart whole;
-	private final ModelPart hips;
-
-	public AbhorentThoughtModel(ModelPart root) {
-		this.whole = root.getChild("whole");
-		this.hips = root.getChild("hips");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createLayers() {
@@ -452,12 +444,13 @@ public class AbhorentThoughtModel<EntityAbhorentThought extends Entity> extends 
 
 		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
+	private final ModelPart whole;
 
-	@Override
-	public void setupAnim(EntityAbhorentThought entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		
+	private final ModelPart hips;
 
+	public AbhorentThoughtModel(ModelPart root) {
+		this.whole = root.getChild("whole");
+		this.hips = root.getChild("hips");
 	}
 
 	@Override
@@ -465,5 +458,12 @@ public class AbhorentThoughtModel<EntityAbhorentThought extends Entity> extends 
 			float red, float green, float blue, float alpha) {
 		whole.render(poseStack, buffer, packedLight, packedOverlay);
 		hips.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(EntityAbhorentThought entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
+
 	}
 }

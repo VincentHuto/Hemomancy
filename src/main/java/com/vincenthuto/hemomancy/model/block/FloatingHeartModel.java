@@ -17,19 +17,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 public class FloatingHeartModel extends Model {
-	
+
 	public static final ModelLayerLocation mortal_display = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "mortal_display"), "main");
 
-	
-	private final ModelPart aorta;
-	private final ModelPart bb_main;
-
-	public FloatingHeartModel(ModelPart root) {
-		super(RenderType::entityTranslucent);
-		this.aorta = root.getChild("aorta");
-		this.bb_main = root.getChild("bb_main");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -64,6 +55,15 @@ public class FloatingHeartModel extends Model {
 				PartPose.offset(0.0F, 24.0F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
+	}
+	private final ModelPart aorta;
+
+	private final ModelPart bb_main;
+
+	public FloatingHeartModel(ModelPart root) {
+		super(RenderType::entityTranslucent);
+		this.aorta = root.getChild("aorta");
+		this.bb_main = root.getChild("bb_main");
 	}
 
 	@Override

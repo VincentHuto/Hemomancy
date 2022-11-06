@@ -48,11 +48,43 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 					Block.box(9, 7, 9, 10, 10, 10), Block.box(6, 7, 9, 7, 10, 10), Block.box(6, 7, 6, 7, 10, 7))
 			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
+		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
+	}
 	public VialCentrifugeBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(LIT, false));
 
 	}
+
+	@Override
+	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
+		super.attack(state, worldIn, pos, player);
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(FACING, LIT);
+	}
+	@Override
+	public RenderShape getRenderShape(BlockState p_60550_) {
+		return RenderShape.MODEL;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		return SHAPE_N;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(LIT,
+				false);
+	}
+
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
@@ -67,23 +99,22 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
-		super.triggerEvent(state, world, pos, id, param);
-		BlockEntity tileentity = world.getBlockEntity(pos);
-		return tileentity != null && tileentity.triggerEvent(id, param);
+	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING))).setValue(LIT, false);
 	}
 
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
 	@Override
-	public InteractionResult use(BlockState p_48706_, Level p_48707_, BlockPos p_48708_, Player p_48709_,
-			InteractionHand p_48710_, BlockHitResult p_48711_) {
-		this.openContainer(p_48707_, p_48708_, p_48709_);
-		return InteractionResult.CONSUME;
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+			boolean isMoving) {
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
+		return new VialCentrifugeBlockEntity(arg0, arg1);
+	}
+
+	@Override
+	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
 	}
 
 	protected void openContainer(Level level, BlockPos pos, Player player) {
@@ -97,53 +128,22 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState p_60550_) {
-		return RenderShape.MODEL;
-	}
-
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
-	}
-
-	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-	}
-
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-			boolean isMoving) {
-	}
-
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(LIT,
-				false);
-	}
-
-	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(LIT, false);
 	}
 
 	@Override
-	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.getRotation(state.getValue(FACING))).setValue(LIT, false);
+	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
+		super.triggerEvent(state, world, pos, id, param);
+		BlockEntity tileentity = world.getBlockEntity(pos);
+		return tileentity != null && tileentity.triggerEvent(id, param);
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT);
-	}
-
-	@Override
-	public void attack(BlockState state, Level worldIn, BlockPos pos, Player player) {
-		super.attack(state, worldIn, pos, player);
-	}
-
-	@Override
-	public BlockEntity newBlockEntity(BlockPos arg0, BlockState arg1) {
-		return new VialCentrifugeBlockEntity(arg0, arg1);
+	public InteractionResult use(BlockState p_48706_, Level p_48707_, BlockPos p_48708_, Player p_48709_,
+			InteractionHand p_48710_, BlockHitResult p_48711_) {
+		this.openContainer(p_48707_, p_48708_, p_48709_);
+		return InteractionResult.CONSUME;
 	}
 
 }

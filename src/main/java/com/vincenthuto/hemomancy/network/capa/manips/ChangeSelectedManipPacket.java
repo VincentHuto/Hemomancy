@@ -14,15 +14,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class ChangeSelectedManipPacket {
 
-	float parTick;
-
-	public ChangeSelectedManipPacket() {
-	}
-
-	public ChangeSelectedManipPacket(float par) {
-		this.parTick = par;
-	}
-
 	public static ChangeSelectedManipPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new ChangeSelectedManipPacket(buffer.readFloat());
@@ -68,6 +59,15 @@ public class ChangeSelectedManipPacket {
 
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	float parTick;
+
+	public ChangeSelectedManipPacket() {
+	}
+
+	public ChangeSelectedManipPacket(float par) {
+		this.parTick = par;
 	}
 
 }

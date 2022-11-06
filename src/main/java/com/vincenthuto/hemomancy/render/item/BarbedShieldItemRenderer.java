@@ -19,9 +19,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class BarbedShieldItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	private final BarbedShieldModel modelShield;
 	public static final Material LOCATION_ROYAL_GUARD_SHIELD_BASE = new Material(TextureAtlas.LOCATION_BLOCKS,
 			new ResourceLocation(Hemomancy.MOD_ID, "entity/barbed_shield/model_barbed_shield"));
+	private final BarbedShieldModel modelShield;
 
 	public BarbedShieldItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);

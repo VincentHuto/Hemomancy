@@ -9,16 +9,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.world.entity.Entity;
 
 public class EntityParticleUtils {
-	public static Predicate<Entity> getEntityPredicate(Entity ent) {
-		for (Predicate<Entity> pred : HemoEntityPredicates.BLOODTYPES) {
-			if (pred.test(ent)) {
-				return pred;
-			}
-		}
-		return HemoEntityPredicates.WARMBLOODED;
-
-	}
-
 	public static ParticleColor genRandomColor() {
 		Random rand = new Random();
 		return new ParticleColor(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
@@ -47,6 +37,16 @@ public class EntityParticleUtils {
 			return ParticleColor.RED;
 		}
 		return ParticleColor.BLOOD;
+
+	}
+
+	public static Predicate<Entity> getEntityPredicate(Entity ent) {
+		for (Predicate<Entity> pred : HemoEntityPredicates.BLOODTYPES) {
+			if (pred.test(ent)) {
+				return pred;
+			}
+		}
+		return HemoEntityPredicates.WARMBLOODED;
 
 	}
 }

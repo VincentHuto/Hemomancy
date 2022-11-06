@@ -20,42 +20,6 @@ import net.minecraft.world.entity.Entity;
 public class ChitiniteModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelchitinite"), "main");
-	private final ModelPart shell;
-	private final ModelPart plate4;
-	private final ModelPart plate3;
-	private final ModelPart plate2;
-	private final ModelPart plate5;
-	private final ModelPart lLeg4;
-	private final ModelPart lLeg5;
-	private final ModelPart rLeg;
-	private final ModelPart rLeg4;
-	private final ModelPart rLeg3;
-	private final ModelPart lLeg3;
-	private final ModelPart plate;
-	private final ModelPart lLeg;
-	private final ModelPart rLeg2;
-	private final ModelPart rLeg5;
-	private final ModelPart lLeg2;
-
-	public ChitiniteModel(ModelPart root) {
-		this.shell = root.getChild("shell");
-		this.plate4 = root.getChild("plate4");
-		this.plate3 = root.getChild("plate3");
-		this.plate2 = root.getChild("plate2");
-		this.plate5 = root.getChild("plate5");
-		this.lLeg4 = root.getChild("lLeg4");
-		this.lLeg5 = root.getChild("lLeg5");
-		this.rLeg = root.getChild("rLeg");
-		this.rLeg4 = root.getChild("rLeg4");
-		this.rLeg3 = root.getChild("rLeg3");
-		this.lLeg3 = root.getChild("lLeg3");
-		this.plate = root.getChild("plate");
-		this.lLeg = root.getChild("lLeg");
-		this.rLeg2 = root.getChild("rLeg2");
-		this.rLeg5 = root.getChild("rLeg5");
-		this.lLeg2 = root.getChild("lLeg2");
-	}
-
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -180,23 +144,41 @@ public class ChitiniteModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart shell;
+	private final ModelPart plate4;
+	private final ModelPart plate3;
+	private final ModelPart plate2;
+	private final ModelPart plate5;
+	private final ModelPart lLeg4;
+	private final ModelPart lLeg5;
+	private final ModelPart rLeg;
+	private final ModelPart rLeg4;
+	private final ModelPart rLeg3;
+	private final ModelPart lLeg3;
+	private final ModelPart plate;
+	private final ModelPart lLeg;
+	private final ModelPart rLeg2;
+	private final ModelPart rLeg5;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
+	private final ModelPart lLeg2;
 
-		this.lLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.lLeg2.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.lLeg3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.lLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.lLeg5.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-
-		this.rLeg5.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.rLeg2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.rLeg3.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.rLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.rLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-
+	public ChitiniteModel(ModelPart root) {
+		this.shell = root.getChild("shell");
+		this.plate4 = root.getChild("plate4");
+		this.plate3 = root.getChild("plate3");
+		this.plate2 = root.getChild("plate2");
+		this.plate5 = root.getChild("plate5");
+		this.lLeg4 = root.getChild("lLeg4");
+		this.lLeg5 = root.getChild("lLeg5");
+		this.rLeg = root.getChild("rLeg");
+		this.rLeg4 = root.getChild("rLeg4");
+		this.rLeg3 = root.getChild("rLeg3");
+		this.lLeg3 = root.getChild("lLeg3");
+		this.plate = root.getChild("plate");
+		this.lLeg = root.getChild("lLeg");
+		this.rLeg2 = root.getChild("rLeg2");
+		this.rLeg5 = root.getChild("rLeg5");
+		this.lLeg2 = root.getChild("lLeg2");
 	}
 
 	@Override
@@ -218,5 +200,23 @@ public class ChitiniteModel<T extends Entity> extends EntityModel<T> {
 		rLeg2.render(poseStack, buffer, packedLight, packedOverlay);
 		rLeg5.render(poseStack, buffer, packedLight, packedOverlay);
 		lLeg2.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
+		this.lLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.lLeg2.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+		this.lLeg3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.lLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+		this.lLeg5.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+
+		this.rLeg5.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+		this.rLeg2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.rLeg3.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+		this.rLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.rLeg4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+
 	}
 }

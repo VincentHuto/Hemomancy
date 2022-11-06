@@ -2,8 +2,6 @@ package com.vincenthuto.hemomancy.item.armor;
 
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.model.armor.ChitiniteArmorModel;
@@ -26,8 +24,8 @@ public class ChitiniteArmorItem extends ArmorItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-			
-			
+
+
 			@Override
 			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {

@@ -20,32 +20,6 @@ import net.minecraft.world.entity.Entity;
 public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelchthonian"), "main");
-	private final ModelPart abdomen;
-	private final ModelPart thorax;
-	private final ModelPart skull;
-	private final ModelPart rFrontLeg;
-	private final ModelPart rMidLeg;
-	private final ModelPart rBackLeg;
-	private final ModelPart lBackLeg;
-	private final ModelPart lMidLeg;
-	private final ModelPart lFrontLeg;
-	private final ModelPart lMandible;
-	private final ModelPart rMandible;
-
-	public ChthonianModel(ModelPart root) {
-		this.abdomen = root.getChild("abdomen");
-		this.thorax = root.getChild("thorax");
-		this.skull = root.getChild("skull");
-		this.rFrontLeg = root.getChild("rFrontLeg");
-		this.rMidLeg = root.getChild("rMidLeg");
-		this.rBackLeg = root.getChild("rBackLeg");
-		this.lBackLeg = root.getChild("lBackLeg");
-		this.lMidLeg = root.getChild("lMidLeg");
-		this.lFrontLeg = root.getChild("lFrontLeg");
-		this.lMandible = root.getChild("lMandible");
-		this.rMandible = root.getChild("rMandible");
-	}
-
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
@@ -217,18 +191,31 @@ public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart abdomen;
+	private final ModelPart thorax;
+	private final ModelPart skull;
+	private final ModelPart rFrontLeg;
+	private final ModelPart rMidLeg;
+	private final ModelPart rBackLeg;
+	private final ModelPart lBackLeg;
+	private final ModelPart lMidLeg;
+	private final ModelPart lFrontLeg;
+	private final ModelPart lMandible;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
-		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
+	private final ModelPart rMandible;
 
-		this.lMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
-		this.lMandible.xRot = headPitch * ((float) Math.PI / 180F);
-		this.rMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
-		this.rMandible.xRot = headPitch * ((float) Math.PI / 180F);
-
+	public ChthonianModel(ModelPart root) {
+		this.abdomen = root.getChild("abdomen");
+		this.thorax = root.getChild("thorax");
+		this.skull = root.getChild("skull");
+		this.rFrontLeg = root.getChild("rFrontLeg");
+		this.rMidLeg = root.getChild("rMidLeg");
+		this.rBackLeg = root.getChild("rBackLeg");
+		this.lBackLeg = root.getChild("lBackLeg");
+		this.lMidLeg = root.getChild("lMidLeg");
+		this.lFrontLeg = root.getChild("lFrontLeg");
+		this.lMandible = root.getChild("lMandible");
+		this.rMandible = root.getChild("rMandible");
 	}
 
 	@Override
@@ -245,5 +232,18 @@ public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 		lFrontLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		lMandible.render(poseStack, buffer, packedLight, packedOverlay);
 		rMandible.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
+
+		this.lMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		this.lMandible.xRot = headPitch * ((float) Math.PI / 180F);
+		this.rMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		this.rMandible.xRot = headPitch * ((float) Math.PI / 180F);
+
 	}
 }

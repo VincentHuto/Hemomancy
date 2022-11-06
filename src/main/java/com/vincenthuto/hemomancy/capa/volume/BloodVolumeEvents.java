@@ -45,24 +45,6 @@ public class BloodVolumeEvents {
 	}
 
 	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
-		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodVolumeServerPacket(volume));
-		player.displayClientMessage(
-				Component.literal("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
-		player.displayClientMessage(
-				Component.literal(
-						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
-				false);
-		player.displayClientMessage(
-				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
-				false);
-	}
-
-	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -73,18 +55,6 @@ public class BloodVolumeEvents {
 				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
-	}
-
-	@SubscribeEvent
-	public static void playerRespawn(PlayerRespawnEvent event) {
-		Player playernew = event.getEntity();
-		if (!playernew.level.isClientSide) {
-			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new);
-			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playernew),
-					new BloodVolumeServerPacket(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
-							bloodVolumeNew.getBloodVolume(), bloodVolumeNew.getBloodLine()));
-		}
 	}
 
 	@SubscribeEvent
@@ -107,6 +77,36 @@ public class BloodVolumeEvents {
 			peorig.invalidateCaps();
 		}
 
+	}
+
+	@SubscribeEvent
+	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player),
+				new BloodVolumeServerPacket(volume));
+		player.displayClientMessage(
+				Component.literal("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
+		player.displayClientMessage(
+				Component.literal(
+						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
+				false);
+		player.displayClientMessage(
+				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
+				false);
+	}
+
+	@SubscribeEvent
+	public static void playerRespawn(PlayerRespawnEvent event) {
+		Player playernew = event.getEntity();
+		if (!playernew.level.isClientSide) {
+			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playernew),
+					new BloodVolumeServerPacket(bloodVolumeNew.isActive(), bloodVolumeNew.getMaxBloodVolume(),
+							bloodVolumeNew.getBloodVolume(), bloodVolumeNew.getBloodLine()));
+		}
 	}
 
 //	private static Font fontRenderer;

@@ -10,10 +10,10 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class PacketOpenRunesInv {
 
-	public PacketOpenRunesInv(FriendlyByteBuf buf) {
+	public PacketOpenRunesInv() {
 	}
 
-	public PacketOpenRunesInv() {
+	public PacketOpenRunesInv(FriendlyByteBuf buf) {
 	}
 
 	public void decode(FriendlyByteBuf buf) {

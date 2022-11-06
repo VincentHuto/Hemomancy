@@ -24,14 +24,18 @@ import net.minecraft.world.item.ItemStack;
 
 public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public final LivingAxeModel unleashed;
-
 	public static ResourceLocation living_blade = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_living_axe_hand.png");
+
+	public final LivingAxeModel unleashed;
 
 	public LivingAxeItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
 		unleashed = new LivingAxeModel(p_172551_.bakeLayer(LivingAxeModel.living_axe));
+	}
+
+	public LivingAxeModel getModel() {
+		return unleashed;
 	}
 
 	@Override
@@ -65,9 +69,5 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
-	}
-
-	public LivingAxeModel getModel() {
-		return unleashed;
 	}
 }

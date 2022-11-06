@@ -24,14 +24,14 @@ public class ConjurationManip extends BloodManipulation {
 		this.item = item;
 	}
 
-	public 	RegistryObject<Item> getItem() {
-		return item;
-	}
-
 	@Override
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (heldItemMainhand.isEmpty()) {
 			player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item.get()));
 		}
+	}
+
+	public 	RegistryObject<Item> getItem() {
+		return item;
 	}
 }

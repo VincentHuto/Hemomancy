@@ -39,21 +39,22 @@ public class LivingGraspItem extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack itemstack = playerIn.getItemInHand(handIn);
-
-		playerIn.startUsingItem(handIn);
-		return InteractionResultHolder.consume(itemstack);
-
-	}
-
-	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.DARK_RED);
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.BOW;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		return 72000 / 2;
 	}
 
 	@Override
@@ -95,23 +96,6 @@ public class LivingGraspItem extends Item {
 
 	}
 
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		return 72000 / 2;
-	}
-
-	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.BOW;
-	}
-
-	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
-		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
-		worldIn.addFreshEntity(miss);
-	}
-
 	public void summomCorruptNote(Level worldIn, Player playerIn) {
 		TrackingBloodOrbEntity missile = new TrackingBloodOrbEntity(playerIn, false);
 		missile.setPos(playerIn.getX() + (Math.random() - 0.5 * 0.1), playerIn.getY() + 0.8f,
@@ -120,6 +104,13 @@ public class LivingGraspItem extends Item {
 			playerIn.playSound(SoundEvents.ENDERMAN_SCREAM, 0.6F, 0.8F + (float) Math.random() * 0.2F);
 			worldIn.addFreshEntity(missile);
 		}
+	}
+
+	public void summonDirectedOrb(Level worldIn, Player playerIn) {
+		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
+		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
+		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
+		worldIn.addFreshEntity(miss);
 	}
 
 	public void summonNoteStorm(int numMiss, Level worldIn, Player playerIn) {
@@ -149,6 +140,15 @@ public class LivingGraspItem extends Item {
 
 			}
 		}
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack itemstack = playerIn.getItemInHand(handIn);
+
+		playerIn.startUsingItem(handIn);
+		return InteractionResultHolder.consume(itemstack);
+
 	}
 
 }

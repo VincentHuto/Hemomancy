@@ -28,6 +28,16 @@ public class VeinRecallerItem extends Item implements IDispellable {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack itemStack, Level world) {
+		return 0;
+	}
+
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return true;
+	}
+
+	@Override
 	@OnlyIn(value = Dist.CLIENT)
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
@@ -48,16 +58,6 @@ public class VeinRecallerItem extends Item implements IDispellable {
 		}
 		return InteractionResultHolder.consume(stack);
 
-	}
-
-	@Override
-	public int getEntityLifespan(ItemStack itemStack, Level world) {
-		return 0;
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-		return true;
 	}
 
 }

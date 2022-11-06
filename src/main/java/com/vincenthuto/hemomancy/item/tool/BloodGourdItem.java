@@ -35,8 +35,33 @@ public class BloodGourdItem extends Item implements IRune {
 	}
 
 	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return false;
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		boolean bloodPresent = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent();
+		if (bloodPresent) {
+			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+			tooltip.add(Component.literal("Max Blood Volume: " + tier.getMaxVolume())
+					.withStyle(ChatFormatting.GOLD));
+			if (stack.hasTag()) {
+				tooltip.add(Component.literal("Blood Volume: " + bloodVolume.getBloodVolume())
+						.withStyle(ChatFormatting.RED));
+				if (stack.getTag().getBoolean(TAG_STATE)) {
+					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));
+				} else {
+					tooltip.add(Component.literal("State: Corked").withStyle(ChatFormatting.GRAY));
+				}
+			}
+		}
+	}
+
+	public double getMaxBlood() {
+		return tier.getMaxVolume();
+	}
+
+	@Override
+	public RuneType getRuneType() {
+		return RuneType.GOURD;
 	}
 
 	@Override
@@ -79,6 +104,11 @@ public class BloodGourdItem extends Item implements IRune {
 	}
 
 	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return false;
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof BloodGourdItem) {
@@ -96,38 +126,8 @@ public class BloodGourdItem extends Item implements IRune {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		boolean bloodPresent = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent();
-		if (bloodPresent) {
-			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(NullPointerException::new);
-			tooltip.add(Component.literal("Max Blood Volume: " + tier.getMaxVolume())
-					.withStyle(ChatFormatting.GOLD));
-			if (stack.hasTag()) {
-				tooltip.add(Component.literal("Blood Volume: " + bloodVolume.getBloodVolume())
-						.withStyle(ChatFormatting.RED));
-				if (stack.getTag().getBoolean(TAG_STATE)) {
-					tooltip.add(Component.literal("State: Open").withStyle(ChatFormatting.RED));
-				} else {
-					tooltip.add(Component.literal("State: Corked").withStyle(ChatFormatting.GRAY));
-				}
-			}
-		}
-	}
-
-	public double getMaxBlood() {
-		return tier.getMaxVolume();
-	}
-
-	@Override
 	public boolean willAutoSync(LivingEntity player) {
 		return true;
-	}
-	
-	@Override
-	public RuneType getRuneType() {
-		return RuneType.GOURD;
 	}
 
 }

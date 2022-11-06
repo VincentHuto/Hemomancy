@@ -16,22 +16,21 @@ public class EntityTagGenerator extends TagsProvider<EntityType<?>> {
 	}
 
 	@Override
-	public String getName() {
-		return "Entity Type Tags";
+	protected void addTags() {
+		this.tag(EntityInit.FUNGAL_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.FERRIC_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.NEUROTIC_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.UMBRAL_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.INCANDESCENT_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.FRIGID_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.FERVENT_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.RUINOUS_TAG).add(EntityInit.fungling.get());
+		this.tag(EntityInit.VIVACIOUS_TAG).add(EntityInit.fungling.get());
 	}
 
 	@Override
-	protected void addTags() {
-		this.tag(EntityInit.FUNGAL).add(EntityInit.fungling.get());
-		this.tag(EntityInit.FERRIC).add(EntityInit.fungling.get());
-		this.tag(EntityInit.NEUROTIC).add(EntityInit.fungling.get());
-		this.tag(EntityInit.UMBRAL).add(EntityInit.fungling.get());
-		this.tag(EntityInit.INCANDESCENT).add(EntityInit.fungling.get());
-		this.tag(EntityInit.FRIGID).add(EntityInit.fungling.get());
-		this.tag(EntityInit.FERVENT).add(EntityInit.fungling.get());
-		this.tag(EntityInit.RUINOUS).add(EntityInit.fungling.get());
-		this.tag(EntityInit.VIVACIOUS).add(EntityInit.fungling.get());
-
+	public String getName() {
+		return "Entity Type Tags";
 	}
 
 }

@@ -30,6 +30,16 @@ public class BloodyFlaskItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		// TODO Auto-generated method stub
+		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
+	}
+
+	public float getAmount() {
+		return amount;
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {
@@ -52,16 +62,6 @@ public class BloodyFlaskItem extends Item {
 
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		// TODO Auto-generated method stub
-		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
-	}
-
-	public float getAmount() {
-		return amount;
 	}
 
 }

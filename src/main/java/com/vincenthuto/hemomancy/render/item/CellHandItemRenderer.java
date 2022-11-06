@@ -43,17 +43,57 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.ForgeHooksClient;
 
 public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
+	public BakedModel location;
+
+	public final ResourceLocation skinTexture = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
 	public CellHandItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
 	}
 
-	public BakedModel location;
-	public final ResourceLocation skinTexture = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
+	public void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
+			AbstractClientPlayer playerIn, HumanoidArm side) {
+		if (side == HumanoidArm.RIGHT) {
+			Minecraft mc = Minecraft.getInstance();
+			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
+			renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).rightArm,
+					(playerrenderer.getModel()).rightSleeve);
+		} else {
+			Minecraft mc = Minecraft.getInstance();
+			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
+			this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).leftArm,
+					(playerrenderer.getModel()).leftSleeve);
+		}
+
+	}
+
+	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
+		Minecraft mc = Minecraft.getInstance();
+		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
+		matrixStackIn.pushPose();
+		if (side == HumanoidArm.RIGHT) {
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(12.0f));
+			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
+			matrixStackIn.translate(1.0, -0.4, 0.8);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
+
+		} else {
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-12.0f));
+			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
+			matrixStackIn.translate(0.0, -0.3, 0.6);
+			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
+		}
+		matrixStackIn.popPose();
+	}
+
+	// ModelBloodArm model = new ModelBloodArm(1.0f);
 
 	@Override
 	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack,
@@ -113,47 +153,6 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 
-	// ModelBloodArm model = new ModelBloodArm(1.0f);
-
-	private void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, HumanoidArm side) {
-		Minecraft mc = Minecraft.getInstance();
-		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
-		matrixStackIn.pushPose();
-		if (side == HumanoidArm.RIGHT) {
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(12.0f));
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
-			matrixStackIn.translate(1.0, -0.4, 0.8);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
-
-		} else {
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-12.0f));
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
-			matrixStackIn.translate(0.0, -0.3, 0.6);
-			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
-		}
-		matrixStackIn.popPose();
-	}
-
-	public void renderArm(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
-			AbstractClientPlayer playerIn, HumanoidArm side) {
-		if (side == HumanoidArm.RIGHT) {
-			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
-			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
-			renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).rightArm,
-					(playerrenderer.getModel()).rightSleeve);
-		} else {
-			Minecraft mc = Minecraft.getInstance();
-			mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
-			PlayerRenderer playerrenderer = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(mc.player);
-			this.renderItem(matrixStackIn, bufferIn, combinedLightIn, playerIn, (playerrenderer.getModel()).leftArm,
-					(playerrenderer.getModel()).leftSleeve);
-		}
-
-	}
-
 	private void renderItem(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
 			AbstractClientPlayer playerIn, ModelPart rendererArmIn, ModelPart rendererArmwearIn) {
 		Minecraft mc = Minecraft.getInstance();
@@ -177,10 +176,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	@SuppressWarnings("unused")
 	private void spawnFirstPersonParticlesForStack(ItemStack stack, HumanoidArm hand) {
-		if (Minecraft.getInstance().isPaused()) {
-			return;
-		}
-		if (!(stack.getItem() instanceof ICellHand)) {
+		if (Minecraft.getInstance().isPaused() || !(stack.getItem() instanceof ICellHand)) {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
@@ -205,8 +201,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 				List<Entity> targets = player.level.getEntities(player, player.getBoundingBox().inflate(5.0));
 				if (targets.size() > 0) {
-					for (int i = 0; i < targets.size(); ++i) {
-						Entity target = targets.get(i);
+					for (Entity target : targets) {
 						if (target instanceof LivingEntity) {
 							LivingEntity livingTarget = (LivingEntity) target;
 							Vector3 targetVec = Vector3.fromEntityCenter(livingTarget);

@@ -22,19 +22,19 @@ public class DSDItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal("Also known as a D.S.D. used to"));
+		tooltip.add(Component.literal("commandeer Drudges to your will."));
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		if (level.isClientSide) {
 			Minecraft mc = Minecraft.getInstance();
 			mc.cameraEntity.setPos(mc.cameraEntity.getPosition(HLClientUtils.getPartialTicks()).add(0, 2, 0));
 		}
 		return super.use(level, player, hand);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Also known as a D.S.D. used to"));
-		tooltip.add(Component.literal("commandeer Drudges to your will."));
 	}
 
 }

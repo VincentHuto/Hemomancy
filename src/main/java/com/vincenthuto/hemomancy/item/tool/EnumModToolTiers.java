@@ -36,27 +36,33 @@ public enum EnumModToolTiers implements Tier {
 		this.repairMaterial = new LazyLoadedValue<>(repairMaterialIn);
 	}
 
-	public int getUses() {
-		return this.maxUses;
-	}
-
-	public float getSpeed() {
-		return this.efficiency;
-	}
-
+	@Override
 	public float getAttackDamageBonus() {
 		return this.attackDamage;
 	}
 
-	public int getLevel() {
-		return this.harvestLevel;
-	}
-
+	@Override
 	public int getEnchantmentValue() {
 		return this.enchantability;
 	}
 
+	@Override
+	public int getLevel() {
+		return this.harvestLevel;
+	}
+
+	@Override
 	public Ingredient getRepairIngredient() {
 		return this.repairMaterial.get();
+	}
+
+	@Override
+	public float getSpeed() {
+		return this.efficiency;
+	}
+
+	@Override
+	public int getUses() {
+		return this.maxUses;
 	}
 }

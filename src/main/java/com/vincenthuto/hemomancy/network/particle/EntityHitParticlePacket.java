@@ -12,17 +12,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class EntityHitParticlePacket {
 
-	double x, y, z;
-
-	public EntityHitParticlePacket() {
-	}
-
-	public EntityHitParticlePacket(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
 	public static EntityHitParticlePacket decode(final FriendlyByteBuf buffer) {
 		return new EntityHitParticlePacket(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 	}
@@ -47,6 +36,17 @@ public class EntityHitParticlePacket {
 
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	double x, y, z;
+
+	public EntityHitParticlePacket() {
+	}
+
+	public EntityHitParticlePacket(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
 }

@@ -24,21 +24,6 @@ import net.minecraft.world.entity.Entity;
 public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modelthirster"), "main");
-	private final ModelPart Head;
-	private final ModelPart Body;
-	private final ModelPart RightArm;
-	private final ModelPart LeftArm;
-	private final ModelPart RightLeg;
-	private final ModelPart LeftLeg;
-
-	public ThirsterModel(ModelPart root) {
-		this.Head = root.getChild("Head");
-		this.Body = root.getChild("Body");
-		this.RightArm = root.getChild("RightArm");
-		this.LeftArm = root.getChild("LeftArm");
-		this.RightLeg = root.getChild("RightLeg");
-		this.LeftLeg = root.getChild("LeftLeg");
-	}
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
@@ -66,10 +51,20 @@ public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart Head;
+	private final ModelPart Body;
+	private final ModelPart RightArm;
+	private final ModelPart LeftArm;
+	private final ModelPart RightLeg;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+	private final ModelPart LeftLeg;
+	public ThirsterModel(ModelPart root) {
+		this.Head = root.getChild("Head");
+		this.Body = root.getChild("Body");
+		this.RightArm = root.getChild("RightArm");
+		this.LeftArm = root.getChild("LeftArm");
+		this.RightLeg = root.getChild("RightLeg");
+		this.LeftLeg = root.getChild("LeftLeg");
 	}
 
 	@Override
@@ -80,5 +75,10 @@ public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 		LeftArm.render(poseStack, buffer, packedLight, packedOverlay);
 		RightLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		LeftLeg.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

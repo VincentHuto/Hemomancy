@@ -11,11 +11,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class HumaneIdolBlockEntity extends BlockEntity {
 
+	float count = 0.5f;
+
 	public HumaneIdolBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.humane_idol.get(), pos, state);
 	}
-
-	float count = 0.5f;
 
 	public void tick() {
 		Vector3 centerVec = Vector3.fromBlockEntityCenter(this).add(0, -1, 0);

@@ -19,17 +19,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BloodClawData implements ParticleOptions {
 
-	private ParticleType<BloodClawData> type;
 	public static final Codec<BloodClawData> CODEC = RecordCodecBuilder
 			.create(instance -> instance
 					.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 							Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 							Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 					.apply(instance, BloodClawData::new));
-
-	public ParticleColor color;
-
-	public static final Deserializer<BloodClawData> DESERIALIZER = new Deserializer<BloodClawData>() {
+	public static final Deserializer<BloodClawData> DESERIALIZER = new Deserializer<>() {
 		@Override
 		public BloodClawData fromCommand(ParticleType<BloodClawData> type, StringReader reader)
 				throws CommandSyntaxException {
@@ -42,6 +38,10 @@ public class BloodClawData implements ParticleOptions {
 			return new BloodClawData(type, ParticleColor.deserialize(buffer.readUtf()));
 		}
 	};
+
+	private ParticleType<BloodClawData> type;
+
+	public ParticleColor color;
 
 	public BloodClawData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);

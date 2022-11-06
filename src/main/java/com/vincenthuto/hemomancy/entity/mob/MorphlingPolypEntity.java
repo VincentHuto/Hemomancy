@@ -23,37 +23,24 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class MorphlingPolypEntity extends Monster {
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
 	public MorphlingPolypEntity(EntityType<? extends MorphlingPolypEntity> type, Level worldIn) {
 		super(type, worldIn);
 
 	}
 
 	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
 	}
 
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
 
 	}
 
@@ -68,22 +55,9 @@ public class MorphlingPolypEntity extends Monster {
 	}
 
 	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
+			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
@@ -99,5 +73,31 @@ public class MorphlingPolypEntity extends Monster {
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
 	}
 }

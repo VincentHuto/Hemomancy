@@ -51,6 +51,15 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 //	}
 
 	@Override
+	public float getDestroySpeed(ItemStack stack, BlockState state) {
+		if (EFFECTIVE_ON.contains(state.getBlock())) {
+			return speed;
+		} else {
+			return 0.5f;
+		}
+	}
+
+	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
 		return 0;
 	}
@@ -62,11 +71,6 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.DARK_RED);
-	}
-
-	@Override
-	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		return super.onEntitySwing(stack, entity);
 	}
 
 	@Override
@@ -117,11 +121,7 @@ public class LivingToolItem extends DiggerItem implements IDispellable {
 	}
 
 	@Override
-	public float getDestroySpeed(ItemStack stack, BlockState state) {
-		if (EFFECTIVE_ON.contains(state.getBlock())) {
-			return speed;
-		} else {
-			return 0.5f;
-		}
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+		return super.onEntitySwing(stack, entity);
 	}
 }

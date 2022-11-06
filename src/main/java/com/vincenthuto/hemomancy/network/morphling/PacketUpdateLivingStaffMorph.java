@@ -18,21 +18,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkEvent;
 
 public class PacketUpdateLivingStaffMorph {
-	private int selected;
-
-	public PacketUpdateLivingStaffMorph(int selectedIn) {
-		this.selected = selectedIn;
-
-	}
-
-	public static void encode(PacketUpdateLivingStaffMorph msg, FriendlyByteBuf buf) {
-		buf.writeInt(msg.selected);
-	}
-
-	public static PacketUpdateLivingStaffMorph decode(FriendlyByteBuf buf) {
-		return new PacketUpdateLivingStaffMorph(buf.readInt());
-	}
-
 	public static class Handler {
 		public static void handle(final PacketUpdateLivingStaffMorph msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
@@ -55,7 +40,7 @@ public class PacketUpdateLivingStaffMorph {
 								if (items != null) {
 									if (items.contains("Items", 9)) {
 										@SuppressWarnings("static-access")
-										ItemStack selectedStack = jar
+										ItemStack selectedStack = ItemStack
 												.of(((ListTag) items.get("Items")).getCompound(msg.selected));
 										if (selectedStack.getItem() instanceof IMorphling) {
 											CompoundTag staffnbt = staff.getOrCreateTag();
@@ -63,7 +48,7 @@ public class PacketUpdateLivingStaffMorph {
 											if (staffItems != null) {
 												if (staffItems.contains("Items", 9)) {
 													@SuppressWarnings("static-access")
-													ItemStack selectedStaffStack = staff
+													ItemStack selectedStaffStack = ItemStack
 															.of(((ListTag) staffItems.get("Items")).getCompound(0));
 													castedJar.setDirty();
 													castedStaff.setDirty();
@@ -87,7 +72,7 @@ public class PacketUpdateLivingStaffMorph {
 				 * if (jarHandler instanceof MorphlingJarItemHandler && staffHandler instanceof
 				 * LivingStaffItemHandler) { System.out.println("IS WORKING");
 				 * MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-				 * 
+				 *
 				 * LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
 				 * // ItemStack originalFocus = castedStaff.getStackInSlot(0).copy(); ItemStack
 				 * inJar = castedJar.getStackInSlot(msg.selected).copy(); if (inJar.getItem() !=
@@ -99,5 +84,20 @@ public class PacketUpdateLivingStaffMorph {
 			});
 			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	public static PacketUpdateLivingStaffMorph decode(FriendlyByteBuf buf) {
+		return new PacketUpdateLivingStaffMorph(buf.readInt());
+	}
+
+	public static void encode(PacketUpdateLivingStaffMorph msg, FriendlyByteBuf buf) {
+		buf.writeInt(msg.selected);
+	}
+
+	private int selected;
+
+	public PacketUpdateLivingStaffMorph(int selectedIn) {
+		this.selected = selectedIn;
+
 	}
 }

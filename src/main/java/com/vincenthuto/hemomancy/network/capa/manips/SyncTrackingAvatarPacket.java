@@ -25,20 +25,20 @@ public class SyncTrackingAvatarPacket {
 		this.isActive = isActive;
 	}
 
-	public void toBytes(FriendlyByteBuf buf) {
-		buf.writeInt(this.playerId);
-		buf.writeBoolean(this.isActive);
-	}
-
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
 				p.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(b -> {
-					b.setAvatarActive(isActive);					
+					b.setAvatarActive(isActive);
 				});
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public void toBytes(FriendlyByteBuf buf) {
+		buf.writeInt(this.playerId);
+		buf.writeBoolean(this.isActive);
 	}
 }

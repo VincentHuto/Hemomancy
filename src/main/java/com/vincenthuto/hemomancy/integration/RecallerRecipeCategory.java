@@ -36,15 +36,19 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "visceral_artificial_recaller");
+	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
+			Hemomancy.MOD_ID + ":textures/gui/recaller_overlay.png");
 	private final IDrawable background;
 	private final String localizedName;
 	private final IDrawable overlay;
 	private final IDrawable icon;
-	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/recaller_overlay.png");
 	IGuiHelper guiHelper;
 	int guiWidth = 170;
 	int guiHeight = 100;
+
+	private int zLevel = 10;
+
+	Minecraft mc = Minecraft.getInstance();
 
 	public RecallerRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(170, 100);
@@ -56,23 +60,6 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 	}
 
 	@Override
-	public IDrawable getIcon() {
-		return icon;
-	}
-
-	@Nonnull
-	@Override
-	public Component getTitle() {
-		return Component.literal(localizedName);
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Override
 	public void draw(RecallerRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack ms, double mouseX,
 			double mouseY) {
 		overlay.draw(ms);
@@ -81,8 +68,6 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 		ms.translate(87, 45, 0);
 		drawCenter(ms, recipe.getTendency(), centerX, centerY);
 	}
-
-	private int zLevel = 10;
 
 	private void drawCenter(PoseStack ms, Map<EnumBloodTendency, Float> tends, int xOff, int yOff) {
 		float guiHeight = 228, guiWidth = 174;
@@ -119,6 +104,28 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 		}
 	}
 
+	@Nonnull
+	@Override
+	public IDrawable getBackground() {
+		return background;
+	}
+
+	@Override
+	public IDrawable getIcon() {
+		return icon;
+	}
+
+	@Override
+	public RecipeType<RecallerRecipe> getRecipeType() {
+		return JEIPlugin.recaller_recipe_type;
+	}
+
+	@Nonnull
+	@Override
+	public Component getTitle() {
+		return Component.literal(localizedName);
+	}
+
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, RecallerRecipe recipe, IFocusGroup focuses) {
 		List<List<ItemStack>> list = new ArrayList<>();
@@ -134,13 +141,6 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 149, 77).addIngredient(VanillaTypes.ITEM_STACK,
 				recipe.getResultItem());
 
-	}
-
-	Minecraft mc = Minecraft.getInstance();
-
-	@Override
-	public RecipeType<RecallerRecipe> getRecipeType() {
-		return JEIPlugin.recaller_recipe_type;
 	}
 
 }

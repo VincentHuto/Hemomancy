@@ -25,22 +25,6 @@ import net.minecraftforge.client.gui.ScreenUtils;
 public class JuiceinatorScreen extends AbstractContainerScreen<JuiceinatorMenu> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/juiceinator_gui.png");
-	private final ResourceLocation texture;
-	final JuicinatorBlockEntity te;
-
-	public JuiceinatorScreen(JuiceinatorMenu screenContainer, Inventory inv, Component titleIn) {
-		super(screenContainer, inv, titleIn);
-		this.texture = TEXTURE;
-		this.te = screenContainer.getTe();
-
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
-	}
-
 	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
 			float height) {
 
@@ -65,6 +49,66 @@ public class JuiceinatorScreen extends AbstractContainerScreen<JuiceinatorMenu> 
 				.endVertex();
 
 		tessellator.end();
+	}
+	private final ResourceLocation texture;
+
+	final JuicinatorBlockEntity te;
+
+	public JuiceinatorScreen(JuiceinatorMenu screenContainer, Inventory inv, Component titleIn) {
+		super(screenContainer, inv, titleIn);
+		this.texture = TEXTURE;
+		this.te = screenContainer.getTe();
+
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+	}
+
+	@Override
+	public void removed() {
+		super.removed();
+	}
+
+	@Override
+	public void render(PoseStack p_97858_, int p_97859_, int p_97860_, float p_97861_) {
+		this.renderBackground(p_97858_);
+		this.renderBg(p_97858_, p_97861_, p_97859_, p_97860_);
+		super.render(p_97858_, p_97859_, p_97860_, p_97861_);
+		int guiWidth = 176;
+		int guiHeight = 166;
+		int centerX = (width / 2) - guiWidth / 2;
+		int centerY = (height / 2) - guiHeight / 2;
+		p_97858_.pushPose();
+		p_97858_.translate(0, -30, 0);
+		renderVolumeBar(p_97858_, centerX, centerY, te.getLevel());
+		renderVolumeFrame(p_97858_, centerX, centerY, te.getLevel());
+		p_97858_.popPose();
+		this.renderTooltip(p_97858_, p_97859_, p_97860_);
+	}
+
+	@Override
+	protected void renderBg(PoseStack p_97853_, float p_97854_, int p_97855_, int p_97856_) {
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, this.texture);
+		int i = this.leftPos;
+		int j = this.topPos;
+		this.blit(p_97853_, i, j, 0, 0, this.imageWidth, this.imageHeight);
+		if (this.menu.isLit()) {
+			int k = this.menu.getLitProgress();
+			this.blit(p_97853_, i + 56, j + 36 + 12 - k, 176, 12 - k, 14, k + 1);
+		}
+		int l = this.menu.getBurnProgress();
+		this.blit(p_97853_, i + 79, j + 34, 176, 14, l + 1, 16);
+	}
+
+	@Override
+	protected void renderLabels(PoseStack matrixStack, int x, int y) {
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
+
 	}
 
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
@@ -115,52 +159,8 @@ public class JuiceinatorScreen extends AbstractContainerScreen<JuiceinatorMenu> 
 	}
 
 	@Override
-	public void render(PoseStack p_97858_, int p_97859_, int p_97860_, float p_97861_) {
-		this.renderBackground(p_97858_);
-		this.renderBg(p_97858_, p_97861_, p_97859_, p_97860_);
-		super.render(p_97858_, p_97859_, p_97860_, p_97861_);
-		int guiWidth = 176;
-		int guiHeight = 166;
-		int centerX = (width / 2) - guiWidth / 2;
-		int centerY = (height / 2) - guiHeight / 2;
-		p_97858_.pushPose();
-		p_97858_.translate(0, -30, 0);
-		renderVolumeBar(p_97858_, centerX, centerY, te.getLevel());
-		renderVolumeFrame(p_97858_, centerX, centerY, te.getLevel());
-		p_97858_.popPose();
-		this.renderTooltip(p_97858_, p_97859_, p_97860_);
-	}
-
-	@Override
-	protected void renderBg(PoseStack p_97853_, float p_97854_, int p_97855_, int p_97856_) {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, this.texture);
-		int i = this.leftPos;
-		int j = this.topPos;
-		this.blit(p_97853_, i, j, 0, 0, this.imageWidth, this.imageHeight);
-		if (this.menu.isLit()) {
-			int k = this.menu.getLitProgress();
-			this.blit(p_97853_, i + 56, j + 36 + 12 - k, 176, 12 - k, 14, k + 1);
-		}
-		int l = this.menu.getBurnProgress();
-		this.blit(p_97853_, i + 79, j + 34, 176, 14, l + 1, 16);
-	}
-
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 130, 4, 0000);
-
-	}
-
-	@Override
 	protected void slotClicked(Slot p_97848_, int p_97849_, int p_97850_, ClickType p_97851_) {
 		super.slotClicked(p_97848_, p_97849_, p_97850_, p_97851_);
-	}
-
-	@Override
-	public void removed() {
-		super.removed();
 	}
 
 }

@@ -37,18 +37,25 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialCharmScreen extends Screen {
+	@SubscribeEvent
+	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
+		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+			return;
+
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.screen instanceof RadialCharmScreen) {
+			event.setCanceled(true);
+		}
+	}
 	private ItemStack vascCharmEquipped;
 	private BloodGourdItem gourdEquipped;
 	private IRunesItemHandler inv;
-	private Minecraft mc;
 
+	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
 	private final List<BlitRadialMenuItem> cachedMenuItems = Lists.newArrayList();
-	private final GenericRadialMenu menu;
 
-	private ItemRenderer getItemRenderer() {
-		return itemRenderer;
-	}
+	private final GenericRadialMenu menu;
 
 	public RadialCharmScreen(IRunesItemHandler invIn) {
 		super(Component.literal("RADIAL MENU"));
@@ -62,13 +69,13 @@ public class RadialCharmScreen extends Screen {
 
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
 			@Override
-			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
-				RadialCharmScreen.this.renderTooltip(matrixStack, stack, mouseX, mouseY);
+			public Font getFontRenderer() {
+				return font;
 			}
 
 			@Override
-			public void renderTooltip(PoseStack matrixStack, Component component, int mouseX, int mouseY) {
-				RadialCharmScreen.this.renderTooltip(matrixStack, component, mouseX, mouseY);
+			public ItemRenderer getItemRenderer() {
+				return RadialCharmScreen.this.getItemRenderer();
 			}
 
 			@Override
@@ -77,13 +84,13 @@ public class RadialCharmScreen extends Screen {
 			}
 
 			@Override
-			public Font getFontRenderer() {
-				return font;
+			public void renderTooltip(PoseStack matrixStack, Component component, int mouseX, int mouseY) {
+				RadialCharmScreen.this.renderTooltip(matrixStack, component, mouseX, mouseY);
 			}
 
 			@Override
-			public ItemRenderer getItemRenderer() {
-				return RadialCharmScreen.this.getItemRenderer();
+			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
+				RadialCharmScreen.this.renderTooltip(matrixStack, stack, mouseX, mouseY);
 			}
 
 		}) {
@@ -94,40 +101,13 @@ public class RadialCharmScreen extends Screen {
 		};
 	}
 
-	@SubscribeEvent
-	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
-		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
-			return;
-
-		Minecraft mc = Minecraft.getInstance();
-		if (mc.screen instanceof RadialCharmScreen) {
-			event.setCanceled(true);
-		}
+	private ItemRenderer getItemRenderer() {
+		return itemRenderer;
 	}
 
-	@Override // removed
-	public void removed() {
-		super.removed();
-		RadialClientEvents.wipeOpen();
-	}
-
-	@Override // tick
-	public void tick() {
-		super.tick();
-		menu.tick();
-		if (menu.isClosed()) {
-			Minecraft.getInstance().setScreen(null);
-			RadialClientEvents.wipeOpen();
-		}
-		if (!menu.isReady()) {
-			return;
-		}
-		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
-			Minecraft.getInstance().setScreen(null);
-		}
-		if (!RadialClientEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
-			this.processClick(false);
-		}
+	@Override // isPauseScreen
+	public boolean isPauseScreen() {
+		return false;
 	}
 
 	@Override // mouseReleased
@@ -138,6 +118,12 @@ public class RadialCharmScreen extends Screen {
 
 	protected void processClick(boolean triggeredByMouse) {
 		menu.clickItem();
+	}
+
+	@Override // removed
+	public void removed() {
+		super.removed();
+		RadialClientEvents.wipeOpen();
 	}
 
 	@Override
@@ -171,14 +157,14 @@ public class RadialCharmScreen extends Screen {
 			this.needsRecheckStacks = false;
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			List<Component> textComponents = new ArrayList<Component>();
+			List<Component> textComponents = new ArrayList<>();
 			textComponents.add(Component.literal("No Known Manipulations"));
 			textComponents.add(Component.literal("No Known Manipuladdwddwtions"));
 
 			this.menu.setCentralText(textComponents);
 		} else if (gourdEquipped != null) {
 
-			List<Component> textComponents = new ArrayList<Component>();
+			List<Component> textComponents = new ArrayList<>();
 			if (inv != null) {
 				IBloodVolume bloodVolume = inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX)
 						.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
@@ -193,8 +179,22 @@ public class RadialCharmScreen extends Screen {
 		this.menu.draw(matrixStack, partialTicks, mouseX, mouseY);
 	}
 
-	@Override // isPauseScreen
-	public boolean isPauseScreen() {
-		return false;
+	@Override // tick
+	public void tick() {
+		super.tick();
+		menu.tick();
+		if (menu.isClosed()) {
+			Minecraft.getInstance().setScreen(null);
+			RadialClientEvents.wipeOpen();
+		}
+		if (!menu.isReady()) {
+			return;
+		}
+		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
+			Minecraft.getInstance().setScreen(null);
+		}
+		if (!RadialClientEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
+			this.processClick(false);
+		}
 	}
 }

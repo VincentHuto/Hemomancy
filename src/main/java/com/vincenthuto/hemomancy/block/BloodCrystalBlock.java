@@ -32,8 +32,23 @@ public class BloodCrystalBlock extends Block {
 	}
 
 	@Override
+	public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
+		Direction direction = pState.getValue(FACING);
+		return pLevel
+				.getBlockState(pPos.offset(new Vec3i(direction.getOpposite().getStepX(),
+						direction.getOpposite().getStepY(), direction.getOpposite().getStepZ())))
+				.getBlock() != Blocks.AIR;
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
+		super.createBlockStateDefinition(pBuilder);
+		pBuilder.add(FACING);
+	}
+
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		switch ((Direction) state.getValue(FACING)) {
+		switch (state.getValue(FACING)) {
 		case NORTH:
 			return SHAPE_N;
 		case SOUTH:
@@ -63,28 +78,13 @@ public class BloodCrystalBlock extends Block {
 	}
 
 	@Override
-	public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
-		return super.rotate(state, level, pos, direction);
-	}
-
-	@Override
 	public BlockState mirror(BlockState pState, Mirror pMirror) {
 		return super.mirror(pState, pMirror);
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
-		super.createBlockStateDefinition(pBuilder);
-		pBuilder.add(FACING);
-	}
-
-	@Override
-	public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-		Direction direction = pState.getValue(FACING);
-		return pLevel
-				.getBlockState(pPos.offset(new Vec3i(direction.getOpposite().getStepX(),
-						direction.getOpposite().getStepY(), direction.getOpposite().getStepZ())))
-				.getBlock() != Blocks.AIR;
+	public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
+		return super.rotate(state, level, pos, direction);
 	}
 
 }

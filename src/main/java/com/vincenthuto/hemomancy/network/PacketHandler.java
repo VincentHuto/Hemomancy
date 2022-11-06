@@ -49,7 +49,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -86,6 +85,27 @@ public class PacketHandler {
 	public static SimpleChannel CHANNELRUNEBINDER = NetworkRegistry.newSimpleChannel(
 			new ResourceLocation(Hemomancy.MOD_ID, "runebinderchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+
+	public static void handleRadialInventorySlotChangeMessage(RadialInventorySlotChangePacket message,
+			Supplier<NetworkEvent.Context> ctxSupplier) {
+		NetworkEvent.Context ctx = ctxSupplier.get();
+		if (!PacketHandler.validateBasics(message, ctx)) {
+			return;
+		}
+		ServerPlayer sendingPlayer = ctx.getSender();
+		if (sendingPlayer == null) {
+			Hemomancy.LOGGER.error("EntityPlayerMP was null when RadialInventorySlotChangeMessage was received");
+			return;
+		}
+		ctx.enqueueWork(() -> {
+			ItemStack stack;
+			stack = message.isOffhand() ? sendingPlayer.getOffhandItem() : sendingPlayer.getMainHandItem();
+			if (stack.getItem() instanceof IRadialInventorySelect) {
+				((IRadialInventorySelect) stack.getItem()).setSlot(sendingPlayer, stack, message.getSlot(),
+						message.isOffhand(), false);
+			}
+		});
+	}
 
 	public static void registerChannels() {
 
@@ -247,26 +267,5 @@ public class PacketHandler {
 			return false;
 		}
 		return true;
-	}
-
-	public static void handleRadialInventorySlotChangeMessage(RadialInventorySlotChangePacket message,
-			Supplier<NetworkEvent.Context> ctxSupplier) {
-		NetworkEvent.Context ctx = ctxSupplier.get();
-		if (!PacketHandler.validateBasics(message, ctx)) {
-			return;
-		}
-		ServerPlayer sendingPlayer = ctx.getSender();
-		if (sendingPlayer == null) {
-			Hemomancy.LOGGER.error("EntityPlayerMP was null when RadialInventorySlotChangeMessage was received");
-			return;
-		}
-		ctx.enqueueWork(() -> {
-			ItemStack stack;
-			stack = message.isOffhand() ? sendingPlayer.getOffhandItem() : sendingPlayer.getMainHandItem();
-			if (stack.getItem() instanceof IRadialInventorySelect) {
-				((IRadialInventorySelect) stack.getItem()).setSlot((Player) sendingPlayer, stack, message.getSlot(),
-						message.isOffhand(), false);
-			}
-		});
 	}
 }

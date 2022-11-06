@@ -8,8 +8,8 @@ import com.vincenthuto.hemomancy.capa.player.skills.SkillPoint;
 
 public class SkillPointInit {
 
-	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<List<SkillPoint>>();
-	public static List<SkillPoint> BASE = new ArrayList<SkillPoint>();
+	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<>();
+	public static List<SkillPoint> BASE = new ArrayList<>();
 	public static SkillPoint base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
 			skill_feeding_frenzy;
 
@@ -34,16 +34,16 @@ public class SkillPointInit {
 		registerSkillBranch(BASE);
 	}
 
-	// Adds branch to the greater skill tree
-	public static List<SkillPoint> registerSkillBranch(List<SkillPoint> branch) {
-		SKILL_TREE.add(branch);
-		return branch;
-	}
-
 	// Adds the skill to the selected Branch
 	public static SkillPoint registerSkill(List<SkillPoint> branch, SkillPoint manip) {
 		branch.add(manip);
 		return manip;
+	}
+
+	// Adds branch to the greater skill tree
+	public static List<SkillPoint> registerSkillBranch(List<SkillPoint> branch) {
+		SKILL_TREE.add(branch);
+		return branch;
 	}
 
 }

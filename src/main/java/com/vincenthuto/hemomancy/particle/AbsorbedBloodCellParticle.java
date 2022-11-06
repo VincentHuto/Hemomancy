@@ -59,13 +59,40 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 	}
 
 	@Override
-	public boolean shouldCull() {
-		return false;
+	public int getLightColor(float partialTick) {
+		int i = super.getLightColor(partialTick);
+		float f = (float) this.age / (float) this.lifetime;
+		f = f * f;
+		f = f * f;
+		int j = i & 255;
+		int k = i >> 16 & 255;
+		k = k + (int) (f * 15.0F * 16.0F);
+		if (k > 240) {
+			k = 240;
+		}
+
+		return j | k << 16;
 	}
 
 	@Override
 	public ParticleRenderType getRenderType() {
 		return HLRenderTypeInit.DARK_GLOW_RENDER;
+	}
+
+	@Override
+	public boolean isAlive() {
+		return this.age < this.lifetime;
+	}
+
+	@Override
+	public void move(double x, double y, double z) {
+		this.setBoundingBox(this.getBoundingBox().move(x, y, z));
+		this.setLocationFromBoundingbox();
+	}
+
+	@Override
+	public boolean shouldCull() {
+		return false;
 	}
 
 	@Override
@@ -85,32 +112,5 @@ public class AbsorbedBloodCellParticle extends TextureSheetParticle {
 			this.y = this.coordY + this.yd * f - f1 * 1.2F;
 			this.z = this.coordZ + this.zd * f;
 		}
-	}
-
-	@Override
-	public void move(double x, double y, double z) {
-		this.setBoundingBox(this.getBoundingBox().move(x, y, z));
-		this.setLocationFromBoundingbox();
-	}
-
-	@Override
-	public boolean isAlive() {
-		return this.age < this.lifetime;
-	}
-
-	@Override
-	public int getLightColor(float partialTick) {
-		int i = super.getLightColor(partialTick);
-		float f = (float) this.age / (float) this.lifetime;
-		f = f * f;
-		f = f * f;
-		int j = i & 255;
-		int k = i >> 16 & 255;
-		k = k + (int) (f * 15.0F * 16.0F);
-		if (k > 240) {
-			k = 240;
-		}
-
-		return j | k << 16;
 	}
 }

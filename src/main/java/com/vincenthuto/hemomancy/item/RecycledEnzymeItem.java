@@ -26,13 +26,11 @@ public class RecycledEnzymeItem extends Item {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		if (!worldIn.isClientSide) {
-			playerIn.displayClientMessage(Component.literal(String.valueOf(getTend())), false);
-			playerIn.displayClientMessage(Component.literal(String.valueOf(getAmount())), false);
-		}
-		return super.use(worldIn, playerIn, handIn);
+	public float getAmount() {
+		Random rand = new Random();
+		float fl = rand.nextFloat();
+		int in = rand.nextInt(15);
+		return fl * in;
 	}
 
 	public EnumBloodTendency getTend() {
@@ -41,11 +39,13 @@ public class RecycledEnzymeItem extends Item {
 		return EnumBloodTendency.values()[val];
 	}
 
-	public float getAmount() {
-		Random rand = new Random();
-		float fl = rand.nextFloat();
-		int in = rand.nextInt(15);
-		return fl * in;
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		if (!worldIn.isClientSide) {
+			playerIn.displayClientMessage(Component.literal(String.valueOf(getTend())), false);
+			playerIn.displayClientMessage(Component.literal(String.valueOf(getAmount())), false);
+		}
+		return super.use(worldIn, playerIn, handIn);
 	}
 
 }

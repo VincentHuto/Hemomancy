@@ -33,12 +33,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class BloodCraftingKeyPressPacket {
 
-	public ItemStack heldStack;
-
-	public BloodCraftingKeyPressPacket(ItemStack stack) {
-		this.heldStack = stack;
-	}
-
 	public static BloodCraftingKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodCraftingKeyPressPacket(buffer.readItem());
@@ -50,7 +44,7 @@ public class BloodCraftingKeyPressPacket {
 	}
 
 	public static List<BloodStructureRecipe> getMatchingRecipes(ItemStack stack, Level level) {
-		List<BloodStructureRecipe> matchedRecipes = new ArrayList<BloodStructureRecipe>();
+		List<BloodStructureRecipe> matchedRecipes = new ArrayList<>();
 		for (BloodStructureRecipe recipe : BloodStructureRecipe.getAllRecipes(level)) {
 			if (recipe.getHeldItem().getItem() == stack.getItem()) {
 				matchedRecipes.add(recipe);
@@ -132,5 +126,11 @@ public class BloodCraftingKeyPressPacket {
 
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public ItemStack heldStack;
+
+	public BloodCraftingKeyPressPacket(ItemStack stack) {
+		this.heldStack = stack;
 	}
 }

@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hutoslib.client.model.anim.Animation;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -24,32 +23,8 @@ import net.minecraft.world.entity.LivingEntity;
 public class BloodDrunkPuppeteerModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 
-	public final Map<String, ModelPart> parts;
-
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "modelblooddrunkpuppeteer"), "main");
-	private final ModelPart head;
-	private final ModelPart body;
-	private final ModelPart right_arm;
-	private final ModelPart left_arm;
-	private final ModelPart left_leg;
-	private final ModelPart left_leg2;
-	private final ModelPart right_leg;
-	private final ModelPart right_leg2;
-
-	public BloodDrunkPuppeteerModel(ModelPart root) {
-		super(root);
-		this.head = root.getChild("head");
-		this.body = root.getChild("body");
-		this.right_arm = root.getChild("right_arm");
-		this.left_arm = root.getChild("left_arm");
-		this.left_leg = root.getChild("left_leg");
-		this.left_leg2 = root.getChild("left_leg2");
-		this.right_leg = root.getChild("right_leg");
-		this.right_leg2 = root.getChild("right_leg2");
-
-		parts = new ImmutableMap.Builder<String, ModelPart>().put("body", body).put("head", head).build();
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createbodyLayer() {
@@ -146,6 +121,40 @@ public class BloodDrunkPuppeteerModel<T extends LivingEntity> extends HumanoidMo
 
 		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
+	public final Map<String, ModelPart> parts;
+	private final ModelPart head;
+	private final ModelPart body;
+	private final ModelPart right_arm;
+	private final ModelPart left_arm;
+	private final ModelPart left_leg;
+	private final ModelPart left_leg2;
+	private final ModelPart right_leg;
+
+	private final ModelPart right_leg2;
+
+	public BloodDrunkPuppeteerModel(ModelPart root) {
+		super(root);
+		this.head = root.getChild("head");
+		this.body = root.getChild("body");
+		this.right_arm = root.getChild("right_arm");
+		this.left_arm = root.getChild("left_arm");
+		this.left_leg = root.getChild("left_leg");
+		this.left_leg2 = root.getChild("left_leg2");
+		this.right_leg = root.getChild("right_leg");
+		this.right_leg2 = root.getChild("right_leg2");
+
+		parts = new ImmutableMap.Builder<String, ModelPart>().put("body", body).put("head", head).build();
+	}
+
+	@Override
+	protected ModelPart getArm(HumanoidArm pSide) {
+		return pSide == HumanoidArm.LEFT ? this.left_arm : this.right_arm;
+	}
+
+	@Override
+	public ModelPart getHead() {
+		return this.head;
+	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
@@ -178,16 +187,6 @@ public class BloodDrunkPuppeteerModel<T extends LivingEntity> extends HumanoidMo
 	@Override
 	public void translateToHand(HumanoidArm pSide, PoseStack pPoseStack) {
 		this.getArm(pSide).translateAndRotate(pPoseStack);
-	}
-
-	@Override
-	protected ModelPart getArm(HumanoidArm pSide) {
-		return pSide == HumanoidArm.LEFT ? this.left_arm : this.right_arm;
-	}
-
-	@Override
-	public ModelPart getHead() {
-		return this.head;
 	}
 
 }

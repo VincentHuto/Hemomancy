@@ -22,6 +22,11 @@ public class IronPillarRenderer extends MobRenderer<EntityIronPillar, IronPillar
 	}
 
 	@Override
+	public ResourceLocation getTextureLocation(EntityIronPillar p_114482_) {
+		return texture;
+	}
+
+	@Override
 	protected void scale(EntityIronPillar entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 		super.scale(entitylivingbaseIn, matrixStackIn, partialTickTime);
 		float f = 0.0F;
@@ -42,10 +47,5 @@ public class IronPillarRenderer extends MobRenderer<EntityIronPillar, IronPillar
 			matrixStackIn.scale(1, d, 1);
 
 		}
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(EntityIronPillar p_114482_) {
-		return texture;
 	}
 }

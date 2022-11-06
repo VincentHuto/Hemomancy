@@ -24,15 +24,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class GroundBloodDrawPacket {
 
-	float parTick;
-
-	public GroundBloodDrawPacket() {
-	}
-
-	public GroundBloodDrawPacket(float par) {
-		this.parTick = par;
-	}
-
 	public static GroundBloodDrawPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new GroundBloodDrawPacket(buffer.readFloat());
@@ -182,6 +173,15 @@ public class GroundBloodDrawPacket {
 
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	float parTick;
+
+	public GroundBloodDrawPacket() {
+	}
+
+	public GroundBloodDrawPacket(float par) {
+		this.parTick = par;
 	}
 
 }

@@ -28,6 +28,14 @@ public class BloodStainedStoneItem extends Item {
 	}
 
 	@Override
+	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+		SoundSource soundcategory = entityLiving instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
+		worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(),
+				SoundEvents.BEACON_DEACTIVATE, soundcategory, 1.0F,
+				1.0F / (worldIn.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		IBloodVolume volCap = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -47,14 +55,6 @@ public class BloodStainedStoneItem extends Item {
 		}
 		return InteractionResultHolder.consume(stack);
 
-	}
-
-	@Override
-	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		SoundSource soundcategory = entityLiving instanceof Player ? SoundSource.PLAYERS : SoundSource.HOSTILE;
-		worldIn.playSound((Player) null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(),
-				SoundEvents.BEACON_DEACTIVATE, soundcategory, 1.0F,
-				1.0F / (worldIn.random.nextFloat() * 0.5F + 1.0F) + 0.2F);
 	}
 
 }

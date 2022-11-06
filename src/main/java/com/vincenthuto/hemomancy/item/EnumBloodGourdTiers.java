@@ -14,15 +14,15 @@ public enum EnumBloodGourdTiers {
 		this.enchantability = enchantabilityIn;
 	}
 
-	public int getTierLevel() {
-		return tierLevel;
+	public int getEnchantability() {
+		return this.enchantability;
 	}
 
 	public float getMaxVolume() {
 		return maxVolume;
 	}
 
-	public int getEnchantability() {
-		return this.enchantability;
+	public int getTierLevel() {
+		return tierLevel;
 	}
 }

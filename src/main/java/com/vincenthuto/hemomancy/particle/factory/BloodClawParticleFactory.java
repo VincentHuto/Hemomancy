@@ -12,8 +12,12 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 
 public class BloodClawParticleFactory implements ParticleProvider<BloodClawData> {
-	private final SpriteSet spriteSet;
 	public static final String NAME = "blood_claw";
+	public static ParticleOptions createData(ParticleColor color) {
+		return new BloodClawData(ParticleInit.blood_claw.get(), color);
+	}
+
+	private final SpriteSet spriteSet;
 
 	public BloodClawParticleFactory(SpriteSet sprite) {
 		this.spriteSet = sprite;
@@ -25,10 +29,6 @@ public class BloodClawParticleFactory implements ParticleProvider<BloodClawData>
 		return new BloodClawParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, 0.2f, 50, this.spriteSet);
 
-	}
-
-	public static ParticleOptions createData(ParticleColor color) {
-		return new BloodClawData(ParticleInit.blood_claw.get(), color);
 	}
 
 }

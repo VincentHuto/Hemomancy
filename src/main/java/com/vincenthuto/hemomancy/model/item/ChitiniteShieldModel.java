@@ -21,14 +21,6 @@ public class ChitiniteShieldModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation chitinite_shield = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_shield"), "main");
 
-	private final ModelPart shield;
-
-	public ChitiniteShieldModel(ModelPart part) {
-		super(RenderType::entityTranslucent);
-		this.shield = part.getChild("shield");
-
-	}
-
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
@@ -49,9 +41,11 @@ public class ChitiniteShieldModel<T extends Entity> extends EntityModel<T> {
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
+	private final ModelPart shield;
+
+	public ChitiniteShieldModel(ModelPart part) {
+		super(RenderType::entityTranslucent);
+		this.shield = part.getChild("shield");
 
 	}
 
@@ -59,5 +53,11 @@ public class ChitiniteShieldModel<T extends Entity> extends EntityModel<T> {
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		shield.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
 	}
 }

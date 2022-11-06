@@ -43,8 +43,47 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	}
+
+	@Override
+	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
+		return true;
+	}
+
+	@Override
+	public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
+		return armorType == EquipmentSlot.MAINHAND || armorType == EquipmentSlot.OFFHAND;
+	}
+
+	@Override
+	public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving) {
+		if (entityLiving instanceof Player) {
+			((Player) entityLiving).releaseUsingItem();
+		}
+		return stack;
+	}
+
+	@Override
+	public BakedModel getBakedModel() {
+		// TODO Auto-generated method stub
+		return ClientProxy.bloodAbsorptionModel;
+	}
+
+	@Override
 	public int getEntityLifespan(ItemStack itemStack, Level world) {
 		return 0;
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.NONE;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		return 72000 / 2;
 	}
 
 	@Override
@@ -59,39 +98,14 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		});
 	}
 
-	public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entityLiving) {
-		if (entityLiving instanceof Player) {
-			((Player) entityLiving).releaseUsingItem();
-		}
-		return stack;
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return true;
 	}
 
+	@Override
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		return InteractionResult.PASS;
-	}
-
-	@SuppressWarnings("unused")
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getItemInHand(handIn);
-		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
-		if (volume.isActive()) {
-			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
-				playerIn.startUsingItem(handIn);
-				new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-			}
-		} else {
-			playerIn.displayClientMessage(
-					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),
-					true);
-		}
-
-		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 
 	@Override
@@ -117,38 +131,28 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
-	public int getUseDuration(ItemStack stack) {
-		return 72000 / 2;
-	}
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack stack = playerIn.getItemInHand(handIn);
+		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(NullPointerException::new);
+		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		if (volume.isActive()) {
+			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
+				playerIn.startUsingItem(handIn);
+				new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+			}
+		} else {
+			playerIn.displayClientMessage(
+					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),
+					true);
+		}
 
-	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.NONE;
-	}
-
-	public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
-		return armorType == EquipmentSlot.MAINHAND || armorType == EquipmentSlot.OFFHAND;
-	}
-
-	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
-		return true;
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-		return true;
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-	}
-
-	@Override
-	public BakedModel getBakedModel() {
-		// TODO Auto-generated method stub
-		return ClientProxy.bloodAbsorptionModel;
+		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 
 }

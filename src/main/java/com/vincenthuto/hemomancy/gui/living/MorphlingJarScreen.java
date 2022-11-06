@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
+	private ResourceLocation GUI;
+
 	public MorphlingJarScreen(MorphlingJarMenu container, Inventory playerInventory, Component name) {
 		super(container, playerInventory, name);
 
@@ -30,7 +32,7 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 			break;
 		case 12:
 			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_max.png");
-			imageWidth = 176;  
+			imageWidth = 176;
 			imageHeight = 184;
 			break;
 		default:
@@ -41,11 +43,22 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 		}
 	}
 
-	private ResourceLocation GUI;
-
 	@Override
 	protected void init() {
 		super.init();
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+
+		return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
+	public void render(PoseStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_) {
+		this.renderBackground(matrixStack);
+		super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
+		this.renderTooltip(matrixStack, p_render_1_, p_render_2_);
 	}
 
 	@Override
@@ -60,18 +73,5 @@ public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int x, int y) {
 		this.font.draw(matrixStack, this.title.getString(), 7, 6, 0x404040);
-	}
-
-	@Override
-	public void render(PoseStack matrixStack, int p_render_1_, int p_render_2_, float p_render_3_) {
-		this.renderBackground(matrixStack);
-		super.render(matrixStack, p_render_1_, p_render_2_, p_render_3_);
-		this.renderTooltip(matrixStack, p_render_1_, p_render_2_);
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-
-		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 }

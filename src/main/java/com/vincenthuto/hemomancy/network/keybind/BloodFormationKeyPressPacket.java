@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.network.keybind;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;

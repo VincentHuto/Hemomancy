@@ -12,16 +12,6 @@ public enum EnumBloodTendency {
 	MORTEM(new ParticleColor(0, 58, 0)), CONGEATIO(new ParticleColor(0, 100, 255)),
 	FERRIC(new ParticleColor(53, 53, 53)), TENEBRIS(new ParticleColor(70, 0, 110));
 
-	ParticleColor color;
-
-	EnumBloodTendency(ParticleColor color) {
-		this.color = color;
-	}
-
-	public ParticleColor getColor() {
-		return color;
-	}
-
 	public static Item getRepEnzyme(EnumBloodTendency tend) {
 		switch (tend) {
 		case ANIMUS:
@@ -45,6 +35,16 @@ public enum EnumBloodTendency {
 
 		}
 
+	}
+
+	ParticleColor color;
+
+	EnumBloodTendency(ParticleColor color) {
+		this.color = color;
+	}
+
+	public ParticleColor getColor() {
+		return color;
 	}
 
 }

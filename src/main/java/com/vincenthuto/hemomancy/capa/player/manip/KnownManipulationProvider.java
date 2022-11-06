@@ -23,21 +23,12 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 	//@CapabilityInject(IKnownManipulations.class)
-	public static final Capability<IKnownManipulations> MANIP_CAPA = CapabilityManager.get(new CapabilityToken<IKnownManipulations>() {});;
+	public static final Capability<IKnownManipulations> MANIP_CAPA = CapabilityManager.get(new CapabilityToken<IKnownManipulations>() {});
+	public static LinkedHashMap<BloodManipulation, ManipLevel> getPlayerManips(Player player) {
+		return player.getCapability(MANIP_CAPA).orElseThrow(IllegalStateException::new).getKnownManips();
+	}
+
 	private LazyOptional<IKnownManipulations> instance = LazyOptional.of(KnownManipulations::new);
-
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		return MANIP_CAPA.orEmpty(cap, instance);
-
-	}
-
-	@Override
-	public Tag serializeNBT() {
-		return writeNBT(MANIP_CAPA,
-				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
-	}
 
 	@Override
 	public void deserializeNBT(Tag nbt) {
@@ -46,52 +37,17 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 
 	}
 
-	public static LinkedHashMap<BloodManipulation, ManipLevel> getPlayerManips(Player player) {
-		return player.getCapability(MANIP_CAPA).orElseThrow(IllegalStateException::new).getKnownManips();
-	}
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		return MANIP_CAPA.orEmpty(cap, instance);
 
-	public Tag writeNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side) {
-		ListTag list = new ListTag();
-		CompoundTag selectedManip = new CompoundTag();
-		selectedManip.put("Selected", instance.getSelectedManip().serialize());
-		list.add(selectedManip);
-
-		for (int i = 0; i < instance.getKnownManips().size(); i++) {
-			BloodManipulation manip = instance.getManipList().get(i);
-			ManipLevel level = instance.getLevelList().get(i);
-			if (manip != null && level != null) {
-				CompoundTag entry = new CompoundTag();
-				entry.put("Manip" + i, manip.serialize());
-				entry.put("Level" + i, level.serialize());
-				list.add(entry);
-			}
-		}
-		CompoundTag selectedVein = new CompoundTag();
-		selectedManip.put("SelectedVein", instance.getSelectedVein().serializeNBT());
-		list.add(selectedVein);
-
-		CompoundTag veinCount = new CompoundTag();
-		veinCount.putInt("veinCount", instance.getVeinList().size());
-		list.add(veinCount);
-		for (int i = 0; i < instance.getVeinList().size(); i++) {
-			VeinLocation loc = instance.getVeinList().get(i);
-			if (loc != null) {
-				CompoundTag entry = new CompoundTag();
-				entry.put("Vein" + i, loc.serializeNBT());
-				list.add(entry);
-			}
-		}
-		CompoundTag avatarActive = new CompoundTag();
-		avatarActive.putBoolean("avatarActive", instance.isAvatarActive());
-		list.add(avatarActive);
-
-		return list;
 	}
 
 	public void readNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side,
 			Tag nbt) {
-		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<BloodManipulation, ManipLevel>();
-		List<VeinLocation> veinList = new ArrayList<VeinLocation>();
+		LinkedHashMap<BloodManipulation, ManipLevel> map = new LinkedHashMap<>();
+		List<VeinLocation> veinList = new ArrayList<>();
 		if (nbt instanceof ListTag) {
 			ListTag listNbt = (ListTag) nbt;
 			int veinCount = 0;
@@ -142,6 +98,50 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 			instance.setVeinList(veinList);
 		}
 
+	}
+
+	@Override
+	public Tag serializeNBT() {
+		return writeNBT(MANIP_CAPA,
+				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
+	}
+
+	public Tag writeNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side) {
+		ListTag list = new ListTag();
+		CompoundTag selectedManip = new CompoundTag();
+		selectedManip.put("Selected", instance.getSelectedManip().serialize());
+		list.add(selectedManip);
+
+		for (int i = 0; i < instance.getKnownManips().size(); i++) {
+			BloodManipulation manip = instance.getManipList().get(i);
+			ManipLevel level = instance.getLevelList().get(i);
+			if (manip != null && level != null) {
+				CompoundTag entry = new CompoundTag();
+				entry.put("Manip" + i, manip.serialize());
+				entry.put("Level" + i, level.serialize());
+				list.add(entry);
+			}
+		}
+		CompoundTag selectedVein = new CompoundTag();
+		selectedManip.put("SelectedVein", instance.getSelectedVein().serializeNBT());
+		list.add(selectedVein);
+
+		CompoundTag veinCount = new CompoundTag();
+		veinCount.putInt("veinCount", instance.getVeinList().size());
+		list.add(veinCount);
+		for (int i = 0; i < instance.getVeinList().size(); i++) {
+			VeinLocation loc = instance.getVeinList().get(i);
+			if (loc != null) {
+				CompoundTag entry = new CompoundTag();
+				entry.put("Vein" + i, loc.serializeNBT());
+				list.add(entry);
+			}
+		}
+		CompoundTag avatarActive = new CompoundTag();
+		avatarActive.putBoolean("avatarActive", instance.isAvatarActive());
+		list.add(avatarActive);
+
+		return list;
 	}
 
 }

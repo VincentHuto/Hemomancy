@@ -18,15 +18,26 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class LivingSyringeMenu extends AbstractContainerMenu {
+	public int slotcount = 0;
+
+	private int slotID;
+
+	public String itemKey = "";
+
+	private Inventory playerInv;
+
+	public LivingSyringeItemHandler handler;
+	public LivingSyringeMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
+			Player playerEntity) {
+		this(windowId, world, pos, playerInventory, playerEntity);
+	}
 	public LivingSyringeMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
-
 	public LivingSyringeMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
-
 	public LivingSyringeMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(ContainerInit.living_syringe.get(), windowId);
@@ -53,37 +64,21 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 			playerEntity.closeContainer();
 	}
 
-	public LivingSyringeMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
-			Player playerEntity) {
-		this(windowId, world, pos, playerInventory, playerEntity);
-	}
+	private void addMySlots(ItemStack stack) {
+		if (handler == null)
+			return;
 
-	public int slotcount = 0;
-	private int slotID;
-	public String itemKey = "";
-	private Inventory playerInv;
-	public LivingSyringeItemHandler handler;
+		int cols = slotcount % 1 == 0 ? 1 : 10;
+		int rows = slotcount / cols;
+		int slotindex = 0;
 
-	@Override
-	public boolean stillValid(Player playerIn) {
-		if (slotID == -106)
-			return playerIn.getOffhandItem().getItem() instanceof LivingSyringeItem;
-		return playerIn.getInventory().getItem(slotID).getItem() instanceof LivingSyringeItem;
-	}
+		for (int row = 0; row < rows; row++) {
 
-	@Override
-	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-		super.clicked(slot, dragType, clickTypeIn, player);
-
-		if (slot >= 0) {
-			if (getSlot(slot).getItem().getItem() instanceof LivingSyringeItem) {
-
-			}
+			this.addSlot(new LivingSyringeSlot(handler, slotindex, 80, 61));
+			slotindex++;
+			if (slotindex >= slotcount)
+				break;
 		}
-		if (clickTypeIn == ClickType.SWAP)
-
-			if (slot >= 0)
-				getSlot(slot).container.setChanged();
 	}
 
 	private void addPlayerSlots(Inventory playerInventory) {
@@ -117,45 +112,19 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 		}
 	}
 
-	private void addMySlots(ItemStack stack) {
-		if (handler == null)
-			return;
-
-		int cols = slotcount % 1 == 0 ? 1 : 10;
-		int rows = slotcount / cols;
-		int slotindex = 0;
-
-		for (int row = 0; row < rows; row++) {
-
-			this.addSlot(new LivingSyringeSlot(handler, slotindex, 80, 61));
-			slotindex++;
-			if (slotindex >= slotcount)
-				break;
-		}
-	}
-
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
-			ItemStack itemstack1 = slot.getItem();
-			if (itemstack1.getCount() < 1) {
-				itemstack = itemstack1.copy();
-				if (index < bagslotcount) {
-					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
-						return ItemStack.EMPTY;
-				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
-					return ItemStack.EMPTY;
-				}
-				if (itemstack1.isEmpty())
-					slot.set(ItemStack.EMPTY);
-				else
-					slot.setChanged();
+	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slot, dragType, clickTypeIn, player);
+
+		if (slot >= 0) {
+			if (getSlot(slot).getItem().getItem() instanceof LivingSyringeItem) {
+
 			}
 		}
-		return itemstack;
+		if (clickTypeIn == ClickType.SWAP)
+
+			if (slot >= 0)
+				getSlot(slot).container.setChanged();
 	}
 
 	private ItemStack findLivingStaff(Player playerEntity) {
@@ -182,5 +151,36 @@ public class LivingSyringeMenu extends AbstractContainerMenu {
 			}
 		}
 		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		Slot slot = this.slots.get(index);
+		if (slot != null && slot.hasItem()) {
+			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
+			ItemStack itemstack1 = slot.getItem();
+			if (itemstack1.getCount() < 1) {
+				itemstack = itemstack1.copy();
+				if (index < bagslotcount) {
+					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
+						return ItemStack.EMPTY;
+				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+					return ItemStack.EMPTY;
+				}
+				if (itemstack1.isEmpty())
+					slot.set(ItemStack.EMPTY);
+				else
+					slot.setChanged();
+			}
+		}
+		return itemstack;
+	}
+
+	@Override
+	public boolean stillValid(Player playerIn) {
+		if (slotID == -106)
+			return playerIn.getOffhandItem().getItem() instanceof LivingSyringeItem;
+		return playerIn.getInventory().getItem(slotID).getItem() instanceof LivingSyringeItem;
 	}
 }

@@ -21,16 +21,9 @@ public abstract class RadialMenuItem
         this.owner = owner;
     }
 
-    public boolean isVisible()
-    {
-        return visible;
-    }
+    public abstract void draw(DrawingContext context);
 
-    public void setVisible(boolean newVisible)
-    {
-        visible = newVisible;
-        owner.visibilityChanged(this);
-    }
+    public abstract void drawTooltips(DrawingContext context);
 
     @Nullable
     public List<Component>  getCentralText()
@@ -38,14 +31,24 @@ public abstract class RadialMenuItem
         return centralText;
     }
 
-    public void setCentralText(@Nullable List<Component>  centralText)
-    {
-        this.centralText = centralText;
-    }
-
     public boolean isHovered()
     {
         return hovered;
+    }
+
+    public boolean isVisible()
+    {
+        return visible;
+    }
+
+    public boolean onClick()
+    {
+        return false;
+    }
+
+    public void setCentralText(@Nullable List<Component>  centralText)
+    {
+        this.centralText = centralText;
     }
 
     public void setHovered(boolean hovered)
@@ -53,12 +56,9 @@ public abstract class RadialMenuItem
         this.hovered = hovered;
     }
 
-    public abstract void draw(DrawingContext context);
-
-    public abstract void drawTooltips(DrawingContext context);
-
-    public boolean onClick()
+    public void setVisible(boolean newVisible)
     {
-        return false;
+        visible = newVisible;
+        owner.visibilityChanged(this);
     }
 }

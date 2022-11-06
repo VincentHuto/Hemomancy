@@ -18,16 +18,16 @@ public class LivingItemItem extends Item {
 	}
 
 	@Override
+	public int getEntityLifespan(ItemStack itemStack, Level world) {
+		return 0;
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.DARK_RED);
-	}
-
-	@Override
-	public int getEntityLifespan(ItemStack itemStack, Level world) {
-		return 0;
 	}
 }

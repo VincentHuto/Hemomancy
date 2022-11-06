@@ -18,6 +18,34 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class FillBloodGourdRecipe extends ShapedRecipe {
+	public static class Serializer implements RecipeSerializer<FillBloodGourdRecipe> {
+		@Override
+		public FillBloodGourdRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+			try {
+				return new FillBloodGourdRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
+			} catch (Exception exception) {
+				Hemomancy.LOGGER.info("Error reading CopyBloodGourdRecipe from packet: ", exception);
+				throw exception;
+			}
+		}
+
+		@Nullable
+		@Override
+		public FillBloodGourdRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+			return new FillBloodGourdRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
+		}
+
+		@Override
+		public void toNetwork(FriendlyByteBuf buffer, FillBloodGourdRecipe recipe) {
+			try {
+				RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
+			} catch (Exception exception) {
+				Hemomancy.LOGGER.info("Error writing CopyBloodGourdRecipe Recipe to packet: ", exception);
+				throw exception;
+			}
+		}
+	}
+
 	public FillBloodGourdRecipe(final ResourceLocation id, final String group, final int recipeWidth,
 			final int recipeHeight, final NonNullList<Ingredient> ingredients, final ItemStack recipeOutput) {
 		super(id, group, recipeWidth, recipeHeight, ingredients, recipeOutput);
@@ -62,34 +90,6 @@ public class FillBloodGourdRecipe extends ShapedRecipe {
 		}
 
 		return craftingResult;
-	}
-
-	public static class Serializer implements RecipeSerializer<FillBloodGourdRecipe> {
-		@Nullable
-		@Override
-		public FillBloodGourdRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-			return new FillBloodGourdRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
-		}
-
-		@Override
-		public FillBloodGourdRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-			try {
-				return new FillBloodGourdRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error reading CopyBloodGourdRecipe from packet: ", exception);
-				throw exception;
-			}
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, FillBloodGourdRecipe recipe) {
-			try {
-				RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error writing CopyBloodGourdRecipe Recipe to packet: ", exception);
-				throw exception;
-			}
-		}
 	}
 
 }

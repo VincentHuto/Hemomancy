@@ -11,14 +11,11 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class StartCentrifugeButtonPacket {
 
-	public StartCentrifugeButtonPacket() {
+	public static StartCentrifugeButtonPacket decode(FriendlyByteBuf buf) {
+		return new StartCentrifugeButtonPacket();
 	}
 
 	public static void encode(StartCentrifugeButtonPacket msg, FriendlyByteBuf buf) {
-	}
-
-	public static StartCentrifugeButtonPacket decode(FriendlyByteBuf buf) {
-		return new StartCentrifugeButtonPacket();
 	}
 
 	public static void handle(final StartCentrifugeButtonPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -32,5 +29,8 @@ public class StartCentrifugeButtonPacket {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public StartCentrifugeButtonPacket() {
 	}
 }

@@ -13,21 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class UpdateCurrentVeinPacket {
-	private int selected;
-
-	public UpdateCurrentVeinPacket(int selectedIn) {
-		this.selected = selectedIn;
-
-	}
-
-	public static void encode(UpdateCurrentVeinPacket msg, FriendlyByteBuf buf) {
-		buf.writeInt(msg.selected);
-	}
-
-	public static UpdateCurrentVeinPacket decode(FriendlyByteBuf buf) {
-		return new UpdateCurrentVeinPacket(buf.readInt());
-	}
-
 	public static class Handler {
 		public static void handle(final UpdateCurrentVeinPacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
@@ -47,5 +32,20 @@ public class UpdateCurrentVeinPacket {
 			});
 			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	public static UpdateCurrentVeinPacket decode(FriendlyByteBuf buf) {
+		return new UpdateCurrentVeinPacket(buf.readInt());
+	}
+
+	public static void encode(UpdateCurrentVeinPacket msg, FriendlyByteBuf buf) {
+		buf.writeInt(msg.selected);
+	}
+
+	private int selected;
+
+	public UpdateCurrentVeinPacket(int selectedIn) {
+		this.selected = selectedIn;
+
 	}
 }

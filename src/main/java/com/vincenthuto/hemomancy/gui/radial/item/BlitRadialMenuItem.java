@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.gui.radial.item;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.gui.radial.DrawingContext;
 import com.vincenthuto.hemomancy.gui.radial.GenericRadialMenu;
 
@@ -19,14 +18,6 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 	private final int tex_w;
 	private final int tex_h;
 
-	public int getSlot() {
-		return this.slot;
-	}
-
-	public ResourceLocation getStack() {
-		return this.rLoc;
-	}
-
 	public BlitRadialMenuItem(GenericRadialMenu owner, int slot, ResourceLocation rLoc, int u, int v, int w, int h,
 			int texW, int texH, Component altText) {
 		super(owner, altText, Integer.MAX_VALUE);
@@ -43,10 +34,10 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 	@Override
 	public void draw(DrawingContext context) {
 		context.matrixStack.pushPose();
-		context.matrixStack.translate(-8.0, -8.0, (double) context.z);
-		RenderSystem.setShaderTexture(0, (ResourceLocation) this.rLoc);
-		GuiComponent.blit((PoseStack) context.matrixStack, (int) ((int) context.x), (int) ((int) context.y),
-				(float) this.u, (float) this.v, (int) this.w, (int) this.h, (int) this.tex_w, (int) this.tex_h);
+		context.matrixStack.translate(-8.0, -8.0, context.z);
+		RenderSystem.setShaderTexture(0, this.rLoc);
+		GuiComponent.blit(context.matrixStack, ((int) context.x), ((int) context.y),
+				this.u, this.v, this.w, this.h, this.tex_w, this.tex_h);
 		context.matrixStack.popPose();
 	}
 
@@ -55,5 +46,13 @@ public class BlitRadialMenuItem extends TextRadialMenuItem {
 		if (this.getText() != null) {
 			context.drawingHelper.renderTooltip(context.matrixStack, this.getText(), (int) context.x, (int) context.y);
 		}
+	}
+
+	public int getSlot() {
+		return this.slot;
+	}
+
+	public ResourceLocation getStack() {
+		return this.rLoc;
 	}
 }

@@ -27,20 +27,27 @@ import net.minecraftforge.items.IItemHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
+	@SubscribeEvent
+    public static void overlayEvent(RenderGuiOverlayEvent.Pre event)
+    {
+        if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+            return;
+
+		if (Minecraft.getInstance().screen instanceof RadialMenuScreen) {
+			event.setCanceled(true);
+		}
+	}
 	private ItemStack stackEquipped;
+
 	private IItemHandler inventory;
-
 	private boolean keyCycleBeforeL = false;
-	private boolean keyCycleBeforeR = false;
 
+	private boolean keyCycleBeforeR = false;
 	private boolean needsRecheckStacks = true;
 	private final List<ItemStackRadialMenuItem> cachedMenuItems = Lists.newArrayList();
 	private final TextRadialMenuItem insertMenuItem;
-	private final GenericRadialMenu menu;
 
-	private ItemRenderer getItemRenderer() {
-		return itemRenderer;
-	}
+	private final GenericRadialMenu menu;
 
 	public RadialMenuScreen(ItemStack getter) {
 		super(Component.literal("RADIAL MENU"));
@@ -52,16 +59,6 @@ public class RadialMenuScreen extends Screen {
 		this.insertMenuItem = null;
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
 			@Override
-			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
-				RadialMenuScreen.this.renderTooltip(matrixStack, stack, mouseX, mouseY);
-			}
-
-			@Override
-			public Screen getScreen() {
-				return RadialMenuScreen.this;
-			}
-
-			@Override
 			public Font getFontRenderer() {
 				return font;
 			}
@@ -72,9 +69,19 @@ public class RadialMenuScreen extends Screen {
 			}
 
 			@Override
+			public Screen getScreen() {
+				return RadialMenuScreen.this;
+			}
+
+			@Override
 			public void renderTooltip(PoseStack matrixStack, Component component, int mouseX, int mouseY) {
 				RadialMenuScreen.this.renderTooltip(matrixStack, component, mouseX, mouseY);
 
+			}
+
+			@Override
+			public void renderTooltip(PoseStack matrixStack, ItemStack stack, int mouseX, int mouseY) {
+				RadialMenuScreen.this.renderTooltip(matrixStack, stack, mouseX, mouseY);
 			}
 		}) {
 
@@ -86,44 +93,13 @@ public class RadialMenuScreen extends Screen {
 		};
 	}
 
-	@SubscribeEvent
-    public static void overlayEvent(RenderGuiOverlayEvent.Pre event)
-    {
-        if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
-            return;
-
-		if (Minecraft.getInstance().screen instanceof RadialMenuScreen) {
-			event.setCanceled(true);
-		}
+	private ItemRenderer getItemRenderer() {
+		return itemRenderer;
 	}
 
-	@Override // removed
-	public void removed() {
-		super.removed();
-		RadialClientEvents.wipeOpen();
-	}
-
-	@Override // tick
-	public void tick() {
-		super.tick();
-
-		menu.tick();
-
-		if (menu.isClosed()) {
-			Minecraft.getInstance().setScreen(null);
-			RadialClientEvents.wipeOpen();
-		}
-		if (!menu.isReady() || inventory == null) {
-			return;
-		}
-
-		ItemStack inHand = minecraft.player.getMainHandItem();
-
-		if (inventory == null) {
-			Minecraft.getInstance().setScreen(null);
-		} else if (!RadialClientEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
-			menu.close();
-		}
+	@Override // isPauseScreen
+	public boolean isPauseScreen() {
+		return false;
 	}
 
 	@Override // mouseReleased
@@ -134,6 +110,12 @@ public class RadialMenuScreen extends Screen {
 
 	protected void processClick(boolean triggeredByMouse) {
 		menu.clickItem();
+	}
+
+	@Override // removed
+	public void removed() {
+		super.removed();
+		RadialClientEvents.wipeOpen();
 	}
 
 	@Override
@@ -168,7 +150,7 @@ public class RadialMenuScreen extends Screen {
 		insertMenuItem.setVisible(hasAddButton);
 
 		if (cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			List<Component> textComponents = new ArrayList<Component>();
+			List<Component> textComponents = new ArrayList<>();
 			textComponents.add(Component.literal("text.toolbelt.empty"));
 		} else {
 			menu.setCentralText(null);
@@ -177,8 +159,26 @@ public class RadialMenuScreen extends Screen {
 		menu.draw(matrixStack, partialTicks, mouseX, mouseY);
 	}
 
-	@Override // isPauseScreen
-	public boolean isPauseScreen() {
-		return false;
+	@Override // tick
+	public void tick() {
+		super.tick();
+
+		menu.tick();
+
+		if (menu.isClosed()) {
+			Minecraft.getInstance().setScreen(null);
+			RadialClientEvents.wipeOpen();
+		}
+		if (!menu.isReady() || inventory == null) {
+			return;
+		}
+
+		ItemStack inHand = minecraft.player.getMainHandItem();
+
+		if (inventory == null) {
+			Minecraft.getInstance().setScreen(null);
+		} else if (!RadialClientEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
+			menu.close();
+		}
 	}
 }

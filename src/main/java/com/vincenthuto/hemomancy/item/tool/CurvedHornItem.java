@@ -11,7 +11,7 @@ public class CurvedHornItem extends BloodGourdItem {
 		super(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1).durability(3), tierIn);
 
 	}
-	
-	
+
+
 
 }

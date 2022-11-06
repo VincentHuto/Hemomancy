@@ -12,20 +12,10 @@ import com.vincenthuto.hemomancy.manipulation.EnumManipulationType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class UseContManipKeyPacket {
-
-	float parTick;
-
-	public UseContManipKeyPacket() {
-	}
-
-	public UseContManipKeyPacket(float par) {
-		this.parTick = par;
-	}
 
 	public static UseContManipKeyPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
@@ -57,7 +47,7 @@ public class UseContManipKeyPacket {
 							// Continuous and Charged
 							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS
 									|| selectedManip.getType() == EnumManipulationType.CHARGED) {
-								selectedManip.performAction(player, (ServerLevel) player.level,
+								selectedManip.performAction(player, player.level,
 										player.getMainHandItem(), player.blockPosition());
 							} else {
 								player.displayClientMessage(Component.literal(
@@ -75,6 +65,15 @@ public class UseContManipKeyPacket {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	float parTick;
+
+	public UseContManipKeyPacket() {
+	}
+
+	public UseContManipKeyPacket(float par) {
+		this.parTick = par;
 	}
 
 }

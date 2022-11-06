@@ -16,19 +16,11 @@ public class EarthenVeinLocProvider implements ICapabilitySerializable<CompoundT
 	public static final Capability<IEarthenVeinLoc> VEIN_CAPA = CapabilityManager
 			.get(new CapabilityToken<IEarthenVeinLoc>() {
 			});
+	public static VeinLocation getLocation(Player player) {
+		return player.getCapability(VEIN_CAPA).orElseThrow(IllegalStateException::new).getVeinLocation();
+	}
+
 	private LazyOptional<IEarthenVeinLoc> instance = LazyOptional.of(EarthenVeinLoc::new);
-
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		return VEIN_CAPA.orEmpty(cap, instance);
-	}
-
-	@Override
-	public CompoundTag serializeNBT() {
-		return writeNBT(VEIN_CAPA,
-				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
-	}
 
 	@Override
 	public void deserializeNBT(CompoundTag nbt) {
@@ -37,20 +29,28 @@ public class EarthenVeinLocProvider implements ICapabilitySerializable<CompoundT
 
 	}
 
-	public static VeinLocation getLocation(Player player) {
-		return player.getCapability(VEIN_CAPA).orElseThrow(IllegalStateException::new).getVeinLocation();
-	}
-
-	public CompoundTag writeNBT(Capability<IEarthenVeinLoc> capability, IEarthenVeinLoc instance, Direction side) {
-		CompoundTag loc = new CompoundTag();
-		loc.put("loc", instance.getVeinLocation().serializeNBT());
-		return loc;
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		return VEIN_CAPA.orEmpty(cap, instance);
 	}
 
 	public void readNBT(Capability<IEarthenVeinLoc> capability, IEarthenVeinLoc instance, Direction side,
 			CompoundTag nbt) {
 		instance.setVeinLoc(VeinLocation.deserializeToLoc(nbt.getCompound("loc")));
 
+	}
+
+	@Override
+	public CompoundTag serializeNBT() {
+		return writeNBT(VEIN_CAPA,
+				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
+	}
+
+	public CompoundTag writeNBT(Capability<IEarthenVeinLoc> capability, IEarthenVeinLoc instance, Direction side) {
+		CompoundTag loc = new CompoundTag();
+		loc.put("loc", instance.getVeinLocation().serializeNBT());
+		return loc;
 	}
 
 }

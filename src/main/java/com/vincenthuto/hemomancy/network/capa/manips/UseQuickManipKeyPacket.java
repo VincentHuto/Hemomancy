@@ -21,15 +21,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class UseQuickManipKeyPacket {
 
-	float parTick;
-
-	public UseQuickManipKeyPacket() {
-	}
-
-	public UseQuickManipKeyPacket(float par) {
-		this.parTick = par;
-	}
-
 	public static UseQuickManipKeyPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new UseQuickManipKeyPacket(buffer.readFloat());
@@ -105,6 +96,15 @@ public class UseQuickManipKeyPacket {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	float parTick;
+
+	public UseQuickManipKeyPacket() {
+	}
+
+	public UseQuickManipKeyPacket(float par) {
+		this.parTick = par;
 	}
 
 }

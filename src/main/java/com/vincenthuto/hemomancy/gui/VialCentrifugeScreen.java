@@ -34,24 +34,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
 	static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_fill_tiled.png");
-	final Inventory playerInv;
-	final VialCentrifugeBlockEntity te;
-	int left, top;
-	int guiWidth = 176;
-	int guiHeight = 186;
-	GuiButtonTextured forgetButton;
-	int FORGETBUTTONID = 1;
-
-	public VialCentrifugeScreen(VialCentrifugeMenu screenContainer, Inventory inv, Component titleIn) {
-		super(screenContainer, inv, titleIn);
-		this.leftPos = 0;
-		this.topPos = 0;
-		this.imageWidth = 176;
-		this.imageHeight = 186;
-		this.playerInv = inv;
-		this.te = screenContainer.getTe();
-	}
-
 	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
 			float height) {
 
@@ -75,6 +57,84 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 				.endVertex();
 
 		tessellator.end();
+	}
+	final Inventory playerInv;
+	final VialCentrifugeBlockEntity te;
+	int left, top;
+	int guiWidth = 176;
+	int guiHeight = 186;
+	GuiButtonTextured forgetButton;
+
+	int FORGETBUTTONID = 1;
+
+	public VialCentrifugeScreen(VialCentrifugeMenu screenContainer, Inventory inv, Component titleIn) {
+		super(screenContainer, inv, titleIn);
+		this.leftPos = 0;
+		this.topPos = 0;
+		this.imageWidth = 176;
+		this.imageHeight = 186;
+		this.playerInv = inv;
+		this.te = screenContainer.getTe();
+	}
+
+	@Override
+	protected void init() {
+		super.init();
+		renderables.clear();
+		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_CENTRIFUGE, FORGETBUTTONID, leftPos + 90-28,
+				topPos + 44, 16, 16, 176, 0, null, (press) -> {
+					if (press instanceof GuiButtonTextured) {
+						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new StartCentrifugeButtonPacket());
+					}
+				}));
+
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+
+	@Override
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		int centerX = (width / 2) - guiWidth / 2;
+		int centerY = (height / 2) - guiHeight / 2;
+		renderVolumeBar(matrixStack, centerX, centerY, te.getLevel());
+		this.renderTooltip(matrixStack, mouseX, mouseY);
+		if (forgetButton.isHoveredOrFocused()) {
+			List<Component> ClosePage = new ArrayList<>();
+			ClosePage.add(Component.literal(I18n.get("Start Centrifuge")));
+			if (forgetButton.isHoveredOrFocused()) {
+				renderComponentTooltip(matrixStack, ClosePage, mouseX, mouseY);
+			}
+		}
+	}
+
+	@Override
+	public void renderBackground(PoseStack matrixStack) {
+		super.renderBackground(matrixStack);
+	}
+
+	@Override
+	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+		this.renderBackground(matrixStack);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, GUI_CENTRIFUGE);
+		HLGuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+		int l = this.menu.getSpinProgress();
+		if (l < 24)
+			this.blit(matrixStack, this.leftPos + 118, this.topPos + 80, 177, 33, l, 16);
+	}
+
+	@Override
+	protected void renderLabels(PoseStack matrixStack, int x, int y) {
+		//this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
+		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 26, 85, 0000);
+		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
+
 	}
 
 	public void renderVolumeBar(PoseStack matrix, int screenWidth, int screenHeight, Level world) {
@@ -111,66 +171,6 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 				heightShift);
 		ScreenUtils.drawTexturedModalRect(matrix, 1 + screenWidth + 7, 1 + screenHeight + 25, 1, 0, 12, 42, heightShift);
 		matrix.popPose();
-	}
-
-	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		forgetButton.render(matrixStack, mouseX, mouseY, partialTicks);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		int centerX = (width / 2) - guiWidth / 2;
-		int centerY = (height / 2) - guiHeight / 2;
-		renderVolumeBar(matrixStack, centerX, centerY, te.getLevel());
-		this.renderTooltip(matrixStack, mouseX, mouseY);
-		if (forgetButton.isHoveredOrFocused()) {
-			List<Component> ClosePage = new ArrayList<Component>();
-			ClosePage.add(Component.literal(I18n.get("Start Centrifuge")));
-			if (forgetButton.isHoveredOrFocused()) {
-				renderComponentTooltip(matrixStack, ClosePage, mouseX, mouseY);
-			}
-		}
-	}
-
-	@Override
-	public void renderBackground(PoseStack matrixStack) {
-		super.renderBackground(matrixStack);
-	}
-
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int x, int y) {
-		//this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
-		this.font.draw(matrixStack, String.valueOf(te.getBloodVolume()), 26, 85, 0000);
-		this.font.draw(matrixStack, "Inventory", 8, this.imageHeight - 90, 000000);
-
-	}
-
-	@Override
-	protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-		this.renderBackground(matrixStack);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, GUI_CENTRIFUGE);
-		HLGuiUtils.drawTexturedModalRect(this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-		int l = this.menu.getSpinProgress();
-		if (l < 24)
-			this.blit(matrixStack, this.leftPos + 118, this.topPos + 80, 177, 33, l, 16);
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		renderables.clear();
-		this.addRenderableWidget(forgetButton = new GuiButtonTextured(GUI_CENTRIFUGE, FORGETBUTTONID, leftPos + 90-28,
-				topPos + 44, 16, 16, 176, 0, null, (press) -> {
-					if (press instanceof GuiButtonTextured) {
-						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new StartCentrifugeButtonPacket());
-					}
-				}));
-
-	}
-
-	@Override
-	public boolean isPauseScreen() {
-		return false;
 	}
 
 }

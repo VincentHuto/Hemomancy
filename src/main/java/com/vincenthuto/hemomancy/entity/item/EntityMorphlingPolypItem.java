@@ -35,6 +35,12 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 		this.lifespan = (stack.getItem() == null ? 6000 : stack.getEntityLifespan(p_i50217_2_));
 	}
 
+	@Nonnull
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
 	@Override
 	public void tick() {
 
@@ -53,8 +59,8 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 			}
 		}
 		List<Entity> entList = this.level.getEntities(this, this.getBoundingBox().inflate(0.75));
-		List<Item> itemList = new ArrayList<Item>();
-		List<ItemEntity> itemEntList = new ArrayList<ItemEntity>();
+		List<Item> itemList = new ArrayList<>();
+		List<ItemEntity> itemEntList = new ArrayList<>();
 
 		// Machina Spark
 		for (int i = 0; i < entList.size(); i++) {
@@ -91,12 +97,6 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 		}
 		super.tick();
 
-	}
-
-	@Nonnull
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 }

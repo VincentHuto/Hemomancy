@@ -30,12 +30,7 @@ public class EntityWretchedWill extends BloodConstructEntity {
 		// Prevents it from falling
 
 	}
-	
-	@Override
-	protected void sendDebugPackets() {
-		super.sendDebugPackets();
-	}
-	
+
 	@Override
 	public boolean broadcastToPlayer(ServerPlayer p_19937_) {
 		return super.broadcastToPlayer(p_19937_);
@@ -45,7 +40,7 @@ public class EntityWretchedWill extends BloodConstructEntity {
 	public Packet<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
-	
+
 	@Override
 	public void onAddedToWorld() {
 		super.onAddedToWorld();
@@ -53,6 +48,11 @@ public class EntityWretchedWill extends BloodConstructEntity {
 			if (creator instanceof Player player) {
 			}
 		}
+	}
+
+	@Override
+	protected void sendDebugPackets() {
+		super.sendDebugPackets();
 	}
 
 	@Override

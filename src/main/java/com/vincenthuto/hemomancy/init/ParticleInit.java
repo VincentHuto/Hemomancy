@@ -40,10 +40,10 @@ public class ParticleInit {
 
 	public static final RegistryObject<ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
 			.register("hit_glow", () -> new HitGlowParticleType());
-	
+
 	public static final RegistryObject<ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
 			.register("blood_avatar_hit", () -> new BloodAvatarHitParticleType());
-	
+
 	public static final RegistryObject<ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
 			() -> new BloodCellParticleType());
 	public static final RegistryObject<ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",

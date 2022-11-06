@@ -62,33 +62,15 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 		});
 	}
 
-	@Nonnull
 	@Override
-	public Component getTitle() {
-		return Component.literal("Juiceinator");
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getIcon() {
-		return icon;
-	}
-
-	protected void drawExperience(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
-		float experience = recipe.getExperience();
-		if (experience > 0) {
-			MutableComponent experienceString = Component.literal("XP" + experience);
-			Minecraft minecraft = Minecraft.getInstance();
-			Font fontRenderer = minecraft.font;
-			int stringWidth = fontRenderer.width(experienceString);
-			fontRenderer.draw(poseStack, experienceString, background.getWidth() - stringWidth, y, 0xFF808080);
-		}
+	public void draw(JuiceinatorRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack PoseStack, double mouseX,
+			double mouseY) {
+		overlay.draw(PoseStack);
+		animatedFlame.draw(PoseStack, 57, 37);
+		IDrawableAnimated arrow = getArrow(recipe);
+		arrow.draw(PoseStack, 79, 34);
+		drawExperience(recipe, PoseStack, 0);
+		drawCookTime(recipe, PoseStack, 80);
 	}
 
 	protected void drawCookTime(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
@@ -103,6 +85,17 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 		}
 	}
 
+	protected void drawExperience(JuiceinatorRecipe recipe, PoseStack poseStack, int y) {
+		float experience = recipe.getExperience();
+		if (experience > 0) {
+			MutableComponent experienceString = Component.literal("XP" + experience);
+			Minecraft minecraft = Minecraft.getInstance();
+			Font fontRenderer = minecraft.font;
+			int stringWidth = fontRenderer.width(experienceString);
+			fontRenderer.draw(poseStack, experienceString, background.getWidth() - stringWidth, y, 0xFF808080);
+		}
+	}
+
 	protected IDrawableAnimated getArrow(JuiceinatorRecipe recipe) {
 		int cookTime = recipe.getCookingTime();
 		if (cookTime <= 0) {
@@ -111,15 +104,27 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 		return this.cachedArrows.getUnchecked(cookTime);
 	}
 
+	@Nonnull
 	@Override
-	public void draw(JuiceinatorRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack PoseStack, double mouseX,
-			double mouseY) {
-		overlay.draw(PoseStack);
-		animatedFlame.draw(PoseStack, 57, 37);
-		IDrawableAnimated arrow = getArrow(recipe);
-		arrow.draw(PoseStack, 79, 34);
-		drawExperience(recipe, PoseStack, 0);
-		drawCookTime(recipe, PoseStack, 80);
+	public IDrawable getBackground() {
+		return background;
+	}
+
+	@Nonnull
+	@Override
+	public IDrawable getIcon() {
+		return icon;
+	}
+
+	@Override
+	public RecipeType<JuiceinatorRecipe> getRecipeType() {
+		return JEIPlugin.juiceinator_recipe_type;
+	}
+
+	@Nonnull
+	@Override
+	public Component getTitle() {
+		return Component.literal("Juiceinator");
 	}
 
 	@Override
@@ -132,11 +137,6 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 		}
 		builder.addSlot(RecipeIngredientRole.INPUT, 56, 17).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
 
-	}
-
-	@Override
-	public RecipeType<JuiceinatorRecipe> getRecipeType() {
-		return JEIPlugin.juiceinator_recipe_type;
 	}
 
 }

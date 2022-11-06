@@ -33,16 +33,16 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET };
 	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD,
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
+	public final static int GOURD_SLOT_INDEX=5;
+	public final static int CHARM_SLOT_INDEX=4;
 	private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;
-	public final static int GOURD_SLOT_INDEX=5;
-	public final static int CHARM_SLOT_INDEX=4;
 
 	public IRunesItemHandler runes;
 
-	
-	
+
+
 	public CharmGourdMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
@@ -88,32 +88,8 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void removed(Player player) {
-		super.removed(player);
-		this.craftResult.clearContent();
-		if (!player.level.isClientSide) {
-			this.clearContainer(player, this.craftMatrix);
-		}
-	}
-
-	@Override
-	public boolean stillValid(Player p_38974_) {
-		return this.player.inventoryMenu.stillValid(p_38974_);
-	}
-
-	@Override
-	public void slotsChanged(Container par1IInventory) {
-		super.slotsChanged(par1IInventory);
-		CraftingMenu.slotChangedCraftingGrid(this, player.level, player, craftMatrix, craftResult);
-//		try {
-//
-//			Method onCraftChange = ObfuscationReflectionHelper.findMethod(CraftingMenu.class, "slotChangedCraftingGrid",
-//					int.class, Level.class, Player.class, CraftingContainer.class, ResultContainer.class);
-//			onCraftChange.invoke(null, this.containerId, this.player.level, this.player, this.craftMatrix,
-//					this.craftResult);
-//		} catch (IllegalAccessException | InvocationTargetException e) {
-//			e.printStackTrace();
-//		}
+	public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
+		return slot.container != this.craftResult && super.canTakeItemForPickAll(stack, slot);
 	}
 
 	@Override
@@ -140,8 +116,32 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
-		return slot.container != this.craftResult && super.canTakeItemForPickAll(stack, slot);
+	public void removed(Player player) {
+		super.removed(player);
+		this.craftResult.clearContent();
+		if (!player.level.isClientSide) {
+			this.clearContainer(player, this.craftMatrix);
+		}
+	}
+
+	@Override
+	public void slotsChanged(Container par1IInventory) {
+		super.slotsChanged(par1IInventory);
+		CraftingMenu.slotChangedCraftingGrid(this, player.level, player, craftMatrix, craftResult);
+//		try {
+//
+//			Method onCraftChange = ObfuscationReflectionHelper.findMethod(CraftingMenu.class, "slotChangedCraftingGrid",
+//					int.class, Level.class, Player.class, CraftingContainer.class, ResultContainer.class);
+//			onCraftChange.invoke(null, this.containerId, this.player.level, this.player, this.craftMatrix,
+//					this.craftResult);
+//		} catch (IllegalAccessException | InvocationTargetException e) {
+//			e.printStackTrace();
+//		}
+	}
+
+	@Override
+	public boolean stillValid(Player p_38974_) {
+		return this.player.inventoryMenu.stillValid(p_38974_);
 	}
 
 }

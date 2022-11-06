@@ -32,7 +32,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ManipulationInit {
 
-	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<BloodManipulation>();
+	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<>();
 
 	public static final ResourceKey<Registry<BloodManipulation>> MANIP_KEY = ResourceKey
 			.createRegistryKey(new ResourceLocation(Hemomancy.MOD_ID, "bloodmanipulations"));
@@ -102,7 +102,7 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 
 	public static List<BloodManipulation> getAllEntries() {
-		List<BloodManipulation> blocks = new ArrayList<BloodManipulation>();
+		List<BloodManipulation> blocks = new ArrayList<>();
 		MANIPS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 		return blocks;
 	}

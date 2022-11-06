@@ -14,23 +14,12 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class ClearRecallerStatePacket {
 
-	public ClearRecallerStatePacket() {
-	}
-
-	public static void encode(ClearRecallerStatePacket msg, FriendlyByteBuf buf) {
-
-	}
-
-	public static ClearRecallerStatePacket decode(FriendlyByteBuf buf) {
-		return new ClearRecallerStatePacket();
-	}
-
 	public static class Handler {
 
 		public static void handle(final ClearRecallerStatePacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
 				@SuppressWarnings("serial")
-				Map<EnumBloodTendency, Float> blankTend = new HashMap<EnumBloodTendency, Float>() {
+				Map<EnumBloodTendency, Float> blankTend = new HashMap<>() {
 					{
 						put(EnumBloodTendency.ANIMUS, 0f);
 						put(EnumBloodTendency.MORTEM, 0f);
@@ -51,5 +40,16 @@ public class ClearRecallerStatePacket {
 			});
 			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	public static ClearRecallerStatePacket decode(FriendlyByteBuf buf) {
+		return new ClearRecallerStatePacket();
+	}
+
+	public static void encode(ClearRecallerStatePacket msg, FriendlyByteBuf buf) {
+
+	}
+
+	public ClearRecallerStatePacket() {
 	}
 }

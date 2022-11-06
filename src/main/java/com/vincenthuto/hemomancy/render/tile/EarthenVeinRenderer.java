@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class EarthenVeinRenderer implements BlockEntityRenderer<EarthenVeinBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private final EarthenVeinModel vein;
 	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/earthen_vein/model_earthen_vein.png");
+	private final EarthenVeinModel vein;
 
 	public EarthenVeinRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		vein = new EarthenVeinModel(p_173636_.bakeLayer(EarthenVeinModel.earth_vein));

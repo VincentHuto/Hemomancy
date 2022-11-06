@@ -20,17 +20,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class ChangeMorphKeyPacket {
 
-	public ChangeMorphKeyPacket() {
-
-	}
-
-	public static void encode(ChangeMorphKeyPacket msg, FriendlyByteBuf buf) {
-	}
-
-	public static ChangeMorphKeyPacket decode(FriendlyByteBuf buf) {
-		return new ChangeMorphKeyPacket();
-	}
-
 	public static class Handler {
 		public static void handle(final ChangeMorphKeyPacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
@@ -55,7 +44,7 @@ public class ChangeMorphKeyPacket {
 									int randSlot = rand.nextInt(4);
 									if (items.contains("Items", 9)) {
 										@SuppressWarnings("static-access")
-										ItemStack selectedStack = jar
+										ItemStack selectedStack = ItemStack
 												.of(((ListTag) items.get("Items")).getCompound(randSlot));
 										if (selectedStack.getItem() instanceof IMorphling) {
 											CompoundTag staffnbt = staff.getOrCreateTag();
@@ -63,7 +52,7 @@ public class ChangeMorphKeyPacket {
 											if (staffItems != null) {
 												if (staffItems.contains("Items", 9)) {
 													@SuppressWarnings("static-access")
-													ItemStack selectedStaffStack = staff
+													ItemStack selectedStaffStack = ItemStack
 															.of(((ListTag) staffItems.get("Items")).getCompound(0));
 
 													castedJar.setDirty();
@@ -88,7 +77,7 @@ public class ChangeMorphKeyPacket {
 				 * if (jarHandler instanceof MorphlingJarItemHandler && staffHandler instanceof
 				 * LivingStaffItemHandler) { System.out.println("IS WORKING");
 				 * MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-				 * 
+				 *
 				 * LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
 				 * // ItemStack originalFocus = castedStaff.getStackInSlot(0).copy(); ItemStack
 				 * inJar = castedJar.getStackInSlot(msg.selected).copy(); if (inJar.getItem() !=
@@ -100,5 +89,16 @@ public class ChangeMorphKeyPacket {
 			});
 			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	public static ChangeMorphKeyPacket decode(FriendlyByteBuf buf) {
+		return new ChangeMorphKeyPacket();
+	}
+
+	public static void encode(ChangeMorphKeyPacket msg, FriendlyByteBuf buf) {
+	}
+
+	public ChangeMorphKeyPacket() {
+
 	}
 }

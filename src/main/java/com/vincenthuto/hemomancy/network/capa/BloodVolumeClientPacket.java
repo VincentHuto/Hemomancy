@@ -13,7 +13,11 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class BloodVolumeClientPacket {
 
-	public BloodVolumeClientPacket() {
+	public static BloodVolumeClientPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new BloodVolumeClientPacket();
+	}
+
+	public static void encode(final BloodVolumeClientPacket msg, final FriendlyByteBuf packetBuffer) {
 
 	}
 
@@ -31,11 +35,7 @@ public class BloodVolumeClientPacket {
 		ctx.get().setPacketHandled(true);
 	}
 
-	public static void encode(final BloodVolumeClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public BloodVolumeClientPacket() {
 
-	}
-
-	public static BloodVolumeClientPacket decode(final FriendlyByteBuf packetBuffer) {
-		return new BloodVolumeClientPacket();
 	}
 }

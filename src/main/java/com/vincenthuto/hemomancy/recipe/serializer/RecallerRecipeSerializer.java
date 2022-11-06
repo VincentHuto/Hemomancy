@@ -19,7 +19,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe> {
-	public static HashMap<ResourceLocation, RecallerRecipe> ALL_RECIPES = new HashMap<ResourceLocation, RecallerRecipe>();
+	public static HashMap<ResourceLocation, RecallerRecipe> ALL_RECIPES = new HashMap<>();
 
 	public static RecallerRecipe getRecipe(String path) {
 		return ALL_RECIPES.get(new ResourceLocation("hemomancy:recaller/" + path));
@@ -71,14 +71,14 @@ public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe
 		try {
 			ResourceLocation id = pBuffer.readResourceLocation();
 			Ingredient input = Ingredient.of(pBuffer.readItem());
-			Map<EnumBloodTendency, Float> tends = new HashMap<EnumBloodTendency, Float>();
+			Map<EnumBloodTendency, Float> tends = new HashMap<>();
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tends.put(tend, pBuffer.readFloat());
 			}
 			ItemStack output = pBuffer.readItem();
 			return new RecallerRecipe(id, input, tends, output);
 		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error reading recaller recipe from packet.", (Throwable) e);
+			Hemomancy.LOGGER.error("Error reading recaller recipe from packet.", e);
 			throw e;
 		}
 	}
@@ -97,7 +97,7 @@ public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe
 			}
 			pBuffer.writeItemStack(pRecipe.getResultItem(), false);
 		} catch (Exception e) {
-			Hemomancy.LOGGER.error("Error writing recaller recipe to packet.", (Throwable) e);
+			Hemomancy.LOGGER.error("Error writing recaller recipe to packet.", e);
 			throw e;
 		}
 	}

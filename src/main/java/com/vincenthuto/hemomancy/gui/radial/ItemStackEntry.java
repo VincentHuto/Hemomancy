@@ -19,10 +19,18 @@ public class ItemStackEntry {
 					Codec.LONG.fieldOf("count").forGetter(o -> o.count),
 					InfoTableSlot.CODEC.optionalFieldOf("info").forGetter(
 							o -> o.info == null || o.info.isEmpty() ? Optional.empty() : Optional.of(o.info)))
-			.apply(instance, (a, b, c) -> new ItemStackEntry((ItemStack) a, (long) b, c.orElse(new InfoTableSlot()))));
+			.apply(instance, (a, b, c) -> new ItemStackEntry(a, b, c.orElse(new InfoTableSlot()))));
 	public static ItemStackEntry EMPTY = new ItemStackEntry(ItemStack.EMPTY);
+	public static ItemStackEntry deserialize(Tag tag) {
+		if (tag == null) {
+			return EMPTY;
+		}
+		return (ItemStackEntry) CODEC.parse((DynamicOps) NbtOps.INSTANCE, (Object) tag).getOrThrow(false,
+				arg_0 -> (Hemomancy.LOGGER).error(arg_0));
+	}
 	private ItemStack stack;
 	private long count;
+
 	private InfoTableSlot info;
 
 	public ItemStackEntry(ItemStack stack) {
@@ -37,18 +45,8 @@ public class ItemStackEntry {
 		this.info = info;
 	}
 
-	public ItemStack getStackOriginal() {
-		return this.stack;
-	}
-
-	public ItemStack getStackCopy() {
-		ItemStack copy = this.stack.copy();
-		copy.setCount((int) this.count);
-		return copy;
-	}
-
 	public ItemStack extract(int count) {
-		if ((long) count > this.count) {
+		if (count > this.count) {
 			count = (int) this.count;
 		}
 		if (this.stack.getCount() == count) {
@@ -59,7 +57,7 @@ public class ItemStackEntry {
 		}
 		ItemStack copy = this.getStackCopy();
 		copy.setCount(count);
-		this.count -= (long) count;
+		this.count -= count;
 		return copy;
 	}
 
@@ -67,18 +65,23 @@ public class ItemStackEntry {
 		return this.count;
 	}
 
-	public void setCount(long count) {
-		this.count = count;
-		this.stack.setCount((int) this.count);
+	public InfoTableSlot getInfo() {
+		return this.info;
+	}
+
+	public ItemStack getStackCopy() {
+		ItemStack copy = this.stack.copy();
+		copy.setCount((int) this.count);
+		return copy;
+	}
+
+	public ItemStack getStackOriginal() {
+		return this.stack;
 	}
 
 	public void grow(long count) {
 		this.count += count;
 		this.stack.setCount((int) this.count);
-	}
-
-	public InfoTableSlot getInfo() {
-		return this.info;
 	}
 
 	public boolean isEmpty() {
@@ -93,11 +96,8 @@ public class ItemStackEntry {
 				arg_0 -> (Hemomancy.LOGGER).error(arg_0));
 	}
 
-	public static ItemStackEntry deserialize(Tag tag) {
-		if (tag == null) {
-			return EMPTY;
-		}
-		return (ItemStackEntry) CODEC.parse((DynamicOps) NbtOps.INSTANCE, (Object) tag).getOrThrow(false,
-				arg_0 -> (Hemomancy.LOGGER).error(arg_0));
+	public void setCount(long count) {
+		this.count = count;
+		this.stack.setCount((int) this.count);
 	}
 }

@@ -37,14 +37,20 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootGenerator extends LootTableProvider {
-	public LootGenerator(DataGenerator dataGeneratorIn, ExistingFileHelper helper) {
-		super(dataGeneratorIn);
-	}
+	private static class Blocks extends BlockLoot {
+		@Override
+		protected void addTables() {
 
-	@Override
-	protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
-		return ImmutableList.of(Pair.of(Blocks::new, LootContextParamSets.BLOCK),
-				Pair.of(Entites::new, LootContextParamSets.ENTITY));
+			BlockInit.getAllBlockEntries().stream().forEach(b -> dropSelf(b));
+
+		}
+
+		@Override
+		protected Iterable<Block> getKnownBlocks() {
+			return ForgeRegistries.BLOCKS.getValues().stream()
+					.filter(b -> ForgeRegistries.BLOCKS.getKey(b).getNamespace().equals(Hemomancy.MOD_ID))
+					.collect(Collectors.toList());
+		}
 	}
 
 	private static class Entites extends EntityLoot {
@@ -63,7 +69,7 @@ public class LootGenerator extends LootTableProvider {
 							.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F)))
 							.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F))))
 					.when(LootItemKilledByPlayerCondition.killedByPlayer())));
-			
+
 			this.add(EntityInit.chthonian_queen.get(), LootTable.lootTable().withPool(LootPool.lootPool()
 					.setRolls(ConstantValue.exactly(1.0F))
 					.add(LootItem.lootTableItem(ItemInit.chitinous_husk.get())
@@ -143,20 +149,14 @@ public class LootGenerator extends LootTableProvider {
 		}
 	}
 
-	private static class Blocks extends BlockLoot {
-		@Override
-		protected void addTables() {
+	public LootGenerator(DataGenerator dataGeneratorIn, ExistingFileHelper helper) {
+		super(dataGeneratorIn);
+	}
 
-			BlockInit.getAllBlockEntries().stream().forEach(b -> dropSelf(b));
-
-		}
-
-		@Override
-		protected Iterable<Block> getKnownBlocks() {
-			return ForgeRegistries.BLOCKS.getValues().stream()
-					.filter(b -> ForgeRegistries.BLOCKS.getKey(b).getNamespace().equals(Hemomancy.MOD_ID))
-					.collect(Collectors.toList());
-		}
+	@Override
+	protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+		return ImmutableList.of(Pair.of(Blocks::new, LootContextParamSets.BLOCK),
+				Pair.of(Entites::new, LootContextParamSets.ENTITY));
 	}
 
 	@Override

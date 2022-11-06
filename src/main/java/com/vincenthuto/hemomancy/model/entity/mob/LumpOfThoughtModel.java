@@ -24,11 +24,6 @@ import net.minecraft.world.entity.Entity;
 public class LumpOfThoughtModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modellumpofthought"), "main");
-	private final ModelPart bone;
-
-	public LumpOfThoughtModel(ModelPart root) {
-		this.bone = root.getChild("bone");
-	}
 	@SuppressWarnings("unused")
 
 	public static LayerDefinition createBodyLayer() {
@@ -185,13 +180,18 @@ public class LumpOfThoughtModel<T extends Entity> extends EntityModel<T> {
 		return LayerDefinition.create(meshdefinition, 128, 128);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+	private final ModelPart bone;
+	public LumpOfThoughtModel(ModelPart root) {
+		this.bone = root.getChild("bone");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		bone.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

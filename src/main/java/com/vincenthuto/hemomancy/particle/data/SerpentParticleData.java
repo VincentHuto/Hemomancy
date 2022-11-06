@@ -19,16 +19,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SerpentParticleData implements ParticleOptions {
 
-	private ParticleType<SerpentParticleData> type;
 	public static final Codec<SerpentParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 			.apply(instance, SerpentParticleData::new));
-
-	public ParticleColor color;
-
-	public static final Deserializer<SerpentParticleData> DESERIALIZER = new Deserializer<SerpentParticleData>() {
+	public static final Deserializer<SerpentParticleData> DESERIALIZER = new Deserializer<>() {
 		@Override
 		public SerpentParticleData fromCommand(ParticleType<SerpentParticleData> type, StringReader reader)
 				throws CommandSyntaxException {
@@ -41,6 +37,10 @@ public class SerpentParticleData implements ParticleOptions {
 			return new SerpentParticleData(type, ParticleColor.deserialize(buffer.readUtf()));
 		}
 	};
+
+	private ParticleType<SerpentParticleData> type;
+
+	public ParticleColor color;
 
 	public SerpentParticleData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);

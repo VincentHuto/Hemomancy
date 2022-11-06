@@ -15,6 +15,7 @@ import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -38,13 +39,8 @@ public class MorphlingJarViewerScreen extends Screen {
 	public MorphlingJarItemHandler handler;
 	Player player = HLClientUtils.getClientPlayer();
 
-	@OnlyIn(Dist.CLIENT)
-	public MorphlingJarViewerScreen() {
-		super(Component.literal("View All Morphs"));
-
-	}
-
 	int x;
+
 	int y;
 	int xLeftBorder = 8;
 	int xRightBorder = 60;
@@ -52,6 +48,55 @@ public class MorphlingJarViewerScreen extends Screen {
 	int bottomYBorder = 200;
 	int velX = 2;
 	int velY = 2;
+	public int slotcount = 0;
+
+	public String itemKey = "";
+
+	@OnlyIn(Dist.CLIENT)
+	public MorphlingJarViewerScreen() {
+		super(Component.literal("View All Morphs"));
+
+	}
+	@Override
+	protected void init() {
+		left = width / 2 - guiWidth / 2;
+		top = height / 2 - guiHeight / 2;
+		renderables.clear();
+		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+				.orElseThrow(NullPointerException::new);
+
+		if (binderHandler instanceof MorphlingJarItemHandler) {
+			handler = (MorphlingJarItemHandler) binderHandler;
+			handler.load();
+			slotcount = handler.getSlots();
+			itemKey = stack.getDescriptionId();
+
+			for (int i = 0; i < binderHandler.getSlots(); i++) {
+				this.addRenderableWidget(new GuiButtonTextured(texture, i, 0, 0, 20, 20, 174, 98, null, (press) -> {
+					if (press instanceof GuiButtonTextured) {
+						player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
+						ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
+						if (morphStack.getItem() instanceof MorphlingItem) {
+							PacketHandler.CHANNELMORPHLINGJAR.sendToServer(
+									new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
+						}
+
+					}
+					onClose();
+
+				}));
+
+			}
+		}
+		super.init();
+
+	}
+
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
 
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -74,9 +119,9 @@ public class MorphlingJarViewerScreen extends Screen {
 		// GlStateManager._popMatrix();
 
 		// GlStateManager._pushMatrix();
-		for (int i = 0; i < renderables.size(); i++) {
-			renderables.get(i).render(matrixStack, mouseX, mouseY, 511);
-			if (((GuiButtonTextured) renderables.get(i)).isHoveredOrFocused()) {
+		for (Widget renderable : renderables) {
+			renderable.render(matrixStack, mouseX, mouseY, 511);
+			if (((GuiButtonTextured) renderable).isHoveredOrFocused()) {
 				ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 				@SuppressWarnings("unused")
 				IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
@@ -173,50 +218,6 @@ public class MorphlingJarViewerScreen extends Screen {
 		}
 		// GlStateManager._popMatrix();
 
-	}
-
-	public int slotcount = 0;
-	public String itemKey = "";
-
-	@Override
-	protected void init() {
-		left = width / 2 - guiWidth / 2;
-		top = height / 2 - guiHeight / 2;
-		renderables.clear();
-		ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
-		IItemHandler binderHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-				.orElseThrow(NullPointerException::new);
-
-		if (binderHandler instanceof MorphlingJarItemHandler) {
-			handler = (MorphlingJarItemHandler) binderHandler;
-			handler.load();
-			slotcount = handler.getSlots();
-			itemKey = stack.getDescriptionId();
-
-			for (int i = 0; i < binderHandler.getSlots(); i++) {
-				this.addRenderableWidget(new GuiButtonTextured(texture, i, 0, 0, 20, 20, 174, 98, null, (press) -> {
-					if (press instanceof GuiButtonTextured) {
-						player.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-						ItemStack morphStack = binderHandler.getStackInSlot(((GuiButtonTextured) press).getId());
-						if (morphStack.getItem() instanceof MorphlingItem) {
-							PacketHandler.CHANNELMORPHLINGJAR.sendToServer(
-									new PacketUpdateLivingStaffMorph(((GuiButtonTextured) press).getId()));
-						}
-
-					}
-					onClose();
-
-				}));
-
-			}
-		}
-		super.init();
-
-	}
-
-	@Override
-	public boolean isPauseScreen() {
-		return false;
 	}
 
 }

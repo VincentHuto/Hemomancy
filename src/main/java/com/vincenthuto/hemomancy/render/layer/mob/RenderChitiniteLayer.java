@@ -17,6 +17,7 @@ public class RenderChitiniteLayer<T extends Entity, M extends SpiderModel<T>> ex
 		super(p_117507_);
 	}
 
+	@Override
 	public RenderType renderType() {
 		return RENDER_TYPE;
 	}

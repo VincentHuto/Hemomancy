@@ -21,6 +21,71 @@ public class LanguageGenerator extends LanguageProvider {
 		super(gen, Hemomancy.MOD_ID, "en_us");
 	}
 
+	public void addBannerTranslation(String regName, String transName) {
+		add("block.minecraft.banner." + regName + ".black", "Black " + transName);
+		add("block.minecraft.banner." + regName + ".red", "Red " + transName);
+		add("block.minecraft.banner." + regName + ".green", "Green " + transName);
+		add("block.minecraft.banner." + regName + ".brown", "Brown " + transName);
+		add("block.minecraft.banner." + regName + ".blue", "Blue " + transName);
+		add("block.minecraft.banner." + regName + ".purple", "Purple " + transName);
+		add("block.minecraft.banner." + regName + ".cyan", "Cyan " + transName);
+		add("block.minecraft.banner." + regName + ".silver", "Light Gray " + transName);
+		add("block.minecraft.banner." + regName + ".gray", "Gray " + transName);
+		add("block.minecraft.banner." + regName + ".pink", "Pink " + transName);
+		add("block.minecraft.banner." + regName + ".lime", "Lime " + transName);
+		add("block.minecraft.banner." + regName + ".yellow", "Yellow " + transName);
+		add("block.minecraft.banner." + regName + ".lightBlue", "Light " + transName);
+		add("block.minecraft.banner." + regName + ".magenta", "Magenta " + transName);
+		add("block.minecraft.banner." + regName + ".orange", "Orange " + transName);
+		add("block.minecraft.banner." + regName + ".white", "White " + transName);
+
+		add("item.hemomancy." + regName + "_arm_banner.black",
+				"Black " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.red", "Red " + HLTextUtils.convertInitToLang("_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.green",
+				"Green " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.brown",
+				"Brown " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.blue",
+				"Blue " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.purple",
+				"Purple " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.cyan",
+				"Cyan " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.silver",
+				"Light Gray " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.gray",
+				"Gray " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.pink",
+				"Pink " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.lime",
+				"Lime " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.yellow",
+				"Yellow " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.lightBlue",
+				"Light " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.magenta",
+				"Magenta " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.orange",
+				"Orange " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+		add("item.hemomancy." + regName + "_arm_banner.white",
+				"White " + HLTextUtils.convertInitToLang(regName + "_arm_banner"));
+	}
+
+	public void addKeyBindTranslations() {
+		add("key.hemomancy.category", "Hemomancy");
+		add("key.hemomancy.bloodcrafting.desc", "Activate Blood Construct");
+		add("key.hemomancy.bloodformation.desc", "Blood Formation");
+		add("key.hemomancy.drawtest.desc", "Blood Draw");
+		add("key.hemomancy.morphjarpickup.desc", "Toggle Morphling Jar Pickup");
+		add("key.hemomancy.openjar.desc", "Open Morphling Jar");
+		add("key.hemomancy.quickusemanip.desc", "Use Quick Manipulation");
+		add("key.hemomancy.runebinderpickup.desc", "Toggle Rune Binder Pickup");
+		add("key.hemomancy.contusemanip.desc", "Use Continous Manipulation");
+		add("key.hemomancy.cyclemanip.desc", "Cycle Known Manipulations");
+
+	}
+
 	@Override
 	protected void addTranslations() {
 		// Jei
@@ -28,12 +93,14 @@ public class LanguageGenerator extends LanguageProvider {
 		add("hemomancy.jei.chisel_station", "Chisel Station");
 
 		// Banner
-		addArmBannerTranslation("chitinite");
-
 		addBannerTranslation("hemomancy_heart", "Vascularium");
 		addBannerTranslation("hemomancy_veins", "Veins");
+		addBannerTranslation("hemomancy_chitinite", "Chitinite");
+
 		add("item.hemomancy.heart_pattern.desc", "Vascularium Crest");
 		add("item.hemomancy.veins_pattern.desc", "Vein Border");
+		add("item.hemomancy.chitinite_pattern.desc", "Chitinite");
+
 		addKeyBindTranslations();
 
 		add("itemGroup.hemomancy", "Hemomancy the Sanguis Noctis");
@@ -110,70 +177,4 @@ public class LanguageGenerator extends LanguageProvider {
 
 	}
 
-	public void addKeyBindTranslations() {
-		add("key.hemomancy.category", "Hemomancy");
-		add("key.hemomancy.bloodcrafting.desc", "Activate Blood Construct");
-		add("key.hemomancy.bloodformation.desc", "Blood Formation");
-		add("key.hemomancy.drawtest.desc", "Blood Draw");
-		add("key.hemomancy.morphjarpickup.desc", "Toggle Morphling Jar Pickup");
-		add("key.hemomancy.openjar.desc", "Open Morphling Jar");
-		add("key.hemomancy.quickusemanip.desc", "Use Quick Manipulation");
-		add("key.hemomancy.runebinderpickup.desc", "Toggle Rune Binder Pickup");
-		add("key.hemomancy.contusemanip.desc", "Use Continous Manipulation");
-		add("key.hemomancy.cyclemanip.desc", "Cycle Known Manipulations");
-
-	}
-
-	public void addBannerTranslation(String regName, String transName) {
-		add("block.minecraft.banner." + regName + ".black", "Black " + transName);
-		add("block.minecraft.banner." + regName + ".red", "Red " + transName);
-		add("block.minecraft.banner." + regName + ".green", "Green " + transName);
-		add("block.minecraft.banner." + regName + ".brown", "Brown " + transName);
-		add("block.minecraft.banner." + regName + ".blue", "Blue " + transName);
-		add("block.minecraft.banner." + regName + ".purple", "Purple " + transName);
-		add("block.minecraft.banner." + regName + ".cyan", "Cyan " + transName);
-		add("block.minecraft.banner." + regName + ".silver", "Light Gray " + transName);
-		add("block.minecraft.banner." + regName + ".gray", "Gray " + transName);
-		add("block.minecraft.banner." + regName + ".pink", "Pink " + transName);
-		add("block.minecraft.banner." + regName + ".lime", "Lime " + transName);
-		add("block.minecraft.banner." + regName + ".yellow", "Yellow " + transName);
-		add("block.minecraft.banner." + regName + ".lightBlue", "Light " + transName);
-		add("block.minecraft.banner." + regName + ".magenta", "Magenta " + transName);
-		add("block.minecraft.banner." + regName + ".orange", "Orange " + transName);
-		add("block.minecraft.banner." + regName + ".white", "White " + transName);
-	}
-
-	public void addArmBannerTranslation(String prefix) {
-		add("item.hemomancy." + prefix + "_arm_banner.black",
-				"Black " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.red", "Red " + HLTextUtils.convertInitToLang("_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.green",
-				"Green " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.brown",
-				"Brown " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.blue",
-				"Blue " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.purple",
-				"Purple " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.cyan",
-				"Cyan " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.silver",
-				"Light Gray " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.gray",
-				"Gray " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.pink",
-				"Pink " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.lime",
-				"Lime " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.yellow",
-				"Yellow " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.lightBlue",
-				"Light " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.magenta",
-				"Magenta " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.orange",
-				"Orange " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-		add("item.hemomancy." + prefix + "_arm_banner.white",
-				"White " + HLTextUtils.convertInitToLang(prefix + "_arm_banner"));
-	}
 }

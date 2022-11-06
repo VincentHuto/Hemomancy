@@ -43,27 +43,60 @@ public class LivingSpearItem extends LivingToolItem {
 
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getMainHandItem();
-		playerIn.startUsingItem(handIn);
-
-		if (stack.getItem() instanceof LivingSpearItem) {
-			CompoundTag compound = stack.getOrCreateTag();
-			if (!compound.getBoolean(TAG_STATE)) {
-				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
-				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag()) {
+			if (stack.getTag().getBoolean(TAG_STATE)) {
+				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
 			} else {
-				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
-				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
+				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
 			}
-			stack.setTag(compound);
 		}
-		return super.use(worldIn, playerIn, handIn);
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.SPEAR;
 	}
 
 	@Override
 	public int getUseDuration(ItemStack stack) {
 		return 72000 / 2;
+	}
+
+	@Override
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		super.hurtEnemy(stack, target, attacker);
+		/*
+		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
+		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
+		 * Player playerIn = (Player) attacker; IBloodVolume playerVolume =
+		 * playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+		 * .orElseThrow(NullPointerException::new); float damageMod =
+		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
+		 * { playerVolume.subtractBloodVolume(damageMod);
+		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
+		 * (ServerPlayer) playerIn), new
+		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
+		 * playerVolume.getBloodVolume())); } else {
+		 * playerVolume.subtractBloodVolume(damageMod);
+		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
+		 * (ServerPlayer) playerIn), new
+		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
+		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
+		 * attacker, (p_220017_1_) -> {
+		 * p_220017_1_.sendBreakAnimation(attacker.getActiveHand()); }); }
+		 *
+		 * } }
+		 */
+		return super.hurtEnemy(stack, target, attacker);
+	}
+
+	@Override
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		super.initializeClient(consumer);
+		consumer.accept(RenderPropLivingSpear.INSTANCE);
+
 	}
 
 	@Override
@@ -108,11 +141,11 @@ public class LivingSpearItem extends LivingToolItem {
 				 * (ServerPlayer) player), new
 				 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
 				 * playerVolume.getBloodVolume()));
-				 * 
+				 *
 				 * this.summonDirectedOrb(worldIn, player);
-				 * 
+				 *
 				 * }
-				 * 
+				 *
 				 * stack.damageItem(1, player, (p_220009_1_) -> {
 				 * p_220009_1_.sendBreakAnimation(player.getActiveHand()); }); } else {
 				 * player.sendStatusMessage(Component.literal("Not enough blood to be shed"),
@@ -124,34 +157,6 @@ public class LivingSpearItem extends LivingToolItem {
 		}
 	}
 
-	@Override
-	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		super.hurtEnemy(stack, target, attacker);
-		/*
-		 * if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
-		 * attacker.heal(this.getAttackDamage() / 2); if (!attacker.world.isRemote) {
-		 * Player playerIn = (Player) attacker; IBloodVolume playerVolume =
-		 * playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-		 * .orElseThrow(NullPointerException::new); float damageMod =
-		 * this.getAttackDamage() * 75f; if (playerVolume.getBloodVolume() > damageMod)
-		 * { playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); } else {
-		 * playerVolume.subtractBloodVolume(damageMod);
-		 * PacketHandler.CHANNELBLOODVOLUME.send( PacketDistributor.PLAYER.with(() ->
-		 * (ServerPlayer) playerIn), new
-		 * PacketBloodVolumeServer(playerVolume.getMaxBloodVolume(),
-		 * playerVolume.getBloodVolume())); stack.damageItem(getMaxDamage() + 10,
-		 * attacker, (p_220017_1_) -> {
-		 * p_220017_1_.sendBreakAnimation(attacker.getActiveHand()); }); }
-		 * 
-		 * } }
-		 */
-		return super.hurtEnemy(stack, target, attacker);
-	}
-
 	public void summonDirectedOrb(Level worldIn, Player playerIn) {
 		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
 		Vector3 vec = Vector3.fromEntityCenter(playerIn);
@@ -159,28 +164,23 @@ public class LivingSpearItem extends LivingToolItem {
 		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
 		worldIn.addFreshEntity(miss);
 	}
-
 	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.SPEAR;
-	}
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack stack = playerIn.getMainHandItem();
+		playerIn.startUsingItem(handIn);
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("State: Unleashed").withStyle(ChatFormatting.RED));
+		if (stack.getItem() instanceof LivingSpearItem) {
+			CompoundTag compound = stack.getOrCreateTag();
+			if (!compound.getBoolean(TAG_STATE)) {
+				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
+				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			} else {
-				tooltip.add(Component.literal("State: Tame").withStyle(ChatFormatting.GRAY));
+				playerIn.playSound(SoundEvents.BEACON_DEACTIVATE, 0.40f, 1F);
+				compound.putBoolean(TAG_STATE, !compound.getBoolean(TAG_STATE));
 			}
+			stack.setTag(compound);
 		}
-	}
-	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(RenderPropLivingSpear.INSTANCE);
-
+		return super.use(worldIn, playerIn, handIn);
 	}
 }
 

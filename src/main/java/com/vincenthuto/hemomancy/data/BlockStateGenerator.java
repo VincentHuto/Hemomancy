@@ -42,16 +42,16 @@ public class BlockStateGenerator extends BlockStateProvider {
 			}
 		}
 
-		
+
 		/*
 		 * for (RegistryObject<Block> b : BlockInit.MODELEDBLOCKS.getEntries()) {
 		 * blockTexture(b.get()); }
-		 * 
+		 *
 		 * for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
 		 * axisBlock((RotatedPillarBlock) b.get(), b.get().getRegistryName(), new
 		 * ResourceLocation(Hemomancy.MOD_ID, b.get().getRegistryName().getPath() +
 		 * "_end")); blockTexture(b.get());
-		 * 
+		 *
 		 * }
 		 */
 	}

@@ -11,13 +11,10 @@ import com.vincenthuto.hemomancy.recipe.serializer.BloodStructureRecipeSerialize
 import com.vincenthuto.hemomancy.recipe.serializer.JuiceinatorSerializer;
 import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;

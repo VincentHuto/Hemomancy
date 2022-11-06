@@ -27,8 +27,28 @@ public class BloodVialItem extends Item {
 	public static String TAG_ENTITY_TYPE = "entity_type";
 	public static String TAG_STATE = "state";
 
+	@SuppressWarnings("deprecation")
+	public static EntityType<?> getEntityType(ItemStack stack) {
+		if (stack.hasTag()) {
+			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
+				EntityType<?> type = Registry.ENTITY_TYPE
+						.get(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
+				return type;
+			}
+		}
+		return null;
+	}
+
 	public BloodVialItem(Properties prop) {
 		super(prop.stacksTo(1));
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag()) {
+			tooltip.add(Component.literal(I18n.get(getEntityType(stack).getDescriptionId())).append(" Sample"));
+		}
 	}
 
 	@Override
@@ -41,7 +61,7 @@ public class BloodVialItem extends Item {
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (entity != null) {
-			
+
 			tag.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString());
 			tag.putBoolean(TAG_STATE, true);
 		} else {
@@ -58,31 +78,11 @@ public class BloodVialItem extends Item {
 			@SuppressWarnings("deprecation")
 			EntityType<?> type = Registry.ENTITY_TYPE
 					.get(new ResourceLocation(curr.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
-			if (ForgeRegistries.ENTITY_TYPES.getValue(ForgeRegistries.ENTITY_TYPES.getKey(type)).is(EntityInit.FUNGAL)) {
+			if (ForgeRegistries.ENTITY_TYPES.getValue(ForgeRegistries.ENTITY_TYPES.getKey(type)).is(EntityInit.FUNGAL_TAG)) {
 			}
 			System.out.println(getEntityType(curr));
 		}
 		return super.use(pLevel, pPlayer, pUsedHand);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			tooltip.add(Component.literal(I18n.get(getEntityType(stack).getDescriptionId())).append(" Blood"));
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public static EntityType<?> getEntityType(ItemStack stack) {
-		if (stack.hasTag()) {
-			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
-				EntityType<?> type = Registry.ENTITY_TYPE
-						.get(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
-				return type;
-			}
-		}
-		return null;
 	}
 
 }

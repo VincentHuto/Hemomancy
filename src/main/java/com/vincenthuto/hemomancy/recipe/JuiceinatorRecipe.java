@@ -14,24 +14,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class JuiceinatorRecipe extends AbstractCookingRecipe {
+	public static List<JuiceinatorRecipe> getAllRecipes(Level world) {
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.juiceinator_recipe_type.get());
+	}
+
 	public JuiceinatorRecipe(ResourceLocation resourceLocation, String group, Ingredient ingredient, ItemStack result,
 			float experience, int cookingTime) {
 		super(RecipeInit.juiceinator_recipe_type.get(), resourceLocation, group, ingredient, result, experience,
 				cookingTime);
-	}
-
-	@Override
-	public ItemStack getToastSymbol() {
-		return new ItemStack(BlockInit.juiceinator.get());
-	}
-
-	@Override
-	public RecipeSerializer<?> getSerializer() {
-		return RecipeInit.juiceinator_serializer.get();
-	}
-
-	public static List<JuiceinatorRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.juiceinator_recipe_type.get());
 	}
 
 	@Override
@@ -44,5 +34,15 @@ public class JuiceinatorRecipe extends AbstractCookingRecipe {
 	@Override
 	public ItemStack getResultItem() {
 		return super.getResultItem();
+	}
+
+	@Override
+	public RecipeSerializer<?> getSerializer() {
+		return RecipeInit.juiceinator_serializer.get();
+	}
+
+	@Override
+	public ItemStack getToastSymbol() {
+		return new ItemStack(BlockInit.juiceinator.get());
 	}
 }

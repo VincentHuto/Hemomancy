@@ -36,221 +36,26 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implements MenuProvider, IBloodTile {
-	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	public static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	public static final String TAG_BLOOD_TENDENCY = "tendency";
 	public static final String TAG_RECIPE = "recipe";
+	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
+			VisceralRecallerBlockEntity self) {
+	}
+	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
+			VisceralRecallerBlockEntity self) {
+	}
+	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	String recipePath = "";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+
 	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA)
 			.orElseThrow(IllegalStateException::new);
+
 	RecallerRecipe curRecipe = null;
 
 	public VisceralRecallerBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.visceral_artificial_recaller.get(), pos, state);
-	}
-
-	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
-			VisceralRecallerBlockEntity self) {
-	}
-
-	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
-			VisceralRecallerBlockEntity self) {
-	}
-
-	public RecallerRecipe getCurRecipe() {
-		return curRecipe;
-	}
-
-	public ItemStack getResultItem() {
-		return curRecipe != null ? curRecipe.getResultItem() : ItemStack.EMPTY;
-	}
-
-	@Override
-	public void onLoad() {
-		volume.setActive(true);
-	}
-
-	public IBloodVolume getBloodCapability() {
-		return volume;
-	}
-
-	public double getBloodVolume() {
-		return volume.getBloodVolume();
-	}
-
-	public double getMaxBloodVolume() {
-		return volume.getMaxBloodVolume();
-	}
-
-	public IBloodTendency getTendCapability() {
-		return tendency;
-	}
-
-	public Map<EnumBloodTendency, Float> getTendency() {
-		return tendency.getTendency();
-	}
-
-	// NBT
-	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.contents);
-		if (tag != null) {
-			recipePath = tag.getString(TAG_RECIPE);
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
-		}
-	}
-
-	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		ContainerHelper.saveAllItems(tag, this.contents);
-		if (tag != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-			tag.putString(TAG_RECIPE, recipePath);
-
-			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
-				if (tendency.getTendency().get(key) != null) {
-					tag.putFloat(key.toString(), tendency.getTendency().get(key));
-				} else {
-					tag.putFloat(key.toString(), 0);
-				}
-			}
-		}
-
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		if (tag != null) {
-			recipePath = tag.getString(TAG_RECIPE);
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
-		}
-	}
-
-	@Override
-	public final CompoundTag getUpdateTag() {
-		CompoundTag tag = new CompoundTag();
-		ContainerHelper.saveAllItems(tag, this.contents);
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		tag.putString(TAG_RECIPE, recipePath);
-		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
-			if (tendency.getTendency().get(key) != null) {
-				tag.putFloat(key.toString(), tendency.getTendency().get(key));
-			} else {
-				tag.putFloat(key.toString(), 0);
-			}
-		}
-		return tag;
-	}
-
-	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
-		if (pkt.getTag() != null) {
-			CompoundTag tag = pkt.getTag();
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			recipePath = tag.getString(TAG_RECIPE);
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
-		}
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
-	@Override
-	protected Component getDefaultName() {
-		return Component.literal("container.visceral_recaller");
-	}
-
-	@Override
-	protected AbstractContainerMenu createMenu(int id, Inventory player) {
-		return new VisceralRecallerMenu(id, player, this);
-	}
-
-	@Override
-	public int getContainerSize() {
-		return this.contents.size();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		for (ItemStack itemstack : this.contents) {
-			if (!itemstack.isEmpty()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public ItemStack getItem(int p_58328_) {
-		return this.contents.get(p_58328_);
-	}
-
-	@Override
-	public ItemStack removeItem(int pIndex, int pCount) {
-		return ContainerHelper.removeItem(this.contents, pIndex, pCount);
-	}
-
-	@Override
-	public ItemStack removeItemNoUpdate(int pIndex) {
-		return ContainerHelper.takeItem(this.contents, pIndex);
-	}
-
-	@Override
-	public boolean stillValid(Player p_58340_) {
-		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
-				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
-						this.worldPosition.getZ() + 0.5D) <= 64.0D;
-	}
-
-	@Override
-	public void clearContent() {
-		this.contents.clear();
-	}
-
-	private void checkRecipe() {
-		// this.tendency.getTendency().forEach((key, value) -> System.out.println(key +
-		// ":" + value));
-		this.tendency.getTendency();
-		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
-			if (recipe.getTendency().equals(this.tendency.getTendency())
-					&& recipe.getIngredient().test(contents.get(1))) {
-				// System.out.println("Matching Recipe: " + recipe);
-				curRecipe = recipe;
-				recipePath = ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem()).getPath();
-				break;
-			} else {
-				// System.out.println("No matching recipe found!");
-				recipePath = "";
-				curRecipe = null;
-			}
-		}
-		// System.out.println(curRecipe);
-	}
-
-	public boolean hasValidRecipe() {
-		return curRecipe != null;
 	}
 
 	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
@@ -350,10 +155,205 @@ public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implem
 
 	}
 
+	private void checkRecipe() {
+		// this.tendency.getTendency().forEach((key, value) -> System.out.println(key +
+		// ":" + value));
+		this.tendency.getTendency();
+		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
+			if (recipe.getTendency().equals(this.tendency.getTendency())
+					&& recipe.getIngredient().test(contents.get(1))) {
+				// System.out.println("Matching Recipe: " + recipe);
+				curRecipe = recipe;
+				recipePath = ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem()).getPath();
+				break;
+			} else {
+				// System.out.println("No matching recipe found!");
+				recipePath = "";
+				curRecipe = null;
+			}
+		}
+		// System.out.println(curRecipe);
+	}
+
+	@Override
+	public void clearContent() {
+		this.contents.clear();
+	}
+
+	@Override
+	protected AbstractContainerMenu createMenu(int id, Inventory player) {
+		return new VisceralRecallerMenu(id, player, this);
+	}
+
+	public IBloodVolume getBloodCapability() {
+		return volume;
+	}
+
+	public double getBloodVolume() {
+		return volume.getBloodVolume();
+	}
+
+	@Override
+	public int getContainerSize() {
+		return this.contents.size();
+	}
+
+	public RecallerRecipe getCurRecipe() {
+		return curRecipe;
+	}
+
+	@Override
+	protected Component getDefaultName() {
+		return Component.literal("container.visceral_recaller");
+	}
+
+	@Override
+	public ItemStack getItem(int p_58328_) {
+		return this.contents.get(p_58328_);
+	}
+
+	public double getMaxBloodVolume() {
+		return volume.getMaxBloodVolume();
+	}
+
+	public ItemStack getResultItem() {
+		return curRecipe != null ? curRecipe.getResultItem() : ItemStack.EMPTY;
+	}
+
+	public IBloodTendency getTendCapability() {
+		return tendency;
+	}
+
+	public Map<EnumBloodTendency, Float> getTendency() {
+		return tendency.getTendency();
+	}
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
+	public final CompoundTag getUpdateTag() {
+		CompoundTag tag = new CompoundTag();
+		ContainerHelper.saveAllItems(tag, this.contents);
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		tag.putString(TAG_RECIPE, recipePath);
+		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
+			if (tendency.getTendency().get(key) != null) {
+				tag.putFloat(key.toString(), tendency.getTendency().get(key));
+			} else {
+				tag.putFloat(key.toString(), 0);
+			}
+		}
+		return tag;
+	}
+
+	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		if (tag != null) {
+			recipePath = tag.getString(TAG_RECIPE);
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			}
+		}
+	}
+
+	public boolean hasValidRecipe() {
+		return curRecipe != null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemstack : this.contents) {
+			if (!itemstack.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// NBT
+	@Override
+	public void load(CompoundTag tag) {
+		super.load(tag);
+		this.contents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.contents);
+		if (tag != null) {
+			recipePath = tag.getString(TAG_RECIPE);
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			}
+		}
+	}
+
+	@Override
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+		super.onDataPacket(net, pkt);
+		if (pkt.getTag() != null) {
+			CompoundTag tag = pkt.getTag();
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			recipePath = tag.getString(TAG_RECIPE);
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+			}
+		}
+	}
+
+	@Override
+	public void onLoad() {
+		volume.setActive(true);
+	}
+
+	@Override
+	public ItemStack removeItem(int pIndex, int pCount) {
+		return ContainerHelper.removeItem(this.contents, pIndex, pCount);
+	}
+
+	@Override
+	public ItemStack removeItemNoUpdate(int pIndex) {
+		return ContainerHelper.takeItem(this.contents, pIndex);
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+		ContainerHelper.saveAllItems(tag, this.contents);
+		if (tag != null) {
+			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+			tag.putString(TAG_RECIPE, recipePath);
+
+			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
+				if (tendency.getTendency().get(key) != null) {
+					tag.putFloat(key.toString(), tendency.getTendency().get(key));
+				} else {
+					tag.putFloat(key.toString(), 0);
+				}
+			}
+		}
+
+	}
+
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
+	}
+
 	@Override
 	public void setItem(int pIndex, ItemStack pStack) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean stillValid(Player p_58340_) {
+		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
+				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
+						this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}
 
 }

@@ -63,23 +63,6 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	}
 
 	@Override
-	public IDrawable getIcon() {
-		return icon;
-	}
-
-	@Nonnull
-	@Override
-	public Component getTitle() {
-		return Component.literal(localizedName);
-	}
-
-	@Nonnull
-	@Override
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Override
 	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack ms, double mouseX,
 			double mouseY) {
 		overlay.draw(ms);
@@ -97,6 +80,28 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 		AABB dims = new AABB(0, 0, 0, 0, 0, 0);
 		Lighting.setupForFlatItems();
 		renderRecipe(recipe, ms, dims, guiScaleFactor, scissorBounds);
+	}
+
+	@Nonnull
+	@Override
+	public IDrawable getBackground() {
+		return background;
+	}
+
+	@Override
+	public IDrawable getIcon() {
+		return icon;
+	}
+
+	@Override
+	public RecipeType<BloodStructureRecipe> getRecipeType() {
+		return JEIPlugin.blood_structure_recipe_type;
+	}
+
+	@Nonnull
+	@Override
+	public Component getTitle() {
+		return Component.literal(localizedName);
 	}
 
 	private void renderRecipe(BloodStructureRecipe recipe, PoseStack mx, AABB dims, double guiScaleFactor,
@@ -169,12 +174,12 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	public void setRecipe(IRecipeLayoutBuilder builder, BloodStructureRecipe recipe, IFocusGroup focuses) {
 
 		List<List<ItemStack>> list = new ArrayList<>();
-		List<ItemStack> heldStack = new ArrayList<ItemStack>() {
+		List<ItemStack> heldStack = new ArrayList<>() {
 			{
 				add(recipe.getHeldItem());
 			}
 		};
-		List<ItemStack> hitStack = new ArrayList<ItemStack>() {
+		List<ItemStack> hitStack = new ArrayList<>() {
 			{
 				add(new ItemStack(recipe.getHitBlock().asItem()));
 			}
@@ -187,11 +192,6 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 41).addIngredient(VanillaTypes.ITEM_STACK,
 					recipe.getResult());
 		}
-	}
-
-	@Override
-	public RecipeType<BloodStructureRecipe> getRecipeType() {
-		return JEIPlugin.blood_structure_recipe_type;
 	}
 
 }

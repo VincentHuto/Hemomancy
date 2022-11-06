@@ -34,10 +34,20 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 	public static final int RESULT_SLOT = 2;
 	public static final int SLOT_COUNT = 4;
 	public static final int DATA_COUNT = 4;
+	private static JuicinatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
+		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
+		Objects.requireNonNull(data, "data cannot be null");
+		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
+		if (tileAtPos instanceof JuicinatorBlockEntity) {
+			return (JuicinatorBlockEntity) tileAtPos;
+		}
+		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	}
 	private final JuicinatorBlockEntity container;
 	private final ContainerData data;
 	protected final Level level;
 	private final RecipeType<? extends AbstractCookingRecipe> recipeType;
+
 	private JuicinatorBlockEntity te;
 
 	public JuiceinatorMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
@@ -73,8 +83,15 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 		this.addDataSlots(containerData);
 	}
 
-	public JuicinatorBlockEntity getTe() {
-		return te;
+	@SuppressWarnings("unchecked")
+	protected boolean canSmelt(ItemStack p_38978_) {
+		return this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType,
+				new SimpleContainer(p_38978_), this.level).isPresent();
+	}
+
+	public void clearCraftingContent() {
+		this.getSlot(0).set(ItemStack.EMPTY);
+		this.getSlot(2).set(ItemStack.EMPTY);
 	}
 
 	public void fillCraftSlotsStackedContents(StackedContents p_38976_) {
@@ -83,34 +100,46 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 		}
 	}
 
-	public void clearCraftingContent() {
-		this.getSlot(0).set(ItemStack.EMPTY);
-		this.getSlot(2).set(ItemStack.EMPTY);
-	}
-
-	public boolean recipeMatches(Recipe<? super JuicinatorBlockEntity> p_38980_) {
-		return p_38980_.matches(this.container, this.level);
-	}
-
-	public int getResultSlotIndex() {
-		return 2;
-	}
-
-	public int getGridWidth() {
-		return 1;
+	public int getBurnProgress() {
+		int i = this.data.get(2);
+		int j = this.data.get(3);
+		return j != 0 && i != 0 ? i * 24 / j : 0;
 	}
 
 	public int getGridHeight() {
 		return 1;
 	}
 
+	public int getGridWidth() {
+		return 1;
+	}
+
+	public int getLitProgress() {
+		int i = this.data.get(1);
+		if (i == 0) {
+			i = 200;
+		}
+		return this.data.get(0) * 13 / i;
+	}
+
+	public int getResultSlotIndex() {
+		return 2;
+	}
+
 	public int getSize() {
 		return 4;
 	}
 
-	@Override
-	public boolean stillValid(Player p_38974_) {
-		return this.container.stillValid(p_38974_);
+	public JuicinatorBlockEntity getTe() {
+		return te;
+	}
+
+	public boolean isFuel(ItemStack p_38989_) {
+		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.recipeType) > 0;
+	}
+
+	public boolean isLit() {
+		return this.data.get(0) > 0;
 	}
 
 	@Override
@@ -164,36 +193,8 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 		return itemstack;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected boolean canSmelt(ItemStack p_38978_) {
-		return this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType,
-				new SimpleContainer(p_38978_), this.level).isPresent();
-	}
-
-	public boolean isFuel(ItemStack p_38989_) {
-		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.recipeType) > 0;
-	}
-
-	public int getBurnProgress() {
-		int i = this.data.get(2);
-		int j = this.data.get(3);
-		return j != 0 && i != 0 ? i * 24 / j : 0;
-	}
-
-	public int getLitProgress() {
-		int i = this.data.get(1);
-		if (i == 0) {
-			i = 200;
-		}
-		return this.data.get(0) * 13 / i;
-	}
-
-	public boolean isLit() {
-		return this.data.get(0) > 0;
-	}
-
-	public boolean shouldMoveToInventory(int p_150463_) {
-		return p_150463_ != 1;
+	public boolean recipeMatches(Recipe<? super JuicinatorBlockEntity> p_38980_) {
+		return p_38980_.matches(this.container, this.level);
 	}
 
 	@Override
@@ -201,13 +202,12 @@ public class JuiceinatorMenu extends AbstractContainerMenu {
 		super.setData(p_38855_, p_38856_);
 	}
 
-	private static JuicinatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
-		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
-		Objects.requireNonNull(data, "data cannot be null");
-		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
-		if (tileAtPos instanceof JuicinatorBlockEntity) {
-			return (JuicinatorBlockEntity) tileAtPos;
-		}
-		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	public boolean shouldMoveToInventory(int p_150463_) {
+		return p_150463_ != 1;
+	}
+
+	@Override
+	public boolean stillValid(Player p_38974_) {
+		return this.container.stillValid(p_38974_);
 	}
 }

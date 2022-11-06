@@ -25,6 +25,20 @@ public class DrudgeElectrodeItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		tooltip.add(Component.literal("Used to give and reflect commands to drudges"));
+		if (stack.hasTag()) {
+			if (stack.getTag().getBoolean(TAG_MODE)) {
+				tooltip.add(Component.literal("State: On").withStyle(ChatFormatting.RED));
+			} else {
+				tooltip.add(Component.literal("State: Off").withStyle(ChatFormatting.GRAY));
+			}
+		}
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+
+	}
+
+	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		return true;
 //		if (target instanceof EntityDrudge) {
@@ -42,6 +56,12 @@ public class DrudgeElectrodeItem extends Item {
 	}
 
 	@Override
+	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getMainHandItem();
 		if (stack.getItem() instanceof DrudgeElectrodeItem) {
@@ -56,25 +76,5 @@ public class DrudgeElectrodeItem extends Item {
 			stack.setTag(compound);
 		}
 		return super.use(worldIn, playerIn, handIn);
-	}
-
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal("Used to give and reflect commands to drudges"));
-		if (stack.hasTag()) {
-			if (stack.getTag().getBoolean(TAG_MODE)) {
-				tooltip.add(Component.literal("State: On").withStyle(ChatFormatting.RED));
-			} else {
-				tooltip.add(Component.literal("State: Off").withStyle(ChatFormatting.GRAY));
-			}
-		}
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-
 	}
 }

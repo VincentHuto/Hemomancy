@@ -9,12 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkEvent;
 
 public class ToggleMorphlingJarMessagePacket {
-	private boolean enabled;
-
-	public ToggleMorphlingJarMessagePacket(boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public static ToggleMorphlingJarMessagePacket decode(final FriendlyByteBuf buffer) {
 		boolean en = buffer.readBoolean();
 		return new ToggleMorphlingJarMessagePacket(en);
@@ -34,5 +28,11 @@ public class ToggleMorphlingJarMessagePacket {
 						true);
 			});
 		ctx.get().setPacketHandled(true);
+	}
+
+	private boolean enabled;
+
+	public ToggleMorphlingJarMessagePacket(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

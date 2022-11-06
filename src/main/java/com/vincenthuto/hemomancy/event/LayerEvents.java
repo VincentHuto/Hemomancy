@@ -32,17 +32,28 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class LayerEvents {
 
-	@SuppressWarnings("deprecation")
-	@SubscribeEvent
-	public static void onStitch(TextureStitchEvent.Pre event) {
-		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/royal_guard_shield_base"));
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/barbed_shield/model_barbed_shield"));
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/chitinite_shield/model_chitinite_shield"));
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
+			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
+		R renderer = event.getRenderer(entityType);
+		if (renderer != null) {
+			renderer.addLayer(new BloodGourdLayer(renderer));
+			renderer.addLayer(new BloodAvatarLayer(renderer));
+			renderer.addLayer(new CellHandLayer(renderer));
+			renderer.addLayer(new VascCharmLayer<>(renderer));
 
 		}
-		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
-			event.addSprite(BannerSlot.SLOT_BACKGROUND);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
+		EntityRenderer<? extends Player> render = event.getSkin(skinName);
+		if (render instanceof LivingEntityRenderer livingRenderer) {
+			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
+			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
+			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
+			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
+
 		}
 	}
 
@@ -60,28 +71,17 @@ public class LayerEvents {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void addLayerToPlayerSkin(EntityRenderersEvent.AddLayers event, String skinName) {
-		EntityRenderer<? extends Player> render = event.getSkin(skinName);
-		if (render instanceof LivingEntityRenderer livingRenderer) {
-			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
-			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
-			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
-			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
+	@SuppressWarnings("deprecation")
+	@SubscribeEvent
+	public static void onStitch(TextureStitchEvent.Pre event) {
+		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
+			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/royal_guard_shield_base"));
+			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/barbed_shield/model_barbed_shield"));
+			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/chitinite_shield/model_chitinite_shield"));
 
 		}
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static <T extends LivingEntity, M extends HumanoidModel<T>, R extends LivingEntityRenderer<T, M>> void addLayerToEntity(
-			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
-		R renderer = event.getRenderer(entityType);
-		if (renderer != null) {
-			renderer.addLayer(new BloodGourdLayer(renderer));
-			renderer.addLayer(new BloodAvatarLayer(renderer));
-			renderer.addLayer(new CellHandLayer(renderer));
-			renderer.addLayer(new VascCharmLayer<T, M>(renderer));
-
+		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
+			event.addSprite(BannerSlot.SLOT_BACKGROUND);
 		}
 	}
 

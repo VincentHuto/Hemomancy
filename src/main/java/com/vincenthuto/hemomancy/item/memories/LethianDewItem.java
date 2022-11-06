@@ -33,6 +33,14 @@ public class LethianDewItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal("Highly concentrated lethian dew"));
+		tooltip.add(Component.literal("Used to forget your selected manipulation"));
+		tooltip.add(Component.literal("\"Just a drop is all it takes...\""));
+	}
+
+	@Override
 	public ItemStack finishUsingItem(ItemStack p_42984_, Level p_42985_, LivingEntity p_42986_) {
 		Player player = p_42986_ instanceof Player ? (Player) p_42986_ : null;
 		if (player instanceof ServerPlayer) {
@@ -64,18 +72,13 @@ public class LethianDewItem extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack p_43001_) {
-		return 16;
-	}
-
-	@Override
 	public UseAnim getUseAnimation(ItemStack p_42997_) {
 		return UseAnim.DRINK;
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level p_42993_, Player p_42994_, InteractionHand p_42995_) {
-		return ItemUtils.startUsingInstantly(p_42993_, p_42994_, p_42995_);
+	public int getUseDuration(ItemStack p_43001_) {
+		return 16;
 	}
 
 	@Override
@@ -84,11 +87,8 @@ public class LethianDewItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Highly concentrated lethian dew"));
-		tooltip.add(Component.literal("Used to forget your selected manipulation"));
-		tooltip.add(Component.literal("\"Just a drop is all it takes...\""));
+	public InteractionResultHolder<ItemStack> use(Level p_42993_, Player p_42994_, InteractionHand p_42995_) {
+		return ItemUtils.startUsingInstantly(p_42993_, p_42994_, p_42995_);
 	}
 
 }

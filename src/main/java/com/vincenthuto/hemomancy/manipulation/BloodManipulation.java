@@ -21,14 +21,34 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 
 public class BloodManipulation  {
+	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
+			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
+	/*
+	 * Reads a NBT tag and converts it to a manipulation
+	 */
+	public static BloodManipulation deserialize(CompoundTag nbt) {
+		if (nbt != null && !nbt.isEmpty()) {
+			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
+					&& nbt.contains("tendency") && nbt.contains("rank") && nbt.contains("section")) {
+				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
+						nbt.getDouble("level"), nbt.getDouble("xpcost"),
+						EnumManipulationType.valueOf(nbt.getString("type")),
+						EnumManipulationRank.valueOf(nbt.getString("rank")),
+						EnumBloodTendency.valueOf(nbt.getString("tendency")),
+						EnumVeinSections.valueOf(nbt.getString("section")));
+
+				return manip;
+			}
+		}
+		return null;
+	}
 	String name;
 	double cost, alignLevel, xpCost;
 	EnumBloodTendency tend;
 	EnumManipulationRank rank;
 	EnumVeinSections section;
+
 	EnumManipulationType type;
-	public static BloodManipulation BLANK = new BloodManipulation("No Selected", 0, 0, 0, EnumManipulationType.QUICK,
-			EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD);
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -39,6 +59,46 @@ public class BloodManipulation  {
 		this.tend = tendency;
 		this.rank = rank;
 		this.section = section;
+	}
+
+	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
+
+	}
+
+	public double getAlignLevel() {
+		return alignLevel;
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getProperName() {
+		return HLTextUtils.convertInitToLang(name);
+	}
+
+	public EnumManipulationRank getRank() {
+		return rank;
+	}
+
+	public EnumVeinSections getSection() {
+		return section;
+	}
+
+	public EnumBloodTendency getTend() {
+		return tend;
+	}
+
+	public EnumManipulationType getType() {
+		return type;
+	}
+
+	public double getXpCost() {
+		return xpCost;
 	}
 
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
@@ -71,30 +131,6 @@ public class BloodManipulation  {
 		}
 	}
 
-	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
-
-	}
-
-	/*
-	 * Reads a NBT tag and converts it to a manipulation
-	 */
-	public static BloodManipulation deserialize(CompoundTag nbt) {
-		if (nbt != null && !nbt.isEmpty()) {
-			if (nbt.contains("name") && nbt.contains("cost") && nbt.contains("level") && nbt.contains("type")
-					&& nbt.contains("tendency") && nbt.contains("rank") && nbt.contains("section")) {
-				BloodManipulation manip = new BloodManipulation(nbt.getString("name"), nbt.getDouble("cost"),
-						nbt.getDouble("level"), nbt.getDouble("xpcost"),
-						EnumManipulationType.valueOf(nbt.getString("type")),
-						EnumManipulationRank.valueOf(nbt.getString("rank")),
-						EnumBloodTendency.valueOf(nbt.getString("tendency")),
-						EnumVeinSections.valueOf(nbt.getString("section")));
-
-				return manip;
-			}
-		}
-		return null;
-	}
-
 	/*
 	 * Writes a NBT tag from this manipulation
 	 */
@@ -111,77 +147,41 @@ public class BloodManipulation  {
 		return nbt;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getProperName() {
-		return HLTextUtils.convertInitToLang(name);
-	}
-
-	@Override
-	public String toString() {
-		return HLTextUtils.convertInitToLang(name);
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getCost() {
-		return cost;
+	public void setAlignLevel(float alignLevel) {
+		this.alignLevel = alignLevel;
 	}
 
 	public void setCost(double cost) {
 		this.cost = cost;
 	}
 
-	public double getAlignLevel() {
-		return alignLevel;
-	}
-
-	public void setAlignLevel(float alignLevel) {
-		this.alignLevel = alignLevel;
-	}
-
-	public EnumManipulationType getType() {
-		return type;
-	}
-
-	public void setType(EnumManipulationType type) {
-		this.type = type;
-	}
-
-	public EnumBloodTendency getTend() {
-		return tend;
-	}
-
-	public void setTend(EnumBloodTendency tend) {
-		this.tend = tend;
-	}
-
-	public double getXpCost() {
-		return xpCost;
-	}
-
-	public void setXpCost(double xpCost) {
-		this.xpCost = xpCost;
-	}
-
-	public EnumManipulationRank getRank() {
-		return rank;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setRank(EnumManipulationRank rank) {
 		this.rank = rank;
 	}
 
-	public EnumVeinSections getSection() {
-		return section;
-	}
-
 	public void setSection(EnumVeinSections section) {
 		this.section = section;
+	}
+
+	public void setTend(EnumBloodTendency tend) {
+		this.tend = tend;
+	}
+
+	public void setType(EnumManipulationType type) {
+		this.type = type;
+	}
+
+	public void setXpCost(double xpCost) {
+		this.xpCost = xpCost;
+	}
+
+	@Override
+	public String toString() {
+		return HLTextUtils.convertInitToLang(name);
 	}
 
 }

@@ -12,14 +12,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class RuneMenuProvider implements MenuProvider {
 
-	@Override
-	public Component getDisplayName() {
-		return Component.literal("PlayerRuneInv");
-	}
-
 	@Nullable
 	@Override
 	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
 		return new CharmGourdMenu(id, playerInventory);
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return Component.literal("PlayerRuneInv");
 	}
 }

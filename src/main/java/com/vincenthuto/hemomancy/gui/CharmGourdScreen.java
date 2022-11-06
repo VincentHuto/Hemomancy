@@ -32,11 +32,18 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 		super(container, inventory, name);
 	}
 
-	// Replacing tick because im lazy
-	@Override
-	protected boolean isHovering(int p_97768_, int p_97769_, int p_97770_, int p_97771_, double p_97772_,
-			double p_97773_) {
-		return super.isHovering(p_97768_, p_97769_, p_97770_, p_97771_, p_97772_, p_97773_);
+	private void drawTexturedQuad(int x, int y, int width, int height, float tx, float ty, float tw, float th,
+			float z) {
+		Tesselator tess = Tesselator.getInstance();
+		BufferBuilder buffer = tess.getBuilder();
+
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
+		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
+		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
+		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
+
+		tess.end();
 	}
 
 	@Override
@@ -46,12 +53,11 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 		this.resetGuiLeft();
 	}
 
+	// Replacing tick because im lazy
 	@Override
-	protected void renderLabels(PoseStack matrixStack, int p_146979_1_, int p_146979_2_) { // drawGuiContainerForegroundLayer
-		if (this.minecraft != null) { // this.minecraft
-			this.minecraft.font.draw(matrixStack, Component.literal("container.crafting"), 115 - 18, 8 + 22,
-					4210752);
-		}
+	protected boolean isHovering(int p_97768_, int p_97769_, int p_97770_, int p_97771_, double p_97772_,
+			double p_97773_) {
+		return super.isHovering(p_97768_, p_97769_, p_97770_, p_97771_, p_97772_, p_97773_);
 	}
 
 	@Override
@@ -75,8 +81,7 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 			this.blit(matrixStack, k, l, 0, 0, this.getXSize(), this.getYSize()); // blit
 			this.blit(matrixStack, k, l, 0, 0, this.imageWidth, this.imageHeight); // blit
 			drawTexturedQuad(0, 0, 0, 0, 0, 0, 0, 0, 0);
-			for (int i1 = 0; i1 < this.menu.slots.size(); ++i1) {
-				Slot slot = this.menu.slots.get(i1);
+			for (Slot slot : this.menu.slots) {
 				if (slot.hasItem() && slot.getMaxStackSize() == 1) {
 					this.blit(matrixStack, k + slot.x, l + slot.y, 200, 0, 16, 16);
 				}
@@ -85,19 +90,13 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 					l + 75 - 50 - this.oldMouseY, this.minecraft.player);
 		}
 	}
-	
-	private void drawTexturedQuad(int x, int y, int width, int height, float tx, float ty, float tw, float th,
-			float z) {
-		Tesselator tess = Tesselator.getInstance();
-		BufferBuilder buffer = tess.getBuilder();
 
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex((double) x + 0, (double) y + height, z).uv(tx, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + height, z).uv(tx + tw, ty + th).endVertex();
-		buffer.vertex((double) x + width, (double) y + 0, z).uv(tx + tw, ty).endVertex();
-		buffer.vertex((double) x + 0, (double) y + 0, z).uv(tx, ty).endVertex();
-
-		tess.end();
+	@Override
+	protected void renderLabels(PoseStack matrixStack, int p_146979_1_, int p_146979_2_) { // drawGuiContainerForegroundLayer
+		if (this.minecraft != null) { // this.minecraft
+			this.minecraft.font.draw(matrixStack, Component.literal("container.crafting"), 115 - 18, 8 + 22,
+					4210752);
+		}
 	}
 
 	// No Longer necccisairy as you cannot acsess runes from INV anymore

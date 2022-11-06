@@ -1,12 +1,12 @@
 /*
  * package com.vincenthuto.hemomancy.event;
- * 
+ *
  * import java.util.ArrayList; import java.util.List; import
  * java.util.function.Supplier;
- * 
+ *
  * import com.vincenthuto.hemomancy.Hemomancy; import
  * com.vincenthuto.hemomancy.init.EntityInit;
- * 
+ *
  * import net.minecraft.core.Holder; import net.minecraft.core.Registry; import
  * net.minecraft.data.worldgen.features.FeatureUtils; import
  * net.minecraft.data.worldgen.features.OreFeatures; import
@@ -49,10 +49,10 @@
  * net.minecraftforge.eventbus.api.SubscribeEvent; import
  * net.minecraftforge.fml.common.Mod; import
  * net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
- * 
+ *
  * @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.FORGE) public
  * class WorldGenEvents {
- * 
+ *
  * public static Holder<ConfiguredFeature<RandomPatchConfiguration, ?>>
  * BLEEDING_HEART_FEATURE; public static Holder<PlacedFeature>
  * BLEEDING_HEART_PLACEMENT; public static Holder<PlacedFeature>
@@ -61,12 +61,12 @@
  * ?>> WITCHWOOD_TREE_FEATURE; public static Holder<PlacedFeature>
  * WITCHWOOD_TREE_PLACEMENT; public static Holder<PlacedFeature>
  * WITCHWOOD_TREE_VEGETATION;
- * 
+ *
  * private static <T extends FeatureConfiguration> Holder<ConfiguredFeature<T,
  * ?>> feature(String name, Feature<T> feature, T configuration) { return
  * FeatureUtils.register(Hemomancy.MOD_ID + ":" + name, feature, configuration);
  * }
- * 
+ *
  *//**
 	 * @param name   The name of the feature.
 	 * @param tries  How many tries for this feature will be performed.
@@ -80,7 +80,7 @@
  * FeatureUtils.simpleRandomPatchConfiguration(tries,
  * PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK, new
  * SimpleBlockConfiguration(BlockStateProvider.simple(flower.get()))))); }
- * 
+ *
  *//**
 	 * @param name    The name of the feature.
 	 * @param feature The configured feature to use.
@@ -92,7 +92,7 @@
  * extends ConfiguredFeature<?, ?>> feature, int rarity) { return
  * placement(name, feature, RarityFilter.onAverageOnceEvery(rarity),
  * InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome()); }
- * 
+ *
  *//**
 	 * @param name                     The name of the feature.
 	 * @param ore                      The ore block to use.
@@ -113,7 +113,7 @@
  * OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES,
  * deepslateOre.get().defaultBlockState())), veinSize,
  * airExposureDiscardChance)); }
- * 
+ *
  *//**
 	 * @param name                     The name of the feature.
 	 * @param ore                      The ore block to use.
@@ -134,7 +134,7 @@
  * OreConfiguration.target(OreFeatures.NETHER_ORE_REPLACEABLES,
  * deepslateOre.get().defaultBlockState())), veinSize,
  * airExposureDiscardChance)); }
- * 
+ *
  *//**
 	 * @param name                 The name of the feature.
 	 * @param feature              The configured feature to use.
@@ -148,7 +148,7 @@
  * heightRangePlacement) { return placement(name, feature,
  * CountPlacement.of(veinCount), InSquarePlacement.spread(),
  * heightRangePlacement, BiomeFilter.biome()); }
- * 
+ *
  *//**
 	 * @param name    The name of the feature.
 	 * @param log     The log block to use.
@@ -166,7 +166,7 @@
  * TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(log.get(
  * )), trunk, BlockStateProvider.simple(leaves.get()), foliage,
  * size).ignoreVines().build()); }
- * 
+ *
  *//**
 	 * @param name    The name of the feature.
 	 * @param feature The configured feature to use.
@@ -178,7 +178,7 @@
  * Holder<ConfiguredFeature<TreeConfiguration, ?>> feature, Supplier<? extends
  * Block> sapling) { return PlacementUtils.register(Hemomancy.MOD_ID + ":" +
  * name, feature, PlacementUtils.filteredByBlockSurvival(sapling.get())); }
- * 
+ *
  *//**
 	 * @param name     The name of the feature.
 	 * @param feature  The configured feature to use.
@@ -193,11 +193,11 @@
 		 * new ArrayList<>(VegetationPlacements.treePlacement(modifier, sapling.get()));
 		 * list.add(RarityFilter.onAverageOnceEvery(rarity)); return placement(name,
 		 * feature, list.toArray(new PlacementModifier[0])); }
-		 * 
+		 *
 		 * private static Holder<PlacedFeature> placement(String name, Holder<? extends
 		 * ConfiguredFeature<?, ?>> feature, PlacementModifier... modifiers) { return
 		 * PlacementUtils.register(Hemomancy.MOD_ID + ":" + name, feature, modifiers); }
-		 * 
+		 *
 		 * @SubscribeEvent public static void biomeLoading(BiomeLoadingEvent event) {
 		 * BiomeGenerationSettingsBuilder builder = event.getGeneration();
 		 * MobSpawnSettingsBuilder spawn = event.getSpawns(); ResourceLocation biome =
@@ -205,31 +205,31 @@
 		 * (category == Biome.BiomeCategory.NETHER) {
 		 * builder.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES,
 		 * VENOUS_PLACEMENT); }
-		 * 
+		 *
 		 * if (category != Biome.BiomeCategory.NETHER && category !=
 		 * Biome.BiomeCategory.THEEND) {
-		 * 
+		 *
 		 * if (category == Biome.BiomeCategory.FOREST) {
 		 * builder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION,
 		 * BLEEDING_HEART_PLACEMENT); }
-		 * 
+		 *
 		 * if (category == Biome.BiomeCategory.UNDERGROUND) {
 		 * spawn.addSpawn(MobCategory.AMBIENT, new
 		 * MobSpawnSettings.SpawnerData(EntityInit.chitinite.get(), 10, 8, 8));
-		 * 
+		 *
 		 * spawn.addSpawn(MobCategory.MONSTER, new
 		 * MobSpawnSettings.SpawnerData(EntityInit.chthonian_queen.get(), 100, 4, 4));
-		 * 
+		 *
 		 * spawn.addSpawn(MobCategory.MONSTER, new
 		 * MobSpawnSettings.SpawnerData(EntityInit.chthonian.get(), 100, 4, 4));
-		 * 
+		 *
 		 * } if (biome != null &&
 		 * BiomeDictionary.getTypes(ResourceKey.create(Registry.BIOME_REGISTRY, biome))
 		 * .contains(BiomeDictionary.Type.SWAMP)) {
 		 * builder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION,
 		 * WITCHWOOD_TREE_VEGETATION); } }
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * }
 		 */

@@ -50,12 +50,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IBloodTile {
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
-	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	protected static final int SLOT_INPUT = 0;
 	protected static final int SLOT_FUEL = 1;
 	protected static final int SLOT_RESULT = 2;
@@ -71,155 +71,26 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	public static final int NUM_DATA_VALUES = 4;
 	public static final int BURN_TIME_STANDARD = 200;
 	public static final int BURN_COOL_SPEED = 2;
-
-	public NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
-	int litTime;
-	int litDuration;
-	int cookingProgress;
-	int cookingTotalTime;
-	protected final ContainerData dataAccess = new ContainerData() {
-		@Override
-		public int get(int p_58431_) {
-			switch (p_58431_) {
-			case 0:
-				return litTime;
-			case 1:
-				return litDuration;
-			case 2:
-				return cookingProgress;
-			case 3:
-				return cookingTotalTime;
-			default:
-				return 0;
-			}
+	private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
+		int i = Mth.floor(p_155001_ * p_155002_);
+		float f = Mth.frac(p_155001_ * p_155002_);
+		if (f != 0.0F && Math.random() < f) {
+			++i;
 		}
 
-		@Override
-		public void set(int p_58433_, int p_58434_) {
-			switch (p_58433_) {
-			case 0:
-				litTime = p_58434_;
-				break;
-			case 1:
-				litDuration = p_58434_;
-				break;
-			case 2:
-				cookingProgress = p_58434_;
-				break;
-			case 3:
-				cookingTotalTime = p_58434_;
-			}
-		}
-
-		@Override
-		public int getCount() {
-			return 4;
-		}
-	};
-	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeInit.juiceinator_recipe_type.get();
-
-	public JuicinatorBlockEntity(BlockPos p_154992_, BlockState p_154993_) {
-		super(BlockEntityInit.juiceinator.get(), p_154992_, p_154993_);
+		ExperienceOrb.award(p_154999_, p_155000_, i);
 	}
 
-	@Override
-	public void onLoad() {
-		volume.setActive(true);
-		volume.setMaxBloodVolume(2000f);
+	@SuppressWarnings("unchecked")
+	private static int getTotalCookTime(Level p_155010_, RecipeType<? extends AbstractCookingRecipe> p_155011_,
+			Container p_155012_) {
+		return p_155010_.getRecipeManager()
+				.getRecipeFor((RecipeType<AbstractCookingRecipe>) p_155011_, p_155012_, p_155010_)
+				.map(AbstractCookingRecipe::getCookingTime).orElse(200);
 	}
-
-	public IBloodVolume getBloodCapability() {
-		return volume;
+	public static boolean isFuel(ItemStack p_58400_) {
+		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58400_, null) > 0;
 	}
-
-	public double getBloodVolume() {
-		return volume.getBloodVolume();
-	}
-
-	public double getMaxBloodVolume() {
-		return volume.getMaxBloodVolume();
-	}
-
-	private boolean isLit() {
-		return this.litTime > 0;
-	}
-
-	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.items);
-		this.litTime = tag.getInt("BurnTime");
-		this.cookingProgress = tag.getInt("CookTime");
-		this.cookingTotalTime = tag.getInt("CookTimeTotal");
-		this.litDuration = this.getBurnDuration(this.items.get(1));
-		CompoundTag compoundtag = tag.getCompound("RecipesUsed");
-		for (String s : compoundtag.getAllKeys()) {
-			this.recipesUsed.put(new ResourceLocation(s), compoundtag.getInt(s));
-		}
-		if (tag != null) {
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		}
-
-	}
-
-	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		tag.putInt("BurnTime", this.litTime);
-		tag.putInt("CookTime", this.cookingProgress);
-		tag.putInt("CookTimeTotal", this.cookingTotalTime);
-		ContainerHelper.saveAllItems(tag, this.items);
-		CompoundTag compoundtag = new CompoundTag();
-		this.recipesUsed.forEach((p_58382_, p_58383_) -> {
-			compoundtag.putInt(p_58382_.toString(), p_58383_);
-		});
-		tag.put("RecipesUsed", compoundtag);
-		if (tag != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		}
-	}
-
-	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		if (tag != null) {
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		}
-	}
-
-	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = new CompoundTag();
-		tag.putInt("BurnTime", this.litTime);
-		tag.putInt("CookTime", this.cookingProgress);
-		tag.putInt("CookTimeTotal", this.cookingTotalTime);
-		ContainerHelper.saveAllItems(tag, this.items);
-		CompoundTag compoundtag = new CompoundTag();
-		this.recipesUsed.forEach((p_58382_, p_58383_) -> {
-			compoundtag.putInt(p_58382_.toString(), p_58383_);
-		});
-		tag.put("RecipesUsed", compoundtag);
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-		return tag;
-	}
-
-	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		super.onDataPacket(net, pkt);
-		if (pkt.getTag() != null) {
-			CompoundTag tag = pkt.getTag();
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-		}
-
-	}
-
-	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
-
 	@SuppressWarnings("unchecked")
 	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, JuicinatorBlockEntity te) {
 		boolean flag = te.isLit();
@@ -287,29 +158,69 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		}
 
 	}
+	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	public NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+	int litTime;
+	int litDuration;
+	int cookingProgress;
 
-	@SuppressWarnings("unchecked")
-	private boolean canBurn(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-		if (!p_155007_.get(0).isEmpty() && p_155006_ != null) {
-			ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).assemble(this);
-			if (itemstack.isEmpty()) {
-				return false;
-			} else {
-				ItemStack itemstack1 = p_155007_.get(2);
-				if (itemstack1.isEmpty()) {
-					return true;
-				} else if (!itemstack1.sameItem(itemstack)) {
-					return false;
-				} else if (itemstack1.getCount() + itemstack.getCount() <= p_155008_
-						&& itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge fix:
-					return true;
-				} else {
-					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix:
-				}
+	int cookingTotalTime;
+
+	protected final ContainerData dataAccess = new ContainerData() {
+		@Override
+		public int get(int p_58431_) {
+			switch (p_58431_) {
+			case 0:
+				return litTime;
+			case 1:
+				return litDuration;
+			case 2:
+				return cookingProgress;
+			case 3:
+				return cookingTotalTime;
+			default:
+				return 0;
 			}
-		} else {
-			return false;
 		}
+
+		@Override
+		public int getCount() {
+			return 4;
+		}
+
+		@Override
+		public void set(int p_58433_, int p_58434_) {
+			switch (p_58433_) {
+			case 0:
+				litTime = p_58434_;
+				break;
+			case 1:
+				litDuration = p_58434_;
+				break;
+			case 2:
+				cookingProgress = p_58434_;
+				break;
+			case 3:
+				cookingTotalTime = p_58434_;
+			}
+		}
+	};
+
+	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+
+	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeInit.juiceinator_recipe_type.get();
+
+	LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers = SidedInvWrapper.create(this,
+			Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH);
+
+	public JuicinatorBlockEntity(BlockPos p_154992_, BlockState p_154993_) {
+		super(BlockEntityInit.juiceinator.get(), p_154992_, p_154993_);
+	}
+
+	public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
+		List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.getLevel(), p_155004_.position());
+		p_155004_.awardRecipes(list);
+		this.recipesUsed.clear();
 	}
 
 	private boolean burn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> inventory, int p_155029_) {
@@ -341,6 +252,74 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private boolean canBurn(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+		if (!p_155007_.get(0).isEmpty() && p_155006_ != null) {
+			ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).assemble(this);
+			if (itemstack.isEmpty()) {
+				return false;
+			} else {
+				ItemStack itemstack1 = p_155007_.get(2);
+				if (itemstack1.isEmpty()) {
+					return true;
+				} else if (!itemstack1.sameItem(itemstack)) {
+					return false;
+				} else if (itemstack1.getCount() + itemstack.getCount() <= p_155008_
+						&& itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge fix:
+					return true;
+				} else {
+					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix:
+				}
+			}
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean canPlaceItem(int p_58389_, ItemStack p_58390_) {
+		return super.canPlaceItem(p_58389_, p_58390_);
+
+	}
+
+	@Override
+	public boolean canPlaceItemThroughFace(int p_58336_, ItemStack p_58337_, @Nullable Direction p_58338_) {
+		return this.canPlaceItem(p_58336_, p_58337_);
+	}
+
+	@Override
+	public boolean canTakeItemThroughFace(int p_58392_, ItemStack p_58393_, Direction p_58394_) {
+		return (p_58394_ == Direction.DOWN && p_58392_ == 1)
+				? p_58393_.is(Items.WATER_BUCKET) || p_58393_.is(Items.BUCKET)
+				: true;
+	}
+
+	@Override
+	public void clearContent() {
+		this.items.clear();
+	}
+
+	@Override
+	protected AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_) {
+		return new JuiceinatorMenu(p_58627_, p_58628_, this, this.dataAccess);
+	}
+
+	@Override
+	public void fillStackedContents(StackedContents p_58342_) {
+		for (ItemStack itemstack : this.items) {
+			p_58342_.accountStack(itemstack);
+		}
+
+	}
+
+	public IBloodVolume getBloodCapability() {
+		return volume;
+	}
+
+	public double getBloodVolume() {
+		return volume.getBloodVolume();
+	}
+
 	protected int getBurnDuration(ItemStack p_58343_) {
 		if (p_58343_.isEmpty()) {
 			return 0;
@@ -350,16 +329,62 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static int getTotalCookTime(Level p_155010_, RecipeType<? extends AbstractCookingRecipe> p_155011_,
-			Container p_155012_) {
-		return p_155010_.getRecipeManager()
-				.getRecipeFor((RecipeType<AbstractCookingRecipe>) p_155011_, p_155012_, p_155010_)
-				.map(AbstractCookingRecipe::getCookingTime).orElse(200);
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+		if (!this.remove && facing != null
+				&& capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			switch (facing) {
+			case UP:
+				return handlers[0].cast();
+			case DOWN:
+				return handlers[1].cast();
+			case EAST:
+				return handlers[3].cast();
+			case SOUTH:
+				return handlers[4].cast();
+			default:
+				return handlers[2].cast();
+			}
+		}
+		return super.getCapability(capability, facing);
 	}
 
-	public static boolean isFuel(ItemStack p_58400_) {
-		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58400_, null) > 0;
+	@Override
+	public int getContainerSize() {
+		return this.items.size();
+	}
+
+	@Override
+	protected Component getDefaultName() {
+		return Component.literal("container.hemomancy.juiceinator");
+	}
+
+	@Override
+	public ItemStack getItem(int pSlot) {
+		return this.items.get(pSlot);
+	}
+
+	public double getMaxBloodVolume() {
+		return volume.getMaxBloodVolume();
+	}
+
+	public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
+		List<Recipe<?>> list = Lists.newArrayList();
+		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+			p_154996_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_155023_) -> {
+				list.add(p_155023_);
+				createExperience(p_154996_, p_154997_, entry.getIntValue(),
+						((AbstractCookingRecipe) p_155023_).getExperience());
+			});
+		}
+
+		return list;
+	}
+
+	@Override
+	@Nullable
+	public Recipe<?> getRecipeUsed() {
+		return null;
 	}
 
 	@Override
@@ -379,20 +404,40 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	public boolean canPlaceItemThroughFace(int p_58336_, ItemStack p_58337_, @Nullable Direction p_58338_) {
-		return this.canPlaceItem(p_58336_, p_58337_);
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override
-	public boolean canTakeItemThroughFace(int p_58392_, ItemStack p_58393_, Direction p_58394_) {
-		return (p_58394_ == Direction.DOWN && p_58392_ == 1)
-				? p_58393_.is(Items.WATER_BUCKET) || p_58393_.is(Items.BUCKET)
-				: true;
+	public CompoundTag getUpdateTag() {
+		CompoundTag tag = new CompoundTag();
+		tag.putInt("BurnTime", this.litTime);
+		tag.putInt("CookTime", this.cookingProgress);
+		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		ContainerHelper.saveAllItems(tag, this.items);
+		CompoundTag compoundtag = new CompoundTag();
+		this.recipesUsed.forEach((p_58382_, p_58383_) -> {
+			compoundtag.putInt(p_58382_.toString(), p_58383_);
+		});
+		tag.put("RecipesUsed", compoundtag);
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		return tag;
 	}
 
 	@Override
-	public int getContainerSize() {
-		return this.items.size();
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		if (tag != null) {
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		}
+	}
+
+	@Override
+	public void invalidateCaps() {
+		super.invalidateCaps();
+		for (LazyOptional<? extends IItemHandler> handler : handlers) {
+			handler.invalidate();
+		}
 	}
 
 	@Override
@@ -405,9 +450,43 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		return true;
 	}
 
+	private boolean isLit() {
+		return this.litTime > 0;
+	}
+
 	@Override
-	public ItemStack getItem(int pSlot) {
-		return this.items.get(pSlot);
+	public void load(CompoundTag tag) {
+		super.load(tag);
+		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.items);
+		this.litTime = tag.getInt("BurnTime");
+		this.cookingProgress = tag.getInt("CookTime");
+		this.cookingTotalTime = tag.getInt("CookTimeTotal");
+		this.litDuration = this.getBurnDuration(this.items.get(1));
+		CompoundTag compoundtag = tag.getCompound("RecipesUsed");
+		for (String s : compoundtag.getAllKeys()) {
+			this.recipesUsed.put(new ResourceLocation(s), compoundtag.getInt(s));
+		}
+		if (tag != null) {
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		}
+
+	}
+
+	@Override
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+		super.onDataPacket(net, pkt);
+		if (pkt.getTag() != null) {
+			CompoundTag tag = pkt.getTag();
+			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		}
+
+	}
+
+	@Override
+	public void onLoad() {
+		volume.setActive(true);
+		volume.setMaxBloodVolume(2000f);
 	}
 
 	@Override
@@ -418,6 +497,36 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public ItemStack removeItemNoUpdate(int pSlot) {
 		return ContainerHelper.takeItem(this.items, pSlot);
+	}
+
+	@Override
+	public void reviveCaps() {
+		super.reviveCaps();
+		this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN,
+				Direction.NORTH, Direction.EAST, Direction.SOUTH);
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+		tag.putInt("BurnTime", this.litTime);
+		tag.putInt("CookTime", this.cookingProgress);
+		tag.putInt("CookTimeTotal", this.cookingTotalTime);
+		ContainerHelper.saveAllItems(tag, this.items);
+		CompoundTag compoundtag = new CompoundTag();
+		this.recipesUsed.forEach((p_58382_, p_58383_) -> {
+			compoundtag.putInt(p_58382_.toString(), p_58383_);
+		});
+		tag.put("RecipesUsed", compoundtag);
+		if (tag != null) {
+			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		}
+	}
+
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
 	}
 
 	@Override
@@ -449,30 +558,6 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		}
 	}
 
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
-	@Override
-	public boolean stillValid(Player p_58340_) {
-		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
-				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
-						this.worldPosition.getZ() + 0.5D) <= 64.0D;
-	}
-
-	@Override
-	public boolean canPlaceItem(int p_58389_, ItemStack p_58390_) {
-		return super.canPlaceItem(p_58389_, p_58390_);
-
-	}
-
-	@Override
-	public void clearContent() {
-		this.items.clear();
-	}
-
 	@Override
 	public void setRecipeUsed(@Nullable Recipe<?> p_58345_) {
 		if (p_58345_ != null) {
@@ -482,94 +567,10 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@Override
-	@Nullable
-	public Recipe<?> getRecipeUsed() {
-		return null;
-	}
-
-	public void awardUsedRecipesAndPopExperience(ServerPlayer p_155004_) {
-		List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_155004_.getLevel(), p_155004_.position());
-		p_155004_.awardRecipes(list);
-		this.recipesUsed.clear();
-	}
-
-	public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel p_154996_, Vec3 p_154997_) {
-		List<Recipe<?>> list = Lists.newArrayList();
-		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
-			p_154996_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_155023_) -> {
-				list.add(p_155023_);
-				createExperience(p_154996_, p_154997_, entry.getIntValue(),
-						((AbstractCookingRecipe) p_155023_).getExperience());
-			});
-		}
-
-		return list;
-	}
-
-	private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
-		int i = Mth.floor(p_155001_ * p_155002_);
-		float f = Mth.frac(p_155001_ * p_155002_);
-		if (f != 0.0F && Math.random() < f) {
-			++i;
-		}
-
-		ExperienceOrb.award(p_154999_, p_155000_, i);
-	}
-
-	@Override
-	public void fillStackedContents(StackedContents p_58342_) {
-		for (ItemStack itemstack : this.items) {
-			p_58342_.accountStack(itemstack);
-		}
-
-	}
-
-	LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers = SidedInvWrapper.create(this,
-			Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH);
-
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-		if (!this.remove && facing != null
-				&& capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			switch (facing) {
-			case UP:
-				return handlers[0].cast();
-			case DOWN:
-				return handlers[1].cast();
-			case EAST:
-				return handlers[3].cast();
-			case SOUTH:
-				return handlers[4].cast();
-			default:
-				return handlers[2].cast();
-			}
-		}
-		return super.getCapability(capability, facing);
-	}
-
-	@Override
-	public void invalidateCaps() {
-		super.invalidateCaps();
-		for (int x = 0; x < handlers.length; x++) {
-			handlers[x].invalidate();
-		}
-	}
-
-	@Override
-	public void reviveCaps() {
-		super.reviveCaps();
-		this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN,
-				Direction.NORTH, Direction.EAST, Direction.SOUTH);
-	}
-
-	@Override
-	protected Component getDefaultName() {
-		return Component.literal("container.hemomancy.juiceinator");
-	}
-
-	@Override
-	protected AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_) {
-		return new JuiceinatorMenu(p_58627_, p_58628_, this, this.dataAccess);
+	public boolean stillValid(Player p_58340_) {
+		return (this.level.getBlockEntity(this.worldPosition) != this) ? false
+				: p_58340_.distanceToSqr(this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
+						this.worldPosition.getZ() + 0.5D) <= 64.0D;
 	}
 
 }

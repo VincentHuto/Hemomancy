@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.151.
- * 
+ *
  * Could not load the following classes:
  *  javax.annotation.Nullable
  *  net.minecraft.nbt.CompoundTag
@@ -16,26 +16,22 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public interface IExtendedItemHandler extends IItemHandlerModifiable {
-	default public int getSlots() {
-		return this.size();
-	}
-
-	public int size();
-
-	public long getCountInSlot(int var1);
-
-	public void enlarge(int var1);
-
-	public CompoundTag serialize();
+	public void addListener(IInventoryListener var1);
 
 	public void deserialize(CompoundTag var1);
 
-	default public void setInventoryData(RadialInventoryData<?> data) {
-	}
+	public void enlarge(int var1);
+
+	public long getCountInSlot(int var1);
 
 	@Nullable
 	default public RadialInventoryData<?> getInventoryData() {
 		return null;
+	}
+
+	@Override
+	default public int getSlots() {
+		return this.size();
 	}
 
 	default public void markDirty() {
@@ -45,5 +41,10 @@ public interface IExtendedItemHandler extends IItemHandlerModifiable {
 		}
 	}
 
-	public void addListener(IInventoryListener var1);
+	public CompoundTag serialize();
+
+	default public void setInventoryData(RadialInventoryData<?> data) {
+	}
+
+	public int size();
 }

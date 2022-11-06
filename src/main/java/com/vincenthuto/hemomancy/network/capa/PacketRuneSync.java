@@ -29,12 +29,6 @@ public class PacketRuneSync {
 		this.mindrune = mindrune;
 	}
 
-	public void toBytes(FriendlyByteBuf buf) {
-		buf.writeInt(this.playerId);
-		buf.writeByte(this.slot);
-		buf.writeItem(this.mindrune);
-	}
-
 	public void handle(Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
@@ -45,5 +39,11 @@ public class PacketRuneSync {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	public void toBytes(FriendlyByteBuf buf) {
+		buf.writeInt(this.playerId);
+		buf.writeByte(this.slot);
+		buf.writeItem(this.mindrune);
 	}
 }

@@ -11,10 +11,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class ScryingPodiumBlockEntity extends BlockEntity {
 
-	public ScryingPodiumBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.scrying_podium.get(), pos, state);
-	}
-
 	@SuppressWarnings("unused")
 	public static void animTick(Level level, BlockPos pos, BlockState state, ScryingPodiumBlockEntity ent) {
 		if (level.isClientSide) {
@@ -43,5 +39,9 @@ public class ScryingPodiumBlockEntity extends BlockEntity {
 //						pos.getZ() + inversedSphere[i].z + .5, 0, 0.00, 0);
 //			}
 		}
+	}
+
+	public ScryingPodiumBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityInit.scrying_podium.get(), pos, state);
 	}
 }

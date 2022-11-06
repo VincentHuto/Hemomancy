@@ -22,11 +22,6 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 	public static final ModelLayerLocation layer = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_avatar"), "main");
 
-	public BloodAvatarModel(ModelPart root) {
-		super(root, RenderType::entityTranslucent);
-
-	}
-
 	@SuppressWarnings("unused")
 	public static LayerDefinition createLayer() {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
@@ -492,10 +487,9 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 		return LayerDefinition.create(meshdefinition, 256, 256);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+	public BloodAvatarModel(ModelPart root) {
+		super(root, RenderType::entityTranslucent);
+
 	}
 
 	@Override
@@ -508,6 +502,12 @@ public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 
 }

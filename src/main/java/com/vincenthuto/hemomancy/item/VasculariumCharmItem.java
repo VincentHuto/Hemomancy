@@ -35,8 +35,45 @@ import net.minecraft.world.phys.HitResult;
 
 public class VasculariumCharmItem extends Item implements IRune {
 
+	public static enum Commands {
+		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
+
+		private final ResourceLocation iconTexture = new ResourceLocation(Hemomancy.MOD_ID,
+				"textures/gui/command_icons/" + this.toString().toLowerCase() + ".png");
+
+		public ResourceLocation getIcon() {
+			return this.iconTexture;
+		}
+
+	}
+
 	public VasculariumCharmItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmount) {
 		super(properties.stacksTo(1));
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal(ChatFormatting.RED + "So you've chosen the path of blood."));
+		tooltip.add(Component.literal(ChatFormatting.RED + "Representative of your resolve."));
+		tooltip.add(Component.literal(ChatFormatting.RED + "Leads you to a place of solace."));
+	}
+
+	@Override
+	public Rarity getRarity(ItemStack stack) {
+		return Rarity.RARE;
+	}
+
+	@Override
+	public RuneType getRuneType() {
+		// TODO Auto-generated method stub
+		return RuneType.VASC;
+	}
+
+	@Override
+	public boolean isFoil(ItemStack stack) {
+
+		return true;
 	}
 
 	@Override
@@ -85,43 +122,6 @@ public class VasculariumCharmItem extends Item implements IRune {
 			return InteractionResultHolder.consume(itemstack);
 		}
 
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		// super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal(ChatFormatting.RED + "So you've chosen the path of blood."));
-		tooltip.add(Component.literal(ChatFormatting.RED + "Representative of your resolve."));
-		tooltip.add(Component.literal(ChatFormatting.RED + "Leads you to a place of solace."));
-	}
-
-	@Override
-	public Rarity getRarity(ItemStack stack) {
-		return Rarity.RARE;
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-
-		return true;
-	}
-
-	public static enum Commands {
-		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
-
-		private final ResourceLocation iconTexture = new ResourceLocation(Hemomancy.MOD_ID,
-				"textures/gui/command_icons/" + this.toString().toLowerCase() + ".png");
-
-		public ResourceLocation getIcon() {
-			return this.iconTexture;
-		}
-
-	}
-
-	@Override
-	public RuneType getRuneType() {
-		// TODO Auto-generated method stub
-		return RuneType.VASC;
 	}
 
 }

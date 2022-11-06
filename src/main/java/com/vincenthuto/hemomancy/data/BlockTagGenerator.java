@@ -17,11 +17,6 @@ public class BlockTagGenerator extends BlockTagsProvider {
 	}
 
 	@Override
-	public String getName() {
-		return super.getName() + ": " + Hemomancy.MOD_ID;
-	}
-
-	@Override
 	protected void addTags() {
 
 		TagsProvider.TagAppender<Block> axeTag = tag(BlockTags.MINEABLE_WITH_AXE);
@@ -49,5 +44,10 @@ public class BlockTagGenerator extends BlockTagsProvider {
 //		tag(Tags.Blocks.CHESTS).add(FBContent.blockFramedChest.get());
 //		tag(BlockTags.RAILS).add(FBContent.blockFramedRailSlope.get());
 
+	}
+
+	@Override
+	public String getName() {
+		return super.getName() + ": " + Hemomancy.MOD_ID;
 	}
 }

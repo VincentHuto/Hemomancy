@@ -23,14 +23,19 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class BloodDrunkPuppeteerEntity extends Monster {
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
 	public BloodDrunkPuppeteerEntity(EntityType<? extends BloodDrunkPuppeteerEntity> type, Level worldIn) {
 		super(type, worldIn);
 
 	}
 
 	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
 	}
 
 	@Override
@@ -40,9 +45,55 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 	}
 
 	@Override
+	protected void doPush(Entity entityIn) {
+		super.doPush(entityIn);
+		/*
+		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
+		 * EntityBeastFromBeyond)) {
+		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
+		 */
+	}
+
+	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
 			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
 		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		return SoundEvents.WOLF_AMBIENT;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		return SoundEvents.WOLF_DEATH;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+
 	}
 
 	@Override
@@ -64,18 +115,18 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 		 * (this.ticksExisted < 2) { this.world.addParticle(ParticleTypes.POOF,
 		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
 		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); }
-		 * 
+		 *
 		 * if (this.ticksExisted > 2 && this.ticksExisted < 20) {
-		 * 
+		 *
 		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
 		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
 		 * 0.0D, 0.0D); }
-		 * 
+		 *
 		 * if (this.ticksExisted > 180 && this.ticksExisted < 220) {
 		 * this.world.addParticle(ParticleTypes.ITEM_SNOWBALL, this.getPosX() + (double)
 		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
 		 * 0.0D, 0.0D);
-		 * 
+		 *
 		 * } if (this.ticksExisted == 220) { this.world.addParticle(ParticleTypes.POOF,
 		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
 		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); if (!this.world.isRemote) {
@@ -83,56 +134,5 @@ public class BloodDrunkPuppeteerEntity extends Monster {
 		 * world.playSound(this.getPosX(), this.getPosY(), this.getPosZ(),
 		 * SoundEvents.BLOCK_SNOW_BREAK, SoundSource.HOSTILE, 3f, 1.2f, false); } } }
 		 */
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
-
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
-		/*
-		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
-		 * EntityBeastFromBeyond)) {
-		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
-		 */
-	}
-
-	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
-	}
-
-	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
-	}
-
-	@Override
-	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
 	}
 }

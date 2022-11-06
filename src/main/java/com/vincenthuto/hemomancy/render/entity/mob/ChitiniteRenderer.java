@@ -24,15 +24,15 @@ public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteMod
 	}
 
 	@Override
-	public void render(ChitiniteEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-	}
-
-	@Override
 	public ResourceLocation getTextureLocation(ChitiniteEntity entity) {
 		return TEXTURE;
 
+	}
+
+	@Override
+	public void render(ChitiniteEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
+			MultiBufferSource pBuffer, int pPackedLight) {
+		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
 	}
 
 }

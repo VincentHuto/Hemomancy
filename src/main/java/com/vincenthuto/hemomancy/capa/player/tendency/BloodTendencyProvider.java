@@ -16,21 +16,12 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 	//@CapabilityInject(IBloodTendency.class)
-	public static final Capability<IBloodTendency> TENDENCY_CAPA =CapabilityManager.get(new CapabilityToken<IBloodTendency>() {});;
+	public static final Capability<IBloodTendency> TENDENCY_CAPA =CapabilityManager.get(new CapabilityToken<IBloodTendency>() {});
+	public static Map<EnumBloodTendency, Float> getPlayerTendency(Player player) {
+		return player.getCapability(TENDENCY_CAPA).orElseThrow(IllegalStateException::new).getTendency();
+	}
+
 	private LazyOptional<IBloodTendency> instance = LazyOptional.of(BloodTendency::new);
-
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		return TENDENCY_CAPA.orEmpty(cap, instance);
-
-	}
-
-	@Override
-	public Tag serializeNBT() {
-		return writeNBT(TENDENCY_CAPA,
-				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
-	}
 
 	@Override
 	public void deserializeNBT(Tag nbt) {
@@ -39,8 +30,27 @@ public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 
 	}
 
-	public static Map<EnumBloodTendency, Float> getPlayerTendency(Player player) {
-		return player.getCapability(TENDENCY_CAPA).orElseThrow(IllegalStateException::new).getTendency();
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		return TENDENCY_CAPA.orEmpty(cap, instance);
+
+	}
+
+	public void readNBT(Capability<IBloodTendency> capability, IBloodTendency instance, Direction side, Tag nbt) {
+		if (!(instance instanceof BloodTendency))
+			throw new IllegalArgumentException(
+					"Can not deserialize to an instance that isn't the default implementation");
+		CompoundTag test = (CompoundTag) nbt;
+		for (EnumBloodTendency coven : EnumBloodTendency.values()) {
+			instance.getTendency().put(coven, test.getFloat(coven.toString()));
+		}
+	}
+
+	@Override
+	public Tag serializeNBT() {
+		return writeNBT(TENDENCY_CAPA,
+				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
 	}
 
 	public CompoundTag writeNBT(Capability<IBloodTendency> capability, IBloodTendency instance, Direction side) {
@@ -54,15 +64,5 @@ public class BloodTendencyProvider implements ICapabilitySerializable<Tag> {
 			}
 		}));
 		return covenTag;
-	}
-
-	public void readNBT(Capability<IBloodTendency> capability, IBloodTendency instance, Direction side, Tag nbt) {
-		if (!(instance instanceof BloodTendency))
-			throw new IllegalArgumentException(
-					"Can not deserialize to an instance that isn't the default implementation");
-		CompoundTag test = (CompoundTag) nbt;
-		for (EnumBloodTendency coven : EnumBloodTendency.values()) {
-			instance.getTendency().put(coven, test.getFloat(coven.toString()));
-		}
 	}
 }

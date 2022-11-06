@@ -9,15 +9,15 @@ public enum RuneType {
 		this.validSlots = validSlots;
 	}
 
+	public int[] getValidSlots() {
+		return validSlots;
+	}
+
 	public boolean hasSlot(int slot) {
 		for (int s : validSlots) {
 			if (s == slot)
 				return true;
 		}
 		return false;
-	}
-
-	public int[] getValidSlots() {
-		return validSlots;
 	}
 }

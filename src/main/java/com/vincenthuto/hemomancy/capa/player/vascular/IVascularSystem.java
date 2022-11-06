@@ -4,14 +4,14 @@ import java.util.Map;
 
 public interface IVascularSystem {
 
-	public Map<EnumVeinSections, Float> getVascularSystem();
-
-	public void setVascularSystem(Map<EnumVeinSections, Float> vascularSystem);
-
-	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value);
+	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn);
 
 	public float getHealthBySection(EnumVeinSections sectionIn);
 
-	public EnumBloodFlow getBloodFlowBySection(EnumVeinSections sectionIn);
+	public Map<EnumVeinSections, Float> getVascularSystem();
+
+	public void setVascularSectionHealth(EnumVeinSections sectionIn, float value);
+
+	public void setVascularSystem(Map<EnumVeinSections, Float> vascularSystem);
 
 }

@@ -19,8 +19,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class VisceralRecallerMenu extends AbstractContainerMenu {
+	private static VisceralRecallerBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
+		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
+		Objects.requireNonNull(data, "data cannot be null");
+		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
+		if (tileAtPos instanceof VisceralRecallerBlockEntity) {
+			return (VisceralRecallerBlockEntity) tileAtPos;
+		}
+		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	}
 	private final int numRows;
 	private final VisceralRecallerBlockEntity te;
+
 	public int[] activatedRunes;
 
 	public VisceralRecallerMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
@@ -51,26 +61,6 @@ public class VisceralRecallerMenu extends AbstractContainerMenu {
 
 	}
 
-	private static VisceralRecallerBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
-		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
-		Objects.requireNonNull(data, "data cannot be null");
-		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
-		if (tileAtPos instanceof VisceralRecallerBlockEntity) {
-			return (VisceralRecallerBlockEntity) tileAtPos;
-		}
-		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
-	}
-
-	@Override
-	public boolean stillValid(Player playerIn) {
-		return this.te.stillValid(playerIn);
-	}
-
-	@Override
-	public void removed(Player playerIn) {
-		super.removed(playerIn);
-	}
-
 	@Override
 	public void broadcastChanges() {
 		te.sendUpdates();
@@ -79,16 +69,14 @@ public class VisceralRecallerMenu extends AbstractContainerMenu {
 	}
 
 	@Override
-	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
-		super.setItem(p_182407_, p_182408_, p_182409_);
-		te.sendUpdates();
-	}
-
-	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
 		te.sendUpdates();
 
+	}
+
+	public VisceralRecallerBlockEntity getTe() {
+		return this.te;
 	}
 
 	@Override
@@ -118,8 +106,20 @@ public class VisceralRecallerMenu extends AbstractContainerMenu {
 		return stack;
 	}
 
-	public VisceralRecallerBlockEntity getTe() {
-		return this.te;
+	@Override
+	public void removed(Player playerIn) {
+		super.removed(playerIn);
+	}
+
+	@Override
+	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
+		super.setItem(p_182407_, p_182408_, p_182409_);
+		te.sendUpdates();
+	}
+
+	@Override
+	public boolean stillValid(Player playerIn) {
+		return this.te.stillValid(playerIn);
 	}
 
 }

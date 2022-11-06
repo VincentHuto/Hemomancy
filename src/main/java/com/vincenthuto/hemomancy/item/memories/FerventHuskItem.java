@@ -30,18 +30,18 @@ public class FerventHuskItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal("Used to enhance your manipulations"));
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.GOLD);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Used to enhance your manipulations"));
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class FerventHuskItem extends Item {
 		if (!worldIn.isClientSide) {
 			if(known.getSelectedManip() != null) {
 				known.incrSelectedManipLevel(1);
-				
+
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new KnownManipulationServerPacket(known));
 				stack.shrink(1);

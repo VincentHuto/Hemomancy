@@ -18,6 +18,18 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class LivingStaffMenu extends AbstractContainerMenu {
+	public int slotcount = 0;
+	private int slotID;
+
+	public String itemKey = "";
+
+	private Inventory playerInv;
+
+	public LivingStaffItemHandler handler;
+	public LivingStaffMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
+			Player playerEntity) {
+		this(windowId, world, pos, playerInventory, playerEntity);
+	}
 	public LivingStaffMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
@@ -25,7 +37,6 @@ public class LivingStaffMenu extends AbstractContainerMenu {
 	public LivingStaffMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
-
 	public LivingStaffMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(ContainerInit.living_staff.get(), windowId);
@@ -52,37 +63,26 @@ public class LivingStaffMenu extends AbstractContainerMenu {
 			playerEntity.closeContainer();
 	}
 
-	public LivingStaffMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
-			Player playerEntity) {
-		this(windowId, world, pos, playerInventory, playerEntity);
-	}
+	private void addMySlots(ItemStack stack) {
+		if (handler == null)
+			return;
 
-	public int slotcount = 0;
-	private int slotID;
-	public String itemKey = "";
-	private Inventory playerInv;
-	public LivingStaffItemHandler handler;
+		int cols = slotcount % 1 == 0 ? 1 : 10;
+		int rows = slotcount / cols;
+		int slotindex = 0;
 
-	@Override
-	public boolean stillValid(Player playerIn) {
-		if (slotID == -106)
-			return playerIn.getOffhandItem().getItem() instanceof LivingStaffItem;
-		return playerIn.getInventory().getItem(slotID).getItem() instanceof LivingStaffItem;
-	}
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				int x = 70 + col * 18;
+				int y = 95 + row * 18;
 
-	@Override
-	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
-		super.clicked(slot, dragType, clickTypeIn, player);
-
-		if (slot >= 0) {
-			if (getSlot(slot).getItem().getItem() instanceof LivingStaffItem) {
-
+				this.addSlot(new MorphlingJarSlot(handler, slotindex, x + 1, y + 1));
+				slotindex++;
+				if (slotindex >= slotcount)
+					break;
 			}
 		}
-		if (clickTypeIn == ClickType.SWAP)
 
-			if (slot >= 0)
-				getSlot(slot).container.setChanged();
 	}
 
 	private void addPlayerSlots(Inventory playerInventory) {
@@ -120,50 +120,19 @@ public class LivingStaffMenu extends AbstractContainerMenu {
 		}
 	}
 
-	private void addMySlots(ItemStack stack) {
-		if (handler == null)
-			return;
-
-		int cols = slotcount % 1 == 0 ? 1 : 10;
-		int rows = slotcount / cols;
-		int slotindex = 0;
-
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				int x = 70 + col * 18;
-				int y = 95 + row * 18;
-
-				this.addSlot(new MorphlingJarSlot(handler, slotindex, x + 1, y + 1));
-				slotindex++;
-				if (slotindex >= slotcount)
-					break;
-			}
-		}
-
-	}
-
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
-			ItemStack itemstack1 = slot.getItem();
-			if (itemstack1.getCount() < 1) {
-				itemstack = itemstack1.copy();
-				if (index < bagslotcount) {
-					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
-						return ItemStack.EMPTY;
-				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
-					return ItemStack.EMPTY;
-				}
-				if (itemstack1.isEmpty())
-					slot.set(ItemStack.EMPTY);
-				else
-					slot.setChanged();
+	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slot, dragType, clickTypeIn, player);
+
+		if (slot >= 0) {
+			if (getSlot(slot).getItem().getItem() instanceof LivingStaffItem) {
+
 			}
 		}
-		return itemstack;
+		if (clickTypeIn == ClickType.SWAP)
+
+			if (slot >= 0)
+				getSlot(slot).container.setChanged();
 	}
 
 	private ItemStack findLivingStaff(Player playerEntity) {
@@ -190,5 +159,36 @@ public class LivingStaffMenu extends AbstractContainerMenu {
 			}
 		}
 		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		Slot slot = this.slots.get(index);
+		if (slot != null && slot.hasItem()) {
+			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
+			ItemStack itemstack1 = slot.getItem();
+			if (itemstack1.getCount() < 1) {
+				itemstack = itemstack1.copy();
+				if (index < bagslotcount) {
+					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
+						return ItemStack.EMPTY;
+				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+					return ItemStack.EMPTY;
+				}
+				if (itemstack1.isEmpty())
+					slot.set(ItemStack.EMPTY);
+				else
+					slot.setChanged();
+			}
+		}
+		return itemstack;
+	}
+
+	@Override
+	public boolean stillValid(Player playerIn) {
+		if (slotID == -106)
+			return playerIn.getOffhandItem().getItem() instanceof LivingStaffItem;
+		return playerIn.getInventory().getItem(slotID).getItem() instanceof LivingStaffItem;
 	}
 }

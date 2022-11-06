@@ -19,18 +19,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 public class LivingBladeHandTameModel extends Model {
-	
+
 	public static final ModelLayerLocation living_blade_tame = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "living_blade_tame"), "main");
-	
-	private final List<ModelPart> parts = new ArrayList<ModelPart>();
-
-	public LivingBladeHandTameModel(ModelPart part) {
-		super(RenderType::entityTranslucent);
-		for (int i = 0; i < 39; i++) {
-			parts.add(part.getChild(Integer.toString(i)));
-		}
-	}
 
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();
@@ -153,6 +144,15 @@ public class LivingBladeHandTameModel extends Model {
 				CubeListBuilder.create().texOffs(0, 0).addBox(-2.5029F, -5.4441F, -2.5147F, 5.0F, 1.0F, 5.0F, false),
 				PartPose.ZERO);
 		return LayerDefinition.create(mesh, 64, 64);
+	}
+
+	private final List<ModelPart> parts = new ArrayList<>();
+
+	public LivingBladeHandTameModel(ModelPart part) {
+		super(RenderType::entityTranslucent);
+		for (int i = 0; i < 39; i++) {
+			parts.add(part.getChild(Integer.toString(i)));
+		}
 	}
 
 	@Override

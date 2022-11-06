@@ -46,6 +46,16 @@ public class MorphlingIncubatorBlockEntity extends TileSimpleInventory {
 		return true;
 	}
 
+	@Override
+	protected SimpleContainer createItemHandler() {
+		return new SimpleContainer(5) {
+			@Override
+			public int getMaxStackSize() {
+				return 1;
+			}
+		};
+	}
+
 	public boolean isEmpty() {
 		for (int i = 0; i < inventorySize(); i++) {
 			if (!getItemHandler().getItem(i).isEmpty()) {
@@ -57,34 +67,24 @@ public class MorphlingIncubatorBlockEntity extends TileSimpleInventory {
 	}
 
 	@Override
-	public void writePacketNBT(CompoundTag tag) {
-		super.writePacketNBT(tag);
-
-	}
-
-	@Override
 	public void readPacketNBT(CompoundTag tag) {
 		super.readPacketNBT(tag);
 
 	}
 
 	@Override
-	protected SimpleContainer createItemHandler() {
-		return new SimpleContainer(5) {
-			@Override
-			public int getMaxStackSize() {
-				return 1;
-			}
-		};
+	public void writePacketNBT(CompoundTag tag) {
+		super.writePacketNBT(tag);
+
 	}
 
 	/*
 	 * public void onActivated(Player player, ItemStack wand) { RecipeWandMaker
 	 * recipe = null; if (currentRecipe != null) recipe = currentRecipe; else for
 	 * (RecipeWandMaker recipe_ : ModWandRecipies.wandMakerRecipies) {
-	 * 
+	 *
 	 * if (recipe_.matches(itemHandler)) { recipe = recipe_; break; } }
-	 * 
+	 *
 	 * if (recipe != null) { float manaCost = recipe.getVibeUsage() / this.level; if
 	 * (vibes.getVibes() >= manaCost) { ItemStack output =
 	 * recipe.getOutput().copy(); ItemEntity outputItem = new ItemEntity(world,
@@ -95,7 +95,7 @@ public class MorphlingIncubatorBlockEntity extends TileSimpleInventory {
 	 * world.addBlockEvent(getPos(), BlockInit.wand_maker.get(), SET_COOLDOWN_EVENT,
 	 * 60); world.addBlockEvent(getPos(), BlockInit.wand_maker.get(),
 	 * CRAFT_EFFECT_EVENT, 0);
-	 * 
+	 *
 	 * for (int i = 0; i < getSizeInventory(); i++) { ItemStack stack =
 	 * itemHandler.getStackInSlot(i); if (!stack.isEmpty()) { } this.sendUpdates();
 	 * itemHandler.setStackInSlot(i, ItemStack.EMPTY); } } } }

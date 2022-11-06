@@ -23,9 +23,8 @@ public class SlotSelectiveRuneType extends SlotItemHandler {
 	}
 
 	@Override
-	public boolean mayPlace(ItemStack stack) {
-
-		return itemType.isInstance(stack.getItem());
+	public int getMaxStackSize() {
+		return 1;
 	}
 
 	@Override
@@ -36,6 +35,12 @@ public class SlotSelectiveRuneType extends SlotItemHandler {
 
 		IRune mindrune = stack.getCapability(RunesCapabilities.ITEM_RUNE).orElseThrow(NullPointerException::new);
 		return mindrune.canUnequip(player);
+	}
+
+	@Override
+	public boolean mayPlace(ItemStack stack) {
+
+		return itemType.isInstance(stack.getItem());
 	}
 
 	@Override
@@ -63,10 +68,5 @@ public class SlotSelectiveRuneType extends SlotItemHandler {
 				&& getItem().getCapability(RunesCapabilities.ITEM_RUNE, null).isPresent()) {
 			getItem().getCapability(RunesCapabilities.ITEM_RUNE, null).ifPresent((iRune) -> iRune.onEquipped(player));
 		}
-	}
-
-	@Override
-	public int getMaxStackSize() {
-		return 1;
 	}
 }

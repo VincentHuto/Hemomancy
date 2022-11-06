@@ -17,15 +17,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public class BloodGourdModel<T extends LivingEntity> extends EntityModel<T> {
-	
+
 	public static final ModelLayerLocation blood_gourd = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_gourd"), "main");
-	
-	private final ModelPart body;
-
-	public BloodGourdModel(ModelPart root) {
-		this.body = root.getChild("body");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -64,16 +58,22 @@ public class BloodGourdModel<T extends LivingEntity> extends EntityModel<T> {
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
+	private final ModelPart body;
 
+	public BloodGourdModel(ModelPart root) {
+		this.body = root.getChild("body");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		body.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+
 	}
 
 }

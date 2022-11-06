@@ -22,100 +22,6 @@ public class BarbedShieldModel extends Model {
 	public static final ModelLayerLocation barbed_shield = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "barbed_shield"), "main");
 
-	private final List<ModelPart> parts = new ArrayList<ModelPart>();
-
-	public BarbedShieldModel(ModelPart part) {
-		super(RenderType::entityTranslucent);
-		for (int i = 0; i < 13; i++) {
-			ModelPart shield3 = part.getChild(Integer.toString(i));
-			parts.add(shield3);
-
-		}
-		for (int i = 13; i < 16; i++) {
-			ModelPart bone = part.getChild(Integer.toString(i));
-			bone.setPos(3, -17.75f, -4.58f);
-			setRotationAngle(bone, -0.2618F, 0.0F, 0.48F);
-			parts.add(bone);
-		}
-
-		for (int i = 16; i < 19; i++) {
-			ModelPart bone9 = part.getChild(Integer.toString(i));
-			bone9.setPos(0.0F, -18.25F, -4.5833F);
-			setRotationAngle(bone9, -0.2618F, 0.0F, 0.0F);
-			parts.add(bone9);
-		}
-
-		for (int i = 19; i < 22; i++) {
-			ModelPart bone10 = part.getChild(Integer.toString(i));
-			bone10.setPos(0.0F, -6.75F, -4.5833F);
-			setRotationAngle(bone10, -0.2618F, 0.0F, -3.1416F);
-			parts.add(bone10);
-		}
-
-		for (int i = 22; i < 25; i++) {
-			ModelPart bone2 = part.getChild(Integer.toString(i));
-			bone2.setPos(-3.0F, -17.75F, -4.5833F);
-			setRotationAngle(bone2, -0.2618F, 0.0F, -0.48F);
-			parts.add(bone2);
-		}
-
-		for (int i = 25; i < 28; i++) {
-			ModelPart bone3 = part.getChild(Integer.toString(i));
-			bone3.setPos(-3.0F, -7.25F, -4.5833F);
-			setRotationAngle(bone3, -0.2618F, 0.0F, -2.6616F);
-			parts.add(bone3);
-		}
-
-		for (int i = 28; i < 31; i++) {
-			ModelPart bone4 = part.getChild(Integer.toString(i));
-			bone4.setPos(3.0F, -7.25F, -4.5833F);
-			setRotationAngle(bone4, -0.2618F, 0.0F, 2.6616F);
-			parts.add(bone4);
-		}
-
-		for (int i = 31; i < 34; i++) {
-			ModelPart bone5 = part.getChild(Integer.toString(i));
-			bone5.setPos(-5.0F, -16.25F, -4.5833F);
-			setRotationAngle(bone5, -0.2618F, 0.0F, -1.0908F);
-			parts.add(bone5);
-		}
-
-		for (int i = 34; i < 37; i++) {
-			ModelPart bone6 = part.getChild(Integer.toString(i));
-			bone6.setPos(5.0F, -16.25F, -4.5833F);
-			setRotationAngle(bone6, -0.2618F, 0.0F, 1.0908F);
-			parts.add(bone6);
-		}
-
-		for (int i = 37; i < 40; i++) {
-			ModelPart bone7 = part.getChild(Integer.toString(i));
-			bone7.setPos(5.0F, -8.25F, -4.5833F);
-			setRotationAngle(bone7, -0.2618F, 0.0F, 2.0508F);
-			parts.add(bone7);
-		}
-
-		for (int i = 40; i < 43; i++) {
-			ModelPart bone11 = part.getChild(Integer.toString(i));
-			bone11.setPos(5.5F, -12.25F, -4.5833F);
-			setRotationAngle(bone11, -0.2618F, 0.0F, 1.5708F);
-			parts.add(bone11);
-		}
-
-		for (int i = 43; i < 46; i++) {
-			ModelPart bone12 = part.getChild(Integer.toString(i));
-			bone12.setPos(-5.5F, -12.25F, -4.5833F);
-			setRotationAngle(bone12, -0.2618F, 0.0F, -1.5708F);
-			parts.add(bone12);
-		}
-
-		for (int i = 46; i < 49; i++) {
-			ModelPart bone8 = part.getChild(Integer.toString(i));
-			bone8.setPos(-5.0F, -8.25F, -4.5833F);
-			setRotationAngle(bone8, -0.2618F, 0.0F, -2.0508F);
-			parts.add(bone8);
-		}
-	}
-
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition shield3 = mesh.getRoot();
@@ -292,6 +198,100 @@ public class BarbedShieldModel extends Model {
 				PartPose.ZERO);
 
 		return LayerDefinition.create(mesh, 64, 64);
+	}
+
+	private final List<ModelPart> parts = new ArrayList<>();
+
+	public BarbedShieldModel(ModelPart part) {
+		super(RenderType::entityTranslucent);
+		for (int i = 0; i < 13; i++) {
+			ModelPart shield3 = part.getChild(Integer.toString(i));
+			parts.add(shield3);
+
+		}
+		for (int i = 13; i < 16; i++) {
+			ModelPart bone = part.getChild(Integer.toString(i));
+			bone.setPos(3, -17.75f, -4.58f);
+			setRotationAngle(bone, -0.2618F, 0.0F, 0.48F);
+			parts.add(bone);
+		}
+
+		for (int i = 16; i < 19; i++) {
+			ModelPart bone9 = part.getChild(Integer.toString(i));
+			bone9.setPos(0.0F, -18.25F, -4.5833F);
+			setRotationAngle(bone9, -0.2618F, 0.0F, 0.0F);
+			parts.add(bone9);
+		}
+
+		for (int i = 19; i < 22; i++) {
+			ModelPart bone10 = part.getChild(Integer.toString(i));
+			bone10.setPos(0.0F, -6.75F, -4.5833F);
+			setRotationAngle(bone10, -0.2618F, 0.0F, -3.1416F);
+			parts.add(bone10);
+		}
+
+		for (int i = 22; i < 25; i++) {
+			ModelPart bone2 = part.getChild(Integer.toString(i));
+			bone2.setPos(-3.0F, -17.75F, -4.5833F);
+			setRotationAngle(bone2, -0.2618F, 0.0F, -0.48F);
+			parts.add(bone2);
+		}
+
+		for (int i = 25; i < 28; i++) {
+			ModelPart bone3 = part.getChild(Integer.toString(i));
+			bone3.setPos(-3.0F, -7.25F, -4.5833F);
+			setRotationAngle(bone3, -0.2618F, 0.0F, -2.6616F);
+			parts.add(bone3);
+		}
+
+		for (int i = 28; i < 31; i++) {
+			ModelPart bone4 = part.getChild(Integer.toString(i));
+			bone4.setPos(3.0F, -7.25F, -4.5833F);
+			setRotationAngle(bone4, -0.2618F, 0.0F, 2.6616F);
+			parts.add(bone4);
+		}
+
+		for (int i = 31; i < 34; i++) {
+			ModelPart bone5 = part.getChild(Integer.toString(i));
+			bone5.setPos(-5.0F, -16.25F, -4.5833F);
+			setRotationAngle(bone5, -0.2618F, 0.0F, -1.0908F);
+			parts.add(bone5);
+		}
+
+		for (int i = 34; i < 37; i++) {
+			ModelPart bone6 = part.getChild(Integer.toString(i));
+			bone6.setPos(5.0F, -16.25F, -4.5833F);
+			setRotationAngle(bone6, -0.2618F, 0.0F, 1.0908F);
+			parts.add(bone6);
+		}
+
+		for (int i = 37; i < 40; i++) {
+			ModelPart bone7 = part.getChild(Integer.toString(i));
+			bone7.setPos(5.0F, -8.25F, -4.5833F);
+			setRotationAngle(bone7, -0.2618F, 0.0F, 2.0508F);
+			parts.add(bone7);
+		}
+
+		for (int i = 40; i < 43; i++) {
+			ModelPart bone11 = part.getChild(Integer.toString(i));
+			bone11.setPos(5.5F, -12.25F, -4.5833F);
+			setRotationAngle(bone11, -0.2618F, 0.0F, 1.5708F);
+			parts.add(bone11);
+		}
+
+		for (int i = 43; i < 46; i++) {
+			ModelPart bone12 = part.getChild(Integer.toString(i));
+			bone12.setPos(-5.5F, -12.25F, -4.5833F);
+			setRotationAngle(bone12, -0.2618F, 0.0F, -1.5708F);
+			parts.add(bone12);
+		}
+
+		for (int i = 46; i < 49; i++) {
+			ModelPart bone8 = part.getChild(Integer.toString(i));
+			bone8.setPos(-5.0F, -8.25F, -4.5833F);
+			setRotationAngle(bone8, -0.2618F, 0.0F, -2.0508F);
+			parts.add(bone8);
+		}
 	}
 
 	@Override

@@ -14,24 +14,15 @@ public class RunesItemHandlerCap {
 		@Override
 		public IRunesItemHandler call() {
 			return new IRunesItemHandler() {
+				@Nonnull
 				@Override
-				public boolean isItemValidForSlot(int slot, ItemStack stack) {
-					return false;
+				public ItemStack extractItem(int slot, int amount, boolean simulate) {
+					return null;
 				}
 
 				@Override
-				public boolean isEventBlocked() {
-					return false;
-				}
-
-				@Override
-				public void setEventBlock(boolean blockEvents) {
-
-				}
-
-				@Override
-				public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-
+				public int getSlotLimit(int slot) {
+					return 0;
 				}
 
 				@Override
@@ -51,20 +42,29 @@ public class RunesItemHandlerCap {
 					return null;
 				}
 
-				@Nonnull
 				@Override
-				public ItemStack extractItem(int slot, int amount, boolean simulate) {
-					return null;
-				}
-
-				@Override
-				public int getSlotLimit(int slot) {
-					return 0;
+				public boolean isEventBlocked() {
+					return false;
 				}
 
 				@Override
 				public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 					return false;
+				}
+
+				@Override
+				public boolean isItemValidForSlot(int slot, ItemStack stack) {
+					return false;
+				}
+
+				@Override
+				public void setEventBlock(boolean blockEvents) {
+
+				}
+
+				@Override
+				public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+
 				}
 
 				@Override

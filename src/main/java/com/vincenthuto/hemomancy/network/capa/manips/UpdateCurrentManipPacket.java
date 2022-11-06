@@ -13,21 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 public class UpdateCurrentManipPacket {
-	private int selected;
-
-	public UpdateCurrentManipPacket(int selectedIn) {
-		this.selected = selectedIn;
-
-	}
-
-	public static void encode(UpdateCurrentManipPacket msg, FriendlyByteBuf buf) {
-		buf.writeInt(msg.selected);
-	}
-
-	public static UpdateCurrentManipPacket decode(FriendlyByteBuf buf) {
-		return new UpdateCurrentManipPacket(buf.readInt());
-	}
-
 	public static class Handler {
 		public static void handle(final UpdateCurrentManipPacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
@@ -48,5 +33,20 @@ public class UpdateCurrentManipPacket {
 			});
 			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	public static UpdateCurrentManipPacket decode(FriendlyByteBuf buf) {
+		return new UpdateCurrentManipPacket(buf.readInt());
+	}
+
+	public static void encode(UpdateCurrentManipPacket msg, FriendlyByteBuf buf) {
+		buf.writeInt(msg.selected);
+	}
+
+	private int selected;
+
+	public UpdateCurrentManipPacket(int selectedIn) {
+		this.selected = selectedIn;
+
 	}
 }

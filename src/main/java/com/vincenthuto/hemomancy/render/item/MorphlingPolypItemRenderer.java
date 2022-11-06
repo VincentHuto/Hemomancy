@@ -46,6 +46,14 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 		return i;
 	}
 
+	/**
+	 * Returns the location of an entity's texture.
+	 */
+	@Override
+	public ResourceLocation getTextureLocation(ItemEntity entity) {
+		return TextureAtlas.LOCATION_BLOCKS;
+	}
+
 	@Override
 	public void render(ItemEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
@@ -97,25 +105,10 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
-	/**
-	 * Returns the location of an entity's texture.
-	 */
-	@Override
-	public ResourceLocation getTextureLocation(ItemEntity entity) {
-		return TextureAtlas.LOCATION_BLOCKS;
-	}
-
 	/*
 	 * ==================================== FORGE START
 	 * ===========================================
 	 */
-
-	/**
-	 * @return If items should spread out when rendered in 3D
-	 */
-	public boolean shouldSpreadItems() {
-		return true;
-	}
 
 	/**
 	 * @return If items should have a bob effect
@@ -127,4 +120,11 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 	 * ==================================== FORGE END
 	 * =============================================
 	 */
+
+	/**
+	 * @return If items should spread out when rendered in 3D
+	 */
+	public boolean shouldSpreadItems() {
+		return true;
+	}
 }

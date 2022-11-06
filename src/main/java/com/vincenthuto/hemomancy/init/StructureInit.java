@@ -31,7 +31,7 @@ public class StructureInit {
 //					PlacedFeature.CODEC.fieldOf("feature").forGetter(ExampleBiomeModifier::feature)
 //			// declare constructor
 //			).apply(builder, ExampleBiomeModifier::new)));
-	
+
 	public static final RegistryObject<StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
 			.register("blood_temple", () -> explicitStructureTypeTyping(BloodTempleStructure.CODEC));
 

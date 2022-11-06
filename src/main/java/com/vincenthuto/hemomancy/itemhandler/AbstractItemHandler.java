@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.151.
- * 
+ *
  * Could not load the following classes:
  *  javax.annotation.Nonnull
  *  net.minecraft.core.NonNullList
@@ -26,18 +26,33 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public abstract class AbstractItemHandler implements IExtendedItemHandler {
 	protected NonNullList<ItemStackEntry> stacks;
-	protected Set<IInventoryListener> listeners = new HashSet<IInventoryListener>();
+	protected Set<IInventoryListener> listeners = new HashSet<>();
 
 	public AbstractItemHandler() {
 		this(1);
 	}
 
 	public AbstractItemHandler(int size) {
-		this.stacks = NonNullList.withSize((int) size,  ItemStackEntry.EMPTY);
+		this.stacks = NonNullList.withSize(size,  ItemStackEntry.EMPTY);
 	}
 
 	public AbstractItemHandler(NonNullList<ItemStackEntry> stacks) {
 		this.stacks = stacks;
+	}
+
+	@Override
+	public void addListener(IInventoryListener listener) {
+		this.listeners.add(listener);
+	}
+
+	@Override
+	public void deserialize(CompoundTag result) {
+		int size = result.getInt("slots");
+		this.enlarge(Math.max(size, this.size()));
+		for (int i = 0; i < size; ++i) {
+			ItemStackEntry entry = ItemStackEntry.deserialize(result.get("" + i));
+			this.stacks.set(i,  entry);
+		}
 	}
 
 	@Override
@@ -49,13 +64,50 @@ public abstract class AbstractItemHandler implements IExtendedItemHandler {
 		if (size == this.stacks.size()) {
 			return;
 		}
-		NonNullList newList = NonNullList.withSize((int) size,  ItemStackEntry.EMPTY);
+		NonNullList newList = NonNullList.withSize(size,  ItemStackEntry.EMPTY);
 		for (int i = 0; i < this.stacks.size(); ++i) {
-			newList.set(i,  ((ItemStackEntry) this.stacks.get(i)));
+			newList.set(i,  (this.stacks.get(i)));
 		}
 		this.stacks = newList;
 	}
 
+	@Override
+	@Nonnull
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
+		if (amount == 0) {
+			return ItemStack.EMPTY;
+		}
+		this.validateSlotIndex(slot);
+		ItemStackEntry entry = this.stacks.get(slot);
+		ItemStack existing = entry.getStackOriginal();
+		if (existing.isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+		int toExtract = Math.min(amount, existing.getMaxStackSize());
+		if (existing.getCount() <= toExtract) {
+			if (!simulate) {
+				this.stacks.set(slot,  ItemStackEntry.EMPTY);
+				this.onContentsChanged(slot);
+				return existing;
+			}
+			return existing.copy();
+		}
+		if (!simulate) {
+			entry = new ItemStackEntry(
+					ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+			this.stacks.set(slot,  entry);
+			this.onContentsChanged(slot);
+		}
+		return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
+	}
+
+	@Override
+	public long getCountInSlot(int slot) {
+		this.validateSlotIndex(slot);
+		return this.stacks.get(slot).getCount();
+	}
+
+	@Override
 	public abstract int getSlotLimit(int var1);
 
 	public int getSlotLimit(int slot, ItemStack stack) {
@@ -63,28 +115,13 @@ public abstract class AbstractItemHandler implements IExtendedItemHandler {
 	}
 
 	@Override
-	public int size() {
-		return this.stacks.size();
-	}
-
-	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-		this.validateSlotIndex(slot);
-		this.stacks.set(slot,  new ItemStackEntry(stack));
-		this.onContentsChanged(slot);
-	}
-
 	@Nonnull
 	public ItemStack getStackInSlot(int slot) {
 		this.validateSlotIndex(slot);
-		return ((ItemStackEntry) this.stacks.get(slot)).getStackOriginal();
+		return this.stacks.get(slot).getStackOriginal();
 	}
 
 	@Override
-	public long getCountInSlot(int slot) {
-		this.validateSlotIndex(slot);
-		return ((ItemStackEntry) this.stacks.get(slot)).getCount();
-	}
-
 	@Nonnull
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		boolean reachedLimit;
@@ -95,11 +132,11 @@ public abstract class AbstractItemHandler implements IExtendedItemHandler {
 			return stack;
 		}
 		this.validateSlotIndex(slot);
-		ItemStackEntry entry = (ItemStackEntry) this.stacks.get(slot);
+		ItemStackEntry entry = this.stacks.get(slot);
 		ItemStack existing = entry.getStackOriginal();
 		int limit = this.getSlotLimit(slot, stack);
 		if (!existing.isEmpty()) {
-			if (!ItemHandlerHelper.canItemStacksStack((ItemStack) stack, (ItemStack) existing)) {
+			if (!ItemHandlerHelper.canItemStacksStack(stack, existing)) {
 				return stack;
 			}
 			limit -= existing.getCount();
@@ -123,79 +160,8 @@ public abstract class AbstractItemHandler implements IExtendedItemHandler {
 			}
 			this.onContentsChanged(slot);
 		}
-		return reachedLimit ? ItemHandlerHelper.copyStackWithSize((ItemStack) stack, (int) (stack.getCount() - limit))
+		return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit)
 				: ItemStack.EMPTY;
-	}
-
-	@Nonnull
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (amount == 0) {
-			return ItemStack.EMPTY;
-		}
-		this.validateSlotIndex(slot);
-		ItemStackEntry entry = (ItemStackEntry) this.stacks.get(slot);
-		ItemStack existing = entry.getStackOriginal();
-		if (existing.isEmpty()) {
-			return ItemStack.EMPTY;
-		}
-		int toExtract = Math.min(amount, existing.getMaxStackSize());
-		if (existing.getCount() <= toExtract) {
-			if (!simulate) {
-				this.stacks.set(slot,  ItemStackEntry.EMPTY);
-				this.onContentsChanged(slot);
-				return existing;
-			}
-			return existing.copy();
-		}
-		if (!simulate) {
-			entry = new ItemStackEntry(
-					ItemHandlerHelper.copyStackWithSize((ItemStack) existing, (int) (existing.getCount() - toExtract)));
-			this.stacks.set(slot,  entry);
-			this.onContentsChanged(slot);
-		}
-		return ItemHandlerHelper.copyStackWithSize((ItemStack) existing, (int) toExtract);
-	}
-
-	public abstract boolean isItemValid(int var1, @Nonnull ItemStack var2);
-
-	protected void validateSlotIndex(int slot) {
-		if (slot < 0 || slot >= this.stacks.size()) {
-			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + this.stacks.size() + ")");
-		}
-	}
-
-	public void onContentsChanged(int slot) {
-		for (IInventoryListener listener : this.listeners) {
-			listener.inventoryChanged(this, slot);
-		}
-	}
-
-	@Override
-	public void addListener(IInventoryListener listener) {
-		this.listeners.add(listener);
-	}
-
-	@Override
-	public CompoundTag serialize() {
-		CompoundTag result = new CompoundTag();
-		result.putInt("slots", this.size());
-		for (int i = 0; i < this.size(); ++i) {
-			ItemStackEntry entry = (ItemStackEntry) this.stacks.get(i);
-			if (entry.isEmpty())
-				continue;
-			result.put("" + i, entry.serialize());
-		}
-		return result;
-	}
-
-	@Override
-	public void deserialize(CompoundTag result) {
-		int size = result.getInt("slots");
-		this.enlarge(Math.max(size, this.size()));
-		for (int i = 0; i < size; ++i) {
-			ItemStackEntry entry = ItemStackEntry.deserialize(result.get("" + i));
-			this.stacks.set(i,  entry);
-		}
 	}
 
 	public boolean isEmpty() {
@@ -205,5 +171,45 @@ public abstract class AbstractItemHandler implements IExtendedItemHandler {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public abstract boolean isItemValid(int var1, @Nonnull ItemStack var2);
+
+	public void onContentsChanged(int slot) {
+		for (IInventoryListener listener : this.listeners) {
+			listener.inventoryChanged(this, slot);
+		}
+	}
+
+	@Override
+	public CompoundTag serialize() {
+		CompoundTag result = new CompoundTag();
+		result.putInt("slots", this.size());
+		for (int i = 0; i < this.size(); ++i) {
+			ItemStackEntry entry = this.stacks.get(i);
+			if (entry.isEmpty())
+				continue;
+			result.put("" + i, entry.serialize());
+		}
+		return result;
+	}
+
+	@Override
+	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+		this.validateSlotIndex(slot);
+		this.stacks.set(slot,  new ItemStackEntry(stack));
+		this.onContentsChanged(slot);
+	}
+
+	@Override
+	public int size() {
+		return this.stacks.size();
+	}
+
+	protected void validateSlotIndex(int slot) {
+		if (slot < 0 || slot >= this.stacks.size()) {
+			throw new RuntimeException("Slot " + slot + " not in valid range - [0," + this.stacks.size() + ")");
+		}
 	}
 }

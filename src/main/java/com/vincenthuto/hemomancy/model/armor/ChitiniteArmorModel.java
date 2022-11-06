@@ -40,30 +40,6 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 	public static final Lazy<ChitiniteArmorModel<LivingEntity>> boots = Lazy.of(
 			() -> new ChitiniteArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(CHITINITE_FEET_LAYER)));
 
-	public ChitiniteArmorModel(ModelPart root) {
-		super(root, RenderType::entityTranslucent);
-
-	}
-
-	@SuppressWarnings("unused")
-	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
-		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
-		PartDefinition partdefinition = meshdefinition.getRoot();
-		if (slot.equals(EquipmentSlot.HEAD)) {
-			PartDefinition head = partdefinition.addOrReplaceChild("head",
-					CubeListBuilder.create().texOffs(0, 0)
-							.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.0F)).texOffs(39, 101)
-							.addBox(5.0F, -7.0F, -2.0F, 0.0F, 4.0F, 5.0F, new CubeDeformation(1.0F)).texOffs(26, 102)
-							.addBox(-5.0F, -7.0F, -2.0F, 0.0F, 4.0F, 5.0F, new CubeDeformation(1.0F)).texOffs(35, 82)
-							.addBox(-2.5F, -9.0F, -3.75F, 5.0F, 0.0F, 7.0F, new CubeDeformation(1.0F)).texOffs(45, 105)
-							.addBox(-2.5F, -7.5F, 4.75F, 5.0F, 4.0F, 0.0F, new CubeDeformation(1.0F)),
-					PartPose.offset(0.0F, 0.0F, 0.0F));
-		}
-
-		return LayerDefinition.create(meshdefinition, 256, 256);
-
-	}
-
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer(EquipmentSlot slot) {
 		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
@@ -216,7 +192,7 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 							.addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)),
 					PartPose.offset(-1.9F, 12.0F, 0.0F));
 
-			
+
 		}
 		if (slot.equals(EquipmentSlot.FEET)) {
 
@@ -241,10 +217,28 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 
 	}
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-			float headPitch) {
-		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+	@SuppressWarnings("unused")
+	public static LayerDefinition createHeadLayer(EquipmentSlot slot) {
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0);
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		if (slot.equals(EquipmentSlot.HEAD)) {
+			PartDefinition head = partdefinition.addOrReplaceChild("head",
+					CubeListBuilder.create().texOffs(0, 0)
+							.addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(1.0F)).texOffs(39, 101)
+							.addBox(5.0F, -7.0F, -2.0F, 0.0F, 4.0F, 5.0F, new CubeDeformation(1.0F)).texOffs(26, 102)
+							.addBox(-5.0F, -7.0F, -2.0F, 0.0F, 4.0F, 5.0F, new CubeDeformation(1.0F)).texOffs(35, 82)
+							.addBox(-2.5F, -9.0F, -3.75F, 5.0F, 0.0F, 7.0F, new CubeDeformation(1.0F)).texOffs(45, 105)
+							.addBox(-2.5F, -7.5F, 4.75F, 5.0F, 4.0F, 0.0F, new CubeDeformation(1.0F)),
+					PartPose.offset(0.0F, 0.0F, 0.0F));
+		}
+
+		return LayerDefinition.create(meshdefinition, 256, 256);
+
+	}
+
+	public ChitiniteArmorModel(ModelPart root) {
+		super(root, RenderType::entityTranslucent);
+
 	}
 
 	@Override
@@ -257,5 +251,11 @@ public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T
 		leftLeg.render(poseStack, buffer, packedLight, packedOverlay);
 		rightArm.render(poseStack, buffer, packedLight, packedOverlay);
 
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 	}
 }

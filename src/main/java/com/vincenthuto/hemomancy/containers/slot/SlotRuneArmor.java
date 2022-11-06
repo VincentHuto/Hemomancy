@@ -31,9 +31,10 @@ public class SlotRuneArmor extends Slot {
 		return 1;
 	}
 
+	@Nullable
 	@Override
-	public boolean mayPlace(ItemStack stack) {
-		return stack.canEquip(this.slotType, this.playerEntity);
+	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() { // getSlotTexture
+		return Pair.of(InventoryMenu.BLOCK_ATLAS, CharmGourdMenu.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
 	}
 
 	@Override
@@ -43,9 +44,8 @@ public class SlotRuneArmor extends Slot {
 				&& super.mayPickup(playerIn);
 	}
 
-	@Nullable
 	@Override
-	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() { // getSlotTexture
-		return Pair.of(InventoryMenu.BLOCK_ATLAS, CharmGourdMenu.ARMOR_SLOT_TEXTURES[slotType.getIndex()]);
+	public boolean mayPlace(ItemStack stack) {
+		return stack.canEquip(this.slotType, this.playerEntity);
 	}
 }

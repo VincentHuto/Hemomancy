@@ -27,25 +27,29 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 public class GenericRadialMenu {
-	public static final float OPEN_ANIMATION_LENGTH = 2.5f;
-
-	public final IRadialMenuHost host;
-	private final List<RadialMenuItem> items = Lists.newArrayList();
-	private final List<RadialMenuItem> visibleItems = Lists.newArrayList();
-	private final Minecraft minecraft;
-	public int backgroundColor = 0x3F000000;
-	public int backgroundColorHover = 0x3FFFFFFF;
-
 	public enum State {
 		INITIALIZING, OPENING, NORMAL, CLOSING, CLOSED
 	}
 
+	public static final float OPEN_ANIMATION_LENGTH = 2.5f;
+	private static final float PRECISION = 2.5f / 360.0f;
+	private static final double TWO_PI = 2.0 * Math.PI;
+	public final IRadialMenuHost host;
+	private final List<RadialMenuItem> items = Lists.newArrayList();
+	private final List<RadialMenuItem> visibleItems = Lists.newArrayList();
+
+	private final Minecraft minecraft;
+
+	public int backgroundColor = 0x3F000000;
+	public int backgroundColorHover = 0x3FFFFFFF;
 	private State state = State.INITIALIZING;
 	public double startAnimation;
 	public float animProgress;
 	public float radiusIn;
 	public float radiusOut;
+
 	public float itemRadius;
+
 	public float animTop;
 
 	private List<Component> centralText;
@@ -53,77 +57,6 @@ public class GenericRadialMenu {
 	public GenericRadialMenu(Minecraft minecraft, IRadialMenuHost host) {
 		this.minecraft = minecraft;
 		this.host = host;
-	}
-
-	public void setCentralText(@Nullable List<Component> centralText) {
-		this.centralText = centralText;
-	}
-
-	public List<Component> getCentralText() {
-		return centralText;
-	}
-
-	public int getHovered() {
-		for (int i = 0; i < visibleItems.size(); i++) {
-			if (visibleItems.get(i).isHovered())
-				return i;
-		}
-		return -1;
-	}
-
-	@Nullable
-	public RadialMenuItem getHoveredItem() {
-		for (RadialMenuItem item : visibleItems) {
-			if (item.isHovered())
-				return item;
-		}
-		return null;
-	}
-
-	public void setHovered(int which) {
-		for (int i = 0; i < visibleItems.size(); i++) {
-			visibleItems.get(i).setHovered(i == which);
-		}
-	}
-
-	public int getVisibleItemCount() {
-		return visibleItems.size();
-	}
-
-	public void clickItem() {
-		switch (state) {
-		case NORMAL:
-			RadialMenuItem item = getHoveredItem();
-			if (item != null) {
-				item.onClick();
-				return;
-			}
-			break;
-		default:
-			break;
-		}
-		onClickOutside();
-	}
-
-	public void onClickOutside() {
-		// to be implemented by users
-	}
-
-	public boolean isClosed() {
-		return state == State.CLOSED;
-	}
-
-	public boolean isReady() {
-		return state == State.NORMAL;
-	}
-
-	public void visibilityChanged(RadialMenuItem item) {
-		visibleItems.clear();
-		for (RadialMenuItem radialMenuItem : items) {
-			if (radialMenuItem.isVisible()) {
-				visibleItems.add(radialMenuItem);
-			}
-		}
 	}
 
 	public void add(RadialMenuItem item) {
@@ -147,6 +80,21 @@ public class GenericRadialMenu {
 		visibleItems.clear();
 	}
 
+	public void clickItem() {
+		switch (state) {
+		case NORMAL:
+			RadialMenuItem item = getHoveredItem();
+			if (item != null) {
+				item.onClick();
+				return;
+			}
+			break;
+		default:
+			break;
+		}
+		onClickOutside();
+	}
+
 	public void close() {
 		Screen owner = host.getScreen();
 		state = State.CLOSING;
@@ -155,16 +103,29 @@ public class GenericRadialMenu {
 		setHovered(-1);
 	}
 
-	public void tick() {
-		Screen owner = host.getScreen();
-
-		if (state == State.INITIALIZING) {
-			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getFrameTime();
-			state = State.OPENING;
-			animProgress = 0;
+	public void cycleNext() {
+		int numItems = getVisibleItemCount();
+		int which = getHovered();
+		if (which < 0)
+			which = 0;
+		else {
+			which++;
+			if (which >= numItems)
+				which = 0;
 		}
+		moveMouseToItem(which, numItems);
+		setHovered(which);
+	}
 
-		// updateAnimationState(minecraft.getRenderPartialTicks());
+	public void cyclePrevious() {
+		int numItems = getVisibleItemCount();
+		int which = getHovered();
+		which--;
+		if (which < 0)
+			which = numItems - 1;
+		setHovered(which);
+
+		moveMouseToItem(which, numItems);
 	}
 
 	public void draw(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
@@ -203,8 +164,7 @@ public class GenericRadialMenu {
 			matrixStack.popPose();
 
 			List<Component> currentCentralText = centralText;
-			for (int i = 0; i < visibleItems.size(); i++) {
-				RadialMenuItem item = visibleItems.get(i);
+			for (RadialMenuItem item : visibleItems) {
 				if (item.isHovered()) {
 					if (item.getCentralText() != null)
 						currentCentralText = item.getCentralText();
@@ -224,68 +184,6 @@ public class GenericRadialMenu {
 			matrixStack.pushPose();
 			drawTooltips(matrixStack, mouseX, mouseY);
 			matrixStack.popPose();
-		}
-	}
-
-	private void updateAnimationState(float partialTicks) {
-		float openAnimation = 0;
-		Screen owner = host.getScreen();
-		switch (state) {
-		case OPENING:
-			openAnimation = (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation)
-					/ OPEN_ANIMATION_LENGTH);
-			if (openAnimation >= 1.0 || getVisibleItemCount() == 0) {
-				openAnimation = 1;
-				state = State.NORMAL;
-			}
-			break;
-		case CLOSING:
-			openAnimation = 1
-					- (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation) / OPEN_ANIMATION_LENGTH);
-			if (openAnimation <= 0 || getVisibleItemCount() == 0) {
-				openAnimation = 0;
-				state = State.CLOSED;
-			}
-			break;
-		}
-		animProgress = openAnimation; // MathHelper.clamp(openAnimation, 0, 1);
-	}
-
-	private void drawTooltips(PoseStack matrixStack, int mouseX, int mouseY) {
-		Screen owner = host.getScreen();
-		Font fontRenderer = host.getFontRenderer();
-		ItemRenderer itemRenderer = host.getItemRenderer();
-		for (int i = 0; i < visibleItems.size(); i++) {
-			RadialMenuItem item = visibleItems.get(i);
-			if (item.isHovered()) {
-				DrawingContext context = new DrawingContext(matrixStack, owner.width, owner.height, mouseX, mouseY, 0,
-						fontRenderer, itemRenderer, host);
-				item.drawTooltips(context);
-			}
-		}
-	}
-
-	private void drawItems(PoseStack matrixStack, int x, int y, float z, int width, int height, Font font,
-			ItemRenderer itemRenderer) {
-		iterateVisible((item, s, e) -> {
-			float middle = (s + e) * 0.5f;
-			float posX = x + itemRadius * (float) Math.cos(middle);
-			float posY = y + itemRadius * (float) Math.sin(middle);
-
-			DrawingContext context = new DrawingContext(matrixStack, width, height, posX, posY, z, font, itemRenderer,
-					host);
-			item.draw(context);
-		});
-	}
-
-	private void iterateVisible(TriConsumer<RadialMenuItem, Float, Float> consumer) {
-		int numItems = visibleItems.size();
-		for (int i = 0; i < numItems; i++) {
-			float s = (float) getAngleFor(i - 0.5, numItems);
-			float e = (float) getAngleFor(i + 0.5, numItems);
-
-			RadialMenuItem item = visibleItems.get(i);
-			consumer.accept(item, s, e);
 		}
 	}
 
@@ -310,7 +208,18 @@ public class GenericRadialMenu {
 		}
 	}
 
-	private static final float PRECISION = 2.5f / 360.0f;
+	private void drawItems(PoseStack matrixStack, int x, int y, float z, int width, int height, Font font,
+			ItemRenderer itemRenderer) {
+		iterateVisible((item, s, e) -> {
+			float middle = (s + e) * 0.5f;
+			float posX = x + itemRadius * (float) Math.cos(middle);
+			float posY = y + itemRadius * (float) Math.sin(middle);
+
+			DrawingContext context = new DrawingContext(matrixStack, width, height, posX, posY, z, font, itemRenderer,
+					host);
+			item.draw(context);
+		});
+	}
 
 	private void drawPieArc(BufferBuilder buffer, float x, float y, float z, float radiusIn, float radiusOut,
 			float startAngle, float endAngle, int color) {
@@ -346,29 +255,68 @@ public class GenericRadialMenu {
 		}
 	}
 
-	public void cyclePrevious() {
-		int numItems = getVisibleItemCount();
-		int which = getHovered();
-		which--;
-		if (which < 0)
-			which = numItems - 1;
-		setHovered(which);
-
-		moveMouseToItem(which, numItems);
+	private void drawTooltips(PoseStack matrixStack, int mouseX, int mouseY) {
+		Screen owner = host.getScreen();
+		Font fontRenderer = host.getFontRenderer();
+		ItemRenderer itemRenderer = host.getItemRenderer();
+		for (RadialMenuItem item : visibleItems) {
+			if (item.isHovered()) {
+				DrawingContext context = new DrawingContext(matrixStack, owner.width, owner.height, mouseX, mouseY, 0,
+						fontRenderer, itemRenderer, host);
+				item.drawTooltips(context);
+			}
+		}
 	}
 
-	public void cycleNext() {
-		int numItems = getVisibleItemCount();
-		int which = getHovered();
-		if (which < 0)
-			which = 0;
-		else {
-			which++;
-			if (which >= numItems)
-				which = 0;
+	private double getAngleFor(double i, int numItems) {
+		if (numItems == 0)
+			return 0;
+		double angle = ((i / numItems) + 0.25) * TWO_PI + Math.PI;
+		return angle;
+	}
+
+	public List<Component> getCentralText() {
+		return centralText;
+	}
+
+	public int getHovered() {
+		for (int i = 0; i < visibleItems.size(); i++) {
+			if (visibleItems.get(i).isHovered())
+				return i;
 		}
-		moveMouseToItem(which, numItems);
-		setHovered(which);
+		return -1;
+	}
+
+	@Nullable
+	public RadialMenuItem getHoveredItem() {
+		for (RadialMenuItem item : visibleItems) {
+			if (item.isHovered())
+				return item;
+		}
+		return null;
+	}
+
+	public int getVisibleItemCount() {
+		return visibleItems.size();
+	}
+
+	public boolean isClosed() {
+		return state == State.CLOSED;
+	}
+
+	public boolean isReady() {
+		return state == State.NORMAL;
+	}
+
+	private void iterateVisible(TriConsumer<RadialMenuItem, Float, Float> consumer) {
+		int numItems = visibleItems.size();
+		for (int i = 0; i < numItems; i++) {
+			float s = (float) getAngleFor(i - 0.5, numItems);
+			float e = (float) getAngleFor(i + 0.5, numItems);
+
+			RadialMenuItem item = visibleItems.get(i);
+			consumer.accept(item, s, e);
+		}
 	}
 
 	private void moveMouseToItem(int which, int numItems) {
@@ -379,14 +327,9 @@ public class GenericRadialMenu {
 		setMousePosition(x + itemRadius * Math.cos(angle), y + itemRadius * Math.sin(angle));
 	}
 
-	private void setMousePosition(double x, double y) {
-		Screen owner = host.getScreen();
-		Window mainWindow = minecraft.getWindow();
-		GLFW.glfwSetCursorPos(mainWindow.getWindow(), (int) (x * mainWindow.getScreenWidth() / owner.width),
-				(int) (y * mainWindow.getScreenHeight() / owner.height));
+	public void onClickOutside() {
+		// to be implemented by users
 	}
-
-	private static final double TWO_PI = 2.0 * Math.PI;
 
 	private void processMouse(int mouseX, int mouseY) {
 		if (!isReady())
@@ -446,10 +389,65 @@ public class GenericRadialMenu {
 		}
 	}
 
-	private double getAngleFor(double i, int numItems) {
-		if (numItems == 0)
-			return 0;
-		double angle = ((i / numItems) + 0.25) * TWO_PI + Math.PI;
-		return angle;
+	public void setCentralText(@Nullable List<Component> centralText) {
+		this.centralText = centralText;
+	}
+
+	public void setHovered(int which) {
+		for (int i = 0; i < visibleItems.size(); i++) {
+			visibleItems.get(i).setHovered(i == which);
+		}
+	}
+
+	private void setMousePosition(double x, double y) {
+		Screen owner = host.getScreen();
+		Window mainWindow = minecraft.getWindow();
+		GLFW.glfwSetCursorPos(mainWindow.getWindow(), (int) (x * mainWindow.getScreenWidth() / owner.width),
+				(int) (y * mainWindow.getScreenHeight() / owner.height));
+	}
+
+	public void tick() {
+		Screen owner = host.getScreen();
+
+		if (state == State.INITIALIZING) {
+			startAnimation = minecraft.level.getGameTime() + (double) minecraft.getFrameTime();
+			state = State.OPENING;
+			animProgress = 0;
+		}
+
+		// updateAnimationState(minecraft.getRenderPartialTicks());
+	}
+
+	private void updateAnimationState(float partialTicks) {
+		float openAnimation = 0;
+		Screen owner = host.getScreen();
+		switch (state) {
+		case OPENING:
+			openAnimation = (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation)
+					/ OPEN_ANIMATION_LENGTH);
+			if (openAnimation >= 1.0 || getVisibleItemCount() == 0) {
+				openAnimation = 1;
+				state = State.NORMAL;
+			}
+			break;
+		case CLOSING:
+			openAnimation = 1
+					- (float) ((minecraft.level.getGameTime() + partialTicks - startAnimation) / OPEN_ANIMATION_LENGTH);
+			if (openAnimation <= 0 || getVisibleItemCount() == 0) {
+				openAnimation = 0;
+				state = State.CLOSED;
+			}
+			break;
+		}
+		animProgress = openAnimation; // MathHelper.clamp(openAnimation, 0, 1);
+	}
+
+	public void visibilityChanged(RadialMenuItem item) {
+		visibleItems.clear();
+		for (RadialMenuItem radialMenuItem : items) {
+			if (radialMenuItem.isVisible()) {
+				visibleItems.add(radialMenuItem);
+			}
+		}
 	}
 }

@@ -20,8 +20,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class VialCentrifugeMenu extends AbstractContainerMenu {
+	private static VialCentrifugeBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
+		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
+		Objects.requireNonNull(data, "data cannot be null");
+		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
+		if (tileAtPos instanceof VialCentrifugeBlockEntity) {
+			return (VialCentrifugeBlockEntity) tileAtPos;
+		}
+		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	}
 	private final int numRows;
 	private final VialCentrifugeBlockEntity te;
+
 	private final ContainerData data;
 
 	public VialCentrifugeMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
@@ -66,7 +76,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		addSlot(new OutputSlot(te, 15, 154,44));
 		addSlot(new OutputSlot(te, 16, 134, 62));
 		addSlot(new OutputSlot(te, 17, 154,62));
-		
+
 		//Aux Output
 		addSlot(new OutputSlot(te, 18, 144, 80));
 
@@ -84,14 +94,18 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 	}
 
-	private static VialCentrifugeBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
-		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
-		Objects.requireNonNull(data, "data cannot be null");
-		final BlockEntity tileAtPos = playerInv.player.level.getBlockEntity(data.readBlockPos());
-		if (tileAtPos instanceof VialCentrifugeBlockEntity) {
-			return (VialCentrifugeBlockEntity) tileAtPos;
-		}
-		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	@Override
+	public void broadcastChanges() {
+		te.sendUpdates();
+		super.broadcastChanges();
+
+	}
+
+	@Override
+	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+		super.clicked(slotId, dragType, clickTypeIn, player);
+		te.sendUpdates();
+
 	}
 
 	public int getSpinProgress() {
@@ -102,34 +116,8 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		return output;
 	}
 
-	@Override
-	public boolean stillValid(Player playerIn) {
-		return this.te.stillValid(playerIn);
-	}
-
-	@Override
-	public void removed(Player playerIn) {
-		super.removed(playerIn);
-	}
-
-	@Override
-	public void broadcastChanges() {
-		te.sendUpdates();
-		super.broadcastChanges();
-
-	}
-
-	@Override
-	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
-		super.setItem(p_182407_, p_182408_, p_182409_);
-		te.sendUpdates();
-	}
-
-	@Override
-	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
-		super.clicked(slotId, dragType, clickTypeIn, player);
-		te.sendUpdates();
-
+	public VialCentrifugeBlockEntity getTe() {
+		return this.te;
 	}
 
 	@Override
@@ -159,8 +147,20 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		return stack;
 	}
 
-	public VialCentrifugeBlockEntity getTe() {
-		return this.te;
+	@Override
+	public void removed(Player playerIn) {
+		super.removed(playerIn);
+	}
+
+	@Override
+	public void setItem(int p_182407_, int p_182408_, ItemStack p_182409_) {
+		super.setItem(p_182407_, p_182408_, p_182409_);
+		te.sendUpdates();
+	}
+
+	@Override
+	public boolean stillValid(Player playerIn) {
+		return this.te.stillValid(playerIn);
 	}
 
 }

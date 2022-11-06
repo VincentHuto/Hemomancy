@@ -15,29 +15,17 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID)
 public final class ClientTickHandler {
 
-	private ClientTickHandler() {
-	}
-
 	public static int ticksWithLexicaOpen = 0;
+
 	public static int pageFlipTicks = 0;
 	public static int ticksInGame = 0;
 	public static float partialTicks = 0;
 	public static float delta = 0;
 	public static float total = 0;
-
 	private static void calcDelta() {
 		float oldTotal = total;
 		total = ticksInGame + partialTicks;
 		delta = total - oldTotal;
-	}
-
-	@SubscribeEvent
-	public static void renderTick(RenderTickEvent event) {
-		if (event.phase == Phase.START)
-			partialTicks = event.renderTickTime;
-		else {
-			calcDelta();
-		}
 	}
 
 	@SubscribeEvent
@@ -56,6 +44,18 @@ public final class ClientTickHandler {
 		}
 
 		calcDelta();
+	}
+
+	@SubscribeEvent
+	public static void renderTick(RenderTickEvent event) {
+		if (event.phase == Phase.START)
+			partialTicks = event.renderTickTime;
+		else {
+			calcDelta();
+		}
+	}
+
+	private ClientTickHandler() {
 	}
 
 }

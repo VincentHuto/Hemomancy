@@ -13,7 +13,11 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class BloodTendencyClientPacket {
 
-	public BloodTendencyClientPacket() {
+	public static BloodTendencyClientPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new BloodTendencyClientPacket();
+	}
+
+	public static void encode(final BloodTendencyClientPacket msg, final FriendlyByteBuf packetBuffer) {
 
 	}
 
@@ -30,11 +34,7 @@ public class BloodTendencyClientPacket {
 		ctx.get().setPacketHandled(true);
 	}
 
-	public static void encode(final BloodTendencyClientPacket msg, final FriendlyByteBuf packetBuffer) {
+	public BloodTendencyClientPacket() {
 
-	}
-
-	public static BloodTendencyClientPacket decode(final FriendlyByteBuf packetBuffer) {
-		return new BloodTendencyClientPacket();
 	}
 }

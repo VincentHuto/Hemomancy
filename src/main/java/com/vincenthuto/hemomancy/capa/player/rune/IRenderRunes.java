@@ -13,8 +13,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IRenderRunes extends IRune {
 
-	void onPlayerRuneRender(PoseStack matrix, int packedLight, MultiBufferSource iRenderTypeBuffer, Player player,
-			RenderType type, float partialTicks);
+	enum RenderType {
+		BODY, HEAD;
+	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static void doRender(HumanoidModel<?> bipedModel, ItemStack stack, LivingEntity player, PoseStack ms,
@@ -22,9 +23,8 @@ public interface IRenderRunes extends IRune {
 			float ageInTicks, float netHeadYaw, float headPitch) {
 	}
 
-	enum RenderType {
-		BODY, HEAD;
-	}
+	void onPlayerRuneRender(PoseStack matrix, int packedLight, MultiBufferSource iRenderTypeBuffer, Player player,
+			RenderType type, float partialTicks);
 
 	void onPlayerRuneRender(PoseStack matrix, ItemStack stack, int packedLight, MultiBufferSource iRenderTypeBuffer,
 			Player player, RenderType type, float partialTicks);

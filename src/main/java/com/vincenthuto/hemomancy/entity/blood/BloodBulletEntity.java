@@ -43,68 +43,9 @@ public class BloodBulletEntity extends AbstractArrow {
 		super(EntityInit.blood_bullet.get(), shooter, worldIn);
 	}
 
-	@Nonnull
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	@Override
-	public void tick() {
-		super.tick();
-		if (this.level.isClientSide) {
-			for (int i = 0; i < 2; i++) {
-				level.addParticle(
-						GlowParticleFactory.createData(new ParticleColor(255 * level.random.nextFloat(), 0, 0)),
-						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-				level.addParticle(
-						BloodCellParticleFactory.createData(new ParticleColor(255 * level.random.nextFloat(), 0, 0)),
-						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
-
-				
-				Random rand = new Random();
-				Vector3 endVec = Vector3.fromEntityCenter(this).add(rand.nextDouble() - rand.nextDouble(),
-						rand.nextDouble() - rand.nextDouble(), rand.nextDouble() - rand.nextDouble());
-				Vec3 speedVec = new Vec3(endVec.x, endVec.y, endVec.z);
-
-			HLPacketHandler.sendLightningSpawn(this.position().add(0.5, 0.5, 0.5), speedVec, 64.0f,
-						this.level.dimension(), ParticleColor.RED, 3, 10, 9, 1.2f);
-			}
-		}
-
-		if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 50) {
-			this.level.broadcastEntityEvent(this, (byte) 0);
-			this.remove(RemovalReason.KILLED);
-		}
-
-	}
-
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
-
-	}
-
-	@Override
-	public void setSoundEvent(SoundEvent soundIn) {
-		super.setSoundEvent(soundIn);
-	}
-
-	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
-	}
-
-	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_) {
-		super.onHitEntity(p_213868_1_);
-		Entity entity = p_213868_1_.getEntity();
-		if (entity instanceof LivingEntity) {
-			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
-
-		}
 
 	}
 
@@ -117,6 +58,12 @@ public class BloodBulletEntity extends AbstractArrow {
 
 		}
 
+	}
+
+	@Nonnull
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	@Override
@@ -148,6 +95,59 @@ public class BloodBulletEntity extends AbstractArrow {
 			break;
 		}
 		}
+	}
+
+	@Override
+	protected void onHitEntity(EntityHitResult p_213868_1_) {
+		super.onHitEntity(p_213868_1_);
+		Entity entity = p_213868_1_.getEntity();
+		if (entity instanceof LivingEntity) {
+			((LivingEntity) entity).addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 1000, 2));
+
+		}
+
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+	}
+
+	@Override
+	public void setSoundEvent(SoundEvent soundIn) {
+		super.setSoundEvent(soundIn);
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if (this.level.isClientSide) {
+			for (int i = 0; i < 2; i++) {
+				level.addParticle(
+						GlowParticleFactory.createData(new ParticleColor(255 * level.random.nextFloat(), 0, 0)),
+						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
+				level.addParticle(
+						BloodCellParticleFactory.createData(new ParticleColor(255 * level.random.nextFloat(), 0, 0)),
+						getX() + HLParticleUtils.inRange(-0.1, 0.1), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+						getZ() + HLParticleUtils.inRange(-0.1, 0.1), 0, 0.005, 0);
+
+
+				Random rand = new Random();
+				Vector3 endVec = Vector3.fromEntityCenter(this).add(rand.nextDouble() - rand.nextDouble(),
+						rand.nextDouble() - rand.nextDouble(), rand.nextDouble() - rand.nextDouble());
+				Vec3 speedVec = new Vec3(endVec.x, endVec.y, endVec.z);
+
+			HLPacketHandler.sendLightningSpawn(this.position().add(0.5, 0.5, 0.5), speedVec, 64.0f,
+						this.level.dimension(), ParticleColor.RED, 3, 10, 9, 1.2f);
+			}
+		}
+
+		if (this.inGround && this.inGroundTime != 0 && this.inGroundTime >= 50) {
+			this.level.broadcastEntityEvent(this, (byte) 0);
+			this.remove(RemovalReason.KILLED);
+		}
+
 	}
 
 }

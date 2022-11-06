@@ -23,11 +23,9 @@ public class BloodyBookItem extends ItemGuideBook {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
-		if (lvl.isClientSide()) {
-			Hemomancy.proxy.openGuideGui();
-		}
-		return super.use(lvl, p_41433_, p_41434_);
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
 	}
 
 //	@Override
@@ -74,14 +72,16 @@ public class BloodyBookItem extends ItemGuideBook {
 //	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
+	public Rarity getRarity(ItemStack par1ItemStack) {
+		return Rarity.UNCOMMON;
 	}
 
 	@Override
-	public Rarity getRarity(ItemStack par1ItemStack) {
-		return Rarity.UNCOMMON;
+	public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
+		if (lvl.isClientSide()) {
+			Hemomancy.proxy.openGuideGui();
+		}
+		return super.use(lvl, p_41433_, p_41434_);
 	}
 
 }

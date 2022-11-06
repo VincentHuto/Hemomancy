@@ -19,20 +19,12 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 			.get(new CapabilityToken<IBloodVolume>() {
 			});
 
+	public static double getPlayerbloodVolume(Player player) {
+		return player.getCapability(VOLUME_CAPA).orElseThrow(IllegalStateException::new).getBloodVolume();
+	}
 	BloodVolume capability = new BloodVolume();
+
 	private LazyOptional<IBloodVolume> instance = LazyOptional.of(() -> capability);
-
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-		return cap == VOLUME_CAPA ? instance.cast() : LazyOptional.empty();
-	}
-
-	@Override
-	public Tag serializeNBT() {
-		return writeNBT(VOLUME_CAPA,
-				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
-	}
 
 	@Override
 	public void deserializeNBT(Tag nbt) {
@@ -40,17 +32,10 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 				null, nbt);
 	}
 
-	public static double getPlayerbloodVolume(Player player) {
-		return player.getCapability(VOLUME_CAPA).orElseThrow(IllegalStateException::new).getBloodVolume();
-	}
-
-	public CompoundTag writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
-		CompoundTag entry = new CompoundTag();
-		entry.putBoolean("Active", instance.isActive());
-		entry.putDouble("Max", instance.getMaxBloodVolume());
-		entry.putDouble("Volume", instance.getBloodVolume());
-		entry.put("Bloodline", instance.getBloodLine().serialize());
-		return entry;
+	@Nonnull
+	@Override
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		return cap == VOLUME_CAPA ? instance.cast() : LazyOptional.empty();
 	}
 
 	public void readNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side, Tag nbt) {
@@ -67,5 +52,20 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 			}
 		}
 
+	}
+
+	@Override
+	public Tag serializeNBT() {
+		return writeNBT(VOLUME_CAPA,
+				instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")), null);
+	}
+
+	public CompoundTag writeNBT(Capability<IBloodVolume> capability, IBloodVolume instance, Direction side) {
+		CompoundTag entry = new CompoundTag();
+		entry.putBoolean("Active", instance.isActive());
+		entry.putDouble("Max", instance.getMaxBloodVolume());
+		entry.putDouble("Volume", instance.getBloodVolume());
+		entry.put("Bloodline", instance.getBloodLine().serialize());
+		return entry;
 	}
 }

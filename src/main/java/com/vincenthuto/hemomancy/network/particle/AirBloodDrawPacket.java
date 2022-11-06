@@ -7,15 +7,6 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class AirBloodDrawPacket {
 
-	float parTick;
-
-	public AirBloodDrawPacket() {
-	}
-
-	public AirBloodDrawPacket(float par) {
-		this.parTick = par;
-	}
-
 	public static AirBloodDrawPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new AirBloodDrawPacket(buffer.readFloat());
@@ -63,6 +54,15 @@ public class AirBloodDrawPacket {
 //			}
 //		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	float parTick;
+
+	public AirBloodDrawPacket() {
+	}
+
+	public AirBloodDrawPacket(float par) {
+		this.parTick = par;
 	}
 
 }

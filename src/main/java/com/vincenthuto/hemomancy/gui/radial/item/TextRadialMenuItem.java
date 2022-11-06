@@ -10,16 +10,6 @@ public class TextRadialMenuItem extends RadialMenuItem
     private final Component text;
     private final int color;
 
-    public Component getText()
-    {
-        return text;
-    }
-
-    public int getColor()
-    {
-        return color;
-    }
-
     public TextRadialMenuItem(GenericRadialMenu owner, Component text)
     {
         super(owner);
@@ -47,5 +37,15 @@ public class TextRadialMenuItem extends RadialMenuItem
     public void drawTooltips(DrawingContext context)
     {
         // nothing to do (yet)
+    }
+
+    public int getColor()
+    {
+        return color;
+    }
+
+    public Component getText()
+    {
+        return text;
     }
 }

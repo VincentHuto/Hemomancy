@@ -31,12 +31,12 @@ public class EnzymeItem extends Item {
 
 	}
 
-	public EnumBloodTendency getTend() {
-		return tend;
-	}
-
 	public float getAmount() {
 		return amount;
+	}
+
+	public EnumBloodTendency getTend() {
+		return tend;
 	}
 
 }

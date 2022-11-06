@@ -20,9 +20,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class MortalDisplayRenderer implements BlockEntityRenderer<MortalDisplayBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private final FloatingHeartModel heart;
 	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_floating_heart.png");
+	private final FloatingHeartModel heart;
 
 	public MortalDisplayRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		heart = new FloatingHeartModel(p_173636_.bakeLayer(FloatingHeartModel.mortal_display));

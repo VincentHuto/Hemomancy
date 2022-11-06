@@ -26,8 +26,8 @@ public class ContainerInit {
 
 	public static final RegistryObject<MenuType<VialCentrifugeMenu>> vial_centrifuge = CONTAINERS
 			.register("vial_centrifuge", () -> IForgeMenuType.create(VialCentrifugeMenu::new));
-	
-	
+
+
 	public static final RegistryObject<MenuType<JuiceinatorMenu>> juiceinator = CONTAINERS.register("juiceinator",
 			() -> IForgeMenuType.create(JuiceinatorMenu::new));
 

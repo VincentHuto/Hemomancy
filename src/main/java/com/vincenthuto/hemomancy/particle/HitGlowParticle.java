@@ -46,13 +46,18 @@ public class HitGlowParticle extends TextureSheetParticle {
 	}
 
 	@Override
+	public int getLightColor(float pTicks) {
+		return 255;
+	}
+
+	@Override
 	public ParticleRenderType getRenderType() {
 		return HLRenderTypeInit.GLOW_RENDER;
 	}
 
 	@Override
-	public int getLightColor(float pTicks) {
-		return 255;
+	public boolean isAlive() {
+		return this.age < this.lifetime;
 	}
 
 	@Override
@@ -67,10 +72,5 @@ public class HitGlowParticle extends TextureSheetParticle {
 		this.alpha = 1;
 		this.oRoll = roll;
 		roll += 1.0f;
-	}
-
-	@Override
-	public boolean isAlive() {
-		return this.age < this.lifetime;
 	}
 }

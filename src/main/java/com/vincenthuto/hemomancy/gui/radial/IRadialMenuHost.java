@@ -6,9 +6,9 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 
 public interface IRadialMenuHost extends IDrawingHelper
 {
-    Screen getScreen();
-
     Font getFontRenderer();
 
     ItemRenderer getItemRenderer();
+
+    Screen getScreen();
 }

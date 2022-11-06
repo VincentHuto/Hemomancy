@@ -25,16 +25,20 @@ import net.minecraft.world.item.ItemStack;
 
 public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public final LivingBladeUnleashedModel unleashed;
-	public final LivingBladeHandTameModel tame;
-
 	public static ResourceLocation living_blade = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_living_blade_hand.png");
+	public final LivingBladeUnleashedModel unleashed;
+
+	public final LivingBladeHandTameModel tame;
 
 	public LivingBladeItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
 		unleashed = new LivingBladeUnleashedModel(p_172551_.bakeLayer(LivingBladeUnleashedModel.living_blade_unleashed));
 		tame = new LivingBladeHandTameModel(p_172551_.bakeLayer(LivingBladeHandTameModel.living_blade_tame));
+	}
+
+	public LivingBladeUnleashedModel getModel() {
+		return unleashed;
 	}
 
 	@Override
@@ -65,9 +69,5 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
-	}
-
-	public LivingBladeUnleashedModel getModel() {
-		return unleashed;
 	}
 }

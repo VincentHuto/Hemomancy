@@ -29,25 +29,8 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 		Arrays.fill(previous, ItemStack.EMPTY);
 	}
 
-	@Override
-	public void setSize(int size) {
-		if (size != RUNE_SLOTS)
-			System.out.println("Cannot resize rune container");
-	}
-
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		LazyOptional<IRune> opt = stack.getCapability(RunesCapabilities.ITEM_RUNE);
-		if (stack.isEmpty() || !opt.isPresent())
-			return false;
-		IRune mindrune = opt.orElseThrow(NullPointerException::new);
-		return mindrune.canEquip(holder) && mindrune.getRuneType().hasSlot(slot);
-	}
-
-	@Override
-	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-		if (stack.isEmpty() || this.isItemValidForSlot(slot, stack)) {
-			super.setStackInSlot(slot, stack);
-		}
+	public LivingEntity getHolder() {
+		return this.holder;
 	}
 
 	@Override
@@ -63,8 +46,12 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 	}
 
 	@Override
-	public void setEventBlock(boolean blockEvents) {
-		this.blockEvents = blockEvents;
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		LazyOptional<IRune> opt = stack.getCapability(RunesCapabilities.ITEM_RUNE);
+		if (stack.isEmpty() || !opt.isPresent())
+			return false;
+		IRune mindrune = opt.orElseThrow(NullPointerException::new);
+		return mindrune.canEquip(holder) && mindrune.getRuneType().hasSlot(slot);
 	}
 
 	@Override
@@ -72,14 +59,22 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 		this.changed[slot] = true;
 	}
 
-	public void tick() {
-		for (int i = 0; i < getSlots(); i++) {
-			ItemStack stack = getStackInSlot(i);
-			if (stack.getItem() != Items.AIR) {
-				stack.getCapability(RunesCapabilities.ITEM_RUNE).ifPresent(b -> b.onWornTick(holder));
-			}
+	@Override
+	public void setEventBlock(boolean blockEvents) {
+		this.blockEvents = blockEvents;
+	}
+
+	@Override
+	public void setSize(int size) {
+		if (size != RUNE_SLOTS)
+			System.out.println("Cannot resize rune container");
+	}
+
+	@Override
+	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+		if (stack.isEmpty() || this.isItemValidForSlot(slot, stack)) {
+			super.setStackInSlot(slot, stack);
 		}
-		sync();
 	}
 
 	private void sync() {
@@ -104,7 +99,14 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 		}
 	}
 
-	public LivingEntity getHolder() {
-		return this.holder;
+	@Override
+	public void tick() {
+		for (int i = 0; i < getSlots(); i++) {
+			ItemStack stack = getStackInSlot(i);
+			if (stack.getItem() != Items.AIR) {
+				stack.getCapability(RunesCapabilities.ITEM_RUNE).ifPresent(b -> b.onWornTick(holder));
+			}
+		}
+		sync();
 	}
 }

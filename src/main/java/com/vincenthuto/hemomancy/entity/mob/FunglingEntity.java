@@ -41,7 +41,107 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class FunglingEntity extends PathfinderMob {
 
-//	private Animation animation = NO_ANIMATION;
+// Move Goal
+	private class MoveTowardsTargetGoal extends Goal {
+		private final PathfinderMob creature;
+		private LivingEntity targetEntity;
+		private double movePosX;
+		private double movePosY;
+		private double movePosZ;
+		private final double speed;
+		private final float maxTargetDistance;
+
+		public MoveTowardsTargetGoal(PathfinderMob creature, double speedIn, float targetMaxDistance) {
+			this.creature = creature;
+			this.speed = speedIn;
+			this.maxTargetDistance = targetMaxDistance;
+			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+		}
+
+		/**
+		 * Returns whether an in-progress EntityAIBase should continue executing
+		 */
+		@Override
+		public boolean canContinueToUse() {
+			return !this.creature.getNavigation().isDone() && this.targetEntity.isAlive()
+					&& this.targetEntity.distanceToSqr(this.creature) < this.maxTargetDistance * this.maxTargetDistance;
+		}
+
+		/**
+		 * Returns whether execution should begin. You can also read and cache any state
+		 * necessary for execution in this method as well.
+		 */
+		@Override
+		public boolean canUse() {
+			this.targetEntity = this.creature.getTarget();
+			if (this.targetEntity == null) {
+				return false;
+			} else if (this.targetEntity.distanceToSqr(this.creature) > this.maxTargetDistance
+					* this.maxTargetDistance) {
+				return false;
+			} else {
+				BlockPos vector3d = RandomPos.generateRandomPosTowardDirection(this.creature, 16, level.random,
+						this.targetEntity.blockPosition());
+				if (vector3d == null) {
+					return false;
+
+				} else {
+					this.movePosX = vector3d.getX();
+					this.movePosY = vector3d.getY();
+					this.movePosZ = vector3d.getZ();
+					return true;
+				}
+			}
+		}
+
+		/**
+		 * Execute a one shot task or start executing a continuous task
+		 */
+		@Override
+		public void start() {
+			this.creature.getNavigation().moveTo(this.movePosX, this.movePosY, this.movePosZ, this.speed);
+		}
+
+		/**
+		 * Reset the task's internal state. Called when this task is interrupted by
+		 * another one
+		 */
+		@Override
+		public void stop() {
+			this.targetEntity = null;
+		}
+
+		@Override
+		public void tick() {
+			LivingEntity target = getTarget();
+			if (target == null)
+				return;
+			double distFromTarget = distanceToSqr(target);
+
+			getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
+
+			boolean isClose = distFromTarget < 40;
+
+			if (getNavigation().isDone())
+				getNavigation().moveTo(target, 1.2);
+
+			if (isClose)
+				yBodyRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
+//
+//			if (noActiveAnimation()) {
+//				if (distFromTarget > 40) {
+//					AnimationPacket.send(EntityFungling.this, NO_ANIMATION);
+//				}
+//			}
+		}
+	}
+
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
+	//	private Animation animation = NO_ANIMATION;
 //	public static final Animation HEADBUTT_ANIMATION = new Animation(17);
 //	public static final Animation SPOREPUFF_ANIMATION = new Animation(17);
 	public int puffCooldown = 0;
@@ -50,47 +150,6 @@ public class FunglingEntity extends PathfinderMob {
 	public FunglingEntity(EntityType<? extends FunglingEntity> type, Level worldIn) {
 		super(type, worldIn);
 
-	}
-
-	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
-	}
-
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-
-	}
-
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-	}
-
-	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
-		List<Entity> list = world.getEntities(this, effectBounds);
-		for (Entity ent : list) {
-			if (!(ent instanceof FunglingEntity)) {
-				LivingEntity liv = (LivingEntity) ent;
-				liv.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 200));
-				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
-					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25),
-							getY() + HLParticleUtils.inRange(-0.25, 0.25),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
-							getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
-							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -144,42 +203,13 @@ public class FunglingEntity extends PathfinderMob {
 	}
 
 	@Override
-	public void tick() {
-		super.tick();
-		// updateAnimations();
-		LivingEntity target = getTarget();
-		if (target == null)
-			return;
-		double distFromTarget = distanceToSqr(target);
-
-		getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
-		boolean isClose = distFromTarget < 5;
-		if (getNavigation().isDone())
-			getNavigation().moveTo(target, 1.2);
-		if (isClose) {
-			yRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
-		}
-//		if (noActiveAnimation()) {
-//			if (distFromTarget > 15 && distFromTarget < 30) {
-//				AnimationPacket.send(EntityFungling.this, SPOREPUFF_ANIMATION);
-//
-//				if (!level.isClientSide) {
-//					HLParticleUtils.spawnPoof((ServerLevel) level, new BlockPos(Vector3.fromEntityCenter(this).x,
-//							Vector3.fromEntityCenter(this).y, Vector3.fromEntityCenter(this).z));
-//					sporePuff(level, new AABB(this.position().add(-2, -2, -2), this.position().add(2, 2, 2)),
-//							this.position().x() + 0.5, this.position().y(), this.position().z() + 0.5);
-//				}
-//
-//			} else if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityFungling.this, target) + 90,
-//					yRot) < 30) {
-//				AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
-//			}
-//		}
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
 	}
 
 	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
+	protected void defineSynchedData() {
+		super.defineSynchedData();
 
 	}
 
@@ -189,24 +219,14 @@ public class FunglingEntity extends PathfinderMob {
 	}
 
 	@Override
-	protected void registerGoals() {
-		// goalSelector.addGoal(2, new HeadButtGoal());
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(1, new MoveTowardsTargetGoal(this, 0.5d, 50));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
+			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	@Override
@@ -222,6 +242,47 @@ public class FunglingEntity extends PathfinderMob {
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		// goalSelector.addGoal(2, new HeadButtGoal());
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(1, new MoveTowardsTargetGoal(this, 0.5d, 50));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+
+	}
+
+	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
+		List<Entity> list = world.getEntities(this, effectBounds);
+		for (Entity ent : list) {
+			if (!(ent instanceof FunglingEntity)) {
+				LivingEntity liv = (LivingEntity) ent;
+				liv.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 200));
+				for (int countparticles = 0; countparticles <= 10; ++countparticles) {
+					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 150, 0)),
+							getX() + HLParticleUtils.inRange(-0.25, 0.25),
+							getY() + HLParticleUtils.inRange(-0.25, 0.25),
+							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
+					world.addParticle(GlowParticleFactory.createData(new ParticleColor(0, 250, 0)),
+							getX() + HLParticleUtils.inRange(-0.25, 0.25), getY() + HLParticleUtils.inRange(-0.1, 0.1),
+							getZ() + HLParticleUtils.inRange(-0.25, 0.25), 0, 0.000, 0);
+				}
+			}
+		}
 	}
 
 //	@Override
@@ -289,99 +350,38 @@ public class FunglingEntity extends PathfinderMob {
 //		}
 //	}
 
-	// Move Goal
-	private class MoveTowardsTargetGoal extends Goal {
-		private final PathfinderMob creature;
-		private LivingEntity targetEntity;
-		private double movePosX;
-		private double movePosY;
-		private double movePosZ;
-		private final double speed;
-		private final float maxTargetDistance;
+	@Override
+	public void tick() {
+		super.tick();
+		// updateAnimations();
+		LivingEntity target = getTarget();
+		if (target == null)
+			return;
+		double distFromTarget = distanceToSqr(target);
 
-		public MoveTowardsTargetGoal(PathfinderMob creature, double speedIn, float targetMaxDistance) {
-			this.creature = creature;
-			this.speed = speedIn;
-			this.maxTargetDistance = targetMaxDistance;
-			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+		getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
+		boolean isClose = distFromTarget < 5;
+		if (getNavigation().isDone())
+			getNavigation().moveTo(target, 1.2);
+		if (isClose) {
+			yRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
 		}
-
-		@Override
-		public void tick() {
-			LivingEntity target = getTarget();
-			if (target == null)
-				return;
-			double distFromTarget = distanceToSqr(target);
-
-			getLookControl().setLookAt(target, getMaxHeadYRot(), getMaxHeadXRot());
-
-			boolean isClose = distFromTarget < 40;
-
-			if (getNavigation().isDone())
-				getNavigation().moveTo(target, 1.2);
-
-			if (isClose)
-				yBodyRotO = (float) MathUtils.getAngle(FunglingEntity.this, target) + 90f;
+//		if (noActiveAnimation()) {
+//			if (distFromTarget > 15 && distFromTarget < 30) {
+//				AnimationPacket.send(EntityFungling.this, SPOREPUFF_ANIMATION);
 //
-//			if (noActiveAnimation()) {
-//				if (distFromTarget > 40) {
-//					AnimationPacket.send(EntityFungling.this, NO_ANIMATION);
+//				if (!level.isClientSide) {
+//					HLParticleUtils.spawnPoof((ServerLevel) level, new BlockPos(Vector3.fromEntityCenter(this).x,
+//							Vector3.fromEntityCenter(this).y, Vector3.fromEntityCenter(this).z));
+//					sporePuff(level, new AABB(this.position().add(-2, -2, -2), this.position().add(2, 2, 2)),
+//							this.position().x() + 0.5, this.position().y(), this.position().z() + 0.5);
 //				}
+//
+//			} else if (isClose && Mth.degreesDifferenceAbs((float) MathUtils.getAngle(EntityFungling.this, target) + 90,
+//					yRot) < 30) {
+//				AnimationPacket.send(EntityFungling.this, HEADBUTT_ANIMATION);
 //			}
-		}
-
-		/**
-		 * Returns whether execution should begin. You can also read and cache any state
-		 * necessary for execution in this method as well.
-		 */
-		@Override
-		public boolean canUse() {
-			this.targetEntity = this.creature.getTarget();
-			if (this.targetEntity == null) {
-				return false;
-			} else if (this.targetEntity.distanceToSqr(this.creature) > this.maxTargetDistance
-					* this.maxTargetDistance) {
-				return false;
-			} else {
-				BlockPos vector3d = RandomPos.generateRandomPosTowardDirection(this.creature, 16, level.random,
-						this.targetEntity.blockPosition());
-				if (vector3d == null) {
-					return false;
-
-				} else {
-					this.movePosX = vector3d.getX();
-					this.movePosY = vector3d.getY();
-					this.movePosZ = vector3d.getZ();
-					return true;
-				}
-			}
-		}
-
-		/**
-		 * Returns whether an in-progress EntityAIBase should continue executing
-		 */
-		@Override
-		public boolean canContinueToUse() {
-			return !this.creature.getNavigation().isDone() && this.targetEntity.isAlive()
-					&& this.targetEntity.distanceToSqr(this.creature) < this.maxTargetDistance * this.maxTargetDistance;
-		}
-
-		/**
-		 * Reset the task's internal state. Called when this task is interrupted by
-		 * another one
-		 */
-		@Override
-		public void stop() {
-			this.targetEntity = null;
-		}
-
-		/**
-		 * Execute a one shot task or start executing a continuous task
-		 */
-		@Override
-		public void start() {
-			this.creature.getNavigation().moveTo(this.movePosX, this.movePosY, this.movePosZ, this.speed);
-		}
+//		}
 	}
 
 }

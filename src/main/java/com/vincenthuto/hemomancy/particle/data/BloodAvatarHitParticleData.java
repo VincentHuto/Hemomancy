@@ -19,17 +19,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BloodAvatarHitParticleData implements ParticleOptions {
 
-	private ParticleType<BloodAvatarHitParticleData> type;
 	public static final Codec<BloodAvatarHitParticleData> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("r").forGetter(d -> d.color.getRed()),
 					Codec.FLOAT.fieldOf("g").forGetter(d -> d.color.getGreen()),
 					Codec.FLOAT.fieldOf("b").forGetter(d -> d.color.getBlue()))
 			.apply(instance, BloodAvatarHitParticleData::new));
-
-	public ParticleColor color;
-
 	@SuppressWarnings("deprecation")
-	public static final Deserializer<BloodAvatarHitParticleData> DESERIALIZER = new Deserializer<BloodAvatarHitParticleData>() {
+	public static final Deserializer<BloodAvatarHitParticleData> DESERIALIZER = new Deserializer<>() {
 		@Override
 		public BloodAvatarHitParticleData fromCommand(ParticleType<BloodAvatarHitParticleData> type, StringReader reader)
 				throws CommandSyntaxException {
@@ -42,6 +38,10 @@ public class BloodAvatarHitParticleData implements ParticleOptions {
 			return new BloodAvatarHitParticleData(type, ParticleColor.deserialize(buffer.readUtf()));
 		}
 	};
+
+	private ParticleType<BloodAvatarHitParticleData> type;
+
+	public ParticleColor color;
 
 	public BloodAvatarHitParticleData(float r, float g, float b) {
 		this.color = new ParticleColor(r, g, b);

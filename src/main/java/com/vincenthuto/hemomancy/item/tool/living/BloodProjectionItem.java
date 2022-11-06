@@ -41,6 +41,26 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	}
 
 	@Override
+	public BakedModel getBakedModel() {
+		return ClientProxy.bloodProjectionModel;
+	}
+
+	@Override
+	public int getEntityLifespan(ItemStack itemStack, Level world) {
+		return 0;
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.NONE;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		return 72000 / 2;
+	}
+
+	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
 			final BlockEntityWithoutLevelRenderer myRenderer = new CellHandItemRenderer(null, null);
@@ -53,32 +73,8 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	}
 
 	@Override
-	public int getEntityLifespan(ItemStack itemStack, Level world) {
-		return 0;
-	}
-
-	@SuppressWarnings("unused")
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getItemInHand(handIn);
-		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
-				.orElseThrow(NullPointerException::new);
-		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-				.orElseThrow(NullPointerException::new);
-		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
-		if (volume.isActive()) {
-			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
-				playerIn.startUsingItem(handIn);
-				new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-			}
-		} else {
-			playerIn.displayClientMessage(
-					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),
-					true);
-		}
-
-		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
+	public boolean isFoil(ItemStack stack) {
+		return true;
 	}
 
 	@Override
@@ -109,24 +105,28 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		}
 	}
 
+	@SuppressWarnings("unused")
 	@Override
-	public int getUseDuration(ItemStack stack) {
-		return 72000 / 2;
-	}
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack stack = playerIn.getItemInHand(handIn);
+		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(NullPointerException::new);
+		IBloodTendency tendency = playerIn.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		if (volume.isActive()) {
+			if (volume.getBloodVolume() < volume.getMaxBloodVolume()) {
+				playerIn.startUsingItem(handIn);
+				new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+			}
+		} else {
+			playerIn.displayClientMessage(
+					Component.literal("You lack the skill to manifest this power!").withStyle(ChatFormatting.RED),
+					true);
+		}
 
-	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.NONE;
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-		return true;
-	}
-
-	@Override
-	public BakedModel getBakedModel() {
-		return ClientProxy.bloodProjectionModel;
+		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 
 }

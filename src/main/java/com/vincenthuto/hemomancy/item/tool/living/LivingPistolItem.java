@@ -39,45 +39,15 @@ public class LivingPistolItem extends Item implements IDispellable {
 	}
 
 	@Override
-	public UseAnim getUseAnimation(ItemStack p_41452_) {
-		return UseAnim.BOW;
-	}
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag()) {
+			if (stack.getTag().contains(TAG_MODE)) {
+				int mode = stack.getTag().getInt(TAG_MODE);
+				tooltip.add(Component.literal("State: " + mode).withStyle(ChatFormatting.RED));
 
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		int count = 16;
-		int mode = getGunMode(stack);
-		if (mode == 0) {
-			count = 16;
-		} else if (mode == 1) {
-			count = 32;
-		} else {
-			count = 48;
-		}
-		return count;
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack stack = playerIn.getItemInHand(handIn);
-		CompoundTag compound = stack.getOrCreateTag();
-		if (playerIn.isCrouching()) {
-			int mode = getGunMode(stack);
-			if (mode == 0) {
-				compound.putInt(TAG_MODE, 1);
-				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
-			} else if (mode == 1) {
-				compound.putInt(TAG_MODE, 2);
-				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
-			} else {
-				compound.putInt(TAG_MODE, 0);
-				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
 			}
-			stack.setTag(compound);
-		} else {
-			ItemUtils.startUsingInstantly(worldIn, playerIn, handIn);
 		}
-		return super.use(worldIn, playerIn, handIn);
 	}
 
 	@Override
@@ -118,27 +88,6 @@ public class LivingPistolItem extends Item implements IDispellable {
 		return super.finishUsingItem(stack, world, entity);
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (stack.getTag().contains(TAG_MODE)) {
-				int mode = stack.getTag().getInt(TAG_MODE);
-				tooltip.add(Component.literal("State: " + mode).withStyle(ChatFormatting.RED));
-
-			}
-		}
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public Component getName(ItemStack stack) {
-		return Component
-				.literal(HLTextUtils.stringToBloody(
-						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
-				.withStyle(ChatFormatting.DARK_RED);
-	}
-
 	public int getGunMode(ItemStack stack) {
 		if (stack.getItem() instanceof LivingPistolItem) {
 			CompoundTag compound = stack.getOrCreateTag();
@@ -151,10 +100,61 @@ public class LivingPistolItem extends Item implements IDispellable {
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
+	public Component getName(ItemStack stack) {
+		return Component
+				.literal(HLTextUtils.stringToBloody(
+						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
+				.withStyle(ChatFormatting.DARK_RED);
+	}
+
+	@Override
+	public UseAnim getUseAnimation(ItemStack p_41452_) {
+		return UseAnim.BOW;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		int count = 16;
+		int mode = getGunMode(stack);
+		if (mode == 0) {
+			count = 16;
+		} else if (mode == 1) {
+			count = 32;
+		} else {
+			count = 48;
+		}
+		return count;
+	}
+
+	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		super.initializeClient(consumer);
 		consumer.accept(RenderPropPistol.INSTANCE);
 
+	}
+
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		ItemStack stack = playerIn.getItemInHand(handIn);
+		CompoundTag compound = stack.getOrCreateTag();
+		if (playerIn.isCrouching()) {
+			int mode = getGunMode(stack);
+			if (mode == 0) {
+				compound.putInt(TAG_MODE, 1);
+				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
+			} else if (mode == 1) {
+				compound.putInt(TAG_MODE, 2);
+				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
+			} else {
+				compound.putInt(TAG_MODE, 0);
+				playerIn.playSound(SoundEvents.BEACON_ACTIVATE, 0.40f, 1F);
+			}
+			stack.setTag(compound);
+		} else {
+			ItemUtils.startUsingInstantly(worldIn, playerIn, handIn);
+		}
+		return super.use(worldIn, playerIn, handIn);
 	}
 }
 

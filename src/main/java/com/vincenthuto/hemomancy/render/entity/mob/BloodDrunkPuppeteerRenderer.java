@@ -25,15 +25,15 @@ public class BloodDrunkPuppeteerRenderer
 	}
 
 	@Override
-	public void render(BloodDrunkPuppeteerEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
-			MultiBufferSource pBuffer, int pPackedLight) {
-		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
-	}
-
-	@Override
 	public ResourceLocation getTextureLocation(BloodDrunkPuppeteerEntity entity) {
 		return TEXTURE;
 
+	}
+
+	@Override
+	public void render(BloodDrunkPuppeteerEntity pEntity, float pEntityYaw, float pPartialTicks, PoseStack pMatrixStack,
+			MultiBufferSource pBuffer, int pPackedLight) {
+		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
 	}
 
 }

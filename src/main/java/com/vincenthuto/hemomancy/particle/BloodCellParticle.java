@@ -46,18 +46,23 @@ public class BloodCellParticle extends TextureSheetParticle {
 	}
 
 	@Override
+	public int getLightColor(float pTicks) {
+		return 255;
+	}
+
+	@Override
 	public ParticleRenderType getRenderType() {
 		return HLRenderTypeInit.DARK_GLOW_RENDER;
 	}
 
 	@Override
-	public boolean shouldCull() {
-		return false;
+	public boolean isAlive() {
+		return this.age < this.lifetime;
 	}
 
 	@Override
-	public int getLightColor(float pTicks) {
-		return 255;
+	public boolean shouldCull() {
+		return false;
 	}
 
 	@Override
@@ -72,10 +77,5 @@ public class BloodCellParticle extends TextureSheetParticle {
 		this.alpha = initAlpha * (1.0f - lifeCoeff);
 		this.oRoll = roll;
 		// particleAngle += 1.0f;
-	}
-
-	@Override
-	public boolean isAlive() {
-		return this.age < this.lifetime;
 	}
 }

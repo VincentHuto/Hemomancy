@@ -21,10 +21,6 @@ import net.minecraft.world.phys.AABB;
 
 public class SerpentineIdolBlockEntity extends BlockEntity {
 
-	public SerpentineIdolBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.serpentine_idol.get(), pos, state);
-	}
-
 	@SuppressWarnings("unused")
 	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
 		if (level.getBlockEntity(pos)instanceof SerpentineIdolBlockEntity te) {
@@ -71,6 +67,10 @@ public class SerpentineIdolBlockEntity extends BlockEntity {
 
 		}
 
+	}
+
+	public SerpentineIdolBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityInit.serpentine_idol.get(), pos, state);
 	}
 
 }

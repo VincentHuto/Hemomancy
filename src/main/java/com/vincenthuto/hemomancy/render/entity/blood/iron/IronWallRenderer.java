@@ -20,8 +20,13 @@ public class IronWallRenderer extends MobRenderer<EntityIronWall, IronWallModel<
 		super(p_174447_, new IronWallModel<EntityIronWall>(p_174447_.bakeLayer(IronWallModel.iron_wall)), 0.5F);
 
 	}
-	
-	
+
+
+	@Override
+	public ResourceLocation getTextureLocation(EntityIronWall p_114482_) {
+		return texture;
+	}
+
 	@Override
 	protected void scale(EntityIronWall entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 		super.scale(entitylivingbaseIn, matrixStackIn, partialTickTime);
@@ -43,10 +48,5 @@ public class IronWallRenderer extends MobRenderer<EntityIronWall, IronWallModel<
 			matrixStackIn.scale(1, d, 1);
 
 		}
-	}
-	
-	@Override
-	public ResourceLocation getTextureLocation(EntityIronWall p_114482_) {
-		return texture;
 	}
 }

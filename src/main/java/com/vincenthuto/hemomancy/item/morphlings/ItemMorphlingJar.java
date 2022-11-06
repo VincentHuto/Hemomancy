@@ -47,16 +47,115 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class ItemMorphlingJar extends Item {
 
+	@SuppressWarnings("rawtypes")
+	class MorphlingJarCaps implements ICapabilitySerializable {
+		@SuppressWarnings("unused")
+		private int size;
+
+		private ItemStack itemStack;
+		private MorphlingJarItemHandler inventory;
+		private LazyOptional<IItemHandler> optional;
+		public MorphlingJarCaps(ItemStack stack, int size, CompoundTag nbtIn) {
+			itemStack = stack;
+			this.size = size;
+			inventory = new MorphlingJarItemHandler(itemStack, size);
+			optional = LazyOptional.of(() -> inventory);
+		}
+
+		@Override
+		public void deserializeNBT(Tag nbt) {
+			inventory.load();
+		}
+
+		@Nonnull
+		@Override
+		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+			if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+				return optional.cast();
+			} else
+				return LazyOptional.empty();
+		}
+
+		@Override
+		public Tag serializeNBT() {
+			inventory.save();
+			return new CompoundTag();
+		}
+	}
+	public static String TAG_SIZE = "size";
 	String name;
 	Integer size;
+
 	Rarity rarity;
-	public static String TAG_SIZE = "size";
 
 	public ItemMorphlingJar(String name, Integer size, Rarity rarity) {
 		super(new Item.Properties().stacksTo(1).tab(com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup.instance));
 		this.name = name;
 		this.size = size;
 		this.rarity = rarity;
+	}
+
+	@SuppressWarnings("static-access")
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+
+		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
+		if (pickupEnabled)
+			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupenabled")));
+		else
+			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupdisabled")));
+
+		if (Screen.hasShiftDown()) {
+			IItemHandler jarHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+					.orElseThrow(NullPointerException::new);
+			if (jarHandler != null) {
+				for (int i = 0; i < jarHandler.getSlots(); i++) {
+					if (jarHandler.getStackInSlot(i).getItem() != Items.AIR) {
+					}
+				}
+				CompoundTag CompoundTag = stack.getOrCreateTag();
+				CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
+				if (items != null) {
+					if (items.contains("Items", 9)) {
+						for (int i = 0; i < ((ListTag) items.get("Items")).size(); i++) {
+							tooltip.add(ItemStack.of(((ListTag) items.get("Items")).getCompound(i)).getHoverName());
+
+						}
+					}
+				}
+			}
+
+		} else {
+			tooltip.add(Component.literal(fallbackString("hemomancy.shift", "Press <�6�oShift�r> for info.")));
+		}
+	}
+
+	private String fallbackString(String key, String fallback) {
+		String tmp = I18n.get(key);
+		return tmp.equals(key) ? fallback : tmp;
+	}
+
+	public boolean filterItem(ItemStack item, ItemStack packItem) {
+		return item.getItem() instanceof MorphlingItem ? true : false;
+
+	}
+
+	@Override
+	public Rarity getRarity(ItemStack stack) {
+		return rarity;
+	}
+
+	@SuppressWarnings("unused")
+	private boolean hasTranslation(String key) {
+		return !I18n.get(key).equals(key);
+	}
+
+	@Nullable
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+		return new MorphlingJarCaps(stack, size, nbt);
 	}
 
 	@Override
@@ -75,119 +174,9 @@ public class ItemMorphlingJar extends Item {
 		}
 	}
 
-	@Override
-	public Rarity getRarity(ItemStack stack) {
-		return rarity;
-	}
-
-	public ItemMorphlingJar setName() {
-		return this;
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return false;
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		if (worldIn.isClientSide) {
-			if (!playerIn.isShiftKeyDown()) {
-				Hemomancy.proxy.openJarGui();
-				playerIn.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
-			}
-		}
-
-		if (!worldIn.isClientSide) {
-			if (playerIn.isShiftKeyDown()) {
-				// open
-				playerIn.openMenu(new MenuProvider() {
-					@Override
-					public Component getDisplayName() {
-						return playerIn.getItemInHand(handIn).getHoverName();
-					}
-
-					@Nullable
-					@Override
-					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
-							Player p_createMenu_3_) {
-						return new MorphlingJarMenu(windowId, p_createMenu_3_.level,
-								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
-					}
-				});
-
-			}
-		}
-		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
-
-	}
-
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new MorphlingJarCaps(stack, size, nbt);
-	}
-
-	@SuppressWarnings("rawtypes")
-	class MorphlingJarCaps implements ICapabilitySerializable {
-		public MorphlingJarCaps(ItemStack stack, int size, CompoundTag nbtIn) {
-			itemStack = stack;
-			this.size = size;
-			inventory = new MorphlingJarItemHandler(itemStack, size);
-			optional = LazyOptional.of(() -> inventory);
-		}
-
-		@SuppressWarnings("unused")
-		private int size;
-		private ItemStack itemStack;
-		private MorphlingJarItemHandler inventory;
-		private LazyOptional<IItemHandler> optional;
-
-		@Nonnull
-		@Override
-		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-			if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-				return optional.cast();
-			} else
-				return LazyOptional.empty();
-		}
-
-		@Override
-		public Tag serializeNBT() {
-			inventory.save();
-			return new CompoundTag();
-		}
-
-		@Override
-		public void deserializeNBT(Tag nbt) {
-			inventory.load();
-		}
-	}
-
-	public void togglePickup(Player playerEntity, ItemStack stack) {
-		CompoundTag nbt = stack.getOrCreateTag();
-		boolean Pickup = !nbt.getBoolean("Pickup");
-		nbt.putBoolean("Pickup", Pickup);
-		if (playerEntity instanceof ServerPlayer)
-			PacketHandler.CHANNELMORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
-					new ToggleMorphlingJarMessagePacket(Pickup));
-		else
-			playerEntity.displayClientMessage(Component.literal(
-					I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
-
-	}
-
-	public boolean filterItem(ItemStack item, ItemStack packItem) {
-		return item.getItem() instanceof MorphlingItem ? true : false;
-
-	}
-
 	public boolean pickupEvent(EntityItemPickupEvent event, ItemStack stack) {
 		CompoundTag nbt = stack.getTag();
-		if (nbt == null)
-			return false;
-
-		if (!nbt.getBoolean("Pickup"))
+		if ((nbt == null) || !nbt.getBoolean("Pickup"))
 			return false;
 
 		LazyOptional<IItemHandler> stupidIdiot = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
@@ -216,50 +205,58 @@ public class ItemMorphlingJar extends Item {
 		return pickedUp.isEmpty();
 	}
 
-	@SuppressWarnings("unused")
-	private boolean hasTranslation(String key) {
-		return !I18n.get(key).equals(key);
+	public ItemMorphlingJar setName() {
+		return this;
 	}
 
-	private String fallbackString(String key, String fallback) {
-		String tmp = I18n.get(key);
-		return tmp.equals(key) ? fallback : tmp;
-	}
-
-	@SuppressWarnings("static-access")
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return false;
+	}
 
-		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
-		if (pickupEnabled)
-			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupenabled")));
+	public void togglePickup(Player playerEntity, ItemStack stack) {
+		CompoundTag nbt = stack.getOrCreateTag();
+		boolean Pickup = !nbt.getBoolean("Pickup");
+		nbt.putBoolean("Pickup", Pickup);
+		if (playerEntity instanceof ServerPlayer)
+			PacketHandler.CHANNELMORPHLINGJAR.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
+					new ToggleMorphlingJarMessagePacket(Pickup));
 		else
-			tooltip.add(Component.literal(I18n.get("hemomancy.autopickupdisabled")));
+			playerEntity.displayClientMessage(Component.literal(
+					I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
 
-		if (Screen.hasShiftDown()) {
-			IItemHandler jarHandler = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-					.orElseThrow(NullPointerException::new);
-			if (jarHandler != null) {
-				for (int i = 0; i < jarHandler.getSlots(); i++) {
-					if (jarHandler.getStackInSlot(i).getItem() != Items.AIR) {
-					}
-				}
-				CompoundTag CompoundTag = stack.getOrCreateTag();
-				CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-				if (items != null) {
-					if (items.contains("Items", 9)) {
-						for (int i = 0; i < ((ListTag) items.get("Items")).size(); i++) {
-							tooltip.add(stack.of(((ListTag) items.get("Items")).getCompound(i)).getHoverName());
+	}
 
-						}
-					}
-				}
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+		if (worldIn.isClientSide) {
+			if (!playerIn.isShiftKeyDown()) {
+				Hemomancy.proxy.openJarGui();
+				playerIn.playSound(SoundEvents.GLASS_PLACE, 0.40f, 1F);
 			}
-
-		} else {
-			tooltip.add(Component.literal(fallbackString("hemomancy.shift", "Press <�6�oShift�r> for info.")));
 		}
+
+		if (!worldIn.isClientSide) {
+			if (playerIn.isShiftKeyDown()) {
+				// open
+				playerIn.openMenu(new MenuProvider() {
+					@Nullable
+					@Override
+					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
+							Player p_createMenu_3_) {
+						return new MorphlingJarMenu(windowId, p_createMenu_3_.level,
+								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
+					}
+
+					@Override
+					public Component getDisplayName() {
+						return playerIn.getItemInHand(handIn).getHoverName();
+					}
+				});
+
+			}
+		}
+		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
+
 	}
 }

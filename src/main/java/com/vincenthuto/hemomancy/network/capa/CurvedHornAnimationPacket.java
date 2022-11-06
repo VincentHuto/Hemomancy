@@ -11,10 +11,10 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class CurvedHornAnimationPacket {
 
-	public CurvedHornAnimationPacket(FriendlyByteBuf buf) {
+	public CurvedHornAnimationPacket() {
 	}
 
-	public CurvedHornAnimationPacket() {
+	public CurvedHornAnimationPacket(FriendlyByteBuf buf) {
 	}
 
 	public void decode(FriendlyByteBuf buf) {

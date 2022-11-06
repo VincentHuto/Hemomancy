@@ -14,25 +14,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 
 public class SpawnAvatarParticlesPacket {
-	Vec3 pos;
-	ParticleColor color;
-
-	public SpawnAvatarParticlesPacket() {
-	}
-
-	public SpawnAvatarParticlesPacket(Vec3 pos, ParticleColor color) {
-		this.pos = pos;
-		this.color = color;
-	}
-
-	public Vec3 getPos() {
-		return pos;
-	}
-
-	public ParticleColor getColor() {
-		return color;
-	}
-
 	public static SpawnAvatarParticlesPacket decode(FriendlyByteBuf buf) {
 		SpawnAvatarParticlesPacket msg = new SpawnAvatarParticlesPacket();
 		try {
@@ -44,7 +25,6 @@ public class SpawnAvatarParticlesPacket {
 		}
 		return msg;
 	}
-
 	public static void encode(SpawnAvatarParticlesPacket msg, FriendlyByteBuf buf) {
 		buf.writeDouble(msg.getPos().x);
 		buf.writeDouble(msg.getPos().y);
@@ -58,7 +38,7 @@ public class SpawnAvatarParticlesPacket {
 	public static void handle(SpawnAvatarParticlesPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
 		NetworkEvent.Context ctx = ctxSupplier.get();
 		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = (Optional<?>) LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
+		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
 		if (!clientLevel.isPresent()) {
 			return;
 		}
@@ -67,5 +47,25 @@ public class SpawnAvatarParticlesPacket {
 				msg.getPos().z, 0, 0, 0);
 
 		ctxSupplier.get().setPacketHandled(true);
+	}
+
+	Vec3 pos;
+
+	ParticleColor color;
+
+	public SpawnAvatarParticlesPacket() {
+	}
+
+	public SpawnAvatarParticlesPacket(Vec3 pos, ParticleColor color) {
+		this.pos = pos;
+		this.color = color;
+	}
+
+	public ParticleColor getColor() {
+		return color;
+	}
+
+	public Vec3 getPos() {
+		return pos;
 	}
 }

@@ -27,23 +27,6 @@ import net.minecraftforge.client.gui.ScreenUtils;
 @OnlyIn(Dist.CLIENT)
 public class BloodVolumeHud extends Screen {
 
-	public double bloodVolume = 0;
-	private Minecraft mc;
-	LocalPlayer player;
-
-	public BloodVolumeHud(LocalPlayer playerIn, Minecraft mcI) {
-		super(Component.literal(""));
-		this.player = playerIn;
-		this.mc = mcI;
-
-	}
-
-	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
-
-	}
-
 	/**
 	 * Draws a textured rectangle at the current z-value. Ported From past Versions
 	 */
@@ -63,8 +46,8 @@ public class BloodVolumeHud extends Screen {
 		// soon to be top left
 		bufferbuilder.vertex(x + width, y + height - 13.25, 1)
 				.uv((textureX + width) * 0.00390625F, (textureY + height) * 0.00390625F).endVertex();
-		
-		
+
+
 		// soon to be bottom left
 		bufferbuilder.vertex(x + width, y-6 , 1).uv((textureX + width) * 0.00390625F, (textureY + 0) * 0.00390625F)
 				.endVertex();
@@ -73,6 +56,23 @@ public class BloodVolumeHud extends Screen {
 				.endVertex();
 
 		tessellator.end();
+	}
+	public double bloodVolume = 0;
+	private Minecraft mc;
+
+	LocalPlayer player;
+
+	public BloodVolumeHud(LocalPlayer playerIn, Minecraft mcI) {
+		super(Component.literal(""));
+		this.player = playerIn;
+		this.mc = mcI;
+
+	}
+
+	@Override
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		super.render(matrixStack, mouseX, mouseY, partialTicks);
+
 	}
 
 	/* This helper method will render the bar */
@@ -100,8 +100,8 @@ public class BloodVolumeHud extends Screen {
 
 					float textureUShift = (world.getGameTime() * 0.25f % 256);
 					float heightShift = (float) Math.cos(world.getGameTime() * 0.1);
-					
-					
+
+
 					//Fill
 					matrix.pushPose();
 					RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -111,7 +111,7 @@ public class BloodVolumeHud extends Screen {
 					drawFlippedTexturedModalRect(-13, 113, 22 + textureUShift, textureUShift, 7f,
 							2 + heightShift - newBarWidth);
 					matrix.popPose();
-	
+
 					//Frame
 					matrix.pushPose();
 					RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -120,7 +120,7 @@ public class BloodVolumeHud extends Screen {
 					ScreenUtils.drawTexturedModalRect(matrix, 1, 0 + 106, 9, 244, 13, 12, heightShift);
 					ScreenUtils.drawTexturedModalRect(matrix, 1, 0, 1, 0, 12, 106, heightShift);
 					matrix.popPose();
-		
+
 
 				}
 			}

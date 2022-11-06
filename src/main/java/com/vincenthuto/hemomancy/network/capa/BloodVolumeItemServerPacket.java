@@ -12,25 +12,16 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class BloodVolumeItemServerPacket {
 
-	private boolean active;
-	private double max;
-	private double volume;
-	private Bloodline bloodline;
-
-	public BloodVolumeItemServerPacket(IBloodVolume volume) {
-		this.active = volume.isActive();
-		this.max = volume.getMaxBloodVolume();
-		this.volume = volume.getBloodVolume();
-		this.bloodline = volume.getBloodLine();
+	public static BloodVolumeItemServerPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new BloodVolumeItemServerPacket(packetBuffer.readBoolean(), packetBuffer.readDouble(),
+				packetBuffer.readDouble(), Bloodline.deserialize(packetBuffer.readNbt()));
 	}
-
-	public BloodVolumeItemServerPacket(boolean active, double maxIn, double volumeIn, Bloodline bloodline) {
-		this.active = active;
-		this.max = maxIn;
-		this.volume = volumeIn;
-		this.bloodline = bloodline;
+	public static void encode(final BloodVolumeItemServerPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeBoolean(msg.active);
+		packetBuffer.writeDouble(msg.max);
+		packetBuffer.writeDouble(msg.volume);
+		packetBuffer.writeNbt(msg.bloodline.serialize());
 	}
-
 	public static void handle(final BloodVolumeItemServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 
@@ -46,16 +37,25 @@ public class BloodVolumeItemServerPacket {
 		});
 		ctx.get().setPacketHandled(true);
 	}
+	private boolean active;
 
-	public static void encode(final BloodVolumeItemServerPacket msg, final FriendlyByteBuf packetBuffer) {
-		packetBuffer.writeBoolean(msg.active);
-		packetBuffer.writeDouble(msg.max);
-		packetBuffer.writeDouble(msg.volume);
-		packetBuffer.writeNbt(msg.bloodline.serialize());
+	private double max;
+
+	private double volume;
+
+	private Bloodline bloodline;
+
+	public BloodVolumeItemServerPacket(boolean active, double maxIn, double volumeIn, Bloodline bloodline) {
+		this.active = active;
+		this.max = maxIn;
+		this.volume = volumeIn;
+		this.bloodline = bloodline;
 	}
 
-	public static BloodVolumeItemServerPacket decode(final FriendlyByteBuf packetBuffer) {
-		return new BloodVolumeItemServerPacket(packetBuffer.readBoolean(), packetBuffer.readDouble(),
-				packetBuffer.readDouble(), Bloodline.deserialize(packetBuffer.readNbt()));
+	public BloodVolumeItemServerPacket(IBloodVolume volume) {
+		this.active = volume.isActive();
+		this.max = volume.getMaxBloodVolume();
+		this.volume = volume.getBloodVolume();
+		this.bloodline = volume.getBloodLine();
 	}
 }

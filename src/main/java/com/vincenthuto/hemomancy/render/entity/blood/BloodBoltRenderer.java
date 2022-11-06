@@ -25,6 +25,19 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 		super(renderManagerIn);
 	}
 
+	public void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, int offsetX, int offsetY,
+			int offsetZ, float textureX, float textureY, int p_229039_9_, int p_229039_10_, int p_229039_11_,
+			int packedLightIn) {
+		vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(255, 255, 255, 255).uv(textureX, textureY)
+				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn)
+				.normal(normals, p_229039_9_, p_229039_11_, p_229039_10_).endVertex();
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(BloodBoltEntity entity) {
+		return TEXTURE;
+	}
+
 	@Override
 	@SuppressWarnings("unused")
 	public void render(BloodBoltEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
@@ -75,18 +88,5 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 
 		matrixStackIn.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
-
-	public void drawVertex(Matrix4f matrix, Matrix3f normals, VertexConsumer vertexBuilder, int offsetX, int offsetY,
-			int offsetZ, float textureX, float textureY, int p_229039_9_, int p_229039_10_, int p_229039_11_,
-			int packedLightIn) {
-		vertexBuilder.vertex(matrix, offsetX, offsetY, offsetZ).color(255, 255, 255, 255).uv(textureX, textureY)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLightIn)
-				.normal(normals, p_229039_9_, p_229039_11_, p_229039_10_).endVertex();
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(BloodBoltEntity entity) {
-		return TEXTURE;
 	}
 }

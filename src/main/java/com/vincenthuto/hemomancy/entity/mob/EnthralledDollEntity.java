@@ -34,8 +34,19 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 public class EnthralledDollEntity extends Monster {
 
+	public static AttributeSupplier.Builder setAttributes() {
+		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 1.0D);
+	}
+
 	LivingEntity owner;
 
+	@Nullable
+	private UUID ownerUUID;
+
+	@Nullable
+	private Entity cachedOwner;
+	private boolean leftOwner;
 	public EnthralledDollEntity(EntityType<? extends EnthralledDollEntity> type, Level worldIn) {
 		super(type, worldIn);
 
@@ -44,32 +55,6 @@ public class EnthralledDollEntity extends Monster {
 	public EnthralledDollEntity(Level worldIn, LivingEntity owner) {
 		super(EntityInit.enthralled_doll.get(), worldIn);
 		this.owner = owner;
-
-	}
-
-	@Nullable
-	private UUID ownerUUID;
-	@Nullable
-	private Entity cachedOwner;
-	private boolean leftOwner;
-
-	@Nullable
-	public Entity getOwner() {
-		if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-			return this.cachedOwner;
-		} else if (this.ownerUUID != null && this.level instanceof ServerLevel) {
-			this.cachedOwner = ((ServerLevel) this.level).getEntity(this.ownerUUID);
-			return this.cachedOwner;
-		} else {
-			return null;
-		}
-	}
-
-	public void setOwner(@Nullable Entity pEntity) {
-		if (pEntity != null) {
-			this.ownerUUID = pEntity.getUUID();
-			this.cachedOwner = pEntity;
-		}
 
 	}
 
@@ -85,26 +70,9 @@ public class EnthralledDollEntity extends Monster {
 		}
 	}
 
-	protected boolean ownedBy(Entity p_150172_) {
-		return p_150172_.getUUID().equals(this.ownerUUID);
-	}
-
 	@Override
-	public void readAdditionalSaveData(CompoundTag pCompound) {
-		super.readAdditionalSaveData(pCompound);
-		if (pCompound.hasUUID("Owner")) {
-			this.ownerUUID = pCompound.getUUID("Owner");
-		}
-
-		this.leftOwner = pCompound.getBoolean("LeftOwner");
-	}
-
-	@Override
-	public void tick() {
-		if (!this.leftOwner) {
-			this.leftOwner = this.checkLeftOwner();
-		}
-		super.tick();
+	protected int calculateFallDamage(float distance, float damageMultiplier) {
+		return 0;
 	}
 
 	private boolean checkLeftOwner() {
@@ -124,26 +92,8 @@ public class EnthralledDollEntity extends Monster {
 	}
 
 	@Override
-	protected float getSoundVolume() {
-		return 0.3f;
-	}
-
-	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
-	}
-
-	@Override
-	public void playerTouch(Player entityIn) {
-		super.playerTouch(entityIn);
-		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
 
 	}
 
@@ -158,48 +108,15 @@ public class EnthralledDollEntity extends Monster {
 	}
 
 	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
-	}
-
-	@Override
-	public boolean mayInteract(Level pLevel, BlockPos pPos) {
-		Entity entity = this.getOwner();
-		if (entity instanceof Player) {
-			return entity.mayInteract(pLevel, pPos);
-		} else {
-			return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
-		}
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
+			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
+		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
 	public Packet<?> getAddEntityPacket() {
 		Entity entity = this.getOwner();
 		return new ClientboundAddEntityPacket(this, entity == null ? 0 : entity.getId());
-	}
-
-	@Override
-	public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
-		super.recreateFromPacket(pPacket);
-		Entity entity = this.level.getEntity(pPacket.getData());
-		if (entity != null) {
-			this.setOwner(entity);
-		}
-
-	}
-
-	public static AttributeSupplier.Builder setAttributes() {
-		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
 	}
 
 	@Override
@@ -215,5 +132,88 @@ public class EnthralledDollEntity extends Monster {
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
 		return SoundEvents.WOLF_HURT;
+	}
+
+	@Nullable
+	public Entity getOwner() {
+		if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
+			return this.cachedOwner;
+		} else if (this.ownerUUID != null && this.level instanceof ServerLevel) {
+			this.cachedOwner = ((ServerLevel) this.level).getEntity(this.ownerUUID);
+			return this.cachedOwner;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	protected float getSoundVolume() {
+		return 0.3f;
+	}
+
+	@Override
+	public boolean mayInteract(Level pLevel, BlockPos pPos) {
+		Entity entity = this.getOwner();
+		if (entity instanceof Player) {
+			return entity.mayInteract(pLevel, pPos);
+		} else {
+			return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
+		}
+	}
+
+	protected boolean ownedBy(Entity p_150172_) {
+		return p_150172_.getUUID().equals(this.ownerUUID);
+	}
+
+	@Override
+	public void playerTouch(Player entityIn) {
+		super.playerTouch(entityIn);
+		// entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f);
+
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag pCompound) {
+		super.readAdditionalSaveData(pCompound);
+		if (pCompound.hasUUID("Owner")) {
+			this.ownerUUID = pCompound.getUUID("Owner");
+		}
+
+		this.leftOwner = pCompound.getBoolean("LeftOwner");
+	}
+
+	@Override
+	public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
+		super.recreateFromPacket(pPacket);
+		Entity entity = this.level.getEntity(pPacket.getData());
+		if (entity != null) {
+			this.setOwner(entity);
+		}
+
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+
+	}
+
+	public void setOwner(@Nullable Entity pEntity) {
+		if (pEntity != null) {
+			this.ownerUUID = pEntity.getUUID();
+			this.cachedOwner = pEntity;
+		}
+
+	}
+
+	@Override
+	public void tick() {
+		if (!this.leftOwner) {
+			this.leftOwner = this.checkLeftOwner();
+		}
+		super.tick();
 	}
 }

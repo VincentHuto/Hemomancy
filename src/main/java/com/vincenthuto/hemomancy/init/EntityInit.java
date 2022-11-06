@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.BloodBoltEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodBulletEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodCloudCarrierEntity;
+import com.vincenthuto.hemomancy.entity.blood.BloodConstructEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodShotEntity;
 import com.vincenthuto.hemomancy.entity.blood.CloudEntityBlood;
@@ -47,18 +48,18 @@ import net.minecraftforge.registries.RegistryObject;
 public class EntityInit {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
 			Hemomancy.MOD_ID);
-	
-	public static final TagKey<EntityType<?>> FUNGAL = createTag("fungal");
-	public static final TagKey<EntityType<?>> UMBRAL = createTag("umbral");
-	public static final TagKey<EntityType<?>> INCANDESCENT = createTag("incandescent");
-	public static final TagKey<EntityType<?>> FERRIC = createTag("ferric");
-	public static final TagKey<EntityType<?>> VIVACIOUS = createTag("vivacious");
-	public static final TagKey<EntityType<?>> RUINOUS = createTag("ruinous");
-	public static final TagKey<EntityType<?>> NEUROTIC = createTag("neurotic");
-	public static final TagKey<EntityType<?>> FERVENT = createTag("fervent");
-	public static final TagKey<EntityType<?>> FRIGID = createTag("frigid");
 
-	
+	public static final TagKey<EntityType<?>> FUNGAL_TAG = createTag("fungal");
+	public static final TagKey<EntityType<?>> UMBRAL_TAG = createTag("umbral");
+	public static final TagKey<EntityType<?>> INCANDESCENT_TAG = createTag("incandescent");
+	public static final TagKey<EntityType<?>> FERRIC_TAG = createTag("ferric");
+	public static final TagKey<EntityType<?>> VIVACIOUS_TAG = createTag("vivacious");
+	public static final TagKey<EntityType<?>> RUINOUS_TAG = createTag("ruinous");
+	public static final TagKey<EntityType<?>> NEUROTIC_TAG = createTag("neurotic");
+	public static final TagKey<EntityType<?>> FERVENT_TAG = createTag("fervent");
+	public static final TagKey<EntityType<?>> FRIGID_TAG = createTag("frigid");
+
+
 	// Mobs
 	public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
 			() -> EntityType.Builder.<LeechEntity>of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -201,13 +202,18 @@ public class EntityInit {
 					.clientTrackingRange(4).setUpdateInterval(20)
 					.build(new ResourceLocation(Hemomancy.MOD_ID, "dark_arrow").toString()));
 
+	public static TagKey<EntityType<?>> createTag(String name){
+		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
+				new ResourceLocation(Hemomancy.MOD_ID,name));
+	}
+
 	@SubscribeEvent
 	public static void onAttributeCreate(EntityAttributeCreationEvent event) {
-		event.put(EntityInit.blood_cloud.get(), CloudEntityBlood.setAttributes().build());
-		event.put(EntityInit.iron_pillar.get(), EntityIronPillar.setAttributes().build());
-		event.put(EntityInit.iron_wall.get(), EntityIronWall.setAttributes().build());
-		event.put(EntityInit.iron_spike.get(), EntityIronSpike.setAttributes().build());
-		event.put(EntityInit.wretched_will.get(), EntityWretchedWill.setAttributes().build());
+		event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
+		event.put(EntityInit.iron_pillar.get(), BloodConstructEntity.setAttributes().build());
+		event.put(EntityInit.iron_wall.get(), BloodConstructEntity.setAttributes().build());
+		event.put(EntityInit.iron_spike.get(), BloodConstructEntity.setAttributes().build());
+		event.put(EntityInit.wretched_will.get(), BloodConstructEntity.setAttributes().build());
 		event.put(EntityInit.leech.get(), LeechEntity.setAttributes().build());
 		event.put(EntityInit.fargone.get(), FargoneEntity.setAttributes().build());
 		event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());
@@ -223,9 +229,4 @@ public class EntityInit {
 
 	}
 
-	public static TagKey<EntityType<?>> createTag(String name){
-		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
-				new ResourceLocation(Hemomancy.MOD_ID,name));
-	}
-	
 }

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.manipulation.quick;
 
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -29,6 +28,27 @@ import net.minecraft.world.phys.Vec3;
 
 public class DeadlyGazeManip extends BloodManipulation {
 
+	@Nullable
+	public static EntityHitResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter) {
+		Vec3 eyes = shooter.getEyePosition(1f);
+		Vec3 end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
+
+		Entity result = null;
+		double distance = range * range;
+		for (Entity entity : shooter.level.getEntities(shooter, shooter.getBoundingBox().inflate(range), filter)) {
+			Optional<Vec3> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
+			if (opt.isPresent()) {
+				double dist = eyes.distanceToSqr(opt.get());
+				if (dist < distance) {
+					result = entity;
+					distance = dist;
+				}
+			}
+		}
+
+		return result == null ? null : new EntityHitResult(result);
+	}
+
 	public DeadlyGazeManip(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		super(name, cost, alignLevel, xpCost, type, rank, tendency, section);
@@ -51,33 +71,12 @@ public class DeadlyGazeManip extends BloodManipulation {
 
 					PacketHandler.sendClawParticles(end, ParticleColor.BLOOD, 64f, world.dimension());
 
-			
+
 					HutosLib.proxy.lightningFX(entVec, end, 64f, ParticleColor.BLOOD);
 
 				}
 			}
 		}
 
-	}
-
-	@Nullable
-	public static EntityHitResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter) {
-		Vec3 eyes = shooter.getEyePosition(1f);
-		Vec3 end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
-
-		Entity result = null;
-		double distance = range * range;
-		for (Entity entity : shooter.level.getEntities(shooter, shooter.getBoundingBox().inflate(range), filter)) {
-			Optional<Vec3> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
-			if (opt.isPresent()) {
-				double dist = eyes.distanceToSqr(opt.get());
-				if (dist < distance) {
-					result = entity;
-					distance = dist;
-				}
-			}
-		}
-
-		return result == null ? null : new EntityHitResult(result);
 	}
 }

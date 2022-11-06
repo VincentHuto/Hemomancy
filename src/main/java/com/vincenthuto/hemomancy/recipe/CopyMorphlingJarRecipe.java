@@ -16,6 +16,34 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class CopyMorphlingJarRecipe extends ShapedRecipe {
+	public static class Serializer implements RecipeSerializer<CopyMorphlingJarRecipe> {
+		@Override
+		public CopyMorphlingJarRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+			try {
+				return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
+			} catch (Exception exception) {
+				Hemomancy.LOGGER.info("Error reading CopyJar Recipe from packet: ", exception);
+				throw exception;
+			}
+		}
+
+		@Nullable
+		@Override
+		public CopyMorphlingJarRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+			return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
+		}
+
+		@Override
+		public void toNetwork(FriendlyByteBuf buffer, CopyMorphlingJarRecipe recipe) {
+			try {
+				RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
+			} catch (Exception exception) {
+				Hemomancy.LOGGER.info("Error writing CopyJar Recipe to packet: ", exception);
+				throw exception;
+			}
+		}
+	}
+
 	public CopyMorphlingJarRecipe(final ResourceLocation id, final String group, final int recipeWidth,
 			final int recipeHeight, final NonNullList<Ingredient> ingredients, final ItemStack recipeOutput) {
 		super(id, group, recipeWidth, recipeHeight, ingredients, recipeOutput);
@@ -46,34 +74,6 @@ public class CopyMorphlingJarRecipe extends ShapedRecipe {
 		}
 
 		return craftingResult;
-	}
-
-	public static class Serializer implements RecipeSerializer<CopyMorphlingJarRecipe> {
-		@Nullable
-		@Override
-		public CopyMorphlingJarRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-			return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
-		}
-
-		@Override
-		public CopyMorphlingJarRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-			try {
-				return new CopyMorphlingJarRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error reading CopyJar Recipe from packet: ", exception);
-				throw exception;
-			}
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, CopyMorphlingJarRecipe recipe) {
-			try {
-				RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
-			} catch (Exception exception) {
-				Hemomancy.LOGGER.info("Error writing CopyJar Recipe to packet: ", exception);
-				throw exception;
-			}
-		}
 	}
 
 }

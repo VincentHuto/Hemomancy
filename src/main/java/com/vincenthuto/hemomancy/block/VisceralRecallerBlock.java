@@ -53,10 +53,73 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 					Block.box(12.5, 8.5, 0.5, 15.5, 15.5, 3.5))
 			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
+	@Nullable
+	@SuppressWarnings("unchecked")
+	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
+		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
+	}
+
 	public VisceralRecallerBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
 
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(FACING);
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_,
+			CollisionContext p_60558_) {
+		return SHAPE_N;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		if (level.isClientSide) {
+			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
+					VisceralRecallerBlockEntity::clientTick);
+		} else {
+			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
+					VisceralRecallerBlockEntity::serverTick);
+		}
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+			boolean isMoving) {
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+		return new VisceralRecallerBlockEntity(p_153215_, p_153216_);
+	}
+
+	@Override
+	public BlockState rotate(BlockState state, Rotation rot) {
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+	}
+
+	@Override
+	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
+		super.triggerEvent(state, world, pos, id, param);
+		BlockEntity tileentity = world.getBlockEntity(pos);
+		return tileentity != null && tileentity.triggerEvent(id, param);
 	}
 
 	@Override
@@ -81,69 +144,6 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 		}
 		return InteractionResult.SUCCESS;
 
-	}
-
-	@Nullable
-	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
-			BlockEntityType<T> type) {
-		if (level.isClientSide) {
-			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
-					VisceralRecallerBlockEntity::clientTick);
-		} else {
-			return createTickerHelper(type, BlockEntityInit.visceral_artificial_recaller.get(),
-					VisceralRecallerBlockEntity::serverTick);
-		}
-	}
-
-	@Override
-	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
-		super.triggerEvent(state, world, pos, id, param);
-		BlockEntity tileentity = world.getBlockEntity(pos);
-		return tileentity != null && tileentity.triggerEvent(id, param);
-	}
-
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-			BlockEntityType<A> candidate, BlockEntityType<E> desired, BlockEntityTicker<? super E> ticker) {
-		return desired == candidate ? (BlockEntityTicker<A>) ticker : null;
-	}
-
-	@Override
-	public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_,
-			CollisionContext p_60558_) {
-		return SHAPE_N;
-	}
-
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-			boolean isMoving) {
-	}
-
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-	}
-
-	@Override
-	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
-	}
-
-	@Override
-	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
-	}
-
-	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
-
-	@Override
-	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new VisceralRecallerBlockEntity(p_153215_, p_153216_);
 	}
 
 }

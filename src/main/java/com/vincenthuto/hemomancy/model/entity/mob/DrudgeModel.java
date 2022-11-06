@@ -24,27 +24,6 @@ import net.minecraft.world.entity.Entity;
 public class DrudgeModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modeldrudgenew"), "main");
-	private final ModelPart tent;
-	private final ModelPart tent2;
-	private final ModelPart tent3;
-	private final ModelPart tent4;
-	private final ModelPart tent5;
-	private final ModelPart tent6;
-	private final ModelPart tent7;
-	private final ModelPart tent8;
-	private final ModelPart brain;
-
-	public DrudgeModel(ModelPart root) {
-		this.tent = root.getChild("tent");
-		this.tent2 = root.getChild("tent2");
-		this.tent3 = root.getChild("tent3");
-		this.tent4 = root.getChild("tent4");
-		this.tent5 = root.getChild("tent5");
-		this.tent6 = root.getChild("tent6");
-		this.tent7 = root.getChild("tent7");
-		this.tent8 = root.getChild("tent8");
-		this.brain = root.getChild("brain");
-	}
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
@@ -108,10 +87,26 @@ public class DrudgeModel<T extends Entity> extends EntityModel<T> {
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
+	private final ModelPart tent;
+	private final ModelPart tent2;
+	private final ModelPart tent3;
+	private final ModelPart tent4;
+	private final ModelPart tent5;
+	private final ModelPart tent6;
+	private final ModelPart tent7;
+	private final ModelPart tent8;
 
-	@Override
-	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+	private final ModelPart brain;
+	public DrudgeModel(ModelPart root) {
+		this.tent = root.getChild("tent");
+		this.tent2 = root.getChild("tent2");
+		this.tent3 = root.getChild("tent3");
+		this.tent4 = root.getChild("tent4");
+		this.tent5 = root.getChild("tent5");
+		this.tent6 = root.getChild("tent6");
+		this.tent7 = root.getChild("tent7");
+		this.tent8 = root.getChild("tent8");
+		this.brain = root.getChild("brain");
 	}
 
 	@Override
@@ -125,5 +120,10 @@ public class DrudgeModel<T extends Entity> extends EntityModel<T> {
 		tent7.render(poseStack, buffer, packedLight, packedOverlay);
 		tent8.render(poseStack, buffer, packedLight, packedOverlay);
 		brain.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
 	}
 }

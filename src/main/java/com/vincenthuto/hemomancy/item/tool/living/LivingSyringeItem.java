@@ -44,41 +44,74 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class LivingSyringeItem extends LivingItemItem {
 
+	@SuppressWarnings("rawtypes")
+	class LivingSyringeInventoryCap implements ICapabilitySerializable {
+		@SuppressWarnings("unused")
+		private int size;
+
+		private ItemStack itemStack;
+		private LivingSyringeItemHandler inventory;
+		private LazyOptional<IItemHandler> optional;
+		public LivingSyringeInventoryCap(ItemStack stack, int size, CompoundTag nbtIn) {
+			itemStack = stack;
+			this.size = size;
+			inventory = new LivingSyringeItemHandler(itemStack, size);
+			optional = LazyOptional.of(() -> inventory);
+		}
+
+		@Override
+		public void deserializeNBT(Tag nbt) {
+			inventory.load();
+		}
+
+		@Nonnull
+		@Override
+		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+			if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+				return optional.cast();
+			} else
+				return LazyOptional.empty();
+		}
+
+		@Override
+		public Tag serializeNBT() {
+			inventory.save();
+			return new CompoundTag();
+		}
+	}
+
 	public static String TAG_STATE = "state";
 
 	public LivingSyringeItem(Properties properties) {
 		super(properties);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-
-		if (!worldIn.isClientSide) {
-			if (playerIn.isShiftKeyDown()) {
-				playerIn.openMenu(new MenuProvider() {
-
-					@Override
-					public Component getDisplayName() {
-						return playerIn.getItemInHand(handIn).getHoverName();
-					}
-
-					@Nullable
-					@Override
-					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
-							Player p_createMenu_3_) {
-						return new LivingSyringeMenu(windowId, p_createMenu_3_.level,
-								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
-					}
-				});
-
-			} else {
-				ItemStack itemstack = playerIn.getItemInHand(handIn);
-				playerIn.startUsingItem(handIn);
-				return InteractionResultHolder.consume(itemstack);
+	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		CompoundTag CompoundTag = stack.getOrCreateTag();
+		CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
+		if (items != null) {
+			if (items.contains("Items", 9)) {
+				tooltip.add(ItemStack.of(((ListTag) items.get("Items")).getCompound(0)).getHoverName());
 			}
 		}
-		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
+	}
 
+	@Override
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.BOW;
+	}
+
+	@Override
+	public int getUseDuration(ItemStack stack) {
+		return 72000 / 2;
+	}
+
+	@Nullable
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+		return new LivingSyringeInventoryCap(stack, 1, nbt);
 	}
 
 	@Override
@@ -131,7 +164,7 @@ public class LivingSyringeItem extends LivingItemItem {
 						if (items != null) {
 							if (items.contains("Items", 9)) {
 								@SuppressWarnings("static-access")
-								ItemStack selectedStack = stack.of(((ListTag) items.get("Items")).getCompound(0));
+								ItemStack selectedStack = ItemStack.of(((ListTag) items.get("Items")).getCompound(0));
 								if (selectedStack.getItem() instanceof IMorphling) {
 									IMorphling morphling = (IMorphling) selectedStack.getItem();
 									morphling.use(player, player.getUsedItemHand(), stack, worldIn);
@@ -166,16 +199,6 @@ public class LivingSyringeItem extends LivingItemItem {
 
 	}
 
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		return 72000 / 2;
-	}
-
-	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.BOW;
-	}
-
 	public void summonDirectedOrb(Level worldIn, Player playerIn) {
 		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
 		miss.setPos(playerIn.getX() - 0.5, playerIn.getY() + 0.6, playerIn.getZ() - 0.5);
@@ -183,58 +206,35 @@ public class LivingSyringeItem extends LivingItemItem {
 		worldIn.addFreshEntity(miss);
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		CompoundTag CompoundTag = stack.getOrCreateTag();
-		CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-		if (items != null) {
-			if (items.contains("Items", 9)) {
-				tooltip.add(stack.of(((ListTag) items.get("Items")).getCompound(0)).getHoverName());
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+
+		if (!worldIn.isClientSide) {
+			if (playerIn.isShiftKeyDown()) {
+				playerIn.openMenu(new MenuProvider() {
+
+					@Nullable
+					@Override
+					public AbstractContainerMenu createMenu(int windowId, Inventory p_createMenu_2_,
+							Player p_createMenu_3_) {
+						return new LivingSyringeMenu(windowId, p_createMenu_3_.level,
+								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
+					}
+
+					@Override
+					public Component getDisplayName() {
+						return playerIn.getItemInHand(handIn).getHoverName();
+					}
+				});
+
+			} else {
+				ItemStack itemstack = playerIn.getItemInHand(handIn);
+				playerIn.startUsingItem(handIn);
+				return InteractionResultHolder.consume(itemstack);
 			}
 		}
-	}
+		return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
 
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new LivingSyringeInventoryCap(stack, 1, nbt);
-	}
-
-	@SuppressWarnings("rawtypes")
-	class LivingSyringeInventoryCap implements ICapabilitySerializable {
-		public LivingSyringeInventoryCap(ItemStack stack, int size, CompoundTag nbtIn) {
-			itemStack = stack;
-			this.size = size;
-			inventory = new LivingSyringeItemHandler(itemStack, size);
-			optional = LazyOptional.of(() -> inventory);
-		}
-
-		@SuppressWarnings("unused")
-		private int size;
-		private ItemStack itemStack;
-		private LivingSyringeItemHandler inventory;
-		private LazyOptional<IItemHandler> optional;
-
-		@Nonnull
-		@Override
-		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-			if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-				return optional.cast();
-			} else
-				return LazyOptional.empty();
-		}
-
-		@Override
-		public Tag serializeNBT() {
-			inventory.save();
-			return new CompoundTag();
-		}
-
-		@Override
-		public void deserializeNBT(Tag nbt) {
-			inventory.load();
-		}
 	}
 
 }

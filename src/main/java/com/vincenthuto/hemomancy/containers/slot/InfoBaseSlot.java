@@ -1,6 +1,6 @@
 /*
  * Decompiled with CFR 0.151.
- * 
+ *
  * Could not load the following classes:
  *  net.minecraft.nbt.CompoundTag
  *  net.minecraft.nbt.Tag
@@ -13,46 +13,140 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
 public abstract class InfoBaseSlot<V> {
-    protected final String key;
-    protected CompoundTag tag;
+    public static class BooleanDataEntry
+    extends InfoBaseSlot<Boolean> {
+        private boolean value;
 
-    public InfoBaseSlot(String key) {
-        this.key = key;
-    }
-
-    public String getKey() {
-        return this.key;
-    }
-
-    public abstract Class<?> getType();
-
-    public abstract CompoundTag getTag();
-
-    protected CompoundTag getBaseTag() {
-        if (this.tag == null) {
-            this.tag = new CompoundTag();
-            this.tag.putString("key", this.key);
+        public BooleanDataEntry(String key, boolean value) {
+            super(key);
+            this.value = value;
         }
-        return this.tag;
+
+        @Override
+        public boolean asBoolean() {
+            return this.value;
+        }
+
+        @Override
+        public Boolean asObject() {
+            return this.asBoolean();
+        }
+
+        @Override
+        public CompoundTag getTag() {
+            if (this.tag == null) {
+                this.tag = this.getBaseTag();
+                this.tag.putBoolean("value", this.value);
+            }
+            return this.tag;
+        }
+
+        @Override
+        public Class<?> getType() {
+            return Boolean.class;
+        }
+    }
+    public static class FloatDataEntry
+    extends InfoBaseSlot<Float> {
+        private float value;
+
+        public FloatDataEntry(String key, float value) {
+            super(key);
+            this.value = value;
+        }
+
+        @Override
+        public float asFloat() {
+            return this.value;
+        }
+
+        @Override
+        public Float asObject() {
+            return Float.valueOf(this.asFloat());
+        }
+
+        @Override
+        public CompoundTag getTag() {
+            if (this.tag == null) {
+                this.tag = this.getBaseTag();
+                this.tag.putFloat("value", this.value);
+            }
+            return this.tag;
+        }
+
+        @Override
+        public Class<?> getType() {
+            return Float.class;
+        }
     }
 
-    public String asString() {
-        throw new InvalidTypeException(this.getKey() + " cannot be converted into a string.");
+    public static class IntegerDataEntry
+    extends InfoBaseSlot<Integer> {
+        private int value;
+
+        public IntegerDataEntry(String key, int value) {
+            super(key);
+            this.value = value;
+        }
+
+        @Override
+        public int asInt() {
+            return this.value;
+        }
+
+        @Override
+        public Integer asObject() {
+            return this.asInt();
+        }
+
+        @Override
+        public CompoundTag getTag() {
+            if (this.tag == null) {
+                this.tag = this.getBaseTag();
+                this.tag.putInt("value", this.value);
+            }
+            return this.tag;
+        }
+
+        @Override
+        public Class<?> getType() {
+            return Integer.class;
+        }
     }
 
-    public int asInt() {
-        throw new InvalidTypeException(this.getKey() + " cannot be converted into an integer.");
-    }
+    public static class StringDataEntry
+    extends InfoBaseSlot<String> {
+        private String value;
 
-    public float asFloat() {
-        throw new InvalidTypeException(this.getKey() + " cannot be converted into a float.");
-    }
+        public StringDataEntry(String key, String value) {
+            super(key);
+            this.value = value;
+        }
 
-    public boolean asBoolean() {
-        throw new InvalidTypeException(this.getKey() + " cannot be converted into a boolean.");
-    }
+        @Override
+        public String asObject() {
+            return this.asString();
+        }
 
-    public abstract V asObject();
+        @Override
+        public String asString() {
+            return this.value;
+        }
+
+        @Override
+        public CompoundTag getTag() {
+            if (this.tag == null) {
+                this.tag = this.getBaseTag();
+                this.tag.putString("value", this.value);
+            }
+            return this.tag;
+        }
+
+        @Override
+        public Class<?> getType() {
+            return String.class;
+        }
+    }
 
     public static InfoBaseSlot<?> fromNBT(CompoundTag tag) {
         String key = tag.getString("key");
@@ -73,140 +167,46 @@ public abstract class InfoBaseSlot<V> {
         throw new RuntimeException("Invalid NBT tag stored in data entry: " + tag);
     }
 
-    public static class StringDataEntry
-    extends InfoBaseSlot<String> {
-        private String value;
+    protected final String key;
 
-        public StringDataEntry(String key, String value) {
-            super(key);
-            this.value = value;
-        }
+    protected CompoundTag tag;
 
-        @Override
-        public Class<?> getType() {
-            return String.class;
-        }
-
-        @Override
-        public CompoundTag getTag() {
-            if (this.tag == null) {
-                this.tag = this.getBaseTag();
-                this.tag.putString("value", this.value);
-            }
-            return this.tag;
-        }
-
-        @Override
-        public String asString() {
-            return this.value;
-        }
-
-        @Override
-        public String asObject() {
-            return this.asString();
-        }
+    public InfoBaseSlot(String key) {
+        this.key = key;
     }
 
-    public static class IntegerDataEntry
-    extends InfoBaseSlot<Integer> {
-        private int value;
-
-        public IntegerDataEntry(String key, int value) {
-            super(key);
-            this.value = value;
-        }
-
-        @Override
-        public Class<?> getType() {
-            return Integer.class;
-        }
-
-        @Override
-        public CompoundTag getTag() {
-            if (this.tag == null) {
-                this.tag = this.getBaseTag();
-                this.tag.putInt("value", this.value);
-            }
-            return this.tag;
-        }
-
-        @Override
-        public int asInt() {
-            return this.value;
-        }
-
-        @Override
-        public Integer asObject() {
-            return this.asInt();
-        }
+    public boolean asBoolean() {
+        throw new InvalidTypeException(this.getKey() + " cannot be converted into a boolean.");
     }
 
-    public static class FloatDataEntry
-    extends InfoBaseSlot<Float> {
-        private float value;
-
-        public FloatDataEntry(String key, float value) {
-            super(key);
-            this.value = value;
-        }
-
-        @Override
-        public Class<?> getType() {
-            return Float.class;
-        }
-
-        @Override
-        public CompoundTag getTag() {
-            if (this.tag == null) {
-                this.tag = this.getBaseTag();
-                this.tag.putFloat("value", this.value);
-            }
-            return this.tag;
-        }
-
-        @Override
-        public float asFloat() {
-            return this.value;
-        }
-
-        @Override
-        public Float asObject() {
-            return Float.valueOf(this.asFloat());
-        }
+    public float asFloat() {
+        throw new InvalidTypeException(this.getKey() + " cannot be converted into a float.");
     }
 
-    public static class BooleanDataEntry
-    extends InfoBaseSlot<Boolean> {
-        private boolean value;
-
-        public BooleanDataEntry(String key, boolean value) {
-            super(key);
-            this.value = value;
-        }
-
-        @Override
-        public Class<?> getType() {
-            return Boolean.class;
-        }
-
-        @Override
-        public CompoundTag getTag() {
-            if (this.tag == null) {
-                this.tag = this.getBaseTag();
-                this.tag.putBoolean("value", this.value);
-            }
-            return this.tag;
-        }
-
-        @Override
-        public boolean asBoolean() {
-            return this.value;
-        }
-
-        @Override
-        public Boolean asObject() {
-            return this.asBoolean();
-        }
+    public int asInt() {
+        throw new InvalidTypeException(this.getKey() + " cannot be converted into an integer.");
     }
+
+    public abstract V asObject();
+
+    public String asString() {
+        throw new InvalidTypeException(this.getKey() + " cannot be converted into a string.");
+    }
+
+    protected CompoundTag getBaseTag() {
+        if (this.tag == null) {
+            this.tag = new CompoundTag();
+            this.tag.putString("key", this.key);
+        }
+        return this.tag;
+    }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public abstract CompoundTag getTag();
+
+    public abstract Class<?> getType();
 }
 

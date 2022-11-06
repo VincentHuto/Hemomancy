@@ -35,11 +35,32 @@ public class UnsignedLedgerItem extends Item {
 	}
 
 	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag()) {
+			if (!stack.getTag().getBoolean(TAG_STATE)) {
+				tooltip.add(Component.literal("Unsigned").withStyle(ChatFormatting.GRAY));
+			} else {
+				if (stack.getTag().contains(TAG_BLOODLINE)) {
+					tooltip.add(Component.literal("Signed with: "
+							+ Bloodline.deserialize(stack.getTag().getCompound(TAG_BLOODLINE)).getName())
+									.withStyle(ChatFormatting.RED));
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return stack.hasTag() && stack.getTag().getBoolean(TAG_STATE);
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (stack.getItem() instanceof UnsignedLedgerItem) {
 			String bloodLineName = playerIn.getName().getContents() + "'s Blood Line";
-			ArrayList<UUID> uuids = new ArrayList<UUID>();
+			ArrayList<UUID> uuids = new ArrayList<>();
 			// Created using the leaders UUID and the gametime at time of creation
 			UUID bloodLineUUID = new UUID(playerIn.getUUID().getMostSignificantBits(), playerIn.level.getGameTime());
 			Bloodline playerLine = new Bloodline(bloodLineName, playerIn.getUUID(), bloodLineUUID, uuids);
@@ -72,26 +93,5 @@ public class UnsignedLedgerItem extends Item {
 
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag()) {
-			if (!stack.getTag().getBoolean(TAG_STATE)) {
-				tooltip.add(Component.literal("Unsigned").withStyle(ChatFormatting.GRAY));
-			} else {
-				if (stack.getTag().contains(TAG_BLOODLINE)) {
-					tooltip.add(Component.literal("Signed with: "
-							+ Bloodline.deserialize(stack.getTag().getCompound(TAG_BLOODLINE)).getName())
-									.withStyle(ChatFormatting.RED));
-				}
-			}
-		}
-	}
-
-	@Override
-	public boolean isFoil(ItemStack stack) {
-		return stack.hasTag() && stack.getTag().getBoolean(TAG_STATE);
 	}
 }

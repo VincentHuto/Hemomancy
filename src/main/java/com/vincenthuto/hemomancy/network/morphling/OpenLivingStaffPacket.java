@@ -32,17 +32,17 @@ public class OpenLivingStaffPacket {
 			ServerPlayer player = ctx.get().getSender();
 			if (!Hemomancy.findItemInPlayerInv(player, LivingStaffItem.class).isEmpty()) {
 				player.openMenu(new MenuProvider() {
-					@Override
-					public Component getDisplayName() {
-						return Hemomancy.findItemInPlayerInv(player, LivingStaffItem.class).getHoverName();
-					}
-
 					@Nullable
 					@Override
 					public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_,
 							Player p_createMenu_3_) {
 						return new LivingStaffMenu(p_createMenu_1_, p_createMenu_3_.level,
 								p_createMenu_3_.blockPosition(), p_createMenu_2_, p_createMenu_3_);
+					}
+
+					@Override
+					public Component getDisplayName() {
+						return Hemomancy.findItemInPlayerInv(player, LivingStaffItem.class).getHoverName();
 					}
 				});
 			}

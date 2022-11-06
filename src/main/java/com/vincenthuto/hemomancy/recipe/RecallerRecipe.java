@@ -19,8 +19,28 @@ import net.minecraft.world.level.Level;
 
 public class RecallerRecipe extends CustomRecipe {
 
-	Map<EnumBloodTendency, Float> tendency = new HashMap<EnumBloodTendency, Float>();
+	@SuppressWarnings("serial")
+	public static final HashMap<EnumBloodTendency, Float> blank() {
+		return new HashMap<>() {
+			{
+				put(EnumBloodTendency.ANIMUS, 0f);
+				put(EnumBloodTendency.MORTEM, 0f);
+				put(EnumBloodTendency.DUCTILIS, 0f);
+				put(EnumBloodTendency.FERRIC, 0f);
+				put(EnumBloodTendency.LUX, 0f);
+				put(EnumBloodTendency.TENEBRIS, 0f);
+				put(EnumBloodTendency.FLAMMEUS, 0f);
+				put(EnumBloodTendency.CONGEATIO, 0f);
+			}
+		};
+	}
+	public static List<RecallerRecipe> getAllRecipes(Level world) {
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe_type.get());
+	}
+	Map<EnumBloodTendency, Float> tendency = new HashMap<>();
+
 	protected ItemStack result = null;
+
 	protected Ingredient ingredient = null;
 
 	public RecallerRecipe(ResourceLocation pId, Ingredient ingredient, Map<EnumBloodTendency, Float> tends,
@@ -38,21 +58,14 @@ public class RecallerRecipe extends CustomRecipe {
 		this.result = result;
 	}
 
-	public boolean matchRecipe(RecallerRecipe checkRecipe) {
-		if (getTendency().equals(checkRecipe.getTendency())) {
-			if (ingredient.equals(checkRecipe.ingredient)) {
-				return true;
-			}
-		}
+	@Override
+	public ItemStack assemble(CraftingContainer pContainer) {
+		return this.getResultItem().copy();
+	}
+
+	@Override
+	public boolean canCraftInDimensions(int pWidth, int pHeight) {
 		return false;
-	}
-
-	public Map<EnumBloodTendency, Float> getTendency() {
-		return tendency;
-	}
-
-	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
-		this.tendency = tendency;
 	}
 
 	public Ingredient getIngredient() {
@@ -66,35 +79,18 @@ public class RecallerRecipe extends CustomRecipe {
 		return ing;
 	}
 
-	@SuppressWarnings("serial")
-	public static final HashMap<EnumBloodTendency, Float> blank() {
-		return new HashMap<EnumBloodTendency, Float>() {
-			{
-				put(EnumBloodTendency.ANIMUS, 0f);
-				put(EnumBloodTendency.MORTEM, 0f);
-				put(EnumBloodTendency.DUCTILIS, 0f);
-				put(EnumBloodTendency.FERRIC, 0f);
-				put(EnumBloodTendency.LUX, 0f);
-				put(EnumBloodTendency.TENEBRIS, 0f);
-				put(EnumBloodTendency.FLAMMEUS, 0f);
-				put(EnumBloodTendency.CONGEATIO, 0f);
-			}
-		};
-	}
-
 	@Override
 	public ItemStack getResultItem() {
 		return this.result;
 	}
 
 	@Override
-	public boolean matches(CraftingContainer pContainer, Level pLevel) {
-		return true;
+	public RecipeSerializer<?> getSerializer() {
+		return RecipeInit.recaller_recipe_serializer.get();
 	}
 
-	@Override
-	public ItemStack assemble(CraftingContainer pContainer) {
-		return this.getResultItem().copy();
+	public Map<EnumBloodTendency, Float> getTendency() {
+		return tendency;
 	}
 
 	@Override
@@ -103,17 +99,21 @@ public class RecallerRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean canCraftInDimensions(int pWidth, int pHeight) {
+	public boolean matches(CraftingContainer pContainer, Level pLevel) {
+		return true;
+	}
+
+	public boolean matchRecipe(RecallerRecipe checkRecipe) {
+		if (getTendency().equals(checkRecipe.getTendency())) {
+			if (ingredient.equals(checkRecipe.ingredient)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
-	@Override
-	public RecipeSerializer<?> getSerializer() {
-		return RecipeInit.recaller_recipe_serializer.get();
-	}
-
-	public static List<RecallerRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.recaller_recipe_type.get());
+	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
+		this.tendency = tendency;
 	}
 
 	@Override

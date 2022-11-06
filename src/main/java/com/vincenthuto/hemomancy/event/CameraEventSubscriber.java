@@ -43,6 +43,8 @@ public class CameraEventSubscriber {
 //
 //	}
 
+	private static Font fontRenderer;
+
 	@SubscribeEvent
 	public static void cameraVIew(EntityEvent.Size event) {
 		if (event.getEntity() instanceof Player player) {
@@ -67,8 +69,6 @@ public class CameraEventSubscriber {
 			}
 		}
 	}
-
-	private static Font fontRenderer;
 
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent(receiveCanceled = true)
@@ -129,6 +129,40 @@ public class CameraEventSubscriber {
 //		}
 	}
 
+	public static void renderPlayerArm(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
+			float pEquippedProgress, float pSwingProgress, HumanoidArm pSide) {
+		Minecraft minecraft = Minecraft.getInstance();
+		boolean flag = pSide != HumanoidArm.LEFT;
+		float f = flag ? 1.0F : -1.0F;
+		float f1 = Mth.sqrt(pSwingProgress);
+		float f2 = -0.3F * Mth.sin(f1 * (float) Math.PI);
+		float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2F));
+		float f4 = -0.4F * Mth.sin(pSwingProgress * (float) Math.PI);
+		pMatrixStack.translate(f * (f2 + 0.64000005F), f3 + -0.6F + pEquippedProgress * -0.6F,
+				f4 + -0.71999997F);
+		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * 45.0F));
+		float f5 = Mth.sin(pSwingProgress * pSwingProgress * (float) Math.PI);
+		float f6 = Mth.sin(f1 * (float) Math.PI);
+		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
+		pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+		AbstractClientPlayer abstractclientplayer = minecraft.player;
+		RenderSystem.setShaderTexture(0, abstractclientplayer.getSkinTextureLocation());
+		pMatrixStack.translate(f * -1.0F, 3.6F, 3.5D);
+		pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));
+		pMatrixStack.mulPose(Vector3f.XP.rotationDegrees(200.0F));
+		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * -135.0F));
+		pMatrixStack.translate(f * 5.6F, 0.0D, 0.0D);
+		pMatrixStack.scale(2, 2, 2);
+		PlayerRenderer playerrenderer = (PlayerRenderer) minecraft.getEntityRenderDispatcher()
+				.<AbstractClientPlayer>getRenderer(abstractclientplayer);
+		if (flag) {
+			playerrenderer.renderRightHand(pMatrixStack, pBuffer, pCombinedLight, abstractclientplayer);
+		} else {
+			playerrenderer.renderLeftHand(pMatrixStack, pBuffer, pCombinedLight, abstractclientplayer);
+		}
+
+	}
+
 	@SubscribeEvent
 	public static void renderPlayerFirstPerson(RenderHandEvent event) {
 //		PoseStack ms = event.getPoseStack();
@@ -156,40 +190,6 @@ public class CameraEventSubscriber {
 //			}
 //		});
 //		ms.popPose();
-
-	}
-
-	public static void renderPlayerArm(PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
-			float pEquippedProgress, float pSwingProgress, HumanoidArm pSide) {
-		Minecraft minecraft = Minecraft.getInstance();
-		boolean flag = pSide != HumanoidArm.LEFT;
-		float f = flag ? 1.0F : -1.0F;
-		float f1 = Mth.sqrt(pSwingProgress);
-		float f2 = -0.3F * Mth.sin(f1 * (float) Math.PI);
-		float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2F));
-		float f4 = -0.4F * Mth.sin(pSwingProgress * (float) Math.PI);
-		pMatrixStack.translate((double) (f * (f2 + 0.64000005F)), (double) (f3 + -0.6F + pEquippedProgress * -0.6F),
-				(double) (f4 + -0.71999997F));
-		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * 45.0F));
-		float f5 = Mth.sin(pSwingProgress * pSwingProgress * (float) Math.PI);
-		float f6 = Mth.sin(f1 * (float) Math.PI);
-		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
-		pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
-		AbstractClientPlayer abstractclientplayer = minecraft.player;
-		RenderSystem.setShaderTexture(0, abstractclientplayer.getSkinTextureLocation());
-		pMatrixStack.translate((double) (f * -1.0F), (double) 3.6F, 3.5D);
-		pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));
-		pMatrixStack.mulPose(Vector3f.XP.rotationDegrees(200.0F));
-		pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * -135.0F));
-		pMatrixStack.translate((double) (f * 5.6F), 0.0D, 0.0D);
-		pMatrixStack.scale(2, 2, 2);
-		PlayerRenderer playerrenderer = (PlayerRenderer) minecraft.getEntityRenderDispatcher()
-				.<AbstractClientPlayer>getRenderer(abstractclientplayer);
-		if (flag) {
-			playerrenderer.renderRightHand(pMatrixStack, pBuffer, pCombinedLight, abstractclientplayer);
-		} else {
-			playerrenderer.renderLeftHand(pMatrixStack, pBuffer, pCombinedLight, abstractclientplayer);
-		}
 
 	}
 

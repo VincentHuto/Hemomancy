@@ -17,15 +17,9 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 public class BloodBulletModel extends EntityModel<BloodBulletEntity> {
-	
+
 	public static final ModelLayerLocation blood_bullet = new ModelLayerLocation(
 			new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet"), "main");
-
-	private final ModelPart head;
-
-	public BloodBulletModel(ModelPart root) {
-		this.head = root.getChild("head");
-	}
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
@@ -59,15 +53,21 @@ public class BloodBulletModel extends EntityModel<BloodBulletEntity> {
 		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 
-	@Override
-	public void setupAnim(BloodBulletEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
-			float netHeadYaw, float headPitch) {
+	private final ModelPart head;
 
+	public BloodBulletModel(ModelPart root) {
+		this.head = root.getChild("head");
 	}
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		head.render(poseStack, buffer, packedLight, packedOverlay);
+	}
+
+	@Override
+	public void setupAnim(BloodBulletEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
+			float netHeadYaw, float headPitch) {
+
 	}
 }

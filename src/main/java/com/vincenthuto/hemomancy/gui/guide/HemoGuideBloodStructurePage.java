@@ -30,6 +30,13 @@ public class HemoGuideBloodStructurePage extends GuiGuidePage {
 		this.recipe = recipe;
 	}
 
+	public HemoGuideBloodStructurePage(int pageNumIn, String categoryIn, String titleIn, ItemStack iconIn,
+			ResourceLocation recipe) {
+		super(pageNumIn, categoryIn, titleIn, "", iconIn);
+		this.recipe = recipe;
+
+	}
+
 	public HemoGuideBloodStructurePage(int pageNumIn, String catagoryIn, String titleIn, ResourceLocation recipe) {
 		super(pageNumIn, catagoryIn, titleIn, "", "");
 		this.recipe = recipe;
@@ -43,13 +50,6 @@ public class HemoGuideBloodStructurePage extends GuiGuidePage {
 
 	}
 
-	public HemoGuideBloodStructurePage(int pageNumIn, String catagoryIn, String titleIn, String subtitleIn,
-			String textIn, ResourceLocation recipe) {
-		super(pageNumIn, catagoryIn, titleIn, subtitleIn, textIn);
-		this.recipe = recipe;
-
-	}
-
 	public HemoGuideBloodStructurePage(int pageNumIn, String categoryIn, String titleIn, String subtitleIn,
 			String textIn, ItemStack iconIn, ResourceLocation recipe) {
 		super(pageNumIn, categoryIn, titleIn, subtitleIn, iconIn, textIn);
@@ -57,11 +57,25 @@ public class HemoGuideBloodStructurePage extends GuiGuidePage {
 
 	}
 
-	public HemoGuideBloodStructurePage(int pageNumIn, String categoryIn, String titleIn, ItemStack iconIn,
-			ResourceLocation recipe) {
-		super(pageNumIn, categoryIn, titleIn, "", iconIn);
+	public HemoGuideBloodStructurePage(int pageNumIn, String catagoryIn, String titleIn, String subtitleIn,
+			String textIn, ResourceLocation recipe) {
+		super(pageNumIn, catagoryIn, titleIn, subtitleIn, textIn);
 		this.recipe = recipe;
 
+	}
+
+	@Override
+	public TomeLib getOwnerTome() {
+		return new HemoLib();
+	}
+
+	@Override
+	public boolean mouseDragged(double xPos, double yPos, int button, double dragLeftRight, double dragUpDown) {
+		xDragPos = xPos;
+		yDragPos = yPos;
+		this.dragLeftRight += dragLeftRight / 2;
+		this.dragUpDown -= dragUpDown / 2;
+		return super.mouseDragged(xPos, yPos, button, dragLeftRight, dragUpDown);
 	}
 
 	@Override
@@ -97,20 +111,6 @@ public class HemoGuideBloodStructurePage extends GuiGuidePage {
 					(int) (left - guiWidth + 196), (int) (top + guiHeight - 160));
 		}
 
-	}
-
-	@Override
-	public boolean mouseDragged(double xPos, double yPos, int button, double dragLeftRight, double dragUpDown) {
-		xDragPos = xPos;
-		yDragPos = yPos;
-		this.dragLeftRight += dragLeftRight / 2;
-		this.dragUpDown -= dragUpDown / 2;
-		return super.mouseDragged(xPos, yPos, button, dragLeftRight, dragUpDown);
-	}
-
-	@Override
-	public TomeLib getOwnerTome() {
-		return new HemoLib();
 	}
 
 }

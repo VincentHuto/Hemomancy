@@ -14,23 +14,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
 public class BloodTendencyServerPacket {
-	private Map<EnumBloodTendency, Float> Tendency = new HashMap<>();
-
-	public BloodTendencyServerPacket(Map<EnumBloodTendency, Float> TendencyIn) {
-		this.Tendency = TendencyIn;
-	}
-
-	// This code only runs on the client
-	@SuppressWarnings("unused")
-	public static void handle(final BloodTendencyServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
-
-			Minecraft.getInstance().player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
-
-		});
-		ctx.get().setPacketHandled(true);
+	public static BloodTendencyServerPacket decode(final FriendlyByteBuf packetBuffer) {
+		Map<EnumBloodTendency, Float> devo = new HashMap<>();
+		for (EnumBloodTendency key : EnumBloodTendency.values()) {
+			devo.put(key, packetBuffer.readNbt().getFloat(key.toString()));
+		}
+		return new BloodTendencyServerPacket(devo);
 	}
 
 	public static void encode(final BloodTendencyServerPacket msg, final FriendlyByteBuf packetBuffer) {
@@ -47,11 +36,22 @@ public class BloodTendencyServerPacket {
 		}
 	}
 
-	public static BloodTendencyServerPacket decode(final FriendlyByteBuf packetBuffer) {
-		Map<EnumBloodTendency, Float> devo = new HashMap<>();
-		for (EnumBloodTendency key : EnumBloodTendency.values()) {
-			devo.put(key, packetBuffer.readNbt().getFloat(key.toString()));
-		}
-		return new BloodTendencyServerPacket(devo);
+	// This code only runs on the client
+	@SuppressWarnings("unused")
+	public static void handle(final BloodTendencyServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			ServerPlayer sender = ctx.get().getSender();
+
+			Minecraft.getInstance().player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(IllegalStateException::new).setTendency(msg.Tendency);
+
+		});
+		ctx.get().setPacketHandled(true);
+	}
+
+	private Map<EnumBloodTendency, Float> Tendency = new HashMap<>();
+
+	public BloodTendencyServerPacket(Map<EnumBloodTendency, Float> TendencyIn) {
+		this.Tendency = TendencyIn;
 	}
 }

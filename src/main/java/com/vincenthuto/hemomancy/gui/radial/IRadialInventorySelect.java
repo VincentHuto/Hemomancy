@@ -28,13 +28,13 @@ public interface IRadialInventorySelect extends IRadialMenuItem {
 
 	public int capacity();
 
-	public void setIndex(ItemStack var1, int var2);
-
 	public int getIndex(ItemStack var1);
 
 	default public IItemHandlerModifiable getInventory(ItemStack stackEquipped) {
 		return new ItemInventoryBase(stackEquipped, this.capacity());
 	}
+
+	public void setIndex(ItemStack var1, int var2);
 
 	default public void setSlot(Player player, ItemStack stack, int index, boolean offhand, boolean packet) {
 		if (stack.getItem() instanceof IRadialInventorySelect) {

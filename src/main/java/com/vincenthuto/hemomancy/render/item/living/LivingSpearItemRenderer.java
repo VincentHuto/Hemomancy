@@ -26,16 +26,19 @@ import net.minecraft.world.item.ItemStack;
 
 public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	public final LivingSpearModel spearModel;
-
 	public static ResourceLocation living_spear = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_living_spear_hand.png");
+
+	public final LivingSpearModel spearModel;
 
 	public LivingSpearItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
 		spearModel= new LivingSpearModel(p_172551_.bakeLayer(LivingSpearModel.living_spear));
 	}
 
+	public LivingSpearModel getModel() {
+		return spearModel;
+	}
 	@Override
 	public void renderByItem(ItemStack stack, ItemTransforms.TransformType p_239207_2_, PoseStack ms,
 			MultiBufferSource buffers, int light, int overlay) {
@@ -49,7 +52,7 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 					.immediate(Tesselator.getInstance().getBuilder());
-			
+
 			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_spear));
 
 			boolean itemIsInUse = player.getUseItemRemainingTicks() > 0;
@@ -104,8 +107,5 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 			irendertypebuffer$impl.endBatch();
 			ms.popPose();
 		}
-	}
-	public LivingSpearModel getModel() {
-		return spearModel;
 	}
 }

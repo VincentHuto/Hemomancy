@@ -36,21 +36,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 public class BloodTendencyEvents {
+	private static Font fontRenderer;
+
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
 			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodtendancy"), new BloodTendencyProvider());
 		}
-	}
-
-	@SubscribeEvent
-	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		ServerPlayer player = (ServerPlayer) event.getEntity();
-		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
-		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
-				new BloodTendencyServerPacket(BloodTendency));
-//		player.displayClientMessage(
-//				Component.literal("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
 	}
 
 	@SubscribeEvent
@@ -68,15 +60,6 @@ public class BloodTendencyEvents {
 				new BloodTendencyServerPacket(BloodTendency));
 //		player.displayClientMessage(
 //				Component.literal("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
-	}
-
-	@SubscribeEvent
-	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
-		/*
-		 * // Causes particles when the air is hit if (e.getLevel().isRemote) {
-		 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
-		 * PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks())); }
-		 */
 	}
 
 	@SubscribeEvent
@@ -104,35 +87,13 @@ public class BloodTendencyEvents {
 	}
 
 	@SubscribeEvent
-	public static void playerDeath(PlayerEvent.Clone event) {
-
-		Player peorig = event.getOriginal();
-		Player playernew = event.getEntity();
-		if (event.isWasDeath()) {
-			peorig.reviveCaps();
-			IBloodTendency bloodTendencyNew = playernew.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-					.orElseThrow(IllegalStateException::new);
-			bloodTendencyNew.setTendency(peorig.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-					.orElseThrow(IllegalArgumentException::new).getTendency());
-			peorig.invalidateCaps();
-		}
-
+	public static void onPlayerHitsBlock(PlayerInteractEvent.LeftClickEmpty e) {
+		/*
+		 * // Causes particles when the air is hit if (e.getLevel().isRemote) {
+		 * PacketHandler.CHANNELBLOODVOLUME .sendToServer(new
+		 * PacketGroundBloodDraw(ClientEventSubscriber.getPartialTicks())); }
+		 */
 	}
-
-	@SubscribeEvent
-	public static void respawn(PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
-			if (!player.getCommandSenderWorld().isClientSide) {
-				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-						.orElseThrow(IllegalArgumentException::new);
-				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new BloodTendencyServerPacket(tendency.getTendency()));
-			}
-		}
-	}
-
-	private static Font fontRenderer;
 
 	@SuppressWarnings({ "deprecation", "unused" })
 	@OnlyIn(Dist.CLIENT)
@@ -190,7 +151,7 @@ public class BloodTendencyEvents {
 							/*
 							 * AbstractGui.fill(event.getPoseStack(), 0, 0, event.getWindow().getWidth(),
 							 * event.getWindow().getHeight(), new Color(0, 0, 0, 0).getRGB());
-							 * 
+							 *
 							 * fontRenderer.drawString(event.getPoseStack(), "No BloodTendency", 5, 5, new
 							 * Color(0, 0, 0, 0).getRGB());
 							 */
@@ -200,6 +161,45 @@ public class BloodTendencyEvents {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void playerDeath(PlayerEvent.Clone event) {
+
+		Player peorig = event.getOriginal();
+		Player playernew = event.getEntity();
+		if (event.isWasDeath()) {
+			peorig.reviveCaps();
+			IBloodTendency bloodTendencyNew = playernew.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(IllegalStateException::new);
+			bloodTendencyNew.setTendency(peorig.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+					.orElseThrow(IllegalArgumentException::new).getTendency());
+			peorig.invalidateCaps();
+		}
+
+	}
+
+	@SubscribeEvent
+	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		Map<EnumBloodTendency, Float> BloodTendency = BloodTendencyProvider.getPlayerTendency(player);
+		PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> player),
+				new BloodTendencyServerPacket(BloodTendency));
+//		player.displayClientMessage(
+//				Component.literal("Welcome! Current Blood Tendency: " + ChatFormatting.GOLD + BloodTendency), false);
+	}
+
+	@SubscribeEvent
+	public static void respawn(PlayerRespawnEvent event) {
+		if (event.getEntity() instanceof Player) {
+			Player player = event.getEntity();
+			if (!player.getCommandSenderWorld().isClientSide) {
+				IBloodTendency tendency = player.getCapability(BloodTendencyProvider.TENDENCY_CAPA)
+						.orElseThrow(IllegalArgumentException::new);
+				PacketHandler.CHANNELBLOODTENDENCY.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+						new BloodTendencyServerPacket(tendency.getTendency()));
 			}
 		}
 	}

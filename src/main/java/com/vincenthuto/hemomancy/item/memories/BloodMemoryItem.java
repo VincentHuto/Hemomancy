@@ -38,6 +38,14 @@ public class BloodMemoryItem extends Item {
 		this.manip = manip;
 	}
 
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (getManip() != null) {
+			tooltip.add(Component.literal(getManip().getProperName()));
+		}
+	}
+
 	public BloodManipulation getManip() {
 		return manip.get();
 	}
@@ -49,14 +57,6 @@ public class BloodMemoryItem extends Item {
 				.literal(HLTextUtils.stringToBloody(
 						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
 				.withStyle(ChatFormatting.DARK_RED);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (getManip() != null) {
-			tooltip.add(Component.literal(getManip().getProperName()));
-		}
 	}
 
 	@Override

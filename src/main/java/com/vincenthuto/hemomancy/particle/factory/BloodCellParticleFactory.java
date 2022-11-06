@@ -12,8 +12,12 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 
 public class BloodCellParticleFactory implements ParticleProvider<BloodCellData> {
-	private final SpriteSet spriteSet;
 	public static final String NAME = "blood_cell";
+	public static ParticleOptions createData(ParticleColor color) {
+		return new BloodCellData(ParticleInit.blood_cell.get(), color);
+	}
+
+	private final SpriteSet spriteSet;
 
 	public BloodCellParticleFactory(SpriteSet sprite) {
 		this.spriteSet = sprite;
@@ -25,10 +29,6 @@ public class BloodCellParticleFactory implements ParticleProvider<BloodCellData>
 		return new BloodCellParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, data.color.getRed(),
 				data.color.getGreen(), data.color.getBlue(), 2.0f, .025f, 50, this.spriteSet);
 
-	}
-
-	public static ParticleOptions createData(ParticleColor color) {
-		return new BloodCellData(ParticleInit.blood_cell.get(), color);
 	}
 
 }

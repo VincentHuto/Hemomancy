@@ -60,13 +60,8 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	}
 
 	@Override
-	public BlockState updateShape(BlockState p_53323_, Direction p_53324_, BlockState p_53325_, LevelAccessor p_53326_,
-			BlockPos p_53327_, BlockPos p_53328_) {
-		if (p_53323_.getValue(WATERLOGGED)) {
-			p_53326_.scheduleTick(p_53327_, Fluids.WATER, Fluids.WATER.getTickDelay(p_53326_));
-		}
-
-		return super.updateShape(p_53323_, p_53324_, p_53325_, p_53326_, p_53327_, p_53328_);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		builder.add(FACING, STENTED, NAMED, WATERLOGGED);
 	}
 
 	@Override
@@ -75,8 +70,17 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	}
 
 	@Override
-	public boolean propagatesSkylightDown(BlockState p_52348_, BlockGetter p_52349_, BlockPos p_52350_) {
-		return !p_52348_.getValue(WATERLOGGED);
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		return SHAPE_N;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
+
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(STENTED, false).setValue(NAMED, false)
+				.setValue(WATERLOGGED, Boolean.valueOf(fluidstate.getType() == Fluids.WATER));
 	}
 
 	@Nullable
@@ -84,6 +88,47 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
 		return type == BlockEntityInit.earthen_vein.get() ? EarthenVeinBlockEntity::tick : null;
+	}
+
+	@Override
+	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+			boolean isMoving) {
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+		return new EarthenVeinBlockEntity(p_153215_, p_153216_);
+	}
+
+	@Override
+	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(state, world, pos, neighbor);
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState p_52348_, BlockGetter p_52349_, BlockPos p_52350_) {
+		return !p_52348_.getValue(WATERLOGGED);
+	}
+
+	@Override
+	public BlockState rotate(BlockState state, Rotation rot) {
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+	}
+
+	@Override
+	public BlockState updateShape(BlockState p_53323_, Direction p_53324_, BlockState p_53325_, LevelAccessor p_53326_,
+			BlockPos p_53327_, BlockPos p_53328_) {
+		if (p_53323_.getValue(WATERLOGGED)) {
+			p_53326_.scheduleTick(p_53327_, Fluids.WATER, Fluids.WATER.getTickDelay(p_53326_));
+		}
+
+		return super.updateShape(p_53323_, p_53324_, p_53325_, p_53326_, p_53327_, p_53328_);
 	}
 
 	@Override
@@ -148,51 +193,6 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 		}
 		return InteractionResult.SUCCESS;
 
-	}
-
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
-	}
-
-	@Override
-	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-		super.onNeighborChange(state, world, pos, neighbor);
-	}
-
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-			boolean isMoving) {
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-	}
-
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
-
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
-				.setValue(STENTED, false).setValue(NAMED, false)
-				.setValue(WATERLOGGED, Boolean.valueOf(fluidstate.getType() == Fluids.WATER));
-	}
-
-	@Override
-	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
-	}
-
-	@Override
-	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
-	}
-
-	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, STENTED, NAMED, WATERLOGGED);
-	}
-
-	@Override
-	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
-		return new EarthenVeinBlockEntity(p_153215_, p_153216_);
 	}
 
 }

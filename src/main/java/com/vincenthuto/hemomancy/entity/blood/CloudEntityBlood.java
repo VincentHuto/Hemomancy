@@ -78,6 +78,12 @@ public class CloudEntityBlood extends BloodConstructEntity {
 	}
 
 	@Override
+	protected void doPush(Entity entityIn) {
+		super.doPush(entityIn);
+
+	}
+
+	@Override
 	public void tick() {
 		super.tick();
 		if (tickCount > 100) {
@@ -103,12 +109,6 @@ public class CloudEntityBlood extends BloodConstructEntity {
 		if (this.deathTicks <= 0.1 && !this.level.isClientSide) {
 			this.remove(RemovalReason.KILLED);
 		}
-
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
 
 	}
 }

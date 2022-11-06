@@ -32,20 +32,17 @@ public class JEIPlugin implements IModPlugin {
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
 			.create(Hemomancy.MOD_ID, "blood_structure", BloodStructureRecipe.class);
 
+	@Nonnull
+	@Override
+	public ResourceLocation getPluginUid() {
+		return ID;
+	}
+
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		registry.addRecipeCategories(new JuiceinatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new RecallerRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
-
-	}
-
-	@Override
-	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
-		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
-		registry.addRecipes(juiceinator_recipe_type, JuiceinatorRecipe.getAllRecipes(world));
-		registry.addRecipes(recaller_recipe_type, RecallerRecipe.getAllRecipes(world));
-		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 
 	}
 
@@ -56,10 +53,13 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
 	}
 
-	@Nonnull
 	@Override
-	public ResourceLocation getPluginUid() {
-		return ID;
+	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
+		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
+		registry.addRecipes(juiceinator_recipe_type, JuiceinatorRecipe.getAllRecipes(world));
+		registry.addRecipes(recaller_recipe_type, RecallerRecipe.getAllRecipes(world));
+		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
+
 	}
 
 }

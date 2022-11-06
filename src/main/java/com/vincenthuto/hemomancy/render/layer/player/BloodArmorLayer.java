@@ -20,17 +20,17 @@ public class BloodArmorLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 		super(owner);
 	}
 
-	@SuppressWarnings("unused")
-	private void translateToBody(PoseStack matrixStack) {
-		this.getParentModel().leftArm.translateAndRotate(matrixStack);
-	}
-
 	@Override
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 
 		if (ent instanceof Player player) {
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private void translateToBody(PoseStack matrixStack) {
+		this.getParentModel().leftArm.translateAndRotate(matrixStack);
 	}
 
 }

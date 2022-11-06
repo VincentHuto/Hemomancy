@@ -14,23 +14,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
 public class VascularSystemServerPacket {
-	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>();
-
-	public VascularSystemServerPacket(Map<EnumVeinSections, Float> vascularSystemIn) {
-		this.vascularSystem = vascularSystemIn;
-	}
-
-	// This code only runs on the client
-	@SuppressWarnings("unused")
-	public static void handle(final VascularSystemServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
-
-			Minecraft.getInstance().player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
-					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
-
-		});
-		ctx.get().setPacketHandled(true);
+	public static VascularSystemServerPacket decode(final FriendlyByteBuf packetBuffer) {
+		Map<EnumVeinSections, Float> devo = new HashMap<>();
+		for (EnumVeinSections key : EnumVeinSections.values()) {
+			devo.put(key, packetBuffer.readNbt().getFloat(key.toString()));
+		}
+		return new VascularSystemServerPacket(devo);
 	}
 
 	public static void encode(final VascularSystemServerPacket msg, final FriendlyByteBuf packetBuffer) {
@@ -47,11 +36,22 @@ public class VascularSystemServerPacket {
 		}
 	}
 
-	public static VascularSystemServerPacket decode(final FriendlyByteBuf packetBuffer) {
-		Map<EnumVeinSections, Float> devo = new HashMap<>();
-		for (EnumVeinSections key : EnumVeinSections.values()) {
-			devo.put(key, packetBuffer.readNbt().getFloat(key.toString()));
-		}
-		return new VascularSystemServerPacket(devo);
+	// This code only runs on the client
+	@SuppressWarnings("unused")
+	public static void handle(final VascularSystemServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			ServerPlayer sender = ctx.get().getSender();
+
+			Minecraft.getInstance().player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+					.orElseThrow(IllegalStateException::new).setVascularSystem(msg.vascularSystem);
+
+		});
+		ctx.get().setPacketHandled(true);
+	}
+
+	private Map<EnumVeinSections, Float> vascularSystem = new HashMap<>();
+
+	public VascularSystemServerPacket(Map<EnumVeinSections, Float> vascularSystemIn) {
+		this.vascularSystem = vascularSystemIn;
 	}
 }
