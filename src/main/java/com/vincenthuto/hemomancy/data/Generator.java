@@ -26,7 +26,6 @@ public class Generator {
 		generator.addProvider(true, new LanguageGenerator(generator,helper));
 	}
 
-	@SuppressWarnings("unused")
 	private static void registerServerProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 		 generator.addProvider(true,new LootGenerator(generator,helper));

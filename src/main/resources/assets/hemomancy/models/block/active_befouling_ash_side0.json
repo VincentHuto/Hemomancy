@@ -1,6 +1,7 @@
 {
-    "parent": "hemomancy:block/active_befouling_ash_side",
-    "textures": {
-        "line": "hemomancy:block/active_befouling_ash_line0"
-    }
+  "parent" : "hemomancy:block/active_befouling_ash_side",
+  "render_type" : "cutout",
+  "textures" : {
+    "line" : "hemomancy:block/active_befouling_ash_line0"
+  }
 }

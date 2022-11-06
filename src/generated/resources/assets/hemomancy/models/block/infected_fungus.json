@@ -1,6 +1,7 @@
 {
-  "parent": "hemomancy:block/shapes/cross",
-  "textures": {
-    "cross": "hemomancy:block/infected_fungus"
+  "parent" : "hemomancy:block/shapes/cross",
+  "render_type" : "cutout",
+  "textures" : {
+    "cross" : "hemomancy:block/infected_fungus"
   }
 }

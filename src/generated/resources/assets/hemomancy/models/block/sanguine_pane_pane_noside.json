@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/template_glass_pane_noside",
-  "textures": {
-    "pane": "hemomancy:block/sanguine_pane"
+  "parent" : "minecraft:block/template_glass_pane_noside",
+  "render_type" : "translucent",
+  "textures" : {
+    "pane" : "hemomancy:block/sanguine_pane"
   }
 }
