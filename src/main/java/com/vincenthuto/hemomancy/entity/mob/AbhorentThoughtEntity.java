@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -23,7 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
-public class AbhorentThoughtEntity extends Monster{
+public class AbhorentThoughtEntity extends Monster {
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
@@ -31,7 +32,7 @@ public class AbhorentThoughtEntity extends Monster{
 	}
 
 	public int puffCooldown = 0;
-	//private int animationTick;
+	public final AnimationState idleAnimationState = new AnimationState();
 
 	public AbhorentThoughtEntity(EntityType<? extends AbhorentThoughtEntity> type, Level worldIn) {
 		super(type, worldIn);
@@ -109,7 +110,9 @@ public class AbhorentThoughtEntity extends Monster{
 	@Override
 	public void tick() {
 		super.tick();
-
+		if (this.level.isClientSide()) {
+			this.idleAnimationState.startIfStopped(this.tickCount);
+		}
 		/*
 		 * // Particle MobEffects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float
 		 * f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if
