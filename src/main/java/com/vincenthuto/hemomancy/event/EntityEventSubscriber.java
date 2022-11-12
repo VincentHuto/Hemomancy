@@ -79,7 +79,7 @@ public class EntityEventSubscriber {
 
 	@SubscribeEvent
 	public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createLayers);
+		event.registerLayerDefinition(AbhorentThoughtModel.abhorent_thought, AbhorentThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(LivingBladeHandTameModel.living_blade_tame,
 				LivingBladeHandTameModel::createLayers);
 		event.registerLayerDefinition(LivingBladeUnleashedModel.living_blade_unleashed,
