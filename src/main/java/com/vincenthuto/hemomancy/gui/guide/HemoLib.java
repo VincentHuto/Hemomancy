@@ -77,29 +77,29 @@ public class HemoLib extends TomeLib {
 		multiblockPages.add(new HemoGuideBloodStructurePage(1, "Multiblocks", "Liber Sanguinum", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(ItemInit.liber_sanguinum.get()),
-				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/liber_sanguinum")));
+				Hemomancy.rloc("blood_structure/liber_sanguinum")));
 
 		multiblockPages.add(new HemoGuideBloodStructurePage(2, "Multiblocks", "Living Staff", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(ItemInit.living_staff.get()),
-				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/living_staff")));
+				Hemomancy.rloc("blood_structure/living_staff")));
 
 		multiblockPages.add(new HemoGuideBloodStructurePage(3, "Multiblocks", "S.S.C", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
 				new ItemStack(BlockInit.semi_sentient_construct.get()),
-				new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/semi_sentient_construct")));
+				Hemomancy.rloc("blood_structure/semi_sentient_construct")));
 
 		multiblockPages.add(new HemoGuideBloodStructurePage(4, "Multiblocks", "Hematic Iron", "Bloody Book",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.hematic_iron_block.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/hematic_iron_block")));
+				new ItemStack(BlockInit.hematic_iron_block.get()), Hemomancy.rloc("blood_structure/hematic_iron_block")));
 
 
 		multiblockPages.add(new HemoGuideBloodStructurePage(5, "Multiblocks", "Unstained Pillar", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.unstained_podium.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/unstained_pillar")));
+				new ItemStack(BlockInit.unstained_podium.get()), Hemomancy.rloc("blood_structure/unstained_pillar")));
 		multiblockPages.add(new HemoGuideBloodStructurePage(6, "Multiblocks", "Morphling Incubator", "",
 				"This is a test for when I need to type up a description underneath the multiblock itself",
-				new ItemStack(BlockInit.morphling_incubator.get()), new ResourceLocation(Hemomancy.MOD_ID, "blood_structure/morphling_incubator")));
+				new ItemStack(BlockInit.morphling_incubator.get()), Hemomancy.rloc("blood_structure/morphling_incubator")));
 
 		registerChapters();
 	}

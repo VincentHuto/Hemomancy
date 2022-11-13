@@ -23,7 +23,7 @@ import net.minecraft.world.entity.Entity;
 
 public class LeechModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modelleech"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("modelleech"), "main");
 	@SuppressWarnings("unused")
 
 	public static LayerDefinition createBodyLayer() {

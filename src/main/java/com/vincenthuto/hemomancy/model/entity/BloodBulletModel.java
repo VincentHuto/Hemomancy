@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 public class BloodBulletModel extends EntityModel<BloodBulletEntity> {
 
 	public static final ModelLayerLocation blood_bullet = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_bullet"), "main");
+			Hemomancy.rloc("blood_bullet"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

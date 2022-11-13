@@ -21,17 +21,17 @@ public class ClientProxy implements IProxy {
 
 	@SubscribeEvent
 	public static void modelRegisterEvent(ModelEvent.RegisterAdditional event) {
-		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
-		event.register(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+		event.register(Hemomancy.rloc("item/blood_absorption_texture"));
+		event.register(Hemomancy.rloc("item/blood_projection_texture"));
 
 	}
 
 	@SubscribeEvent
 	public static void onModelBake(BakingCompleted evt) {
 		bloodAbsorptionModel = evt.getModels()
-				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_absorption_texture"));
+				.get(Hemomancy.rloc("item/blood_absorption_texture"));
 		bloodProjectionModel = evt.getModels()
-				.get(new ResourceLocation(Hemomancy.MOD_ID, "item/blood_projection_texture"));
+				.get(Hemomancy.rloc("item/blood_projection_texture"));
 
 	}
 

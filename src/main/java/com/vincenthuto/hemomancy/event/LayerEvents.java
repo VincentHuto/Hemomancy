@@ -75,9 +75,9 @@ public class LayerEvents {
 	@SubscribeEvent
 	public static void onStitch(TextureStitchEvent.Pre event) {
 		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/royal_guard_shield_base"));
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/barbed_shield/model_barbed_shield"));
-			event.addSprite(new ResourceLocation(Hemomancy.MOD_ID, "entity/chitinite_shield/model_chitinite_shield"));
+			event.addSprite(Hemomancy.rloc("entity/royal_guard_shield_base"));
+			event.addSprite(Hemomancy.rloc("entity/barbed_shield/model_barbed_shield"));
+			event.addSprite(Hemomancy.rloc("entity/chitinite_shield/model_chitinite_shield"));
 
 		}
 		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {

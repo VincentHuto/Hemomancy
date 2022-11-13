@@ -51,9 +51,9 @@ public class LeechEntity extends Animal {
 	private static final EntityDataAccessor<Integer> SLUG_TYPE = SynchedEntityData.defineId(LeechEntity.class,
 			EntityDataSerializers.INT);
 	public static final Map<Integer, ResourceLocation> TEXTURE_BY_ID = Util.make(Maps.newHashMap(), (p_213410_0_) -> {
-		p_213410_0_.put(0, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_grey.png"));
-		p_213410_0_.put(1, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_grey.png"));
-		p_213410_0_.put(2, new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/leech/model_leech_brown.png"));
+		p_213410_0_.put(0, Hemomancy.rloc("textures/entity/leech/model_leech_grey.png"));
+		p_213410_0_.put(1, Hemomancy.rloc("textures/entity/leech/model_leech_grey.png"));
+		p_213410_0_.put(2, Hemomancy.rloc("textures/entity/leech/model_leech_brown.png"));
 	});
 
 	public static AttributeSupplier.Builder setAttributes() {

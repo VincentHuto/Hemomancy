@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 
 public class ChitiniteShieldModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation chitinite_shield = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_shield"), "main");
+			Hemomancy.rloc("chitinite_shield"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

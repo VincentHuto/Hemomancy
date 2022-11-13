@@ -24,7 +24,7 @@ public class BloodDrunkPuppeteerModel<T extends LivingEntity> extends HumanoidMo
 
 
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelblooddrunkpuppeteer"), "main");
+			Hemomancy.rloc("modelblooddrunkpuppeteer"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createbodyLayer() {

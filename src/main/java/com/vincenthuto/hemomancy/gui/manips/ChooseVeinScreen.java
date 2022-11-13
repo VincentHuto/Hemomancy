@@ -31,7 +31,7 @@ public class ChooseVeinScreen extends Screen {
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/choose_vein.png");
+	final ResourceLocation texture = Hemomancy.rloc("textures/gui/choose_vein.png");
 	Player player = HLClientUtils.getClientPlayer();
 
 	public ChooseVeinScreen() {

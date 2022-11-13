@@ -30,8 +30,8 @@ public class BlockStateGenerator extends BlockStateProvider {
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			String name = Registry.BLOCK.getKey(b.get()).getPath();
 			ModelFile model = models()
-					.withExistingParent(name, new ResourceLocation(Hemomancy.MOD_ID, "block/shapes/cross"))
-					.texture("cross", new ResourceLocation(Hemomancy.MOD_ID, "block/" + name));
+					.withExistingParent(name, Hemomancy.rloc("block/shapes/cross"))
+					.texture("cross", Hemomancy.rloc("block/" + name));
 			simpleBlock(b.get(), model);
 		}
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {

@@ -13,7 +13,7 @@ public class HemoTitlePage extends GuiGuideTitlePage {
 
 	public HemoTitlePage() {
 		super(Component.literal("Hemomancy"), new ItemStack(ItemInit.sanguine_formation.get()), HemoLib.chapters,
-				new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/hemo_overlay.png"));
+				Hemomancy.rloc("textures/gui/hemo_overlay.png"));
 	}
 
 	@Override

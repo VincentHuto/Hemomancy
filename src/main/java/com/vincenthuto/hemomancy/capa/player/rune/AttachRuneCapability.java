@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = Hemomancy.MOD_ID)
 public class AttachRuneCapability {
 
-	private static ResourceLocation cap = new ResourceLocation(Hemomancy.MOD_ID, "rune_cap");
+	private static ResourceLocation cap = Hemomancy.rloc("rune_cap");
 
 	@SubscribeEvent
 	public static void attachCaps(AttachCapabilitiesEvent<ItemStack> event) {

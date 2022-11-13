@@ -21,22 +21,22 @@ public class LivingStaffScreen extends AbstractContainerScreen<LivingStaffMenu> 
 
 		switch (container.slotcount) {
 		case 1:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_gui.png");
+			GUI = Hemomancy.rloc("textures/gui/morphling_jar_gui.png");
 			imageWidth = 176;
 			imageHeight = 228;
 			break;
 		case 8:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_large.png");
+			GUI = Hemomancy.rloc("textures/gui/morphling_jar_large.png");
 			imageWidth = 176;
 			imageHeight = 168;
 			break;
 		case 12:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar_max.png");
+			GUI = Hemomancy.rloc("textures/gui/morphling_jar_max.png");
 			imageWidth = 176;
 			imageHeight = 184;
 			break;
 		default:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/morphling_jar.png");
+			GUI = Hemomancy.rloc("textures/gui/morphling_jar.png");
 			imageWidth = 212;
 			imageHeight = 276;
 			break;

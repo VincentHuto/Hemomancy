@@ -35,7 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
-	public static final ResourceLocation UID = new ResourceLocation(Hemomancy.MOD_ID, "visceral_artificial_recaller");
+	public static final ResourceLocation UID = Hemomancy.rloc("visceral_artificial_recaller");
 	private static final ResourceLocation GUI_RECALLER = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/recaller_overlay.png");
 	private final IDrawable background;

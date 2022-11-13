@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 public class LivingAxeModel extends Model {
 
 	public static final ModelLayerLocation living_axe = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "living_axe"), "main");
+			Hemomancy.rloc("living_axe"), "main");
 
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();

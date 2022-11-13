@@ -18,7 +18,7 @@ import net.minecraft.world.entity.Entity;
 
 public class EnthralledDollModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelenthralleddoll"), "main");
+			Hemomancy.rloc("modelenthralleddoll"), "main");
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

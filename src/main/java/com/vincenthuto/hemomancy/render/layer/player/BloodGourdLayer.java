@@ -28,7 +28,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 	public static ResourceLocation curved = getGourdTexture("curved_horn");
 
 	public static ResourceLocation getGourdTexture(String path) {
-		return new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/blood_gourd/" + path + ".png");
+		return Hemomancy.rloc("textures/entity/blood_gourd/" + path + ".png");
 
 	}
 	private final BloodGourdModel<T> modelBloodGourd;

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Entity;
 public class IronWallModel<T extends Entity> extends EntityModel<T> {
 
 	public static final ModelLayerLocation iron_wall = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "iron_wall"), "main");
+			Hemomancy.rloc("iron_wall"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 public class AbhorentThoughtModel extends HierarchicalModel<AbhorentThoughtEntity> {
 
 	public static final ModelLayerLocation abhorent_thought = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "abhorent_thought"), "main");
+			Hemomancy.rloc("abhorent_thought"), "main");
 
 	private final ModelPart whole;
 

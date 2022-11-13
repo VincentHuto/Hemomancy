@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 public class LivingBladeHandTameModel extends Model {
 
 	public static final ModelLayerLocation living_blade_tame = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "living_blade_tame"), "main");
+			Hemomancy.rloc("living_blade_tame"), "main");
 
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();

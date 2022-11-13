@@ -29,29 +29,15 @@ public class RecipeInit {
 
 	// Types
 
-	public static final RegistryObject<RecipeType<JuiceinatorRecipe>> juiceinator_recipe_type = RECIPE_TYPES
-			.register("juiceinator_recipe_type", () -> new RecipeType<>() {
-				@Override
-				public String toString() {
-					return new ResourceLocation(Hemomancy.MOD_ID, "juiceinator").toString();
-				}
-			});
+	public static final RegistryObject<RecipeType<JuiceinatorRecipe>> juiceinator_recipe_type = RECIPE_TYPES.register(
+			"juiceinator_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("juiceinator")));
 
-	public static final RegistryObject<RecipeType<RecallerRecipe>> recaller_recipe_type = RECIPE_TYPES
-			.register("recaller_recipe_type", () -> new RecipeType<>() {
-				@Override
-				public String toString() {
-					return new ResourceLocation(Hemomancy.MOD_ID, "recaller_recipe").toString();
-				}
-			});
+	public static final RegistryObject<RecipeType<RecallerRecipe>> recaller_recipe_type = RECIPE_TYPES.register(
+			"recaller_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("recaller_recipe")));
 
 	public static final RegistryObject<RecipeType<BloodStructureRecipe>> blood_structure_recipe_type = RECIPE_TYPES
-			.register("blood_structure_recipe", () -> new RecipeType<>() {
-				@Override
-				public String toString() {
-					return new ResourceLocation(Hemomancy.MOD_ID, "blood_structure_recipe").toString();
-				}
-			});
+			.register("blood_structure_recipe",
+					() -> RecipeType.simple(Hemomancy.rloc("blood_structure_recipe")));
 
 	// Serialize
 	public static final RegistryObject<RecipeSerializer<?>> juiceinator_serializer = SERIALIZERS.register("juiceinator",

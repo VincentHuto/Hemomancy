@@ -35,14 +35,14 @@ public class ManipulationInit {
 	public static List<BloodManipulation> MANIPULATIONS = new ArrayList<>();
 
 	public static final ResourceKey<Registry<BloodManipulation>> MANIP_KEY = ResourceKey
-			.createRegistryKey(new ResourceLocation(Hemomancy.MOD_ID, "bloodmanipulations"));
+			.createRegistryKey(Hemomancy.rloc("bloodmanipulations"));
 
 	public static final DeferredRegister<BloodManipulation> MANIPS = DeferredRegister.create(MANIP_KEY,
 			Hemomancy.MOD_ID);
 
 	public static Supplier<IForgeRegistry<BloodManipulation>> MANIPS_TYPE_REGISTRY = MANIPS
 			.makeRegistry(() -> new RegistryBuilder<BloodManipulation>().setMaxID(Integer.MAX_VALUE - 1)
-					.setDefaultKey(new ResourceLocation(Hemomancy.MOD_ID, "bloodmanipulations")));
+					.setDefaultKey(Hemomancy.rloc("bloodmanipulations")));
 
 	public static final RegistryObject<BloodManipulation> venous_travel = MANIPS.register("venous_travel",
 			() -> new ConjurationManip("venous_travel", ItemInit.venous_recaller, 1000, 0, 0,

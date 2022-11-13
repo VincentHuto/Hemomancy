@@ -20,8 +20,8 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 public class BloodVolumeOverlay {
 
-	static ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
-	static ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
+	static ResourceLocation frame = Hemomancy.rloc("textures/gui/blood_bar.png");
+	static ResourceLocation fill_texture = Hemomancy.rloc("textures/gui/blood_fill_tiled.png");
 
 	public static final IGuiOverlay HUD_BLOODVOLUME = ((gui, matrix, partialTick, width, height) -> {
 		ClientLevel world = gui.getMinecraft().level;

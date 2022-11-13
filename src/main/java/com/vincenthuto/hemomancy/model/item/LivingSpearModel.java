@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class LivingSpearModel extends Model {
 	public static final ModelLayerLocation living_spear = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "living_spear"), "main");
+			Hemomancy.rloc("living_spear"), "main");
 
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();

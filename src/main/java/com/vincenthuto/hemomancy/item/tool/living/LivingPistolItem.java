@@ -104,7 +104,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
-						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
+						HLTextUtils.convertInitToLang(HLTextUtils.getItemRegistryName(stack.getItem()))))
 				.withStyle(ChatFormatting.DARK_RED);
 	}
 

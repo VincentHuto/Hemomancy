@@ -74,7 +74,7 @@ public class RenderTypeInit extends RenderType {
 			VertexFormat.Mode.QUADS, 256, false, false,
 			RenderType.CompositeState.builder().setShaderState(RENDERTYPE_GLINT_DIRECT_SHADER)
 					.setTextureState(new RenderStateShard.TextureStateShard(
-							new ResourceLocation(Hemomancy.MOD_ID, "textures/item/crimson_item_glint.png"), true,
+							Hemomancy.rloc("textures/item/crimson_item_glint.png"), true,
 							false))
 					.setWriteMaskState(COLOR_WRITE).setCullState(NO_CULL).setDepthTestState(EQUAL_DEPTH_TEST)
 					.setTransparencyState(GLINT_TRANSPARENCY).setTexturingState(GLINT_TEXTURING)

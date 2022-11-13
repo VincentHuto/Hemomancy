@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 public class BarbedShieldItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public static final Material LOCATION_ROYAL_GUARD_SHIELD_BASE = new Material(TextureAtlas.LOCATION_BLOCKS,
-			new ResourceLocation(Hemomancy.MOD_ID, "entity/barbed_shield/model_barbed_shield"));
+			Hemomancy.rloc("entity/barbed_shield/model_barbed_shield"));
 	private final BarbedShieldModel modelShield;
 
 	public BarbedShieldItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {

@@ -90,7 +90,7 @@ public class VasculariumCharmItem extends Item implements IRune {
 				ServerLevel serverlevel = (ServerLevel) pLevel;
 				BlockPos blockpos = serverlevel.findNearestMapStructure(
 						TagKey.create(Registry.STRUCTURE_REGISTRY,
-								new ResourceLocation(Hemomancy.MOD_ID, "blood_temple")),
+								Hemomancy.rloc("blood_temple")),
 						pPlayer.blockPosition(), 100, false);
 
 				if (blockpos != null) {

@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.EnzymeItem;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
@@ -33,18 +34,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implements MenuProvider, IBloodTile {
 	public static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	public static final String TAG_BLOOD_TENDENCY = "tendency";
 	public static final String TAG_RECIPE = "recipe";
+
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
 			VisceralRecallerBlockEntity self) {
 	}
+
 	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
 			VisceralRecallerBlockEntity self) {
 	}
+
 	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	String recipePath = "";
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
@@ -164,7 +167,7 @@ public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implem
 					&& recipe.getIngredient().test(contents.get(1))) {
 				// System.out.println("Matching Recipe: " + recipe);
 				curRecipe = recipe;
-				recipePath = ForgeRegistries.ITEMS.getKey(recipe.getResultItem().getItem()).getPath();
+				recipePath = HLTextUtils.getItemRegistryName(recipe.getResultItem().getItem());
 				break;
 			} else {
 				// System.out.println("No matching recipe found!");

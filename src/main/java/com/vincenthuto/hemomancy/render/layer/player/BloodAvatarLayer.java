@@ -45,7 +45,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 	private final BloodAvatarModel<T> modelBloodAvatar;
-	ResourceLocation glowTexture = new ResourceLocation(Hemomancy.MOD_ID, "textures/models/armor/avatar_glow.png");
+	ResourceLocation glowTexture = Hemomancy.rloc("textures/models/armor/avatar_glow.png");
 
 	public BloodAvatarLayer(RenderLayerParent<T, M> p_117346_) {
 		super(p_117346_);

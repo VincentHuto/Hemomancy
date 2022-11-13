@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 public class WretchedWillModel<T extends Entity> extends EntityModel<T> {
 
 	public static final ModelLayerLocation wretched_will = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelwretchedwill"), "main");
+			Hemomancy.rloc("modelwretchedwill"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

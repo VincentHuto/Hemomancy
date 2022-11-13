@@ -23,7 +23,7 @@ import net.minecraft.world.entity.Entity;
 
 public class ThirsterModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modelthirster"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("modelthirster"), "main");
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();

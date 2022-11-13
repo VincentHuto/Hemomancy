@@ -13,7 +13,7 @@ public class SoundInit {
 			Hemomancy.MOD_ID);
 
 	private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
-		return SOUNDS.register(name, () -> new SoundEvent(new ResourceLocation(Hemomancy.MOD_ID, name)));
+		return SOUNDS.register(name, () -> new SoundEvent(Hemomancy.rloc(name)));
 	}
 
 	public static final RegistryObject<SoundEvent> ENTITY_ABHORENT_THOUGHT_AMBIENT = registerSoundEvent(

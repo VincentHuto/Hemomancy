@@ -43,7 +43,7 @@ public class RuneEntityEventHandler {
 	@SubscribeEvent
 	public static void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "runecontainer"),
+			event.addCapability(Hemomancy.rloc("runecontainer"),
 					new RunesContainerProvider((Player) event.getObject()));
 		}
 	}

@@ -23,13 +23,13 @@ import net.minecraftforge.common.util.Lazy;
 public class BarbedArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public static final ModelLayerLocation BARBED_HELMET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "barbed_helmet"), "main");
+			Hemomancy.rloc("barbed_helmet"), "main");
 	public static final ModelLayerLocation BARBED_CHEST_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "barbed_chest"), "main");
+			Hemomancy.rloc("barbed_chest"), "main");
 	public static final ModelLayerLocation BARBED_LEGS_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "barbed_leggings"), "main");
+			Hemomancy.rloc("barbed_leggings"), "main");
 	public static final ModelLayerLocation BARBED_FEET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "barbed_boots"), "main");
+			Hemomancy.rloc("barbed_boots"), "main");
 
 	public static final Lazy<BarbedArmorModel<LivingEntity>> helmet = Lazy
 			.of(() -> new BarbedArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BARBED_HELMET_LAYER)));

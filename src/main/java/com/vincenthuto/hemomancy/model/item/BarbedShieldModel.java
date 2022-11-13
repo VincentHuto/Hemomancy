@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class BarbedShieldModel extends Model {
 	public static final ModelLayerLocation barbed_shield = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "barbed_shield"), "main");
+			Hemomancy.rloc("barbed_shield"), "main");
 
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();

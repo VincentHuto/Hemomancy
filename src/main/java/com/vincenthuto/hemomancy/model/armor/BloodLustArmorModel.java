@@ -27,18 +27,18 @@ public class BloodLustArmorModel<T extends LivingEntity> extends HumanoidModel<T
 		NONE, HORNED, TENGU
 	}
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet"), "main");
+			Hemomancy.rloc("blood_lust_helmet"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_TENGU_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet_tengu"), "main");
+			Hemomancy.rloc("blood_lust_helmet_tengu"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_HEAD_HORNED_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_helmet_horned"), "main");
+			Hemomancy.rloc("blood_lust_helmet_horned"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_CHEST_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_chest"), "main");
+			Hemomancy.rloc("blood_lust_chest"), "main");
 	public static final ModelLayerLocation BLOOD_LUST_LEGS_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_legs"), "main");
+			Hemomancy.rloc("blood_lust_legs"), "main");
 
     public static final ModelLayerLocation BLOOD_LUST_BOOTS_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_lust_boots"), "main");
+			Hemomancy.rloc("blood_lust_boots"), "main");
     public static final Lazy<BloodLustArmorModel<LivingEntity>> helmet = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> tengu = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_TENGU_LAYER)));
     public static final Lazy<BloodLustArmorModel<LivingEntity>> horned = Lazy.of(() -> new BloodLustArmorModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(BLOOD_LUST_HEAD_HORNED_LAYER)));

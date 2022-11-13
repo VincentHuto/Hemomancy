@@ -66,6 +66,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 		listnbt.add(CompoundTag1);
 		CompoundTag.put("ChargedProjectiles", listnbt);
 	}
+
 	private static void clearProjectiles(ItemStack stack) {
 		CompoundTag CompoundTag = stack.getTag();
 		if (CompoundTag != null) {
@@ -369,7 +370,7 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	public Component getName(ItemStack stack) {
 		return Component
 				.literal(HLTextUtils.stringToBloody(
-						HLTextUtils.convertInitToLang(ForgeRegistries.ITEMS.getKey(stack.getItem()).getPath())))
+						HLTextUtils.convertInitToLang(HLTextUtils.getItemRegistryName(stack.getItem()))))
 				.withStyle(ChatFormatting.DARK_RED);
 	}
 

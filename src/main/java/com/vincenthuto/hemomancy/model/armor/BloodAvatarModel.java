@@ -20,7 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class BloodAvatarModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public static final ModelLayerLocation layer = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_avatar"), "main");
+			Hemomancy.rloc("blood_avatar"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createLayer() {

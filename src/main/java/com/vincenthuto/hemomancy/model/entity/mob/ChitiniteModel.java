@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 
 public class ChitiniteModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelchitinite"), "main");
+			Hemomancy.rloc("modelchitinite"), "main");
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

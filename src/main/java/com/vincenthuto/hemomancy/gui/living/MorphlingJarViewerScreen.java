@@ -30,7 +30,7 @@ import net.minecraftforge.items.IItemHandler;
 
 @OnlyIn(Dist.CLIENT)
 public class MorphlingJarViewerScreen extends Screen {
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scaledjar.png");
+	final ResourceLocation texture = Hemomancy.rloc("textures/gui/scaledjar.png");
 	int guiWidth = 91;
 	int guiHeight = 130;
 	int left, top;

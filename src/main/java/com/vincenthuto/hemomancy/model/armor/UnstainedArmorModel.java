@@ -23,13 +23,13 @@ import net.minecraftforge.common.util.Lazy;
 public class UnstainedArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public static final ModelLayerLocation UNSTAINED_HELMET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "unstained_helmet"), "main");
+			Hemomancy.rloc("unstained_helmet"), "main");
 	public static final ModelLayerLocation UNSTAINED_CHEST_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "unstained_chest"), "main");
+			Hemomancy.rloc("unstained_chest"), "main");
 	public static final ModelLayerLocation UNSTAINED_LEGS_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "unstained_leggings"), "main");
+			Hemomancy.rloc("unstained_leggings"), "main");
 	public static final ModelLayerLocation UNSTAINED_FEET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "unstained_boots"), "main");
+			Hemomancy.rloc("unstained_boots"), "main");
 
 	public static final Lazy<UnstainedArmorModel<LivingEntity>> helmet = Lazy.of(() -> new UnstainedArmorModel<>(
 			Minecraft.getInstance().getEntityModels().bakeLayer(UNSTAINED_HELMET_LAYER)));

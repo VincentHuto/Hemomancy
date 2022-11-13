@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Entity;
 public class IronPillarModel<T extends Entity> extends EntityModel<EntityIronPillar> {
 
 	public static final ModelLayerLocation iron_pillar = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "iron_pillar"), "main");
+			Hemomancy.rloc("iron_pillar"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

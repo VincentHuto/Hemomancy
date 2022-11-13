@@ -163,5 +163,9 @@ public class Hemomancy {
 		PacketHandler.registerChannels();
 
 	}
+	
+	public static ResourceLocation rloc(String path) {
+		return new ResourceLocation(MOD_ID, path);
+	}
 
 }

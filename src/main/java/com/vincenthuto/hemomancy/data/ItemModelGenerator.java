@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.data;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.ItemInit;
+import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.Item;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ItemModelGenerator extends ItemModelProvider {
@@ -24,18 +24,18 @@ public class ItemModelGenerator extends ItemModelProvider {
 	}
 
 	private void registerBasicItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey( item).getPath();
+		String path = HLTextUtils.getItemRegistryName(item);
 		singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
 
 	}
 
 	private void registerBlockModel(Block block) {
-		String path = ForgeRegistries.BLOCKS.getKey( block).getPath();
+		String path = HLTextUtils.getBlockRegistryName(block);
 		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
 	}
 
 	private void registerHandheldItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
+		String path = HLTextUtils.getItemRegistryName(item);
 		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
 	}
 
@@ -64,7 +64,7 @@ public class ItemModelGenerator extends ItemModelProvider {
 	}
 
 	private void registerSpawnEggItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
+		String path = HLTextUtils.getItemRegistryName(item);
 		withExistingParent(path, mcLoc("item/template_spawn_egg"));
 	}
 }

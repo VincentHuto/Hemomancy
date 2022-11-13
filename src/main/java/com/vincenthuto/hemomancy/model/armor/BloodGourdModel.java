@@ -19,7 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class BloodGourdModel<T extends LivingEntity> extends EntityModel<T> {
 
 	public static final ModelLayerLocation blood_gourd = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_gourd"), "main");
+			Hemomancy.rloc("blood_gourd"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

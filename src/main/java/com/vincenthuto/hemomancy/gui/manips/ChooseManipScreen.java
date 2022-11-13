@@ -33,7 +33,7 @@ public class ChooseManipScreen extends Screen {
 	Minecraft mc = Minecraft.getInstance();
 	int centerX = (width / 2);
 	int centerY = (height / 2);
-	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/tendencybook_hidden.png");
+	final ResourceLocation texture = Hemomancy.rloc("textures/gui/tendencybook_hidden.png");
 	Player player = HLClientUtils.getClientPlayer();
 
 	public ChooseManipScreen() {

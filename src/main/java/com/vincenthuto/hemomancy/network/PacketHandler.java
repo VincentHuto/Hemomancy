@@ -63,27 +63,27 @@ public class PacketHandler {
 	private static int networkID = 0;
 	private static final String PROTOCOL_VERSION = "1";
 	public static final SimpleChannel CHANNELBLOODTENDENCY = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "bloodtendencychannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("bloodtendencychannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static final SimpleChannel CHANNELVASCULARSYSTEM = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "vascularsystemchannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("vascularsystemchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static final SimpleChannel CHANNELBLOODVOLUME = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "bloodvolumechannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("bloodvolumechannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static final SimpleChannel CHANNELKNOWNMANIPS = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulationchannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("knownmanipulationchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static final SimpleChannel CHANNELPARTICLES = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "particlechannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
+			Hemomancy.rloc("particlechannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 	public static SimpleChannel CHANNELRUNES = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "runechannel"), () -> PROTOCOL_VERSION, s -> true, s -> true);
+			Hemomancy.rloc("runechannel"), () -> PROTOCOL_VERSION, s -> true, s -> true);
 	public static SimpleChannel CHANNELMORPHLINGJAR = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "morphlingjarchannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("morphlingjarchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 	public static SimpleChannel CHANNELRUNEBINDER = NetworkRegistry.newSimpleChannel(
-			new ResourceLocation(Hemomancy.MOD_ID, "runebinderchannel"), () -> PROTOCOL_VERSION,
+			Hemomancy.rloc("runebinderchannel"), () -> PROTOCOL_VERSION,
 			PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	public static void handleRadialInventorySlotChangeMessage(RadialInventorySlotChangePacket message,

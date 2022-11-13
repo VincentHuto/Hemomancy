@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 
 public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelchthonian"), "main");
+			Hemomancy.rloc("modelchthonian"), "main");
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

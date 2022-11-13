@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
 
-	private static final ResourceLocation ID = new ResourceLocation(Hemomancy.MOD_ID, "main");
+	private static final ResourceLocation ID = Hemomancy.rloc("main");
 	public static final RecipeType<JuiceinatorRecipe> juiceinator_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
 			"juiceinator", JuiceinatorRecipe.class);
 	public static final RecipeType<RecallerRecipe> recaller_recipe_type = RecipeType.create(Hemomancy.MOD_ID,

@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BloodArmModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public static final ModelLayerLocation blood_arm = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "blood_arm"), "main");
+			Hemomancy.rloc("blood_arm"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createHeadLayer() {

@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class CentrifugeArmsModel extends Model {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelcentrifugemodel"), "main");
+			Hemomancy.rloc("modelcentrifugemodel"), "main");
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();

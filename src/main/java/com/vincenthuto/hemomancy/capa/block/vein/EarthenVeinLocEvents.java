@@ -12,7 +12,7 @@ public class EarthenVeinLocEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
 		if (event.getObject()instanceof EarthenVeinBlockEntity te) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "veinlocation"), new EarthenVeinLocProvider());
+			event.addCapability(Hemomancy.rloc("veinlocation"), new EarthenVeinLocProvider());
 
 		}
 

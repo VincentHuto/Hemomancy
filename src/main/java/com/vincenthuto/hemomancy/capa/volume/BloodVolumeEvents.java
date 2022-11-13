@@ -26,21 +26,21 @@ public class BloodVolumeEvents {
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
 			BloodVolumeProvider provider = new BloodVolumeProvider();
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), provider);
+			event.addCapability(Hemomancy.rloc("bloodvolume"), provider);
 		}
 	}
 
 	@SubscribeEvent
 	public static void attachCapabilitiesItemStack(final AttachCapabilitiesEvent<ItemStack> event) {
 		if (event.getObject().getItem() instanceof BloodGourdItem) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+			event.addCapability(Hemomancy.rloc("bloodvolume"), new BloodVolumeProvider());
 		}
 	}
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
 		if (event.getObject() instanceof IBloodTile) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "bloodvolume"), new BloodVolumeProvider());
+			event.addCapability(Hemomancy.rloc("bloodvolume"), new BloodVolumeProvider());
 		}
 	}
 

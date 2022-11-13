@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Entity;
 public class IronSpikeModel<T extends Entity> extends EntityModel<EntityIronSpike> {
 
 	public static final ModelLayerLocation iron_spike = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "iron_spike"), "main");
+			Hemomancy.rloc("iron_spike"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

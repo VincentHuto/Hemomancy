@@ -33,26 +33,24 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET };
 	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD,
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
-	public final static int GOURD_SLOT_INDEX=5;
-	public final static int CHARM_SLOT_INDEX=4;
+	public final static int GOURD_SLOT_INDEX = 5;
+	public final static int CHARM_SLOT_INDEX = 4;
 	private final CraftingContainer craftMatrix = new CraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;
 
 	public IRunesItemHandler runes;
 
-
-
 	public CharmGourdMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level, playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
+
 	public CharmGourdMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
 
-	public CharmGourdMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
-			Player playerEntity) {
+	public CharmGourdMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
 		super(ContainerInit.gourd_charm_inventory.get(), windowId);
 		this.player = playerInventory.player;
 
@@ -128,15 +126,6 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 	public void slotsChanged(Container par1IInventory) {
 		super.slotsChanged(par1IInventory);
 		CraftingMenu.slotChangedCraftingGrid(this, player.level, player, craftMatrix, craftResult);
-//		try {
-//
-//			Method onCraftChange = ObfuscationReflectionHelper.findMethod(CraftingMenu.class, "slotChangedCraftingGrid",
-//					int.class, Level.class, Player.class, CraftingContainer.class, ResultContainer.class);
-//			onCraftChange.invoke(null, this.containerId, this.player.level, this.player, this.craftMatrix,
-//					this.craftResult);
-//		} catch (IllegalAccessException | InvocationTargetException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override

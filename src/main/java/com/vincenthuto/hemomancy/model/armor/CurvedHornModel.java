@@ -20,7 +20,7 @@ public class CurvedHornModel<T extends LivingEntity> extends EntityModel<T> {
 
 
 	public static final ModelLayerLocation curved_horn = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "curved_horn"), "main");
+			Hemomancy.rloc("curved_horn"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

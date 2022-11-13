@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class EarthenVeinModel extends Model  {
 	public static final ModelLayerLocation earth_vein = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "modelearthenvein"), "main");
+			Hemomancy.rloc("modelearthenvein"), "main");
 
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {

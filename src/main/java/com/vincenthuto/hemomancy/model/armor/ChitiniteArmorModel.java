@@ -23,13 +23,13 @@ import net.minecraftforge.common.util.Lazy;
 public class ChitiniteArmorModel<T extends LivingEntity> extends HumanoidModel<T> {
 
 	public static final ModelLayerLocation CHITINITE_HELMET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_helmet"), "main");
+			Hemomancy.rloc("chitinite_helmet"), "main");
 	public static final ModelLayerLocation CHITINITE_CHEST_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_chest"), "main");
+			Hemomancy.rloc("chitinite_chest"), "main");
 	public static final ModelLayerLocation CHITINITE_LEGS_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_leggings"), "main");
+			Hemomancy.rloc("chitinite_leggings"), "main");
 	public static final ModelLayerLocation CHITINITE_FEET_LAYER = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "chitinite_boots"), "main");
+			Hemomancy.rloc("chitinite_boots"), "main");
 
 	public static final Lazy<ChitiniteArmorModel<LivingEntity>> helmet = Lazy.of(() -> new ChitiniteArmorModel<>(
 			Minecraft.getInstance().getEntityModels().bakeLayer(CHITINITE_HELMET_LAYER)));

@@ -117,7 +117,7 @@ public class JuiceinatorScreen extends AbstractContainerScreen<JuiceinatorMenu> 
 		double bloodVolume = te.getBloodVolume() *2.5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 120) - 8;
-		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
+		ResourceLocation fill_texture = Hemomancy.rloc("textures/gui/blood_fill_tiled.png");
 		matrix.popPose();
 
 		float textureUShift = (te.getLevel().getGameTime() * 0.25f % 256);
@@ -141,7 +141,7 @@ public class JuiceinatorScreen extends AbstractContainerScreen<JuiceinatorMenu> 
 		matrix.pushPose();
 		double bloodVolume = te.getBloodVolume() * 5;
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
-		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
+		ResourceLocation frame = Hemomancy.rloc("textures/gui/blood_bar.png");
 		matrix.popPose();
 
 		float heightShift = (float) Math.cos(te.getLevel().getGameTime() * 0.1);

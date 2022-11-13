@@ -27,7 +27,7 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "knownmanipulations"),
+			event.addCapability(Hemomancy.rloc("knownmanipulations"),
 					new KnownManipulationProvider());
 		}
 	}

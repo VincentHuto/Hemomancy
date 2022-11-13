@@ -137,7 +137,7 @@ public class RadialCharmScreen extends Screen {
 			for (int i = 0; i < manips.getKnownManips().size(); i++) {
 				BloodManipulation c = (BloodManipulation) manips.getKnownManips().keySet().toArray()[i];
 				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, i,
-						new ResourceLocation(Hemomancy.MOD_ID, "textures/item/memory_" + c.getName() + ".png"), 0, 0,
+						Hemomancy.rloc("textures/item/memory_" + c.getName() + ".png"), 0, 0,
 						16, 16, 16, 16, Component.literal(c.getProperName())) {
 					@Override
 					public boolean onClick() {

@@ -35,7 +35,7 @@ public class VascularSystemEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			event.addCapability(new ResourceLocation(Hemomancy.MOD_ID, "vascularsystem"), new VascularSystemProvider());
+			event.addCapability(Hemomancy.rloc("vascularsystem"), new VascularSystemProvider());
 		}
 	}
 

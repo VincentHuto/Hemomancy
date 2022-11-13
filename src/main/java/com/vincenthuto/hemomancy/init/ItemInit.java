@@ -91,19 +91,19 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
 			() -> new ItemArmBanner(new Item.Properties().tab(HemomancyItemGroup.instance), EnumModArmorTiers.CHITINITE,
-					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/arm_banner/chitinite_arm_banner.png")));
+					Hemomancy.rloc("textures/entity/arm_banner/chitinite_arm_banner.png")));
 
 
 	public static final RegistryObject<Item> heart_pattern = BASEITEMS.register("heart_pattern",
 			() -> new BannerPatternItem(
 					TagKey.create(Registry.BANNER_PATTERN_REGISTRY,
-							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/heart")),
+							Hemomancy.rloc("pattern_item/heart")),
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	public static final RegistryObject<Item> veins_pattern = BASEITEMS.register("veins_pattern",
 			() -> new BannerPatternItem(
 					TagKey.create(Registry.BANNER_PATTERN_REGISTRY,
-							new ResourceLocation(Hemomancy.MOD_ID, "pattern_item/veins")),
+							Hemomancy.rloc("pattern_item/veins")),
 					new Item.Properties().tab(HemomancyItemGroup.instance)));
 
 	// Charm
@@ -115,7 +115,7 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
 			() -> new BloodyBookItem(new Item.Properties().tab(HemomancyItemGroup.instance).stacksTo(1),
-					new ResourceLocation(Hemomancy.MOD_ID, "textures/entity/liber_sanguinum.png")));
+					Hemomancy.rloc("textures/entity/liber_sanguinum.png")));
 	public static final RegistryObject<Item> unsigned_ancestral_ledger = BASEITEMS.register("unsigned_ancestral_ledger",
 			() -> new UnsignedLedgerItem(new Item.Properties().tab(HemomancyItemGroup.instance)));
 
@@ -426,7 +426,7 @@ public class ItemInit {
 	@OnlyIn(Dist.CLIENT)
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
 
-		ItemProperties.register(unsigned_ancestral_ledger.get(), new ResourceLocation(Hemomancy.MOD_ID, "unsigned"),
+		ItemProperties.register(unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -441,7 +441,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(bloody_vial.get(), new ResourceLocation(Hemomancy.MOD_ID, "state"),
+		ItemProperties.register(bloody_vial.get(), Hemomancy.rloc("state"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -491,7 +491,7 @@ public class ItemInit {
 							&& LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
 				});
 
-		ItemProperties.register(living_syringe.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+		ItemProperties.register(living_syringe.get(), Hemomancy.rloc("open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -506,7 +506,7 @@ public class ItemInit {
 					}
 				});
 
-//		ItemProperties.register(living_blade.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+//		ItemProperties.register(living_blade.get(), Hemomancy.rloc("open"),
 //				new ItemPropertyFunction() {
 //					@Override
 //					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -521,7 +521,7 @@ public class ItemInit {
 //					}
 //				});
 
-		ItemProperties.register(curved_horn.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+		ItemProperties.register(curved_horn.get(), Hemomancy.rloc("open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -536,7 +536,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(blood_gourd_white.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+		ItemProperties.register(blood_gourd_white.get(), Hemomancy.rloc("open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -551,7 +551,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(blood_gourd_red.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+		ItemProperties.register(blood_gourd_red.get(), Hemomancy.rloc("open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -566,7 +566,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(blood_gourd_black.get(), new ResourceLocation(Hemomancy.MOD_ID, "open"),
+		ItemProperties.register(blood_gourd_black.get(), Hemomancy.rloc("open"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -581,7 +581,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(morphling_jar.get(), new ResourceLocation(Hemomancy.MOD_ID, "size"),
+		ItemProperties.register(morphling_jar.get(), Hemomancy.rloc("size"),
 				new ItemPropertyFunction() {
 					@Override
 					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
@@ -593,7 +593,7 @@ public class ItemInit {
 					}
 				});
 
-		ItemProperties.register(living_staff.get(), new ResourceLocation(Hemomancy.MOD_ID, "morph"),
+		ItemProperties.register(living_staff.get(), Hemomancy.rloc("morph"),
 				new ItemPropertyFunction() {
 
 					@Override

@@ -23,7 +23,7 @@ import net.minecraft.world.entity.Entity;
 
 public class DrudgeModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(Hemomancy.MOD_ID, "modeldrudgenew"), "main");
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("modeldrudgenew"), "main");
 	@SuppressWarnings("unused")
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();

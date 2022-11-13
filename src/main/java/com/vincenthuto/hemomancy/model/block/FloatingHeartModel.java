@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 public class FloatingHeartModel extends Model {
 
 	public static final ModelLayerLocation mortal_display = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "mortal_display"), "main");
+			Hemomancy.rloc("mortal_display"), "main");
 
 
 	@SuppressWarnings("unused")

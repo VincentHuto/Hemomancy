@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 public class LivingBladeUnleashedModel extends Model {
 
 	public static final ModelLayerLocation living_blade_unleashed = new ModelLayerLocation(
-			new ResourceLocation(Hemomancy.MOD_ID, "living_blade_unleashed"), "main");
+			Hemomancy.rloc("living_blade_unleashed"), "main");
 	public static LayerDefinition createLayers() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition part = mesh.getRoot();

@@ -21,12 +21,12 @@ public class LivingSyringeScreen extends AbstractContainerScreen<LivingSyringeMe
 
 		switch (container.slotcount) {
 		case 1:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/living_syringe_gui.png");
+			GUI = Hemomancy.rloc("textures/gui/living_syringe_gui.png");
 			imageWidth = 176;
 			imageHeight = 127;
 			break;
 		default:
-			GUI = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/living_syringe_gui.png");
+			GUI = Hemomancy.rloc("textures/gui/living_syringe_gui.png");
 			imageWidth = 176;
 			imageHeight = 127;
 			break;

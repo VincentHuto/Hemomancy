@@ -31,7 +31,7 @@ import net.minecraftforge.client.gui.ScreenUtils;
 public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifugeMenu> {
 	static final ResourceLocation GUI_CENTRIFUGE = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/centrifuge_gui.png");
-	static final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
+	static final ResourceLocation texture = Hemomancy.rloc("textures/gui/blood_bar.png");
 	static final ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/blood_fill_tiled.png");
 	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
@@ -143,8 +143,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		double bloodVolume = te.getBloodVolume();
 		bloodVolume = 0.01f * (float) Math.floor(bloodVolume * 100.0);
 		float newBarWidth = (int) ((bloodVolume) / 61.25) - 8;
-		ResourceLocation frame = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_bar.png");
-		ResourceLocation fill_texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/blood_fill_tiled.png");
+		ResourceLocation frame = Hemomancy.rloc("textures/gui/blood_bar.png");
+		ResourceLocation fill_texture = Hemomancy.rloc("textures/gui/blood_fill_tiled.png");
 		matrix.popPose();
 
 		float textureUShift = (te.getLevel().getGameTime() * 0.25f % 256);
