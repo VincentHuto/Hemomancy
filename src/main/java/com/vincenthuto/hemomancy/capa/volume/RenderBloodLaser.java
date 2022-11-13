@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 
 public class RenderBloodLaser {
 
@@ -83,7 +83,7 @@ public class RenderBloodLaser {
 		buffer.endBatch(RenderTypeInit.LASER_MAIN_ADDITIVE);
 	}
 
-	public static void renderLaser(RenderLevelLastEvent event, Player player, float ticks) {
+	public static void renderLaser(RenderLevelStageEvent event, Player player, float ticks) {
 		Vector3 centerVec = Vector3.fromEntityCenter(player);
 //		if (player.getEffect(PotionInit.blood_binding.get()) != null) {
 //			if (player.level.isClientSide) {

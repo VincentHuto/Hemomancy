@@ -148,7 +148,6 @@ public class Hemomancy {
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
-		modEventBus.addListener(this::clientSetup);
 		// modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST,
 		// Hemomancy::registerFeature);
 		forgeBus.register(this);
@@ -158,16 +157,6 @@ public class Hemomancy {
 		forgeBus.register(BloodTendencyEvents.class);
 		forgeBus.register(KnownManipulationEvents.class);
 		forgeBus.register(EarthenVeinLocEvents.class);
-		// forgeBus.addListener(EventPriority.NORMAL, WorldInit::addDimensionalSpacing);
-
-		ModLoadingContext modLoadingContext = ModLoadingContext.get();
-
-	}
-
-	private void clientSetup(final FMLClientSetupEvent event) {
-		MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
-		HemoLib hemo = new HemoLib();
-		hemo.registerTome();
 
 	}
 

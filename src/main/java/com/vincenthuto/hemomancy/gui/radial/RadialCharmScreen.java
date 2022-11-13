@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.CharmGourdMenu;
-import com.vincenthuto.hemomancy.event.RadialClientEvents;
+import com.vincenthuto.hemomancy.event.ClientEvents.ClientForgeEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
@@ -123,7 +123,7 @@ public class RadialCharmScreen extends Screen {
 	@Override // removed
 	public void removed() {
 		super.removed();
-		RadialClientEvents.wipeOpen();
+		ClientForgeEvents.wipeOpen();
 	}
 
 	@Override
@@ -159,8 +159,6 @@ public class RadialCharmScreen extends Screen {
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
 			List<Component> textComponents = new ArrayList<>();
 			textComponents.add(Component.literal("No Known Manipulations"));
-			textComponents.add(Component.literal("No Known Manipuladdwddwtions"));
-
 			this.menu.setCentralText(textComponents);
 		} else if (gourdEquipped != null) {
 
@@ -185,7 +183,7 @@ public class RadialCharmScreen extends Screen {
 		menu.tick();
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			RadialClientEvents.wipeOpen();
+			ClientForgeEvents.wipeOpen();
 		}
 		if (!menu.isReady()) {
 			return;
@@ -193,7 +191,7 @@ public class RadialCharmScreen extends Screen {
 		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
 			Minecraft.getInstance().setScreen(null);
 		}
-		if (!RadialClientEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
+		if (!ClientForgeEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
 			this.processClick(false);
 		}
 	}

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.event.RadialClientEvents;
+import com.vincenthuto.hemomancy.event.ClientEvents.ClientForgeEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.ItemStackRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.TextRadialMenuItem;
@@ -115,7 +115,7 @@ public class RadialMenuScreen extends Screen {
 	@Override // removed
 	public void removed() {
 		super.removed();
-		RadialClientEvents.wipeOpen();
+		ClientForgeEvents.wipeOpen();
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class RadialMenuScreen extends Screen {
 
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			RadialClientEvents.wipeOpen();
+			ClientForgeEvents.wipeOpen();
 		}
 		if (!menu.isReady() || inventory == null) {
 			return;
@@ -177,7 +177,7 @@ public class RadialMenuScreen extends Screen {
 
 		if (inventory == null) {
 			Minecraft.getInstance().setScreen(null);
-		} else if (!RadialClientEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
+		} else if (!ClientForgeEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
 			menu.close();
 		}
 	}
