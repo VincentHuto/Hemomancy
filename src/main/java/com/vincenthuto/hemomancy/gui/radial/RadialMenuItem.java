@@ -1,11 +1,8 @@
-package com.vincenthuto.hemomancy.gui.radial.item;
+package com.vincenthuto.hemomancy.gui.radial;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import com.vincenthuto.hemomancy.gui.radial.DrawingContext;
-import com.vincenthuto.hemomancy.gui.radial.GenericRadialMenu;
 
 import net.minecraft.network.chat.Component;
 

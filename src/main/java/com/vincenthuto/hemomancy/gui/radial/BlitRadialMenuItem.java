@@ -1,8 +1,6 @@
-package com.vincenthuto.hemomancy.gui.radial.item;
+package com.vincenthuto.hemomancy.gui.radial;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.gui.radial.DrawingContext;
-import com.vincenthuto.hemomancy.gui.radial.GenericRadialMenu;
 
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;

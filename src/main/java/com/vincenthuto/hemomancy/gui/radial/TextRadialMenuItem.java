@@ -1,7 +1,4 @@
-package com.vincenthuto.hemomancy.gui.radial.item;
-
-import com.vincenthuto.hemomancy.gui.radial.DrawingContext;
-import com.vincenthuto.hemomancy.gui.radial.GenericRadialMenu;
+package com.vincenthuto.hemomancy.gui.radial;
 
 import net.minecraft.network.chat.Component;
 

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.gui.radial;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.gui.radial.item.IRadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 

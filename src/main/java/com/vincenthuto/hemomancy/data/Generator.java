@@ -21,16 +21,16 @@ public class Generator {
 
 	private static void registerClientProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		generator.addProvider(true,new BlockStateGenerator(generator, helper));
-		generator.addProvider(true,new ItemModelGenerator(generator, helper));
-		generator.addProvider(true, new LanguageGenerator(generator,helper));
+		generator.addProvider(true, new BlockStateGenerator(generator, helper));
+		generator.addProvider(true, new ItemModelGenerator(generator, helper));
+		generator.addProvider(true, new LanguageGenerator(generator, helper));
 	}
 
 	private static void registerServerProviders(DataGenerator generator, GatherDataEvent event) {
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		 generator.addProvider(true,new LootGenerator(generator,helper));
-		 generator.addProvider(true,new BlockTagGenerator(generator, helper));
-		generator.addProvider(true,new RecipeGenerator(generator,helper));
-		generator.addProvider(true,new EntityTagGenerator(generator, helper));
+		generator.addProvider(true, new LootGenerator(generator, helper));
+		generator.addProvider(true, new BlockTagGenerator(generator, helper));
+		generator.addProvider(true, new RecipeGenerator(generator, helper));
+		generator.addProvider(true, new EntityTagGenerator(generator, helper));
 	}
 }

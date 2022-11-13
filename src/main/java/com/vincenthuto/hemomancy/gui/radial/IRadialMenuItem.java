@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.gui.radial.item;
+package com.vincenthuto.hemomancy.gui.radial;
 
 import java.util.List;
 

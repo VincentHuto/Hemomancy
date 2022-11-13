@@ -70,8 +70,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			builder = BlockPatternBuilder.start();
 			for (String[] element : schematic) {
 				builder.aisle(element);
-				for (int z = 0; z < element.length; z++) {
-					List<String> distinct = getDistinctChars(element[z]);
+				for (String element3 : element) {
+					List<String> distinct = getDistinctChars(element3);
 					for (String element2 : distinct) {
 						builder.where(element2.toCharArray()[0], blockPredFromHash(symbolList, element2));
 					}

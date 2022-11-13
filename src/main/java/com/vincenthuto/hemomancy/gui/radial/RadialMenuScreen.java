@@ -6,9 +6,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.event.KeyBindEvents;
-import com.vincenthuto.hemomancy.gui.radial.item.ItemStackRadialMenuItem;
-import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
-import com.vincenthuto.hemomancy.gui.radial.item.TextRadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
 
 import net.minecraft.client.Minecraft;
@@ -94,10 +91,12 @@ public class RadialMenuScreen extends Screen {
 		return itemRenderer;
 	}
 
+	@Override
 	public boolean isPauseScreen() {
 		return false;
 	}
 
+	@Override
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
 		processClick(true);
 		return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
