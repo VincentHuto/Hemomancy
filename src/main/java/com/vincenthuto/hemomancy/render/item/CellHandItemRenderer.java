@@ -42,6 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraft.world.phys.Vec3;
 
 public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -130,16 +131,16 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				float g = (color >> 8 & 0xFF) / 255F;
 				float b = (color & 0xFF) / 255F;
 				Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffers,
-						null, location, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY);
+						null, location, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.solid());
 			} else if (!stack.isEmpty()) {
 				if (this.location.isGui3d()) {
 //					ForgeHooksClient.drawItemLayered(Minecraft.getInstance().getItemRenderer(), this.location, stack,
 //							matrixStack, buffer, combinedLight, combinedOverlay, true);
 					Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-							buffers, null, location, 255, 255, 255, 0x000000, combinedOverlay);
+							buffers, null, location, 255, 255, 255, 0x000000, combinedOverlay, ModelData.EMPTY, RenderType.solid());
 				} else {
 					Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-							buffers, null, location, 255, 255, 255, combinedLight, combinedOverlay);
+							buffers, null, location, 255, 255, 255, combinedLight, combinedOverlay, ModelData.EMPTY, RenderType.solid());
 					matrixStack.popPose();
 					matrixStack.pushPose();
 					Minecraft.getInstance().getItemRenderer().render(stack, transformType,

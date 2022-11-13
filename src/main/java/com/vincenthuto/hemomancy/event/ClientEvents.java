@@ -1,14 +1,10 @@
 package com.vincenthuto.hemomancy.event;
 
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
 import com.vincenthuto.hemomancy.gui.CharmGourdScreen;
 import com.vincenthuto.hemomancy.gui.JuiceinatorScreen;
@@ -19,11 +15,8 @@ import com.vincenthuto.hemomancy.gui.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.gui.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.gui.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.gui.overlay.BloodVolumeOverlay;
-import com.vincenthuto.hemomancy.gui.radial.RadialCharmScreen;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.ContainerInit;
-import com.vincenthuto.hemomancy.init.KeyBindInit;
-import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.render.tile.DendriticDistributorRenderer;
 import com.vincenthuto.hemomancy.render.tile.EarthenVeinRenderer;
 import com.vincenthuto.hemomancy.render.tile.MorphlingIncubatorRenderer;
@@ -32,7 +25,6 @@ import com.vincenthuto.hemomancy.render.tile.UnstainedPodiumRenderer;
 import com.vincenthuto.hemomancy.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -47,7 +39,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -58,55 +49,7 @@ public class ClientEvents {
 
 	@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT)
 	public static class ClientForgeEvents {
-		private static boolean menuKey = false;
 
-		@SubscribeEvent
-		public static void handleKeys(TickEvent.ClientTickEvent ev) {
-			if (ev.phase != TickEvent.Phase.START)
-				return;
-
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.screen == null) {
-				boolean toolMenuKeyIsDown = KeyBindInit.openVascCharmMenu.isDown();
-				if (toolMenuKeyIsDown && !menuKey) {
-					while (KeyBindInit.openVascCharmMenu.consumeClick()) {
-						if (mc.screen == null) {
-							mc.player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-								if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
-									mc.setScreen(new RadialCharmScreen(inv));
-								}
-							});
-						}
-					}
-				}
-				menuKey = toolMenuKeyIsDown;
-			} else {
-				menuKey = true;
-			}
-		}
-
-		public static boolean isKeyDown(KeyMapping keybind) {
-			if (keybind.isUnbound())
-				return false;
-
-			boolean isDown = switch (keybind.getKey().getType()) {
-			case KEYSYM ->
-				InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), keybind.getKey().getValue());
-			case MOUSE -> GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(),
-					keybind.getKey().getValue()) == GLFW.GLFW_PRESS;
-			default -> false;
-			};
-			return isDown && keybind.getKeyConflictContext().isActive()
-					&& keybind.getKeyModifier().isActive(keybind.getKeyConflictContext());
-		}
-
-		public static void wipeOpen() {
-			Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-
-			while (KeyBindInit.openVascCharmMenu.consumeClick()) {
-			}
-		}
-		
 		@SubscribeEvent
 		public static void cameraView(EntityEvent.Size event) {
 			if (event.getEntity() instanceof Player player) {
@@ -117,7 +60,6 @@ public class ClientEvents {
 							event.setNewSize(player.getDimensions(Pose.STANDING).scale(2));
 						} else {
 							if (player.isCrouching()) {
-								// event.setNewEyeHeight(Player.CROUCH_BB_HEIGHT);
 								event.setNewSize(player.getDimensions(Pose.CROUCHING));
 
 							} else {
@@ -176,8 +118,7 @@ public class ClientEvents {
 
 			}
 		}
-		
-		
+
 	}
 
 	@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
@@ -207,6 +148,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
 
 		}
+
 		// Overlay
 		@SubscribeEvent
 		public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {

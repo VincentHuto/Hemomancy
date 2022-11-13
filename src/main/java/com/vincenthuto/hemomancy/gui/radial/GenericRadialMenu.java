@@ -40,8 +40,8 @@ public class GenericRadialMenu {
 
 	private final Minecraft minecraft;
 
-	public int backgroundColor = 0x3F000000;
-	public int backgroundColorHover = 0x3FFFFFFF;
+	public int backgroundColor = 0x3Faa0000;
+	public int backgroundColorHover = 0x3FF00000;
 	private State state = State.INITIALIZING;
 	public double startAnimation;
 	public float animProgress;
@@ -96,7 +96,6 @@ public class GenericRadialMenu {
 	}
 
 	public void close() {
-		Screen owner = host.getScreen();
 		state = State.CLOSING;
 		startAnimation = minecraft.level.getGameTime() + (double) minecraft.getFrameTime();
 		animProgress = 1.0f;
@@ -143,6 +142,7 @@ public class GenericRadialMenu {
 
 		boolean animated = state == State.OPENING || state == State.CLOSING;
 		radiusIn = animated ? Math.max(0.1f, 30 * animProgress) : 30;
+		radiusIn *=1.5;
 		radiusOut = radiusIn * 2;
 		itemRadius = (radiusIn + radiusOut) * 0.5f;
 		animTop = animated ? (1 - animProgress) * owner.height / 2.0f : 0;
@@ -175,9 +175,9 @@ public class GenericRadialMenu {
 				for (int i = 0; i < currentCentralText.size(); i++) {
 					Component c = currentCentralText.get(i);
 					String text = c.getString();
-					float height = i*10;
+					float height = i * 10;
 					float textX = (owner.width - fontRenderer.width(text)) / 2.0f;
-					float textY = (owner.height - fontRenderer.lineHeight) / 2.0f ;
+					float textY = (owner.height - fontRenderer.lineHeight) / 2.0f;
 					fontRenderer.drawShadow(matrixStack, text, textX, textY + height, 0xFFFFFFFF);
 				}
 			}
@@ -239,7 +239,7 @@ public class GenericRadialMenu {
 			float angle1 = startAngle + i * slice;
 			float angle2 = startAngle + (i + 1) * slice;
 
-			float pos1InX = x + radiusIn * (float) Math.cos(angle1);
+			float pos1InX = x + radiusIn * (float) Math.asin(angle1);
 			float pos1InY = y + radiusIn * (float) Math.sin(angle1);
 			float pos1OutX = x + radiusOut * (float) Math.cos(angle1);
 			float pos1OutY = y + radiusOut * (float) Math.sin(angle1);

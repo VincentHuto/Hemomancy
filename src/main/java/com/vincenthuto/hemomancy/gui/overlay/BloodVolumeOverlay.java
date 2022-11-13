@@ -1,10 +1,6 @@
 package com.vincenthuto.hemomancy.gui.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -46,7 +42,7 @@ public class BloodVolumeOverlay {
 								matrix.popPose();
 
 								float textureUShift = (world.getGameTime() * 0.25f % 256);
-								float heightShift = (float) Math.cos(world.getGameTime() * 0.2)*2;
+								float heightShift = (float) Math.cos(world.getGameTime() * 0.2) * 2;
 
 								// Fill
 								matrix.pushPose();
@@ -54,10 +50,9 @@ public class BloodVolumeOverlay {
 								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 								RenderSystem.setShaderTexture(0, fill_texture);
 								matrix.mulPose(new Quaternion(Vector3f.ZN, 180, true));
-								ScreenUtils.drawTexturedModalRect(matrix, -10, -106, 22 + (int)textureUShift, 0, 6, (int)newBarWidth+(int)heightShift, heightShift);
+								ScreenUtils.drawTexturedModalRect(matrix, -10, -106, 22 + (int) textureUShift, 0, 6,
+										(int) newBarWidth + (int) heightShift, heightShift);
 
-//								drawFlippedTexturedModalRect(-13, 113, 22 + textureUShift, textureUShift, 7f,
-//										2 + heightShift - newBarWidth);
 								matrix.popPose();
 
 								// Frame
@@ -75,30 +70,4 @@ public class BloodVolumeOverlay {
 			});
 		}
 	});
-
-	/**
-	 * Draws a textured rectangle at the current z-value. Ported From past Versions
-	 */
-	public static void drawFlippedTexturedModalRect(float x, float y, float textureX, float textureY, float width,
-			float height) {
-		Tesselator tessellator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuilder();
-		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		x = x + 10;
-		// soon to be top right
-		bufferbuilder.vertex(x + 13f, y + height - 13.25, 1)
-				.uv((textureX + 0) * 0.00390625F, (textureY + height) * 0.00390625F).endVertex();
-		// soon to be top left
-		bufferbuilder.vertex(x + width, y + height - 13.25, 1)
-				.uv((textureX + width) * 0.00390625F, (textureY + height) * 0.00390625F).endVertex();
-
-		// soon to be bottom left
-		bufferbuilder.vertex(x + width, y - 6, 1).uv((textureX + width) * 0.00390625F, (textureY + 0) * 0.00390625F)
-				.endVertex();
-		// now bottom right
-		bufferbuilder.vertex(x + 13f, y - 6, 1).uv((textureX + 0) * 0.00390625F, (textureY + 0) * 0.00390625F)
-				.endVertex();
-
-		tessellator.end();
-	}
 }

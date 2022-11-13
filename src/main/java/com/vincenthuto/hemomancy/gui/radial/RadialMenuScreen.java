@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.event.ClientEvents.ClientForgeEvents;
+import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.ItemStackRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.TextRadialMenuItem;
@@ -20,29 +20,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RadialMenuScreen extends Screen {
 	@SubscribeEvent
-    public static void overlayEvent(RenderGuiOverlayEvent.Pre event)
-    {
-        if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
-            return;
+	public static void overlayEvent(RenderGuiOverlayEvent.Pre event) {
+		if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+			return;
 
 		if (Minecraft.getInstance().screen instanceof RadialMenuScreen) {
 			event.setCanceled(true);
 		}
 	}
+
 	private ItemStack stackEquipped;
 
 	private IItemHandler inventory;
-	private boolean keyCycleBeforeL = false;
-
-	private boolean keyCycleBeforeR = false;
 	private boolean needsRecheckStacks = true;
 	private final List<ItemStackRadialMenuItem> cachedMenuItems = Lists.newArrayList();
 	private final TextRadialMenuItem insertMenuItem;
@@ -54,7 +51,7 @@ public class RadialMenuScreen extends Screen {
 
 		this.stackEquipped = getter;
 		inventory = stackEquipped.getCount() > 0
-				? stackEquipped.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseThrow(null)
+				? stackEquipped.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseThrow(null)
 				: null;
 		this.insertMenuItem = null;
 		menu = new GenericRadialMenu(Minecraft.getInstance(), new IRadialMenuHost() {
@@ -97,12 +94,10 @@ public class RadialMenuScreen extends Screen {
 		return itemRenderer;
 	}
 
-	@Override // isPauseScreen
 	public boolean isPauseScreen() {
 		return false;
 	}
 
-	@Override // mouseReleased
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
 		processClick(true);
 		return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
@@ -112,10 +107,10 @@ public class RadialMenuScreen extends Screen {
 		menu.clickItem();
 	}
 
-	@Override // removed
+	@Override
 	public void removed() {
 		super.removed();
-		ClientForgeEvents.wipeOpen();
+		KeyBindEvents.wipeOpen();
 	}
 
 	@Override
@@ -126,8 +121,6 @@ public class RadialMenuScreen extends Screen {
 
 		if (inventory == null)
 			return;
-
-		ItemStack inHand = minecraft.player.getMainHandItem();
 
 		if (needsRecheckStacks) {
 			cachedMenuItems.clear();
@@ -167,17 +160,15 @@ public class RadialMenuScreen extends Screen {
 
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			ClientForgeEvents.wipeOpen();
+			KeyBindEvents.wipeOpen();
 		}
 		if (!menu.isReady() || inventory == null) {
 			return;
 		}
 
-		ItemStack inHand = minecraft.player.getMainHandItem();
-
 		if (inventory == null) {
 			Minecraft.getInstance().setScreen(null);
-		} else if (!ClientForgeEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
+		} else if (!KeyBindEvents.isKeyDown(KeyBindInit.OPEN_CHARM_SLOT_KEYBIND)) {
 			menu.close();
 		}
 	}

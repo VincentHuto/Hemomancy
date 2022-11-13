@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.capa.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.container.CharmGourdMenu;
-import com.vincenthuto.hemomancy.event.ClientEvents.ClientForgeEvents;
+import com.vincenthuto.hemomancy.event.KeyBindEvents;
 import com.vincenthuto.hemomancy.gui.radial.item.BlitRadialMenuItem;
 import com.vincenthuto.hemomancy.gui.radial.item.RadialMenuItem;
 import com.vincenthuto.hemomancy.init.KeyBindInit;
@@ -47,6 +47,7 @@ public class RadialCharmScreen extends Screen {
 			event.setCanceled(true);
 		}
 	}
+
 	private ItemStack vascCharmEquipped;
 	private BloodGourdItem gourdEquipped;
 	private IRunesItemHandler inv;
@@ -105,12 +106,12 @@ public class RadialCharmScreen extends Screen {
 		return itemRenderer;
 	}
 
-	@Override // isPauseScreen
+	@Override
 	public boolean isPauseScreen() {
 		return false;
 	}
 
-	@Override // mouseReleased
+	@Override
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
 		processClick(true);
 		return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
@@ -120,10 +121,10 @@ public class RadialCharmScreen extends Screen {
 		menu.clickItem();
 	}
 
-	@Override // removed
+	@Override
 	public void removed() {
 		super.removed();
-		ClientForgeEvents.wipeOpen();
+		KeyBindEvents.wipeOpen();
 	}
 
 	@Override
@@ -131,8 +132,7 @@ public class RadialCharmScreen extends Screen {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
-			IBloodVolume volCap = mc.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(NullPointerException::new);
+
 			IKnownManipulations manips = mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
 
@@ -157,8 +157,10 @@ public class RadialCharmScreen extends Screen {
 			this.needsRecheckStacks = false;
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
+
 			List<Component> textComponents = new ArrayList<>();
 			textComponents.add(Component.literal("No Known Manipulations"));
+
 			this.menu.setCentralText(textComponents);
 		} else if (gourdEquipped != null) {
 
@@ -166,7 +168,11 @@ public class RadialCharmScreen extends Screen {
 			if (inv != null) {
 				IBloodVolume bloodVolume = inv.getStackInSlot(CharmGourdMenu.GOURD_SLOT_INDEX)
 						.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(NullPointerException::new);
+				IBloodVolume volCap = mc.player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(NullPointerException::new);
 				textComponents.add(Component.literal(Double.toString(bloodVolume.getBloodVolume())));
+				textComponents.add(Component.literal("Self: " + volCap.getBloodVolume() + "ml"));
+				textComponents.add(Component.literal("Gourd: " + bloodVolume.getBloodVolume() + "ml"));
 
 			}
 			this.menu.setCentralText(textComponents);
@@ -183,7 +189,7 @@ public class RadialCharmScreen extends Screen {
 		menu.tick();
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			ClientForgeEvents.wipeOpen();
+			KeyBindEvents.wipeOpen();
 		}
 		if (!menu.isReady()) {
 			return;
@@ -191,7 +197,7 @@ public class RadialCharmScreen extends Screen {
 		if (!(vascCharmEquipped.getItem() instanceof VasculariumCharmItem)) {
 			Minecraft.getInstance().setScreen(null);
 		}
-		if (!ClientForgeEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
+		if (!KeyBindEvents.isKeyDown(KeyBindInit.openVascCharmMenu)) {
 			this.processClick(false);
 		}
 	}
