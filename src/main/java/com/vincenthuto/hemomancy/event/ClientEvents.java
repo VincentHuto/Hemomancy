@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.render.tile.DendriticDistributorRenderer;
 import com.vincenthuto.hemomancy.render.tile.EarthenVeinRenderer;
 import com.vincenthuto.hemomancy.render.tile.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.render.tile.MortalDisplayRenderer;
+import com.vincenthuto.hemomancy.render.tile.ScryingPodiumRenderer;
 import com.vincenthuto.hemomancy.render.tile.UnstainedPodiumRenderer;
 import com.vincenthuto.hemomancy.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
@@ -132,6 +133,7 @@ public class ClientEvents {
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);

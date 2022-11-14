@@ -22,6 +22,7 @@ public class BloodVolumeOverlay {
 
 	static ResourceLocation frame = Hemomancy.rloc("textures/gui/blood_bar.png");
 	static ResourceLocation fill_texture = Hemomancy.rloc("textures/gui/blood_fill_tiled.png");
+	static ResourceLocation memory_border = Hemomancy.rloc("textures/gui/memory_border.png");
 
 	public static final IGuiOverlay HUD_BLOODVOLUME = ((gui, matrix, partialTick, width, height) -> {
 		ClientLevel world = gui.getMinecraft().level;
@@ -44,15 +45,22 @@ public class BloodVolumeOverlay {
 								float textureUShift = (world.getGameTime() * 0.25f % 256);
 								float heightShift = (float) Math.cos(world.getGameTime() * 0.2) * 2;
 
+//								
+//								matrix.pushPose();
+//								RenderSystem.setShader(GameRenderer::getPositionTexShader);
+//								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
+//								RenderSystem.setShaderTexture(0, memory_border);
+//								ScreenUtils.drawTexturedModalRect(matrix, 103, 45, 0, 0,256,144, 10);
+//								matrix.popPose();
+								
 								// Fill
 								matrix.pushPose();
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
-								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 								RenderSystem.setShaderTexture(0, fill_texture);
 								matrix.mulPose(new Quaternion(Vector3f.ZN, 180, true));
 								ScreenUtils.drawTexturedModalRect(matrix, -10, -106, 22 + (int) textureUShift, 0, 6,
 										(int) newBarWidth + (int) heightShift, heightShift);
-
 								matrix.popPose();
 
 								// Frame
