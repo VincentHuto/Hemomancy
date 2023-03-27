@@ -8,11 +8,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.model.armor.BloodAvatarModel;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -123,8 +123,8 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		if (!stack.isEmpty()) {
 			poseStack.pushPose();
 			this.getParentModel().translateToHand(arm, poseStack);
-			poseStack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+			poseStack.mulPose(Vector3.XP.rotationDegrees(-90.0F).toMoj());
+			poseStack.mulPose(Vector3.YP.rotationDegrees(180.0F).toMoj());
 			poseStack.scale(2, 2, 2);
 			boolean flag = arm == HumanoidArm.LEFT;
 			poseStack.translate((flag ? -1 : 1) / 4.0F, 0.125D, 1.5 * -0.625D);

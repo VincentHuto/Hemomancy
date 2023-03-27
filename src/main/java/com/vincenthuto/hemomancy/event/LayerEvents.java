@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -71,19 +70,19 @@ public class LayerEvents {
 
 	}
 
-	@SuppressWarnings("deprecation")
-	@SubscribeEvent
-	public static void onStitch(TextureStitchEvent.Pre event) {
-		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
-			event.addSprite(Hemomancy.rloc("entity/royal_guard_shield_base"));
-			event.addSprite(Hemomancy.rloc("entity/barbed_shield/model_barbed_shield"));
-			event.addSprite(Hemomancy.rloc("entity/chitinite_shield/model_chitinite_shield"));
-
-		}
-		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
-			event.addSprite(BannerSlot.SLOT_BACKGROUND);
-		}
-	}
+//	@SuppressWarnings("deprecation")
+//	@SubscribeEvent
+//	public static void onStitch(TextureStitchEvent.Pre event) {
+//		if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS)) {
+//			event.addSprite(Hemomancy.rloc("entity/royal_guard_shield_base"));
+//			event.addSprite(Hemomancy.rloc("entity/barbed_shield/model_barbed_shield"));
+//			event.addSprite(Hemomancy.rloc("entity/chitinite_shield/model_chitinite_shield"));
+//
+//		}
+//		if (event.getAtlas().location() == InventoryMenu.BLOCK_ATLAS) {
+//			event.addSprite(BannerSlot.SLOT_BACKGROUND);
+//		}
+//	}
 
 	// For when the horn breaks it shows the custom animation
 	public static void playHornAnimation() {

@@ -31,7 +31,7 @@ import com.vincenthuto.hemomancy.entity.mob.ThirsterEntity;
 import com.vincenthuto.hemomancy.entity.projectile.TrackingPestsEntity;
 import com.vincenthuto.hemomancy.entity.projectile.TrackingSerpentEntity;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -203,7 +203,7 @@ public class EntityInit {
 					.build(Hemomancy.rloc("dark_arrow").toString()));
 
 	public static TagKey<EntityType<?>> createTag(String name){
-		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY,
+		return TagKey.create(Registries.ENTITY_TYPE,
 				new ResourceLocation(Hemomancy.MOD_ID,name));
 	}
 

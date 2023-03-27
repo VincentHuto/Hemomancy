@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-version = '4.0'
+version = '4.1.0'
 group = 'com.vincenthuto.hemomancy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'hemomancy'
 
@@ -24,7 +24,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-      mappings channel: 'parchment', version: "2022.10.16-1.19.2"
+    mappings channel: 'parchment', version: "2023.03.12-1.19.3"
 	   
      accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg') // Currently, this location cannot be changed from the default.
 
@@ -127,12 +127,12 @@ repositories {
 
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.52'
-     //implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
-     implementation fg.deobf("com.vincenthuto:hutoslib:4.3.1")
-   compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
-   runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
-
+  minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
+     implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+  compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+  runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-common:${jei_version}")
+  runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
 }
 

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.capa.volume;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3d;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -18,42 +18,42 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 
 public class RenderBloodLaser {
 
-	public static Vector3f adjustBeamToEyes(Vector3f from, Vector3f to, Vector3f sortPos) {
+	public static Vector3 adjustBeamToEyes(Vector3 from, Vector3 to, Vector3 sortPos) {
 		Player player = Minecraft.getInstance().player;
-		Vector3f P = new Vector3f((float) player.getX() - sortPos.x(), (float) player.getEyeY() - sortPos.y(),
-				(float) player.getZ() - sortPos.z());
+		Vector3 P = new Vector3((float) player.getX() - sortPos.x, (float) player.getEyeY() - sortPos.y,
+				(float) player.getZ() - sortPos.z);
 
-		Vector3f PS = from.copy();
-		PS.sub(P);
-		Vector3f SE = to.copy();
-		SE.sub(from);
+		Vector3 PS = from.copy();
+		PS.subtract(P);
+		Vector3 SE = to.copy();
+		SE.subtract(from);
 
-		Vector3f adjustedVec = PS.copy();
-		adjustedVec.cross(SE);
+		Vector3 adjustedVec = PS.copy();
+		adjustedVec.crossProduct(SE);
 		adjustedVec.normalize();
 		return adjustedVec;
 	}
 
-	public static void drawLaser(VertexConsumer builder, Matrix4f positionMatrix, Vector3f from, Vector3f to, float r,
-			float g, float b, float alpha, float thickness, double v1, double v2, Vector3f sortPos) {
-		Vector3f adjustedVec = adjustBeamToEyes(from, to, sortPos);
-		adjustedVec.mul(thickness); //
+	public static void drawLaser(VertexConsumer builder, Matrix4f positionMatrix, Vector3 from, Vector3 to, float r,
+			float g, float b, float alpha, float thickness, double v1, double v2, Vector3 sortPos) {
+		Vector3 adjustedVec = adjustBeamToEyes(from, to, sortPos);
+		adjustedVec.multiply(thickness); //
 		// Determines how thick the beam is V
-		Vector3f p1 = from.copy();
+		Vector3 p1 = from.copy();
 		p1.add(adjustedVec);
-		Vector3f p2 = from.copy();
-		p2.sub(adjustedVec);
-		Vector3f p3 = to.copy();
+		Vector3 p2 = from.copy();
+		p2.subtract(adjustedVec);
+		Vector3 p3 = to.copy();
 		p3.add(adjustedVec);
-		Vector3f p4 = to.copy();
-		p4.sub(adjustedVec);
-		builder.vertex(positionMatrix, p1.x(), p1.y(), p1.z()).color(r, g, b, alpha).uv(1, (float) v1)
+		Vector3 p4 = to.copy();
+		p4.subtract(adjustedVec);
+		builder.vertex(positionMatrix, p1.x, p1.y, p1.z).color(r, g, b, alpha).uv(1, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p3.x(), p3.y(), p3.z()).color(r, g, b, alpha).uv(1, (float) v2)
+		builder.vertex(positionMatrix, p3.x, p3.y, p3.z).color(r, g, b, alpha).uv(1, (float) v2)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p4.x(), p4.y(), p4.z()).color(r, g, b, alpha).uv(0, (float) v2)
+		builder.vertex(positionMatrix, p4.x, p4.y, p4.z).color(r, g, b, alpha).uv(0, (float) v2)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
+		builder.vertex(positionMatrix, p2.x, p2.y, p2.z).color(r, g, b, alpha).uv(0, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 	}
 
@@ -72,9 +72,9 @@ public class RenderBloodLaser {
 		float diffX = (float) (to.x - from.x);
 		float diffY = (float) (to.y - from.y);
 		float diffZ = (float) (to.z - from.z);
-		Vector3f startLaser = new Vector3f(0, 0, 0);
-		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
-		Vector3f sortPos = new Vector3f((float) from.x, (float) from.y, (float) from.z);
+		Vector3 startLaser = new Vector3(0, 0, 0);
+		Vector3 endLaser = new Vector3(diffX, diffY, diffZ);
+		Vector3 sortPos = new Vector3((float) from.x, (float) from.y, (float) from.z);
 		Matrix4f positionMatrix = matrixStackIn.last().pose();
 		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.025f, v, v + diffY * -5.5, sortPos);
 		matrixStackIn.popPose();

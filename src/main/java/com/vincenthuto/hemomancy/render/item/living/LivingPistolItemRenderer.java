@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.render.item.living;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.item.tool.living.LivingPistolItem;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -32,13 +32,13 @@ public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
 			if (itemIsInUse) {
 				if (activeHand == InteractionHand.MAIN_HAND) {
 					if (transform == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, -20, true));
+						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(-.55, 0, 0.);
 
 					}
 				} else {
 					if (transform == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, -20, true));
+						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(.55, 0, 0.);
 
 					}

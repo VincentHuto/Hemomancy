@@ -6,9 +6,10 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.google.common.collect.Lists;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.ItemInit;
@@ -49,7 +50,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 	private static void addChargedProjectile(ItemStack crossbow, ItemStack projectile) {
@@ -115,11 +115,10 @@ public class LivingCrossbowItem extends CrossbowItem implements IDispellable {
 				CrossbowAttackMob.shootCrossbowProjectile(CrossbowAttackMob.getTarget(), crossbow, Projectile,
 						projectileAngle);
 			} else {
-				Vec3 Vec31 = shooter.getUpVector(1.0F);
-				Quaternion quaternion = new Quaternion(new Vector3f(Vec31), projectileAngle, true);
-				Vec3 Vec3 = shooter.getViewVector(1.0F);
-				Vector3f vector3f = new Vector3f(Vec3);
-				vector3f.transform(quaternion);
+				Vec3 vec31 = shooter.getUpVector(1.0F);
+	            Quaternionf quaternionf = (new Quaternionf()).setAngleAxis((double)(projectileAngle * ((float)Math.PI / 180F)), vec31.x, vec31.y, vec31.z);
+	            Vec3 vec3 = shooter.getViewVector(1.0F);
+	            Vector3f vector3f = vec3.toVector3f().rotate(quaternionf);
 				Projectile.shoot(vector3f.x(), vector3f.y(), vector3f.z(), velocity, inaccuracy);
 			}
 			if (projectile.getItem() == ItemInit.blood_bolt.get()) {

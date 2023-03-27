@@ -27,16 +27,17 @@ import com.vincenthuto.hemomancy.init.StructureInit;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.recipe.PolypRecipes;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -52,21 +53,21 @@ import net.minecraftforge.registries.RegisterEvent;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 
 public class Hemomancy {
-	// Creative Tab
-	public static class HemomancyItemGroup extends CreativeModeTab {
-		public static final HemomancyItemGroup instance = new HemomancyItemGroup(CreativeModeTab.TABS.length,
-				"hemomancy");
-
-		public HemomancyItemGroup(int index, String label) {
-			super(index, label);
-		}
-
-		@Override
-		public ItemStack makeIcon() {
-			return new ItemStack(ItemInit.sanguine_formation.get());
-		}
-
-	}
+//	// Creative Tab
+//	public static class HemomancyItemGroup extends CreativeModeTab {
+//		public static final HemomancyItemGroup instance = new HemomancyItemGroup(CreativeModeTab.TABS.length,
+//				"hemomancy");
+//
+//		public HemomancyItemGroup(int index, String label) {
+//			super(index, label);
+//		}
+//
+//		@Override
+//		public ItemStack makeIcon() {
+//			return new ItemStack(ItemInit.sanguine_formation.get());
+//		}
+//
+//	}
 
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String MOD_ID = "hemomancy";
@@ -77,8 +78,7 @@ public class Hemomancy {
 	public static boolean forcesLoaded = false;
 
 	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
-		return Pair.of(block.getSecond(),
-				new BlockItem(block.getFirst(), new Item.Properties().tab(HemomancyItemGroup.instance)));
+		return Pair.of(block.getSecond(), new BlockItem(block.getFirst(), new Item.Properties()));
 	}
 
 	// Combined a few methods into one more generic one
@@ -144,6 +144,8 @@ public class Hemomancy {
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		modEventBus.addListener(this::commonSetup);
+		modEventBus.addListener(this::buildCreativeTabs);
+
 		// modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST,
 		// Hemomancy::registerFeature);
 		forgeBus.register(this);
@@ -156,6 +158,32 @@ public class Hemomancy {
 
 	}
 
+	private void buildCreativeTabs(CreativeModeTabEvent.Register event) {
+		event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "hemomancytab"), builder ->
+		// Set name of tab to display
+		builder.title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
+				// Set icon of creative tab
+				.icon(() -> new ItemStack(ItemInit.sanguine_formation.get()))
+				.displayItems((enabledFlags, populator, hasPermissions) -> {
+					// Items
+					ItemInit.BASEITEMS.getEntries().forEach(i -> populator.accept(i.get()));
+					ItemInit.HANDHELDITEMS.getEntries().forEach(i -> populator.accept(i.get()));
+					ItemInit.SPECIALITEMS.getEntries().forEach(i -> populator.accept(i.get()));
+					//ItemInit.SPAWNEGGS.getEntries().forEach(i -> populator.accept(i.get()));
+
+					// Blocks
+					BlockInit.BASEBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.SLABBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.STAIRBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.COLUMNBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.CROSSBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.OBJBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.MODELEDBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+					BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+
+				}));
+	}
+
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
@@ -163,7 +191,7 @@ public class Hemomancy {
 		PacketHandler.registerChannels();
 
 	}
-	
+
 	public static ResourceLocation rloc(String path) {
 		return new ResourceLocation(MOD_ID, path);
 	}

@@ -3,12 +3,12 @@ package com.vincenthuto.hemomancy.render.tile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.model.block.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -46,11 +46,11 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5D, 1.95D, 0.5D);
-		matrixStackIn.mulPose(new Quaternion(Vector3f.XN, 180, true));
+		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		float spinSpeed = (float) mapOneRangeToAnother(te.dataAccess.get(0), 0, 200, 0, 8, 10);
 		float spinMod = spinSpeed < 1 && spinSpeed > 0 ? 0 : spinSpeed;
 	//	System.out.println(spinMod);
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((float) ticks * spinMod));
+		matrixStackIn.mulPose(Vector3.YP.rotationDegrees((float) ticks * spinMod).toMoj());
 		// Displaying vials in slots
 		arms.vial1.visible = !te.inventory.get(2).isEmpty() && te.inventory.get(2).hasTag();
 		arms.vial1Empty.visible = !te.inventory.get(2).isEmpty() && !te.inventory.get(2).hasTag();

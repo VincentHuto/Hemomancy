@@ -13,11 +13,11 @@ import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -40,12 +40,14 @@ import net.minecraftforge.network.NetworkHooks;
 public class BloodBoltEntity extends AbstractArrow {
 	private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(BloodBoltEntity.class,
 			EntityDataSerializers.INT);
+
 	public static int getCustomColor(ItemStack p_191508_0_) {
 		CompoundTag CompoundTag = p_191508_0_.getTag();
 		return CompoundTag != null && CompoundTag.contains("CustomPotionColor", 99)
 				? CompoundTag.getInt("CustomPotionColor")
 				: -1;
 	}
+
 	private Potion potion = Potions.EMPTY;
 	private final Set<MobEffectInstance> customPotionEffects = Sets.newHashSet();
 
@@ -66,9 +68,6 @@ public class BloodBoltEntity extends AbstractArrow {
 	@Override
 	public void addAdditionalSaveData(CompoundTag compound) {
 		super.addAdditionalSaveData(compound);
-		if (this.potion != Potions.EMPTY && this.potion != null) {
-			compound.putString("Potion", Registry.POTION.getKey(this.potion).toString());
-		}
 
 		if (this.fixedColor) {
 			compound.putInt("Color", this.getColor());
@@ -111,7 +110,7 @@ public class BloodBoltEntity extends AbstractArrow {
 
 	@Nonnull
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

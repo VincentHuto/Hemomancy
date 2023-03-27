@@ -11,6 +11,7 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
@@ -48,7 +50,7 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 
 	@Nonnull
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -62,7 +64,7 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 		case BLOCK: {
 			if (!level.isClientSide) {
 				this.level.explode(this, this.getX(), this.getY() + this.getBbHeight() / 16.0F, this.getZ(), 3.0F,
-						Explosion.BlockInteraction.DESTROY);
+						ExplosionInteraction.MOB);
 			}
 			this.remove(RemovalReason.KILLED);
 			break;
@@ -70,7 +72,7 @@ public class DirectedBloodOrbEntity extends ThrowableProjectile {
 		case ENTITY: {
 			if (!level.isClientSide) {
 				this.level.explode(this, this.getX(), this.getY() + this.getBbHeight() / 16.0F, this.getZ(), 3.0F,
-						Explosion.BlockInteraction.NONE);
+						ExplosionInteraction.NONE);
 			}
 			this.remove(RemovalReason.KILLED);
 			break;

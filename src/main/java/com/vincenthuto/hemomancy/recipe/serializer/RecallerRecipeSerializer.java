@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe> {
 	public static HashMap<ResourceLocation, RecallerRecipe> ALL_RECIPES = new HashMap<>();
@@ -44,9 +45,8 @@ public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe
 			int c = GsonHelper.getAsInt(pJson, "count");
 			String s1 = GsonHelper.getAsString(pJson, "result");
 			ResourceLocation resourcelocation = new ResourceLocation(s1);
-			result = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
-				return new IllegalStateException("Item: " + s1 + " does not exist");
-			}), c);
+			result = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
+
 		}
 
 		if (pJson.has("ingredient")) {

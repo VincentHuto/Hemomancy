@@ -15,7 +15,6 @@ import com.vincenthuto.hemomancy.network.capa.PacketGourdRuneSync;
 import com.vincenthuto.hemomancy.network.capa.PacketRuneSync;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;

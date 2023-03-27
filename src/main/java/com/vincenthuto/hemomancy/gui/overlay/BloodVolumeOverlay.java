@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.gui.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
@@ -10,6 +8,8 @@ import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.network.PacketHandler;
 import com.vincenthuto.hemomancy.network.capa.BloodVolumeClientPacket;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -45,20 +45,20 @@ public class BloodVolumeOverlay {
 								float textureUShift = (world.getGameTime() * 0.25f % 256);
 								float heightShift = (float) Math.cos(world.getGameTime() * 0.2) * 2;
 
-//								
+//
 //								matrix.pushPose();
 //								RenderSystem.setShader(GameRenderer::getPositionTexShader);
 //								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
 //								RenderSystem.setShaderTexture(0, memory_border);
 //								ScreenUtils.drawTexturedModalRect(matrix, 103, 45, 0, 0,256,144, 10);
 //								matrix.popPose();
-								
+
 								// Fill
 								matrix.pushPose();
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
 								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 								RenderSystem.setShaderTexture(0, fill_texture);
-								matrix.mulPose(new Quaternion(Vector3f.ZN, 180, true));
+								matrix.mulPose(new Quaternion(Vector3.ZN, 180, true).toMoj());
 								ScreenUtils.drawTexturedModalRect(matrix, -10, -106, 22 + (int) textureUShift, 0, 6,
 										(int) newBarWidth + (int) heightShift, heightShift);
 								matrix.popPose();

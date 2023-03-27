@@ -3,7 +3,8 @@ package com.vincenthuto.hemomancy.network.particle;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import com.mojang.math.Vector3d;
+import org.joml.Vector3d;
+
 import com.vincenthuto.hemomancy.capa.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.init.BlockInit;

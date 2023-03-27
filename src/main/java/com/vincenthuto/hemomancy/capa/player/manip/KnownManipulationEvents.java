@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.network.capa.manips.KnownManipulationServerPack
 import com.vincenthuto.hemomancy.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

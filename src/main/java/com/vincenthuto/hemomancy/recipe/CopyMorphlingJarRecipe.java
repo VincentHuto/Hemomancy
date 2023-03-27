@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -46,11 +47,11 @@ public class CopyMorphlingJarRecipe extends ShapedRecipe {
 
 	public CopyMorphlingJarRecipe(final ResourceLocation id, final String group, final int recipeWidth,
 			final int recipeHeight, final NonNullList<Ingredient> ingredients, final ItemStack recipeOutput) {
-		super(id, group, recipeWidth, recipeHeight, ingredients, recipeOutput);
+		super(id, group, null, recipeWidth, recipeHeight, ingredients, recipeOutput);
 	}
 
 	public CopyMorphlingJarRecipe(ShapedRecipe shapedRecipe) {
-		super(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getRecipeWidth(),
+		super(shapedRecipe.getId(), shapedRecipe.getGroup(), CraftingBookCategory.MISC, shapedRecipe.getRecipeWidth(),
 				shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
 	}
 

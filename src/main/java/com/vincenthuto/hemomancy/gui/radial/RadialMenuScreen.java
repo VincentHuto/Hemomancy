@@ -107,12 +107,6 @@ public class RadialMenuScreen extends Screen {
 	}
 
 	@Override
-	public void removed() {
-		super.removed();
-		KeyBindEvents.wipeOpen();
-	}
-
-	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		matrixStack.pushPose();
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
@@ -159,7 +153,6 @@ public class RadialMenuScreen extends Screen {
 
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			KeyBindEvents.wipeOpen();
 		}
 		if (!menu.isReady() || inventory == null) {
 			return;

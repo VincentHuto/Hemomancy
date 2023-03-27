@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.item.armor;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
@@ -24,7 +23,7 @@ public class BloodLustArmorItem extends ArmorItem {
 	EnumBloodLustMaskTypes maskType;
 
 	public BloodLustArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, EnumBloodLustMaskTypes maskType) {
-		super(materialIn, slot, new Item.Properties().tab(HemomancyItemGroup.instance));
+		super(materialIn, slot, new Item.Properties());
 		this.maskType = maskType;
 	}
 

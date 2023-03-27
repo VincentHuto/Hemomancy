@@ -15,6 +15,7 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -22,8 +23,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -62,7 +63,7 @@ public class BloodBulletEntity extends AbstractArrow {
 
 	@Nonnull
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -77,7 +78,7 @@ public class BloodBulletEntity extends AbstractArrow {
 		case BLOCK: {
 //			if (!level.isClientSide) {
 //				this.level.explode(this, this.getX(), this.getY() + this.getBbHeight() / 16.0F, this.getZ(), 1.0F,
-//						Explosion.BlockInteraction.NONE);
+//						ExplosionInteraction.NONE);
 //			}
 			// this.remove(RemovalReason.KILLED);
 			break;
@@ -85,7 +86,7 @@ public class BloodBulletEntity extends AbstractArrow {
 		case ENTITY: {
 			if (!level.isClientSide) {
 				this.level.explode(this, this.getX(), this.getY() + this.getBbHeight() / 16.0F, this.getZ(), 4.0F,
-						Explosion.BlockInteraction.NONE);
+						ExplosionInteraction.NONE);
 			}
 			this.remove(RemovalReason.KILLED);
 			break;

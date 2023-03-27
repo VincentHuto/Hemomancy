@@ -94,7 +94,7 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int p_146979_1_, int p_146979_2_) { // drawGuiContainerForegroundLayer
 		if (this.minecraft != null) { // this.minecraft
-			this.minecraft.font.draw(matrixStack, Component.literal("container.crafting"), 115 - 18, 8 + 22,
+			this.minecraft.font.draw(matrixStack, Component.translatable("container.crafting"), 115 - 18, 8 + 22,
 					4210752);
 		}
 	}

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.item.VasculariumCharmItem;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -30,10 +30,10 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
 				if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();
-					matrixStack.mulPose(Vector3f.XN.rotationDegrees(180f));
+					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());
 					matrixStack.scale(0.25f, 0.25f, 0.25f);
 					matrixStack.translate(0, -.45, 0.55);
-					matrixStack.mulPose(Vector3f.XN.rotationDegrees(7f));
+					matrixStack.mulPose(Vector3.XN.rotationDegrees(7f).toMoj());
 					this.getParentModel().body.translateAndRotate(matrixStack);
 					Minecraft.getInstance().getItemRenderer().renderStatic(
 							new ItemStack(ItemInit.charm_of_vascularium.get()), TransformType.FIXED, lightness,

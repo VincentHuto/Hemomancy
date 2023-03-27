@@ -6,7 +6,6 @@ import java.util.function.Predicate;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.item.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.item.tool.living.ICellHand;
@@ -78,16 +77,16 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 		mc.getTextureManager().bindForSetup(mc.player.getSkinTextureLocation());
 		matrixStackIn.pushPose();
 		if (side == HumanoidArm.RIGHT) {
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(12.0f));
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
+			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(12.0f).toMoj());
+			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
+			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
 			matrixStackIn.translate(1.0, -0.4, 0.8);
 			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
 
 		} else {
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-12.0f));
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-35.0f));
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(5.0f));
+			matrixStackIn.mulPose(Vector3.YP.rotationDegrees(-12.0f).toMoj());
+			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(-35.0f).toMoj());
+			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(5.0f).toMoj());
 			matrixStackIn.translate(0.0, -0.3, 0.6);
 			renderArm(matrixStackIn, bufferIn, combinedLightIn, mc.player, side);
 		}

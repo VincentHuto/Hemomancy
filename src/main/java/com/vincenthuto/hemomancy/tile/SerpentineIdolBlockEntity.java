@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.tile;
 
 import java.util.List;
 
-import com.mojang.math.Vector3d;
 import com.vincenthuto.hemomancy.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.init.PotionInit;
@@ -34,7 +33,7 @@ public class SerpentineIdolBlockEntity extends BlockEntity {
 					if (!(e instanceof Player)) {
 						Vector3 t = new Vector3(e.getX(), e.getY(), e.getZ());
 						double distance = centerVec.distanceTo(t) + 0.1D;
-						Vector3d r = new Vector3d(t.x - centerVec.x, t.y - centerVec.y, t.z - centerVec.z);
+						Vector3 r = new Vector3(t.x - centerVec.x, t.y - centerVec.y, t.z - centerVec.z);
 						// e.setDeltaMovement(-r.x / 10.2D / distance * 1.3, -r.y / 10.2D / distance,
 						// -r.z / 10.2D / distance * 1.3);
 

@@ -25,7 +25,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -120,12 +119,6 @@ public class RadialCharmScreen extends Screen {
 	}
 
 	@Override
-	public void removed() {
-		super.removed();
-		KeyBindEvents.wipeOpen();
-	}
-
-	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		if (this.needsRecheckStacks) {
@@ -187,7 +180,6 @@ public class RadialCharmScreen extends Screen {
 		menu.tick();
 		if (menu.isClosed()) {
 			Minecraft.getInstance().setScreen(null);
-			KeyBindEvents.wipeOpen();
 		}
 		if (!menu.isReady()) {
 			return;

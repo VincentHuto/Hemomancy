@@ -8,18 +8,18 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
+import com.vincenthuto.hutoslib.math.Quaternion;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -113,7 +113,7 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			final double scale = Minecraft.getInstance().getWindow().getGuiScale();
 			final Matrix4f matrix = mx.last().pose();
 			final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-			matrix.store(buf);
+			matrix.set(buf);
 			Lighting.setupLevel(matrix);
 
 			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
@@ -139,8 +139,8 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			float previewScale = (float) ((2 + Math.exp(2 - (recipeAvgDim / 5))) / explodeMulti);
 			mx.scale(previewScale, -previewScale, previewScale);
 			double test = Math.toDegrees(HLClientUtils.getWorld().getGameTime()) / 15;
-			mx.mulPose(new Quaternion(35f, (float) test, 0, true));
-			mx.mulPose(new Quaternion(0, 35f, 0, true));
+			mx.mulPose(new Quaternion(35f, (float) test, 0, true).toMoj());
+			mx.mulPose(new Quaternion(0, 35f, 0, true).toMoj());
 
 			recipe.getPattern().getBlockPosBlockList().forEach((box) -> {
 				if (box.getPos().getY() < layerCount) {

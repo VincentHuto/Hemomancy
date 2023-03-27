@@ -15,7 +15,7 @@ import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -119,7 +119,7 @@ public class MorphlingJarViewerScreen extends Screen {
 		// GlStateManager._popMatrix();
 
 		// GlStateManager._pushMatrix();
-		for (Widget renderable : renderables) {
+		for (Renderable renderable : renderables) {
 			renderable.render(matrixStack, mouseX, mouseY, 511);
 			if (((GuiButtonTextured) renderable).isHoveredOrFocused()) {
 				ItemStack stack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
@@ -154,8 +154,8 @@ public class MorphlingJarViewerScreen extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured) renderables.get(i)).x = x;
-							((GuiButtonTextured) renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).posX = x;
+							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -166,8 +166,8 @@ public class MorphlingJarViewerScreen extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 2 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured) renderables.get(i)).x = x;
-							((GuiButtonTextured) renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).posX = x;
+							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -177,8 +177,8 @@ public class MorphlingJarViewerScreen extends Screen {
 									.abs(Math.abs(player.level.getGameTime() / 3 % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured) renderables.get(i)).x = x;
-							((GuiButtonTextured) renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).posX = x;
+							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 
@@ -188,8 +188,8 @@ public class MorphlingJarViewerScreen extends Screen {
 							long testY = (Math.abs(Math.abs(player.level.getGameTime() % (maxY * 2) - maxY) - maxY));
 							int x = (int) (centerX + testX);
 							int y = (int) (centerY + testY);
-							((GuiButtonTextured) renderables.get(i)).x = x;
-							((GuiButtonTextured) renderables.get(i)).y = y;
+							((GuiButtonTextured) renderables.get(i)).posX = x;
+							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
 									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
 

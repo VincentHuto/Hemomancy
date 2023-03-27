@@ -89,13 +89,12 @@ public class ItemMorphlingJar extends Item {
 	Rarity rarity;
 
 	public ItemMorphlingJar(String name, Integer size, Rarity rarity) {
-		super(new Item.Properties().stacksTo(1).tab(com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup.instance));
+		super(new Item.Properties().stacksTo(1));
 		this.name = name;
 		this.size = size;
 		this.rarity = rarity;
 	}
 
-	@SuppressWarnings("static-access")
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {

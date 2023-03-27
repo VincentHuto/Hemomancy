@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -50,7 +51,7 @@ public class TeleportToVeinPacket {
 							DimensionalPosition p = known.getSelectedVein();
 							BlockPos bp = p.getPosition();
 							ResourceLocation dimRL = p.getDimension();
-							ResourceKey<Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY, dimRL);
+							ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, dimRL);
 							ServerLevel ovw = player.level.getServer().getLevel(key);
 							if (ovw.getBlockEntity(bp)instanceof EarthenVeinBlockEntity te) {
 								if (!known.getSelectedVein().getName().equals(te.getLoc().getName())) {

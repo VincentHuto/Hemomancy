@@ -12,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -89,8 +90,7 @@ public class VasculariumCharmItem extends Item implements IRune {
 			if (pLevel instanceof ServerLevel) {
 				ServerLevel serverlevel = (ServerLevel) pLevel;
 				BlockPos blockpos = serverlevel.findNearestMapStructure(
-						TagKey.create(Registry.STRUCTURE_REGISTRY,
-								Hemomancy.rloc("structures/blood_temple")),
+						TagKey.create(Registries.STRUCTURE, Hemomancy.rloc("structures/blood_temple")),
 						pPlayer.blockPosition(), 100, false);
 
 				if (blockpos != null) {

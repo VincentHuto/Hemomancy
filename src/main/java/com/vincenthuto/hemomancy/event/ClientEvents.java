@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.event;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.capa.volume.RenderBloodLaserEvent;
@@ -25,6 +24,7 @@ import com.vincenthuto.hemomancy.render.tile.ScryingPodiumRenderer;
 import com.vincenthuto.hemomancy.render.tile.UnstainedPodiumRenderer;
 import com.vincenthuto.hemomancy.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.render.tile.VisceralRecallerRenderer;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -85,17 +85,17 @@ public class ClientEvents {
 			float f3 = 0.4F * Mth.sin(f1 * ((float) Math.PI * 2F));
 			float f4 = -0.4F * Mth.sin(pSwingProgress * (float) Math.PI);
 			pMatrixStack.translate(f * (f2 + 0.64000005F), f3 + -0.6F + pEquippedProgress * -0.6F, f4 + -0.71999997F);
-			pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * 45.0F));
+			pMatrixStack.mulPose(Vector3.YP.rotationDegrees(f * 45.0F).toMoj());
 			float f5 = Mth.sin(pSwingProgress * pSwingProgress * (float) Math.PI);
 			float f6 = Mth.sin(f1 * (float) Math.PI);
-			pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * f6 * 70.0F));
-			pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * f5 * -20.0F));
+			pMatrixStack.mulPose(Vector3.YP.rotationDegrees(f * f6 * 70.0F).toMoj());
+			pMatrixStack.mulPose(Vector3.ZP.rotationDegrees(f * f5 * -20.0F).toMoj());
 			AbstractClientPlayer abstractclientplayer = minecraft.player;
 			RenderSystem.setShaderTexture(0, abstractclientplayer.getSkinTextureLocation());
 			pMatrixStack.translate(f * -1.0F, 3.6F, 3.5D);
-			pMatrixStack.mulPose(Vector3f.ZP.rotationDegrees(f * 120.0F));
-			pMatrixStack.mulPose(Vector3f.XP.rotationDegrees(200.0F));
-			pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(f * -135.0F));
+			pMatrixStack.mulPose(Vector3.ZP.rotationDegrees(f * 120.0F).toMoj());
+			pMatrixStack.mulPose(Vector3.XP.rotationDegrees(200.0F).toMoj());
+			pMatrixStack.mulPose(Vector3.YP.rotationDegrees(f * -135.0F).toMoj());
 			pMatrixStack.translate(f * 5.6F, 0.0D, 0.0D);
 			pMatrixStack.scale(2, 2, 2);
 			PlayerRenderer playerrenderer = (PlayerRenderer) minecraft.getEntityRenderDispatcher()

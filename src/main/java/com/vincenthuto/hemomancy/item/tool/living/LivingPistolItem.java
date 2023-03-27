@@ -3,11 +3,11 @@ package com.vincenthuto.hemomancy.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.entity.blood.BloodBulletEntity;
 import com.vincenthuto.hemomancy.entity.blood.BloodNeedleEntity;
 import com.vincenthuto.hemomancy.render.item.living.LivingPistolItemRenderer;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -29,7 +29,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class LivingPistolItem extends Item implements IDispellable {
 	public static String TAG_MODE = "mode";
@@ -56,11 +55,11 @@ public class LivingPistolItem extends Item implements IDispellable {
 			if (!player.isCrouching()) {
 				int mode = getGunMode(stack);
 				Vec3 vector3d = player.getLookAngle();
-				Vector3f vector3f = new Vector3f(vector3d);
+				Vector3 vector3f = new Vector3(vector3d);
 				if (mode == 0) {
 					// Pistol
 					BloodNeedleEntity shot = new BloodNeedleEntity(world, player);
-					shot.shoot(vector3f.x(), vector3f.y(), vector3f.z(), 4.5F, 1.0f);
+					shot.shoot(vector3f.x, vector3f.y, vector3f.z, 4.5F, 1.0f);
 					world.addFreshEntity(shot);
 				} else if (mode == 1) {
 					// Blaster
@@ -68,7 +67,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 					BloodNeedleEntity[] needles = new BloodNeedleEntity[randInt];
 					for (int i = 0; i < needles.length; i++) {
 						needles[i] = new BloodNeedleEntity(world, player);
-						needles[i].shoot(vector3f.x(), vector3f.y(), vector3f.z(), world.random.nextInt(5) + 4,
+						needles[i].shoot(vector3f.x, vector3f.y, vector3f.z, world.random.nextInt(5) + 4,
 								world.random.nextInt(20) - world.random.nextInt(20));
 						world.addFreshEntity(needles[i]);
 					}
@@ -78,7 +77,7 @@ public class LivingPistolItem extends Item implements IDispellable {
 					BloodBulletEntity[] needles = new BloodBulletEntity[randInt];
 					for (int i = 0; i < needles.length; i++) {
 						needles[i] = new BloodBulletEntity(world, player);
-						needles[i].shoot(vector3f.x(), vector3f.y(), vector3f.z(), world.random.nextInt(5) + 4,
+						needles[i].shoot(vector3f.x, vector3f.y, vector3f.z, world.random.nextInt(5) + 4,
 								world.random.nextInt(5) - world.random.nextInt(5));
 						world.addFreshEntity(needles[i]);
 					}

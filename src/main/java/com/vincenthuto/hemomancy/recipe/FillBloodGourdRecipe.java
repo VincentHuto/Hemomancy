@@ -48,11 +48,11 @@ public class FillBloodGourdRecipe extends ShapedRecipe {
 
 	public FillBloodGourdRecipe(final ResourceLocation id, final String group, final int recipeWidth,
 			final int recipeHeight, final NonNullList<Ingredient> ingredients, final ItemStack recipeOutput) {
-		super(id, group, recipeWidth, recipeHeight, ingredients, recipeOutput);
+		super(id, group, null, recipeWidth, recipeHeight, ingredients, recipeOutput);
 	}
 
 	public FillBloodGourdRecipe(ShapedRecipe shapedRecipe) {
-		super(shapedRecipe.getId(), shapedRecipe.getGroup(), shapedRecipe.getRecipeWidth(),
+		super(shapedRecipe.getId(), shapedRecipe.getGroup(), null, shapedRecipe.getRecipeWidth(),
 				shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
 	}
 

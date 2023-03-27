@@ -4,13 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.item.tool.living.LivingBladeItem;
 import com.vincenthuto.hemomancy.model.item.LivingBladeHandTameModel;
 import com.vincenthuto.hemomancy.model.item.LivingBladeUnleashedModel;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -48,8 +48,8 @@ public class LivingBladeItemRenderer extends BlockEntityWithoutLevelRenderer {
 		if (stack.getItem() instanceof LivingBladeItem) {
 			Model model;
 			ms.pushPose();
-			ms.mulPose(new Quaternion(Vector3f.XP, 180, true));
-			ms.mulPose(new Quaternion(Vector3f.YP, 180, true));
+			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
 			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 					.immediate(Tesselator.getInstance().getBuilder());

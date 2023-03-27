@@ -9,8 +9,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.container.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.network.PacketHandler;
@@ -18,6 +16,8 @@ import com.vincenthuto.hemomancy.network.capa.manips.StartCentrifugeButtonPacket
 import com.vincenthuto.hemomancy.tile.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.client.screen.GuiButtonTextured;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -155,7 +155,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, fill_texture);
-		matrix.mulPose(new Quaternion(Vector3f.ZP, 45, true));
+		matrix.mulPose(new Quaternion(Vector3.ZP, 45, true).toMoj());
 		drawFlippedTexturedModalRect(-12 + screenWidth + 6, 60 + screenHeight + 14, 23 + textureUShift, textureVShift,
 				6, heightShift - newBarWidth);
 		matrix.popPose();

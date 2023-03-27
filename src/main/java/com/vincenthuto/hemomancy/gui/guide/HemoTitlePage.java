@@ -6,7 +6,6 @@ import com.vincenthuto.hutoslib.client.screen.guide.GuiGuideTitlePage;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeLib;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class HemoTitlePage extends GuiGuideTitlePage {

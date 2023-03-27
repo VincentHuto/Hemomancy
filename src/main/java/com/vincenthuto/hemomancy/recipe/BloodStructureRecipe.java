@@ -9,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -40,7 +41,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result) {
-		super(pId);
+		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
 		this.pattern = pattern;
 		this.heldItem = heldItem;

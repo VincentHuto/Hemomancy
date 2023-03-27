@@ -1,12 +1,13 @@
 package com.vincenthuto.hemomancy.render.entity.blood;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.blood.BloodBoltEntity;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -44,8 +45,8 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 			MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose(
-				Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
-		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+				Vector3.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F).toMoj());
+		matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())).toMoj());
 		int i = 0;
 		float f = 0.0F;
 		float f1 = 0.5F;
@@ -59,10 +60,10 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 		float f9 = entityIn.shakeTime - partialTicks;
 		if (f9 > 0.0F) {
 			float f10 = -Mth.sin(f9 * 3.0F) * f9;
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f10));
+			matrixStackIn.mulPose(Vector3.ZP.rotationDegrees(f10).toMoj());
 		}
 
-		matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(45.0F));
+		matrixStackIn.mulPose(Vector3.XP.rotationDegrees(45.0F).toMoj());
 		matrixStackIn.scale(0.05625F, 0.05625F, 0.05625F);
 		matrixStackIn.translate(-4.0D, 0.0D, 0.0D);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityCutout(TEXTURE));
@@ -79,7 +80,7 @@ public class BloodBoltRenderer extends EntityRenderer<BloodBoltEntity> {
 		this.drawVertex(matrix4f, matrix3f, ivertexbuilder, -7, -2, -2, 0.0F, 0.3125F, 1, 0, 0, packedLightIn);
 
 		for (int j = 0; j < 4; ++j) {
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+			matrixStackIn.mulPose(Vector3.XP.rotationDegrees(90.0F).toMoj());
 			this.drawVertex(matrix4f, matrix3f, ivertexbuilder, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, packedLightIn);
 			this.drawVertex(matrix4f, matrix3f, ivertexbuilder, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, packedLightIn);
 			this.drawVertex(matrix4f, matrix3f, ivertexbuilder, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, packedLightIn);

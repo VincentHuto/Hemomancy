@@ -11,7 +11,6 @@ import com.vincenthuto.hemomancy.recipe.serializer.BloodStructureRecipeSerialize
 import com.vincenthuto.hemomancy.recipe.serializer.JuiceinatorSerializer;
 import com.vincenthuto.hemomancy.recipe.serializer.RecallerRecipeSerializer;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fml.common.Mod;

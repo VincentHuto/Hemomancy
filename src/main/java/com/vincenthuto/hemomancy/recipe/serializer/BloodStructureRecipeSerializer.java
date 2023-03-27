@@ -17,7 +17,6 @@ import com.google.gson.JsonSyntaxException;
 import com.vincenthuto.hemomancy.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -38,9 +37,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	private static Block blockFromJson(JsonObject pItemObject) {
 		String s = GsonHelper.getAsString(pItemObject, "block");
-		Block block = Registry.BLOCK.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
-			return new JsonSyntaxException("Unknown block '" + s + "'");
-		});
+		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
 		} else {
@@ -49,9 +47,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	}
 
 	private static Block blockFromString(String s) {
-		Block block = Registry.BLOCK.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
-			return new JsonSyntaxException("Unknown block '" + s + "'");
-		});
+
+		Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
 		if (block == Blocks.AIR) {
 			throw new JsonSyntaxException("Invalid block: " + s);
 		} else {
@@ -105,8 +102,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		Map<String, Block> map = Maps.newHashMap();
 		for (Entry<String, JsonElement> entry : pKeyEntry.entrySet()) {
 			if (entry.getKey().length() != 1) {
-				throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey()
-						+ "' is an invalid symbol (must be 1 character only).");
+				throw new JsonSyntaxException(
+						"Invalid key entry: '" + entry.getKey() + "' is an invalid symbol (must be 1 character only).");
 			}
 			if (" ".equals(entry.getKey())) {
 				throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
@@ -174,9 +171,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		for (int i = 0; i < symbolListLength; i++) {
 			String key = pBuffer.readUtf();
 			ResourceLocation blockLoc = pBuffer.readResourceLocation();
-			Block block = Registry.BLOCK.getOptional(blockLoc).orElseThrow(() -> {
-				return new JsonSyntaxException("Unknown block '" + blockLoc + "'");
-			});
+			Block block = ForgeRegistries.BLOCKS.getValue(blockLoc);
+
 			map.put(key, block);
 		}
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);

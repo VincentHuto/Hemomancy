@@ -3,10 +3,10 @@ package com.vincenthuto.hemomancy.render.tile;
 import java.util.Map;
 import java.util.Random;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
@@ -33,40 +33,40 @@ import net.minecraft.world.phys.Vec3;
 public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRecallerBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	public static Vector3f adjustBeamToEyes(Vector3f from, Vector3f to, Vector3f sortPos) {
+	public static Vector3 adjustBeamToEyes(Vector3 from, Vector3 to, Vector3 sortPos) {
 		Player player = Minecraft.getInstance().player;
-		Vector3f P = new Vector3f((float) player.getX() - sortPos.x(), (float) player.getEyeY() - sortPos.y(),
-				(float) player.getZ() - sortPos.z());
-		Vector3f PS = from.copy();
-		PS.sub(P);
-		Vector3f SE = to.copy();
-		SE.sub(from);
-		Vector3f adjustedVec = PS.copy();
-		adjustedVec.cross(SE);
+		Vector3 P = new Vector3((float) player.getX() - sortPos.x, (float) player.getEyeY() - sortPos.y,
+				(float) player.getZ() - sortPos.z);
+		Vector3 PS = from.copy();
+		PS.subtract(P);
+		Vector3 SE = to.copy();
+		SE.subtract(from);
+		Vector3 adjustedVec = PS.copy();
+		adjustedVec.crossProduct(SE);
 		adjustedVec.normalize();
 		return adjustedVec;
 	}
 
-	public static void drawLaser(VertexConsumer builder, Matrix4f positionMatrix, Vector3f from, Vector3f to, float r,
-			float g, float b, float alpha, float thickness, double v1, double v2, Vector3f sortPos) {
-		Vector3f adjustedVec = adjustBeamToEyes(from, to, sortPos);
-		adjustedVec.mul(thickness); //
+	public static void drawLaser(VertexConsumer builder, Matrix4f positionMatrix, Vector3 from, Vector3 to, float r,
+			float g, float b, float alpha, float thickness, double v1, double v2, Vector3 sortPos) {
+		Vector3 adjustedVec = adjustBeamToEyes(from, to, sortPos);
+		adjustedVec.multiply(thickness); //
 		// Determines how thick the beam is V
-		Vector3f p1 = from.copy();
+		Vector3 p1 = from.copy();
 		p1.add(adjustedVec);
-		Vector3f p2 = from.copy();
-		p2.sub(adjustedVec);
-		Vector3f p3 = to.copy();
+		Vector3 p2 = from.copy();
+		p2.subtract(adjustedVec);
+		Vector3 p3 = to.copy();
 		p3.add(adjustedVec);
-		Vector3f p4 = to.copy();
-		p4.sub(adjustedVec);
-		builder.vertex(positionMatrix, p1.x(), p1.y(), p1.z()).color(r, g, b, alpha).uv(1, (float) v1)
+		Vector3 p4 = to.copy();
+		p4.subtract(adjustedVec);
+		builder.vertex(positionMatrix, p1.x, p1.y, p1.z).color(r, g, b, alpha).uv(1, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p3.x(), p3.y(), p3.z()).color(r, g, b, alpha).uv(1, (float) v2)
+		builder.vertex(positionMatrix, p3.x, p3.y, p3.z).color(r, g, b, alpha).uv(1, (float) v2)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p4.x(), p4.y(), p4.z()).color(r, g, b, alpha).uv(0, (float) v2)
+		builder.vertex(positionMatrix, p4.x, p4.y, p4.z).color(r, g, b, alpha).uv(0, (float) v2)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
+		builder.vertex(positionMatrix, p2.x, p2.y, p2.z).color(r, g, b, alpha).uv(0, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 	}
 
@@ -88,12 +88,12 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 		float diffX = (float) (from.x - to.x);
 		float diffY = (float) (from.y - to.y);
 		float diffZ = (float) (from.z - to.z);
-		Vector3f startLaser = new Vector3f(0, 0, 0);
-		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
-		Vector3f sortPos = new Vector3f((float) to.x, (float) to.y, (float) to.z);
+		Vector3 startLaser = new Vector3(0, 0, 0);
+		Vector3 endLaser = new Vector3(diffX, diffY, diffZ);
+		Vector3 sortPos = new Vector3((float) to.x, (float) to.y, (float) to.z);
 		Matrix4f positionMatrix = matrixStackIn.last().pose();
 
-		Vector3f backPos = new Vector3f((float) to.x, (float) to.y - .05f, (float) to.z);
+		Vector3 backPos = new Vector3((float) to.x, (float) to.y - .05f, (float) to.z);
 
 		drawLaser(builderBack, positionMatrix, endLaser, startLaser, 0, 0, 0, 1f, 0.075f, v, v + diffY * -5.5, backPos);
 		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, 1f, 0.05f, v, v + diffY * -5.5, sortPos);
@@ -164,9 +164,9 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5F, 1.75F, 0.5F);
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(te.getLevel().getGameTime())); // Edit
+		matrixStackIn.mulPose(Vector3.YP.rotationDegrees(te.getLevel().getGameTime()).toMoj()); // Edit
 		matrixStackIn.translate(0.025F, -0.5F, 0.025F);
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90f)); // Edit Radius Movement
+		matrixStackIn.mulPose(Vector3.YP.rotationDegrees(90f).toMoj()); // Edit Radius Movement
 		matrixStackIn.translate(0D, 0.175D * 0.25, 0F); // Block/Item Scale
 		matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 		ItemStack stack = te.contents.get(0);

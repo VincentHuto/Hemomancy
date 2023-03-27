@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.render.item;
 import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -69,7 +69,7 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 		float f2 = BakedModel.getTransforms().getTransform(ItemTransforms.TransformType.GROUND).scale.y();
 		matrixStackIn.translate(0.0D, f1 + 0.25F * f2, 0.0D);
 		float f3 = (entityIn.getAge() + partialTicks) / 20.0F + entityIn.bobOffs;
-		matrixStackIn.mulPose(Vector3f.YP.rotation(f3));
+		matrixStackIn.mulPose(Vector3.YP.rotation(f3).toMoj());
 		if (!flag) {
 			float f7 = -0.0F * (j - 1) * 0.5F;
 			float f8 = -0.0F * (j - 1) * 0.5F;

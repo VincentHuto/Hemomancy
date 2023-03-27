@@ -3,7 +3,6 @@ package com.vincenthuto.hemomancy.item;
 import java.util.List;
 import java.util.Random;
 
-import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.network.chat.Component;
@@ -18,7 +17,7 @@ import net.minecraft.world.level.Level;
 public class RecycledEnzymeItem extends Item {
 
 	public RecycledEnzymeItem() {
-		super(new Item.Properties().tab(HemomancyItemGroup.instance));
+		super(new Item.Properties());
 	}
 
 	@Override

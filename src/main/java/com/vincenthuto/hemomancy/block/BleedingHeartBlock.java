@@ -12,7 +12,7 @@ public class BleedingHeartBlock extends FlowerBlock {
 	}
 
 	@Override
-	public MobEffect getSuspiciousStewEffect() {
+	public MobEffect getSuspiciousEffect() {
 		return PotionInit.blood_rush.get();
 	}
 }

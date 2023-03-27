@@ -12,7 +12,7 @@ public class InfectedFungusBlock extends FlowerBlock {
 	}
 
 	@Override
-	public MobEffect getSuspiciousStewEffect() {
+	public MobEffect getSuspiciousEffect() {
 		return PotionInit.blood_loss.get();
 	}
 }

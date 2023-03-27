@@ -122,13 +122,13 @@ public class ChooseVeinScreen extends Screen {
 			if (renderables.get(i)instanceof GuiButtonTextured telebutton) {
 				if (telebutton.id == 69) {
 					if (telebutton.isHoveredOrFocused()) {
-						font.drawShadow(matrixStack, "Teleport To Selected", telebutton.x - 10 / 2, telebutton.y - 10,
+						font.drawShadow(matrixStack, "Teleport To Selected", telebutton.posX - 10 / 2, telebutton.posY - 10,
 								0xffffff);
 					} else {
 
 //						font.drawShadow(matrixStack,  level.get(j).getCurrentLevel() + "",
-//								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+//								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//								(float) ((GuiButtonTextured) renderables.get(i)).posY + 10, 0xffffff);
 					}
 				}
 			}
@@ -142,55 +142,55 @@ public class ChooseVeinScreen extends Screen {
 					boolean alwaysDisplayHover = false;
 					if (alwaysDisplayHover) {
 						font.drawShadow(matrixStack, known.get(j).getName(),
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y - 20
+								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).posY - 20
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 
 						font.drawShadow(matrixStack, HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).posY - 10
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 
 						font.drawShadow(matrixStack, known.get(j).getPosition().toShortString(),
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) (((GuiButtonTextured) renderables.get(i)).y
+								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+								(float) (((GuiButtonTextured) renderables.get(i)).posY
 										+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 								0xffffff);
 					} else {
 						// is hovered
 						if (((GuiButtonTextured) renderables.get(i)).isHoveredOrFocused()) {
 							font.drawShadow(matrixStack, known.get(j).getName(),
-									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-									(float) (((GuiButtonTextured) renderables.get(i)).y - 20
+									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).posY - 20
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 									0xffffff);
 
 							font.drawShadow(matrixStack,
 									HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
-									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-									(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).posY - 10
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 									0xffffff);
 
 							font.drawShadow(matrixStack, known.get(j).getPosition().toShortString(),
-									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-									(float) (((GuiButtonTextured) renderables.get(i)).y
+									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).posY
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 									0xffffff);
 						} else {
 //							font.drawShadow(matrixStack, known.get(j).getName(),
-//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//									(float) ((GuiButtonTextured) renderables.get(i)).y - 20, 0xffffff);
+//									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).posY - 20, 0xffffff);
 //
 //							font.drawShadow(matrixStack, HLTextUtils.convertInitToLang(known.get(j).getDimension().getPath()),
-//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+//									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).posY - 10, 0xffffff);
 //
 //							font.drawShadow(matrixStack,known.get(j).getPosition().toShortString(),
-//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//									(float) ((GuiButtonTextured) renderables.get(i)).y - 0, 0xffffff);
+//									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).posY - 0, 0xffffff);
 						}
 					}
 				}

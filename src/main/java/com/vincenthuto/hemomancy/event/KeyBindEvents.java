@@ -103,10 +103,10 @@ public class KeyBindEvents {
 				&& keybind.getKeyModifier().isActive(keybind.getKeyConflictContext());
 	}
 
-	public static void wipeOpen() {
-		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-
-		while (KeyBindInit.openVascCharmMenu.consumeClick()) {
-		}
-	}
+//	public static void wipeOpen() {
+//		Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
+//
+//		while (KeyBindInit.openVascCharmMenu.consumeClick()) {
+//		}
+//	}
 }

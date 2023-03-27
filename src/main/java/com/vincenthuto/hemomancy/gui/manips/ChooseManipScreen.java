@@ -101,6 +101,7 @@ public class ChooseManipScreen extends Screen {
 		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
+
 	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		for (int i = 0; i < renderables.size(); i++) {
@@ -120,33 +121,33 @@ public class ChooseManipScreen extends Screen {
 					boolean alwaysDisplayHover = false;
 					if (alwaysDisplayHover) {
 						font.drawShadow(matrixStack, known.get(j).getProperName(),
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+								(float) ((GuiButtonTextured) renderables.get(i)).posY - 10, 0xffffff);
 
 						font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-								((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-								(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+								((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+								(float) ((GuiButtonTextured) renderables.get(i)).posY + 10, 0xffffff);
 					} else {
 
 						if (((GuiButtonTextured) renderables.get(i)).isHoveredOrFocused()) {
 							font.drawShadow(matrixStack, known.get(j).getProperName(),
-									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-									(float) (((GuiButtonTextured) renderables.get(i)).y - 10
+									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).posY - 10
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 									0xffffff);
 							font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-									(float) (((GuiButtonTextured) renderables.get(i)).y + 10
+									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+									(float) (((GuiButtonTextured) renderables.get(i)).posY + 10
 											+ Math.sin(getMinecraft().level.getGameTime() * 0.15) + partialTicks),
 									0xffffff);
 						} else {
 //							font.drawShadow(matrixStack, known.get(j).getProperName(),
-//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//									(float) ((GuiButtonTextured) renderables.get(i)).y - 10, 0xffffff);
+//									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).posY - 10, 0xffffff);
 //
 //							font.drawShadow(matrixStack, level.get(j).getCurrentLevel() + "",
-//									((GuiButtonTextured) renderables.get(i)).x - xOff / 2,
-//									(float) ((GuiButtonTextured) renderables.get(i)).y + 10, 0xffffff);
+//									((GuiButtonTextured) renderables.get(i)).posX - xOff / 2,
+//									(float) ((GuiButtonTextured) renderables.get(i)).posY + 10, 0xffffff);
 						}
 					}
 				}

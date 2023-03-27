@@ -21,8 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -123,7 +123,7 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 		} else {
 			ItemEntity drops = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(),
 					new ItemStack(ItemInit.bloody_flask.get(), worldIn.random.nextInt(4)));
-			worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, Explosion.BlockInteraction.BREAK);
+			worldIn.explode(player, pos.getX(), pos.getY(), pos.getZ(), 4.0F, ExplosionInteraction.BLOCK);
 			worldIn.addFreshEntity(drops);
 		}
 

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.init.EntityInit;
 
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,12 +28,11 @@ public class BloodVialItem extends Item {
 	public static String TAG_ENTITY_TYPE = "entity_type";
 	public static String TAG_STATE = "state";
 
-	@SuppressWarnings("deprecation")
 	public static EntityType<?> getEntityType(ItemStack stack) {
 		if (stack.hasTag()) {
 			if (stack.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
-				EntityType<?> type = Registry.ENTITY_TYPE
-						.get(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
+				EntityType<?> type = ForgeRegistries.ENTITY_TYPES
+						.getValue(new ResourceLocation(stack.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
 				return type;
 			}
 		}
@@ -75,10 +75,8 @@ public class BloodVialItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 		ItemStack curr = pPlayer.getItemInHand(pUsedHand);
 		if (curr.getOrCreateTag().get(TAG_ENTITY_TYPE) != null) {
-			@SuppressWarnings("deprecation")
-			EntityType<?> type = Registry.ENTITY_TYPE
-					.get(new ResourceLocation(curr.getOrCreateTag().getString(TAG_ENTITY_TYPE)));
-			if (ForgeRegistries.ENTITY_TYPES.getValue(ForgeRegistries.ENTITY_TYPES.getKey(type)).is(EntityInit.FUNGAL_TAG)) {
+			if (ForgeRegistries.ENTITY_TYPES.getValue(ForgeRegistries.ENTITY_TYPES.getKey(getEntityType(curr)))
+					.is(EntityInit.FUNGAL_TAG)) {
 			}
 			System.out.println(getEntityType(curr));
 		}

@@ -54,13 +54,12 @@ public class ParticleInit {
 
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
-		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(hit_glow.get(), HitGlowParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(serpent.get(), SerpentParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(blood_claw.get(), BloodClawParticleFactory::new);
-		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(),
-				AbsrobedBloodCellParticleFactory::new);
+		event.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
+		event.register(hit_glow.get(), HitGlowParticleFactory::new);
+		event.register(serpent.get(), SerpentParticleFactory::new);
+		event.register(blood_cell.get(), BloodCellParticleFactory::new);
+		event.register(blood_claw.get(), BloodClawParticleFactory::new);
+		event.register(absorbed_blood_cell.get(), AbsrobedBloodCellParticleFactory::new);
 
 	}
 }

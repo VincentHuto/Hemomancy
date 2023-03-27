@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.render.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.tile.MorphlingIncubatorBlockEntity;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -47,9 +47,9 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		for (int i = 0; i < te.inventorySize(); i++) {
 			ms.pushPose();
 			ms.translate(0.5F, 1.25F, 0.5F);
-			ms.mulPose(Vector3f.YP.rotationDegrees(angles[i] + (float) time));
+			ms.mulPose(Vector3.YP.rotationDegrees(angles[i] + (float) time).toMoj());
 			ms.translate(1.125F, 0F, 0.25F);
-			ms.mulPose(Vector3f.YP.rotationDegrees(90F));
+			ms.mulPose(Vector3.YP.rotationDegrees(90F).toMoj());
 			ms.translate(0D, 0.075 * Math.sin((time + i * 10) / 5D), 0F);
 			ItemStack stack = te.getItemHandler().getItem(i);
 			Minecraft mc = Minecraft.getInstance();

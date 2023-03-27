@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class JuiceinatorSerializer implements RecipeSerializer<JuiceinatorRecipe> {
 
@@ -31,9 +32,8 @@ public class JuiceinatorSerializer implements RecipeSerializer<JuiceinatorRecipe
 			int c = GsonHelper.getAsInt(object, "count");
 			String s1 = GsonHelper.getAsString(object, "result");
 			ResourceLocation resourcelocation = new ResourceLocation(s1);
-			itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
-				return new IllegalStateException("Item: " + s1 + " does not exist");
-			}), c);
+			itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation), c);
+
 		}
 
 		float f = GsonHelper.getAsFloat(object, "experience", 0.0F);

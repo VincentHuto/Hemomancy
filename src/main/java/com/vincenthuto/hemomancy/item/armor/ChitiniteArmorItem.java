@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.item.armor;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.init.ItemInit;
 import com.vincenthuto.hemomancy.model.armor.ChitiniteArmorModel;
 
@@ -18,7 +17,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 public class ChitiniteArmorItem extends ArmorItem {
 
 	public ChitiniteArmorItem(ArmorMaterial materialIn, EquipmentSlot slot) {
-		super(materialIn, slot, new Item.Properties().tab(HemomancyItemGroup.instance).fireResistant());
+		super(materialIn, slot, new Item.Properties().fireResistant());
 	}
 
 	@Override

@@ -1,15 +1,16 @@
 package com.vincenthuto.hemomancy.render.entity.mob;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.entity.mob.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.model.entity.mob.EnthralledDollModel;
 import com.vincenthuto.hemomancy.render.layer.mob.EnthralledDollGlowLayer;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -84,7 +85,7 @@ public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, En
 //				pMatrixStack.pushPose();
 //				pMatrixStack.scale(0.5F, 0.5F, 0.5F);
 //				pMatrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-//				pMatrixStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+//				pMatrixStack.mulPose(Vector3.YP.rotationDegrees(180.0F));
 //				PoseStack.Pose posestack$pose = pMatrixStack.last();
 //				Matrix4f matrix4f = posestack$pose.pose();
 //				Matrix3f matrix3f = posestack$pose.normal();
@@ -123,7 +124,7 @@ public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, En
 				VertexConsumer vertexconsumer1 = pBuffer.getBuffer(RenderType.lineStrip());
 				PoseStack.Pose posestack$pose1 = pMatrixStack.last();
 				int j = 16;
-				Quaternion alpha = Vector3f.YP.rotationDegrees(puppeteer.getLevel().getGameTime());
+				Quaternion alpha = Vector3.YP.rotationDegrees(puppeteer.getLevel().getGameTime());
 				int alph = (int) (alpha.r() * 100);
 
 				// System.out.println(255 + alph);

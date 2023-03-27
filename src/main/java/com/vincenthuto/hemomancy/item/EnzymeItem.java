@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.item;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.Hemomancy.HemomancyItemGroup;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 
 import net.minecraft.ChatFormatting;
@@ -18,7 +17,7 @@ public class EnzymeItem extends Item {
 	float amount;
 
 	public EnzymeItem(EnumBloodTendency tend, float amount) {
-		super(new Item.Properties().tab(HemomancyItemGroup.instance));
+		super(new Item.Properties());
 		this.tend = tend;
 		this.amount = amount;
 	}

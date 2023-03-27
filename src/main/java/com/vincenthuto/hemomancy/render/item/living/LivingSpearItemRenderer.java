@@ -4,12 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.item.tool.living.LivingSpearItem;
 import com.vincenthuto.hemomancy.model.item.LivingSpearModel;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -47,8 +47,8 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
 			ms.pushPose();
-			ms.mulPose(new Quaternion(Vector3f.XP, 180, true));
-			ms.mulPose(new Quaternion(Vector3f.YP, 180, true));
+			ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			ms.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 
 			MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 					.immediate(Tesselator.getInstance().getBuilder());
@@ -64,7 +64,7 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 			}
 			if (p_239207_2_ == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
 					|| p_239207_2_ == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
-				ms.mulPose(new Quaternion(Vector3f.XP, 65, true));
+				ms.mulPose(new Quaternion(Vector3.XP, 65, true).toMoj());
 				ms.translate(0, 0.2, -0.25);
 
 			}
@@ -72,23 +72,23 @@ public class LivingSpearItemRenderer extends BlockEntityWithoutLevelRenderer {
 			if (itemIsInUse) {
 				if (activeHand == InteractionHand.MAIN_HAND) {
 					if (p_239207_2_ == ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, 180, true));
+						ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 						ms.translate(0,1, -1);
 
 					}
 					if (p_239207_2_ == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, -20, true));
+						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(-.55, 0, 0.);
 
 					}
 				} else {
 					if (p_239207_2_ == ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, 180, true));
+						ms.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 						ms.translate(0, 0 - .55, 0.);
 
 					}
 					if (p_239207_2_ == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
-						ms.mulPose(new Quaternion(Vector3f.XP, -20, true));
+						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(.55, 0, 0.);
 
 					}

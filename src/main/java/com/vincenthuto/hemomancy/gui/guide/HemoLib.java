@@ -13,7 +13,6 @@ import com.vincenthuto.hutoslib.client.screen.guide.TomeCategoryTab.TabColor;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeChapter;
 import com.vincenthuto.hutoslib.client.screen.guide.TomeLib;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 

@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.item.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.item.tool.living.ICellHand;
@@ -135,11 +135,11 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 			boolean leftHand;
 			matrixStack.pushPose();
 			Matrix4f curMatrix = matrixStack.last().pose();
-			Matrix4f inverted = curMatrix.copy();
+			Matrix4f inverted = new Matrix4f(curMatrix);
 			inverted.invert();
-			curMatrix.multiply(inverted);
-			matrixStack.mulPose(Vector3f.YP.rotationDegrees(-living.yBodyRot));
-			matrixStack.mulPose(Vector3f.XN.rotationDegrees(-90.0f));
+			curMatrix.mul(inverted);
+			matrixStack.mulPose(Vector3.YP.rotationDegrees(-living.yBodyRot).toMoj());
+			matrixStack.mulPose(Vector3.XN.rotationDegrees(-90.0f).toMoj());
 			((ArmedModel) this.getParentModel()).translateToHand(side, matrixStack);
 			boolean bl = leftHand = side == HumanoidArm.LEFT;
 			if (leftHand) {
@@ -158,7 +158,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 		Vec3 playerPos = player.position();
 		Level world = player.level;
 		Matrix4f curMatrix = matrixStackIn.last().pose();
-		Vec3 particlePos = playerPos.add(new Vec3(curMatrix.m03, curMatrix.m13, curMatrix.m23));
+		Vec3 particlePos = playerPos.add(new Vec3(curMatrix.m03(), curMatrix.m13(), curMatrix.m23()));
 		Vec3 origin = new Vec3(particlePos.x, particlePos.y + 0.1, particlePos.z);
 		int globalPartCount = 20;
 
