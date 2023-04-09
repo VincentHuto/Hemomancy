@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -59,9 +60,10 @@ public class RecallerRecipe extends CustomRecipe {
 		this.result = result;
 	}
 
+	
 	@Override
-	public ItemStack assemble(CraftingContainer pContainer) {
-		return this.getResultItem().copy();
+	public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
+		return this.getResultItem(p_267165_).copy();
 	}
 
 	@Override
@@ -81,7 +83,7 @@ public class RecallerRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess a) {
 		return this.result;
 	}
 

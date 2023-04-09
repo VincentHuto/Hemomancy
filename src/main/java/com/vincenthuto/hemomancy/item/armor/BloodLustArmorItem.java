@@ -22,7 +22,7 @@ public class BloodLustArmorItem extends ArmorItem {
 
 	EnumBloodLustMaskTypes maskType;
 
-	public BloodLustArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, EnumBloodLustMaskTypes maskType) {
+	public BloodLustArmorItem(ArmorMaterial materialIn, Type slot, EnumBloodLustMaskTypes maskType) {
 		super(materialIn, slot, new Item.Properties());
 		this.maskType = maskType;
 	}

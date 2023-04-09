@@ -20,7 +20,6 @@ import com.vincenthuto.hemomancy.particle.type.BloodClawParticleType;
 import com.vincenthuto.hemomancy.particle.type.HitGlowParticleType;
 import com.vincenthuto.hemomancy.particle.type.SerpentParticleType;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;

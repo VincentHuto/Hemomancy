@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.capa.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.item.tool.BloodGourdItem;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -29,12 +30,13 @@ public class CopyBloodGourdRecipe extends ShapedRecipe {
 				throw exception;
 			}
 		}
-
+		
 		@Nullable
 		@Override
 		public CopyBloodGourdRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
 			return new CopyBloodGourdRecipe(RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer));
 		}
+		
 
 		@Override
 		public void toNetwork(FriendlyByteBuf buffer, CopyBloodGourdRecipe recipe) {
@@ -54,12 +56,13 @@ public class CopyBloodGourdRecipe extends ShapedRecipe {
 
 	public CopyBloodGourdRecipe(ShapedRecipe shapedRecipe) {
 		super(shapedRecipe.getId(), shapedRecipe.getGroup(), CraftingBookCategory.MISC, shapedRecipe.getRecipeWidth(),
-				shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem());
+				shapedRecipe.getRecipeHeight(), shapedRecipe.getIngredients(), shapedRecipe.getResultItem(null));
 	}
+	
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv) {
-		final ItemStack craftingResult = super.assemble(inv);
+	public ItemStack assemble(CraftingContainer inv, RegistryAccess p_266725_) {
+		final ItemStack craftingResult = super.assemble(inv, p_266725_);
 		ItemStack dataSource = ItemStack.EMPTY;
 
 		if (!craftingResult.isEmpty()) {

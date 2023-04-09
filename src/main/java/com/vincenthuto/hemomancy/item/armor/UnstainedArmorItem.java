@@ -16,7 +16,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class UnstainedArmorItem extends ArmorItem {
 
-	public UnstainedArmorItem(ArmorMaterial materialIn, EquipmentSlot slot) {
+	public UnstainedArmorItem(ArmorMaterial materialIn, Type slot) {
 		super(materialIn, slot, new Item.Properties().fireResistant());
 	}
 

@@ -105,9 +105,9 @@ public class HemoGuideBloodStructurePage extends GuiGuidePage {
 			HLGuiUtils.renderMultiBlock(matrices, pattern, HLClientUtils.getPartialTicks(), new ScreenBlockTintGetter(),
 					left - guiWidth + 260, top + guiHeight - 65);
 			float guiHeight = 228, guiWidth = 174;
-			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(structure.getHeldItem(),
+			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(matrices, structure.getHeldItem(),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 160));
-			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(structure.getHitBlock()),
+			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(matrices, new ItemStack(structure.getHitBlock()),
 					(int) (left - guiWidth + 196), (int) (top + guiHeight - 160));
 		}
 

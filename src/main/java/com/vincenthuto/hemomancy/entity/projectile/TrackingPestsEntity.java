@@ -199,10 +199,10 @@ public class TrackingPestsEntity extends ThrowableProjectile {
 				LivingEntity thrower = (LivingEntity) getOwner();
 				if (thrower != null) {
 					Player player = thrower instanceof Player ? (Player) thrower : null;
-					target.hurt(player == null ? DamageSource.mobAttack(thrower) : DamageSource.playerAttack(player),
+					target.hurt(player == null ? this.damageSources().mobAttack(thrower) : this.damageSources().playerAttack(player),
 							evil ? 12 : 7);
 				} else
-					target.hurt(DamageSource.GENERIC, evil ? 12 : 7);
+					target.hurt(this.damageSources().generic(), evil ? 12 : 7);
 
 				this.remove(RemovalReason.KILLED);
 			}

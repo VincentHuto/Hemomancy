@@ -16,7 +16,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class BarbedArmorItem extends ArmorItem {
 
-	public BarbedArmorItem(ArmorMaterial materialIn, EquipmentSlot slot) {
+	public BarbedArmorItem(ArmorMaterial materialIn, ArmorItem.Type slot) {
 		super(materialIn, slot, new Item.Properties().fireResistant());
 	}
 

@@ -99,7 +99,7 @@ public class BarbedShieldItem extends Item {
 					List<Entity> mobs = worldIn.getEntities(player, player.getBoundingBox().inflate(0.55),
 							EntitySelector.pushableBy(player));
 					for (Entity ent : mobs) {
-						ent.hurt(DamageSource.GENERIC, 1.5f);
+						ent.hurt(entityIn.damageSources().generic(), 1.5f);
 						stack.hurtAndBreak(1, player, (p_220017_1_) -> {
 							p_220017_1_.broadcastBreakEvent(player.getUsedItemHand());
 						});

@@ -52,8 +52,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BannerPatternItem;
@@ -85,7 +83,7 @@ public class ItemInit {
 	public static final DeferredRegister<Item> SPAWNEGGS = DeferredRegister.create(ForgeRegistries.ITEMS,
 			Hemomancy.MOD_ID);
 
-	public static final DamageSource bloodLoss = new DamageSource("bloodloss");
+	//public static final DamageSource bloodLoss = new DamageSource("bloodloss");
 
 	public static final RegistryObject<Item> chitinite_arm_banner = SPECIALITEMS.register("chitinite_arm_banner",
 			() -> new ItemArmBanner(new Item.Properties(), EnumModArmorTiers.CHITINITE,
@@ -305,16 +303,16 @@ public class ItemInit {
 	// Equipment
 	// Hematic
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.HEAD,
+			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON,  ArmorItem.Type.HELMET,
 					(new Item.Properties()).fireResistant()));
 	public static final RegistryObject<Item> hematic_iron_chestplate = BASEITEMS.register("hematic_iron_chestplate",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.CHEST,
+			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.CHESTPLATE,
 					(new Item.Properties()).fireResistant()));
 	public static final RegistryObject<Item> hematic_iron_leggings = BASEITEMS.register("hematic_iron_leggings",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.LEGS,
+			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.LEGGINGS,
 					(new Item.Properties()).fireResistant()));
 	public static final RegistryObject<Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, EquipmentSlot.FEET,
+			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.BOOTS,
 					(new Item.Properties()).fireResistant()));
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F,
@@ -331,20 +329,20 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 
 	public static final RegistryObject<Item> blood_lust_helm = BASEITEMS.register("blood_lust_helm",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET, EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_helm_tengu = BASEITEMS.register("blood_lust_helm_tengu",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET,
 					EnumBloodLustMaskTypes.TENGU));
 	public static final RegistryObject<Item> blood_lust_helm_horned = BASEITEMS.register("blood_lust_helm_horned",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.HEAD,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.HELMET,
 					EnumBloodLustMaskTypes.HORNED));
 	public static final RegistryObject<Item> blood_lust_chest = BASEITEMS.register("blood_lust_chest",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.CHEST,
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.CHESTPLATE,
 					EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_legs = BASEITEMS.register("blood_lust_legs",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.LEGS, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.LEGGINGS, EnumBloodLustMaskTypes.NONE));
 	public static final RegistryObject<Item> blood_lust_boots = BASEITEMS.register("blood_lust_boots",
-			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, EquipmentSlot.FEET, EnumBloodLustMaskTypes.NONE));
+			() -> new BloodLustArmorItem(EnumModArmorTiers.BLOODLUST, ArmorItem.Type.BOOTS, EnumBloodLustMaskTypes.NONE));
 
 	// Barbed/Barbed
 	public static final RegistryObject<Item> barbed_blade = SPECIALITEMS.register("barbed_blade",
@@ -353,13 +351,13 @@ public class ItemInit {
 	public static final RegistryObject<Item> barbed_shield = SPECIALITEMS.register("barbed_shield",
 			() -> new BarbedShieldItem(new Item.Properties()));
 	public static final RegistryObject<Item> barbed_helm = BASEITEMS.register("barbed_helm",
-			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.HEAD));
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.HELMET));
 	public static final RegistryObject<Item> barbed_chestplate = BASEITEMS.register("barbed_chestplate",
-			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.CHEST));
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.CHESTPLATE));
 	public static final RegistryObject<Item> barbed_leggings = BASEITEMS.register("barbed_leggings",
-			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.LEGS));
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.LEGGINGS));
 	public static final RegistryObject<Item> barbed_boots = BASEITEMS.register("barbed_boots",
-			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, EquipmentSlot.FEET));
+			() -> new BarbedArmorItem(EnumModArmorTiers.BARBED, ArmorItem.Type.BOOTS));
 
 	// Chitinite
 	public static final RegistryObject<Item> chitinite_mace = SPECIALITEMS.register("chitinite_mace",
@@ -368,23 +366,23 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinite_shield = SPECIALITEMS.register("chitinite_shield",
 			() -> new ChitiniteShieldItem(new Item.Properties()));
 	public static final RegistryObject<Item> chitinite_helm = BASEITEMS.register("chitinite_helm",
-			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.HEAD));
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.HELMET));
 	public static final RegistryObject<Item> chitinite_chestplate = BASEITEMS.register("chitinite_chestplate",
-			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.CHEST));
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.CHESTPLATE));
 	public static final RegistryObject<Item> chitinite_leggings = BASEITEMS.register("chitinite_leggings",
-			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.LEGS));
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.LEGGINGS));
 	public static final RegistryObject<Item> chitinite_boots = BASEITEMS.register("chitinite_boots",
-			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, EquipmentSlot.FEET));
-
+			() -> new ChitiniteArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.BOOTS));
+	
 	// Unstained
 	public static final RegistryObject<Item> unstained_helm = BASEITEMS.register("unstained_helm",
-			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.HEAD));
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.HELMET));
 	public static final RegistryObject<Item> unstained_chestplate = BASEITEMS.register("unstained_chestplate",
-			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.CHEST));
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.CHESTPLATE));
 	public static final RegistryObject<Item> unstained_leggings = BASEITEMS.register("unstained_leggings",
-			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.LEGS));
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.LEGGINGS));
 	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
-			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, EquipmentSlot.FEET));
+			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.BOOTS));
 
 	// Spawn Eggs
 	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",

@@ -7,9 +7,9 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -54,8 +54,8 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			ItemStack stack = te.getItemHandler().getItem(i);
 			Minecraft mc = Minecraft.getInstance();
 			if (!stack.isEmpty()) {
-				mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, combinedLightIn,
-						combinedOverlayIn, ms, bufferIn, 0);
+				mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn,
+						combinedOverlayIn, ms, bufferIn, te.getLevel(), 0);
 			}
 			ms.popPose();
 		}

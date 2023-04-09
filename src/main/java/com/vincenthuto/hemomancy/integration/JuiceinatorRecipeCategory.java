@@ -130,7 +130,7 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, JuiceinatorRecipe recipe, IFocusGroup focuses) {
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM_STACK,
-				recipe.getResultItem());
+				recipe.getResultItem(null));
 		List<List<ItemStack>> list = new ArrayList<>();
 		for (Ingredient ingr : recipe.getIngredients()) {
 			list.add(Arrays.asList(ingr.getItems()));

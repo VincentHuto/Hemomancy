@@ -28,8 +28,8 @@ public class ItemStackRadialMenuItem extends TextRadialMenuItem
             viewModelPose.mulPoseMatrix(context.matrixStack.last().pose());
             viewModelPose.translate(-8, -8, context.z);
             RenderSystem.applyModelViewMatrix();
-            context.itemRenderer.renderAndDecorateItem(stack, (int) context.x, (int) context.y);
-            context.itemRenderer.renderGuiItemDecorations(context.fontRenderer, stack, (int) context.x, (int) context.y, "");
+            context.itemRenderer.renderAndDecorateItem(viewModelPose, stack, (int) context.x, (int) context.y);
+            context.itemRenderer.renderGuiItemDecorations(viewModelPose, context.fontRenderer, stack, (int) context.x, (int) context.y, "");
             viewModelPose.popPose();
             RenderSystem.applyModelViewMatrix();
         }

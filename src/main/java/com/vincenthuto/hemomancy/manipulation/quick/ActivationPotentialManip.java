@@ -45,7 +45,7 @@ public class ActivationPotentialManip extends BloodManipulation {
 							player.level.dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
 					HLPacketHandler.sendLightningSpawn(player.position().add(translation), speedVec, 64.0f,
 							player.level.dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
-					target.hurt(DamageSource.playerAttack(player), 5.0f);
+					target.hurt(player.damageSources().playerAttack(player), 5.0f);
 				}
 			}
 		}

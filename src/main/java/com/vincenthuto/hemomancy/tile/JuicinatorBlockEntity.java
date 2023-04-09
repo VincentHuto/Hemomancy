@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -71,6 +72,7 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	public static final int NUM_DATA_VALUES = 4;
 	public static final int BURN_TIME_STANDARD = 200;
 	public static final int BURN_COOL_SPEED = 2;
+
 	private static void createExperience(ServerLevel p_154999_, Vec3 p_155000_, int p_155001_, float p_155002_) {
 		int i = Mth.floor(p_155001_ * p_155002_);
 		float f = Mth.frac(p_155001_ * p_155002_);
@@ -88,9 +90,11 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 				.getRecipeFor((RecipeType<AbstractCookingRecipe>) p_155011_, p_155012_, p_155010_)
 				.map(AbstractCookingRecipe::getCookingTime).orElse(200);
 	}
+
 	public static boolean isFuel(ItemStack p_58400_) {
 		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58400_, null) > 0;
 	}
+
 	@SuppressWarnings("unchecked")
 	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, JuicinatorBlockEntity te) {
 		boolean flag = te.isLit();
@@ -104,7 +108,7 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 				Recipe<?> recipe = level.getRecipeManager()
 						.getRecipeFor((RecipeType<AbstractCookingRecipe>) te.recipeType, te, level).orElse(null);
 				int i = te.getMaxStackSize();
-				if (!te.isLit() && te.canBurn(recipe, te.items, i)) {
+				if (!te.isLit() && te.canBurn(level.registryAccess(), recipe, te.items, i)) {
 					te.litTime = te.getBurnDuration(itemstack);
 					te.litDuration = te.litTime;
 					if (te.isLit()) {
@@ -120,13 +124,13 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 						}
 					}
 				}
-				if (te.isLit() && te.canBurn(recipe, te.items, i)) {
+				if (te.isLit() && te.canBurn(level.registryAccess(), recipe, te.items, i)) {
 					++te.cookingProgress;
 
 					if (te.cookingProgress == te.cookingTotalTime) {
 						te.cookingProgress = 0;
 						te.cookingTotalTime = getTotalCookTime(level, te.recipeType, te);
-						if (te.burn(recipe, te.items, i)) {
+						if (te.burn(level.registryAccess(), recipe, te.items, i)) {
 							te.setRecipeUsed(recipe);
 							te.getBloodCapability().fill(100);
 							te.sendUpdates();
@@ -158,6 +162,7 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		}
 
 	}
+
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 	public NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
 	int litTime;
@@ -223,11 +228,12 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 		this.recipesUsed.clear();
 	}
 
-	private boolean burn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> inventory, int p_155029_) {
-		if (recipe != null && this.canBurn(recipe, inventory, p_155029_)) {
+	private boolean burn(RegistryAccess p_266740_, @Nullable Recipe<?> recipe, NonNullList<ItemStack> inventory,
+			int p_155029_) {
+		if (recipe != null && this.canBurn(this.level.registryAccess(), recipe, inventory, p_155029_)) {
 			ItemStack itemstack = inventory.get(0);
 			@SuppressWarnings("unchecked")
-			ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+			ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this, p_266740_);
 			ItemStack bucketstack = inventory.get(2);
 
 			if (inventory.get(3).isEmpty()) {
@@ -253,9 +259,10 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean canBurn(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+	private boolean canBurn(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_,
+			int p_155008_) {
 		if (!p_155007_.get(0).isEmpty() && p_155006_ != null) {
-			ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).assemble(this);
+			ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).assemble(this, p_266924_);
 			if (itemstack.isEmpty()) {
 				return false;
 			} else {
@@ -491,7 +498,7 @@ public class JuicinatorBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public ItemStack removeItem(int pSlot, int pAmount) {
-		return ContainerHelper.removeItem(this.items, pSlot, pAmount );
+		return ContainerHelper.removeItem(this.items, pSlot, pAmount);
 	}
 
 	@Override

@@ -54,9 +54,9 @@ public class BloodyBookItem extends ItemGuideBook {
 //
 //				LivingEntity target = (LivingEntity) entities.get(rand.nextInt(entities.size()));
 //				if (attacker instanceof Player player) {
-//					target.hurt(DamageSource.playerAttack(player), dmg);
+//					target.hurt(this.damageSources().playerAttack(player), dmg);
 //				} else {
-//					target.hurt(DamageSource.mobAttack(attacker), dmg);
+//					target.hurt(this.damageSources().mobAttack(attacker), dmg);
 //				}
 //
 //				HutosLib.proxy.lightningFX(VecHelper.fromEntityCenter(lightningSource),

@@ -167,7 +167,7 @@ public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implem
 					&& recipe.getIngredient().test(contents.get(1))) {
 				// System.out.println("Matching Recipe: " + recipe);
 				curRecipe = recipe;
-				recipePath = HLTextUtils.getItemRegistryName(recipe.getResultItem().getItem());
+				recipePath = HLTextUtils.getItemRegistryName(recipe.getResultItem(level.registryAccess()).getItem());
 				break;
 			} else {
 				// System.out.println("No matching recipe found!");
@@ -220,7 +220,7 @@ public class VisceralRecallerBlockEntity extends BaseContainerBlockEntity implem
 	}
 
 	public ItemStack getResultItem() {
-		return curRecipe != null ? curRecipe.getResultItem() : ItemStack.EMPTY;
+		return curRecipe != null ? curRecipe.getResultItem(level.registryAccess()) : ItemStack.EMPTY;
 	}
 
 	public IBloodTendency getTendCapability() {

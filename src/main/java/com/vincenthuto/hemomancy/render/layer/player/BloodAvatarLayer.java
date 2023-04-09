@@ -22,8 +22,6 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -37,6 +35,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -53,14 +52,14 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 				Minecraft.getInstance().getEntityModels().bakeLayer(BloodAvatarModel.layer));
 	}
 
-	public void render(ItemStack pItemStack, VertexConsumer swirlConsumer, ItemTransforms.TransformType pTransformType,
+	public void render(ItemStack pItemStack, VertexConsumer swirlConsumer, ItemDisplayContext pItemDisplayContext,
 			boolean pLeftHand, PoseStack pMatrixStack, MultiBufferSource pBuffer, int pCombinedLight,
 			int pCombinedOverlay, BakedModel pModel) {
 		if (!pItemStack.isEmpty()) {
 			pMatrixStack.pushPose();
 
 			pModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(pMatrixStack, pModel,
-					pTransformType, pLeftHand);
+					pItemDisplayContext, pLeftHand);
 			pMatrixStack.translate(-0.5D, -0.5D, -0.5D);
 			if (!pModel.isCustomRenderer()) {
 
@@ -75,7 +74,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 
 			} else {
 				IClientItemExtensions.of(pItemStack).getCustomRenderer().renderByItem(
-						pItemStack, pTransformType, pMatrixStack, pBuffer, pCombinedLight, pCombinedOverlay);
+						pItemStack, pItemDisplayContext, pMatrixStack, pBuffer, pCombinedLight, pCombinedOverlay);
 			}
 
 			pMatrixStack.popPose();
@@ -105,11 +104,11 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 
 					if (!player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
 						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.MAIN_HAND),
-								TransformType.FIRST_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, ms, pBuffer, pPackedLight);
+								ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, ms, pBuffer, pPackedLight);
 					}
 					if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
 						renderArmWithItemPlayer(player, swirlConsumer, player.getItemInHand(InteractionHand.OFF_HAND),
-								TransformType.FIRST_PERSON_LEFT_HAND, HumanoidArm.LEFT, ms, pBuffer, pPackedLight);
+								ItemDisplayContext.FIRST_PERSON_LEFT_HAND, HumanoidArm.LEFT, ms, pBuffer, pPackedLight);
 					}
 
 				}
@@ -118,7 +117,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	}
 
 	protected void renderArmWithItem(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
+			ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
 			int pCombinedLight) {
 		if (!stack.isEmpty()) {
 			poseStack.pushPose();
@@ -134,7 +133,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	}
 
 	protected void renderArmWithItemPlayer(LivingEntity entity, VertexConsumer swirlConsumer, ItemStack stack,
-			ItemTransforms.TransformType transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
+			ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource buffer,
 			int pCombinedLight) {
 		if (stack.is(Items.SPYGLASS) && entity.getUseItem() == stack && entity.swingTime == 0) {
 			this.renderArmWithSpyglass(entity, swirlConsumer, stack, arm, poseStack, buffer, pCombinedLight);
@@ -155,18 +154,18 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		CustomHeadLayer.translateToHead(poseStack, false);
 		boolean flag = arm == HumanoidArm.LEFT;
 		poseStack.translate((flag ? -2.5F : 2.5F) / 16.0F, -0.0625D, 0.0D);
-		renderItem(entity, swirlConsumer, stack, ItemTransforms.TransformType.HEAD, false, poseStack, buffer,
+		renderItem(entity, swirlConsumer, stack, ItemDisplayContext.HEAD, false, poseStack, buffer,
 				pCombinedLight);
 		poseStack.popPose();
 	}
 
 	public void renderItem(LivingEntity pLivingEntity, VertexConsumer swirlConsumer, ItemStack pItemStack,
-			ItemTransforms.TransformType pTransformType, boolean pLeftHand, PoseStack pMatrixStack,
+			ItemDisplayContext pItemDisplayContext, boolean pLeftHand, PoseStack pMatrixStack,
 			MultiBufferSource pBuffer, int pCombinedLight) {
 		if (!pItemStack.isEmpty()) {
-			renderStatic(pLivingEntity, swirlConsumer, pItemStack, pTransformType, pLeftHand, pMatrixStack, pBuffer,
+			renderStatic(pLivingEntity, swirlConsumer, pItemStack, pItemDisplayContext, pLeftHand, pMatrixStack, pBuffer,
 					pLivingEntity.level, pCombinedLight, OverlayTexture.NO_OVERLAY,
-					pLivingEntity.getId() + pTransformType.ordinal());
+					pLivingEntity.getId() + pItemDisplayContext.ordinal());
 
 		}
 	}
@@ -205,7 +204,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 	}
 
 	public void renderStatic(@Nullable LivingEntity p_174243_, VertexConsumer swirlConsumer, ItemStack p_174244_,
-			ItemTransforms.TransformType p_174245_, boolean p_174246_, PoseStack p_174247_, MultiBufferSource p_174248_,
+			ItemDisplayContext p_174245_, boolean p_174246_, PoseStack p_174247_, MultiBufferSource p_174248_,
 			@Nullable Level p_174249_, int p_174250_, int p_174251_, int p_174252_) {
 		if (!p_174244_.isEmpty()) {
 			BakedModel bakedmodel = Minecraft.getInstance().getItemRenderer().getModel(p_174244_, p_174249_, p_174243_,

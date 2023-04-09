@@ -9,7 +9,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.capa.player.tendency.EnumBloodTendency;
 import com.vincenthuto.hemomancy.recipe.RecallerRecipe;
 
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -95,7 +94,7 @@ public class RecallerRecipeSerializer implements RecipeSerializer<RecallerRecipe
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				pBuffer.writeFloat(pRecipe.getTendency().get(tend));
 			}
-			pBuffer.writeItemStack(pRecipe.getResultItem(), false);
+			pBuffer.writeItemStack(pRecipe.getResultItem(null), false);
 		} catch (Exception e) {
 			Hemomancy.LOGGER.error("Error writing recaller recipe to packet.", e);
 			throw e;

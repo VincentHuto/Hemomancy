@@ -5,8 +5,6 @@ import java.util.List;
 import com.vincenthuto.hemomancy.init.EntityInit;
 
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

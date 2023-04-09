@@ -18,6 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -85,11 +86,16 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 
 			HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
 			if (trace.getType() == Type.BLOCK) {
-				if (worldIn.getBlockEntity(new BlockPos(trace.getLocation())) != null) {
-					if (worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+				if (worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
+						(int) trace.getLocation().y, (int) trace.getLocation().z))) != null) {
+					if (worldIn
+							.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
+									(int) trace.getLocation().y, (int) trace.getLocation().z)))
 							.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
 						// System.out.println("hit fillable tile");
-						IBloodVolume tileVolume = worldIn.getBlockEntity(new BlockPos(trace.getLocation()))
+						IBloodVolume tileVolume = worldIn
+								.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
+										(int) trace.getLocation().y, (int) trace.getLocation().z)))
 								.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
 						tileVolume.fillFromSource(playerVolume, 100f);
 

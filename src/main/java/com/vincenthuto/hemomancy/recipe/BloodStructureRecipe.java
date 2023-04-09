@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.init.RecipeInit;
 import com.vincenthuto.hutoslib.client.render.block.MultiblockPattern;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -26,11 +27,13 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 		return collection;
 	}
+
 	public static BloodStructureRecipe getStructureByLocation(Level world, ResourceLocation loc) {
-		//Example new ResourceLocation("hemomancy:blood_structure/living_staff_recipe")
+		// Example new ResourceLocation("hemomancy:blood_structure/living_staff_recipe")
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.blood_structure_recipe_type.get()).stream()
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}
+
 	protected float bloodCost;
 	protected ItemStack heldItem = null;
 	protected Block hitBlock = null;
@@ -50,8 +53,8 @@ public class BloodStructureRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer pContainer) {
-		return this.getResultItem().copy();
+	public ItemStack assemble(CraftingContainer p_44001_, RegistryAccess p_267165_) {
+		return this.getResultItem(p_267165_).copy();
 	}
 
 	@Override
@@ -85,10 +88,6 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return result;
 	}
 
-	@Override
-	public ItemStack getResultItem() {
-		return this.result;
-	}
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {

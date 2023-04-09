@@ -69,7 +69,7 @@ public class CloudEntityBlood extends BloodConstructEntity {
 			if (ent != null) {
 				if (ent != creator && ent != this) {
 					if (!(ent instanceof BloodConstructEntity)) {
-						ent.hurt(ItemInit.bloodLoss, 2);
+						ent.hurt(ent.damageSources().generic(), 2);
 						ent.addEffect(new MobEffectInstance(PotionInit.blood_loss.get(), 20, 1));
 					}
 				}

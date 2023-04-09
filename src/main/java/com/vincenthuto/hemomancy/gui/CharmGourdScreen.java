@@ -86,7 +86,7 @@ public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdM
 					this.blit(matrixStack, k + slot.x, l + slot.y, 200, 0, 16, 16);
 				}
 			}
-			InventoryScreen.renderEntityInInventory(k + 51, l + 75, 30, k + 51 - this.oldMouseX,
+			InventoryScreen.renderEntityInInventoryFollowsMouse(matrixStack,k + 51, l + 75, 30, k + 51 - this.oldMouseX,
 					l + 75 - 50 - this.oldMouseY, this.minecraft.player);
 		}
 	}

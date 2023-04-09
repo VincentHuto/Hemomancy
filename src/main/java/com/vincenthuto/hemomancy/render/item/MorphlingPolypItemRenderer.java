@@ -7,7 +7,6 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -18,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
@@ -66,7 +66,7 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 		int j = this.getModelCount(itemstack);
 		float f1 = shouldBob() ? Mth.sin((entityIn.getAge() + partialTicks) / 10.0F + entityIn.bobOffs) * 0.1F + 0.1F
 				: 0;
-		float f2 = BakedModel.getTransforms().getTransform(ItemTransforms.TransformType.GROUND).scale.y();
+		float f2 = BakedModel.getTransforms().getTransform(ItemDisplayContext.GROUND).scale.y();
 		matrixStackIn.translate(0.0D, f1 + 0.25F * f2, 0.0D);
 		float f3 = (entityIn.getAge() + partialTicks) / 20.0F + entityIn.bobOffs;
 		matrixStackIn.mulPose(Vector3.YP.rotation(f3).toMoj());
@@ -93,7 +93,7 @@ public class MorphlingPolypItemRenderer extends EntityRenderer<ItemEntity> {
 				}
 			}
 
-			this.itemRenderer.render(itemstack, ItemTransforms.TransformType.GROUND, false, matrixStackIn, bufferIn,
+			this.itemRenderer.render(itemstack, ItemDisplayContext.GROUND, false, matrixStackIn, bufferIn,
 					packedLightIn, OverlayTexture.NO_OVERLAY, BakedModel);
 			matrixStackIn.popPose();
 			if (!flag) {

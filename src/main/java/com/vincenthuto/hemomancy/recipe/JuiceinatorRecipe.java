@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.init.BlockInit;
 import com.vincenthuto.hemomancy.init.RecipeInit;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -32,9 +33,10 @@ public class JuiceinatorRecipe extends AbstractCookingRecipe {
 		return allIngredients;
 	}
 
+
 	@Override
-	public ItemStack getResultItem() {
-		return super.getResultItem();
+	public ItemStack getResultItem(RegistryAccess p_266851_) {
+		return this.result;
 	}
 
 	@Override

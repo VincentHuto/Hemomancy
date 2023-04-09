@@ -122,7 +122,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 			if (stack.isEmpty()) {
 				BlockState newState = state.setValue(LIT, true);
 				worldIn.setBlock(pos, newState, 10);
-				player.hurt(ItemInit.bloodLoss, 1.5f);
+				player.hurt(player.damageSources().generic(), 1.5f);
 				if (!worldIn.isClientSide) {
 					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
 							BloodCellParticleFactory.createData(ParticleColor.BLOOD));
@@ -132,7 +132,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 			if (stack.isEmpty()) {
 				BlockState newState = state.setValue(LIT, false);
 				worldIn.setBlock(pos, newState, 10);
-				player.hurt(ItemInit.bloodLoss, 1f);
+				player.hurt(player.damageSources().generic(), 1f);
 				if (!worldIn.isClientSide) {
 					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, ParticleTypes.SMOKE);
 				}

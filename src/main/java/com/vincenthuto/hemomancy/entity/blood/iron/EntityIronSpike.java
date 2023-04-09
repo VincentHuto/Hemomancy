@@ -30,10 +30,10 @@ public class EntityIronSpike extends BloodConstructEntity {
 		if (!(entityIn instanceof EntityIronSpike)) {
 			if (getCreator() != null) {
 				if (entityIn != creator) {
-					entityIn.hurt(DamageSource.GENERIC, 3.5f);
+					entityIn.hurt(this.damageSources().generic(), 3.5f);
 				}
 			} else {
-				entityIn.hurt(DamageSource.GENERIC, 3.5f);
+				entityIn.hurt(this.damageSources().generic(), 3.5f);
 			}
 		}
 	}

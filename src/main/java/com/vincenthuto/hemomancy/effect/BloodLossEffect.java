@@ -46,7 +46,7 @@ public class BloodLossEffect extends MobEffect {
 
 				}
 			} else if (!HemoEntityPredicates.NOBLOOD.test(entity)) {
-				entity.hurt(ItemInit.bloodLoss, 0.5F);
+				entity.hurt(entity.damageSources().generic(), 0.5F);
 				if (entity.level.random.nextDouble() > 0.999) {
 					if (!entity.level.isClientSide) {
 						ServerLevel sLevel = (ServerLevel) entity.level;

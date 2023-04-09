@@ -10,11 +10,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CellHandBakedModel implements BakedModel {
@@ -25,12 +25,12 @@ public class CellHandBakedModel implements BakedModel {
 	}
 
 	@Override
-	public BakedModel applyTransform(TransformType transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
-		if ((transformType == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND
-				|| transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)) {
+	public BakedModel applyTransform(ItemDisplayContext ItemDisplayContext, PoseStack poseStack, boolean applyLeftHandTransform) {
+		if ((ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+				|| ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND)) {
 			return this;
 		}
-		return original.applyTransform(transformType, poseStack, applyLeftHandTransform);
+		return original.applyTransform(ItemDisplayContext, poseStack, applyLeftHandTransform);
 	}
 
 	@Nonnull

@@ -27,7 +27,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -37,6 +36,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -96,29 +96,29 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 	// ModelBloodArm model = new ModelBloodArm(1.0f);
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack,
+	public void renderByItem(ItemStack stack, ItemDisplayContext ItemDisplayContext, PoseStack matrixStack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		if (transformType != ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND
-				&& transformType != ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND) {
-			if (transformType == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
+		if (ItemDisplayContext != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+				&& ItemDisplayContext != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+			if (ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
 				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.RIGHT);
 				this.spawnFirstPersonParticlesForStack(stack, HumanoidArm.RIGHT);
-			} else if (transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
+			} else if (ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
 				if (!(stack.getItem() instanceof ICellHand)) {
 					return;
 				}
 				this.renderArm(matrixStack, buffer, combinedLight, HumanoidArm.LEFT);
 				this.spawnFirstPersonParticlesForStack(stack, HumanoidArm.LEFT);
 			} else {
-				this.renderDefaultItem(stack, transformType, matrixStack, buffer, combinedLight, combinedOverlay);
+				this.renderDefaultItem(stack, ItemDisplayContext, matrixStack, buffer, combinedLight, combinedOverlay);
 			}
 		}
 	}
 
-	private void renderDefaultItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack matrixStack,
+	private void renderDefaultItem(ItemStack stack, ItemDisplayContext ItemDisplayContext, PoseStack matrixStack,
 			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 		VertexConsumer buffers = buffer.getBuffer(Sheets.cutoutBlockSheet());
 		if (stack.getItem() instanceof ICellHand) {
@@ -142,10 +142,10 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 							buffers, null, location, 255, 255, 255, combinedLight, combinedOverlay, ModelData.EMPTY, RenderType.solid());
 					matrixStack.popPose();
 					matrixStack.pushPose();
-					Minecraft.getInstance().getItemRenderer().render(stack, transformType,
-							transformType == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, matrixStack, buffer,
-							transformType == ItemTransforms.TransformType.GUI ? 0xF000F0 : combinedLight,
-							transformType == ItemTransforms.TransformType.GUI ? OverlayTexture.NO_OVERLAY
+					Minecraft.getInstance().getItemRenderer().render(stack, ItemDisplayContext,
+							ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND, matrixStack, buffer,
+							ItemDisplayContext == ItemDisplayContext.GUI ? 0xF000F0 : combinedLight,
+							ItemDisplayContext == ItemDisplayContext.GUI ? OverlayTexture.NO_OVERLAY
 									: combinedOverlay,
 							this.location);
 				}

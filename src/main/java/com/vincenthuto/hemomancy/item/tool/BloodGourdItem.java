@@ -93,7 +93,7 @@ public class BloodGourdItem extends Item implements IRune {
 					if (bloodVolume.getBloodVolume() < tier.getMaxVolume() / 10) {
 						RandomSource rand = worldIn.random;
 						if (rand.nextInt(200) == 20) {
-							player.hurt(ItemInit.bloodLoss, 0.5f);
+							player.hurt(player.damageSources().generic(), 0.5f);
 							bloodVolume.fill(50f);
 						}
 					}

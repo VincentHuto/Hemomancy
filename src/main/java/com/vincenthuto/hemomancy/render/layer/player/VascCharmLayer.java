@@ -9,12 +9,12 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
@@ -36,8 +36,8 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(7f).toMoj());
 					this.getParentModel().body.translateAndRotate(matrixStack);
 					Minecraft.getInstance().getItemRenderer().renderStatic(
-							new ItemStack(ItemInit.charm_of_vascularium.get()), TransformType.FIXED, lightness,
-							OverlayTexture.NO_OVERLAY, matrixStack, buffer, lightness);
+							new ItemStack(ItemInit.charm_of_vascularium.get()), ItemDisplayContext.FIXED, lightness,
+							OverlayTexture.NO_OVERLAY, matrixStack, buffer, ent.level, lightness);
 					matrixStack.popPose();
 				}
 

@@ -18,12 +18,12 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -172,14 +172,14 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 		ItemStack stack = te.contents.get(0);
 		Minecraft mc = Minecraft.getInstance();
 		if (!stack.isEmpty()) {
-			mc.getItemRenderer().renderStatic(null, stack, TransformType.FIXED, true, matrixStackIn, bufferIn, null,
+			mc.getItemRenderer().renderStatic(null, stack, ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn, null,
 					combinedLightIn, combinedOverlayIn, 0);
 		}
 
 		ItemStack stack1 = te.contents.get(1);
 		if (!stack1.isEmpty()) {
 			matrixStackIn.translate(0D, 1f, 0F); // Block/Item Scale
-			mc.getItemRenderer().renderStatic(null, stack1, TransformType.FIXED, true, matrixStackIn, bufferIn, null,
+			mc.getItemRenderer().renderStatic(null, stack1, ItemDisplayContext.FIXED, true, matrixStackIn, bufferIn, null,
 					combinedLightIn, combinedOverlayIn, 0);
 		}
 
@@ -187,7 +187,7 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 				.getRecipe(te.getUpdateTag().getString(VisceralRecallerBlockEntity.TAG_RECIPE));
 		if (currRecipe != null) {
 			matrixStackIn.translate(0D, 1f, 0F); // Block/Item Scale
-			mc.getItemRenderer().renderStatic(null, currRecipe.getResultItem(), TransformType.FIXED, true,
+			mc.getItemRenderer().renderStatic(null, currRecipe.getResultItem(te.getLevel().registryAccess()), ItemDisplayContext.FIXED, true,
 					matrixStackIn, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
 		}
 		matrixStackIn.popPose();

@@ -53,21 +53,6 @@ import net.minecraftforge.registries.RegisterEvent;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 
 public class Hemomancy {
-//	// Creative Tab
-//	public static class HemomancyItemGroup extends CreativeModeTab {
-//		public static final HemomancyItemGroup instance = new HemomancyItemGroup(CreativeModeTab.TABS.length,
-//				"hemomancy");
-//
-//		public HemomancyItemGroup(int index, String label) {
-//			super(index, label);
-//		}
-//
-//		@Override
-//		public ItemStack makeIcon() {
-//			return new ItemStack(ItemInit.sanguine_formation.get());
-//		}
-//
-//	}
 
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String MOD_ID = "hemomancy";
@@ -164,7 +149,7 @@ public class Hemomancy {
 		builder.title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
 				// Set icon of creative tab
 				.icon(() -> new ItemStack(ItemInit.sanguine_formation.get()))
-				.displayItems((enabledFlags, populator, hasPermissions) -> {
+				.displayItems((enabledFlags, populator) -> {
 					// Items
 					ItemInit.BASEITEMS.getEntries().forEach(i -> populator.accept(i.get()));
 					ItemInit.HANDHELDITEMS.getEntries().forEach(i -> populator.accept(i.get()));

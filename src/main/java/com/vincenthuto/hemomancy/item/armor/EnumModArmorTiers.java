@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorItem.Type;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,16 +24,16 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 			0.1F, () -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
 			}),
-	BARBED(Hemomancy.MOD_ID + ":barbed", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F,
-			0.1F, () -> {
+	BARBED(Hemomancy.MOD_ID + ":barbed", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F,
+			() -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
 			}),
 	UNSTAINED(Hemomancy.MOD_ID + ":unstained", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F,
 			0.1F, () -> {
 				return Ingredient.of(ItemInit.chitinous_husk.get());
 			}),
-	BLOODLUST(Hemomancy.MOD_ID + ":blood_lust", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC,
-			3.0F, 0.1F, () -> {
+	BLOODLUST(Hemomancy.MOD_ID + ":blood_lust", 37, new int[] { 3, 6, 8, 3 }, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F,
+			0.1F, () -> {
 				return Ingredient.of(ItemInit.hematic_iron_scrap.get());
 			}),
 
@@ -61,13 +62,13 @@ public enum EnumModArmorTiers implements ArmorMaterial {
 	}
 
 	@Override
-	public int getDefenseForSlot(EquipmentSlot slotIn) {
-		return this.damageReductionAmountArray[slotIn.getIndex()];
+	public int getDefenseForType(Type p_267168_) {
+		return this.damageReductionAmountArray[p_267168_.getSlot().getIndex()];
 	}
 
 	@Override
-	public int getDurabilityForSlot(EquipmentSlot slotIn) {
-		return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * this.maxDamageFactor;
+	public int getDurabilityForType(Type p_266807_) {
+		return MAX_DAMAGE_ARRAY[p_266807_.getSlot().getIndex()] * this.maxDamageFactor;
 	}
 
 	@Override

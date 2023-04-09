@@ -144,7 +144,7 @@ public class LivingAxeItem extends LivingToolItem {
 								if (target instanceof LivingEntity) {
 									LivingEntity livingTarget = (LivingEntity) target;
 									float dam = 3f / targets.size();
-									livingTarget.hurt(ItemInit.bloodLoss, dam);
+									livingTarget.hurt(target.damageSources().generic(), dam);
 								}
 							}
 						}

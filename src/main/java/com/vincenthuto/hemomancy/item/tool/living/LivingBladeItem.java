@@ -58,7 +58,7 @@ public class LivingBladeItem extends LivingToolItem {
 		super.hurtEnemy(stack, target, attacker);
 		if (stack.getOrCreateTag().getBoolean(TAG_STATE)) {
 			attacker.heal(this.getAttackDamage() / 2);
-			target.hurt(new DamageSource("Living Blade"), 20);
+			target.hurt(target.damageSources().generic(), 20);
 			if (!attacker.level.isClientSide) {
 				Player playerIn = (Player) attacker;
 				IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -79,7 +79,7 @@ public class LivingBladeItem extends LivingToolItem {
 
 			}
 		} else {
-			target.hurt(ItemInit.bloodLoss, 5);
+			target.hurt(target.damageSources().generic(), 5);
 
 		}
 		return super.hurtEnemy(stack, target, attacker);

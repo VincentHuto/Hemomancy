@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vincenthuto.hemomancy.recipe.JuiceinatorRecipe;
 
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -57,7 +56,7 @@ public class JuiceinatorSerializer implements RecipeSerializer<JuiceinatorRecipe
 		buffer.writeResourceLocation(recipe.getId());
 		buffer.writeUtf(recipe.getGroup());
 		buffer.writeItem(recipe.getIngredients().get(0).getItems()[0]);
-		buffer.writeItem(recipe.getResultItem());
+		buffer.writeItem(recipe.getResultItem(null));
 		buffer.writeFloat(recipe.getExperience());
 		buffer.writeInt(recipe.getCookingTime());
 	}

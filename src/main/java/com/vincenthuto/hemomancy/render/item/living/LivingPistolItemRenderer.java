@@ -10,9 +10,9 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -22,7 +22,7 @@ public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transform, PoseStack ms,
+	public void renderByItem(ItemStack stack, ItemDisplayContext transform, PoseStack ms,
 			MultiBufferSource buffers, int light, int overlay) {
 		if (stack.getItem()instanceof LivingPistolItem pistol) {
 			Minecraft mc = Minecraft.getInstance();
@@ -31,13 +31,13 @@ public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
 			InteractionHand activeHand = player.getUsedItemHand();
 			if (itemIsInUse) {
 				if (activeHand == InteractionHand.MAIN_HAND) {
-					if (transform == ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND) {
+					if (transform == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
 						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(-.55, 0, 0.);
 
 					}
 				} else {
-					if (transform == ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND) {
+					if (transform == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
 						ms.mulPose(new Quaternion(Vector3.XP, -20, true).toMoj());
 						ms.translate(.55, 0, 0.);
 

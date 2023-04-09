@@ -27,7 +27,6 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -38,6 +37,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -92,7 +92,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 					100);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem,
-					ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStackIn, bufferIn,
+					ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStackIn, bufferIn,
 					packedLightIn);
 			// Left InteractionHand only
 		} else if (leftHandItem.getItem() instanceof ICellHand && !(rightHandItem.getItem() instanceof ICellHand)) {
@@ -104,7 +104,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 					100);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, leftHandItem,
-					ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,
+					ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,
 					packedLightIn);
 			// Both Hands
 		} else if (leftHandItem.getItem() instanceof ICellHand && rightHandItem.getItem() instanceof ICellHand) {
@@ -115,10 +115,10 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 					100);
 			PlayerModel<AbstractClientPlayer> playermodel = playerrenderer.getModel();
 			this.renderHandParticle(entitylivingbaseIn, rightHandItem,
-					ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,
+					ItemDisplayContext.THIRD_PERSON_LEFT_HAND, HumanoidArm.LEFT, matrixStackIn, bufferIn,
 					packedLightIn);
 			this.renderHandParticle(entitylivingbaseIn, leftHandItem,
-					ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStackIn, bufferIn,
+					ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, HumanoidArm.RIGHT, matrixStackIn, bufferIn,
 					packedLightIn);
 
 		}
@@ -126,7 +126,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 	}
 
 	@SuppressWarnings("unused")
-	private void renderHandParticle(LivingEntity living, ItemStack stack, ItemTransforms.TransformType transformType,
+	private void renderHandParticle(LivingEntity living, ItemStack stack, ItemDisplayContext ItemDisplayContext,
 			HumanoidArm side, PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
 		if (Minecraft.getInstance().isPaused()) {
 			return;
@@ -147,14 +147,14 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 			} else {
 				matrixStack.translate(-0.225, 0.65, -0.95);
 			}
-			this.spawnParticleFromMatrix(matrixStack, living, transformType);
+			this.spawnParticleFromMatrix(matrixStack, living, ItemDisplayContext);
 			matrixStack.popPose();
 		}
 	}
 
 	@SuppressWarnings("unused")
 	private void spawnParticleFromMatrix(PoseStack matrixStackIn, LivingEntity player,
-			ItemTransforms.TransformType type) {
+			ItemDisplayContext type) {
 		Vec3 playerPos = player.position();
 		Level world = player.level;
 		Matrix4f curMatrix = matrixStackIn.last().pose();

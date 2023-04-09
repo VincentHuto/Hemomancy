@@ -189,7 +189,6 @@ public class GenericRadialMenu {
 	private void drawBackground(PoseStack matrixStack, float x, float y, float z, float radiusIn, float radiusOut) {
 		if (visibleItems.size() > 0) {
 			RenderSystem.enableBlend();
-			RenderSystem.disableTexture();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -202,7 +201,6 @@ public class GenericRadialMenu {
 				drawPieArc(buffer, x, y, z, radiusIn, radiusOut, s, e, color);
 			});
 			tessellator.end();
-			RenderSystem.enableTexture();
 			RenderSystem.disableBlend();
 		}
 	}

@@ -157,7 +157,7 @@ public class MorphlingJarViewerScreen extends Screen {
 							((GuiButtonTextured) renderables.get(i)).posX = x;
 							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(matrixStack, binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 1) {
 							long testX = (Math
@@ -169,7 +169,7 @@ public class MorphlingJarViewerScreen extends Screen {
 							((GuiButtonTextured) renderables.get(i)).posX = x;
 							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(matrixStack, binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 2) {
 							long testX = (Math.abs(Math.abs(player.level.getGameTime() % (maxX * 2) - maxX) - maxX));
@@ -180,7 +180,7 @@ public class MorphlingJarViewerScreen extends Screen {
 							((GuiButtonTextured) renderables.get(i)).posX = x;
 							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(matrixStack, binderHandler.getStackInSlot(i), x, y);
 
 						} else if (i == 3) {
 							long testX = (Math
@@ -191,7 +191,7 @@ public class MorphlingJarViewerScreen extends Screen {
 							((GuiButtonTextured) renderables.get(i)).posX = x;
 							((GuiButtonTextured) renderables.get(i)).posY = y;
 							Minecraft.getInstance().getItemRenderer()
-									.renderAndDecorateItem(binderHandler.getStackInSlot(i), x, y);
+									.renderAndDecorateItem(matrixStack, binderHandler.getStackInSlot(i), x, y);
 
 						}
 

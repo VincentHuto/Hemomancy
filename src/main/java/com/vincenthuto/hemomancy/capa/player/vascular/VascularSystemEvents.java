@@ -123,7 +123,7 @@ public class VascularSystemEvents {
 						// GlStateManager._pushMatrix();
 						//// GlStateManager._enableAlphaTest();
 						// GlStateManager._enableBlend();
-						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(renderItem),
+						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(event.getPoseStack(), new ItemStack(renderItem),
 								point.x, point.y);
 						// GuiUtil.drawScaledTexturedModalRect(point.x, point.y, 0, 0, 16, 16, 0.062f);
 						// GlStateManager._disableBlend();

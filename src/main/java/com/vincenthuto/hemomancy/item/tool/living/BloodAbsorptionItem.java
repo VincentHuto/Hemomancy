@@ -118,7 +118,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 				if (t instanceof LivingEntity) {
 					LivingEntity livingTarget = (LivingEntity) t;
 					float dam = 3f / targets.size();
-					livingTarget.hurt(ItemInit.bloodLoss, dam);
+					livingTarget.hurt(player.damageSources().generic(), dam);
 					if (!worldIn.isClientSide) {
 						volume.fill(dam);
 						PacketHandler.CHANNELBLOODVOLUME.send(

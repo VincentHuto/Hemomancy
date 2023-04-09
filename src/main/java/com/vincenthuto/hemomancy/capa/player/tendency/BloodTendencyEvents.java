@@ -128,7 +128,7 @@ public class BloodTendencyEvents {
 								String.valueOf(tendency.getAlignmentByTendency(selectedCoven)), point.x, point.y + 30,
 								new Color(255, 0, 0, 255).getRGB());
 
-						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(new ItemStack(renderItem),
+						Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(event.getPoseStack(), new ItemStack(renderItem),
 								point.x, point.y);
 
 						point = MathUtils.rotatePointAbout(point, center, angleBetweenEach);

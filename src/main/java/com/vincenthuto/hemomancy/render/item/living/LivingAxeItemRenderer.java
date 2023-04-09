@@ -16,10 +16,10 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -39,7 +39,7 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType p_239207_2_, PoseStack ms,
+	public void renderByItem(ItemStack stack, ItemDisplayContext p_239207_2_, PoseStack ms,
 			MultiBufferSource buffers, int light, int overlay) {
 
 		if (stack.getItem() instanceof LivingAxeItem) {
@@ -54,7 +54,7 @@ public class LivingAxeItemRenderer extends BlockEntityWithoutLevelRenderer {
 			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_blade));
 			ms.scale(0.65f, 0.65f, 0.65f);
 			ms.translate(-0.6, 0.25, 0.25);
-			if (p_239207_2_ == ItemTransforms.TransformType.GUI) {
+			if (p_239207_2_ == ItemDisplayContext.GUI) {
 				ms.translate(-0, 0.15, 0);
 			}
 			model = unleashed;
