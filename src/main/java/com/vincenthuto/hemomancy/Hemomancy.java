@@ -96,7 +96,6 @@ public class Hemomancy {
 		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 
-	@SuppressWarnings("deprecation")
 	public Hemomancy() {
 		DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> proxy = new ClientProxy());
 		proxy.registerHandlers();
@@ -154,7 +153,7 @@ public class Hemomancy {
 					ItemInit.BASEITEMS.getEntries().forEach(i -> populator.accept(i.get()));
 					ItemInit.HANDHELDITEMS.getEntries().forEach(i -> populator.accept(i.get()));
 					ItemInit.SPECIALITEMS.getEntries().forEach(i -> populator.accept(i.get()));
-					//ItemInit.SPAWNEGGS.getEntries().forEach(i -> populator.accept(i.get()));
+					ItemInit.SPAWNEGGS.getEntries().forEach(i -> populator.accept(i.get()));
 
 					// Blocks
 					BlockInit.BASEBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));

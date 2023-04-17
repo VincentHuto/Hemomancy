@@ -40,10 +40,7 @@ import com.vincenthuto.hemomancy.item.tool.living.VeinRecallerItem;
 import com.vincenthuto.hemomancy.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
-import com.vincenthuto.hutoslib.common.item.ModSpawnEggItem;
 
-import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
@@ -63,7 +60,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -385,35 +382,35 @@ public class ItemInit {
 			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.BOOTS));
 
 	// Spawn Eggs
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
-			() -> new ModSpawnEggItem(EntityInit.leech, 7761777, 4206080,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
+			() -> new ForgeSpawnEggItem(EntityInit.leech, 7761777, 4206080,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
-			() -> new ModSpawnEggItem(EntityInit.fargone, 7352833, 7958646,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+			() -> new ForgeSpawnEggItem(EntityInit.fargone, 7352833, 7958646,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
-			() -> new ModSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+			() -> new ForgeSpawnEggItem(EntityInit.thirster, 3093151, 9515521,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
-			() -> new ModSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+			() -> new ForgeSpawnEggItem(EntityInit.fungling, 7798794, 15711418,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
-			() -> new ModSpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register("spawn_egg_chitinite",
+			() -> new ForgeSpawnEggItem(EntityInit.chitinite, 3617335, 8553354,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
-			() -> new ModSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register("spawn_egg_chthonian",
+			() -> new ForgeSpawnEggItem(EntityInit.chthonian, 7488841, 2170666,
 					new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
-			.register("spawn_egg_chthonian_queen", () -> new ModSpawnEggItem(EntityInit.chthonian_queen, 7488841,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS
+			.register("spawn_egg_chthonian_queen", () -> new ForgeSpawnEggItem(EntityInit.chthonian_queen, 7488841,
 					12235264, new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
-			.register("spawn_egg_lump_of_thought", () -> new ModSpawnEggItem(EntityInit.lump_of_thought, 6094848,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS
+			.register("spawn_egg_lump_of_thought", () -> new ForgeSpawnEggItem(EntityInit.lump_of_thought, 6094848,
 					11315361, new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
-			.register("spawn_egg_abhorent_thought", () -> new ModSpawnEggItem(EntityInit.abhorent_thought, 12124160,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS
+			.register("spawn_egg_abhorent_thought", () -> new ForgeSpawnEggItem(EntityInit.abhorent_thought, 12124160,
 					4259840, new Item.Properties()));
-	public static final RegistryObject<ModSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
-			.register("spawn_egg_morphling_polyp", () -> new ModSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS
+			.register("spawn_egg_morphling_polyp", () -> new ForgeSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0,
 					new Item.Properties()));
 
 	// Item Property Override
@@ -630,30 +627,30 @@ public class ItemInit {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void registerItemColorHandler(ItemColors colors, ItemColor itemColor,
-			RegistryObject<ModSpawnEggItem>... items) {
-		for (RegistryObject<ModSpawnEggItem> itemProvider : items) {
-			colors.register(itemColor, itemProvider.get());
-		}
-	}
+//	@SuppressWarnings("unchecked")
+//	public static void registerItemColorHandler(ItemColors colors, ItemColor itemColor,
+//			RegistryObject<ForgeSpawnEggItem>... items) {
+//		for (RegistryObject<ForgeSpawnEggItem> itemProvider : items) {
+//			colors.register(itemColor, itemProvider.get());
+//		}
+//	}
 
-	@SubscribeEvent
-	public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
-				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
-				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
-				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
-				ItemInit.spawn_egg_leech);
-	}
-
-	@SuppressWarnings("unchecked")
-
-	@SafeVarargs
-	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ModSpawnEggItem>... spawnEggs) {
-		for (RegistryObject<ModSpawnEggItem> spawnEgg : spawnEggs) {
-			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
-		}
-	}
+//	@SubscribeEvent
+//	public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
+//		registerSpawnEggColorHandler(event.getItemColors(), ItemInit.spawn_egg_morphling_polyp,
+//				ItemInit.spawn_egg_abhorent_thought, ItemInit.spawn_egg_lump_of_thought,
+//				ItemInit.spawn_egg_chthonian_queen, ItemInit.spawn_egg_chthonian, ItemInit.spawn_egg_chitinite,
+//				ItemInit.spawn_egg_fungling, ItemInit.spawn_egg_thirster, ItemInit.spawn_egg_fargone,
+//				ItemInit.spawn_egg_leech);
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//
+//	@SafeVarargs
+//	public static void registerSpawnEggColorHandler(ItemColors colors, RegistryObject<ForgeSpawnEggItem>... spawnEggs) {
+//		for (RegistryObject<ForgeSpawnEggItem> spawnEgg : spawnEggs) {
+//			registerItemColorHandler(colors, (stack, tintIndex) -> spawnEgg.get().getColor(tintIndex), spawnEgg);
+//		}
+//	}
 
 }
