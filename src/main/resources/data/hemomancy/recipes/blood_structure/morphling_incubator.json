@@ -1,0 +1,25 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 200,
+  "heldItem": "hemomancy:morphling_polyp",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+  	 ["TGT", "TGT", "   "],
+     ["GGG", "GIG", " T "],
+ 	 ["TGT", "TGT", "   "]
+  ],
+  "key": {
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "G": {
+      "block": "hemomancy:sanguine_glass"
+    },
+    "I": {
+      "block": "hemomancy:infested_venous_stone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:morphling_incubator"
+  }
+}

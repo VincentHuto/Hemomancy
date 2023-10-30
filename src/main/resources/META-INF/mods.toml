@@ -1,0 +1,84 @@
+modLoader="javafml" #mandatory
+
+loaderVersion="[47,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+
+license="All rights reserved"
+
+issueTrackerURL="http://my.issue.tracker/" #optional
+
+[[mods]] #mandatory
+
+modId="hemomancy" #mandatory
+
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="4.1.0" #mandatory
+
+ # A display name for the mod
+displayName="Hemomancy; Sanguine Mastery" #mandatory
+
+# A URL to query for updates for this mod. See the JSON update specification <here>
+updateJSONURL="http://myurl.me/" #optional
+
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL="http://curseforge.com/" #optional
+
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="logo.png" #optional
+
+# A text field displayed in the mod UI
+credits='''
+Thanks to these Folks! Who I looked to for help!
+Vazkii,WolfShotz,Direwolf20,baileyholl, and many others!
+And to the entire Forge Discord!
+'''
+
+# A text field displayed in the mod UI
+authors="Vincent_Huto" #optional
+
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+Channel the carnal fluid flowing through your veins, dont let it go to waste.
+Use it to crush your enemies, or boost yourself!
+After all its just sitting there!
+~Huto
+'''
+
+
+
+
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.hemomancy]]#optional
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="[47,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+# Here's another dependency
+[[dependencies.hemomancy]]
+    modId="minecraft"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[1.20,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+
+[[dependencies.hemomancy]]
+    modId="hutoslib"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
+
+    [[dependencies.hemomancy]]
+    modId="jei"
+    mandatory=false
+    versionRange="[8,)"
+    ordering="NONE"
+    side="BOTH"
+    

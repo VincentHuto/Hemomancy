@@ -1,0 +1,4 @@
+{
+  "parent": "hemomancy:block/sanguine_glass",
+  "render_type" : "translucent"  
+}

@@ -1,0 +1,20 @@
+{
+	"sources": [
+		{
+			"type": "single",
+			"resource": "hemomancy:gui/entity/royal_guard_shield_base"
+		},
+		{
+			"type": "single",
+			"resource": "hemomancy:entity/barbed_shield/model_barbed_shield"
+		},
+		{
+			"type": "single",
+			"resource": "hemomancy:entity/chitinite_shield/model_chitinite_shield"
+		},
+		 {
+            "type": "single",
+            "resource": "hemomancy:gui/empty_banner_slot_background"
+        }
+	]
+}

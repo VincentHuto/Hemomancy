@@ -1,0 +1,32 @@
+{
+"entity.abhorent_thought.ambient": {
+		"category": "entity",
+		"subtitle": "entity.abhorent_thought.ambient",
+		"sounds": [
+			{
+				"name": "hemomancy:entity/abhorent_thought/ambient",
+				"stream": true
+			}
+		]
+	},
+	"entity.abhorent_thought.hurt": {
+		"category": "entity",
+		"subtitle": "entity.abhorent_thought.hurt",
+		"sounds": [
+			{
+				"name": "hemomancy:entity/abhorent_thought/hurt",
+				"stream": true
+			}
+		]
+	},
+	"entity.abhorent_thought.death": {
+		"category": "entity",
+		"subtitle": "entity.abhorent_thought.death",
+		"sounds": [
+			{
+				"name": "hemomancy:entity/abhorent_thought/death",
+				"stream": true
+			}
+		]
+	}
+}

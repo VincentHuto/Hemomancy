@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hematic Memory",
+  "subtitle": "Remembering your potential",
+  "text": "Welcome to Hemomancy! My first(released) major mod, This is a magic mod centered around blood, and blood control, focusing more so on the quality and efficency of blood rather than quantity.",
+  "icon": "hemomancy:hematic_memory"
+}

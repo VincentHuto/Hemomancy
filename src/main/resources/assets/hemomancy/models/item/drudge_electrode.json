@@ -1,0 +1,20 @@
+{
+	"parent": "item/handheld",
+	"textures": {
+		"layer0": "hemomancy:item/drudge_electrode"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"hemomancy:mode": 0
+			},
+			"model": "hemomancy:item/drudge_electrode"
+		},
+		{
+			"predicate": {
+				"hemomancy:mode": 1
+			},
+			"model": "hemomancy:item/drudge_electrode_mode"
+		}
+	]
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "1,0,0",
+  "title": "Intro",
+  "subtitle": "What even is this?",
+  "icon": "hemomancy:sanguine_formation"
+}

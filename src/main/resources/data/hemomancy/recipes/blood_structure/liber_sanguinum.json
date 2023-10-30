@@ -1,0 +1,22 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 100,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "minecraft:bookshelf",
+  "pattern": [
+  	 ["BBB"],
+     ["BSB"],
+ 	 ["BBB"]
+  ],
+  "key": {
+    "S": {
+      "block": "minecraft:bookshelf"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    }
+  },
+  "result": {
+    "item": "hemomancy:liber_sanguinum"
+  }
+}

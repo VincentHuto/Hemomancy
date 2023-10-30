@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:blood_wood_log"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "hemomancy:blood_wood_planks"
+  }
+}

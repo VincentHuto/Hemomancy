@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Living Staff",
+  "subtitle": "An Extension Of Ones Self",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:living_staff",
+  "structureloc": "hemomancy:blood_structure/living_staff"
+}

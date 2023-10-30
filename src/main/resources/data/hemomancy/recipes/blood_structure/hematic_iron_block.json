@@ -1,0 +1,22 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 50,
+  "heldItem": "minecraft:ink_sac",
+  "hitBlock": "minecraft:iron_block",
+  "pattern": [
+  	 ["   ", "BBB"],
+     [" B ", "BIB"],
+ 	 ["   ", "BBB"]
+  ],
+  "key": {
+    "I": {
+      "block": "minecraft:iron_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    }
+  },
+  "result": {
+    "item": "hemomancy:hematic_iron_block"
+  }
+}
