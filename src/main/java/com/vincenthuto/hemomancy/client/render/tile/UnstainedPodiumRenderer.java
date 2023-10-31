@@ -18,19 +18,6 @@ public class UnstainedPodiumRenderer implements BlockEntityRenderer<UnstainedPod
 	@Override
 	public void render(UnstainedPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		/*
-		 * IRenderTypeBuffer.Impl impl =
-		 * Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-		 * matrixStackIn.push(); matrixStackIn.translate(0.5, 1.0, 0.5); ItemStack stack
-		 * = new ItemStack(ItemInit.living_blade.get()); VertexConsumer main =
-		 * bufferIn.getBuffer(RenderTypeLookup.getRenderType(stack, true));
-		 * VertexConsumer glint = bufferIn.getBuffer(RenderTypeInit.getCrimsonGlint());
-		 * VertexConsumer buffer = VertexBuilderUtils.newDelegate(glint, main);
-		 * Minecraft.getInstance().getItemRenderer().renderModel(
-		 * Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(stack,
-		 * te.getLevel(), null), stack, 0xF000F0, combinedOverlayIn, matrixStackIn,
-		 * buffer); matrixStackIn.pop();
-		 * impl.finish(RenderTypeLookup.getRenderType(stack, true));
-		 */
 	}
+
 }

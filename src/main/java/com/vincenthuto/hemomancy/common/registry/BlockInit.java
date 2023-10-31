@@ -267,6 +267,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
 
 	}
 
