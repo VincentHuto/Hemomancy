@@ -71,7 +71,7 @@ public class BlockInit {
 			Hemomancy.MOD_ID);
 	public static final DeferredRegister<Block> SPECIALBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
-	
+
 	public static final DeferredRegister<Block> POTTEDBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
 
@@ -95,8 +95,7 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final RegistryObject<Block> potted_bleeding_heart = POTTEDBLOCKS.register("potted_bleeding_heart",
-			() -> new FlowerPotBlock(null, BlockInit.bleeding_heart,
-					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+			() -> new FlowerPotBlock(null, BlockInit.bleeding_heart, BlockBehaviour.Properties.of()));
 
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
 			() -> new GlassBlock(
@@ -170,6 +169,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+
+	public static final RegistryObject<Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
+			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
 
 	public static final RegistryObject<Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
 			() -> new Block(
@@ -254,6 +256,7 @@ public class BlockInit {
 		return combinedStream;
 	}
 
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void registerBlocks(FMLClientSetupEvent event) {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
@@ -263,14 +266,17 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
-
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
 
 	}
 
 	@SubscribeEvent
 	public static void registerBlocks(FMLCommonSetupEvent event) {
 		event.enqueueWork(() -> {
-			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(), BlockInit.potted_bleeding_heart);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(),
+					BlockInit.potted_bleeding_heart);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(),
+					BlockInit.potted_infected_fungus);
 		});
 	}
 

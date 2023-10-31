@@ -156,7 +156,7 @@ public class VillageEvents {
 			poolAccess.rawTemplates = new ArrayList<>(poolAccess.rawTemplates);
 
 		SinglePoolElement addedElement = SinglePoolElement.single(toAdd.toString()).apply(Projection.RIGID);
-		poolAccess.rawTemplates.add(Pair.of(addedElement, 4));
+		poolAccess.rawTemplates.add(Pair.of(addedElement,5));
 		poolAccess.templates.add(addedElement);
 	}
 
