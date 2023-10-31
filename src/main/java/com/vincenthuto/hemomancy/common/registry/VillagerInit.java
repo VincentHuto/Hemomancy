@@ -5,11 +5,16 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.HemopothecaryProcessor;
 
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -22,6 +27,16 @@ public class VillagerInit {
 	public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister
 			.create(ForgeRegistries.VILLAGER_PROFESSIONS, Hemomancy.MOD_ID);
 
+	public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS = DeferredRegister
+			.create(Registries.STRUCTURE_PROCESSOR, Hemomancy.MOD_ID);
+	
+    private static final ResourceKey<StructureProcessorList> HEMOPOTHECARY_PROCESSOR_LIST_KEY =
+            ResourceKey.create(Registries.PROCESSOR_LIST, Hemomancy.rloc("hemopothecary_processors"));
+
+
+	public static final RegistryObject<StructureProcessorType<HemopothecaryProcessor>> HEMOPOTHECARY_PROCESSOR = STRUCTURE_PROCESSORS
+			.register("hemopothecary_processor", () -> HemopothecaryProcessor::codec);
+
 	public static final RegistryObject<PoiType> TABLE_POI = POINTS_OF_INTEREST.register("hemopothecary",
 			() -> new PoiType(
 					ImmutableSet.copyOf(BlockInit.scrying_podium.get().getStateDefinition().getPossibleStates()), 1,
@@ -33,7 +48,5 @@ public class VillagerInit {
 				Arrays.stream(new Item[] { ItemInit.befouling_ash.get() }).collect(ImmutableSet.toImmutableSet()),
 				ImmutableSet.of(), SoundEvents.VILLAGER_WORK_LEATHERWORKER);
 	});
-
-	
 
 }

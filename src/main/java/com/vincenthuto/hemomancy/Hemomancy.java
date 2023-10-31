@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,10 +33,14 @@ import com.vincenthuto.hemomancy.common.registry.StructureInit;
 import com.vincenthuto.hemomancy.common.registry.VillagerInit;
 import com.vincenthuto.hemomancy.common.worldgen.BaseFeatureInit;
 import com.vincenthuto.hemomancy.common.worldgen.BiomeInit;
+import com.vincenthuto.hemomancy.common.worldgen.VillageEvents;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -42,8 +49,13 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -71,7 +83,6 @@ public class Hemomancy {
 	public static final RegistryObject<CreativeModeTab> hemomancytab = CREATIVETABS.register("hemomancytab",
 			() -> CreativeModeTab.builder().title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
 					.icon(() -> new ItemStack(ItemInit.sanguine_formation.get())).build());
-
 
 	public Hemomancy() {
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
@@ -107,8 +118,11 @@ public class Hemomancy {
 		SoundInit.SOUNDS.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
+
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
+		VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
+
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::buildContents);
 		modEventBus.addListener(DataGeneration::generate);
@@ -123,8 +137,6 @@ public class Hemomancy {
 		forgeBus.register(EarthenVeinLocEvents.class);
 
 	}
-
-
 
 	public void buildContents(BuildCreativeModeTabContentsEvent populator) {
 		if (populator.getTabKey() == hemomancytab.getKey()) {

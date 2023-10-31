@@ -38,8 +38,9 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool.Projection;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraftforge.common.BasicItemListing;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
@@ -52,11 +53,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 @EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.FORGE)
 
 public class VillageEvents {
-	
-	//Trades
-	
-	
-	
+
+	// Trades
+
 	@SubscribeEvent
 	public static void registerTrades(VillagerTradesEvent event) {
 		if (event.getType() != VillagerInit.HEMOPOTHECARY.get())
@@ -119,143 +118,50 @@ public class VillageEvents {
 					.orElse(null);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//Structures
 
+	// Structures
 	@SubscribeEvent
-	public static void onTagsUpdated(ServerAboutToStartEvent ev) {
-
-		// Register engineer's houses for each biome
-		for (String biome : new String[] { "plains", "snowy", "savanna", "desert", "taiga" })
-			for (String type : new String[] { "hemopothecary"})
-				addToPool(new ResourceLocation("village/" + biome + "/houses"),
-						Hemomancy.rloc("village/houses/" + biome + "_" + type), ev.getServer().registryAccess());
+	public static void addBuildingToVillages(final ServerAboutToStartEvent event) {
+		Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess()
+				.registry(Registries.TEMPLATE_POOL).orElseThrow();
+		Registry<StructureProcessorList> processorListRegistry = event.getServer().registryAccess()
+				.registry(Registries.PROCESSOR_LIST).orElseThrow();
+		addBuildingToPool(templatePoolRegistry, processorListRegistry,
+				new ResourceLocation("minecraft:village/plains/houses"), "hemomancy:plains_hemopothecary", 10);
+		addBuildingToPool(templatePoolRegistry, processorListRegistry,
+				new ResourceLocation("minecraft:village/snowy/houses"), "hemomancy:snowy_hemopothecary", 10);
+		addBuildingToPool(templatePoolRegistry, processorListRegistry,
+				new ResourceLocation("minecraft:village/savanna/houses"), "hemomancy:savanna_hemopothecary", 10);
+		addBuildingToPool(templatePoolRegistry, processorListRegistry,
+				new ResourceLocation("minecraft:village/taiga/houses"), "hemomancy:taiga_hemopothecary", 10);
+		addBuildingToPool(templatePoolRegistry, processorListRegistry,
+				new ResourceLocation("minecraft:village/desert/houses"), "hemomancy:desert_hemopothecary", 10);
 	}
 
-	public static final ResourceLocation HEMAPOTHECARY = Hemomancy.rloc("hemapothecary");
+	private static final ResourceKey<StructureProcessorList> TAILOR_SHOP_PROCESSOR_LIST_KEY = ResourceKey
+			.create(Registries.PROCESSOR_LIST, Hemomancy.rloc("hemopothecary_processors"));
 
-	
-	private static void addToPool(ResourceLocation poolId, ResourceLocation toAdd, RegistryAccess regAccess) {
+	private static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry,
+			Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL,
+			int weight) {
+		Holder<StructureProcessorList> emptyProcessorList = processorListRegistry
+				.getHolderOrThrow(TAILOR_SHOP_PROCESSOR_LIST_KEY);
 
-		Registry<StructureTemplatePool> templatePoolRegistry = regAccess.registry(Registries.TEMPLATE_POOL)
-				.orElseThrow();
-		;
-		StructureTemplatePool poolAccess = templatePoolRegistry.get(poolId);
-		if (!(poolAccess.rawTemplates instanceof ArrayList))
-			poolAccess.rawTemplates = new ArrayList<>(poolAccess.rawTemplates);
+		StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
+		if (pool == null)
+			return;
 
-		SinglePoolElement addedElement = SinglePoolElement.single(toAdd.toString()).apply(Projection.RIGID);
-		poolAccess.rawTemplates.add(Pair.of(addedElement,5));
-		poolAccess.templates.add(addedElement);
-	}
+		SinglePoolElement piece = SinglePoolElement.single(nbtPieceRL, emptyProcessorList)
+				.apply(StructureTemplatePool.Projection.RIGID);
 
-	private static class TradeListing implements ItemListing {
-		private final TradeOutline outline;
-		private final LazyItemStack lazyItem;
-		private final PriceInterval priceInfo;
-		private final int maxUses;
-		private final int xp;
-		private float priceMultiplier = 0.05f;
-
-		public TradeListing(@Nonnull TradeOutline outline, @Nonnull Function<Level, ItemStack> item,
-				@Nonnull PriceInterval priceInfo, int maxUses, int xp) {
-			this.outline = outline;
-			this.lazyItem = new LazyItemStack(item);
-			this.priceInfo = priceInfo;
-			this.maxUses = maxUses;
-			this.xp = xp;
+		for (int i = 0; i < weight; i++) {
+			pool.templates.add(piece);
 		}
 
-		public TradeListing(@Nonnull TradeOutline outline, @Nonnull ItemStack itemStack,
-				@Nonnull PriceInterval buyAmounts, int maxUses, int xp) {
-			this(outline, l -> itemStack, buyAmounts, maxUses, xp);
-		}
-
-		public TradeListing(@Nonnull TradeOutline outline, @Nonnull ItemLike item, @Nonnull PriceInterval buyAmounts,
-				int maxUses, int xp) {
-			this(outline, new ItemStack(item), buyAmounts, maxUses, xp);
-		}
-
-		public TradeListing(@Nonnull TradeOutline outline, @Nonnull TagKey<Item> tag, @Nonnull PriceInterval buyAmounts,
-				int maxUses, int xp) {
-			this(outline, l -> l != null ? getPreferredTagStack(l.registryAccess(), tag) : ItemStack.EMPTY,
-					buyAmounts, maxUses, xp);
-		}
-		private static final Map<TagKey<Item>, ItemStack> oreOutputPreference = new HashMap<>();
-
-
-		public static ItemStack getPreferredTagStack(RegistryAccess tags, TagKey<Item> tag)
-		{
-			// TODO caching should not be global, tags can change!
-			return oreOutputPreference.computeIfAbsent(
-					tag, rl -> getPreferredElementbyMod(
-							elementStream(tags, rl), tags.registryOrThrow(Registries.ITEM)
-					).orElse(Items.AIR).getDefaultInstance()
-			).copy();
-		}
-		public static <T> Optional<T> getPreferredElementbyMod(Stream<T> list, Registry<T> registry)
-		{
-			return getPreferredElementbyMod(list, registry::getKey);
-		}
-
-		public static <T> Optional<T> getPreferredElementbyMod(Stream<T> list, Function<T, ResourceLocation> getName)
-		{
-			return list.min(
-				Comparator.<T>comparingInt(t -> {
-					ResourceLocation name = getName.apply(t);
-					String modId = name.getNamespace();
-					int idx = modPreference.indexOf(modId);
-					if(idx < 0)
-						return modPreference.size();
-					else
-						return idx;
-				}).thenComparing(getName)
-			);
-		}
-		public static List<? extends String> modPreference;
-
-
-		public static <T> Stream<T> elementStream(RegistryAccess tags, ResourceKey<Registry<T>> registry, ResourceLocation tag) {
-			return holderStream(tags, registry, tag).map(Holder::value);
-		}
-
-		public static <T> Stream<T> elementStream(RegistryAccess tags, TagKey<T> key) {
-			return holderStream(tags.registryOrThrow(key.registry()), key).map(Holder::value);
-		}
-
-		public static <T> Stream<T> elementStream(Registry<T> registry, TagKey<T> tag) {
-			return holderStream(registry, tag).map(Holder::value);
-		}
-		public static <T> Stream<Holder<T>> holderStream(RegistryAccess tags, ResourceKey<Registry<T>> registry, ResourceLocation tag) {
-			return holderStream(tags.registryOrThrow(registry), TagKey.create(registry, tag));
-		}
-
-		public static <T> Stream<Holder<T>> holderStream(Registry<T> registry, TagKey<T> tag) {
-			return StreamSupport.stream(registry.getTagOrEmpty(tag).spliterator(), false);
-		}
-
-		public TradeListing setMultiplier(float priceMultiplier) {
-			this.priceMultiplier = priceMultiplier;
-			return this;
-		}
-
-		@Nullable
-		@Override
-		public MerchantOffer getOffer(@Nullable Entity trader, @Nonnull RandomSource rand) {
-			ItemStack buying = this.lazyItem.apply(trader != null ? trader.level() : null);
-			return this.outline.generateOffer(buying, priceInfo, rand, maxUses, xp, priceMultiplier);
-		}
+// for completeness
+		List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(pool.rawTemplates);
+		listOfPieceEntries.add(new Pair<>(piece, weight));
+		pool.rawTemplates = listOfPieceEntries;
 	}
 
 	/**
