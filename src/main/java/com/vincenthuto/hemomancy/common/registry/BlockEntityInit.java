@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.EarthenVeinBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.HumaneIdolBlockEntity;
@@ -23,6 +24,10 @@ import net.minecraftforge.registries.RegistryObject;
 public class BlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
 			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Hemomancy.MOD_ID);
+
+	public static final RegistryObject<BlockEntityType<ChiselStationBlockEntity>> runic_chisel_station = TILES
+			.register("runic_chisel_station", () -> BlockEntityType.Builder
+					.of(ChiselStationBlockEntity::new, BlockInit.runic_chisel_station.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<SemiSentientConstructBlockEntity>> semi_sentient_construct = TILES
 			.register("semi_sentient_construct", () -> BlockEntityType.Builder

@@ -2,10 +2,12 @@ package com.vincenthuto.hemomancy.common.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.menu.JuiceinatorMenu;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
 import com.vincenthuto.hemomancy.common.menu.LivingSyringeMenu;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
+import com.vincenthuto.hemomancy.common.menu.RuneBinderInventoryMenu;
 import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.menu.VisceralRecallerMenu;
 
@@ -20,7 +22,14 @@ import net.minecraftforge.registries.RegistryObject;
 public class ContainerInit {
 	public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
 			Hemomancy.MOD_ID);
+	
+	public static final RegistryObject<MenuType<ChiselStationMenu>> runic_chisel_station = CONTAINERS
+			.register("runic_chisel_station", () -> IForgeMenuType.create(ChiselStationMenu::new));
 
+	public static final RegistryObject<MenuType<RuneBinderInventoryMenu>> rune_binder = CONTAINERS
+			.register("rune_binder", () -> IForgeMenuType.create(RuneBinderInventoryMenu::new));
+
+	
 	public static final RegistryObject<MenuType<VisceralRecallerMenu>> visceral_recaller = CONTAINERS
 			.register("visceral_recaller", () -> IForgeMenuType.create(VisceralRecallerMenu::new));
 

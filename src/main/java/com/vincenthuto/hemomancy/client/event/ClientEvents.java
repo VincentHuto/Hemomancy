@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.render.tile.ChiselStationRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.DendriticDistributorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.EarthenVeinRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.MorphlingIncubatorRenderer;
@@ -24,6 +25,8 @@ import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
+import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
+import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
@@ -268,6 +271,7 @@ public class ClientEvents {
 			MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 
 			// Tiles
+			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
@@ -285,6 +289,8 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 			MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
+			MenuScreens.register(ContainerInit.runic_chisel_station.get(), ChiselStationScreen::new);
+			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen	::new);
 
 		}
 

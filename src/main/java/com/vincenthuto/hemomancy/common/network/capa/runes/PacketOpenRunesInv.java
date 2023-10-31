@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.network.capa;
+package com.vincenthuto.hemomancy.common.network.capa.runes;
 
 import java.util.function.Supplier;
 

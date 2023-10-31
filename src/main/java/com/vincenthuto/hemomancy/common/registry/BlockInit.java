@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.block.ActiveBefoulingAshTrailBlock;
 import com.vincenthuto.hemomancy.common.block.ActiveSmoulderingAshTrailBlock;
 import com.vincenthuto.hemomancy.common.block.BefoulingAshTrailBlock;
 import com.vincenthuto.hemomancy.common.block.BleedingHeartBlock;
+import com.vincenthuto.hemomancy.common.block.BlockChiselStation;
 import com.vincenthuto.hemomancy.common.block.BloodCrystalBlock;
 import com.vincenthuto.hemomancy.common.block.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.CrimsonFlameBlock;
@@ -30,6 +31,7 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -195,6 +197,10 @@ public class BlockInit {
 			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
 
 	// Tiles
+	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
+			() -> new BlockChiselStation(
+					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new MorphlingIncubatorBlock(
 					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));

@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
-import com.vincenthuto.hemomancy.common.network.capa.PacketRuneSync;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketRuneSync;
 import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hemomancy.common.registry.PotionInit;
 

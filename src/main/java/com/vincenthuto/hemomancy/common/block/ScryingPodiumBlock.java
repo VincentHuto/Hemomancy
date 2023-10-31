@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.block;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.registry.BlockInit;
 import com.vincenthuto.hemomancy.common.registry.ItemInit;

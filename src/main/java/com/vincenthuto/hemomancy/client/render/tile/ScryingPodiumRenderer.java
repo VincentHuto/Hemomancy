@@ -40,7 +40,7 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 		ResourceLocation GLASSTEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_tran_pane.png");
 
 		matrixStackIn.pushPose();
-		matrixStackIn.translate(0.5f, 1.01f, 0.5f);
+		matrixStackIn.translate(0.5f, 1.0075f, 0.5f);
 		matrixStackIn.scale(0.18f, 0.18f, 0.18f);
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, -90, true).toMoj());
 
@@ -54,11 +54,6 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 		RadiantPortalRendertype.WATER_SHADER.safeGetUniform("intensity").set(30f);
 		vertex = bufferIn.getBuffer(RadiantPortalRendertype.textWithWaterShader(GLASSTEXTURE));
 
-		var yScale = 1f;
-		var xScale = 1f;
-		var zScale = 1f;
-
-
 		float r;
 		float gr;
 		float b;
@@ -66,7 +61,7 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 		gr = 1;
 		b = 1f;
 
-		float mod = 0.01f;
+		float mod = 0.125f;
 		for (float i = -1; i < 1; i += mod) {
 			float uvValue = (i + 1) * 0.5f;
 			for (float g = -1; g < 1; g += mod) {
