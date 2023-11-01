@@ -33,6 +33,7 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 	public void render(ScryingPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		this.renderPortal(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+		this.renderPlayer(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
 	}
 
 	public void renderPortal(ScryingPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
@@ -101,6 +102,7 @@ public class ScryingPodiumRenderer implements BlockEntityRenderer<ScryingPodiumB
 		Minecraft mc = HLClientUtils.getClient();
 		Quaternion quaternion = Vector3.YP.rotationDegrees(180.0F);
 		matrixStackIn.translate(0.5, 1, 0.5);
+		matrixStackIn.scale(0.1f, 0.1f, 0.1f);
 		matrixStackIn.mulPose(quaternion.toMoj());
 		player.yHeadRot = player.getYRot();
 		player.yHeadRotO = player.getYRot();

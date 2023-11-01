@@ -3,9 +3,11 @@ package com.vincenthuto.hemomancy.common.menu;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.RuneSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveRuneTypeSlot;
 import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 
@@ -70,6 +72,10 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
+		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 77, 8));
+		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
+		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
+		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
 		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26));
 		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));
 

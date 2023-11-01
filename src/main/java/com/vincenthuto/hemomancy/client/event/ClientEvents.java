@@ -41,6 +41,7 @@ import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.registry.ContainerInit;
+import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -48,6 +49,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -59,6 +61,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.ModelEvent.BakingCompleted;
+import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -265,6 +268,14 @@ public class ClientEvents {
 
 	@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
 	public static class ClientModBusEvents {
+		
+
+		@SubscribeEvent
+		public static void registerDimEffects(RegisterDimensionSpecialEffectsEvent event) {
+			new FungalSkyBoxRenderer();
+		//	new TFWeatherRenderer();
+			event.register(Hemomancy.rloc("renderer"), new FungalRealmsRenderInfo(128.0F, true, DimensionSpecialEffects.SkyType.END, true, true));
+		}
 
 		@SubscribeEvent
 		public static void clientSetup(FMLClientSetupEvent event) {
