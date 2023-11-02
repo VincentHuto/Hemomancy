@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.worldgen.ConfiguredFeatureInit;
+import com.vincenthuto.hemomancy.common.registry.ConfiguredFeatureInit;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;

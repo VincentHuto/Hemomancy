@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import com.vincenthuto.hemomancy.Hemomancy;
@@ -19,6 +20,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -48,26 +50,21 @@ public class FungalSkyBoxRenderer {
 	public static boolean renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
 			Matrix4f projectionMatrix, Runnable setupFog) {
 		ResourceLocation END_SKY_LOCATION = Hemomancy.rloc("textures/environment/blood_fill_tiled.png");
+		
+		VertexConsumer vertex = Minecraft.getInstance().renderBuffers().bufferSource()
+				.getBuffer(RenderType.endPortal());
 
-		stack.pushPose();
+		Tesselator tesselator = Tesselator.getInstance();
+
 		RenderSystem.enableBlend();
 		RenderSystem.depthMask(false);
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderTexture(0, END_SKY_LOCATION);
-		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		stack.mulPose(Axis.YN.rotationDegrees(-90.0F));
-		stack.mulPose(Axis.XN.rotationDegrees(level.getTimeOfDay(partialTicks) * 360.0F));
-		stack.mulPose(Axis.XN.rotationDegrees(level.getTimeOfDay(partialTicks) * 360.0F));
-		stack.mulPose(Axis.YN.rotationDegrees(level.getGameTime() + partialTicks));
-		var value = oscillatingValueWithHeartbeat((level.getGameTime() + partialTicks) % 360);
 
-
-		stack.translate(0, 90, 0);
 		for (int i = 0; i < 6; ++i) {
 			stack.pushPose();
 			if (i == 1) {
-				
 				stack.mulPose(Axis.XP.rotationDegrees(90.0F));
 			}
 
@@ -84,26 +81,21 @@ public class FungalSkyBoxRenderer {
 			}
 
 			if (i == 5) {
-				
 				stack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
 			}
 
 			Matrix4f matrix4f = stack.last().pose();
-		
 			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).uv(0.0F, 0.0F).color(40, 40, 40, 125).endVertex();
-			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).uv(0.0F, 16.0F).color(40, 40, 40, 125).endVertex();
-			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).uv(16.0F, 16.0F).color(40, 40, 40, 125).endVertex();
-			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).uv(16.0F, 0.0F).color(40, 40, 40, 125).endVertex();
+			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).uv(0.0F, 0.0F).color(40, 40, 40, 255).endVertex();
+			bufferbuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).uv(0.0F, 16.0F).color(40, 40, 40, 255).endVertex();
+			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).uv(16.0F, 16.0F).color(40, 40, 40, 255).endVertex();
+			bufferbuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).uv(16.0F, 0.0F).color(40, 40, 40, 255).endVertex();
 			tesselator.end();
-			
 			stack.popPose();
 		}
-		
-		stack.popPose();
-		
-		
 
+		RenderSystem.depthMask(true);
+		RenderSystem.disableBlend();
 
 		LevelRenderer levelRenderer = Minecraft.getInstance().levelRenderer;
 		setupFog.run();
@@ -118,11 +110,13 @@ public class FungalSkyBoxRenderer {
 		RenderSystem.setShaderColor(f, f1, f2, 0.5F);
 		ShaderInstance shaderinstance = RenderSystem.getShader();
 		VertexBuffer.unbind();
-		
+
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		stack.pushPose();
+		stack.translate(0, 90, 0);
+
 		float f11 = 0.5F - level.getRainLevel(partialTicks);
 		RenderSystem.setShaderColor(0.5F, 0.0F, 0.0F, f11);
 		stack.mulPose(Axis.YP.rotationDegrees(-90.0F));
@@ -131,15 +125,21 @@ public class FungalSkyBoxRenderer {
 		stack.mulPose(Axis.YP.rotationDegrees(level.getGameTime() + partialTicks));
 
 		float f10 = 0.5F; // TF - stars are always bright
+		createStars();
+
 		RenderSystem.setShaderColor(1.0F, 1.0F, 0.0F, 1.0F);
 		FogRenderer.setupNoFog();
+
 		starBuffer.bind();
 		starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
 		RenderSystem.disableBlend();
 		RenderSystem.defaultBlendFunc();
 		stack.popPose();
 		RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
-		double d0 = camera.getEntity().getEyePosition(partialTicks).y(); // - level.getLevelData().getHorizonHeight(level); // TF: Lower Void Horizon Y-Threshold from 63 to 0
+		double d0 = camera.getEntity().getEyePosition(partialTicks).y(); // -
+																			// level.getLevelData().getHorizonHeight(level);
+																			// // TF: Lower Void Horizon Y-Threshold
+																			// from 63 to 0
 		if (d0 < 0.0D) {
 			stack.pushPose();
 			stack.translate(0.0F, 12.0F, 0.0F);
@@ -151,14 +151,10 @@ public class FungalSkyBoxRenderer {
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.depthMask(true);
-		
-		createStars();
-
 
 		return true;
 
 	}
-
 
 	// [VanillaCopy] LevelRenderer.createStars
 	private static void createStars() {
@@ -185,12 +181,12 @@ public class FungalSkyBoxRenderer {
 		// TF - 1500 -> 3000
 		for (int i = 0; i < 3000; ++i) {
 
-			double spreadX = random.nextFloat() * 1.0F - 0.5F;
-			double spreadY = random.nextFloat() * 1.0F - 0.5F;
-			double spreadZ = random.nextFloat() * 1.0F - 0.5F;
-			double vertexEdgeLength = 0.1f + random.nextFloat() * 0.1F;
+			double spreadX = random.nextFloat() * 2.0F - 1F;
+			double spreadY = random.nextFloat() *2.0F - 1F;
+			double spreadZ = random.nextFloat() * 2.0F - 1F;
+			double vertexEdgeLength = 0.15f + random.nextFloat() * 0.1F;
 			double pythagorean = spreadX * spreadX + spreadY * spreadY + spreadZ * spreadZ;
-			if (pythagorean < 1.0D && pythagorean > 0.01D) {
+			if (pythagorean < 1.0D && pythagorean > 0.31D) {
 				pythagorean = 1.0D / Math.sqrt(pythagorean);
 				spreadX *= pythagorean;
 				spreadY *= pythagorean;

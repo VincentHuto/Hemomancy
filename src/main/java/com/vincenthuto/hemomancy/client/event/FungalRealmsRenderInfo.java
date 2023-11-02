@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.common.worldgen.BiomeInit;
+import com.vincenthuto.hemomancy.common.registry.BiomeInit;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
 
 import net.minecraft.client.Camera;

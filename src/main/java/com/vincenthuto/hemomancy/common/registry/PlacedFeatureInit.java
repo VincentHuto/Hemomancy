@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.registry;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 
 public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> FLESH_TENDON = createKey("flesh_tendon");
+	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -27,7 +28,13 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> FLESH_TENDON = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.FLESH_TENDON);
 		
+		final Holder<ConfiguredFeature<?, ?>> HUGE_FUNGUS = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.HUGE_FUNGUS);
+		
+		
+		
         register(context, PlacedFeatureInit.FLESH_TENDON, FLESH_TENDON, List.of(CountPlacement.of(50), InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
+        register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(50), InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
 
 	}
 

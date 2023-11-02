@@ -101,7 +101,7 @@ public class EntityInit {
 
 	public static final RegistryObject<EntityType<BarbedUrchinEntity>> barbed_urchin = ENTITY_TYPES.register(
 			"barbed_urchin",
-			() -> EntityType.Builder.<BarbedUrchinEntity>of(BarbedUrchinEntity::new, MobCategory.MONSTER)
+			() -> EntityType.Builder.<BarbedUrchinEntity>of(BarbedUrchinEntity::new, MobCategory.WATER_AMBIENT)
 					.sized(1F, 1F).build(Hemomancy.rloc("barbed_urchin").toString()));
 	
 	

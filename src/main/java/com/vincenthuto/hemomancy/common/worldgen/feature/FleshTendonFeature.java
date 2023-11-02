@@ -74,9 +74,6 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 		}
 
 		// No room for the tendon
-		if (endPos.getY() == pos.getY()) {
-			return false;
-		}
 
 		BlockPos midPos = endPos.offset(0, Mth.floor(-(endPos.getY() - pos.getY()) * MID_POS_MULTIPLIER), 0);
 

@@ -164,50 +164,6 @@ public class VillageEvents {
 		pool.rawTemplates = listOfPieceEntries;
 	}
 
-	/**
-	 * Lazy-loaded ItemStack to support tag-based trades
-	 */
-	private static class LazyItemStack implements Function<Level, ItemStack> {
-		private final Function<Level, ItemStack> function;
-		private ItemStack instance;
 
-		private LazyItemStack(Function<Level, ItemStack> function) {
-			this.function = function;
-		}
-
-		@Override
-		public ItemStack apply(Level level) {
-			if (instance == null)
-				instance = function.apply(level);
-			return instance;
-		}
-	}
-
-	/**
-	 * Functional interface to create constant implementations from
-	 */
-	@FunctionalInterface
-	private interface TradeOutline {
-		MerchantOffer generateOffer(ItemStack item, PriceInterval priceInfo, RandomSource random, int maxUses, int xp,
-				float priceMultiplier);
-	}
-
-	private static final TradeOutline EMERALD_FOR_ITEM = (buying, priceInfo, random, maxUses, xp,
-			priceMultiplier) -> new MerchantOffer(
-					ItemHandlerHelper.copyStackWithSize(buying, priceInfo.getPrice(random)),
-					new ItemStack(Items.EMERALD), maxUses, xp, priceMultiplier);
-	private static final TradeOutline ONE_ITEM_FOR_EMERALDS = (selling, priceInfo, random, maxUses, xp,
-			priceMultiplier) -> new MerchantOffer(new ItemStack(Items.EMERALD, priceInfo.getPrice(random)), selling,
-					maxUses, xp, priceMultiplier);
-	private static final TradeOutline ITEMS_FOR_ONE_EMERALD = (selling, priceInfo, random, maxUses, xp,
-			priceMultiplier) -> new MerchantOffer(new ItemStack(Items.EMERALD),
-					ItemHandlerHelper.copyStackWithSize(selling, priceInfo.getPrice(random)), maxUses, xp,
-					priceMultiplier);
-
-	private record PriceInterval(int min, int max) {
-		int getPrice(RandomSource rand) {
-			return min >= max ? min : min + rand.nextInt(max - min + 1);
-		}
-	}
 
 }

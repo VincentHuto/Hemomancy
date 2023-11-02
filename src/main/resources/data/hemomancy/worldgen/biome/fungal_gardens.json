@@ -35,14 +35,14 @@
     "misc": [],
     "monster": [],
     "underground_water_creature": [
-      {
-        "type": "minecraft:glow_squid",
-        "weight": 10,
-        "minCount": 4,
-        "maxCount": 6
-      }
+      
     ],
-    "water_ambient": [],
+    "water_ambient": [{
+        "type": "hemomancy:barbed_urchin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 3
+      }],
     "water_creature": []
   },
   "spawn_costs": {},
@@ -65,7 +65,8 @@
     [],
     [],
     [
-	  "hemomancy:flesh_tendon"
+	  "hemomancy:flesh_tendon",
+	  "hemomancy:huge_fungus"
     ],
     [],
     [

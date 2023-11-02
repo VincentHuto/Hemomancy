@@ -17,6 +17,8 @@ import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.common.registry.BaseFeatureInit;
+import com.vincenthuto.hemomancy.common.registry.BiomeInit;
 import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.registry.BlockInit;
 import com.vincenthuto.hemomancy.common.registry.ContainerInit;
@@ -31,8 +33,6 @@ import com.vincenthuto.hemomancy.common.registry.SkillPointInit;
 import com.vincenthuto.hemomancy.common.registry.SoundInit;
 import com.vincenthuto.hemomancy.common.registry.StructureInit;
 import com.vincenthuto.hemomancy.common.registry.VillagerInit;
-import com.vincenthuto.hemomancy.common.worldgen.BaseFeatureInit;
-import com.vincenthuto.hemomancy.common.worldgen.BiomeInit;
 import com.vincenthuto.hemomancy.common.worldgen.VillageEvents;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 

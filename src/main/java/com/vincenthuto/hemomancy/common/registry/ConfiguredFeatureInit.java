@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.worldgen;
+package com.vincenthuto.hemomancy.common.registry;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 
@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FLESH_TENDON = createKey("flesh_tendon");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FUNGUS = createKey("huge_fungus");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
@@ -23,6 +24,8 @@ public class ConfiguredFeatureInit {
 	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
 		register(context, FLESH_TENDON, BaseFeatureInit.FLESH_TENDON,
+				NoneFeatureConfiguration.INSTANCE);
+		register(context, HUGE_FUNGUS, BaseFeatureInit.HUGE_FUNGUS,
 				NoneFeatureConfiguration.INSTANCE);
 
 	}

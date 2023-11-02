@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.data;
 
-import com.vincenthuto.hemomancy.common.worldgen.PlacedFeatureInit;
+import com.vincenthuto.hemomancy.common.registry.PlacedFeatureInit;
 
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
