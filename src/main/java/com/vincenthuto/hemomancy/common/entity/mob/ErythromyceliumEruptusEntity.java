@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.registry.SoundInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;

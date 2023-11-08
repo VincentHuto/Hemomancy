@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.blood;
 
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;

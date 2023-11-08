@@ -6,18 +6,14 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 //GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
-import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

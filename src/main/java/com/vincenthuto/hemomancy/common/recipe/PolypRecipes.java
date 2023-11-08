@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.world.item.Items;
 

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.tile;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hutoslib.common.block.entity.TileSimpleInventory;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 

@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
@@ -17,13 +16,11 @@ import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMenu> {

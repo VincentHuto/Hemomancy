@@ -15,8 +15,8 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Quaternion;
 

@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.menu;
 
+import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.itemhandler.RuneBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneBinderSlot;
-import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

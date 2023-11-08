@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.item;
 
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 

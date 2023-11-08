@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.idol;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.SerpentineIdolBlockEntity;
 
 import net.minecraft.core.BlockPos;

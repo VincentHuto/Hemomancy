@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;

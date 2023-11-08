@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.data;
 import java.util.concurrent.CompletableFuture;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.registries.Registries;

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.blood;
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;

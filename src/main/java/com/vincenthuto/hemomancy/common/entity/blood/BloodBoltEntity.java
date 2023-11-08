@@ -6,9 +6,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

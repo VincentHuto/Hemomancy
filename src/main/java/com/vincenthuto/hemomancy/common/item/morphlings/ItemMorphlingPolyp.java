@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.morphlings;
 
 import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;

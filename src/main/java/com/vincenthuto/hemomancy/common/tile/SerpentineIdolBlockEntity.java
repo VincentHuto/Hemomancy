@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 

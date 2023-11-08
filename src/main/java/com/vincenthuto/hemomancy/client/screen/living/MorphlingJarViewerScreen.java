@@ -6,12 +6,12 @@ import java.util.List;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
 

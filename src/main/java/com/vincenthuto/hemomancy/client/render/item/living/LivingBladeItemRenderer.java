@@ -7,8 +7,8 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeHandTameModel;
 import com.vincenthuto.hemomancy.client.model.item.LivingBladeUnleashedModel;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingBladeItem;
-import com.vincenthuto.hemomancy.common.registry.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 

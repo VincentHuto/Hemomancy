@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 
 import net.minecraft.core.BlockPos;

@@ -9,11 +9,11 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.EnzymeItem;
 import com.vincenthuto.hemomancy.common.menu.VisceralRecallerMenu;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 

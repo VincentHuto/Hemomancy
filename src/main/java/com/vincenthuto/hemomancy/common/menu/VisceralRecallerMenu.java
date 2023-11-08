@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.menu;
 
 import java.util.Objects;
 
+import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
-import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.VisceralRecallerBlockEntity;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 

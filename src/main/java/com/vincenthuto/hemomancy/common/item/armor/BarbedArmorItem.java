@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.armor;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.model.armor.BarbedArmorModel;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.EquipmentSlot;

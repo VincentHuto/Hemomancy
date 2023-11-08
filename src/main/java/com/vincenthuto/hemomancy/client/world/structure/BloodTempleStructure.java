@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.vincenthuto.hemomancy.common.registry.StructureInit;
+import com.vincenthuto.hemomancy.common.init.StructureInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

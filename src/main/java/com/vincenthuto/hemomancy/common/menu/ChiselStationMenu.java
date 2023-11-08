@@ -2,10 +2,10 @@ package com.vincenthuto.hemomancy.common.menu;
 
 import java.util.Objects;
 
+import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.menu.slot.ChiselSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RunePatternSlot;
-import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;

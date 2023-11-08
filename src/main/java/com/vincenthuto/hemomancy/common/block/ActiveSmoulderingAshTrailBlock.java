@@ -10,7 +10,7 @@ import org.joml.Vector3f;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tool;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Items;

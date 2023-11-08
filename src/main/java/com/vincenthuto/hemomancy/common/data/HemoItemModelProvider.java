@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;

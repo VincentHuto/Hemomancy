@@ -4,7 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.vincenthuto.hemomancy.common.registry.ParticleInit;
+import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.particles.ParticleOptions;

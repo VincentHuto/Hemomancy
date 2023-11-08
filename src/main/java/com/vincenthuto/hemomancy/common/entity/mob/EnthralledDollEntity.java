@@ -1,17 +1,23 @@
 package com.vincenthuto.hemomancy.common.entity.mob;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
@@ -21,97 +27,88 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
-public class EnthralledDollEntity extends Monster {
+public class EnthralledDollEntity extends Monster implements OwnableEntity {
+
+	protected static final EntityDataAccessor<Byte> DATA_FLAGS_ID = SynchedEntityData.defineId(TamableAnimal.class,
+			EntityDataSerializers.BYTE);
+	protected static final EntityDataAccessor<Optional<UUID>> DATA_OWNERUUID_ID = SynchedEntityData
+			.defineId(TamableAnimal.class, EntityDataSerializers.OPTIONAL_UUID);
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
 				.add(Attributes.ATTACK_DAMAGE, 1.0D);
 	}
 
-	LivingEntity owner;
-
-	@Nullable
-	private UUID ownerUUID;
-
-	@Nullable
-	private Entity cachedOwner;
-	private boolean leftOwner;
 	public EnthralledDollEntity(EntityType<? extends EnthralledDollEntity> type, Level worldIn) {
 		super(type, worldIn);
+		this.reassessTameGoals();
 
 	}
 
 	public EnthralledDollEntity(Level worldIn, LivingEntity owner) {
 		super(EntityInit.enthralled_doll.get(), worldIn);
-		this.owner = owner;
+		this.reassessTameGoals();
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+
+	}
+
+	public BloodDrunkPuppeteerEntity getPuppeteer() {
+		List<BloodDrunkPuppeteerEntity> owners = level().getNearbyEntities(BloodDrunkPuppeteerEntity.class,
+				TargetingConditions.DEFAULT, this, getBoundingBox().inflate(12.0D, 6.0D, 12.0D));
+		Optional<BloodDrunkPuppeteerEntity> owner = owners.stream().filter(o -> o.getUUID().equals(getOwnerUUID()))
+				.findFirst();
+		if (owner.isPresent()) {
+			return owner.get();
+		}
+		return null;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if(this.getPuppeteer() == null) {
+			this.kill();
+		}
 
 	}
 
 	@Override
 	public void addAdditionalSaveData(CompoundTag pCompound) {
 		super.addAdditionalSaveData(pCompound);
-		if (this.ownerUUID != null) {
-			pCompound.putUUID("Owner", this.ownerUUID);
+		if (this.getOwnerUUID() != null) {
+			pCompound.putUUID("Owner", this.getOwnerUUID());
 		}
 
-		if (this.leftOwner) {
-			pCompound.putBoolean("LeftOwner", true);
-		}
-	}
-
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
-	}
-
-	private boolean checkLeftOwner() {
-		Entity entity = this.getOwner();
-		if (entity != null) {
-			for (Entity entity1 : this.level().getEntities(this,
-					this.getBoundingBox().expandTowards(this.getDeltaMovement()).inflate(1.0D), (p_37272_) -> {
-						return !p_37272_.isSpectator() && p_37272_.isPickable();
-					})) {
-				if (entity1.getRootVehicle() == entity.getRootVehicle()) {
-					return false;
-				}
-			}
-		}
-
-		return true;
 	}
 
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
+		this.entityData.define(DATA_FLAGS_ID, (byte) 0);
+		this.entityData.define(DATA_OWNERUUID_ID, Optional.empty());
 
-	}
-
-	@Override
-	protected void doPush(Entity entityIn) {
-		super.doPush(entityIn);
-		/*
-		 * if (!(entityIn instanceof EntityDerangedBeast || entityIn instanceof
-		 * EntityBeastFromBeyond)) {
-		 * entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.5f); }
-		 */
-	}
-
-	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty,
-			MobSpawnType pReason, SpawnGroupData pSpawnData, CompoundTag pDataTag) {
-		return super.finalizeSpawn(pLevel, pDifficulty, pReason, pSpawnData, pDataTag);
 	}
 
 	@Override
@@ -135,18 +132,6 @@ public class EnthralledDollEntity extends Monster {
 		return SoundEvents.WOLF_HURT;
 	}
 
-	@Nullable
-	public Entity getOwner() {
-		if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-			return this.cachedOwner;
-		} else if (this.ownerUUID != null && this.level() instanceof ServerLevel) {
-			this.cachedOwner = ((ServerLevel) this.level()).getEntity(this.ownerUUID);
-			return this.cachedOwner;
-		} else {
-			return null;
-		}
-	}
-
 	@Override
 	protected float getSoundVolume() {
 		return 0.3f;
@@ -162,10 +147,6 @@ public class EnthralledDollEntity extends Monster {
 		}
 	}
 
-	protected boolean ownedBy(Entity p_150172_) {
-		return p_150172_.getUUID().equals(this.ownerUUID);
-	}
-
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
@@ -176,45 +157,53 @@ public class EnthralledDollEntity extends Monster {
 	@Override
 	public void readAdditionalSaveData(CompoundTag pCompound) {
 		super.readAdditionalSaveData(pCompound);
+		UUID uuid;
 		if (pCompound.hasUUID("Owner")) {
-			this.ownerUUID = pCompound.getUUID("Owner");
+			uuid = pCompound.getUUID("Owner");
+		} else {
+			String s = pCompound.getString("Owner");
+			uuid = OldUsersConverter.convertMobOwnerIfNecessary(this.getServer(), s);
 		}
 
-		this.leftOwner = pCompound.getBoolean("LeftOwner");
+		if (uuid != null) {
+			try {
+				this.setOwnerUUID(uuid);
+				this.setTame(true);
+			} catch (Throwable throwable) {
+				this.setTame(false);
+			}
+		}
+	}
+
+	public boolean isTame() {
+		return (this.entityData.get(DATA_FLAGS_ID) & 4) != 0;
+	}
+
+	public void setTame(boolean pTamed) {
+		byte b0 = this.entityData.get(DATA_FLAGS_ID);
+		if (pTamed) {
+			this.entityData.set(DATA_FLAGS_ID, (byte) (b0 | 4));
+		} else {
+			this.entityData.set(DATA_FLAGS_ID, (byte) (b0 & -5));
+		}
+
+		this.reassessTameGoals();
+	}
+
+	protected void reassessTameGoals() {
 	}
 
 	@Override
-	public void recreateFromPacket(ClientboundAddEntityPacket pPacket) {
-		super.recreateFromPacket(pPacket);
-		Entity entity = this.level().getEntity(pPacket.getData());
-		if (entity != null) {
-			this.setOwner(entity);
-		}
-
+	@Nullable
+	public UUID getOwnerUUID() {
+		return this.entityData.get(DATA_OWNERUUID_ID).orElse((UUID) null);
 	}
 
-	@Override
-	protected void registerGoals() {
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-
+	public void setOwnerUUID(@Nullable UUID pUuid) {
+		this.entityData.set(DATA_OWNERUUID_ID, Optional.ofNullable(pUuid));
 	}
 
-	public void setOwner(@Nullable Entity pEntity) {
-		if (pEntity != null) {
-			this.ownerUUID = pEntity.getUUID();
-			this.cachedOwner = pEntity;
-		}
-
-	}
-
-	@Override
-	public void tick() {
-		if (!this.leftOwner) {
-			this.leftOwner = this.checkLeftOwner();
-		}
-		super.tick();
+	public boolean isOwnedBy(LivingEntity pEntity) {
+		return pEntity == this.getOwner();
 	}
 }

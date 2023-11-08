@@ -5,9 +5,9 @@ import java.util.HashSet;
 import com.google.common.collect.Sets;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 

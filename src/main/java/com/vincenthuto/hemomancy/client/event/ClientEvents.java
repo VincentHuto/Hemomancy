@@ -30,6 +30,8 @@ import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
@@ -39,8 +41,6 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPa
 import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Vector3;

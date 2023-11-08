@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.particles.DustParticleOptions;

@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;

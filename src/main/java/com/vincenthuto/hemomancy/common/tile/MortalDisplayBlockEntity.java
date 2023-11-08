@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;

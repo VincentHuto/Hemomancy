@@ -12,9 +12,9 @@ import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.TeleportToVeinPacket;
-import com.vincenthuto.hemomancy.common.registry.ManipulationInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.client.Minecraft;

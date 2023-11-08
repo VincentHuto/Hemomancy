@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;

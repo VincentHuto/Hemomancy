@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.registry.RecipeInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;

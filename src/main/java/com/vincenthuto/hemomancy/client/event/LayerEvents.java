@@ -47,7 +47,7 @@ import com.vincenthuto.hemomancy.client.render.layer.player.BloodAvatarLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;

@@ -6,8 +6,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.SanguisLanceaItem;
-import com.vincenthuto.hemomancy.common.registry.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 

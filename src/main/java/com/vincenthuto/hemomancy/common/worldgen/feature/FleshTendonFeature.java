@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.worldgen.SimpleBlockPredicate;
 
 import net.minecraft.core.BlockPos;

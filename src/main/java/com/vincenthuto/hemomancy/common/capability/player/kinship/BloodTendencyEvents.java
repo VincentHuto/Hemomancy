@@ -5,9 +5,9 @@ import java.awt.Point;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.VisceralRecallerBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.MathUtils;

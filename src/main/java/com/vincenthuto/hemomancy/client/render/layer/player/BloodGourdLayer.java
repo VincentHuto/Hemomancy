@@ -7,8 +7,8 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;

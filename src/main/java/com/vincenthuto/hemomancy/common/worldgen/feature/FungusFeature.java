@@ -1,21 +1,18 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.HugeMushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.AbstractHugeMushroomFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public class FungusFeature extends Feature<NoneFeatureConfiguration> {

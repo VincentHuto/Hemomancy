@@ -30,7 +30,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraftforge.api.distmarker.Dist;

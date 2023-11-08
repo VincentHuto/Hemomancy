@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicates;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

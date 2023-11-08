@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.registry.SoundInit;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;

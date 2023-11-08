@@ -4,8 +4,8 @@ import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.MortalDisplayBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;

@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -9,7 +10,6 @@ import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.SelectiveRuneTypeSlot;
-import com.vincenthuto.hemomancy.common.registry.ContainerInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

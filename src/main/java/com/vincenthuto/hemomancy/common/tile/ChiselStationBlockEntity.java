@@ -6,9 +6,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 

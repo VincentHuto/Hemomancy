@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.common.item.rune.pattern;
 
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
 

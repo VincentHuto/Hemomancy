@@ -8,13 +8,13 @@ import java.util.Random;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;

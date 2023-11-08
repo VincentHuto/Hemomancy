@@ -12,9 +12,9 @@ import org.joml.Vector3f;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;

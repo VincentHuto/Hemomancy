@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

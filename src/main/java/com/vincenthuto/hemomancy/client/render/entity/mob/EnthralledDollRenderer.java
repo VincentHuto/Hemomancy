@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.client.render.entity.mob;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -8,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.EnthralledDollModel;
 import com.vincenthuto.hemomancy.client.render.layer.mob.EnthralledDollGlowLayer;
+import com.vincenthuto.hemomancy.common.entity.mob.BloodDrunkPuppeteerEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.EnthralledDollEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -21,8 +25,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
-public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, EnthralledDollModel<EnthralledDollEntity>> {
+public class EnthralledDollRenderer
+		extends MobRenderer<EnthralledDollEntity, EnthralledDollModel<EnthralledDollEntity>> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/enthralled_doll/model_enthralled_doll.png");
@@ -76,28 +82,16 @@ public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, En
 			MultiBufferSource pBuffer, int pPackedLight) {
 		super.render(pEntity, pEntityYaw, pPartialTicks, pMatrixStack, pBuffer, pPackedLight);
 
-		Entity owner = pEntity.getOwner();
-		if (owner != null) {
-			if (owner instanceof LivingEntity puppeteer) {
+		List<BloodDrunkPuppeteerEntity> owners = pEntity.level().getNearbyEntities(BloodDrunkPuppeteerEntity.class,
+				TargetingConditions.DEFAULT, pEntity, pEntity.getBoundingBox().inflate(12.0D, 6.0D, 12.0D));
+		Optional<BloodDrunkPuppeteerEntity> owner = owners.stream()
+				.filter(o -> o.getUUID().equals(pEntity.getOwnerUUID())).findFirst();
+
+		if (owners != null) {
+			if (owner.isPresent()) {
 				pMatrixStack.pushPose();
 
-				// Bobber renderer
-//				pMatrixStack.pushPose();
-//				pMatrixStack.scale(0.5F, 0.5F, 0.5F);
-//				pMatrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-//				pMatrixStack.mulPose(Vector3.YP.rotationDegrees(180.0F));
-//				PoseStack.Pose posestack$pose = pMatrixStack.last();
-//				Matrix4f matrix4f = posestack$pose.pose();
-//				Matrix3f matrix3f = posestack$pose.normal();
-//				VertexConsumer vertexconsumer = pBuffer.getBuffer(RENDER_TYPE);
-//				vertex(vertexconsumer, matrix4f, matrix3f, pPackedLight, 0.0F, 0, 0, 1);
-//				vertex(vertexconsumer, matrix4f, matrix3f, pPackedLight, 1.0F, 0, 1, 1);
-//				vertex(vertexconsumer, matrix4f, matrix3f, pPackedLight, 1.0F, 1, 1, 0);
-//				vertex(vertexconsumer, matrix4f, matrix3f, pPackedLight, 0.0F, 1, 0, 0);
-//				pMatrixStack.popPose();
-//
-//
-
+				LivingEntity puppeteer = owner.get();
 				float f = puppeteer.getAttackAnim(pPartialTicks);
 				float f1 = Mth.sin(Mth.sqrt(f) * (float) Math.PI);
 				float f2 = Mth.lerp(pPartialTicks, puppeteer.yRotO, puppeteer.getYRot()) * ((float) Math.PI / 180F);
@@ -110,8 +104,8 @@ public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, En
 				double d6;
 				float f3;
 				d4 = Mth.lerp(pPartialTicks, puppeteer.xo, puppeteer.getX()) - d1 * d2 - d0 * 0.8D;
-				d5 = puppeteer.yo + puppeteer.getEyeHeight()
-						+ (puppeteer.getY() - puppeteer.yo) * pPartialTicks - 0.45D;
+				d5 = puppeteer.yo + puppeteer.getEyeHeight() + (puppeteer.getY() - puppeteer.yo) * pPartialTicks
+						- 0.45D;
 				d6 = Mth.lerp(pPartialTicks, puppeteer.zo, puppeteer.getZ()) - d0 * d2 + d1 * 0.8D;
 				f3 = puppeteer.isCrouching() ? -0.1875F : 0.0F;
 
@@ -135,6 +129,7 @@ public class EnthralledDollRenderer extends MobRenderer<EnthralledDollEntity, En
 				pMatrixStack.popPose();
 
 			}
+
 		}
 	}
 

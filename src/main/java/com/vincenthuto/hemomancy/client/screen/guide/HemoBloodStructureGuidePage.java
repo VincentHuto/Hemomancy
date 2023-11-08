@@ -14,7 +14,6 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
@@ -54,8 +53,6 @@ public class HemoBloodStructureGuidePage extends HLGuiGuidePage {
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("abcdefghijklmnop").withStyle(Style.EMPTY.withFont(Hemomancy.rloc("sky"))),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 110) - line * -10, 160, 0xff0000, true);
-
-			
 			
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("qrstuvwxyz"),

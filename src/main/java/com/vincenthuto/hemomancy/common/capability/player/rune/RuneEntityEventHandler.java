@@ -6,13 +6,13 @@ import java.util.Collections;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketRuneSync;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;

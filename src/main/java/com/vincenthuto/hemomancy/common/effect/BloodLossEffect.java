@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.common.effect;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;

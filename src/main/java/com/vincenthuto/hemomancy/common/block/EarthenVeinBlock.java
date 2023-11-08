@@ -4,9 +4,9 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.EarthenVeinBlockEntity;
 
 import net.minecraft.core.BlockPos;

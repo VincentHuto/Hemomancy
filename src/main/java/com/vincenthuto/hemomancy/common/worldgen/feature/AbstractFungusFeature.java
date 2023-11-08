@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.vincenthuto.hemomancy.common.worldgen.FungusFeatureConfiguration;
+import com.vincenthuto.hemomancy.common.worldgen.config.FungusFeatureConfig;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,13 +13,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
-public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfiguration> {
-	public AbstractFungusFeature(Codec<FungusFeatureConfiguration> pCodec) {
+public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfig> {
+	public AbstractFungusFeature(Codec<FungusFeatureConfig> pCodec) {
 		super(pCodec);
 	}
 
 	protected void placeTrunk(LevelAccessor pLevel, RandomSource pRandom, BlockPos pPos,
-			FungusFeatureConfiguration pConfig, int pMaxHeight, BlockPos.MutableBlockPos pMutablePos) {
+			FungusFeatureConfig pConfig, int pMaxHeight, BlockPos.MutableBlockPos pMutablePos) {
 		for (int i = 0; i < pMaxHeight; ++i) {
 			pMutablePos.set(pPos).move(Direction.UP, i);
 			if (!pLevel.getBlockState(pMutablePos).isSolidRender(pLevel, pMutablePos)) {
@@ -39,7 +39,7 @@ public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfigu
 	}
 
 	protected boolean isValidPosition(LevelAccessor pLevel, BlockPos pPos, int pMaxHeight,
-			BlockPos.MutableBlockPos pMutablePos, FungusFeatureConfiguration pConfig) {
+			BlockPos.MutableBlockPos pMutablePos, FungusFeatureConfig pConfig) {
 		int i = pPos.getY();
 		if (i >= pLevel.getMinBuildHeight() + 1 && i + pMaxHeight + 1 < pLevel.getMaxBuildHeight()) {
 			BlockState blockstate = pLevel.getBlockState(pPos.below());
@@ -74,11 +74,11 @@ public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfigu
 	 * @param pContext A context object with a reference to the level and the
 	 *                 position the feature is being placed at
 	 */
-	public boolean place(FeaturePlaceContext<FungusFeatureConfiguration> pContext) {
+	public boolean place(FeaturePlaceContext<FungusFeatureConfig> pContext) {
 		WorldGenLevel worldgenlevel = pContext.level();
 		BlockPos blockpos = pContext.origin();
 		RandomSource randomsource = pContext.random();
-		FungusFeatureConfiguration hugemushroomfeatureconfiguration = pContext.config();
+		FungusFeatureConfig hugemushroomfeatureconfiguration = pContext.config();
 		int i = this.getTreeHeight(randomsource);
 		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 		if (!this.isValidPosition(worldgenlevel, blockpos, i, blockpos$mutableblockpos,
@@ -96,5 +96,5 @@ public abstract class AbstractFungusFeature extends Feature<FungusFeatureConfigu
 	protected abstract int getTreeRadiusForHeight(int p_65094_, int p_65095_, int pFoliageRadius, int pY);
 
 	protected abstract void makeCap(LevelAccessor pLevel, RandomSource pRandom, BlockPos pPos, int pTreeHeight,
-			BlockPos.MutableBlockPos pMutablePos, FungusFeatureConfiguration pConfig);
+			BlockPos.MutableBlockPos pMutablePos, FungusFeatureConfig pConfig);
 }

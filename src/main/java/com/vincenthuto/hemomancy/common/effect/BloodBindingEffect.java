@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 

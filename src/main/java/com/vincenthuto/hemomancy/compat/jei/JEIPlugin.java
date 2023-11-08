@@ -5,10 +5,10 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;

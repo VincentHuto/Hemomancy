@@ -8,10 +8,10 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.JuiceinatorMenu;
-import com.vincenthuto.hemomancy.common.registry.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
-import com.vincenthuto.hemomancy.common.registry.RecipeInit;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;

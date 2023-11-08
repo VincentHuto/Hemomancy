@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.recipe;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.registry.RecipeInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hutoslib.math.MultiblockPattern;
 
 import net.minecraft.core.NonNullList;

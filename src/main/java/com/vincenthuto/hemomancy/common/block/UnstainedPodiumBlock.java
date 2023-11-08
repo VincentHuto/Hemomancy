@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.block;
 
 import java.util.stream.Stream;
 
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.UnstainedPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;

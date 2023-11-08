@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hutoslib.client.particle.factory.DarkGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;

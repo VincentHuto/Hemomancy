@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 //GlStateManager;

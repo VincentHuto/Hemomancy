@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.BlockInit;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.data.PackOutput;

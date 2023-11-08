@@ -5,7 +5,7 @@ import org.joml.Vector3d;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.common.registry.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;

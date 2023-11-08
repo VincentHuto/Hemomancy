@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Predicates;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
-import com.vincenthuto.hemomancy.common.registry.EntityInit;
-import com.vincenthuto.hemomancy.common.registry.PotionInit;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.PotionInit;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;

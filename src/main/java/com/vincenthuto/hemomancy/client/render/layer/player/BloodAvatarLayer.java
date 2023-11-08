@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodAvatarModel;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.registry.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;

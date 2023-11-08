@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.kinship;
 
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.world.item.Item;

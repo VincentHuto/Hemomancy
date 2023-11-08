@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.armor;
 
 import com.google.common.base.Supplier;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.registry.ItemInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
