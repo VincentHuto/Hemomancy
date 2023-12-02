@@ -22,7 +22,6 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentManipPa
 import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentVeinPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseContManipKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketBinderTogglePickup;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRuneBinder;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
@@ -94,33 +93,23 @@ public class PacketHandler {
 		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
 
-
 		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
-		
 
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketBinderTogglePickup.class, PacketBinderTogglePickup::encode,
-				PacketBinderTogglePickup::decode, PacketBinderTogglePickup::handle);
 		CHANNELRUNEBINDER.registerMessage(networkID++, PacketOpenRuneBinder.class, PacketOpenRuneBinder::encode,
 				PacketOpenRuneBinder::decode, PacketOpenRuneBinder::handle);
 		CHANNELRUNEBINDER.registerMessage(networkID++, PacketToggleBinderMessage.class,
 				PacketToggleBinderMessage::encode, PacketToggleBinderMessage::decode,
 				PacketToggleBinderMessage::handle);
 
-		
-		
-		
-		
-		
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, PacketSpawnLightningParticle.class,
 				PacketSpawnLightningParticle::encode, PacketSpawnLightningParticle::decode,
 				PacketSpawnLightningParticle::handle);
 
-		
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyClientPacket.class,
 				BloodTendencyClientPacket::encode, BloodTendencyClientPacket::decode,
 				BloodTendencyClientPacket::handle);

@@ -95,7 +95,9 @@ public class BefoulingAshTrailBlock extends Block {
 		}
 
 	}
-
+  
+	
+	
 	@OnlyIn(Dist.CLIENT)
 	public static int getRGBByPower(int power) {
 		Vector3f vector3f = powerRGB[power];

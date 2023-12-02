@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.datafixers.util.Pair;
+import com.vincenthuto.hemomancy.client.event.CapeEvent;
 import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLocEvents;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
@@ -49,6 +50,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -56,7 +58,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod("hemomancy")
+@Mod(Hemomancy.MOD_ID)
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class Hemomancy {
 
@@ -75,7 +77,7 @@ public class Hemomancy {
 	public Hemomancy() {
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
-		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		 IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
 		VillagerInit.PROFESSIONS.register(modEventBus);
@@ -110,7 +112,7 @@ public class Hemomancy {
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
-
+		modEventBus.addListener(this::clientSetup);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::buildContents);
 		modEventBus.addListener(DataGeneration::generate);
@@ -145,6 +147,12 @@ public class Hemomancy {
 			BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
 		}
 	}
+	
+
+	private void clientSetup(final FMLClientSetupEvent event) {
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
+		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
+	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 		registerPageTypes(event);
@@ -152,6 +160,7 @@ public class Hemomancy {
 		SkillPointInit.init();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
+		
 
 	}
 

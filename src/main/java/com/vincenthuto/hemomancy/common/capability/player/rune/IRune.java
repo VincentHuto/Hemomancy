@@ -13,6 +13,7 @@ public interface IRune {
 	}
 
 	RuneType getRuneType();
+	
 
 	default void onEquipped(LivingEntity player) {
 	}

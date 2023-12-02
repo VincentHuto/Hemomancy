@@ -142,57 +142,12 @@ public class ItemRuneBinder extends Item {
 		}
 	}
 
-	public void togglePickup(Player playerEntity, ItemStack stack) {
-		CompoundTag nbt = stack.getOrCreateTag();
-		boolean Pickup = !nbt.getBoolean("Pickup");
-		nbt.putBoolean("Pickup", Pickup);
-		if (playerEntity instanceof ServerPlayer)
-			PacketHandler.CHANNELRUNEBINDER.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
-					new PacketToggleBinderMessage(Pickup));
-		else
-			playerEntity.displayClientMessage(Component.translatable(
-					I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")), true);
-
-	}
 
 	public boolean filterItem(ItemStack item, ItemStack packItem) {
 		return item.getItem() instanceof ItemRunePattern ? true : false;
 
 	}
 
-	public boolean pickupEvent(EntityItemPickupEvent event, ItemStack stack) {
-		CompoundTag nbt = stack.getTag();
-		if (nbt == null)
-			return false;
-
-		if (!nbt.getBoolean("Pickup"))
-			return false;
-
-		LazyOptional<IItemHandler> stupidIdiot = stack.getCapability(ForgeCapabilities.ITEM_HANDLER);
-		if (!stupidIdiot.isPresent())
-			return false;
-
-		IItemHandler handler = stupidIdiot.orElse(null);
-		if (handler == null || !(handler instanceof RuneBinderItemHandler))
-			return false;
-		((RuneBinderItemHandler) handler).loadIfNotLoaded();
-
-		if (!filterItem(event.getItem().getItem(), stack))
-			return false;
-
-		ItemStack pickedUp = event.getItem().getItem();
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack slot = handler.getStackInSlot(i);
-			if (slot.isEmpty() || (ItemHandlerHelper.canItemStacksStack(slot, pickedUp) && slot.getCount() < 1
-					&& slot.getCount() < handler.getSlotLimit(i))) {
-				int remainder = handler.insertItem(i, pickedUp.copy(), false).getCount();
-				pickedUp.setCount(remainder);
-				if (remainder == 0)
-					break;
-			}
-		}
-		return pickedUp.isEmpty();
-	}
 
 	private boolean hasTranslation(String key) {
 		return !I18n.get(key).equals(key);
@@ -209,11 +164,6 @@ public class ItemRuneBinder extends Item {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		String translationKey = getDescriptionId();
 
-		boolean pickupEnabled = stack.getOrCreateTag().getBoolean("Pickup");
-		if (pickupEnabled)
-			tooltip.add(Component.translatable(I18n.get("Hemomancy.autopickupenabled")));
-		else
-			tooltip.add(Component.translatable(I18n.get("Hemomancy.autopickupdisabled")));
 
 		if (Screen.hasShiftDown()) {
 			tooltip.add(Component.translatable(I18n.get(translationKey + ".info")));
@@ -223,7 +173,7 @@ public class ItemRuneBinder extends Item {
 				tooltip.add(Component.translatable(I18n.get(translationKey + ".info3")));
 		} else {
 			tooltip.add(
-					Component.translatable(fallbackString("Hemomancy.shift", "Press <�6�oShift�r> for info.")));
+					Component.translatable(fallbackString("Hemomancy.shift", "Press <Shift> for info.")));
 		}
 	}
 }

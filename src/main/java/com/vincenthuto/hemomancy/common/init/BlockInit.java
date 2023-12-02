@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.block.CrimsonFlameBlock;
 import com.vincenthuto.hemomancy.common.block.DendriticDistributorBlock;
 import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
+import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
 import com.vincenthuto.hemomancy.common.block.JuiceinatorBlock;
 import com.vincenthuto.hemomancy.common.block.MorphlingIncubatorBlock;
@@ -216,6 +217,13 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+
+	
+	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
+			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+
+	
+	
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
@@ -277,6 +285,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.translucent());
 
 	}
 

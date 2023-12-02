@@ -164,8 +164,8 @@ repositories {
 dependencies {
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-  //  implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
-    implementation fg.deobf("com.vincenthuto:hutoslib:5.2.1")
+    implementation fg.deobf("curse.maven:hutoslib-478643:${hutoslib_version}")
+    //implementation fg.deobf("com.vincenthuto:hutoslib:5.2.1")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common:${jei_version}")

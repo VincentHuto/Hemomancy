@@ -46,6 +46,7 @@ import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
 import com.vincenthuto.hemomancy.client.render.layer.player.BloodAvatarLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.RenderRunesLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
@@ -161,10 +162,11 @@ public class LayerEvents {
 			EntityRenderersEvent.AddLayers event, EntityType<? extends T> entityType) {
 		R renderer = event.getRenderer(entityType);
 		if (renderer != null) {
-			renderer.addLayer(new BloodGourdLayer(renderer));
-			renderer.addLayer(new BloodAvatarLayer(renderer));
-			renderer.addLayer(new CellHandLayer(renderer));
-			renderer.addLayer(new VascCharmLayer<>(renderer));
+//			renderer.addLayer(new BloodGourdLayer(renderer));
+//			renderer.addLayer(new BloodAvatarLayer(renderer));
+//			renderer.addLayer(new CellHandLayer(renderer));
+//			renderer.addLayer(new RenderRunesLayer(renderer));
+//			renderer.addLayer(new VascCharmLayer<>(renderer));
 
 		}
 	}
@@ -176,6 +178,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
 			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
+			livingRenderer.addLayer(new RenderRunesLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 
 		}

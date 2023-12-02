@@ -50,6 +50,7 @@ public class ChiselStationBlockEntity extends BaseContainerBlockEntity implement
 	public ChiselStationBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.runic_chisel_station.get(), pos, state);
 	}
+	
 
 	@Override
 	public void onLoad() {
