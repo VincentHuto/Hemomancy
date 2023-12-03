@@ -1,0 +1,8 @@
+{
+  "credit" : "Made with Blockbench",
+  "parent" : "block/block",
+  "render_type" : "translucent",
+  "textures" : {
+    "particle" : "hemomancy:block/venous_stone"
+  }
+}

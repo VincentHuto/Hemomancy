@@ -169,8 +169,6 @@ public class BlockInit {
 	public static final RegistryObject<Block> potted_bleeding_heart = POTTEDBLOCKS.register("potted_bleeding_heart",
 			() -> new FlowerPotBlock(null, BlockInit.bleeding_heart, BlockBehaviour.Properties.of()));
 
-	
-	
 	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
@@ -183,8 +181,8 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(0.5F).sound(SoundType.GRAVEL)));
 
 	public static final RegistryObject<Block> erythrocytic_mycelium = BASEBLOCKS.register("erythrocytic_mycelium",
-			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).randomTicks()
-					.strength(0.6F).sound(SoundType.GRASS)));
+			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED)
+					.randomTicks().strength(0.6F).sound(SoundType.GRASS)));
 
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
@@ -201,8 +199,7 @@ public class BlockInit {
 
 	// Tiles
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
-			() -> new BlockChiselStation(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new BlockChiselStation(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new MorphlingIncubatorBlock(
@@ -218,12 +215,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
 
-	
 	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
 			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
 
-	
-	
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
@@ -258,15 +252,17 @@ public class BlockInit {
 		OBJBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 		MODELEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 		SPECIALBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
+		POTTEDBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
 
 		return blocks;
 	}
 
 	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
-				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
-				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
+		Stream<RegistryObject<Block>> combinedStream = Stream
+				.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(), STAIRBLOCKS.getEntries(),
+						COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(), MODELEDBLOCKS.getEntries(),
+						SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries(), POTTEDBLOCKS.getEntries())
 				.flatMap(Collection::stream);
 
 		return combinedStream;
@@ -285,7 +281,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.translucent());
-		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
 
 	}
 

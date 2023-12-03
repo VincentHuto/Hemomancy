@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-
 public class FungalPodiumRenderer implements BlockEntityRenderer<FungalPodiumBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
@@ -31,8 +30,12 @@ public class FungalPodiumRenderer implements BlockEntityRenderer<FungalPodiumBlo
 	@Override
 	public void render(FungalPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		this.renderPortal(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-		this.renderPlayer(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+	
+		
+		
+		
+		//	this.renderPortal(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+		//this.renderPlayer(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
 	}
 
 	public void renderPortal(FungalPodiumBlockEntity te, float partialTicks, PoseStack matrixStackIn,

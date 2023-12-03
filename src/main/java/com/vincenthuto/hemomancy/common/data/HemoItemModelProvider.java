@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.data;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
@@ -35,7 +36,11 @@ public class HemoItemModelProvider extends ItemModelProvider {
 			registerBlockModel(b.get());
 		}
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
-			basicItem(item.get());
+			if(item.get() instanceof ItemRunePattern) {
+				singleTexture("rune_pattern", mcLoc("item/generated"), "layer0", modLoc("item/rune_pattern"));
+			}else {
+				basicItem(item.get());
+			}
 		}
 		for (RegistryObject<Item> item : ItemInit.SPAWNEGGS.getEntries()) {
 			registerSpawnEggItem(item.get());

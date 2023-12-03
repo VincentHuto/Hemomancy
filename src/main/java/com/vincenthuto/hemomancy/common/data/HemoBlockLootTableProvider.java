@@ -12,18 +12,20 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class HemoBlockLootTableProvider extends VanillaBlockLoot {
 
-    @Override
-    protected void generate() {
-    	for(Block reg : BlockInit.getAllBlockEntries()) {
-    		dropSelf(reg);
-    	}
-    }
+	@Override
+	protected void generate() {
+		System.out.println("fefeuwifhyu");
+		for (Block reg : BlockInit.getAllBlockEntries()) {
+			if (reg == BlockInit.potted_bleeding_heart.get() || reg == BlockInit.potted_infected_fungus.get()) {
+				dropPottedContents(reg);
+			} else {
+				dropSelf(reg);
+			}
+		}
+	}
 
-    @Override
-    protected Iterable<Block> getKnownBlocks() {
-        return ForgeRegistries.BLOCKS.getEntries().stream()
-                .filter(e -> e.getKey().location().getNamespace().equals(Hemomancy.MOD_ID))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
+	@Override
+	protected Iterable<Block> getKnownBlocks() {
+		return BlockInit.getAllBlockEntries();
+	}
 }

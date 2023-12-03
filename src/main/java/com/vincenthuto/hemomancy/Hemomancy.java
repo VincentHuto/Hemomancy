@@ -77,7 +77,7 @@ public class Hemomancy {
 	public Hemomancy() {
 		forcesLoaded = ModList.get().isLoaded("forcesofreality");
 		instance = this;
-		 IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 		VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
 		VillagerInit.PROFESSIONS.register(modEventBus);
@@ -147,7 +147,6 @@ public class Hemomancy {
 			BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
 		}
 	}
-	
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
@@ -160,7 +159,6 @@ public class Hemomancy {
 		SkillPointInit.init();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
-		
 
 	}
 

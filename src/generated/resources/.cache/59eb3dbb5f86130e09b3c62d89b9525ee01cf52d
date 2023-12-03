@@ -1,4 +1,4 @@
-// 1.20.1	2023-10-10T15:10:36.4689571	Loot Tables
+// 1.20.1	2023-12-01T20:12:28.7936976	Loot Tables
 9360f1d18490ad6c856830ac5d8f944860c53d7b data/hemomancy/loot_tables/blocks/active_befouling_ash_trail.json
 33c7ae32a6c053108603b7f76541b7d2af4f5291 data/hemomancy/loot_tables/blocks/active_smouldering_ash_trail.json
 61d1099ff40784109d4446882fb747443c6516c2 data/hemomancy/loot_tables/blocks/befouling_ash_trail.json
@@ -15,6 +15,7 @@ c47fe10075a87914589669cb38b4542703e3744a data/hemomancy/loot_tables/blocks/dendr
 2964849e755fb36c63b827e60c88127c2a0b80f6 data/hemomancy/loot_tables/blocks/earthen_vein.json
 9ffa209591eb7f0437615527babed67e00854961 data/hemomancy/loot_tables/blocks/erythrocytic_dirt.json
 d31d80299ae1e971cee9ebadf05eaecae1ccb3bb data/hemomancy/loot_tables/blocks/erythrocytic_mycelium.json
+1dd796ff27f245fd116b4056002daf74a3915955 data/hemomancy/loot_tables/blocks/fungal_podium.json
 2ae9b355e8180cba9a8f1876770904e4c51a5924 data/hemomancy/loot_tables/blocks/gilded_venous_stone.json
 2ba8edb649e3db425470569b646e9bc8da5147ae data/hemomancy/loot_tables/blocks/hematic_iron_block.json
 abdf3e399fd54b7f723c10d3a43751d82dbbd6ac data/hemomancy/loot_tables/blocks/hematic_iron_pillar.json
@@ -34,6 +35,9 @@ d7d0dbbe14bd24cbcc288de9fee3451574bf860e data/hemomancy/loot_tables/blocks/polis
 b6fa7058df3f52446a4c8f1e26a0c60309df777b data/hemomancy/loot_tables/blocks/polished_venous_stone_brick_stairs.json
 8fa7645722963c0aae954c9111c3057e34bd9b49 data/hemomancy/loot_tables/blocks/polished_venous_stone_slab.json
 5c08856fcfc72ff83af7e55eac30615a5f972941 data/hemomancy/loot_tables/blocks/polished_venous_stone_stairs.json
+dac6891f127dcc649439e800f2849d6b2261b7be data/hemomancy/loot_tables/blocks/potted_bleeding_heart.json
+a5bf23332767889e0ed3c7ec2a190d471d48da1a data/hemomancy/loot_tables/blocks/potted_infected_fungus.json
+4ffeb3e4b2452714870733510100db1f21fdc09d data/hemomancy/loot_tables/blocks/runic_chisel_station.json
 55f8edd775df8bca8f04a75af6f7dda7307b134e data/hemomancy/loot_tables/blocks/sanguine_glass.json
 4ef9d6694420dcbed8e8af78dffd7cd6eba407d5 data/hemomancy/loot_tables/blocks/sanguine_pane.json
 5e821a633bdf8a9b881c3bdcdaad9c32cf5fb11e data/hemomancy/loot_tables/blocks/scrying_podium.json

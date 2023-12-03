@@ -32,6 +32,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ParticleInit {
+
+	
 	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister
 			.create(ForgeRegistries.PARTICLE_TYPES, Hemomancy.MOD_ID);
 
@@ -40,7 +42,7 @@ public class ParticleInit {
 
 	public static final RegistryObject<ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
 			.register("hit_glow", () -> new HitGlowParticleType());
-
+	
 	public static final RegistryObject<ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
 			.register("blood_avatar_hit", () -> new BloodAvatarHitParticleType());
 

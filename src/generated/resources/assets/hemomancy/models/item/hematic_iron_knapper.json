@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "hemomancy:item/hematic_iron_knapper"
+  "parent" : "item/handheld",
+  "textures" : {
+    "layer0" : "hemomancy:item/hematic_iron_knapper"
   }
 }

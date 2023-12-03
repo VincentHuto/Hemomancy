@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
 import com.vincenthuto.hemomancy.common.tile.FungalPodiumBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.ScryingPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -82,8 +81,8 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState p_153183_,
 			BlockEntityType<T> p_153184_) {
 		return level.isClientSide
-				? createTickerHelper(p_153184_, BlockEntityInit.scrying_podium.get(),
-						ScryingPodiumBlockEntity::animTick)
+				? createTickerHelper(p_153184_, BlockEntityInit.fungal_podium.get(),
+						FungalPodiumBlockEntity::animTick)
 				: null;
 	}
 
