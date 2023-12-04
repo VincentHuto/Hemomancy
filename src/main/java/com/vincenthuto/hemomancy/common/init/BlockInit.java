@@ -173,7 +173,14 @@ public class BlockInit {
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
+	public static final RegistryObject<Block> stinkhorn_fungus = CROSSBLOCKS.register("stinkhorn_fungus",
+			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+
 	public static final RegistryObject<Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
+			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
+
+	public static final RegistryObject<Block> potted_stinkhorn_fungus = POTTEDBLOCKS.register("potted_stinkhorn_fungus",
 			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
 
 	public static final RegistryObject<Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
@@ -279,8 +286,10 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_stinkhorn_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
-		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
 
 	}
@@ -292,6 +301,8 @@ public class BlockInit {
 					BlockInit.potted_bleeding_heart);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(),
 					BlockInit.potted_infected_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),
+					BlockInit.potted_stinkhorn_fungus);
 		});
 	}
 

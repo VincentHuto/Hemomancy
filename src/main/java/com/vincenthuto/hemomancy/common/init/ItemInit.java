@@ -128,6 +128,8 @@ public class ItemInit {
 			() -> new ItemNameBlockItem(BlockInit.active_befouling_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> hematic_iron_scrap = BASEITEMS.register("hematic_iron_scrap",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> consecrated_copper_ingot = BASEITEMS.register("consecrated_copper_ingot",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> hematic_iron_powder = BASEITEMS.register("hematic_iron_powder",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> serpent_scale = BASEITEMS.register("serpent_scale",
