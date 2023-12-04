@@ -66,6 +66,7 @@
     [],
     [
 	  "hemomancy:flesh_tendon",
+	   "hemomancy:mushroom/canopy_mushrooms_dense",
 	  "hemomancy:huge_fungus"
     ],
     [],
@@ -76,7 +77,8 @@
       "hemomancy:small_infected_fungus",
       "minecraft:mushroom_island_vegetation",
       "minecraft:brown_mushroom_taiga",
-      "minecraft:red_mushroom_taiga"
+      "minecraft:red_mushroom_taiga",
+      "hemomancy:mushroom/canopy_mushrooms_dense"
     ],
     [
     ]

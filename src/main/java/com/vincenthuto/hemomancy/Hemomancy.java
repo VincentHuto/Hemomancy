@@ -31,6 +31,10 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion1;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion2;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion3;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleData;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 
 import net.minecraft.core.registries.Registries;
@@ -57,6 +61,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
+import terrablender.api.Regions;
+import terrablender.api.SurfaceRuleManager;
 
 @Mod(Hemomancy.MOD_ID)
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
@@ -154,6 +160,16 @@ public class Hemomancy {
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
+
+		event.enqueueWork(() -> {
+			Regions.register(new TestRegion1(new ResourceLocation(MOD_ID, "overworld_1"), 2));
+			Regions.register(new TestRegion2(new ResourceLocation(MOD_ID, "overworld_2"), 2));
+			Regions.register(new TestRegion3(new ResourceLocation(MOD_ID, "overworld_3"), 2));
+
+			// Register our surface rules
+			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MOD_ID,
+					TestSurfaceRuleData.makeRules());
+		});
 		registerPageTypes(event);
 		HemoEntityPredicates.init();
 		SkillPointInit.init();

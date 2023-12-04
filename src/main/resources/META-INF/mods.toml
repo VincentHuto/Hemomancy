@@ -82,3 +82,11 @@ After all its just sitting there!
     ordering="NONE"
     side="BOTH"
     
+    [[dependencies.hemomancy]]
+    modId="terrablender"
+    mandatory=true
+    versionRange="[2.2.0.154,)"
+    ordering="AFTER"
+    side="BOTH"
+    
+    

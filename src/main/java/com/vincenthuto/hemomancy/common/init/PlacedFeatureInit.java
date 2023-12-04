@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.Holder;
@@ -12,6 +13,7 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.valueproviders.ClampedInt;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
@@ -19,13 +21,19 @@ import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
 
 public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> FLESH_TENDON = createKey("flesh_tendon");
 	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
+	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_SPARSE = createKey(
+			"mushroom/canopy_mushrooms_sparse");
+	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_DENSE = createKey(
+			"mushroom/canopy_mushrooms_dense");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
+
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		final Holder<ConfiguredFeature<?, ?>> FLESH_TENDON = configuredFeatureGetter
@@ -46,6 +54,22 @@ public class PlacedFeatureInit {
 				RarityFilter.onAverageOnceEvery(7), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
+
+		context.register(PLACED_CANOPY_MUSHROOMS_SPARSE,
+				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_SPARSE),
+						tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1),
+								BlockInit.infected_fungus.get().defaultBlockState())));
+		context.register(PLACED_CANOPY_MUSHROOMS_DENSE,
+				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
+						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),
+								BlockInit.infected_fungus.get().defaultBlockState())));
+
+	}
+
+	private static List<PlacementModifier> tfTreeCheckArea(PlacementModifier count, BlockState sapling) {
+		return ImmutableList.of(count, InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0),
+				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
+				BiomeFilter.biome());
 	}
 
 	protected static void register(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,
