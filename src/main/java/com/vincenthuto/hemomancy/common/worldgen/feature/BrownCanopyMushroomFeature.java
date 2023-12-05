@@ -12,7 +12,7 @@ public class BrownCanopyMushroomFeature extends CanopyMushroomFeature {
 
     @Override
     protected int getBranches(RandomSource random) {
-        return Math.max(random.nextInt(5), 3);
+        return Math.max(random.nextInt(5), 2);
     }
 
     @Override

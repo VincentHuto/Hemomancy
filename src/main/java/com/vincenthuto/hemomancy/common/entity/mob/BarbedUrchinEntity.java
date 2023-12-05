@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob;
 import java.util.List;
 import java.util.function.Predicate;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,6 +12,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
@@ -31,6 +34,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class BarbedUrchinEntity extends AbstractFish {
@@ -99,6 +107,29 @@ public class BarbedUrchinEntity extends AbstractFish {
 	protected void registerGoals() {
 		// super.registerGoals();
 		this.goalSelector.addGoal(1, new BarbedUrchinEntity.BarbedUrchinEntityPuffGoal(this));
+	}
+
+	@Override
+	public MobType getMobType() {
+		return MobType.WATER;
+	}
+
+	public static boolean canSpawnHere(EntityType<? extends AbstractFish> fish, LevelAccessor world,
+			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+		int seaLevel = world.getSeaLevel();
+		int minY = seaLevel - 13;
+		boolean isAllNeighborsSource = isSourceBlock(world, pos.north()) && isSourceBlock(world, pos.south())
+				&& isSourceBlock(world, pos.west()) && isSourceBlock(world, pos.east());
+		return isSourceBlock(world, pos) && isAllNeighborsSource && pos.getY() >= minY && pos.getY() <= seaLevel;
+	}
+    private static boolean isSourceBlock(LevelAccessor world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
+        return state.getBlock() instanceof LiquidBlock && world.getBlockState(pos).is(Blocks.WATER) && state.getValue(LiquidBlock.LEVEL) == 0;
+    }
+
+	@Override
+	public boolean checkSpawnObstruction(LevelReader pLevel) {
+		return pLevel.isUnobstructed(this);
 	}
 
 	public static AttributeSupplier.Builder setAttributes() {

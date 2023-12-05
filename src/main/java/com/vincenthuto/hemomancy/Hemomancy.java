@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.datafixers.util.Pair;
-import com.vincenthuto.hemomancy.client.event.CapeEvent;
 import com.vincenthuto.hemomancy.common.capability.block.vein.EarthenVeinLocEvents;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
@@ -13,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.data.DataGeneration;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.entity.mob.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.init.BaseFeatureInit;
 import com.vincenthuto.hemomancy.common.init.BiomeInit;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -40,6 +40,7 @@ import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -47,6 +48,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -155,34 +157,22 @@ public class Hemomancy {
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
-		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
+//		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
+//		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
 
 		event.enqueueWork(() -> {
-			Regions.register(new TestRegion1(new ResourceLocation(MOD_ID, "overworld_1"), 2));
-			Regions.register(new TestRegion2(new ResourceLocation(MOD_ID, "overworld_2"), 2));
-			Regions.register(new TestRegion3(new ResourceLocation(MOD_ID, "overworld_3"), 2));
-
-			// Register our surface rules
-			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MOD_ID,
-					TestSurfaceRuleData.makeRules());
+			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
+					BloodStructurePageTemplate.SERIALIZER);
 		});
-		registerPageTypes(event);
+
 		HemoEntityPredicates.init();
 		SkillPointInit.init();
 		PolypRecipes.initRecipes();
 		PacketHandler.registerChannels();
 
-	}
-
-	private void registerPageTypes(FMLCommonSetupEvent event) {
-		event.enqueueWork(() -> {
-			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
-					BloodStructurePageTemplate.SERIALIZER);
-		});
 	}
 
 	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {

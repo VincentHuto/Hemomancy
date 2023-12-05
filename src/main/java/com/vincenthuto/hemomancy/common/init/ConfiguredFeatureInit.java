@@ -12,14 +12,11 @@ import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
-import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -27,7 +24,6 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureCo
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleRandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
-import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 
 public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FLESH_TENDON = createKey("flesh_tendon");
@@ -46,7 +42,6 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_MUSHROOMS_DENSE = createKey(
 			"mushroom/canopy_mushrooms_dense");
 
-
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
 	}
@@ -57,14 +52,25 @@ public class ConfiguredFeatureInit {
 		context.register(BROWN_CANOPY_MUSHROOM_TREE,
 				new ConfiguredFeature<>(BaseFeatureInit.CANOPY_BROWN_MUSHROOM,
 						new HugeMushroomFeatureConfiguration(
-								BlockStateProvider.simple(Blocks.BROWN_MUSHROOM_BLOCK.defaultBlockState()
+								BlockStateProvider.simple(BlockInit.infected_cap.get().defaultBlockState()
 										.setValue(HugeMushroomBlock.UP, Boolean.TRUE)
 										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),
-								BlockStateProvider.simple(Blocks.MUSHROOM_STEM.defaultBlockState()
+								BlockStateProvider.simple(BlockInit.infected_stem.get().defaultBlockState()
 										.setValue(HugeMushroomBlock.UP, Boolean.FALSE)
 										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),
 								3)));
-		
+
+		context.register(RED_CANOPY_MUSHROOM_TREE,
+				new ConfiguredFeature<>(BaseFeatureInit.CANOPY_RED_MUSHROOM,
+						new HugeMushroomFeatureConfiguration(
+								BlockStateProvider.simple(BlockInit.infected_cap.get().defaultBlockState()
+										.setValue(HugeMushroomBlock.UP, Boolean.TRUE)
+										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),
+								BlockStateProvider.simple(BlockInit.infected_stem.get().defaultBlockState()
+										.setValue(HugeMushroomBlock.UP, Boolean.FALSE)
+										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),
+								3)));
+
 		context.register(DUMMY_TREE, new ConfiguredFeature<>(Feature.NO_OP, NoneFeatureConfiguration.INSTANCE));
 
 		context.register(CANOPY_MUSHROOMS_SPARSE,
@@ -74,10 +80,9 @@ public class ConfiguredFeatureInit {
 						new WeightedPlacedFeature(
 								PlacementUtils.inlinePlaced(features.getOrThrow(RED_CANOPY_MUSHROOM_TREE)), 0.05f)),
 						PlacementUtils.inlinePlaced(features.getOrThrow(DUMMY_TREE)))));
-	
+
 		context.register(CANOPY_MUSHROOMS_DENSE,
-				new ConfiguredFeature<>(Feature.RANDOM_SELECTOR, 
-						new RandomFeatureConfiguration(List.of(
+				new ConfiguredFeature<>(Feature.RANDOM_SELECTOR, new RandomFeatureConfiguration(List.of(
 						new WeightedPlacedFeature(
 								PlacementUtils.inlinePlaced(features.getOrThrow(BROWN_CANOPY_MUSHROOM_TREE)), 0.675f),
 						new WeightedPlacedFeature(

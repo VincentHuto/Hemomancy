@@ -38,10 +38,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -101,7 +104,7 @@ public class EntityInit {
 
 	public static final RegistryObject<EntityType<BarbedUrchinEntity>> barbed_urchin = ENTITY_TYPES.register(
 			"barbed_urchin",
-			() -> EntityType.Builder.<BarbedUrchinEntity>of(BarbedUrchinEntity::new, MobCategory.WATER_AMBIENT)
+			() -> EntityType.Builder.<BarbedUrchinEntity>of(BarbedUrchinEntity::new, MobCategory.WATER_AMBIENT )
 					.sized(1F, 1F).build(Hemomancy.rloc("barbed_urchin").toString()));
 	
 	
@@ -223,6 +226,13 @@ public class EntityInit {
 		return TagKey.create(Registries.ENTITY_TYPE,
 				new ResourceLocation(Hemomancy.MOD_ID,name));
 	}
+	@SubscribeEvent
+	public static void commonSetup(final FMLCommonSetupEvent event) {
+		SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
+
+	}
+
 
 	@SubscribeEvent
 	public static void onAttributeCreate(EntityAttributeCreationEvent event) {

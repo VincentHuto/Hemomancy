@@ -1,6 +1,10 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion1;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion2;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestRegion3;
+import com.vincenthuto.hemomancy.common.worldgen.terrablender.TestSurfaceRuleData;
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -22,8 +26,15 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
+import terrablender.api.Regions;
+import terrablender.api.SurfaceRuleManager;
 
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class BiomeInit {
 	public static final DeferredRegister<Biome> BIOME_REGISTER = DeferredRegister.create(Registries.BIOME,
 			Hemomancy.MOD_ID);
@@ -67,7 +78,8 @@ public class BiomeInit {
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, NetherPlacements.SPRING_CLOSED);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.FLESH_TENDON);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HUGE_FUNGUS);
-		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
 
 		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(2.0F).downfall(0.0F)
 				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(4159204).waterFogColor(329011)
@@ -115,5 +127,20 @@ public class BiomeInit {
 	private static void addFeature(BiomeGenerationSettings.Builder builder, GenerationStep.Decoration step,
 			ResourceKey<PlacedFeature> feature) {
 		builder.addFeature(step, feature);
+	}
+
+	@SubscribeEvent
+	public static void commonSetup(final FMLCommonSetupEvent event) {
+
+		event.enqueueWork(() -> {
+
+			Regions.register(new TestRegion1(Hemomancy.rloc("overworld_1"), 2));
+			Regions.register(new TestRegion2(Hemomancy.rloc("overworld_2"), 2));
+			Regions.register(new TestRegion3(Hemomancy.rloc("overworld_3"), 2));
+
+			// Register our surface rules
+			SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, Hemomancy.MOD_ID,
+					TestSurfaceRuleData.makeRules());
+		});
 	}
 }
