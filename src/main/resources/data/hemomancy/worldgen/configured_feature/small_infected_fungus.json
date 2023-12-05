@@ -85,7 +85,7 @@
                   "to_place": {
                     "type": "minecraft:simple_state_provider",
                     "state": {
-                      "Name": "hemomancy:befouling_ash_trail",
+                      "Name": "hemomancy:stinkhorn_fungus",
                       "Properties": {
                         "half": "lower"
                       }
@@ -121,7 +121,7 @@
                   "to_place": {
                     "type": "minecraft:simple_state_provider",
                     "state": {
-                      "Name": "hemomancy:smouldering_ash_trail",
+                      "Name": "hemomancy:stinkhorn_fungus",
                       "Properties": {
                         "half": "lower"
                       }
