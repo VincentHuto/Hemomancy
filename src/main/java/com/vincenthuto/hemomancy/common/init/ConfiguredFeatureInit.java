@@ -12,11 +12,14 @@ import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HugeMushroomBlock;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConf
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleRandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 
 public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> FLESH_TENDON = createKey("flesh_tendon");
@@ -45,6 +49,8 @@ public class ConfiguredFeatureInit {
 			"mushroom/canopy_mushrooms_sparse");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_MUSHROOMS_DENSE = createKey(
 			"mushroom/canopy_mushrooms_dense");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> MYCELIUM_BLOB = createKey("mycelium_blob");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> INFESTED_VENOUS_STONE_BLOB = createKey("infested_venous_stone_blob");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
@@ -52,6 +58,18 @@ public class ConfiguredFeatureInit {
 
 	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
+
+		context.register(MYCELIUM_BLOB,
+				new ConfiguredFeature<>(BaseFeatureInit.MYCELIUM_BLOB,
+						new DiskConfiguration(RuleBasedBlockStateProvider.simple(Blocks.MYCELIUM),
+								BlockPredicate.matchesBlocks(BlockInit.erythrocytic_mycelium.get()),
+								UniformInt.of(4, 6), 3)));
+		
+		context.register(INFESTED_VENOUS_STONE_BLOB,
+				new ConfiguredFeature<>(BaseFeatureInit.INFESTED_VENOUS_STONE_BLOB,
+						new DiskConfiguration(RuleBasedBlockStateProvider.simple(BlockInit.infested_venous_stone.get()),
+								BlockPredicate.matchesBlocks(BlockInit.erythrocytic_mycelium.get()),
+								UniformInt.of(4, 6), 3)));
 
 		register(context, PATCH_HYPHAE, Feature.SIMPLE_RANDOM_SELECTOR,
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(
@@ -89,6 +107,7 @@ public class ConfiguredFeatureInit {
 								BlockStateProvider.simple(BlockInit.infected_cap.get().defaultBlockState()
 										.setValue(HugeMushroomBlock.UP, Boolean.TRUE)
 										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),
+
 								BlockStateProvider.simple(BlockInit.infected_stem.get().defaultBlockState()
 										.setValue(HugeMushroomBlock.UP, Boolean.FALSE)
 										.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE)),

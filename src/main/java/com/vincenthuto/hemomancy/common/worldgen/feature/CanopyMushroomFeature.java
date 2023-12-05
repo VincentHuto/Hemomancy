@@ -48,7 +48,7 @@ public abstract class CanopyMushroomFeature extends AbstractHugeBloodMushroomFea
 		int numBranches = this.getBranches(random);
 		float offset = random.nextFloat();
 		for (int b = 0; b < numBranches; b++) {
-			buildABranch(levelAccessor, pos, height - 6 + b, this.getLength(random), 0.3 * b + offset, random,
+			buildABranch(levelAccessor, pos, height - 6 + b, this.getLength(random), 0.1 * b + offset, random,
 					new HugeMushroomFeatureConfiguration(featureConfiguration.capProvider,
 							featureConfiguration.stemProvider, featureConfiguration.foliageRadius - 1));
 		}
