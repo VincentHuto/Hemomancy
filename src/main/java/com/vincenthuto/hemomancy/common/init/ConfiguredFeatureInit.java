@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleRandomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
@@ -30,6 +31,9 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = FeatureUtils
 			.createKey("small_infected_fungus");
+
+	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_HYPHAE = createKey("patch_hyphae");
+
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BROWN_CANOPY_MUSHROOM_TREE = createKey(
 			"mushroom/brown_canopy_mushroom");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> RED_CANOPY_MUSHROOM_TREE = createKey(
@@ -48,6 +52,25 @@ public class ConfiguredFeatureInit {
 
 	public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> features = context.lookup(Registries.CONFIGURED_FEATURE);
+
+		register(context, PATCH_HYPHAE, Feature.SIMPLE_RANDOM_SELECTOR,
+				new SimpleRandomFeatureConfiguration(HolderSet.direct(
+						PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+								FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
+										new SimpleBlockConfiguration(
+												BlockStateProvider.simple(BlockInit.stinkhorn_fungus.get())))),
+						PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+								FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
+										new SimpleBlockConfiguration(
+												BlockStateProvider.simple(BlockInit.infected_fungus.get())))),
+						PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+								FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
+										new SimpleBlockConfiguration(
+												BlockStateProvider.simple(BlockInit.infected_stem.get())))),
+						PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+								FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
+										new SimpleBlockConfiguration(
+												BlockStateProvider.simple(BlockInit.infected_stem.get())))))));
 
 		context.register(BROWN_CANOPY_MUSHROOM_TREE,
 				new ConfiguredFeature<>(BaseFeatureInit.CANOPY_BROWN_MUSHROOM,
@@ -91,6 +114,7 @@ public class ConfiguredFeatureInit {
 
 		register(context, FLESH_TENDON, BaseFeatureInit.FLESH_TENDON, NoneFeatureConfiguration.INSTANCE);
 		register(context, HUGE_FUNGUS, BaseFeatureInit.HUGE_FUNGUS, NoneFeatureConfiguration.INSTANCE);
+
 		register(context, SMALL_INFECTED_FUNGUS, Feature.SIMPLE_RANDOM_SELECTOR,
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(
 						PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
@@ -110,6 +134,11 @@ public class ConfiguredFeatureInit {
 										new SimpleBlockConfiguration(
 												BlockStateProvider.simple(BlockInit.smouldering_ash_trail.get())))))));
 
+	}
+
+	private static RandomPatchConfiguration grassPatch(BlockStateProvider p_195203_, int pTries) {
+		return FeatureUtils.simpleRandomPatchConfiguration(pTries,
+				PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(p_195203_)));
 	}
 
 	private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(

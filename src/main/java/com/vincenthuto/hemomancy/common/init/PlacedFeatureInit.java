@@ -9,12 +9,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.valueproviders.ClampedInt;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
@@ -27,6 +34,8 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> FLESH_TENDON = createKey("flesh_tendon");
 	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
+	public static final ResourceKey<PlacedFeature> PATCH_HYPHAE = createKey("patch_hyphae");
+
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_SPARSE = createKey(
 			"mushroom/canopy_mushrooms_sparse");
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_DENSE = createKey(
@@ -54,6 +63,10 @@ public class PlacedFeatureInit {
 				RarityFilter.onAverageOnceEvery(7), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
+		register(context, PlacedFeatureInit.PATCH_HYPHAE, SMALL_INFECTED_FUNGUS,
+				RarityFilter.onAverageOnceEvery(7), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
 
 		context.register(PLACED_CANOPY_MUSHROOMS_SPARSE,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_SPARSE),
@@ -66,10 +79,17 @@ public class PlacedFeatureInit {
 
 	}
 
+	public static <FC extends FeatureConfiguration, F extends Feature<FC>> void register(
+			BootstapContext<ConfiguredFeature<?, ?>> pContext, ResourceKey<ConfiguredFeature<?, ?>> pKey, F pFeature,
+			FC pConfig) {
+		pContext.register(pKey, new ConfiguredFeature(pFeature, pConfig));
+	}
+
+
+
 	private static List<PlacementModifier> tfTreeCheckArea(PlacementModifier count, BlockState sapling) {
 		return ImmutableList.of(count, InSquarePlacement.spread(), SurfaceWaterDepthFilter.forMaxDepth(0),
-				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
-				BiomeFilter.biome());
+				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
 	}
 
 	protected static void register(BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> placedFeatureKey,

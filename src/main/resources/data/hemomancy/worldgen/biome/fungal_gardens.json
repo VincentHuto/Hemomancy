@@ -74,6 +74,7 @@
     ],
     [
       "minecraft:glow_lichen",
+      "hemomancy:patch_hyphae",
       "hemomancy:small_infected_fungus",
       "minecraft:mushroom_island_vegetation",
       "minecraft:brown_mushroom_taiga",

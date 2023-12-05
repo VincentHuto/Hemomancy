@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.block.DendriticDistributorBlock;
 import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
 import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
+import com.vincenthuto.hemomancy.common.block.HyphaeBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
 import com.vincenthuto.hemomancy.common.block.JuiceinatorBlock;
 import com.vincenthuto.hemomancy.common.block.MorphlingIncubatorBlock;
@@ -45,6 +46,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -162,6 +164,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
 			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 
+	public static final RegistryObject<Block> hyphae = CROSSBLOCKS.register("hyphae",
+			() -> new HyphaeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).replaceable()
+					.noCollission().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XYZ)
+					.ignitedByLava().pushReaction(PushReaction.DESTROY)));
+
 	public static final RegistryObject<Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
 			() -> new BleedingHeartBlock(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
@@ -198,6 +205,7 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
 			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
+
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
 			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
@@ -291,6 +299,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.hyphae.get(), RenderType.cutout());
 
 	}
 

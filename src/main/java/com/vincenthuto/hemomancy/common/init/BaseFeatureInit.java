@@ -1,17 +1,17 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
 import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.BrownCanopyMushroomFeature;
-import com.vincenthuto.hemomancy.common.worldgen.feature.CheckAbovePatchFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FleshTendonFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungusFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.RedCanopyMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFeature;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.DiskConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -36,6 +36,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<SmallInfectedMushroomConfig> SMALL_FUNGUS = register("small_fungus",
 			new SmallInfectedMushroomFeature(SmallInfectedMushroomConfig.CODEC));
+	
+	public static final Feature<HyphaeConfig> PATCH_HYPHAE = register("patch_hyphae",
+			new HyphaeFeature(HyphaeConfig.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);
