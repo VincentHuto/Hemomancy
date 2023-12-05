@@ -36,7 +36,9 @@ public class FungalSkyBoxRenderer {
 	private static VertexBuffer starBuffer;
 	public static VertexBuffer skyBuffer;
 
-	private static final ResourceLocation MOON_LOCATION = Hemomancy.rloc("textures/environment/earth.png");
+	private static final ResourceLocation EARTH_LOCATION = Hemomancy.rloc("textures/environment/earth.png");
+	private static final ResourceLocation MOON_LOCATION = Hemomancy.rloc("textures/environment/moon.png");
+
 	private static final ResourceLocation SUN_LOCATION = new ResourceLocation("textures/environment/sun.png");
 	private static final ResourceLocation CLOUDS_LOCATION = new ResourceLocation("textures/environment/clouds.png");
 	private static final ResourceLocation END_SKY_LOCATION = Hemomancy.rloc("textures/environment/blood_fill_tiled.png");
@@ -143,7 +145,7 @@ public class FungalSkyBoxRenderer {
 		stack.pushPose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 
-        RenderSystem.setShaderTexture(0, MOON_LOCATION);
+        RenderSystem.setShaderTexture(0, EARTH_LOCATION);
         int l = 4% 4;
         int i1 = 4/ 4 % 2;
         float f13 = (float)(l + 0) / 4.0F;
@@ -157,6 +159,21 @@ public class FungalSkyBoxRenderer {
         bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, -moondistance).uv(f13, f14).endVertex();
         bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, -moondistance).uv(f15, f14).endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
+        
+		stack.pushPose();
+
+		 moondistance = 5.0F;
+	        RenderSystem.setShaderTexture(0, MOON_LOCATION);
+
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, moondistance+21).uv(f15, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, moondistance+21).uv(f13, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, -moondistance+21).uv(f13, f14).endVertex();
+        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, -moondistance+21).uv(f15, f14).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
+		stack.popPose();
+
+        
 		stack.popPose();
 
 		
