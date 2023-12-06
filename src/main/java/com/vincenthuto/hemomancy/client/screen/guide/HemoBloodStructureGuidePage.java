@@ -34,54 +34,40 @@ public class HemoBloodStructureGuidePage extends HLGuiGuidePage {
 				((BloodStructurePageTemplate) getPageTemplate()).getStructureKey());
 		if (structure != null) {
 			MultiblockPattern pattern = structure.getPattern();
-			
-			HLGuiUtils.drawMaxWidthString(font,
-					Component.literal("1234567890"),
-					(int) (left - guiWidth + 180), (int) (top + guiHeight - 140) - line * -10, 160, 0xffffff, false);
 
-			
+			HLGuiUtils.drawMaxWidthString(font, Component.literal("1234567890"), (int) (left - guiWidth + 180),
+					(int) (top + guiHeight - 140) - line * -10, 160, 0xffffff, false);
+
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("1234567890").withStyle(Style.EMPTY.withFont(Hemomancy.rloc("sky"))),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 130) - line * -10, 160, 0xff0000, false);
 
-			
-			HLGuiUtils.drawMaxWidthString(font,
-					Component.literal("abcdefghijklmnop"),
-					(int) (left - guiWidth + 180), (int) (top + guiHeight - 120) - line * -10, 160, 0xffffff, true);
+			HLGuiUtils.drawMaxWidthString(font, Component.literal("abcdefghijklmnop"), (int) (left - guiWidth + 180),
+					(int) (top + guiHeight - 120) - line * -10, 160, 0xffffff, true);
 
-			
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("abcdefghijklmnop").withStyle(Style.EMPTY.withFont(Hemomancy.rloc("sky"))),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 110) - line * -10, 160, 0xff0000, true);
-			
-			HLGuiUtils.drawMaxWidthString(font,
-					Component.literal("qrstuvwxyz"),
-					(int) (left - guiWidth + 180), (int) (top + guiHeight - 100) - line * -10, 160, 0xffffff, true);
 
-			
+			HLGuiUtils.drawMaxWidthString(font, Component.literal("qrstuvwxyz"), (int) (left - guiWidth + 180),
+					(int) (top + guiHeight - 100) - line * -10, 160, 0xffffff, true);
+
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("qrstuvwxyz").withStyle(Style.EMPTY.withFont(Hemomancy.rloc("sky"))),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 90) - line * -10, 160, 0xff0000, true);
 
-			
-			HLGuiUtils.drawMaxWidthString(font,
-					Component.literal("!@#$%^&*()"),
-					(int) (left - guiWidth + 180), (int) (top + guiHeight - 80) - line * -10, 160, 0xffffff, true);
+			HLGuiUtils.drawMaxWidthString(font, Component.literal("!@#$%^&*()"), (int) (left - guiWidth + 180),
+					(int) (top + guiHeight - 80) - line * -10, 160, 0xffffff, true);
 
-			
 			HLGuiUtils.drawMaxWidthString(font,
 					Component.literal("!@#$%^&*()").withStyle(Style.EMPTY.withFont(Hemomancy.rloc("sky"))),
 					(int) (left - guiWidth + 180), (int) (top + guiHeight - 70) - line * -10, 160, 0xff0000, true);
 
-			
-			
-			
 			for (Block block : pattern.getBlockCount(false).keySet()) {
 //				HLGuiUtils.drawMaxWidthString(font,
 //						Component.literal(
 //								I18n.get(block.getDescriptionId()) + ": " + pattern.getBlockCount(false).get(block)),
 //						(int) (left - guiWidth + 180), (int) (top + guiHeight - 140) - line * -10, 160, 0xffffff, true);
-
 
 				line++;
 

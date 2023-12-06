@@ -14,7 +14,6 @@ public class HemoBlockLootTableProvider extends VanillaBlockLoot {
 
 	@Override
 	protected void generate() {
-		System.out.println("fefeuwifhyu");
 		for (Block reg : BlockInit.getAllBlockEntries()) {
 			if (reg == BlockInit.potted_bleeding_heart.get() || reg == BlockInit.potted_infected_fungus.get()) {
 				dropPottedContents(reg);
