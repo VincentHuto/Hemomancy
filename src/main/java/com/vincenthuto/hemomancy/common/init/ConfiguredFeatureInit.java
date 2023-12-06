@@ -31,7 +31,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 
 public class ConfiguredFeatureInit {
-	public static final ResourceKey<ConfiguredFeature<?, ?>> FLESH_TENDON = createKey("flesh_tendon");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = FeatureUtils
 			.createKey("small_infected_fungus");
@@ -131,7 +131,7 @@ public class ConfiguredFeatureInit {
 								PlacementUtils.inlinePlaced(features.getOrThrow(RED_CANOPY_MUSHROOM_TREE)), 0.225f)),
 						PlacementUtils.inlinePlaced(features.getOrThrow(DUMMY_TREE)))));
 
-		register(context, FLESH_TENDON, BaseFeatureInit.FLESH_TENDON, NoneFeatureConfiguration.INSTANCE);
+		register(context, HYPHAE_TENDRIL, BaseFeatureInit.HYPHAE_TENDRIL, NoneFeatureConfiguration.INSTANCE);
 		register(context, HUGE_FUNGUS, BaseFeatureInit.HUGE_FUNGUS, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, SMALL_INFECTED_FUNGUS, Feature.SIMPLE_RANDOM_SELECTOR,

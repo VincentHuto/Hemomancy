@@ -200,7 +200,11 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
-
+	
+	public static final RegistryObject<Block> hyphae_block = BASEBLOCKS.register("hyphae_block",
+			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
+	
+	
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
 			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",

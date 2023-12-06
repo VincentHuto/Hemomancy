@@ -156,6 +156,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
+			() -> new Item(new Item.Properties()));
 
 	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
@@ -462,19 +464,14 @@ public class ItemInit {
 			"spawn_egg_morphling_polyp",
 			() -> new ForgeSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0, new Item.Properties()));
 
-	
-	
-	
-	
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
 			"spawn_egg_blood_drunk_puppeteer",
-			() -> new ForgeSpawnEggItem(EntityInit.blood_drunk_puppeteer , 12124160, 12152064, new Item.Properties()));
-	
+			() -> new ForgeSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
+
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
 			"spawn_egg_enthralled_doll",
 			() -> new ForgeSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
-	
-	
+
 	// Item Property Override
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent

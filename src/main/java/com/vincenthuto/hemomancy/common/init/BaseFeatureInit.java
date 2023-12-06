@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
 import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.BrownCanopyMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.CheckAbovePatchFeature;
-import com.vincenthuto.hemomancy.common.worldgen.feature.FleshTendonFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeTendrilFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungusFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.RedCanopyMushroomFeature;
@@ -34,8 +34,8 @@ public class BaseFeatureInit {
 	public static final Feature<HugeMushroomFeatureConfiguration> CANOPY_RED_MUSHROOM = register("canopy_red_mushroom",
 			new RedCanopyMushroomFeature(HugeMushroomFeatureConfiguration.CODEC));
 
-	public static final Feature<NoneFeatureConfiguration> FLESH_TENDON = register("flesh_tendon",
-			new FleshTendonFeature(NoneFeatureConfiguration.CODEC));
+	public static final Feature<NoneFeatureConfiguration> HYPHAE_TENDRIL = register("hyphae_tendril",
+			new HyphaeTendrilFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> HUGE_FUNGUS = register("huge_fungus",
 			new FungusFeature(NoneFeatureConfiguration.CODEC));

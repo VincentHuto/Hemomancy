@@ -21,7 +21,7 @@ import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.phys.Vec3;
 
-public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
+public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	protected SimpleBlockPredicate replace = (world, pos) -> TreeFeature.isAirOrLeaves(world, pos)
 			|| world.getBlockState(pos).getBlock() == Blocks.AMETHYST_CLUSTER
 			|| world.getBlockState(pos).getBlock() == Blocks.LARGE_AMETHYST_BUD
@@ -38,7 +38,7 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 	private static final float MID_POS_MULTIPLIER = 0.9F;
 	private static final float TENDON_STEP = 0.005f;
 
-	public FleshTendonFeature(Codec<NoneFeatureConfiguration> deserializer) {
+	public HyphaeTendrilFeature(Codec<NoneFeatureConfiguration> deserializer) {
 		super(deserializer);
 	}
 
@@ -80,19 +80,19 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 		for (float d = 0.0f; d < 1.0f; d += TENDON_STEP) {
 			BlockPos curPos = quadratic(d, pos, midPos, endPos);
 
-			if (curPos.getY() < 126) {
-				BlockState fleshBlock = BlockInit.infested_venous_stone.get().defaultBlockState();
+			if (curPos.getY() < 256) {
+				BlockState sporeBlock = BlockInit.hyphae_block.get().defaultBlockState();
 				if (rand.nextInt(5) == 0) {
-					fleshBlock = BlockInit.infected_cap.get().defaultBlockState();
+					sporeBlock = BlockInit.hyphae_block.get().defaultBlockState();
 				}
 
-				this.setBlock(world, curPos, fleshBlock);
+				this.setBlock(world, curPos, sporeBlock);
 
 				if (rand.nextInt(75) == 0) {
-					this.generateFleshBall(world, curPos, rand);
+					this.generateSporeBall(world, curPos, rand);
 				}
 				if (rand.nextInt(4) == 0) {
-					this.placeFleshTendonColumn(world, rand, curPos.below());
+					this.placeHyphaeTendrilColumn(world, rand, curPos.below());
 				}
 			} else {
 				break;
@@ -102,35 +102,35 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 		return true;
 	}
 
-	public boolean generateFleshBall(WorldGenLevel world, BlockPos pos, RandomSource rand) {
-		this.setBlock(world, pos, BlockInit.infected_cap.get().defaultBlockState());
+	public boolean generateSporeBall(WorldGenLevel world, BlockPos pos, RandomSource rand) {
+		this.setBlock(world, pos, BlockInit.infected_stem.get().defaultBlockState());
 		this.setBlock(world, pos.north(), Blocks.SHROOMLIGHT.defaultBlockState(), 2);
 		this.setBlock(world, pos.south(), Blocks.SHROOMLIGHT.defaultBlockState(), 2);
 		this.setBlock(world, pos.east(), Blocks.SHROOMLIGHT.defaultBlockState(), 2);
 		this.setBlock(world, pos.west(), Blocks.SHROOMLIGHT.defaultBlockState(), 2);
-		this.setBlock(world, pos.north().west(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.south().west(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.north().east(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.south().east(), BlockInit.infested_venous_stone.get().defaultBlockState());
+		this.setBlock(world, pos.north().west(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.south().west(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.north().east(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.south().east(), BlockInit.infected_stem.get().defaultBlockState());
 
-		this.setBlock(world, pos.above(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.above().north(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.above().south(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.above().east(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.above().west(), BlockInit.infested_venous_stone.get().defaultBlockState());
+		this.setBlock(world, pos.above(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.above().north(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.above().south(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.above().east(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.above().west(), BlockInit.infected_stem.get().defaultBlockState());
 
-		this.setBlock(world, pos.below(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.below().north(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.below().south(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.below().east(), BlockInit.infested_venous_stone.get().defaultBlockState());
-		this.setBlock(world, pos.below().west(), BlockInit.infested_venous_stone.get().defaultBlockState());
+		this.setBlock(world, pos.below(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.below().north(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.below().south(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.below().east(), BlockInit.infected_stem.get().defaultBlockState());
+		this.setBlock(world, pos.below().west(), BlockInit.infected_stem.get().defaultBlockState());
 
-		this.placeFleshTendonColumn(world, rand, pos.below(2));
+		this.placeHyphaeTendrilColumn(world, rand, pos.below(2));
 
 		return true;
 	}
 
-	public void placeFleshTendonColumn(WorldGenLevel p_67377_, RandomSource p_67378_, BlockPos p_67379_) {
+	public void placeHyphaeTendrilColumn(WorldGenLevel p_67377_, RandomSource p_67378_, BlockPos p_67379_) {
 		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
 		blockpos$mutable.set(p_67379_);
 
@@ -141,8 +141,8 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 
 		if (p_67377_.getBlockState(blockpos$mutable.above()).is(BlockInit.venous_stone.get()) || p_67377_.getBlockState(blockpos$mutable.above()).is(BlockInit.erythrocytic_dirt.get())) {
 			for (int i = 0; i <= height; ++i) {
-				Block fleshCheck = p_67377_.getBlockState(blockpos$mutable.below()).getBlock();
-				if (fleshCheck == BlockInit.infected_stem.get() || fleshCheck == BlockInit.venous_stone.get()) {
+				Block sporeCheck = p_67377_.getBlockState(blockpos$mutable.below()).getBlock();
+				if (sporeCheck == BlockInit.infected_stem.get() || sporeCheck == BlockInit.venous_stone.get()) {
 					break;
 				}
 

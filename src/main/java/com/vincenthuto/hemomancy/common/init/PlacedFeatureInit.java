@@ -26,7 +26,7 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
 
 public class PlacedFeatureInit {
-	public static final ResourceKey<PlacedFeature> FLESH_TENDON = createKey("flesh_tendon");
+	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
 	public static final ResourceKey<PlacedFeature> HUGE_FUNGUS = createKey("huge_fungus");
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
 	public static final ResourceKey<PlacedFeature> PATCH_HYPHAE = createKey("patch_hyphae");
@@ -42,8 +42,8 @@ public class PlacedFeatureInit {
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
-		final Holder<ConfiguredFeature<?, ?>> FLESH_TENDON = configuredFeatureGetter
-				.getOrThrow(ConfiguredFeatureInit.FLESH_TENDON);
+		final Holder<ConfiguredFeature<?, ?>> HYPHAE_TENDRIL = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.HYPHAE_TENDRIL);
 
 		final Holder<ConfiguredFeature<?, ?>> HUGE_FUNGUS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.HUGE_FUNGUS);
@@ -63,7 +63,7 @@ public class PlacedFeatureInit {
 								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
 								.build()));
 
-		register(context, PlacedFeatureInit.FLESH_TENDON, FLESH_TENDON, List.of(CountPlacement.of(50),
+		register(context, PlacedFeatureInit.HYPHAE_TENDRIL, HYPHAE_TENDRIL, List.of(CountPlacement.of(50),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
 		register(context, PlacedFeatureInit.HUGE_FUNGUS, HUGE_FUNGUS, List.of(CountPlacement.of(50),
 				InSquarePlacement.spread(), PlacementUtils.FULL_RANGE, BiomeFilter.biome()));
