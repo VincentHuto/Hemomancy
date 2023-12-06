@@ -4,8 +4,11 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -23,7 +26,9 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.dimension.DimensionType;
 
 public class AbhorentThoughtEntity extends Monster {
 
@@ -88,6 +93,32 @@ public class AbhorentThoughtEntity extends Monster {
 		super.playerTouch(entityIn);
 	}
 
+	public static boolean isDarkEnoughToSpawn(ServerLevelAccessor pLevel, BlockPos pPos, RandomSource pRandom) {
+		if (pLevel.getBrightness(LightLayer.SKY, pPos) > pRandom.nextInt(32)) {
+			return false;
+		} else {
+			DimensionType dimensiontype = pLevel.dimensionType();
+			int i = dimensiontype.monsterSpawnBlockLightLimit();
+			if (i < 15 && pLevel.getBrightness(LightLayer.BLOCK, pPos) > i) {
+				return false;
+			} else {
+				int j = pLevel.getLevel().isThundering() ? pLevel.getMaxLocalRawBrightness(pPos, 10)
+						: pLevel.getMaxLocalRawBrightness(pPos);
+				return j <= dimensiontype.monsterSpawnLightTest().sample(pRandom);
+			}
+		}
+	}
+
+	/**
+	 * Static predicate for determining whether a monster can spawn at the provided
+	 * location, incorporating a check of the current light level at the location.
+	 */
+	public static boolean checkMonsterSpawnRules(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
+			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
+		return pLevel.getDifficulty() != Difficulty.PEACEFUL && isDarkEnoughToSpawn(pLevel, pPos, pRandom)
+				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+	}
+
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -99,7 +130,8 @@ public class AbhorentThoughtEntity extends Monster {
 	}
 
 	private boolean isMovingOnLand() {
-		return this.onGround() && this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D && !this.isInWaterOrBubble();
+		return this.onGround() && this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D
+				&& !this.isInWaterOrBubble();
 	}
 
 	private boolean isMovingInWater() {

@@ -243,7 +243,6 @@ public class ErythromyceliumEruptusEntity extends Monster {
 
 				}
 			} else {
-				System.out.println("erupt" + erupt);
 				if(!(this.erupt >0)) {
 					this.disguisedAnimationState.startIfStopped(this.tickCount);
 				}else {

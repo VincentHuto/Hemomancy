@@ -33,8 +33,28 @@
       }
     ],
     "misc": [],
-    "monster": [],
-    "underground_water_creature": [
+ "monster": [
+     {
+        "type": "minecraft:zombie",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      },
+      {
+        "type": "hemomancy:abhorent_thought",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+      ,
+      {
+        "type": "hemomancy:fargone",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    
+    ],    "underground_water_creature": [
       
     ],
     "water_ambient": [{

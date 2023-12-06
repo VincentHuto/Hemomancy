@@ -62,14 +62,14 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 			return false;
 		}
 
-		int xOff = rand.nextInt(MAX_DISTANCE * 4) - MAX_DISTANCE;
-		int zOff = rand.nextInt(MAX_DISTANCE * 4) - MAX_DISTANCE;
+		int xOff = rand.nextInt(MAX_DISTANCE * 2) - MAX_DISTANCE;
+		int zOff = rand.nextInt(MAX_DISTANCE * 2) - MAX_DISTANCE;
 		int minX = rand.nextBoolean() ? MIN_DISTANCE : -MIN_DISTANCE;
 		int minZ = rand.nextBoolean() ? MIN_DISTANCE : -MIN_DISTANCE;
 		BlockPos endPos = pos.offset(Math.abs(xOff) < MIN_DISTANCE ? minX : xOff, pos.getY(),
 				Math.abs(zOff) < MIN_DISTANCE ? minZ : zOff);
 
-		while (world.isEmptyBlock(endPos) && endPos.getY() < 164) {
+		while (world.isEmptyBlock(endPos) && endPos.getY() < 126) {
 			endPos = endPos.above();
 		}
 
@@ -134,7 +134,7 @@ public class FleshTendonFeature extends Feature<NoneFeatureConfiguration> {
 		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
 		blockpos$mutable.set(p_67379_);
 
-		int rand = p_67378_.nextInt(6);
+		int rand = p_67378_.nextInt(16);
 		int minHeight = rand == 0 ? 4 : 1;
 		int maxHeight = rand == 0 ? 8 : 4;
 		int height = Mth.nextInt(p_67378_, minHeight, maxHeight);

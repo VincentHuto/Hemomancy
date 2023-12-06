@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.entity.mob;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +22,9 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.dimension.DimensionType;
 
 public class FargoneEntity extends Monster {
 
@@ -95,17 +100,38 @@ public class FargoneEntity extends Monster {
 		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
 
 	}
+	
+	 public static boolean checkMonsterSpawnRules(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
+	      return pLevel.getDifficulty() != Difficulty.PEACEFUL && isDarkEnoughToSpawn(pLevel, pPos, pRandom) && checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+	   }
+	
+	
+	public static boolean isDarkEnoughToSpawn(ServerLevelAccessor pLevel, BlockPos pPos, RandomSource pRandom) {
+		if (pLevel.getBrightness(LightLayer.SKY, pPos) > pRandom.nextInt(32)) {
+			return false;
+		} else {
+			DimensionType dimensiontype = pLevel.dimensionType();
+			int i = dimensiontype.monsterSpawnBlockLightLimit();
+			if (i < 15 && pLevel.getBrightness(LightLayer.BLOCK, pPos) > i) {
+				return false;
+			} else {
+				int j = pLevel.getLevel().isThundering() ? pLevel.getMaxLocalRawBrightness(pPos, 10)
+						: pLevel.getMaxLocalRawBrightness(pPos);
+				return j <= dimensiontype.monsterSpawnLightTest().sample(pRandom);
+			}
+		}
+	}
 
 	@Override
 	public void tick() {
 		super.tick();
 
 		/*
-		 * // Particle MobEffects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float f1
-		 * = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if (this.ticksExisted
-		 * < 2) { this.world.addParticle(ParticleTypes.POOF, this.getPosX() + (double)
-		 * f, this.getPosY() + 2.0D + (double) f1, this.getPosZ() + (double) f2, 0.0D,
-		 * 0.0D, 0.0D); }
+		 * // Particle MobEffects float f = (this.rand.nextFloat() - 0.5F) * 2.0F; float
+		 * f1 = -1; float f2 = (this.rand.nextFloat() - 0.5F) * 2.0F; if
+		 * (this.ticksExisted < 2) { this.world.addParticle(ParticleTypes.POOF,
+		 * this.getPosX() + (double) f, this.getPosY() + 2.0D + (double) f1,
+		 * this.getPosZ() + (double) f2, 0.0D, 0.0D, 0.0D); }
 		 *
 		 * if (this.ticksExisted > 2 && this.ticksExisted < 20) {
 		 *

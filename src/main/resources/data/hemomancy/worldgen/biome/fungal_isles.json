@@ -33,7 +33,15 @@
       }
     ],
     "misc": [],
-    "monster": [],
+    "monster": [
+     {
+        "type": "minecraft:zombie",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    
+    ],
     "underground_water_creature": [
       
     ],

@@ -70,16 +70,16 @@ public class EntityInit {
 			() -> EntityType.Builder.<LeechEntity>of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
 					.build(Hemomancy.rloc("leech").toString()));
 	public static final RegistryObject<EntityType<FargoneEntity>> fargone = ENTITY_TYPES.register("fargone",
-			() -> EntityType.Builder.<FargoneEntity>of(FargoneEntity::new, MobCategory.MONSTER).sized(1F, 1F)
+			() -> EntityType.Builder.<FargoneEntity>of(FargoneEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
 					.build(Hemomancy.rloc("fargone").toString()));
 	public static final RegistryObject<EntityType<ThirsterEntity>> thirster = ENTITY_TYPES.register("thirster",
-			() -> EntityType.Builder.<ThirsterEntity>of(ThirsterEntity::new, MobCategory.MONSTER).sized(1F, 1F)
+			() -> EntityType.Builder.<ThirsterEntity>of(ThirsterEntity::new, MobCategory.MONSTER).sized(1F, 1.8F)
 					.build(Hemomancy.rloc("thirster").toString()));
 	
 	public static final RegistryObject<EntityType<AbhorentThoughtEntity>> abhorent_thought = ENTITY_TYPES
 			.register("abhorent_thought",
 					() -> EntityType.Builder.<AbhorentThoughtEntity>of(AbhorentThoughtEntity::new, MobCategory.MONSTER)
-							.sized(1.5f, 3F)
+							.sized(1.5f, 3.25F)
 							.build(Hemomancy.rloc("abhorent_thought").toString()));
 
 	public static final RegistryObject<EntityType<ErythromyceliumEruptusEntity>> erythromycelium_eruptus = ENTITY_TYPES
@@ -98,7 +98,7 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<EnthralledDollEntity>> enthralled_doll = ENTITY_TYPES
 			.register("enthralled_doll",
 					() -> EntityType.Builder.<EnthralledDollEntity>of(EnthralledDollEntity::new, MobCategory.MONSTER)
-							.sized(0.9F, 1F)
+							.sized(0.5F, 0.5F)
 							.build(Hemomancy.rloc("enthralled_doll").toString()));
 
 
@@ -122,7 +122,7 @@ public class EntityInit {
 					.build(Hemomancy.rloc("fungling").toString()));
 
 	public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
-			() -> EntityType.Builder.<ChitiniteEntity>of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 1F)
+			() -> EntityType.Builder.<ChitiniteEntity>of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
 					.build(Hemomancy.rloc("chitinite").toString()));
 	public static final RegistryObject<EntityType<ChthonianEntity>> chthonian = ENTITY_TYPES.register("chthonian",
 			() -> EntityType.Builder.<ChthonianEntity>of(ChthonianEntity::new, MobCategory.MONSTER).sized(1F, 1F)
@@ -230,7 +230,10 @@ public class EntityInit {
 	public static void commonSetup(final FMLCommonSetupEvent event) {
 		SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
-
+		SpawnPlacements.register(EntityInit.fargone.get(), SpawnPlacements.Type.ON_GROUND,
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
+		SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
+				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules);
 	}
 
 
