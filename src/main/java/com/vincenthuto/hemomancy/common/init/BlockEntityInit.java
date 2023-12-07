@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.FungalImplantationPylonBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.FungalPodiumBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.HumaneIdolBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
@@ -45,13 +46,14 @@ public class BlockEntityInit {
 			.register("scrying_podium", () -> BlockEntityType.Builder
 					.of(ScryingPodiumBlockEntity::new, BlockInit.scrying_podium.get()).build(null));
 
-	
-	public static final RegistryObject<BlockEntityType<FungalPodiumBlockEntity>> fungal_podium = TILES
-			.register("fungal_podium", () -> BlockEntityType.Builder
-					.of(FungalPodiumBlockEntity::new, BlockInit.fungal_podium.get()).build(null));
+	public static final RegistryObject<BlockEntityType<FungalPodiumBlockEntity>> fungal_podium = TILES.register(
+			"fungal_podium",
+			() -> BlockEntityType.Builder.of(FungalPodiumBlockEntity::new, BlockInit.fungal_podium.get()).build(null));
 
-	
-	
+	public static final RegistryObject<BlockEntityType<FungalImplantationPylonBlockEntity>> fungal_implantation_pylon = TILES
+			.register("fungal_implantation_pylon", () -> BlockEntityType.Builder
+					.of(FungalImplantationPylonBlockEntity::new, BlockInit.fungal_implantation_pylon.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<DendriticDistributorBlockEntity>> dendritic_distributor = TILES
 			.register("dendritic_distributor", () -> BlockEntityType.Builder
 					.of(DendriticDistributorBlockEntity::new, BlockInit.dendritic_distributor.get()).build(null));

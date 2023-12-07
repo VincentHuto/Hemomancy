@@ -8,13 +8,13 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class FargoneRenderer extends MobRenderer<FargoneEntity, FargoneModel<FargoneEntity>> {
+public class FargoneRenderer extends MobRenderer<FargoneEntity, FargoneModel> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/fargone/model_fargone.png");
 
 	public FargoneRenderer(Context renderManagerIn) {
-		super(renderManagerIn, new FargoneModel<FargoneEntity>(renderManagerIn.bakeLayer(FargoneModel.LAYER_LOCATION)), 0.5F);
+		super(renderManagerIn, new FargoneModel(renderManagerIn.bakeLayer(FargoneModel.LAYER_LOCATION)), 0.5F);
 
 	}
 

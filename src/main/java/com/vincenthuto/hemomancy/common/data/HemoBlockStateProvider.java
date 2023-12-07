@@ -23,7 +23,6 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 
 		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			if (b == BlockInit.erythrocytic_mycelium) {
-
 			} else {
 				simpleBlock(b.get());
 				cubeAll(b.get());

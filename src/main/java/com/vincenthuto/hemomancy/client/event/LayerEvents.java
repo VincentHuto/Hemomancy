@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.client.model.block.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.client.model.block.EarthenVeinModel;
 import com.vincenthuto.hemomancy.client.model.block.FloatingEyeModel;
 import com.vincenthuto.hemomancy.client.model.block.FloatingHeartModel;
+import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
 import com.vincenthuto.hemomancy.client.model.entity.BloodBulletModel;
 import com.vincenthuto.hemomancy.client.model.entity.IronPillarModel;
 import com.vincenthuto.hemomancy.client.model.entity.IronSpikeModel;
@@ -110,6 +111,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(ThirsterModel.LAYER_LOCATION, ThirsterModel::createBodyLayer);
 		event.registerLayerDefinition(BloodArmModel.blood_arm, BloodArmModel::createHeadLayer);
 		event.registerLayerDefinition(EarthenVeinModel.LAYER_LOCATION, EarthenVeinModel::createBodyLayer);
+		event.registerLayerDefinition(FungalImplantationPylonModel.LAYER_LOCATION, FungalImplantationPylonModel::createBodyLayer);
 		event.registerLayerDefinition(FloatingEyeModel.LAYER_LOCATION, FloatingEyeModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinModel.LAYER_LOCATION, BarbedUrchinModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);

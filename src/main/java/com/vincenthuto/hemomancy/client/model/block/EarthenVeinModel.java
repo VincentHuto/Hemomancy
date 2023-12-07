@@ -30,7 +30,6 @@ public class EarthenVeinModel extends Model implements IAnimatedModel<EarthenVei
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("earthenveinmodel"),
 			"root");
 
-	// super(RenderType::entityTranslucent);
 
 	private final ModelPart root;
 

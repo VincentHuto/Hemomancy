@@ -38,6 +38,7 @@ import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.ChiselStationRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.DendriticDistributorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.EarthenVeinRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.FungalImplantationPylonRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.FungalPodiumRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.MortalDisplayRenderer;
@@ -226,7 +227,6 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
-		// System.out.println(event.);
 
 	}
 
@@ -361,6 +361,8 @@ public class ClientEvents {
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.fungal_podium.get(),FungalPodiumRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.fungal_implantation_pylon.get(),FungalImplantationPylonRenderer::new);
+
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);

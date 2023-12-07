@@ -19,13 +19,13 @@ public class DataGeneration {
 		PackOutput packOutput = generator.getPackOutput();
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-			generator.addProvider(event.includeClient(), new HemoBlockStateProvider(packOutput, event.getExistingFileHelper() ));
-			generator.addProvider(event.includeClient(), new HemoItemModelProvider(packOutput, event.getExistingFileHelper()));
+	//		generator.addProvider(event.includeClient(), new HemoBlockStateProvider(packOutput, event.getExistingFileHelper() ));
+	//		generator.addProvider(event.includeClient(), new HemoItemModelProvider(packOutput, event.getExistingFileHelper()));
 		generator.addProvider(event.includeClient(), new HemoLanguageProvider(packOutput, "en_us"));
-			generator.addProvider(event.includeServer(), new HemoBlockTagProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
-			generator.addProvider(event.includeServer(), new HemoRecipeProvider(packOutput, event.getExistingFileHelper()));
-			generator.addProvider(event.includeServer(), new HemoEntityTagProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
-			generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(new SubProviderEntry(HemoEntityLootProvider::new, LootContextParamSets.ENTITY),
-					new SubProviderEntry(HemoBlockLootTableProvider::new, LootContextParamSets.BLOCK))));
+//			generator.addProvider(event.includeServer(), new HemoBlockTagProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
+//			generator.addProvider(event.includeServer(), new HemoRecipeProvider(packOutput, event.getExistingFileHelper()));
+//			generator.addProvider(event.includeServer(), new HemoEntityTagProvider(packOutput, lookupProvider, event.getExistingFileHelper()));
+//			generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Set.of(), List.of(new SubProviderEntry(HemoEntityLootProvider::new, LootContextParamSets.ENTITY),
+//					new SubProviderEntry(HemoBlockLootTableProvider::new, LootContextParamSets.BLOCK))));
 	}
 }

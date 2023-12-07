@@ -29,7 +29,7 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class CharmGourdMenu extends AbstractContainerMenu {
+public class SporeImplantMenu extends AbstractContainerMenu {
 
 	public static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[] {
 			InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS,
@@ -44,16 +44,16 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 
 	public IRunesItemHandler runes;
 
-	public CharmGourdMenu(final int windowId, final Inventory playerInventory) {
+	public SporeImplantMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
 
-	public CharmGourdMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
+	public SporeImplantMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
 
-	public CharmGourdMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
+	public SporeImplantMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
 		super(ContainerInit.gourd_charm_inventory.get(), windowId);
 		this.player = playerInventory.player;
 
@@ -72,10 +72,10 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
-//		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 77, 8));
-//		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
-//		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
-//		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
+		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 77, 8));
+		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
+		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
+		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
 		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26));
 		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));
 

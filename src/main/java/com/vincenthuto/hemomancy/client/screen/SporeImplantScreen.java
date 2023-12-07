@@ -20,15 +20,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class CharmGourdScreen extends EffectRenderingInventoryScreen<CharmGourdMenu> {
+public class SporeImplantScreen extends EffectRenderingInventoryScreen<CharmGourdMenu> {
 
 	public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/charm_slot.png");
+			"textures/gui/gui_mind_runes.png");
 
 	private float oldMouseX;
 	private float oldMouseY;
 
-	public CharmGourdScreen(CharmGourdMenu container, Inventory inventory, Component name) {
+	public SporeImplantScreen(CharmGourdMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 	}
 

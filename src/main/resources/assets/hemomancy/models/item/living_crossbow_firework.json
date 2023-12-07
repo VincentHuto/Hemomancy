@@ -3,7 +3,7 @@
   "textures" : {
     "5" : "hemomancy:block/bold_chiseled_hematic_iron_block",
     "7" : "hemomancy:block/crossbow_firework",
-    "8" : "hemomancy:entity/blood_bolt/model_blood_bolt",
+    "8" : "hemomancy:entity/blood_bolt/hematic_iron_pillar",
     "11" : "hemomancy:block/sanguine_pane",
     "12" : "hemomancy:block/sanguine_tran_pane",
     "13" : "hemomancy:block/snake_head",

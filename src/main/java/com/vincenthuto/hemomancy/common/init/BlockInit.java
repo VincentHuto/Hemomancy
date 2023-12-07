@@ -17,12 +17,14 @@ import com.vincenthuto.hemomancy.common.block.CrimsonFlameBlock;
 import com.vincenthuto.hemomancy.common.block.DendriticDistributorBlock;
 import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
+import com.vincenthuto.hemomancy.common.block.FungalImplantationPylonBlock;
 import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.block.HyphaeBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
 import com.vincenthuto.hemomancy.common.block.JuiceinatorBlock;
 import com.vincenthuto.hemomancy.common.block.MorphlingIncubatorBlock;
 import com.vincenthuto.hemomancy.common.block.MortalDisplayBlock;
+import com.vincenthuto.hemomancy.common.block.PuffballFungusBlock;
 import com.vincenthuto.hemomancy.common.block.ScryingPodiumBlock;
 import com.vincenthuto.hemomancy.common.block.SemiSentientConstructBlock;
 import com.vincenthuto.hemomancy.common.block.SmoulderingAshTrailBlock;
@@ -180,9 +182,16 @@ public class BlockInit {
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
+	public static final RegistryObject<Block> puffball_fungus = MODELEDBLOCKS.register("puffball_fungus",
+			() -> new PuffballFungusBlock(MobEffects.SATURATION, 12,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+	
+	
 	public static final RegistryObject<Block> stinkhorn_fungus = CROSSBLOCKS.register("stinkhorn_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+
+	
 
 	public static final RegistryObject<Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
 			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
@@ -236,7 +245,11 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
 			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
-
+	
+	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS.register("fungal_implantation_pylon",
+			() -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+	
+	
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
@@ -304,6 +317,8 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.hyphae.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.puffball_fungus.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_implantation_pylon.get(), RenderType.cutout());
 
 	}
 

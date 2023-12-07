@@ -1,7 +1,7 @@
 {
   "temperature": 0.9,
   "downfall": 1,
-  "has_precipitation": true,
+  "has_precipitation": false,
   "effects": {
     "sky_color": 0,
     "fog_color": 0,
@@ -34,12 +34,7 @@
     ],
     "misc": [],
  "monster": [
-     {
-        "type": "minecraft:zombie",
-        "weight": 10,
-        "minCount": 8,
-        "maxCount": 8
-      },
+    
       {
         "type": "hemomancy:abhorent_thought",
         "weight": 10,
