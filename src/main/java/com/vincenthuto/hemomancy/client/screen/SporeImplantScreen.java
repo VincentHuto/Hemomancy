@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
+import com.vincenthuto.hemomancy.common.menu.SporeImplantMenu;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class SporeImplantScreen extends EffectRenderingInventoryScreen<CharmGourdMenu> {
+public class SporeImplantScreen extends EffectRenderingInventoryScreen<SporeImplantMenu> {
 
 	public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/gui/gui_mind_runes.png");
@@ -28,7 +28,7 @@ public class SporeImplantScreen extends EffectRenderingInventoryScreen<CharmGour
 	private float oldMouseX;
 	private float oldMouseY;
 
-	public SporeImplantScreen(CharmGourdMenu container, Inventory inventory, Component name) {
+	public SporeImplantScreen(SporeImplantMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
 	}
 
@@ -94,9 +94,9 @@ public class SporeImplantScreen extends EffectRenderingInventoryScreen<CharmGour
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int p_146979_1_, int p_146979_2_) { // drawGuiContainerForegroundLayer
-		if (this.minecraft != null) { // this.minecraft
-			graphics.drawString(font, Component.translatable("container.crafting"), 115 - 18, 8 + 22, 4210752, false);
-		}
+//		if (this.minecraft != null) { // this.minecraft
+//			graphics.drawString(font, Component.translatable("container.crafting"), 115 - 18, 8 + 22, 4210752, false);
+//		}
 	}
 
 	// No Longer necccisairy as you cannot acsess runes from INV anymore

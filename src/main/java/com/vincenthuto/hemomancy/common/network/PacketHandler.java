@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPack
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRuneBinder;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenSporeInv;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketRuneSync;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
@@ -81,6 +82,8 @@ public class PacketHandler {
 
 	public static void registerChannels() {
 
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenSporeInv.class, PacketOpenSporeInv::decode,
+				PacketOpenSporeInv::new, PacketOpenSporeInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,

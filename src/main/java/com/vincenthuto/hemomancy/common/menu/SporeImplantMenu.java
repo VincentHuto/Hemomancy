@@ -36,8 +36,8 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 			InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET };
 	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD,
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
-	public final static int GOURD_SLOT_INDEX = 5;
-	public final static int CHARM_SLOT_INDEX = 4;
+	public final static int GOURD_SLOT_INDEX = 6;
+	public final static int CHARM_SLOT_INDEX = 5;
 	private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;
@@ -54,28 +54,30 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 	}
 
 	public SporeImplantMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
-		super(ContainerInit.gourd_charm_inventory.get(), windowId);
+		super(ContainerInit.fungal_implantation.get(), windowId);
 		this.player = playerInventory.player;
 
 		this.runes = this.player.getCapability(RunesCapabilities.RUNES).orElseThrow(NullPointerException::new);
 
-		this.addSlot(new ResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 154, 28 + 26));
+		// this.addSlot(new ResultSlot(playerInventory.player, this.craftMatrix,
+		// this.craftResult, 0, 154, 28 + 26));
 
-		for (int i = 0; i < 2; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				this.addSlot(new Slot(this.craftMatrix, j + i * 2, 116 + j * 18 - 18, 18 + i * 18 + 26));
-			}
-		}
+//		for (int i = 0; i < 2; ++i) {
+//			for (int j = 0; j < 2; ++j) {
+//				this.addSlot(new Slot(this.craftMatrix, j + i * 2, 116 + j * 18 - 18, 18 + i * 18 + 26));
+//			}
+//		}
 
 		for (int k = 0; k < 4; ++k) {
 			final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];
 			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
-		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 77, 8));
-		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
-		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
-		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
+		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 124, 36));
+		this.addSlot(new RuneSlot(player, runes, 1, 106, 18));
+		this.addSlot(new RuneSlot(player, runes, 2, 142, 18));
+		this.addSlot(new RuneSlot(player, runes, 3, 106, 54));
+		this.addSlot(new RuneSlot(player, runes, 4, 142, 54));
 		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26));
 		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));
 

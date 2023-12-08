@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.rune;
 
 public enum RuneType {
-	CONTRACT(0), RUNE(1, 2, 3), OVERRIDE(0, 1, 2, 3), VASC(4), GOURD(5);
+	CONTRACT(0), RUNE(1, 2, 3,4), OVERRIDE(0, 1, 2, 3), VASC(5), GOURD(6);
 
 	int[] validSlots;
 

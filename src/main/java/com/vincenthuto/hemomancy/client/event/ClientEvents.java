@@ -48,6 +48,7 @@ import com.vincenthuto.hemomancy.client.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.VisceralRecallerRenderer;
 import com.vincenthuto.hemomancy.client.screen.CharmGourdScreen;
 import com.vincenthuto.hemomancy.client.screen.JuiceinatorScreen;
+import com.vincenthuto.hemomancy.client.screen.SporeImplantScreen;
 import com.vincenthuto.hemomancy.client.screen.VialCentrifugeScreen;
 import com.vincenthuto.hemomancy.client.screen.VisceralRecallerScreen;
 import com.vincenthuto.hemomancy.client.screen.living.LivingStaffScreen;
@@ -371,6 +372,7 @@ public class ClientEvents {
 					VisceralRecallerRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
+			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
 			MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);
 			MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);

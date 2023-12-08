@@ -36,8 +36,8 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET };
 	private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD,
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
-	public final static int GOURD_SLOT_INDEX = 5;
-	public final static int CHARM_SLOT_INDEX = 4;
+	public final static int GOURD_SLOT_INDEX = 6;
+	public final static int CHARM_SLOT_INDEX = 5;
 	private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;

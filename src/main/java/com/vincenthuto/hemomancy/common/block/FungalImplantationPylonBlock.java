@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenSporeInv;
 import com.vincenthuto.hemomancy.common.tile.FungalImplantationPylonBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -121,7 +121,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
+				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenSporeInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {

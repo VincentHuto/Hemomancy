@@ -386,7 +386,33 @@ public class ItemInit {
 			() -> new ItemRuneBinder("rune_binder", 18, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
 			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
-//	// Contract Runes
+
+	// Spores
+	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
+
+	public static final RegistryObject<Item> fervent_spores = BASEITEMS.register("fervent_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
+
+	public static final RegistryObject<Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+
+	public static final RegistryObject<Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
+
+	public static final RegistryObject<Item> umbral_spores = BASEITEMS.register("umbral_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
+
+	public static final RegistryObject<Item> frigid_spores = BASEITEMS.register("frigid_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
+
+	public static final RegistryObject<Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+
+	public static final RegistryObject<Item> ferric_spores = BASEITEMS.register("ferric_spores",
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
+
+	// Contract Runes
 
 	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
 			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));

@@ -8,12 +8,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.energy.EnergyStorage;
 
 public class FungalImplantationPylonBlockEntity extends BlockEntity {
 
 	@SuppressWarnings("unused")
 	public static void animTick(Level level, BlockPos pos, BlockState state, FungalImplantationPylonBlockEntity ent) {
+//		ent.getCapability(ForgeCapabilities.ENERGY).ifPresent(e ->{
+//			e.
+//		});
+//		
 		if (level.isClientSide) {
+			
+			
+			
 			int globalPartCount = 128;
 			Vec3[] fibboSphere = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.5);
 			Vec3[] corona = HLParticleUtils.randomSphere(globalPartCount, -level.getGameTime() * 0.01, 0.55);

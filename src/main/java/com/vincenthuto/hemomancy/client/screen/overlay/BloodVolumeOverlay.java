@@ -33,7 +33,7 @@ public class BloodVolumeOverlay {
 				if (bloodCap != null) {
 					if (bloodCap.isActive()) {
 						playerIn.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-							if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
+							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 								double bloodVolume = 0;
 								matrix.pose().pushPose();
 								PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
