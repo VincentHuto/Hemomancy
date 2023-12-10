@@ -24,6 +24,7 @@
   "block.hemomancy.hyphae" : "Hyphae",
   "block.hemomancy.hyphae_block" : "Hyphae Block",
   "block.hemomancy.infected_cap" : "Infected Cap",
+    "block.hemomancy.fruiting_infected_cap" : "Fruiting Infected Cap",
   "block.hemomancy.infected_fungus" : "Infected Fungus",
   "block.hemomancy.infected_stem" : "Infected Stem",
   "block.hemomancy.infested_venous_stone" : "Infested Venous Stone",

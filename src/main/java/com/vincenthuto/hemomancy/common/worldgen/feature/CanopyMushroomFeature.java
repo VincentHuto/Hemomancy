@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldgen.feature;
 
 import com.mojang.serialization.Codec;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -119,13 +120,10 @@ public abstract class CanopyMushroomFeature extends AbstractHugeBloodMushroomFea
 				addFirefly(levelAccessor, blockPos, random);
 		}
 
+		BlockState blockstate = random.nextInt() == 0 ? featureConfiguration.capProvider.getState(random, pos)
+				: BlockInit.venous_stone.get().defaultBlockState();
+
 		this.makeCap(levelAccessor, random, dest, 1, new BlockPos.MutableBlockPos(), featureConfiguration);// Branches
-																											// need caps
-																											// as well,
-																											// height in
-																											// this case
-																											// is set to
-																											// 1
 	}
 
 	@Override // Pretty much a 1:1 vanilla copy of the big brown mushroom cap code
@@ -148,8 +146,9 @@ public abstract class CanopyMushroomFeature extends AbstractHugeBloodMushroomFea
 						boolean xMaxOrZ = xIsMax || zMinMax && x == i - 1;
 						boolean zMinOrX = zIsMin || xMinMax && z == 1 - i;
 						boolean zMaxOrX = zIsMax || xMinMax && z == i - 1;
-						BlockState blockstate = featureConfiguration.capProvider.getState(random, pos);
-
+						BlockState blockstate = random.nextInt() < 1
+								? BlockInit.infected_cap.get().defaultBlockState()
+								: BlockInit.fruiting_infected_cap.get().defaultBlockState();
 						if (blockstate.hasProperty(HugeMushroomBlock.WEST)
 								&& blockstate.hasProperty(HugeMushroomBlock.EAST)
 								&& blockstate.hasProperty(HugeMushroomBlock.NORTH)

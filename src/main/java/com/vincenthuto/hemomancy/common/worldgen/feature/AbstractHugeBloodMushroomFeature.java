@@ -123,8 +123,9 @@ public abstract class AbstractHugeBloodMushroomFeature extends Feature<HugeMushr
 				hugemushroomfeatureconfiguration)) {
 			return false;
 		} else {
+	
 			this.makeCap(worldgenlevel, randomsource, blockpos, i, blockpos$mutableblockpos,
-					hugemushroomfeatureconfiguration);
+					 hugemushroomfeatureconfiguration);
 			this.placeTrunk(worldgenlevel, randomsource, blockpos, hugemushroomfeatureconfiguration, i,
 					blockpos$mutableblockpos);
 			this.placeBulb(pContext, worldgenlevel, randomsource, blockpos, hugemushroomfeatureconfiguration, i,

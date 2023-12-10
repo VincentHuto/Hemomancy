@@ -80,6 +80,7 @@ public class PlacedFeatureInit {
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_SPARSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1),
 								BlockInit.infected_fungus.get().defaultBlockState())));
+		
 		context.register(PLACED_CANOPY_MUSHROOMS_DENSE,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),

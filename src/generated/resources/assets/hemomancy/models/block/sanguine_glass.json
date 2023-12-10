@@ -1,7 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent" : "minecraft:block/cube_all",
   "render_type" : "translucent",
-  "textures": {
-    "all": "hemomancy:block/sanguine_glass"
+  "textures" : {
+    "all" : "hemomancy:block/sanguine_glass"
   }
 }
