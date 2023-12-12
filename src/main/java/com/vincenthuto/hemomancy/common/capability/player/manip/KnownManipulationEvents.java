@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationSer
 import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -116,6 +117,12 @@ public class KnownManipulationEvents {
 			syncAvatars(player, Collections.singletonList(player));
 
 		}
+		
+		entity.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
+				manips.setLastVeinMineStart(BlockPos.ZERO);
+			}
+		});
 	}
 
 	@SubscribeEvent

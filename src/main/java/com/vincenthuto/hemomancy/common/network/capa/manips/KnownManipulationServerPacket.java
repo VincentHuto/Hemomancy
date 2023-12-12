@@ -12,11 +12,46 @@ import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 public class KnownManipulationServerPacket {
 
+	
+	private List<VeinLocation> veinList = new ArrayList<>();
+	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<>();
+
+	private BloodManipulation selected;
+
+	private VeinLocation selectedVein;
+	BlockPos lastVeinMineStart;
+
+	private boolean avatarActive;
+
+	public KnownManipulationServerPacket(IKnownManipulations known) {
+		this.known = known.getKnownManips();
+		this.selected = known.getSelectedManip();
+		this.veinList = known.getVeinList();
+		this.selectedVein = known.getSelectedVein();
+		this.avatarActive = known.isAvatarActive();
+		this.lastVeinMineStart = known.getLastVeinMineStart();
+	}
+
+	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
+			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive,BlockPos lastVeinMineStart) {
+
+		this.known = list;
+		this.selected = selected;
+		this.veinList = veinList;
+		this.selectedVein = selectedVein;
+		this.avatarActive = avatarActive;
+		this.lastVeinMineStart = lastVeinMineStart;
+
+
+	}
+	
+	
 	public static KnownManipulationServerPacket decode(final FriendlyByteBuf buf) {
 		BloodManipulation sel = BloodManipulation.deserialize(buf.readNbt());
 		VeinLocation selvein = VeinLocation.deserializeToLoc(buf.readNbt());
@@ -32,8 +67,8 @@ public class KnownManipulationServerPacket {
 			veinList.add(VeinLocation.deserializeFromBuf(buf));
 		}
 		boolean avatarActive = buf.readBoolean();
-
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive);
+		BlockPos lastveinstart = buf.readBlockPos();
+		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart);
 	}
 	public static void encode(final KnownManipulationServerPacket msg, final FriendlyByteBuf buf) {
 		if (msg.selected != null) {
@@ -57,6 +92,8 @@ public class KnownManipulationServerPacket {
 			}
 		}
 		buf.writeBoolean(msg.avatarActive);
+		buf.writeBlockPos(msg.lastVeinMineStart);
+
 	}
 	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
@@ -68,35 +105,11 @@ public class KnownManipulationServerPacket {
 			known.setVeinList(msg.veinList);
 			known.setSelectedVein(msg.selectedVein);
 			known.setAvatarActive(msg.avatarActive);
+			known.setLastVeinMineStart(msg.lastVeinMineStart);
+
 	
 		});
 		ctx.get().setPacketHandled(true);
 	}
-	private List<VeinLocation> veinList = new ArrayList<>();
-	private LinkedHashMap<BloodManipulation, ManipLevel> known = new LinkedHashMap<>();
 
-	private BloodManipulation selected;
-
-	private VeinLocation selectedVein;
-
-	private boolean avatarActive;
-
-	public KnownManipulationServerPacket(IKnownManipulations known) {
-		this.known = known.getKnownManips();
-		this.selected = known.getSelectedManip();
-		this.veinList = known.getVeinList();
-		this.selectedVein = known.getSelectedVein();
-		this.avatarActive = known.isAvatarActive();
-	}
-
-	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
-			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive) {
-
-		this.known = list;
-		this.selected = selected;
-		this.veinList = veinList;
-		this.selectedVein = selectedVein;
-		this.avatarActive = avatarActive;
-
-	}
 }

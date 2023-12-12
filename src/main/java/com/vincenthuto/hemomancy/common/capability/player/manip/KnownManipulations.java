@@ -12,12 +12,23 @@ import net.minecraft.core.BlockPos;
 
 public class KnownManipulations implements IKnownManipulations {
 
+	BlockPos lastVeinMineStart = BlockPos.ZERO;
 	BloodManipulation selectedManip = BloodManipulation.BLANK;
 	ManipLevel manipLevel = ManipLevel.BLANK;
 	LinkedHashMap<BloodManipulation, ManipLevel> knownManips = new LinkedHashMap<>();
 	List<VeinLocation> veinList = new ArrayList<>();
 	VeinLocation selectedVein = VeinLocation.BLANK;
 	boolean avatarActive = false;
+
+	@Override
+	public BlockPos getLastVeinMineStart() {
+		return lastVeinMineStart;
+	}
+
+	@Override
+	public void setLastVeinMineStart(BlockPos newPos) {
+		this.lastVeinMineStart = newPos;
+	}
 
 	/*
 	 * Used because saving the manip objects means its not as easy as just comparing

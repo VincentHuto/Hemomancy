@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,9 +22,13 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+
 public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
-	//@CapabilityInject(IKnownManipulations.class)
-	public static final Capability<IKnownManipulations> MANIP_CAPA = CapabilityManager.get(new CapabilityToken<IKnownManipulations>() {});
+
+	public static final Capability<IKnownManipulations> MANIP_CAPA = CapabilityManager
+			.get(new CapabilityToken<IKnownManipulations>() {
+			});
+
 	public static LinkedHashMap<BloodManipulation, ManipLevel> getPlayerManips(Player player) {
 		return player.getCapability(MANIP_CAPA).orElseThrow(IllegalStateException::new).getKnownManips();
 	}
@@ -92,11 +97,15 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 					if (parsedNbt.contains("avatarActive")) {
 						instance.setAvatarActive(parsedNbt.getBoolean("avatarActive"));
 					}
+					if (parsedNbt.contains("lastVeinMineStart")) {
+						instance.setLastVeinMineStart(
+								NbtUtils.readBlockPos(parsedNbt.getCompound("lastVeinMineStart")));
+					}
 
 				}
 
 			}
-			
+
 			instance.setKnownManips(map);
 			instance.setVeinList(veinList);
 		}
@@ -112,6 +121,7 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 	public Tag writeNBT(Capability<IKnownManipulations> capability, IKnownManipulations instance, Direction side) {
 		ListTag list = new ListTag();
 		CompoundTag selectedManip = new CompoundTag();
+
 		selectedManip.put("Selected", instance.getSelectedManip().serialize());
 		list.add(selectedManip);
 
@@ -143,6 +153,10 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 		CompoundTag avatarActive = new CompoundTag();
 		avatarActive.putBoolean("avatarActive", instance.isAvatarActive());
 		list.add(avatarActive);
+
+		CompoundTag lastVeinMineStart = new CompoundTag();
+		avatarActive.put("lastVeinMineStart", NbtUtils.writeBlockPos(instance.getLastVeinMineStart()));
+		list.add(lastVeinMineStart);
 
 		return list;
 	}

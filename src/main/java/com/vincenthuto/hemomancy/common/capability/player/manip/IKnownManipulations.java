@@ -11,6 +11,10 @@ import net.minecraft.core.BlockPos;
 
 public interface IKnownManipulations {
 
+	public BlockPos getLastVeinMineStart();
+
+	public void setLastVeinMineStart(BlockPos newPos);
+
 	public void setCapa(IKnownManipulations old);
 
 	public boolean doesListContainName(LinkedHashMap<BloodManipulation, ManipLevel> knownList, BloodManipulation manip);

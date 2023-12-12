@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -14,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketRuneSync;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,12 +27,14 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkDirection;
@@ -95,7 +99,7 @@ public class RuneEntityEventHandler {
 	@SubscribeEvent
 	public static void playerHurt(LivingDeathEvent event) {
 
-		if (event.getEntity()instanceof Player player && !event.getEntity().level().isClientSide) {
+		if (event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide) {
 
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
 				// player events
@@ -136,24 +140,39 @@ public class RuneEntityEventHandler {
 		}
 	}
 
+	@SubscribeEvent
+	public static void onBlockBreak(BreakEvent event) {
+
+		event.getPlayer().getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+			event.getPlayer().getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+
+				if (runes.getStackInSlot(0).getItem() == ItemInit.talaromyces_minus.get()
+						&& event.getPlayer().isShiftKeyDown()) {
+					if (manips.getLastVeinMineStart() == BlockPos.ZERO && event.getState().is(Tags.Blocks.ORES)) {
+						VeinMinerHelper.tryVeinMine(event.getPlayer().getMainHandItem(), event.getPlayer(),
+								event.getPos());
+					}
+				}
+			});
+		});
+	}
+
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
 
 		if (stack.getItem() instanceof BloodGourdItem gourd) {
 			IBloodVolume bloodVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
-		//	System.out.println( gourd +" "+ bloodVolume.getBloodVolume());
-			PacketGourdRuneSync pkt = new PacketGourdRuneSync(player.getId(), slot, stack, bloodVolume.getBloodVolume());
+			PacketGourdRuneSync pkt = new PacketGourdRuneSync(player.getId(), slot, stack,
+					bloodVolume.getBloodVolume());
 			for (Player receiver : receivers) {
 				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
 			}
-		}else {
+		} else {
 			PacketRuneSync pkt = new PacketRuneSync(player.getId(), slot, stack);
 			for (Player receiver : receivers) {
 				PacketHandler.CHANNELRUNES.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
 			}
 		}
-
-
 
 	}
 

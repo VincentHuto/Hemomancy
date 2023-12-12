@@ -30,6 +30,8 @@ import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
+import com.vincenthuto.hemomancy.common.item.rune.functional.RespergillusItem;
+import com.vincenthuto.hemomancy.common.item.rune.functional.TalaromycesMinusItem;
 import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.item.tool.CurvedHornItem;
@@ -387,6 +389,18 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
 			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
 
+	
+	//Functional Spores
+	
+	
+	
+	public static final RegistryObject<Item> respergillus = BASEITEMS.register("respergillus",
+			() -> new RespergillusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+
+	public static final RegistryObject<Item> talaromyces_minus = BASEITEMS.register("talaromyces_minus",
+			() -> new TalaromycesMinusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+
+	
 	// Spores
 	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
 			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
