@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -41,22 +42,28 @@ public class BrazierBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
-	private static final VoxelShape SHAPE_N = Stream.of(
-			Block.box(4, 0, 4, 12, 2, 12),
-			Block.box(5, 2, 5, 11, 4, 11),
-			Block.box(6, 4, 6, 10, 13, 10),
-			Block.box(5, 13, 5, 11, 16, 11),
-			Block.box(6, 15, 6, 10, 17, 10),
-			Block.box(5, 14, 11, 11, 17, 12),
-			Block.box(11, 14, 5, 12, 17, 11),
-			Block.box(5, 14, 4, 11, 17, 5),
-			Block.box(4, 14, 5, 5, 17, 11)
-			).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Stream
+			.of(Block.box(4, 0, 4, 12, 2, 12), Block.box(5, 2, 5, 11, 4, 11), Block.box(6, 4, 6, 10, 13, 10),
+					Block.box(5, 13, 5, 11, 16, 11), Block.box(6, 15, 6, 10, 17, 10), Block.box(5, 14, 11, 11, 17, 12),
+					Block.box(11, 14, 5, 12, 17, 11), Block.box(5, 14, 4, 11, 17, 5), Block.box(4, 14, 5, 5, 17, 11))
+			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
 	public BrazierBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(LIT, false));
 
+	}
+
+	@Override
+	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
+		super.animateTick(pState, pLevel, pPos, pRandom);
+		double d0 = (double) pPos.getX() + 0.5D;
+		double d1 = (double) pPos.getY() +1.2D;
+		double d2 = (double) pPos.getZ() + 0.5D;
+		if (pState.getValue(LIT)) {
+			pLevel.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+
+		}
 	}
 
 	@Override

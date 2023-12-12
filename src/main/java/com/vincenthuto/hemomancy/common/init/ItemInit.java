@@ -30,6 +30,7 @@ import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
+import com.vincenthuto.hemomancy.common.item.rune.functional.NoctiluminaDevoransItem;
 import com.vincenthuto.hemomancy.common.item.rune.functional.RespergillusItem;
 import com.vincenthuto.hemomancy.common.item.rune.functional.TalaromycesMinusItem;
 import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
@@ -398,7 +399,10 @@ public class ItemInit {
 			() -> new RespergillusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 
 	public static final RegistryObject<Item> talaromyces_minus = BASEITEMS.register("talaromyces_minus",
-			() -> new TalaromycesMinusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+			() -> new TalaromycesMinusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
+
+	public static final RegistryObject<Item> noctilumina_devorans = BASEITEMS.register("noctilumina_devorans",
+			() -> new NoctiluminaDevoransItem(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
 
 	
 	// Spores

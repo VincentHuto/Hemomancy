@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
 import com.vincenthuto.hemomancy.common.block.FungalImplantationPylonBlock;
 import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
 import com.vincenthuto.hemomancy.common.block.HyphaeBlock;
+import com.vincenthuto.hemomancy.common.block.InfectedCapBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
 import com.vincenthuto.hemomancy.common.block.JuiceinatorBlock;
 import com.vincenthuto.hemomancy.common.block.MorphlingIncubatorBlock;
@@ -215,10 +216,10 @@ public class BlockInit {
 	
 	
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
-			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
+			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 	
 	public static final RegistryObject<Block> fruiting_infected_cap = BASEBLOCKS.register("fruiting_infected_cap",
-			() -> new ErythrocyticMyceliumBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
+			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 	
 	
 	
@@ -319,7 +320,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_stinkhorn_fungus.get(), RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
