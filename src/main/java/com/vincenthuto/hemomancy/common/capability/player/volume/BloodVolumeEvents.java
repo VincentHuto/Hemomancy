@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
@@ -41,6 +44,18 @@ public class BloodVolumeEvents {
 		if (event.getObject() instanceof IBloodTile) {
 			event.addCapability(Hemomancy.rloc("bloodvolume"), new BloodVolumeProvider());
 		}
+	}
+	
+
+	@SubscribeEvent
+	public static void playerTick(TickEvent.PlayerTickEvent event) {
+		Player player = event.player;
+			
+			IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+					.orElseThrow(NullPointerException::new);
+		//	volume.fill(0.25f);
+		//System.out.println(volume.getBloodVolume());
+			
 	}
 
 	@SubscribeEvent

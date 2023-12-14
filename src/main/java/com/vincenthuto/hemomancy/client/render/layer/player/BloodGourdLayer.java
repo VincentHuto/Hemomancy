@@ -48,7 +48,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-				if (inv.getStackInSlot(5).getItem()instanceof BloodGourdItem gourd) {
+				if (inv.getStackInSlot(6).getItem()instanceof BloodGourdItem gourd) {
 					this.translateToBody(matrixStack);
 					ResourceLocation text = gourd == ItemInit.blood_gourd_white.get() ? white
 							: gourd == ItemInit.blood_gourd_red.get() ? red

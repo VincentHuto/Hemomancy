@@ -82,20 +82,19 @@ public class BloodGourdItem extends Item implements IRune {
 					IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume.getBloodVolume() < 5000 && bloodVolume.getBloodVolume() > 0) {
-						bloodVolume.drain(0.5f);
-						playerVolume.fill(0.5f);
-
+						bloodVolume.drain(this.tier.getTierLevel()/2f);
+						playerVolume.fill(this.tier.getTierLevel()/2f);
 					}
 
 				} else {
-					// Refill from player
-					if (bloodVolume.getBloodVolume() < tier.getMaxVolume() / 10) {
-						RandomSource rand = worldIn.random;
-						if (rand.nextInt(200) == 20) {
-							player.hurt(player.damageSources().generic(), 0.5f);
-							bloodVolume.fill(50f);
-						}
-					}
+//					// Refill from player
+//					if (bloodVolume.getBloodVolume() < tier.getMaxVolume() / 10) {
+//						RandomSource rand = worldIn.random;
+//						if (rand.nextInt(200) == 20) {
+//							player.hurt(player.damageSources().generic(), 0.5f);
+//							bloodVolume.fill(50f);
+//						}
+//					}
 				}
 			}
 

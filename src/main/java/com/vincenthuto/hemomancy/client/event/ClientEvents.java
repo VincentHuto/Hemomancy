@@ -180,10 +180,11 @@ public class ClientEvents {
 			boolean useContKeyIsDown = useContManip.isDown();
 
 			if (vascCharmKeyIsDown && !menuKey) {
+
 				while (openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
 						mc.player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-							if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
+							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 								mc.setScreen(new RadialChooseManipScreen(inv));
 							}
 						});

@@ -28,7 +28,7 @@ public class VascCharmLayer<T extends LivingEntity, M extends HumanoidModel<T>> 
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-				if (inv.getStackInSlot(4).getItem() instanceof VasculariumCharmItem charm) {
+				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 					matrixStack.pushPose();
 					matrixStack.mulPose(Vector3.XN.rotationDegrees(180f).toMoj());
 					matrixStack.scale(0.25f, 0.25f, 0.25f);
