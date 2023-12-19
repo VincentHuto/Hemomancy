@@ -168,37 +168,41 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 
 	public static final RegistryObject<Block> hyphae = CROSSBLOCKS.register("hyphae",
-			() -> new HyphaeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).replaceable()
-					.noCollission().instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XYZ)
-					.ignitedByLava().pushReaction(PushReaction.DESTROY)));
+			() -> new HyphaeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).replaceable().noCollission()
+					.instabreak().sound(SoundType.GRASS).offsetType(BlockBehaviour.OffsetType.XYZ).ignitedByLava()
+					.pushReaction(PushReaction.DESTROY)));
 
 	public static final RegistryObject<Block> bleeding_heart = CROSSBLOCKS.register("bleeding_heart",
 			() -> new BleedingHeartBlock(MobEffects.ABSORPTION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final RegistryObject<Block> potted_bleeding_heart = POTTEDBLOCKS.register("potted_bleeding_heart",
-			() -> new FlowerPotBlock(null, BlockInit.bleeding_heart, BlockBehaviour.Properties.of()));
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.bleeding_heart,
+					BlockBehaviour.Properties.of()));
 
 	public static final RegistryObject<Block> infected_fungus = CROSSBLOCKS.register("infected_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
+	public static final RegistryObject<Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.infected_fungus,
+					BlockBehaviour.Properties.of().noCollission()));
+
 	public static final RegistryObject<Block> puffball_fungus = MODELEDBLOCKS.register("puffball_fungus",
 			() -> new PuffballFungusBlock(MobEffects.SATURATION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
-	
-	
+
+	public static final RegistryObject<Block> potted_puffball_fungus = POTTEDBLOCKS.register("potted_puffball_fungus",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.puffball_fungus,
+					BlockBehaviour.Properties.of().noCollission()));
+
 	public static final RegistryObject<Block> stinkhorn_fungus = CROSSBLOCKS.register("stinkhorn_fungus",
 			() -> new InfectedFungusBlock(MobEffects.CONFUSION, 12,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
-	
-
-	public static final RegistryObject<Block> potted_infected_fungus = POTTEDBLOCKS.register("potted_infected_fungus",
-			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
-
 	public static final RegistryObject<Block> potted_stinkhorn_fungus = POTTEDBLOCKS.register("potted_stinkhorn_fungus",
-			() -> new FlowerPotBlock(null, BlockInit.infected_fungus, BlockBehaviour.Properties.of().noCollission()));
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.stinkhorn_fungus,
+					BlockBehaviour.Properties.of().noCollission()));
 
 	public static final RegistryObject<Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
 			() -> new Block(
@@ -210,20 +214,16 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> infected_stem = BASEBLOCKS.register("infected_stem",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
-	
+
 	public static final RegistryObject<Block> hyphae_block = BASEBLOCKS.register("hyphae_block",
 			() -> new Block(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
-	
-	
+
 	public static final RegistryObject<Block> infected_cap = BASEBLOCKS.register("infected_cap",
 			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
-	
+
 	public static final RegistryObject<Block> fruiting_infected_cap = BASEBLOCKS.register("fruiting_infected_cap",
 			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
-	
-	
-	
-	
+
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
 			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
 
@@ -253,11 +253,11 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
 			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
-	
-	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS.register("fungal_implantation_pylon",
-			() -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
-	
-	
+
+	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS
+			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(
+					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
 			() -> new DendriticDistributorBlock(
 					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
@@ -299,10 +299,9 @@ public class BlockInit {
 
 	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream
-				.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(), STAIRBLOCKS.getEntries(),
-						COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(), MODELEDBLOCKS.getEntries(),
-						SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries(), POTTEDBLOCKS.getEntries())
+		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
+				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
+				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
 				.flatMap(Collection::stream);
 
 		return combinedStream;
@@ -320,6 +319,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_stinkhorn_fungus.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_puffball_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
@@ -339,6 +339,8 @@ public class BlockInit {
 					BlockInit.potted_infected_fungus);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),
 					BlockInit.potted_stinkhorn_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(),
+					BlockInit.potted_puffball_fungus);
 		});
 	}
 

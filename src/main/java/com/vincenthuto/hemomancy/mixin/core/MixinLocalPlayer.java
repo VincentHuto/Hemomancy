@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 @Mixin(LocalPlayer.class)
 public class MixinLocalPlayer {
 
+	@SuppressWarnings("resource")
 	@Inject(at = @At(value = "INVOKE_ASSIGN", target = "net/minecraft/client/player/LocalPlayer.getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"), method = "aiStep")
 	public void hemomancy$checkFlight(CallbackInfo cb) {
 		LocalPlayer playerEntity = Minecraft.getInstance().player;

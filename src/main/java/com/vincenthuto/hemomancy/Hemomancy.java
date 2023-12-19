@@ -43,6 +43,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -175,6 +177,11 @@ public class Hemomancy {
 		event.enqueueWork(() -> {
 			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
 					BloodStructurePageTemplate.SERIALIZER);
+			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(), BlockInit.potted_bleeding_heart);
+			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(), BlockInit.potted_stinkhorn_fungus);
+			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(), BlockInit.potted_infected_fungus);
+			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(), BlockInit.potted_puffball_fungus);
+
 		});
 
 		HemoEntityPredicates.init();
