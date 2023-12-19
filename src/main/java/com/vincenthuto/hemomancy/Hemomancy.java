@@ -12,8 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.data.DataGeneration;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
-import com.vincenthuto.hemomancy.common.init.AttributeApi;
-import com.vincenthuto.hemomancy.common.init.AttributeImpl;
+import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.BaseFeatureInit;
 import com.vincenthuto.hemomancy.common.init.BiomeInit;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -37,11 +36,6 @@ import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -52,8 +46,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -118,7 +110,7 @@ public class Hemomancy {
 		SoundInit.SOUNDS.register(modEventBus);
 		BlockEntityInit.TILES.register(modEventBus);
 		ContainerInit.CONTAINERS.register(modEventBus);
-		AttributeImpl.ATTRIBUTES.register(modEventBus);
+		AttributeInit.ATTRIBUTES.register(modEventBus);
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
@@ -139,9 +131,6 @@ public class Hemomancy {
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::buildContents);
 		modEventBus.addListener(DataGeneration::generate);
-
-		modEventBus.addListener(this::attributeSetup);
-		MinecraftForge.EVENT_BUS.addListener(this::playerTick);
 
 		// modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST,
 		// Hemomancy::registerFeature);
@@ -174,27 +163,7 @@ public class Hemomancy {
 		}
 	}
 
-	private void attributeSetup(final EntityAttributeModificationEvent evt) {
 
-		for (EntityType<? extends LivingEntity> type : evt.getTypes()) {
-			evt.add(type, AttributeApi.getInstance().getFlightAttribute());
-		}
-	}
-
-	private void playerTick(final PlayerTickEvent evt) {
-		Player player = evt.player;
-		AttributeInstance attributeInstance = player.getAttribute(AttributeApi.getInstance().getFlightAttribute());
-
-		if (attributeInstance != null) {
-			AttributeModifier elytraModifier = AttributeApi.getInstance().getElytraModifier();
-			attributeInstance.removeModifier(elytraModifier);
-			ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
-
-			if (stack.canElytraFly(player) && !attributeInstance.hasModifier(elytraModifier)) {
-				attributeInstance.addTransientModifier(elytraModifier);
-			}
-		}
-	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 //		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);

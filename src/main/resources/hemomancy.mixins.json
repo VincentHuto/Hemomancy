@@ -5,7 +5,6 @@
   "refmap": "hemomancy.refmap.json",
   "mixins": [
     "MixinLivingEntity"
-
   ],
   "client": [
     "MixinLocalPlayer"

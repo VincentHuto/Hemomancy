@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.runes;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.init.AttributeApi;
+import com.vincenthuto.hemomancy.common.init.AttributeInit;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,7 +27,7 @@ public final class CPacketFlight {
 	        sender.stopFallFlying();
 
 	        if (!sender.onGround() && !sender.isFallFlying() && !sender.isInWater() && !sender
-	            .hasEffect(MobEffects.LEVITATION) && AttributeApi.getInstance().canFly(sender)) {
+	            .hasEffect(MobEffects.LEVITATION) && AttributeInit.canFly(sender)) {
 	          sender.startFallFlying();
 	        }
 	      }

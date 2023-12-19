@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.init.AttributeApi;
+import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -24,7 +24,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -139,47 +141,28 @@ public class RuneEntityEventHandler {
 	public static void onGlideTick(TickEvent.PlayerTickEvent event) {
 		if (event.player.hasEffect(EffectInit.fungal_elytra.get())) {
 			AttributeInstance attributeInstance = event.player
-					.getAttribute(AttributeApi.getInstance().getFlightAttribute());
+					.getAttribute(AttributeInit.getFlightAttribute());
 			if (attributeInstance != null
-					&& !attributeInstance.hasModifier(AttributeApi.getInstance().getElytraModifier()))
-				attributeInstance.addTransientModifier(AttributeApi.getInstance().getElytraModifier());
+					&& !attributeInstance.hasModifier(AttributeInit.getElytraModifier()))
+				attributeInstance.addTransientModifier(AttributeInit.getElytraModifier());
 		}
 	}
+	
 
 	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
 		player.getCapability(RunesCapabilities.RUNES).ifPresent(IRunesItemHandler::tick);
-//		Level level = player.level();
-//
-//		if (player.hasEffect(EffectInit.fungal_elytra.get())) {
-//			// Creation of particles
-//			if (player.getAbilities().flying) {
-//				if (level.isClientSide) {
-//					Vec3 look = player.getForward().cross(new Vec3(0.0D, 1.0D, 0.0D));
-//					float offset = (float) (Math.random() * 0.2D);
-//					look = look.scale(offset);
-//					level.addParticle(ParticleTypes.MYCELIUM, player.getX() + look.x, player.getY(),
-//							player.getZ() + look.z, 0.0D, -0.05000000074505806D, 0.0D);
-//					level.addParticle(ParticleTypes.MYCELIUM, player.getX() - look.x, player.getY(),
-//							player.getZ() - look.z, 0.0D, -0.05000000074505806D, 0.0D);
-//				}
-//			}
-//
-//			// Actual flying
-//
-//			Hemomancy.instance.proxy.setFlightEnabled(player, true);
-//			if (!player.isCreative() && !player.isSpectator()) {
-//				int amplifier = 1;
-//				Hemomancy.instance.proxy.setFlySpeed(player, amplifier * 5 / 100f);
-//				if (player.getAbilities().flying) {
-//					player.setSprinting(false);
-//				}
-//			} else {
-//				Hemomancy.instance.proxy.setFlySpeed(player, 0.05F);
-//			}
-//		}
+		AttributeInstance attributeInstance = player.getAttribute(AttributeInit.getFlightAttribute());
+		if (attributeInstance != null) {
+			AttributeModifier elytraModifier = AttributeInit.getElytraModifier();
+			attributeInstance.removeModifier(elytraModifier);
+			ItemStack stack = player.getItemBySlot(EquipmentSlot.CHEST);
 
+			if (stack.canElytraFly(player) && !attributeInstance.hasModifier(elytraModifier)) {
+				attributeInstance.addTransientModifier(elytraModifier);
+			}
+		}
 	}
 
 	@SubscribeEvent

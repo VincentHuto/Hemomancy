@@ -237,8 +237,7 @@ public class PacketHandler {
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
 
-	public static void sendFlightC2S() {
-		System.out.println("fdefji");
+	public static void sendClientElytraPacket() {
 		CHANNELRUNES.send(PacketDistributor.SERVER.noArg(), new CPacketFlight());
 	}
 
