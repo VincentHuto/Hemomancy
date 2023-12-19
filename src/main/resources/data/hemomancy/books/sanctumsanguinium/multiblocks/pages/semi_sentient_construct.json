@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "S.S.C",
+  "subtitle": "A Thinking Ball of Ick",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:semi_sentient_construct",
+  "structureloc": "hemomancy:blood_structure/semi_sentient_construct"
+}

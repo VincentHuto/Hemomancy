@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Morphling Incubator",
+  "subtitle": "Grow my children!",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:morphling_incubator",
+  "structureloc": "hemomancy:blood_structure/morphling_incubator"
+}

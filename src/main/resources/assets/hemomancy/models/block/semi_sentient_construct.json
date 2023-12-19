@@ -1,0 +1,157 @@
+{
+  "credit" : "Made with Blockbench",
+  "parent" : "block/block",
+  "render_type" : "translucent",
+  "textures" : {
+    "0" : "hemomancy:block/conscious_mass",
+    "2" : "hemomancy:block/hematic_iron_block",
+    "5" : "hemomancy:block/venous_stone",
+    "6" : "hemomancy:block/jar_side",
+    "7" : "hemomancy:block/jar_bottom_side",
+    "particle" : "hemomancy:block/conscious_mass"
+  },
+  "elements" : [ {
+    "from" : [ 2.2, 0.3, 2.2 ],
+    "to" : [ 13.8, 6.2, 13.8 ],
+    "rotation" : {
+      "angle" : 0,
+      "axis" : "y",
+      "origin" : [ 10, 8, 10 ]
+    },
+    "faces" : {
+      "north" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      },
+      "east" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      },
+      "south" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      },
+      "west" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      },
+      "up" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      },
+      "down" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#5"
+      }
+    }
+  }, {
+    "from" : [ 4, 6, 4 ],
+    "to" : [ 12, 12, 12 ],
+    "rotation" : {
+      "angle" : 0,
+      "axis" : "y",
+      "origin" : [ 10, 14, 10 ]
+    },
+    "faces" : {
+      "north" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      },
+      "east" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      },
+      "south" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      },
+      "west" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      },
+      "up" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      },
+      "down" : {
+        "uv" : [ 3, 6, 16, 12 ],
+        "texture" : "#0"
+      }
+    }
+  }, {
+    "from" : [ 2.1, 5.8, 2.1 ],
+    "to" : [ 13.9, 15.8, 13.9 ],
+    "rotation" : {
+      "angle" : 0,
+      "axis" : "y",
+      "origin" : [ 10, 21.8, 10 ]
+    },
+    "faces" : {
+      "north" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "texture" : "#6"
+      },
+      "east" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "texture" : "#6"
+      },
+      "south" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "texture" : "#6"
+      },
+      "west" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "texture" : "#6"
+      },
+      "up" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "texture" : "#6"
+      }
+    }
+  }, {
+    "from" : [ 1.7, 0, 1.7 ],
+    "to" : [ 14.3, 5.8, 14.3 ],
+    "rotation" : {
+      "angle" : 0,
+      "axis" : "y",
+      "origin" : [ 10, 8, 10 ]
+    },
+    "faces" : {
+      "north" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#7"
+      },
+      "east" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#7"
+      },
+      "south" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#7"
+      },
+      "west" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#7"
+      },
+      "up" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#7"
+      },
+      "down" : {
+        "uv" : [ 0, 0, 16, 16 ],
+        "rotation" : 90,
+        "texture" : "#2"
+      }
+    }
+  } ],
+  "groups" : [ {
+    "name" : "VoxelShapes",
+    "origin" : [ 10, 21.8, 10 ],
+    "children" : [ 0, 1, 2, 3 ]
+  } ]
+}

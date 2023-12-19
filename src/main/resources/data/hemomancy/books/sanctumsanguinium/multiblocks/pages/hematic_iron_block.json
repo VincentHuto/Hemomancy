@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hematic Iron",
+  "subtitle": "Blood and Iron",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:hematic_iron_block",
+  "structureloc": "hemomancy:blood_structure/hematic_iron_block"
+}

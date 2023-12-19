@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "item": "minecraft:stick"
+    },
+    "R": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "pattern": [
+    "R",
+    "R",
+    "N"
+  ],
+  "result": {
+    "item": "hemomancy:hematic_iron_sword"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:book",
+  "coverLoc" : "hemomancy:textures/gui/guide/title.png",
+  "overlayLoc" : "hemomancy:textures/gui/guide/hemo_overlay.png",
+  "title": "Hemomancy",
+  "subtitle": "Sanctum Sanguinium+",
+  "text": "REEE",
+  "icon": "hemomancy:sanguine_formation"
+}

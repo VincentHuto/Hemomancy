@@ -1,0 +1,125 @@
+{
+  "multipart" : [ {
+    "when" : {
+      "up" : "false",
+      "west" : "false",
+      "east" : "false",
+      "south" : "false",
+      "north" : "false"
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_floor0"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_floor1"
+    } ]
+  }, {
+    "when" : {
+      "OR" : [ {
+        "north" : "true"
+      }, {
+        "up" : "false",
+        "west" : "false",
+        "east" : "false",
+        "south" : "false",
+        "north" : "false"
+      } ]
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_side0"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side1"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt0"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt1"
+    } ]
+  }, {
+    "when" : {
+      "OR" : [ {
+        "east" : "true"
+      }, {
+        "up" : "false",
+        "west" : "false",
+        "east" : "false",
+        "south" : "false",
+        "north" : "false"
+      } ]
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_side0",
+      "y" : 90
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side1",
+      "y" : 90
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt0",
+      "y" : 90
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt1",
+      "y" : 90
+    } ]
+  }, {
+    "when" : {
+      "OR" : [ {
+        "south" : "true"
+      }, {
+        "up" : "false",
+        "west" : "false",
+        "east" : "false",
+        "south" : "false",
+        "north" : "false"
+      } ]
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_side0",
+      "y" : 180
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side1",
+      "y" : 180
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt0",
+      "y" : 180
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt1",
+      "y" : 180
+    } ]
+  }, {
+    "when" : {
+      "OR" : [ {
+        "west" : "true"
+      }, {
+        "up" : "false",
+        "west" : "false",
+        "east" : "false",
+        "south" : "false",
+        "north" : "false"
+      } ]
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_side0",
+      "y" : 270
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side1",
+      "y" : 270
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt0",
+      "y" : 270
+    }, {
+      "model" : "hemomancy:block/crimson_flames_side_alt1",
+      "y" : 270
+    } ]
+  }, {
+    "when" : {
+      "up" : "true"
+    },
+    "apply" : [ {
+      "model" : "hemomancy:block/crimson_flames_up0"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_up1"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_up_alt0"
+    }, {
+      "model" : "hemomancy:block/crimson_flames_up_alt1"
+    } ]
+  } ]
+}

@@ -1,0 +1,24 @@
+{
+  "variants" : {
+    "snowy=false" : [ {
+      "model" : "hemomancy:block/infected_cap",
+      "uvlock" : false
+    }, {
+      "model" : "hemomancy:block/infected_cap",
+      "y" : 90,
+      "uvlock" : false
+    }, {
+      "model" : "hemomancy:block/infected_cap",
+      "y" : 180,
+      "uvlock" : false
+    }, {
+      "model" : "hemomancy:block/infected_cap",
+      "y" : 270,
+      "uvlock" : false
+    } ],
+    "snowy=true" : {
+      "model" : "hemomancy:block/erythrocytic_dirt_block_snow",
+        "uvlock": false
+    }
+  }
+}

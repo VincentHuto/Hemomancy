@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "hemomancy:block/polished_venous_stone_brick_slab"
+    },
+    "type=double": {
+      "model": "hemomancy:block/polished_venous_stone_bricks"
+    },
+    "type=top": {
+      "model": "hemomancy:block/polished_venous_stone_brick_slab_top"
+    }
+  }
+}

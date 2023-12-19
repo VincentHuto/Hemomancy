@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.6,0,0",
+  "title": "Manipulations",
+  "subtitle": "Hemomancy",
+  "icon": "hemomancy:blood_stained_stone"
+}

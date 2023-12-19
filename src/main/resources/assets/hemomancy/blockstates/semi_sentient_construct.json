@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/semi_sentient_construct"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/semi_sentient_construct",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/semi_sentient_construct",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/semi_sentient_construct",
+			"y": 90
+		}
+	}
+}

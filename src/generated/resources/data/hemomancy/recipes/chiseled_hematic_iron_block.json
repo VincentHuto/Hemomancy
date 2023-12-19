@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": {
+      "item": "hemomancy:hematic_iron_block"
+    }
+  },
+  "pattern": [
+    "TT",
+    "TT"
+  ],
+  "result": {
+    "count": 4,
+    "item": "hemomancy:chiseled_hematic_iron_block"
+  },
+  "show_notification": true
+}

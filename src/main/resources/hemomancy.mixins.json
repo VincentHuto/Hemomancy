@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.vincenthuto.hemomancy.mixin.core",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "hemomancy.refmap.json",
+  "mixins": [
+    "MixinLivingEntity"
+
+  ],
+  "client": [
+    "MixinLocalPlayer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

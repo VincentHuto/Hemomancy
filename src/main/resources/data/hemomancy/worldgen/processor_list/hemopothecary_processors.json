@@ -1,0 +1,7 @@
+{
+  "processors": [
+    {
+      "processor_type": "hemomancy:hemopothecary_processor"
+    }
+  ]
+}

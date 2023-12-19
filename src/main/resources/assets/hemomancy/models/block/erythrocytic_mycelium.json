@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "hemomancy:block/erythrocytic_dirt",
+    "side": "hemomancy:block/erythrocytic_mycelium_side",
+    "top": "hemomancy:block/erythrocytic_mycelium_top"
+  }
+}
