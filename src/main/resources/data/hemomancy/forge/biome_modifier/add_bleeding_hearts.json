@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#hemomancy:bleeding_heart_spawnlist",
+  "features": "hemomancy:bleeding_hearts",
+  "step": "vegetal_decoration"
+}

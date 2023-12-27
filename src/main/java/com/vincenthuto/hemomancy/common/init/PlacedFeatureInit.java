@@ -31,12 +31,15 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> SMALL_INFECTED_FUNGUS = createKey("small_infected_fungus");
 	public static final ResourceKey<PlacedFeature> PATCH_HYPHAE = createKey("patch_hyphae");
 	public static final ResourceKey<PlacedFeature> PLACED_MYCELIUM_BLOB = createKey("mycelium_blob");
-	public static final ResourceKey<PlacedFeature> PLACED_INFESTED_VENOUS_STONE_BLOB = createKey("infested_venous_stone_blob");
+	public static final ResourceKey<PlacedFeature> PLACED_INFESTED_VENOUS_STONE_BLOB = createKey(
+			"infested_venous_stone_blob");
 
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_SPARSE = createKey(
 			"mushroom/canopy_mushrooms_sparse");
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_DENSE = createKey(
 			"mushroom/canopy_mushrooms_dense");
+
+	public static final ResourceKey<PlacedFeature> BLEEDING_HEARTS = createKey("bleeding_hearts");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
@@ -51,12 +54,19 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.SMALL_INFECTED_FUNGUS);
 
+		final Holder<ConfiguredFeature<?, ?>> BLEEDING_HEARTS = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.BLEEDING_HEARTS);
+
+		register(context, PlacedFeatureInit.BLEEDING_HEARTS, BLEEDING_HEARTS, RarityFilter.onAverageOnceEvery(7),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
 		context.register(PLACED_MYCELIUM_BLOB,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.MYCELIUM_BLOB),
 						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(3),
 								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
 								.build()));
-		
+
 		context.register(PLACED_INFESTED_VENOUS_STONE_BLOB,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.INFESTED_VENOUS_STONE_BLOB),
 						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(3),
@@ -80,7 +90,7 @@ public class PlacedFeatureInit {
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_SPARSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(3, 0.1F, 1),
 								BlockInit.infected_fungus.get().defaultBlockState())));
-		
+
 		context.register(PLACED_CANOPY_MUSHROOMS_DENSE,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),

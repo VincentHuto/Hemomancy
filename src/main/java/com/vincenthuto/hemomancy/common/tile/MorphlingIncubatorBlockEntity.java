@@ -109,10 +109,8 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 	}
 
 	private void outputResults() {
-		System.out.println("Done");
 		System.out.println(spinningProgress);
 		if (spinningProgress <= 1) {
-			System.out.println("");
 			for (int i = 1; i < 5; i++) {
 				System.out.println(i);
 				inventory.set(i, ItemStack.EMPTY);

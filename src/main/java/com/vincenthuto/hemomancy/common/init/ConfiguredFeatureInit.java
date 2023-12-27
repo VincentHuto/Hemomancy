@@ -36,6 +36,9 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = FeatureUtils
 			.createKey("small_infected_fungus");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BLEEDING_HEARTS = FeatureUtils
+			.createKey("bleeding_hearts");
+
 	public static final ResourceKey<ConfiguredFeature<?, ?>> PATCH_HYPHAE = createKey("patch_hyphae");
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BROWN_CANOPY_MUSHROOM_TREE = createKey(
@@ -50,7 +53,8 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> CANOPY_MUSHROOMS_DENSE = createKey(
 			"mushroom/canopy_mushrooms_dense");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> MYCELIUM_BLOB = createKey("mycelium_blob");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> INFESTED_VENOUS_STONE_BLOB = createKey("infested_venous_stone_blob");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> INFESTED_VENOUS_STONE_BLOB = createKey(
+			"infested_venous_stone_blob");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
@@ -64,7 +68,7 @@ public class ConfiguredFeatureInit {
 						new DiskConfiguration(RuleBasedBlockStateProvider.simple(Blocks.MYCELIUM),
 								BlockPredicate.matchesBlocks(BlockInit.erythrocytic_mycelium.get()),
 								UniformInt.of(4, 6), 3)));
-		
+
 		context.register(INFESTED_VENOUS_STONE_BLOB,
 				new ConfiguredFeature<>(BaseFeatureInit.INFESTED_VENOUS_STONE_BLOB,
 						new DiskConfiguration(RuleBasedBlockStateProvider.simple(BlockInit.infested_venous_stone.get()),
@@ -152,6 +156,11 @@ public class ConfiguredFeatureInit {
 								FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK,
 										new SimpleBlockConfiguration(
 												BlockStateProvider.simple(BlockInit.smouldering_ash_trail.get())))))));
+
+		register(context, SMALL_INFECTED_FUNGUS, Feature.SIMPLE_RANDOM_SELECTOR,
+				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+								BlockStateProvider.simple(BlockInit.bleeding_heart.get())))))));
 
 	}
 

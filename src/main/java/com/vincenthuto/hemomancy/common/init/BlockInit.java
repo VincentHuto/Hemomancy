@@ -256,58 +256,69 @@ public class BlockInit {
 
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
-			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new BlockHumaneIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.STONE)));
 	public static final RegistryObject<Block> serpentine_idol = MODELEDBLOCKS.register("serpentine_idol",
-			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new BlockSerpentineIdol(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	// Tiles
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
-			() -> new BlockChiselStation(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new BlockChiselStation(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
-			() -> new MorphlingIncubatorBlock(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new MorphlingIncubatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> semi_sentient_construct = MODELEDBLOCKS
-			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			.register("semi_sentient_construct", () -> new SemiSentientConstructBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> unstained_podium = MODELEDBLOCKS.register("unstained_podium",
-			() -> new UnstainedPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new UnstainedPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
-			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
-			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS
-			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> dendritic_distributor = MODELEDBLOCKS.register("dendritic_distributor",
-			() -> new DendriticDistributorBlock(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new DendriticDistributorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> mortal_display = MODELEDBLOCKS.register("mortal_display",
-			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
-			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlock(
-					BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlock(BlockBehaviour.Properties.of()
+					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
-			() -> new EarthenVeinBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.STONE)));
+			() -> new EarthenVeinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.STONE)));
 	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
-			() -> new BrazierBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.METAL)));
+			() -> new BrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
 	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
-			() -> new JuiceinatorBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.METAL)));
+			() -> new JuiceinatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
-			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().strength(50f, 1500f).sound(SoundType.METAL)));
+			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> blood_crystal = MODELEDBLOCKS.register("blood_crystal",
-			() -> new BloodCrystalBlock(
-					BlockBehaviour.Properties.of().noOcclusion().strength(50f, 1500f).sound(SoundType.METAL)));
+			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
@@ -326,10 +337,9 @@ public class BlockInit {
 
 	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream
-				.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(), STAIRBLOCKS.getEntries(),
-						COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(), MODELEDBLOCKS.getEntries(),
-						SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
+		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
+				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
+				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
 				.flatMap(Collection::stream);
 
 		return combinedStream;
