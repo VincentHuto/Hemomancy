@@ -277,6 +277,8 @@ public class ItemInit {
 			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
+	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_gourd_white = SPECIALITEMS.register("blood_gourd_white",
 			() -> new BloodGourdItem(new Item.Properties().stacksTo(1), EnumBloodGourdTiers.SIMPLE));
 	public static final RegistryObject<Item> blood_gourd_red = SPECIALITEMS.register("blood_gourd_red",
