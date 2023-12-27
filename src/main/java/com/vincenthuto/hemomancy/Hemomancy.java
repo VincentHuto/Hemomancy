@@ -32,6 +32,7 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 
 import net.minecraft.core.registries.Registries;
@@ -84,6 +85,7 @@ public class Hemomancy {
 		instance = this;
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+	    HemoConfig.register();
 		VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
 		VillagerInit.PROFESSIONS.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);

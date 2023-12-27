@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeClientPacket;
+import com.vincenthuto.hemomancy.config.HemoClientConfig;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -34,6 +35,8 @@ public class BloodVolumeOverlay {
 					if (bloodCap.isActive()) {
 						playerIn.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
 							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
+								var w = width;
+								var h = height;
 								double bloodVolume = 0;
 								matrix.pose().pushPose();
 								PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
@@ -44,17 +47,40 @@ public class BloodVolumeOverlay {
 
 								float textureUShift = (world.getGameTime() * 0.25f % 256);
 								float heightShift = (float) Math.cos(world.getGameTime() * 0.2) * 2;
+								var positionLoc = HemoClientConfig.HUD_LOCATION.get();
+								var posX = 0;
+								var posY = 0;
 
-//
-//								matrix.pushPose();
-//								RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
-//								RenderSystem.setShaderTexture(0, memory_border);
-//								ScreenUtils.drawTexturedModalRect(matrix, 103, 45, 0, 0,256,144, 10);
-//								matrix.popPose();
+								switch (positionLoc) {
+								case 0:
+									posX = 0;
+									posY = 0;
+									break;
+								case 1:
+									if (playerIn.getActiveEffects().isEmpty()) {
+										posX = w - 16;
+										posY = 0;
+									} else {
+										posX = w - 16;
+										posY = 32;
+									}
+									break;
+								case 2:
+									posX = 0;
+									posY = h - 120;
+									break;
+								case 3:
+									posX = w - 16;
+									posY = h - 120;
+									break;
+								default:
+									posX = 0;
+									posY = 0;
+								}
 
 								// Fill
 								matrix.pose().pushPose();
+								matrix.pose().translate(posX, posY, 0);
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
 								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
 								RenderSystem.setShaderTexture(0, fill_texture);
@@ -65,6 +91,7 @@ public class BloodVolumeOverlay {
 
 								// Frame
 								matrix.pose().pushPose();
+								matrix.pose().translate(posX, posY, 0);
 								RenderSystem.setShader(GameRenderer::getPositionTexShader);
 								RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 								RenderSystem.setShaderTexture(0, frame); // Cap
