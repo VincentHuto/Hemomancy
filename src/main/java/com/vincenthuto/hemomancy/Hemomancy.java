@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.FluidInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.LootModifierInit;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.init.ParticleInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -116,7 +117,7 @@ public class Hemomancy {
 		EntityInit.ENTITY_TYPES.register(modEventBus);
 		StructureInit.STRUCTURES.register(modEventBus);
 		VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
-
+		LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 			return () -> {
 

@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:add_item",
+  "conditions": [
+    {
+      "condition": "minecraft:random_chance",
+      "chance": 0.05
+    },
+    {
+      "condition": "block_state_property",
+      "block": "minecraft:tall_grass"
+    }
+  ],
+  "item": "hemomancy:gourd_seeds"
+}
