@@ -85,19 +85,22 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
+		HitResult trace = player.pick(5.5,0, true);
 		if (trace.getType() == Type.BLOCK) {
-			BlockEntity be = worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x - 1,
-					(int) trace.getLocation().y, (int) trace.getLocation().z - 1)));
+			BlockEntity be = worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x ,
+					(int) trace.getLocation().y, (int) trace.getLocation().z )));
 			if (be != null) {
 				if (be.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
 
 					IBloodVolume tileVolume = be.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(IllegalStateException::new);
-					tileVolume.fillFromSource(playerVolume, 100f);
-					if(be instanceof IBloodTile bt ) {
-						bt.sendUpdates();
+					if(!tileVolume.isFull()) {
+						tileVolume.fillFromSource(playerVolume, 100f);
+						if (be instanceof IBloodTile bt) {
+							bt.sendUpdates();
+						}
 					}
+					
 				}
 			}
 

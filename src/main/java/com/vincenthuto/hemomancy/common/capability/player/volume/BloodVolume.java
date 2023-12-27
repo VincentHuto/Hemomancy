@@ -32,7 +32,7 @@ public class BloodVolume implements IBloodVolume {
 
 	@Override
 	public boolean drainFromSource(IBloodVolume src, double points) {
-		if (src.fill(points)) {
+		if (src.fill(points) ) {
 			drain(points);
 			return true;
 		} else {
@@ -54,7 +54,7 @@ public class BloodVolume implements IBloodVolume {
 
 	@Override
 	public boolean fillFromSource(IBloodVolume src, double points) {
-		if (src.drain(points)) {
+		if (src.drain(points) && src.getBloodVolume() > points) {
 			fill(points);
 			return true;
 		} else {
