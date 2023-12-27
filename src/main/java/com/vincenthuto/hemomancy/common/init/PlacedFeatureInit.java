@@ -39,7 +39,10 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> PLACED_CANOPY_MUSHROOMS_DENSE = createKey(
 			"mushroom/canopy_mushrooms_dense");
 
+	// Plants
 	public static final ResourceKey<PlacedFeature> BLEEDING_HEARTS = createKey("bleeding_hearts");
+
+	public static final ResourceKey<PlacedFeature> STINK_HORNS = createKey("stink_horns");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
@@ -54,6 +57,7 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> SMALL_INFECTED_FUNGUS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.SMALL_INFECTED_FUNGUS);
 
+		//Plants
 		final Holder<ConfiguredFeature<?, ?>> BLEEDING_HEARTS = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.BLEEDING_HEARTS);
 
@@ -61,6 +65,16 @@ public class PlacedFeatureInit {
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
+		final Holder<ConfiguredFeature<?, ?>> STINK_HORNS = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.STINK_HORNS);
+
+		register(context, PlacedFeatureInit.STINK_HORNS, STINK_HORNS, RarityFilter.onAverageOnceEvery(7),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
+		
+		
+		//Blobs
 		context.register(PLACED_MYCELIUM_BLOB,
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.MYCELIUM_BLOB),
 						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(3),

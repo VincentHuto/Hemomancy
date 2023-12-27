@@ -85,7 +85,7 @@ public class Hemomancy {
 		instance = this;
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-	    HemoConfig.register();
+		HemoConfig.register();
 		VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
 		VillagerInit.PROFESSIONS.register(modEventBus);
 		ManipulationInit.MANIPS.register(modEventBus);
@@ -106,7 +106,6 @@ public class Hemomancy {
 		BlockInit.OBJBLOCKS.register(modEventBus);
 		BlockInit.SPECIALBLOCKS.register(modEventBus);
 		BlockInit.POTTEDBLOCKS.register(modEventBus);
-
 		BlockInit.MODELEDBLOCKS.register(modEventBus);
 		FluidInit.FLUIDS.register(modEventBus);
 		CREATIVETABS.register(modEventBus);
@@ -122,7 +121,6 @@ public class Hemomancy {
 		LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 			return () -> {
-
 				this.proxy = new ClientProxy();
 			};
 		});
@@ -135,16 +133,7 @@ public class Hemomancy {
 		modEventBus.addListener(this::clientSetup);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::buildContents);
-		modEventBus.addListener(DataGeneration::generate);
-
-		// modEventBus.addGenericListener(Feature.class, EventPriority.LOWEST,
-		// Hemomancy::registerFeature);
 		forgeBus.register(this);
-		forgeBus.register(BloodVolumeEvents.class);
-		forgeBus.register(VascularSystemEvents.class);
-		forgeBus.register(BloodTendencyEvents.class);
-		forgeBus.register(KnownManipulationEvents.class);
-		forgeBus.register(EarthenVeinLocEvents.class);
 
 	}
 
@@ -158,28 +147,17 @@ public class Hemomancy {
 
 			var b = BlockInit.getAllBlockEntriesAsStream();
 			b.forEach(item -> {
-				if (item.get() != BlockInit.attached_gourd_stem.get() 
-						&& item.get() != BlockInit.gourd_stem.get()
+				if (item.get() != BlockInit.attached_gourd_stem.get() && item.get() != BlockInit.gourd_stem.get()
 						&& item.get() != BlockInit.active_befouling_ash_trail.get()
 						&& item.get() != BlockInit.active_smouldering_ash_trail.get()) {
 					populator.accept(item.get());
 				}
 			});
-			// Blocks
-//			BlockInit.BASEBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.SLABBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.STAIRBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.COLUMNBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.CROSSBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.OBJBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.MODELEDBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-//			BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
 		}
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-//		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
-//		MinecraftForge.EVENT_BUS.addListener(CapeEvent::onClientTick);
+	
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
