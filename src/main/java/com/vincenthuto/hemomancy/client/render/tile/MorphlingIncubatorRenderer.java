@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.common.tile.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -74,8 +76,6 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 				ms.popPose();
 			} else {
 				ms.pushPose();
-//				System.out.println("X"+i+ ": " + xMover);
-//				System.out.println("Z"+i+ ": " +zMover);
 
 				float r = 1.5f; // Radius of the circle
 				float w = 1.0f; // Angular speed (radians per unit time)
@@ -83,18 +83,19 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 				float Cx = te.getBlockPos().getX() + 0.5f; // Center X-coordinate
 				float Cy = te.getBlockPos().getY() + 1; // Center Y-coordinate
 				float Cz = te.getBlockPos().getZ() + 0.5f; // Center Z-coordinate (constant in this example)
-				
-				//System.out.println(r);
-				/*
-				 * if(r>0) { r -= 8-(200-time) * 0.05f; System.out.println(r);
-				 * 
-				 * }
-				 */
 
+				if (t < 1.5 && t > 0) {
+					r = r - (1.5f - t);
+				}
 
 				double angle = w * t + i * Math.PI / 2;
 				float x = (float) (Cx + r * Math.cos(angle));
-				float y = Cy;
+				float y;
+				if (i % 2 == 0) {
+					y = Cy + (float) (Math.sin(te.getLevel().getGameTime() * 0.1f) * 0.1f);
+				} else {
+					y = Cy + (float) (Math.cos(te.getLevel().getGameTime() * 0.1f) * 0.1f);
+				}
 				float z = (float) (Cz + r * Math.sin(angle)); // Since the circle is in the XY plane, z remains constant
 
 				Vector3f loc = new Vector3f(x, y, z);
@@ -109,6 +110,15 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 					// System.out.println(loc);
 					te.getLevel().addParticle(EmberParticleFactory.createData(ParticleColor.PURPLE, 2, 0.12f, 14),
 							(double) loc.x, (double) loc.y, (double) loc.z, 0.0D, 0.0D, 0.0D);
+
+					if (time > 0 && time < 25) {
+						for (Vec3 v : HLParticleUtils.randomSphere((int) 4, 0.25f, 0.25f)) {
+							te.getLevel().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
+									(double) loc.x + v.x, (double) loc.y + v.y, (double) loc.z + v.z, 0.0D, 0.0D, 0.0D);
+						}
+
+					}
+
 					mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn,
 							combinedOverlayIn, ms, bufferIn, te.getLevel(), 0);
 				}

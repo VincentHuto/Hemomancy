@@ -81,8 +81,9 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock {
 			BlockEntityType<T> p_153184_) {
 		return level.isClientSide
 				? createTickerHelper(p_153184_, BlockEntityInit.fungal_implantation_pylon.get(),
-						FungalImplantationPylonBlockEntity::animTick)
-				: null;
+						FungalImplantationPylonBlockEntity::clientTick)
+				: createTickerHelper(p_153184_, BlockEntityInit.fungal_implantation_pylon.get(),
+						FungalImplantationPylonBlockEntity::serverTick);
 	}
 
 	@Override

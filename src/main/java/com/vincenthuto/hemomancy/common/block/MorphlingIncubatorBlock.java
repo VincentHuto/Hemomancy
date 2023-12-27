@@ -150,9 +150,7 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}else {
 			te.attemptStartup();
-			if (!worldIn.isClientSide) {
-				HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, ParticleTypes.MYCELIUM);
-			}
+	
 		}
 
 		return InteractionResult.PASS;
