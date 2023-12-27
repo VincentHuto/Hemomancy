@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
 import com.vincenthuto.hemomancy.common.block.FungalImplantationPylonBlock;
 import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
+import com.vincenthuto.hemomancy.common.block.GourdBlock;
 import com.vincenthuto.hemomancy.common.block.HyphaeBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedCapBlock;
 import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
@@ -38,16 +39,22 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.PumpkinBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.StemGrownBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -162,6 +169,11 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
 					.sound(SoundType.METAL)));
 
+	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
+			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
+
+	// Plants
+
 	public static final RegistryObject<Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",
 			() -> new RotatedPillarBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.WOOD)));
 	public static final RegistryObject<Block> blood_wood_planks = BASEBLOCKS.register("blood_wood_planks",
@@ -224,8 +236,23 @@ public class BlockInit {
 	public static final RegistryObject<Block> fruiting_infected_cap = BASEBLOCKS.register("fruiting_infected_cap",
 			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 
-	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
-			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE), 1.5f));
+	// Gourd
+	public static final RegistryObject<Block> gourd = MODELEDBLOCKS.register("gourd",
+			() -> new GourdBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
+					.instrument(NoteBlockInstrument.DIDGERIDOO).strength(1.0F).sound(SoundType.WOOD)
+					.pushReaction(PushReaction.DESTROY)));
+
+	public static final RegistryObject<Block> attached_gourd_stem = MODELEDBLOCKS.register("attached_gourd_stem",
+			() -> new AttachedStemBlock((StemGrownBlock) gourd.get(), () -> {
+				return ItemInit.gourd_seeds.get();
+			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().instabreak().sound(SoundType.WOOD)
+					.pushReaction(PushReaction.DESTROY)));
+
+	public static final RegistryObject<Block> gourd_stem = MODELEDBLOCKS.register("gourd_stem",
+			() -> new StemBlock((StemGrownBlock) gourd.get(), () -> {
+				return ItemInit.gourd_seeds.get();
+			}, BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).noCollission().randomTicks().instabreak()
+					.sound(SoundType.HARD_CROP).pushReaction(PushReaction.DESTROY)));
 
 	// Idols
 	public static final RegistryObject<Block> humane_idol = MODELEDBLOCKS.register("humane_idol",
@@ -299,9 +326,10 @@ public class BlockInit {
 
 	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(),
-				STAIRBLOCKS.getEntries(), COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(),
-				MODELEDBLOCKS.getEntries(), SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
+		Stream<RegistryObject<Block>> combinedStream = Stream
+				.of(BASEBLOCKS.getEntries(), SLABBLOCKS.getEntries(), STAIRBLOCKS.getEntries(),
+						COLUMNBLOCKS.getEntries(), CROSSBLOCKS.getEntries(), MODELEDBLOCKS.getEntries(),
+						SPECIALBLOCKS.getEntries(), OBJBLOCKS.getEntries())
 				.flatMap(Collection::stream);
 
 		return combinedStream;
@@ -327,6 +355,8 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.hyphae.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.puffball_fungus.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_implantation_pylon.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
 
 	}
 

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "hemomancy:gourd"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "hemomancy:gourd_seeds"
+  }
+}

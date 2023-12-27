@@ -153,19 +153,26 @@ public class Hemomancy {
 			ItemInit.SPECIALITEMS.getEntries().forEach(i -> populator.accept(i.get()));
 			ItemInit.SPAWNEGGS.getEntries().forEach(i -> populator.accept(i.get()));
 
+			var b = BlockInit.getAllBlockEntriesAsStream();
+			b.forEach(item -> {
+				if (item.get() != BlockInit.attached_gourd_stem.get() 
+						&& item.get() != BlockInit.gourd_stem.get()
+						&& item.get() != BlockInit.active_befouling_ash_trail.get()
+						&& item.get() != BlockInit.active_smouldering_ash_trail.get()) {
+					populator.accept(item.get());
+				}
+			});
 			// Blocks
-			BlockInit.BASEBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.SLABBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.STAIRBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.COLUMNBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.CROSSBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.OBJBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.MODELEDBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
-			BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.BASEBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.SLABBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.STAIRBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.COLUMNBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.CROSSBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.OBJBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.MODELEDBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
+//			BlockInit.SPECIALBLOCKS.getEntries().forEach(i -> populator.accept(i.get()));
 		}
 	}
-
-
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 //		MinecraftForge.EVENT_BUS.addListener(CapeEvent::renderLevelLast);
@@ -177,10 +184,14 @@ public class Hemomancy {
 		event.enqueueWork(() -> {
 			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
 					BloodStructurePageTemplate.SERIALIZER);
-			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(), BlockInit.potted_bleeding_heart);
-			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(), BlockInit.potted_stinkhorn_fungus);
-			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(), BlockInit.potted_infected_fungus);
-			((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(), BlockInit.potted_puffball_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(),
+					BlockInit.potted_bleeding_heart);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),
+					BlockInit.potted_stinkhorn_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(),
+					BlockInit.potted_infected_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(),
+					BlockInit.potted_puffball_fungus);
 
 		});
 
@@ -216,8 +227,17 @@ public class Hemomancy {
 			return;
 		}
 
-		BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId())).map(t -> createItemBlock(t))
-				.forEach(item -> registerBlockItem(event, item));
+		var b = BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
+				.map(t -> createItemBlock(t));
+		b.forEach(item -> {
+			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
+					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
+					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()) {
+				registerBlockItem(event, item);
+			}
+		});
+
 	}
 
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {

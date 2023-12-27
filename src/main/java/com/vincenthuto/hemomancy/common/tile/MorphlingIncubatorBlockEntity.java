@@ -96,14 +96,7 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 
 				te.outputResults();
 			}
-//			if (!te.inventory.isEmpty()) {
-//				if (!((te.checkBalancedSpots(2, 6) && te.checkBalancedSpots(3, 7) && te.checkBalancedSpots(4, 8)
-//						&& te.checkBalancedSpots(9, 5)))) {
-//					if (te.dataAccess.get(0) > 0) {
-//						te.dataAccess.set(0, 0);
-//					}
-//				}
-//			}
+
 		}
 	}
 
@@ -124,16 +117,12 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 				System.out.println(i);
 				inventory.set(i, ItemStack.EMPTY);
 			}
-	         double d0 = (double)Mth.randomBetween(level.random, -0.2F, 0.2F);
-	         double d1 = (double)Mth.randomBetween(level.random, -0.2F, 0.2F);
-	         double d2 = (double)Mth.randomBetween(level.random, -0.2F, 0.2F);
+			double d0 = (double) Mth.randomBetween(level.random, -0.2F, 0.2F);
+			double d1 = (double) Mth.randomBetween(level.random, -0.2F, 0.2F);
+			double d2 = (double) Mth.randomBetween(level.random, -0.2F, 0.2F);
 			inventory.set(0, ItemStack.EMPTY);
-			getLevel().addFreshEntity(new ItemEntity(
-					level, worldPosition.getX(),
-					worldPosition.getY()+1,
-					worldPosition.getZ(),
-					new ItemStack(ItemInit.noctifly_agaric.get()),
-					d0,d1, d2));
+			getLevel().addFreshEntity(new ItemEntity(level, worldPosition.getX(), worldPosition.getY() + 1,
+					worldPosition.getZ(), new ItemStack(ItemInit.noctifly_agaric.get()), d0, d1, d2));
 		}
 	}
 

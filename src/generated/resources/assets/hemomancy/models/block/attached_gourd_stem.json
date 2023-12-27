@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/stem_fruit",
+  "textures": {
+    "stem": "hemomancy:block/gourd_stem",
+    "upperstem": "hemomancy:block/attached_gourd_stem"
+  }
+}

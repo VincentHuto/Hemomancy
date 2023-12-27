@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
@@ -13,12 +14,14 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -28,14 +31,23 @@ import net.minecraft.world.phys.Vec3;
 
 public class MorphlingIncubatorRenderer implements BlockEntityRenderer<MorphlingIncubatorBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	Minecraft mc;
 
 	public MorphlingIncubatorRenderer(BlockEntityRendererProvider.Context p_173636_) {
+		mc = Minecraft.getInstance();
 	}
 
 	@Override
 	public void render(MorphlingIncubatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
 
+		
+		ms.pushPose();
+		ms.translate(0.5, 0.5, 0.5);
+        this.renderNameTag(te,Component.literal(te.getBloodVolume()+""), ms, bufferIn, combinedLightIn);
+		ms.popPose();
+
+		
 		int items = 0;
 		for (int i = 1; i < te.inventory.size(); i++) {
 			if (te.inventory.get(i).isEmpty()) {
@@ -127,5 +139,22 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 
 		}
 
+	}
+
+	protected void renderNameTag(MorphlingIncubatorBlockEntity te, Component component, PoseStack pose,
+			MultiBufferSource buffer, int color) {
+		pose.pushPose();
+		pose.translate(0.0F, 1, 0.0F);
+		pose.mulPose(mc.getEntityRenderDispatcher().cameraOrientation());
+		pose.scale(-0.025F, -0.025F, 0.025F);
+		Matrix4f matrix4f = pose.last().pose();
+		float f1 = mc.options.getBackgroundOpacity(0.25F);
+		int j = (int) (f1 * 255.0F) << 24;
+		Font font = mc.font;
+		float f2 = (float) (-font.width(component) / 2);
+		font.drawInBatch(component, f2, (float) 0, 553648127, false, matrix4f, buffer, Font.DisplayMode.NORMAL, j,
+				color);
+
+		pose.popPose();
 	}
 }

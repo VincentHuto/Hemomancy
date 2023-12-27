@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.ChatFormatting;
@@ -30,6 +31,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -82,27 +84,23 @@ public class BloodProjectionItem extends Item implements IDispellable, ICellHand
 	public void onUseTick(Level worldIn, LivingEntity player, ItemStack stack, int count) {
 		IBloodVolume playerVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
-		if (worldIn.isClientSide) {
 
-			HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
-			if (trace.getType() == Type.BLOCK) {
-				if (worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
-						(int) trace.getLocation().y, (int) trace.getLocation().z))) != null) {
-					if (worldIn
-							.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
-									(int) trace.getLocation().y, (int) trace.getLocation().z)))
-							.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
-						// System.out.println("hit fillable tile");
-						IBloodVolume tileVolume = worldIn
-								.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x,
-										(int) trace.getLocation().y, (int) trace.getLocation().z)))
-								.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
-						tileVolume.fillFromSource(playerVolume, 100f);
+		HitResult trace = player.pick(5.5, HLClientUtils.getPartialTicks(), true);
+		if (trace.getType() == Type.BLOCK) {
+			BlockEntity be = worldIn.getBlockEntity(new BlockPos(new Vec3i((int) trace.getLocation().x - 1,
+					(int) trace.getLocation().y, (int) trace.getLocation().z - 1)));
+			if (be != null) {
+				if (be.getCapability(BloodVolumeProvider.VOLUME_CAPA).isPresent()) {
 
+					IBloodVolume tileVolume = be.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+							.orElseThrow(IllegalStateException::new);
+					tileVolume.fillFromSource(playerVolume, 100f);
+					if(be instanceof IBloodTile bt ) {
+						bt.sendUpdates();
 					}
 				}
-
 			}
+
 		}
 		if (!worldIn.isClientSide) {
 

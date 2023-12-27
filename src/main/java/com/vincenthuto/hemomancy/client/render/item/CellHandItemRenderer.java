@@ -50,6 +50,7 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public final ResourceLocation skinTexture = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/entity/hardened_skin.png");
+
 	public CellHandItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
 	}
@@ -130,23 +131,25 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 				float g = (color >> 8 & 0xFF) / 255F;
 				float b = (color & 0xFF) / 255F;
 				Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), buffers,
-						null, location, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.solid());
+						null, location, r, g, b, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY,
+						RenderType.solid());
 			} else if (!stack.isEmpty()) {
 				if (this.location.isGui3d()) {
 //					ForgeHooksClient.drawItemLayered(Minecraft.getInstance().getItemRenderer(), this.location, stack,
 //							matrixStack, buffer, combinedLight, combinedOverlay, true);
 					Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-							buffers, null, location, 255, 255, 255, 0x000000, combinedOverlay, ModelData.EMPTY, RenderType.solid());
+							buffers, null, location, 255, 255, 255, 0x000000, combinedOverlay, ModelData.EMPTY,
+							RenderType.solid());
 				} else {
 					Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-							buffers, null, location, 255, 255, 255, combinedLight, combinedOverlay, ModelData.EMPTY, RenderType.solid());
+							buffers, null, location, 255, 255, 255, combinedLight, combinedOverlay, ModelData.EMPTY,
+							RenderType.solid());
 					matrixStack.popPose();
 					matrixStack.pushPose();
 					Minecraft.getInstance().getItemRenderer().render(stack, ItemDisplayContext,
 							ItemDisplayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND, matrixStack, buffer,
 							ItemDisplayContext == ItemDisplayContext.GUI ? 0xF000F0 : combinedLight,
-							ItemDisplayContext == ItemDisplayContext.GUI ? OverlayTexture.NO_OVERLAY
-									: combinedOverlay,
+							ItemDisplayContext == ItemDisplayContext.GUI ? OverlayTexture.NO_OVERLAY : combinedOverlay,
 							this.location);
 				}
 			}
@@ -194,11 +197,9 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 			Vec3 perp = look.cross(new Vec3(0.0, 1.0, 0.0)).normalize()
 					.scale(hand == HumanoidArm.LEFT ? (double) -0.4f : (double) 0.4f);
 			particlePos = particlePos.add(look).add(perp);
-
 			Vec3 origin = new Vec3(particlePos.x, particlePos.y + 0.1, particlePos.z);
 
 			if (player.getItemInHand(activeHand).getItem() instanceof BloodAbsorptionItem) {
-
 				List<Entity> targets = player.level().getEntities(player, player.getBoundingBox().inflate(5.0));
 				if (targets.size() > 0) {
 					for (Entity target : targets) {
@@ -222,10 +223,16 @@ public class CellHandItemRenderer extends BlockEntityWithoutLevelRenderer {
 					Vec3 hitVec = trace.getLocation();
 					Vec3 finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).reverse();
 
-					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD), hitVec.x,
-							hitVec.y + 1.05D, hitVec.z, ((float) finalPos.x) - 0.5D,
-							(float) finalPos.y - rand.nextFloat() - 0.5F, ((float) finalPos.z) - 0.5D);
+					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD),
+							hitVec.x,
+							hitVec.y + 1.05D,
+							hitVec.z, 
+							(float) finalPos.x + rand.nextFloat() - 0.5D,
+							(float) finalPos.y - rand.nextFloat() - 0F,
+							(float) finalPos.z + rand.nextFloat() - 0.5D);
+				
 				}
+				
 			}
 
 			Vec3[] fibboSphere = HLParticleUtils.fibboSphere(globalPartCount, -world.getGameTime() * 0.01, 0.15);

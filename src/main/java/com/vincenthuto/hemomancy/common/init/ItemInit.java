@@ -69,6 +69,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -162,6 +163,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
+			() -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
 
 	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
@@ -391,11 +394,8 @@ public class ItemInit {
 	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
 			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
 
-	
-	//Functional Spores
-	
-	
-	
+	// Functional Spores
+
 	public static final RegistryObject<Item> respergillus = BASEITEMS.register("respergillus",
 			() -> new RespergillusItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 
@@ -408,7 +408,6 @@ public class ItemInit {
 	public static final RegistryObject<Item> noctifly_agaric = BASEITEMS.register("noctifly_agaric",
 			() -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 
-	
 	// Spores
 	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
 			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));

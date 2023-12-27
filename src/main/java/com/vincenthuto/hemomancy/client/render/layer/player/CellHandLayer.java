@@ -190,7 +190,7 @@ public class CellHandLayer<T extends LivingEntity, M extends EntityModel<T>> ext
 				HitResult trace = player.pick(5, HLClientUtils.getPartialTicks(), true);
 				if (trace.getType() == Type.BLOCK) {
 					Vec3 hitVec = trace.getLocation();
-					Vec3 finalPos = hitVec.subtract(particlePos.x, particlePos.y, particlePos.z).reverse();
+					Vec3 finalPos = hitVec.subtract(vec.x, vec.y, vec.z).reverse();
 					world.addParticle(AbsrobedBloodCellParticleFactory.createData(ParticleColor.BLOOD), hitVec.x,
 							hitVec.y + 1.05D, hitVec.z, (float) finalPos.x + rand.nextFloat() - 0.5D,
 							(float) finalPos.y - rand.nextFloat() - 0.5F, (float) finalPos.z + rand.nextFloat() - 0.5D);
