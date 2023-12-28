@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.item;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.codex.ArcanaProgressionScreen;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
@@ -82,21 +83,25 @@ public class BloodyBookItem extends ItemGuideBook {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
 		BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
-		System.out.println(test.getBooks());
 		BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("sanctumsanguinium"));
 		if (test != null) {
 			if (lvl.isClientSide) {
-				if(book != null) {
-					 HLGuiGuideTitlePage.openScreenViaItem(book);
+				if (p_41433_.isShiftKeyDown()) {
+					ArcanaProgressionScreen.openCodexViaItem();
+				} else {
+					if (book != null) {
+						HLGuiGuideTitlePage.openScreenViaItem(book);
+					}
 				}
+
 			}
 		}
-		
-		
+
 //		if (lvl.isClientSide()) {
 //			HemoTitlePage.openScreenViaItem();
 //		}
-	//	BookCodeModel hbook = BookManager.getBookByTitle(new ResourceLocation("hemomancy", "sanctumsanguinium"));
+		// BookCodeModel hbook = BookManager.getBookByTitle(new
+		// ResourceLocation("hemomancy", "sanctumsanguinium"));
 //
 //		if (hbook != null) {
 //			if (lvl.isClientSide()) {

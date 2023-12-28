@@ -1,10 +1,11 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.codex.ArcanaProgressionScreen;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.data.PackOutput;
@@ -24,6 +25,8 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
+        ArcanaProgressionScreen.setupEntries();
+
 		// Jei
 		add("hemomancy.jei.recaller", "Visceral Recaller");
 		add("hemomancy.jei.chisel_station", "Chisel Station");
