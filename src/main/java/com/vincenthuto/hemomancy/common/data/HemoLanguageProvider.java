@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.data;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaProgressionScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
@@ -25,7 +25,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-        ArcanaProgressionScreen.setupEntries();
+        HemoProgressionScreen.setupEntries();
 
 		// Jei
 		add("hemomancy.jei.recaller", "Visceral Recaller");

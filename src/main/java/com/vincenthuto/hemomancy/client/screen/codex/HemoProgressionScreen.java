@@ -29,9 +29,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
-public class ArcanaProgressionScreen extends AbstractProgressionCodexScreen {
+public class HemoProgressionScreen extends AbstractProgressionCodexScreen {
 
-	public static ArcanaProgressionScreen screen;
+	public static HemoProgressionScreen screen;
 
 	public static final List<BookEntry> ENTRIES = new ArrayList<>();
 
@@ -39,11 +39,11 @@ public class ArcanaProgressionScreen extends AbstractProgressionCodexScreen {
 	public static final ResourceLocation FADE_TEXTURE = Hemomancy.rloc("textures/gui/book/fade.png");
 	public static final ResourceLocation BACKGROUND_TEXTURE = Hemomancy.rloc("textures/gui/book/background.png");
 
-	protected ArcanaProgressionScreen() {
+	protected HemoProgressionScreen() {
 		super(1024, 2560);
 		minecraft = Minecraft.getInstance();
 		setupEntries();
-		MinecraftForge.EVENT_BUS.post(new SetupMalumCodexEntriesEvent());
+		MinecraftForge.EVENT_BUS.post(new SetupProgressionEntriesEvent());
 		setupObjects();
 	}
 
@@ -61,9 +61,9 @@ public class ArcanaProgressionScreen extends AbstractProgressionCodexScreen {
 		renderEntries(guiGraphics, mouseX, mouseY, partialTicks);
 		GL11.glDisable(GL_SCISSOR_TEST);
 
-		ArcanaCodexHelper.renderTransparentTexture(FADE_TEXTURE, guiGraphics.pose(), guiLeft, guiTop, 1, 1, bookWidth,
+		HemoCodexHelper.renderTransparentTexture(FADE_TEXTURE, guiGraphics.pose(), guiLeft, guiTop, 1, 1, bookWidth,
 				bookHeight, 512, 512);
-		ArcanaCodexHelper.renderTexture(FRAME_TEXTURE, guiGraphics.pose(), guiLeft, guiTop, 1, 1, bookWidth, bookHeight,
+		HemoCodexHelper.renderTexture(FRAME_TEXTURE, guiGraphics.pose(), guiLeft, guiTop, 1, 1, bookWidth, bookHeight,
 				512, 512);
 		lateEntryRender(guiGraphics, mouseX, mouseY, partialTicks);
 	}
@@ -85,7 +85,7 @@ public class ArcanaProgressionScreen extends AbstractProgressionCodexScreen {
 		if (vOffset > backgroundImageHeight - bookInsideHeight) {
 			vOffset = backgroundImageHeight - bookInsideHeight;
 		}
-		ArcanaCodexHelper.renderTexture(BACKGROUND_TEXTURE, poseStack, insideLeft, insideTop, uOffset, vOffset,
+		HemoCodexHelper.renderTexture(BACKGROUND_TEXTURE, poseStack, insideLeft, insideTop, uOffset, vOffset,
 				bookInsideWidth, bookInsideHeight, backgroundImageWidth / 2, backgroundImageHeight / 2);
 	}
 
@@ -112,9 +112,9 @@ public class ArcanaProgressionScreen extends AbstractProgressionCodexScreen {
 		this.ignoreNextMouseInput = ignoreNextMouseClick;
 	}
 
-	public static ArcanaProgressionScreen getScreenInstance() {
+	public static HemoProgressionScreen getScreenInstance() {
 		if (screen == null) {
-			screen = new ArcanaProgressionScreen();
+			screen = new HemoProgressionScreen();
 		}
 		return screen;
 	}

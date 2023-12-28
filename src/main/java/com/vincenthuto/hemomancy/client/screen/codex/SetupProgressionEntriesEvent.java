@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.screen.codex;
 
 import net.minecraftforge.eventbus.api.Event;
 
-public class SetupMalumCodexEntriesEvent extends Event {
-	public SetupMalumCodexEntriesEvent() {
+public class SetupProgressionEntriesEvent extends Event {
+	public SetupProgressionEntriesEvent() {
 	}
 
 	@Override

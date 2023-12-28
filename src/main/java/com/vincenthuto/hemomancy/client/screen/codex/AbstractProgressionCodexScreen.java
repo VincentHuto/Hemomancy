@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-public abstract class AbstractProgressionCodexScreen extends AbstractMalumScreen {
+public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen {
 
     public float xOffset;
     public float yOffset;
@@ -102,7 +102,7 @@ public abstract class AbstractProgressionCodexScreen extends AbstractMalumScreen
         if (!isInView(mouseX, mouseY)) {
             return false;
         }
-        return ArcanaCodexHelper.isHovering(mouseX, mouseY, posX, posY, width, height);
+        return HemoCodexHelper.isHovering(mouseX, mouseY, posX, posY, width, height);
     }
 
     public void faceObject(BookObject object) {

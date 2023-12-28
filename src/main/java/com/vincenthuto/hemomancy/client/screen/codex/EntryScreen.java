@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 
-public class EntryScreen extends AbstractMalumScreen {
+public class EntryScreen extends AbstractHemoScreen {
 
     public static EntryScreen entryScreen;
 
@@ -43,7 +43,7 @@ public class EntryScreen extends AbstractMalumScreen {
         PoseStack poseStack = guiGraphics.pose();
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
-        ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
+        HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
         if (!openEntry.pages.isEmpty()) {
             int openPages = grouping * 2;
             for (int i = openPages; i < openPages + 2; i++) {
@@ -57,18 +57,18 @@ public class EntryScreen extends AbstractMalumScreen {
                 }
             }
         }
-        ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 193, 28, 18, 512, 512);
+        HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 193, 28, 18, 512, 512);
         if (isHovering(mouseX, mouseY, guiLeft - 13, guiTop + 150, 28, 18)) {
-        	ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 232, 28, 18, 512, 512);
+        	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 232, 28, 18, 512, 512);
         } else {
-        	ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 213, 28, 18, 512, 512);
+        	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 213, 28, 18, 512, 512);
         }
         if (grouping < openEntry.pages.size() / 2f - 1) {
-        	ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 193, 28, 18, 512, 512);
+        	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 193, 28, 18, 512, 512);
             if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 15, guiTop + 150, 28, 18)) {
-            	ArcanaCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 232, 28, 18, 512, 512);
+            	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 232, 28, 18, 512, 512);
             } else {
-            	ArcanaCodexHelper. renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 213, 28, 18, 512, 512);
+            	HemoCodexHelper. renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 213, 28, 18, 512, 512);
             }
         }
         if (!openEntry.pages.isEmpty()) {
@@ -130,7 +130,7 @@ public class EntryScreen extends AbstractMalumScreen {
 
     @Override
     public boolean isHovering(double mouseX, double mouseY, int posX, int posY, int width, int height) {
-        return ArcanaCodexHelper.isHovering(mouseX, mouseY, posX, posY, width, height);
+        return HemoCodexHelper.isHovering(mouseX, mouseY, posX, posY, width, height);
     }
 
     @Override

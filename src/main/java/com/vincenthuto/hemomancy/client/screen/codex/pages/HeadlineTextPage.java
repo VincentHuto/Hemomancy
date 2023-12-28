@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.codex.pages;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaCodexHelper;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
 import net.minecraft.client.Minecraft;
@@ -31,8 +31,8 @@ public class HeadlineTextPage extends BookPage {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = Component.translatable(headlineTranslationKey());
-        ArcanaCodexHelper.renderText(guiGraphics, component, guiLeft + 75 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 31, 125);
+        HemoCodexHelper.renderText(guiGraphics, component, guiLeft + 75 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 31, 125);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class HeadlineTextPage extends BookPage {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = Component.translatable(headlineTranslationKey());
-        ArcanaCodexHelper.renderText(guiGraphics, component, guiLeft + 218 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 31, 125);
+        HemoCodexHelper.renderText(guiGraphics, component, guiLeft + 218 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 31, 125);
     }
 }

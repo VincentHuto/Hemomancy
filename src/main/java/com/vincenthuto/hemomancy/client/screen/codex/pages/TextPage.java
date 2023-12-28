@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.codex.pages;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaCodexHelper;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
 import net.minecraft.client.Minecraft;
@@ -24,13 +24,13 @@ public class TextPage extends BookPage {
     public void renderLeft(Minecraft minecraft, GuiGraphics guiGraphics, EntryScreen screen, int mouseX, int mouseY, float partialTicks) {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 10, 126);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 10, 126);
     }
 
     @Override
     public void renderRight(Minecraft minecraft, GuiGraphics guiGraphics, EntryScreen screen, int mouseX, int mouseY, float partialTicks) {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 10, 126);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 10, 126);
     }
 }

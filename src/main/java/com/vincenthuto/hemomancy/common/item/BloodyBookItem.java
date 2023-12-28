@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaProgressionScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
@@ -87,7 +87,7 @@ public class BloodyBookItem extends ItemGuideBook {
 		if (test != null) {
 			if (lvl.isClientSide) {
 				if (p_41433_.isShiftKeyDown()) {
-					ArcanaProgressionScreen.openCodexViaItem();
+					HemoProgressionScreen.openCodexViaItem();
 				} else {
 					if (book != null) {
 						HLGuiGuideTitlePage.openScreenViaItem(book);

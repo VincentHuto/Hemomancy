@@ -26,7 +26,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-public class ArcanaCodexHelper {
+public class HemoCodexHelper {
 
     public static final VFXBuilders.ScreenVFXBuilder VFX_BUILDER = VFXBuilders.createScreen().setPosTexDefaultFormat();
 
@@ -94,17 +94,17 @@ public class ArcanaCodexHelper {
         RenderSystem.disableBlend();
     }
 
-    public static void renderComponents(AbstractMalumScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
+    public static void renderComponents(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
         java.util.List<ItemStack> items = components.stream().map(IRecipeComponent::getStack).collect(Collectors.toList());
         renderItemList(screen, guiGraphics, items, left, top, mouseX, mouseY, vertical).run();
     }
 
-    public static Runnable renderBufferedComponents(AbstractMalumScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
+    public static Runnable renderBufferedComponents(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
         java.util.List<ItemStack> items = components.stream().map(IRecipeComponent::getStack).collect(Collectors.toList());
         return renderItemList(screen, guiGraphics, items, left, top, mouseX, mouseY, vertical);
     }
 
-    public static void renderComponent(AbstractMalumScreen screen, GuiGraphics guiGraphics, IRecipeComponent component, int posX, int posY, int mouseX, int mouseY) {
+    public static void renderComponent(AbstractHemoScreen screen, GuiGraphics guiGraphics, IRecipeComponent component, int posX, int posY, int mouseX, int mouseY) {
         if (component.getStacks().size() == 1) {
             renderItem(screen, guiGraphics, component.getStack(), posX, posY, mouseX, mouseY);
             return;
@@ -118,11 +118,11 @@ public class ArcanaCodexHelper {
         }
     }
 
-    public static void renderItem(AbstractMalumScreen screen, GuiGraphics guiGraphics, Ingredient ingredient, int posX, int posY, int mouseX, int mouseY) {
+    public static void renderItem(AbstractHemoScreen screen, GuiGraphics guiGraphics, Ingredient ingredient, int posX, int posY, int mouseX, int mouseY) {
         renderItem(screen, guiGraphics, List.of(ingredient.getItems()), posX, posY, mouseX, mouseY);
     }
 
-    public static void renderItem(AbstractMalumScreen screen, GuiGraphics guiGraphics, java.util.List<ItemStack> stacks, int posX, int posY, int mouseX, int mouseY) {
+    public static void renderItem(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<ItemStack> stacks, int posX, int posY, int mouseX, int mouseY) {
         if (stacks.size() == 1) {
             renderItem(screen, guiGraphics, stacks.get(0), posX, posY, mouseX, mouseY);
             return;
@@ -136,7 +136,7 @@ public class ArcanaCodexHelper {
         }
     }
 
-    public static void renderItem(AbstractMalumScreen screen, GuiGraphics guiGraphics, ItemStack stack, int posX, int posY, int mouseX, int mouseY) {
+    public static void renderItem(AbstractHemoScreen screen, GuiGraphics guiGraphics, ItemStack stack, int posX, int posY, int mouseX, int mouseY) {
         guiGraphics.renderItem(stack, posX, posY);
         guiGraphics.renderItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
         if (screen.isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
@@ -144,7 +144,7 @@ public class ArcanaCodexHelper {
         }
     }
 
-    public static Runnable renderItemList(AbstractMalumScreen screen, GuiGraphics guiGraphics, java.util.List<ItemStack> items, int left, int top, int mouseX, int mouseY, boolean vertical) {
+    public static Runnable renderItemList(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<ItemStack> items, int left, int top, int mouseX, int mouseY, boolean vertical) {
         int slots = items.size();
         renderItemFrames(guiGraphics.pose(), slots, left, top, vertical);
         return () -> {

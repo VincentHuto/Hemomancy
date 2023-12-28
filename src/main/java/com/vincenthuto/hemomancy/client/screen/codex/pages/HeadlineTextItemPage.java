@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.codex.pages;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaCodexHelper;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
 import net.minecraft.client.Minecraft;
@@ -39,9 +39,9 @@ public class HeadlineTextItemPage extends BookPage {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = Component.translatable(headlineTranslationKey());
-        ArcanaCodexHelper.renderText(guiGraphics, component, guiLeft + 75 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 76, 126);
-        ArcanaCodexHelper.renderItem(screen, guiGraphics, spiritStack, guiLeft + 67, guiTop + 44, mouseX, mouseY);
+        HemoCodexHelper.renderText(guiGraphics, component, guiLeft + 75 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 14, guiTop + 76, 126);
+        HemoCodexHelper.renderItem(screen, guiGraphics, spiritStack, guiLeft + 67, guiTop + 44, mouseX, mouseY);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class HeadlineTextItemPage extends BookPage {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
         Component component = Component.translatable(headlineTranslationKey());
-        ArcanaCodexHelper.renderText(guiGraphics, component, guiLeft + 218 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
-        ArcanaCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 76, 126);
-        ArcanaCodexHelper. renderItem(screen, guiGraphics, spiritStack, guiLeft + 209, guiTop + 44, mouseX, mouseY);
+        HemoCodexHelper.renderText(guiGraphics, component, guiLeft + 218 - minecraft.font.width(component.getString()) / 2, guiTop + 10);
+        HemoCodexHelper.renderWrappingText(guiGraphics, translationKey(), guiLeft + 156, guiTop + 76, 126);
+        HemoCodexHelper. renderItem(screen, guiGraphics, spiritStack, guiLeft + 209, guiTop + 44, mouseX, mouseY);
     }
 }

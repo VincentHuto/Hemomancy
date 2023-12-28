@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.codex.pages;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaCodexHelper;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.BookEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
@@ -35,13 +35,13 @@ public class BookPage {
     public void renderBackgroundLeft(PoseStack poseStack) {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        ArcanaCodexHelper.renderTexture(background, poseStack, guiLeft, guiTop, 1, 1, EntryScreen.entryScreen.bookWidth - 147, EntryScreen.entryScreen.bookHeight, 512, 512);
+        HemoCodexHelper.renderTexture(background, poseStack, guiLeft, guiTop, 1, 1, EntryScreen.entryScreen.bookWidth - 147, EntryScreen.entryScreen.bookHeight, 512, 512);
     }
 
     public void renderBackgroundRight(PoseStack poseStack) {
         int guiLeft = guiLeft();
         int guiTop = guiTop();
-        ArcanaCodexHelper.renderTexture(background, poseStack, guiLeft + 147, guiTop, 148, 1, EntryScreen.entryScreen.bookWidth - 147, EntryScreen.entryScreen.bookHeight, 512, 512);
+        HemoCodexHelper.renderTexture(background, poseStack, guiLeft + 147, guiTop, 148, 1, EntryScreen.entryScreen.bookWidth - 147, EntryScreen.entryScreen.bookHeight, 512, 512);
     }
 
     public int guiLeft() {

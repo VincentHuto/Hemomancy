@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.client.screen.codex.objects;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.codex.AbstractProgressionCodexScreen;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaCodexHelper;
-import com.vincenthuto.hemomancy.client.screen.codex.ArcanaProgressionScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
 import com.vincenthuto.hemomancy.client.screen.codex.BookEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
@@ -30,9 +30,9 @@ public class IconObject extends EntryObject {
         int posX = offsetPosX(xOffset);
         int posY = offsetPosY(yOffset);
         PoseStack poseStack = guiGraphics.pose();
-        ArcanaCodexHelper.renderTransparentTexture(ArcanaProgressionScreen.FADE_TEXTURE, poseStack, posX - 13, posY - 13, 1, 252, 58, 58, 512, 512);
-        ArcanaCodexHelper.renderTexture(ArcanaProgressionScreen.FRAME_TEXTURE, poseStack, posX, posY, 67, getFrameTextureV(), width, height, 512, 512);
-        ArcanaCodexHelper.renderTexture(ArcanaProgressionScreen.FRAME_TEXTURE, poseStack, posX, posY, 166, getBackgroundTextureV(), width, height, 512, 512);
-        ArcanaCodexHelper.renderWavyIcon(textureLocation, poseStack, posX + 8, posY + 8);
+        HemoCodexHelper.renderTransparentTexture(HemoProgressionScreen.FADE_TEXTURE, poseStack, posX - 13, posY - 13, 1, 252, 58, 58, 512, 512);
+        HemoCodexHelper.renderTexture(HemoProgressionScreen.FRAME_TEXTURE, poseStack, posX, posY, 67, getFrameTextureV(), width, height, 512, 512);
+        HemoCodexHelper.renderTexture(HemoProgressionScreen.FRAME_TEXTURE, poseStack, posX, posY, 166, getBackgroundTextureV(), width, height, 512, 512);
+        HemoCodexHelper.renderWavyIcon(textureLocation, poseStack, posX + 8, posY + 8);
     }
 }
