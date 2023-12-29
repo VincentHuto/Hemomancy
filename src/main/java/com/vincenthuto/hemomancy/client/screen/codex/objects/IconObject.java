@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.client.screen.codex.AbstractProgressionCodexScreen;
 import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.ProgressionEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.BookEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
 
@@ -15,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 public class IconObject extends EntryObject {
     public final ResourceLocation textureLocation;
 
-    public IconObject(AbstractProgressionCodexScreen screen, BookEntry entry, ResourceLocation textureLocation, int posX, int posY) {
-        super(screen, entry.setDark(), posX, posY);
+    public IconObject(AbstractProgressionCodexScreen screen, int chapter,ProgressionEntry<EntryObject> entry, ResourceLocation textureLocation, int posX, int posY) {
+        super(screen, chapter, entry.setDark(), posX, posY);
         this.textureLocation = textureLocation;
     }
 

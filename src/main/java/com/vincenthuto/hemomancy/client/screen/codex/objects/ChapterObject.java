@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.codex.objects;
 import java.util.Arrays;
 
 import com.vincenthuto.hemomancy.client.screen.codex.AbstractProgressionCodexScreen;
-import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.ChapterEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
 import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
 import com.vincenthuto.hemomancy.client.screen.codex.ProgressionEntry;
@@ -13,18 +13,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
-public class EntryObject extends BookObject {
-	public final ProgressionEntry<BookObject> entry;
+public class ChapterObject extends BookObject {
+	public final ProgressionEntry entry;
 
-	public EntryObject(AbstractProgressionCodexScreen screen, int chapter,ProgressionEntry entry, int posX, int posY) {
-		super(screen, chapter ,posX, posY, 32, 32);
+	public ChapterObject(AbstractProgressionCodexScreen screen,int chapter, ProgressionEntry entry, int posX, int posY) {
+		super(screen,chapter, posX, posY, 32, 32);
 		this.entry = entry;
-
 	}
 
 	@Override
 	public void click(float xOffset, float yOffset, double mouseX, double mouseY) {
-		EntryScreen.openScreen(this);
+		//EntryScreen.openScreen(this);
+		screen.setChapter(((ChapterEntry)entry).chapterNum);
+		screen.cachedChapter =((ChapterEntry)entry).chapterNum;
+
 	}
 
 	@Override
@@ -49,6 +51,10 @@ public class EntryObject extends BookObject {
 					Arrays.asList(Component.translatable(entry.translationKey()),
 							Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)),
 					mouseX, mouseY);
+			// screen.renderComponentTooltip(guiGraphics,
+			// Arrays.asList(Component.translatable(entry.translationKey()),
+			// Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)),
+			// mouseX, mouseY, minecraft.font);
 		}
 	}
 

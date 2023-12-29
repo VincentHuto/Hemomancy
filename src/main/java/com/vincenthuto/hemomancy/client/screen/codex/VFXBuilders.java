@@ -222,7 +222,6 @@ public class VFXBuilders {
         }
 
         public ScreenVFXBuilder end() {
-            //bufferbuilder.end();
             BufferUploader.drawWithShader(bufferbuilder.end());
             return this;
         }

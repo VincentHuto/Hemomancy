@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.screen.codex.objects.BookObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.EntryObject;
 import com.vincenthuto.hemomancy.client.screen.codex.pages.BookPage;
 
@@ -37,18 +38,18 @@ public class EntryScreen extends AbstractHemoScreen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        BookEntry openEntry = openObject.entry;
+        ProgressionEntry<BookObject> openEntry = openObject.entry;
         renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         PoseStack poseStack = guiGraphics.pose();
         int guiLeft = (width - bookWidth) / 2;
         int guiTop = (height - bookHeight) / 2;
         HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft, guiTop, 1, 1, bookWidth, bookHeight, 512, 512);
-        if (!openEntry.pages.isEmpty()) {
+        if (!openEntry.getPages().isEmpty()) {
             int openPages = grouping * 2;
             for (int i = openPages; i < openPages + 2; i++) {
-                if (i < openEntry.pages.size()) {
-                    BookPage page = openEntry.pages.get(i);
+                if (i < openEntry.getPages().size()) {
+                    BookPage page = openEntry.getPages().get(i);
                     if (i % 2 == 0) {
                         page.renderBackgroundLeft(poseStack);
                     } else {
@@ -63,7 +64,7 @@ public class EntryScreen extends AbstractHemoScreen {
         } else {
         	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft - 13, guiTop + 150, 1, 213, 28, 18, 512, 512);
         }
-        if (grouping < openEntry.pages.size() / 2f - 1) {
+        if (grouping < openEntry.getPages().size() / 2f - 1) {
         	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 193, 28, 18, 512, 512);
             if (isHovering(mouseX, mouseY, guiLeft + bookWidth - 15, guiTop + 150, 28, 18)) {
             	HemoCodexHelper.renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 232, 28, 18, 512, 512);
@@ -71,18 +72,18 @@ public class EntryScreen extends AbstractHemoScreen {
             	HemoCodexHelper. renderTexture(BOOK_TEXTURE, poseStack, guiLeft + bookWidth - 15, guiTop + 150, 30, 213, 28, 18, 512, 512);
             }
         }
-        if (!openEntry.pages.isEmpty()) {
+        if (!openEntry.getPages().isEmpty()) {
             int openPages = grouping * 2;
             for (int i = openPages; i < openPages + 2; i++) {
-                if (i < openEntry.pages.size()) {
-                    BookPage page = openEntry.pages.get(i);
-                    boolean isRepeat = i % 2 != 0 && page.getClass().equals(openEntry.pages.get(i - 1).getClass());
+                if (i < openEntry.getPages().size()) {
+                    BookPage page = openEntry.getPages().get(i);
+                    boolean isRepeat = i % 2 != 0 && page.getClass().equals(openEntry.getPages().get(i - 1).getClass());
                     page.render(minecraft, guiGraphics, this, mouseX, mouseY, partialTicks, isRepeat);
                 }
             }
             for (int i = openPages; i < openPages + 2; i++) {
-                if (i < openEntry.pages.size()) {
-                    BookPage page = openEntry.pages.get(i);
+                if (i < openEntry.getPages().size()) {
+                    BookPage page = openEntry.getPages().get(i);
                     if (i % 2 == 0) {
                         page.renderLeft(minecraft, guiGraphics, this, mouseX, mouseY, partialTicks);
                     } else {
@@ -139,7 +140,7 @@ public class EntryScreen extends AbstractHemoScreen {
     }
 
     public void nextPage() {
-        if (grouping < openObject.entry.pages.size() / 2f - 1) {
+        if (grouping < openObject.entry.getPages().size() / 2f - 1) {
             grouping += 1;
             playPageFlipSound(() -> SoundEvents.BOOK_PAGE_TURN, getSweetenerPitch());
         }
@@ -167,7 +168,7 @@ public class EntryScreen extends AbstractHemoScreen {
     }
 
     public float getSweetenerPitch() {
-        return 1 + (float) grouping / openObject.entry.pages.size();
+        return 1 + (float) grouping / openObject.entry.getPages().size();
     }
 
     public void renderLate(Runnable runnable) {
