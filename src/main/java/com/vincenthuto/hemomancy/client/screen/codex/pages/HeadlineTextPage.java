@@ -19,11 +19,11 @@ public class HeadlineTextPage extends BookPage {
     }
 
     public String headlineTranslationKey() {
-        return "malum.gui.book.entry.page.headline." + headlineTranslationKey;
+        return "hemo.gui.book.entry.page.headline." + headlineTranslationKey;
     }
 
     public String translationKey() {
-        return "malum.gui.book.entry.page.text." + translationKey;
+        return "hemo.gui.book.entry.page.text." + translationKey;
     }
 
     @Override

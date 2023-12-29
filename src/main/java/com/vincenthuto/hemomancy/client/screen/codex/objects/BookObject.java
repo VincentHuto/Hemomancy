@@ -15,10 +15,14 @@ public class BookObject implements ProgressionObject {
 	public boolean isHovering;
 	public float hover;
 	public int chapter;
+	public String parentId;
+	public String identifier;
 
-	public BookObject(AbstractProgressionCodexScreen screen,int chapter, int posX, int posY, int width, int height) {
+
+	public BookObject(AbstractProgressionCodexScreen screen, String identifier,int chapter, String parentId, int posX, int posY, int width, int height) {
 		this.screen = screen;
 		this.chapter =chapter;
+		this.parentId = parentId;
 		this.posX = posX;
 		this.posY = posY;
 		this.width = width;
@@ -93,6 +97,7 @@ public class BookObject implements ProgressionObject {
 
 	public boolean isHovering(AbstractProgressionCodexScreen screen, float xOffset, float yOffset, double mouseX,
 			double mouseY) {
+
 		return screen.isHovering(mouseX, mouseY, offsetPosX(xOffset), offsetPosY(yOffset), width, height);
 	}
 
@@ -115,4 +120,15 @@ public class BookObject implements ProgressionObject {
 	public void setChapter(int chapter) {
 		this.chapter = chapter;
 	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	@Override
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
 }

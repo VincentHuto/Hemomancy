@@ -15,7 +15,6 @@ public class ChapterEntry implements ProgressionEntry<ChapterObject>{
     public  int yOffset;
     public  int chapterNum;
     public  ObjectSupplier<ChapterObject> objectSupplier = ChapterObject::new;
-
     public boolean isSoulwood;
     public boolean isDark;
 
@@ -37,11 +36,11 @@ public class ChapterEntry implements ProgressionEntry<ChapterObject>{
     }
 
     public String translationKey() {
-        return "malum.gui.book.entry." + identifier;
+        return "hemo.gui.book.entry." + identifier;
     }
 
     public String descriptionTranslationKey() {
-        return "malum.gui.book.entry." + identifier + ".description";
+        return "hemo.gui.book.entry." + identifier + ".description";
     }
 
     public ChapterEntry setSoulwood() {
@@ -108,5 +107,23 @@ public class ChapterEntry implements ProgressionEntry<ChapterObject>{
 	@Override
 	public void setChapter(int chapter) {
 		
+	}
+
+	@Override
+	public String getParentId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setParentId(String parentId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getIdentifier() {
+		// TODO Auto-generated method stub
+		return identifier;
 	}
 }

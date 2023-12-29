@@ -21,20 +21,21 @@ public class BookEntry implements ProgressionEntry<EntryObject>{
     public ObjectSupplier<EntryObject> objectSupplier = EntryObject::new;
     public boolean isSoulwood;
     public boolean isDark;
+    public String parentId;
 
-    public BookEntry(String identifier,int chapter, int xOffset, int yOffset) {
+    public BookEntry(String identifier,int chapter,String parentId, int xOffset, int yOffset) {
         this.chapter = chapter;
-
+        this.parentId = parentId;
         this.iconStack = null;
         this.identifier = identifier;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
 
-    public BookEntry(String identifier, int chapter,Item item, int xOffset, int yOffset) {
+    public BookEntry(String identifier, int chapter,String parentId,Item item, int xOffset, int yOffset) {
         this.iconStack = item.getDefaultInstance();
         this.chapter = chapter;
-
+        this.parentId = parentId;
         this.identifier = identifier;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
@@ -42,11 +43,11 @@ public class BookEntry implements ProgressionEntry<EntryObject>{
     }
 
     public String translationKey() {
-        return "malum.gui.book.entry." + identifier;
+        return "hemo.gui.book.entry." + identifier;
     }
 
     public String descriptionTranslationKey() {
-        return "malum.gui.book.entry." + identifier + ".description";
+        return "hemo.gui.book.entry." + identifier + ".description";
     }
     
     public boolean isDark() {
@@ -120,5 +121,21 @@ public class BookEntry implements ProgressionEntry<EntryObject>{
 	@Override
 	public ItemStack getIconStack() {
 		return iconStack;
+	}
+
+	@Override
+	public String getParentId() {
+		// TODO Auto-generated method stub
+		return parentId;
+	}
+
+	@Override
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+	
+	@Override
+	public String getIdentifier() {
+		return identifier;
 	}
 }

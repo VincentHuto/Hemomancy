@@ -16,8 +16,8 @@ import net.minecraft.network.chat.Component;
 public class EntryObject extends BookObject {
 	public final ProgressionEntry<BookObject> entry;
 
-	public EntryObject(AbstractProgressionCodexScreen screen, int chapter,ProgressionEntry entry, int posX, int posY) {
-		super(screen, chapter ,posX, posY, 32, 32);
+	public EntryObject(AbstractProgressionCodexScreen screen, String identifier, int chapter,String parentId,ProgressionEntry entry, int posX, int posY) {
+		super(screen, identifier, chapter ,parentId,posX, posY, 32, 32);
 		this.entry = entry;
 
 	}
@@ -45,6 +45,8 @@ public class EntryObject extends BookObject {
 	public void lateRender(Minecraft minecraft, GuiGraphics guiGraphics, float xOffset, float yOffset, int mouseX,
 			int mouseY, float partialTicks) {
 		if (isHovering) {
+			System.out.println(mouseX);
+
 			guiGraphics.renderComponentTooltip(minecraft.font,
 					Arrays.asList(Component.translatable(entry.translationKey()),
 							Component.translatable(entry.descriptionTranslationKey()).withStyle(ChatFormatting.GRAY)),

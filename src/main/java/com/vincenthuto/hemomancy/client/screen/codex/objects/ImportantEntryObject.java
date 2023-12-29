@@ -11,8 +11,8 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class ImportantEntryObject extends EntryObject {
 
-    public ImportantEntryObject(AbstractProgressionCodexScreen screen,int chapter, ProgressionEntry entry, int posX, int posY) {
-        super(screen, chapter, entry, posX, posY);
+    public ImportantEntryObject(AbstractProgressionCodexScreen screen, String identifier,int chapter,String parentId, ProgressionEntry entry, int posX, int posY) {
+        super(screen, identifier, chapter, parentId, entry, posX, posY);
     }
 
     @Override

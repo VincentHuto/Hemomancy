@@ -151,51 +151,51 @@ public class HemoProgressionScreen extends AbstractProgressionCodexScreen {
 
 		ENTRIES.add(new ChapterEntry("notintor", 1, ItemInit.sanguine_formation.get(), 0, 0));
 
-		ENTRIES.add(new BookEntry("spirit_crystals", 0, 0, 1)
-				.setObjectSupplier(
-						(s,c, e, x, y) -> new IconObject(s, c, e, Hemomancy.rloc("textures/gui/vein_teleport.png"), x, y))
+		ENTRIES.add(new BookEntry("spirit_crystals", 0, "", 0, 1)
+				.setObjectSupplier((s, i, c, p, e, x, y) -> new IconObject(s, i, c, p, e,
+						Hemomancy.rloc("textures/gui/vein_teleport.png"), x, y))
 				.addPage(new HeadlineTextPage("spirit_crystals", "spirit_crystals.1"))
 				.addPage(new TextPage("spirit_crystals.2")).addPage(new TextPage("spirit_crystals.3")));
 
-		ENTRIES.add(new BookEntry("introduction", 0, ItemInit.barbed_blade.get(), 0, 2)
+		ENTRIES.add(new BookEntry("introduction", 0, "", ItemInit.barbed_blade.get(), 0, 2)
 				.setObjectSupplier(ImportantEntryObject::new)
 				.addPage(new HeadlineTextPage("introduction", "introduction.1")).addPage(new TextPage("introduction.2"))
 				.addPage(new TextPage("introduction.3")).addPage(new TextPage("introduction.4"))
 				.addPage(new TextPage("introduction.5")));
 
-		ENTRIES.add(new BookEntry("natural_quartz", 0, BlockInit.blood_crystal.get().asItem(), 2, 1)
+		ENTRIES.add(new BookEntry("natural_quartz", 0, "", BlockInit.blood_crystal.get().asItem(), 2, 1)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
 						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
 
-		ENTRIES.add(new BookEntry("natural_quartz2", 0, BlockInit.polished_venous_stone_brick_stairs.get().asItem(), 2, 2)
+		ENTRIES.add(new BookEntry("natural_quartz2", 0, "", BlockInit.polished_venous_stone_brick_stairs.get().asItem(),
+				2, 2).setObjectSupplier(MinorEntryObject::new)
+				.addPage(new HeadlineTextItemPage("natural_quartz", "natural_quartz.1",
+						new ItemStack(BlockInit.blood_crystal.get()))));
+
+		ENTRIES.add(new BookEntry("natural_quartz3", 0, "", BlockInit.befouling_ash_trail.get().asItem(), 2, 3)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
 						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
 
-		ENTRIES.add(new BookEntry("natural_quartz3", 0, BlockInit.befouling_ash_trail.get().asItem(), 2, 3)
+		ENTRIES.add(new BookEntry("natural_quartz4", 0, "", BlockInit.runic_chisel_station.get().asItem(), -2, 3)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
 						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
 
-		ENTRIES.add(new BookEntry("natural_quartz4", 0, BlockInit.runic_chisel_station.get().asItem(), -2, 3)
+		ENTRIES.add(new BookEntry("natural_auartz", 1, "", ItemInit.memory_activation_potential.get().asItem(), 2, 1)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
 						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
 
-		ENTRIES.add(new BookEntry("natural_auartz", 1, BlockInit.bleeding_heart.get().asItem(), 2, 1)
+		ENTRIES.add(new BookEntry("naturalauartz2", 1, "natural_auartz", ItemInit.memory_blood_rush.get().asItem(), 2, 2)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
-						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
+						"natural_quartz.1", new ItemStack(ItemInit.memory_activation_potential.get()))));
 
-		ENTRIES.add(new BookEntry("naturalauartz2", 1, BlockInit.blood_wood_log.get().asItem(), 2, 2)
+		ENTRIES.add(new BookEntry("natural_auartz3", 1, "naturalauartz2",ItemInit.memory_blood_needle.get().asItem(), 2, 3)
 				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
-						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
+						"natural_quartz.1", new ItemStack(ItemInit.memory_activation_potential.get()))));
 
-		ENTRIES.add(new BookEntry("natural_auartz3", 1, BlockInit.blood_crystal.get().asItem(), 2, 3)
-				.setObjectSupplier(MinorEntryObject::new).addPage(new HeadlineTextItemPage("natural_quartz",
-						"natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
-
-		ENTRIES.add(
-				new BookEntry("natural_auartz4", 1, BlockInit.polished_venous_stone_brick_stairs.get().asItem(), -2, 4)
-						.setObjectSupplier(MinorEntryObject::new).
-						addPage(new HeadlineTextItemPage("natural_quartz","natural_quartz.1", new ItemStack(BlockInit.blood_crystal.get()))));
-
+		ENTRIES.add(new BookEntry("natural_auartz4", 1, "natural_auartz3", ItemInit.memory_blood_absorption.get().asItem(),
+				-2, 4).setObjectSupplier(MinorEntryObject::new)
+				.addPage(new HeadlineTextItemPage("natural_quartz", "natural_quartz.1",
+						new ItemStack(ItemInit.memory_activation_potential.get()))));
 
 	}
 }

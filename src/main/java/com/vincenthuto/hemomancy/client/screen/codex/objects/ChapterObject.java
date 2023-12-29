@@ -16,8 +16,8 @@ import net.minecraft.network.chat.Component;
 public class ChapterObject extends BookObject {
 	public final ProgressionEntry entry;
 
-	public ChapterObject(AbstractProgressionCodexScreen screen,int chapter, ProgressionEntry entry, int posX, int posY) {
-		super(screen,chapter, posX, posY, 32, 32);
+	public ChapterObject(AbstractProgressionCodexScreen screen, String identifier,int chapter,String parentId, ProgressionEntry entry, int posX, int posY) {
+		super(screen,identifier, chapter, parentId, posX, posY, 32, 32);
 		this.entry = entry;
 	}
 

@@ -32,7 +32,7 @@ public class EntryScreen extends AbstractHemoScreen {
     public int grouping;
 
     public EntryScreen(EntryObject openObject) {
-        super(Component.translatable("malum.gui.entry.title"));
+        super(Component.translatable("hemo.gui.entry.title"));
         this.openObject = openObject;
     }
 

@@ -29,7 +29,9 @@ public interface ProgressionObject {
     public float getHover();
     
     public  boolean isHovering();
-
+    
+    public String getIdentifier();
+    public void setIdentifier(String identifier);
 	
 	public int hoverCap();
 

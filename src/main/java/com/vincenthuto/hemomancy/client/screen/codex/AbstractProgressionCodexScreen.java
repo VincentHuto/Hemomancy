@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.client.screen.codex.objects.BookObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.ChapterObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.EntryObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.ProgressionObject;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,7 +44,7 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 
 	protected AbstractProgressionCodexScreen(int bookWidth, int bookHeight, int bookInsideWidth, int bookInsideHeight,
 			int backgroundImageWidth, int backgroundImageHeight) {
-		super(Component.translatable("malum.gui.book.title"));
+		super(Component.translatable("hemo.gui.book.title"));
 		this.bookWidth = bookWidth;
 		this.bookHeight = bookHeight;
 		this.bookInsideWidth = bookInsideWidth;
@@ -70,19 +72,19 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 		int height = 48;
 
 		for (ProgressionEntry entry : getEntries()) {
-			//System.out.println(entry.getChapter());
+			// System.out.println(entry.getChapter());
 			if (entry instanceof ChapterEntry c) {
-				chapterObjects.add(entry.getObjectSupplier().getEntryObject(this, entry.getChapter(), entry,
-						coreX + entry.getXOffset() * width, coreY - entry.getYOffset() * height));
-			}else {
-				System.out.println(entry.getChapter());
-				BookObject b = (BookObject) entry.getObjectSupplier().getEntryObject(this, entry.getChapter(), entry,
-						coreX + entry.getXOffset() * width, coreY - entry.getYOffset() * height);
+				chapterObjects.add(entry.getObjectSupplier().getEntryObject(this, entry.getIdentifier(),
+						entry.getChapter(), entry.getParentId(), entry, coreX + entry.getXOffset() * width,
+						coreY - entry.getYOffset() * height));
+			} else {
+				BookObject b = (BookObject) entry.getObjectSupplier().getEntryObject(this, entry.getIdentifier(),
+						entry.getChapter(), entry.getParentId(), entry, coreX + entry.getXOffset() * width,
+						coreY - entry.getYOffset() * height);
 				b.setChapter(entry.getChapter());
-				System.out.println(b.getChapter());
+				b.setIdentifier(entry.getIdentifier());
 				bookObjects.add(b);
 			}
-		
 
 		}
 
@@ -117,13 +119,11 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 			return super.mouseReleased(mouseX, mouseY, button);
 		}
 		for (ProgressionObject object : bookObjects) {
-			// System.out.println(object.getChapter());
 			if (object instanceof ChapterObject c) {
 
 			} else {
 				if (object.isHovering(this, xOffset, yOffset, mouseX, mouseY)) {
 					object.click(xOffset, yOffset, mouseX, mouseY);
-					System.out.println(object.getChapter());
 					break;
 				}
 			}
@@ -161,8 +161,28 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 			if (bookObjects.get(i) instanceof ChapterObject c) {
 
 			} else {
+
 				if (bookObjects.get(i) instanceof EntryObject e) {
 					if (e.getChapter() == chapter) {
+						if (e.entry.getParentId() != "") {
+							for (ProgressionEntry<ProgressionObject> x : getEntries()) {
+								if (x.getIdentifier().equals(e.parentId)) {
+									BookObject p = null;
+									for (ProgressionObject b : bookObjects) {
+										if (b.getIdentifier() == x.getIdentifier()) {
+											p = (BookObject) b;
+										}
+									}
+									if (p != null) {
+										HLGuiUtils.drawLine(guiGraphics.pose(), e.offsetPosX(xOffset)+16,
+												e.offsetPosY(yOffset)+16, p.offsetPosX(xOffset)+16, p.offsetPosY(yOffset)+16,
+												ParticleColor.YELLOW, 2);
+									}
+
+								}
+							}
+						}
+
 						boolean isHovering = e.isHovering(this, xOffset, yOffset, mouseX, mouseY);
 						e.setHovering(isHovering);
 						e.setHover(
