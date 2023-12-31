@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 2,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Flakes",
+  "subtitle": "Control",
+  "text": "Flakes are biproducts of using knappers, currently obsidian are the only kind available and serve as a slight bonus to using the proper tool, 4 flakes can be combinded to reform their parent block. ",
+  "icon": "hutoslib:obsidian_flakes",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

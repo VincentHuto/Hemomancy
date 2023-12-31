@@ -25,7 +25,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 	@Override
 	protected void addTranslations() {
-        HemoProgressionScreen.setupEntries();
+      //  HemoProgressionScreen.setupEntries();
 
 		// Jei
 		add("hemomancy.jei.recaller", "Visceral Recaller");

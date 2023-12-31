@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:tree",
+  "coverLoc" : "hutoslib:textures/gui/guide/title.png",
+  "overlayLoc" : "hutoslib:textures/gui/guide/guide_overlay.png",
+  "title" : "Hemomancy",
+  "subtitle" : "a Library Mod+",
+  "text" : "reee",
+  "icon" : "diamond_knapper"
+}

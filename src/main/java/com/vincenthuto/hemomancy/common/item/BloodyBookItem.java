@@ -4,9 +4,12 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
+import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreeCodeModel;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreePlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
 
 import net.minecraft.ChatFormatting;
@@ -84,10 +87,13 @@ public class BloodyBookItem extends ItemGuideBook {
 	public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
 		BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
 		BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("sanctumsanguinium"));
+		SkillTreePlaceboReloadListener testt = SkillTreePlaceboReloadListener.INSTANCE;
+		SkillTreeCodeModel tt = testt.getTreeByTitle(Hemomancy.rloc("hemotree"));
+	
 		if (test != null) {
 			if (lvl.isClientSide) {
 				if (p_41433_.isShiftKeyDown()) {
-					HemoProgressionScreen.openCodexViaItem();
+					HemoProgressionScreen.openCodexViaItem(tt);
 				} else {
 					if (book != null) {
 						HLGuiGuideTitlePage.openScreenViaItem(book);
@@ -96,20 +102,6 @@ public class BloodyBookItem extends ItemGuideBook {
 
 			}
 		}
-
-//		if (lvl.isClientSide()) {
-//			HemoTitlePage.openScreenViaItem();
-//		}
-		// BookCodeModel hbook = BookManager.getBookByTitle(new
-		// ResourceLocation("hemomancy", "sanctumsanguinium"));
-//
-//		if (hbook != null) {
-//			if (lvl.isClientSide()) {
-//				TestGuiGuideTitlePage guide = new TestGuiGuideTitlePage(hbook);
-//				guide.openScreenViaItem(hbook);
-//			}
-//
-//		}
 		return super.use(lvl, p_41433_, p_41434_);
 	}
 

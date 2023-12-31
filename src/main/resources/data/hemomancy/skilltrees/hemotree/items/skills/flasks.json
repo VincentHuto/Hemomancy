@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Flasks",
+  "subtitle": "Control",
+  "text": "Flasks serve as a smaller unit of liquid containment, currently unused in their base state, but used by other mods.",
+  "icon": "hutoslib:cured_clay_flask",
+  "parents":[1],
+  "posX": 3,
+  "posY": 4
+}

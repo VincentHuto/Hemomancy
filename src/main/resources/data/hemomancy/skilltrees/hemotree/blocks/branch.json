@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:branch",
+  "ordinality": 4,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "color": "0,1,0",
+  "title": "Misc Blocks",
+  "subtitle": "Display Your Goods.",
+  "icon": "hutoslib:display_pedestal"
+}

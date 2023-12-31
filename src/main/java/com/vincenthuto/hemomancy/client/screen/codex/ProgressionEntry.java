@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.client.screen.codex.objects.ProgressionObject;
 import com.vincenthuto.hemomancy.client.screen.codex.pages.BookPage;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreeCodeModel;
 
 import net.minecraft.world.item.ItemStack;
 
@@ -48,7 +49,7 @@ public interface ProgressionEntry<T extends ProgressionObject> {
 	ObjectSupplier<T> getObjectSupplier();
 
 	public interface ObjectSupplier<T> {
-		ProgressionObject getEntryObject(AbstractProgressionCodexScreen screen, String identifier, int chapter,
+		ProgressionObject getEntryObject(AbstractProgressionCodexScreen screen,SkillTreeCodeModel model, String identifier, int chapter,
 				String parentId, ProgressionEntry entry, int x, int y);
 	}
 

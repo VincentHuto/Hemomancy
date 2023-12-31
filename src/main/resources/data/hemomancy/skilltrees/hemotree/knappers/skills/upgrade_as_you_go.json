@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 2,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Tiers",
+  "subtitle": "Upgrade as you go",
+  "text": "Like all tools, knappers themselves have tiers and can be upgraded as player progression continues. The standard vanilla tiers of wood,stone,iron, diamond, and netherite are all included in this as well as other mods adding their own tiers!",
+  "icon": "hutoslib:diamond_knapper",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

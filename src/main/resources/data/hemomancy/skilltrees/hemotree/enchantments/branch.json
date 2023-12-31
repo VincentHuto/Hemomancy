@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:branch",
+  "ordinality": 5,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "color": "1,0,1",
+  "title": "Enchantments!",
+  "subtitle": "Ohhhh Shiny!",
+  "icon": "minecraft:glow_berries"
+}

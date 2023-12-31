@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Easy Shattering!",
+  "subtitle": "Smash all the things!",
+  "text": "Ever find yourself struggling to smash blocks with standard tools that are just not right for the job? Are things like Obsidian and other hard yet brittle materials? just a pain to obtain in a modscape that requires loads of it early on?  Well look no further, these simple, yet highly specialized tools are made for just that! Simply two sticks and your material of choice in a diagonal and this tool can be yours too!",
+  "icon": "hutoslib:iron_knapper",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

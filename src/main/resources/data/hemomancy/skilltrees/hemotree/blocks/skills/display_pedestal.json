@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Display Pedestal",
+  "subtitle": "Show off your Gear",
+  "text": "Display pedestals are a one item/block storage pedestal that simply shows off in a nice lazy susan style to display around your base. They come in many flavors aside from the standard stone brick to fit whatever base design you may have!",
+  "icon": "hutoslib:display_pedestal",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

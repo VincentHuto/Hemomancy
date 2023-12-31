@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.codex.objects;
 
+import java.util.List;
+
 import com.vincenthuto.hemomancy.client.screen.codex.AbstractProgressionCodexScreen;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreeCodeModel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,14 +18,16 @@ public class BookObject implements ProgressionObject {
 	public boolean isHovering;
 	public float hover;
 	public int chapter;
-	public String parentId;
+	public List<Integer> parentId;
 	public String identifier;
+	public SkillTreeCodeModel model;
 
 
-	public BookObject(AbstractProgressionCodexScreen screen, String identifier,int chapter, String parentId, int posX, int posY, int width, int height) {
+	public BookObject(AbstractProgressionCodexScreen screen,SkillTreeCodeModel model, String identifier,int chapter, List<Integer> list, int posX, int posY, int width, int height) {
+		this.model = model;
 		this.screen = screen;
 		this.chapter =chapter;
-		this.parentId = parentId;
+		this.parentId = list;
 		this.posX = posX;
 		this.posY = posY;
 		this.width = width;

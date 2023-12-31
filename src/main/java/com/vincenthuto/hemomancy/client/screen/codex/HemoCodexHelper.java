@@ -94,29 +94,7 @@ public class HemoCodexHelper {
         RenderSystem.disableBlend();
     }
 
-    public static void renderComponents(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
-        java.util.List<ItemStack> items = components.stream().map(IRecipeComponent::getStack).collect(Collectors.toList());
-        renderItemList(screen, guiGraphics, items, left, top, mouseX, mouseY, vertical).run();
-    }
 
-    public static Runnable renderBufferedComponents(AbstractHemoScreen screen, GuiGraphics guiGraphics, java.util.List<? extends IRecipeComponent> components, int left, int top, int mouseX, int mouseY, boolean vertical) {
-        java.util.List<ItemStack> items = components.stream().map(IRecipeComponent::getStack).collect(Collectors.toList());
-        return renderItemList(screen, guiGraphics, items, left, top, mouseX, mouseY, vertical);
-    }
-
-    public static void renderComponent(AbstractHemoScreen screen, GuiGraphics guiGraphics, IRecipeComponent component, int posX, int posY, int mouseX, int mouseY) {
-        if (component.getStacks().size() == 1) {
-            renderItem(screen, guiGraphics, component.getStack(), posX, posY, mouseX, mouseY);
-            return;
-        }
-        int index = (int) (Minecraft.getInstance().level.getGameTime() % (20L * component.getStacks().size()) / 20);
-        ItemStack stack = component.getStacks().get(index);
-        guiGraphics.renderItem(stack, posX, posY);
-        guiGraphics.renderItemDecorations(Minecraft.getInstance().font, stack, posX, posY, null);
-        if (screen.isHovering(mouseX, mouseY, posX, posY, 16, 16)) {
-            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, Screen.getTooltipFromItem(Minecraft.getInstance(), stack), mouseX, mouseY);
-        }
-    }
 
     public static void renderItem(AbstractHemoScreen screen, GuiGraphics guiGraphics, Ingredient ingredient, int posX, int posY, int mouseX, int mouseY) {
         renderItem(screen, guiGraphics, List.of(ingredient.getItems()), posX, posY, mouseX, mouseY);

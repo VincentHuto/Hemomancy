@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Arm Banners",
+  "subtitle": "Display your fealty!",
+  "text": "Showing off your sweet banner designs using a shield is so last season,  not to mention it takes up a precious left hand slot for another weapon or torches!, Now you can slap it on your shoulder with a matching armor type  to display to the entire world while leaving your off hand free!",
+  "icon": "hutoslib:iron_arm_banner",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

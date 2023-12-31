@@ -2,16 +2,19 @@ package com.vincenthuto.hemomancy.client.screen.codex;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.vincenthuto.hemomancy.client.screen.codex.objects.BookObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.ChapterObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.EntryObject;
 import com.vincenthuto.hemomancy.client.screen.codex.objects.ProgressionObject;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
+import com.vincenthuto.hutoslib.common.data.skilltree.BranchTemplate;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTemplate;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreeCodeModel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,13 +41,14 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 	public final int backgroundImageWidth;
 	public final int backgroundImageHeight;
 
-	protected AbstractProgressionCodexScreen(int backgroundImageWidth, int backgroundImageHeight) {
-		this(378, 250, 344, 218, backgroundImageWidth, backgroundImageHeight);
+	protected AbstractProgressionCodexScreen(SkillTreeCodeModel model, int backgroundImageWidth,
+			int backgroundImageHeight) {
+		this(model, 378, 250, 344, 218, backgroundImageWidth, backgroundImageHeight);
 	}
 
-	protected AbstractProgressionCodexScreen(int bookWidth, int bookHeight, int bookInsideWidth, int bookInsideHeight,
-			int backgroundImageWidth, int backgroundImageHeight) {
-		super(Component.translatable("hemo.gui.book.title"));
+	protected AbstractProgressionCodexScreen(SkillTreeCodeModel model, int bookWidth, int bookHeight,
+			int bookInsideWidth, int bookInsideHeight, int backgroundImageWidth, int backgroundImageHeight) {
+		super(model, Component.translatable("hemo.gui.book.title"));
 		this.bookWidth = bookWidth;
 		this.bookHeight = bookHeight;
 		this.bookInsideWidth = bookInsideWidth;
@@ -56,10 +60,6 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 
 	@Override
 	public void init() {
-
-	}
-
-	public void setupObjects() {
 		chapterObjects.clear();
 		bookObjects.clear();
 		this.width = minecraft.getWindow().getGuiScaledWidth();
@@ -71,27 +71,24 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 		int width = 40;
 		int height = 48;
 
-		for (ProgressionEntry entry : getEntries()) {
-			// System.out.println(entry.getChapter());
-			if (entry instanceof ChapterEntry c) {
-				chapterObjects.add(entry.getObjectSupplier().getEntryObject(this, entry.getIdentifier(),
-						entry.getChapter(), entry.getParentId(), entry, coreX + entry.getXOffset() * width,
-						coreY - entry.getYOffset() * height));
-			} else {
-				BookObject b = (BookObject) entry.getObjectSupplier().getEntryObject(this, entry.getIdentifier(),
-						entry.getChapter(), entry.getParentId(), entry, coreX + entry.getXOffset() * width,
-						coreY - entry.getYOffset() * height);
-				b.setChapter(entry.getChapter());
-				b.setIdentifier(entry.getIdentifier());
-				bookObjects.add(b);
+		var branches = model.getBranchs();
+		for (BranchTemplate b : branches) {
+			var skills = b.getSkills();
+			ChapterObject chapt = new ChapterObject(this, model, b, b.getId().getPath(), b.getOrdinality(), List.of(),
+					coreX + 0 * width, coreY - 0 * height);
+			chapterObjects.add(chapt);
+			for (SkillTemplate s : skills) {
+				EntryObject be = new EntryObject(this, s, model, s.getOrdinality(), s.getId().getPath(),
+						b.getOrdinality(), s.getParentIds(), coreX + s.getPosX() * width, coreY - s.getPosY() * height);
+				bookObjects.add(be);
 			}
-
 		}
-
+		chapterObjects.sort((o1, o2) -> Integer.compare(o1.getChapter(), o2.getChapter()));
+		
 		faceObject(bookObjects.get(0));
 	}
 
-	public abstract void openScreen(boolean ignoreNextMouseClick);
+	public abstract void openScreen(SkillTreeCodeModel model, boolean ignoreNextMouseClick);
 
 	public abstract Collection<ProgressionEntry> getEntries();
 
@@ -157,43 +154,36 @@ public abstract class AbstractProgressionCodexScreen extends AbstractHemoScreen 
 
 	public void renderEntries(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		for (int i = bookObjects.size() - 1; i >= 0; i--) {
-
-			if (bookObjects.get(i) instanceof ChapterObject c) {
-
-			} else {
-
+			if (!(bookObjects.get(i) instanceof ChapterObject c)) {
 				if (bookObjects.get(i) instanceof EntryObject e) {
 					if (e.getChapter() == chapter) {
-						if (e.entry.getParentId() != "") {
-							for (ProgressionEntry<ProgressionObject> x : getEntries()) {
-								if (x.getIdentifier().equals(e.parentId)) {
-									BookObject p = null;
-									for (ProgressionObject b : bookObjects) {
-										if (b.getIdentifier() == x.getIdentifier()) {
-											p = (BookObject) b;
+						if (e.parentId.size() > 0) {
+							for (int j = 0; j < e.parentId.size(); j++) {
+								for (int k = bookObjects.size() - 1; k >= 0; k--) {
+									if (bookObjects.get(k) instanceof EntryObject p) {
+										if (p.getOrdinality() == e.parentId.get(j) && e.chapter == p.chapter) {
+											if (p != null) {
+												HLGuiUtils.drawLine(guiGraphics.pose(), e.offsetPosX(xOffset) + 16,
+														e.offsetPosY(yOffset) + 16, p.offsetPosX(xOffset) + 16,
+														p.offsetPosY(yOffset) + 16, ParticleColor.YELLOW, 2);
+											}
 										}
 									}
-									if (p != null) {
-										HLGuiUtils.drawLine(guiGraphics.pose(), e.offsetPosX(xOffset)+16,
-												e.offsetPosY(yOffset)+16, p.offsetPosX(xOffset)+16, p.offsetPosY(yOffset)+16,
-												ParticleColor.YELLOW, 2);
-									}
-
 								}
 							}
 						}
-
 						boolean isHovering = e.isHovering(this, xOffset, yOffset, mouseX, mouseY);
 						e.setHovering(isHovering);
 						e.setHover(
 								isHovering ? Math.min(e.getHover() + 1, e.hoverCap()) : Math.max(e.getHover() - 1, 0));
 						e.render(minecraft, guiGraphics, xOffset, yOffset, mouseX, mouseY, partialTicks);
 					}
-				}
 
+				}
 			}
 
 		}
+
 	}
 
 	public void lateEntryRender(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {

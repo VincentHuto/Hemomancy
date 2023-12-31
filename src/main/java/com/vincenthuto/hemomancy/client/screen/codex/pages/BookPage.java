@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.codex.pages;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
-import com.vincenthuto.hemomancy.client.screen.codex.BookEntry;
 import com.vincenthuto.hemomancy.client.screen.codex.EntryScreen;
+import com.vincenthuto.hemomancy.client.screen.codex.HemoCodexHelper;
+import com.vincenthuto.hutoslib.common.data.skilltree.SkillTemplate;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class BookPage {
     public final ResourceLocation background;
-    protected BookEntry parentEntry;
+    protected SkillTemplate parentEntry;
 
     public BookPage(ResourceLocation background) {
         this.background = background;
@@ -52,7 +52,7 @@ public class BookPage {
         return (EntryScreen.entryScreen.height - EntryScreen.entryScreen.bookHeight) / 2;
     }
 
-    public BookPage setParentEntry(BookEntry parentEntry) {
+    public BookPage setParentEntry(SkillTemplate parentEntry) {
         this.parentEntry = parentEntry;
         return this;
     }
