@@ -27,6 +27,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.ChthonianRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.EnthralledDollRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.ErythromyceliumEruptusRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.FargoneRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.FerventChitiniteRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.FunglingRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.LumpOfThoughtRenderer;
@@ -211,17 +212,6 @@ public class ClientEvents {
 		}
 
 	}
-	
-//    private static boolean addedDragonWingLayer = false;
-//
-//    @SubscribeEvent
-//    @OnlyIn(Dist.CLIENT)
-//    public static void onPlayerRenderPre(RenderPlayerEvent.Pre event) {
-//        if (!addedDragonWingLayer) {
-//            event.getRenderer().addLayer(new FungalWingLayer<>(event.getRenderer(), Minecraft.getInstance().getEntityModels()));
-//            addedDragonWingLayer = true;
-//        }
-//    }
 
 	public static boolean isKeyDown(KeyMapping keybind) {
 		if (keybind.isUnbound())
@@ -348,6 +338,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
 			event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
 			event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
+			event.registerEntityRenderer(EntityInit.fervent_chitinite.get(), FerventChitiniteRenderer::new);
 			event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
 			event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
 			event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);

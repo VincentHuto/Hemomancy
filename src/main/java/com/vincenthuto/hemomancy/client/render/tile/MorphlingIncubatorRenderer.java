@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.client.render.tile;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.common.tile.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
@@ -18,11 +15,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;

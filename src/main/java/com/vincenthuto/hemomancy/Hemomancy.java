@@ -165,6 +165,7 @@ public class Hemomancy {
 		event.enqueueWork(() -> {
 			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
 					BloodStructurePageTemplate.SERIALIZER);
+			
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(),
 					BlockInit.potted_bleeding_heart);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),

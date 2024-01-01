@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.DrudgeModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.EnthralledDollModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ErythromyceliumEruptusModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.FargoneModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.FerventChitiniteModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.FunglingModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.LeechModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.LumpOfThoughtModel;
@@ -98,6 +99,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(ChthonianModel.LAYER_LOCATION, ChthonianModel::createBodyLayer);
 		event.registerLayerDefinition(ChthonianQueenModel.LAYER_LOCATION, ChthonianQueenModel::createBodyLayer);
 		event.registerLayerDefinition(ChitiniteModel.LAYER_LOCATION, ChitiniteModel::createBodyLayer);
+		event.registerLayerDefinition(FerventChitiniteModel.LAYER_LOCATION, FerventChitiniteModel::createBodyLayer);
+		event.registerLayerDefinition(FerventChitiniteModel.CRYSTAL_LAYER_LOCATION, FerventChitiniteModel::createCrystalLayer);
+
 		event.registerLayerDefinition(DrudgeModel.LAYER_LOCATION, DrudgeModel::createBodyLayer);
 		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
 		event.registerLayerDefinition(FunglingModel.LAYER_LOCATION, FunglingModel::createBodyLayer);

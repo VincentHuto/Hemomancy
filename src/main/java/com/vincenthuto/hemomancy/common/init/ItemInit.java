@@ -161,6 +161,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> blood_rock = BASEITEMS.register("blood_rock",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
@@ -494,6 +496,11 @@ public class ItemInit {
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register(
 			"spawn_egg_chitinite",
 			() -> new ForgeSpawnEggItem(EntityInit.chitinite, 3617335, 8553354, new Item.Properties()));
+	
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fervent_chitinite = SPAWNEGGS.register(
+			"spawn_egg_fervent_chitinite",
+			() -> new ForgeSpawnEggItem(EntityInit.fervent_chitinite, 3617335, 12124160, new Item.Properties()));
+	
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register(
 			"spawn_egg_chthonian",
 			() -> new ForgeSpawnEggItem(EntityInit.chthonian, 7488841, 2170666, new Item.Properties()));

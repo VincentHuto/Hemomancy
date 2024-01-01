@@ -25,6 +25,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.ChthonianQueenEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.EnthralledDollEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.ErythromyceliumEruptusEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.FargoneEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.FerventChitiniteEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.LeechEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.LumpOfThoughtEntity;
@@ -124,6 +125,12 @@ public class EntityInit {
 	public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
 			() -> EntityType.Builder.<ChitiniteEntity>of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
 					.build(Hemomancy.rloc("chitinite").toString()));
+	
+	public static final RegistryObject<EntityType<FerventChitiniteEntity>> fervent_chitinite = ENTITY_TYPES.register("fervent_chitinite",
+			() -> EntityType.Builder.<FerventChitiniteEntity>of(FerventChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
+					.build(Hemomancy.rloc("fervent_chitinite").toString()));
+	
+	
 	public static final RegistryObject<EntityType<ChthonianEntity>> chthonian = ENTITY_TYPES.register("chthonian",
 			() -> EntityType.Builder.<ChthonianEntity>of(ChthonianEntity::new, MobCategory.MONSTER).sized(1F, 1F)
 					.build(Hemomancy.rloc("chthonian").toString()));
@@ -249,6 +256,7 @@ public class EntityInit {
 		event.put(EntityInit.fungling.get(), FargoneEntity.setAttributes().build());
 		event.put(EntityInit.thirster.get(), ThirsterEntity.setAttributes().build());
 		event.put(EntityInit.chitinite.get(), ChitiniteEntity.setAttributes().build());
+		event.put(EntityInit.fervent_chitinite.get(), ChitiniteEntity.setAttributes().build());
 		event.put(EntityInit.chthonian.get(), ChthonianEntity.setAttributes().build());
 		event.put(EntityInit.chthonian_queen.get(), ChthonianQueenEntity.setAttributes().build());
 		event.put(EntityInit.lump_of_thought.get(), LumpOfThoughtEntity.setAttributes().build());

@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.event.ClientTickHandler;
 import com.vincenthuto.hemomancy.client.model.block.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.common.tile.VialCentrifugeBlockEntity;
+import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -43,7 +43,7 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 	@Override
 	public void render(VialCentrifugeBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		double ticks = ClientTickHandler.ticksInGame + ClientTickHandler.partialTicks - 1.3 * 0.14;
+		double ticks = HlClientTickHandler	.ticksInGame + HlClientTickHandler.partialTicks - 1.3 * 0.14;
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(0.5D, 1.95D, 0.5D);
 		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
