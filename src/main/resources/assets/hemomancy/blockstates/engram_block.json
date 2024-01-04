@@ -1,0 +1,57 @@
+{
+	"variants": {
+		"character=0": {
+			"model": "hemomancy:block/engrams/engram_a"
+		},	"character=1": {
+			"model": "hemomancy:block/engrams/engram_b"
+		},	"character=2": {
+			"model": "hemomancy:block/engrams/engram_c"
+		},	"character=3": {
+			"model": "hemomancy:block/engrams/engram_d"
+		},	"character=4": {
+			"model": "hemomancy:block/engrams/engram_e"
+		},	"character=5": {
+			"model": "hemomancy:block/engrams/engram_f"
+		},	"character=6": {
+			"model": "hemomancy:block/engrams/engram_g"
+		},	"character=7": {
+			"model": "hemomancy:block/engrams/engram_h"
+		},	"character=8": {
+			"model": "hemomancy:block/engrams/engram_i"
+		},	"character=9": {
+			"model": "hemomancy:block/engrams/engram_j"
+		},	"character=10": {
+			"model": "hemomancy:block/engrams/engram_k"
+		},	"character=11": {
+			"model": "hemomancy:block/engrams/engram_l"
+		},	"character=12": {
+			"model": "hemomancy:block/engrams/engram_m"
+		},	"character=13": {
+			"model": "hemomancy:block/engrams/engram_n"
+		},	"character=14": {
+			"model": "hemomancy:block/engrams/engram_o"
+		},	"character=15": {
+			"model": "hemomancy:block/engrams/engram_p"
+		},	"character=16": {
+			"model": "hemomancy:block/engrams/engram_q"
+		},	"character=17": {
+			"model": "hemomancy:block/engrams/engram_r"
+		},	"character=18": {
+			"model": "hemomancy:block/engrams/engram_s"
+		},	"character=19": {
+			"model": "hemomancy:block/engrams/engram_t"
+		},	"character=20": {
+			"model": "hemomancy:block/engrams/engram_u"
+		},	"character=21": {
+			"model": "hemomancy:block/engrams/engram_v"
+		},	"character=22": {
+			"model": "hemomancy:block/engrams/engram_w"
+		},	"character=23": {
+			"model": "hemomancy:block/engrams/engram_x"
+		},	"character=24": {
+			"model": "hemomancy:block/engrams/engram_y"
+		},	"character=25": {
+			"model": "hemomancy:block/engrams/engram_z"
+		}
+	}
+}

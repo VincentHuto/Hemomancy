@@ -11,15 +11,15 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteModel<ChitiniteEntity>> {
+public class ChitiniteRenderer extends MobRenderer<ChitiniteEntity, ChitiniteModel> {
 
 	protected static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/chitinite/model_chitinite.png");
 
 	public ChitiniteRenderer(Context renderManagerIn) {
 		super(renderManagerIn,
-				new ChitiniteModel<ChitiniteEntity>(renderManagerIn.bakeLayer(ChitiniteModel.LAYER_LOCATION)), 0.5F);
-		this.addLayer(new RenderChitiniteLayer(this));
+				new ChitiniteModel(renderManagerIn.bakeLayer(ChitiniteModel.LAYER_LOCATION)), 0.5F);
+	//	this.addLayer(new RenderChitiniteLayer(this));
 
 	}
 

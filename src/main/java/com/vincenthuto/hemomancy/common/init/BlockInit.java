@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.block.BrazierBlock;
 import com.vincenthuto.hemomancy.common.block.CrimsonFlameBlock;
 import com.vincenthuto.hemomancy.common.block.DendriticDistributorBlock;
 import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
+import com.vincenthuto.hemomancy.common.block.EngramBlock;
 import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
 import com.vincenthuto.hemomancy.common.block.FungalImplantationPylonBlock;
 import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
@@ -102,6 +103,8 @@ public class BlockInit {
 	public static final RegistryObject<Block> active_befouling_ash_trail = SPECIALBLOCKS.register(
 			"active_befouling_ash_trail",
 			() -> new ActiveBefoulingAshTrailBlock(BlockBehaviour.Properties.of().noCollission().instabreak()));
+
+	public static final RegistryObject<Block> engram_block = SPECIALBLOCKS.register("engram_block", EngramBlock::new);
 
 	// Blocks
 
@@ -367,6 +370,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_implantation_pylon.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.cutout());
 
 	}
 

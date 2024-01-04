@@ -215,7 +215,8 @@ public class Hemomancy {
 			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
 					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
 					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()) {
+					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.engram_block.get()) {
 				registerBlockItem(event, item);
 			}
 		});
