@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.BloodyBookItem;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.EngramStampItem;
 import com.vincenthuto.hemomancy.common.item.EnumBloodGourdTiers;
 import com.vincenthuto.hemomancy.common.item.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
@@ -300,7 +301,12 @@ public class ItemInit {
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
 			() -> new BloodVialItem(new Item.Properties()));
 
-	// Equipment
+	// Equipment  
+	
+	
+	public static final RegistryObject<Item> engram_stamp = SPECIALITEMS.register("engram_stamp",
+			() -> new EngramStampItem(new Item.Properties().stacksTo(1)));
+	
 	// Hematic
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
 			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.HELMET,
