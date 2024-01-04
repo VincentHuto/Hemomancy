@@ -149,7 +149,8 @@ public class Hemomancy {
 			b.forEach(item -> {
 				if (item.get() != BlockInit.attached_gourd_stem.get() && item.get() != BlockInit.gourd_stem.get()
 						&& item.get() != BlockInit.active_befouling_ash_trail.get()
-						&& item.get() != BlockInit.active_smouldering_ash_trail.get()) {
+						&& item.get() != BlockInit.active_smouldering_ash_trail.get()
+						&& item.get() != BlockInit.engram_block.get()) {
 					populator.accept(item.get());
 				}
 			});
@@ -157,7 +158,7 @@ public class Hemomancy {
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-	
+
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
@@ -165,7 +166,7 @@ public class Hemomancy {
 		event.enqueueWork(() -> {
 			BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
 					BloodStructurePageTemplate.SERIALIZER);
-			
+
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(),
 					BlockInit.potted_bleeding_heart);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),

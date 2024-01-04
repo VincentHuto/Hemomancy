@@ -370,7 +370,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_implantation_pylon.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.translucent());
 
 	}
 

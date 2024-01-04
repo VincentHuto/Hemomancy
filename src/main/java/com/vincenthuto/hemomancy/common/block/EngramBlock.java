@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.block;
 
 import com.mna.blocks.tileentities.ChalkRuneTile;
+import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -19,6 +23,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -31,7 +36,7 @@ public class EngramBlock extends WaterloggableBlock {
 		super(BlockBehaviour.Properties.of().mapColor(DyeColor.RED).strength(0.1F).noCollission().noOcclusion()
 				.sound(SoundType.HONEY_BLOCK), false);
 		var r = (int) (Math.random() * 26);
-		this.registerDefaultState(this.defaultBlockState().setValue(CHARACTERINDEX,r));
+		this.registerDefaultState(this.defaultBlockState().setValue(CHARACTERINDEX, r));
 	}
 
 	public RenderShape getRenderShape(BlockState blockState) {
@@ -54,7 +59,7 @@ public class EngramBlock extends WaterloggableBlock {
 	public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
 		return 3;
 	}
-	
+
 	@Override
 	public void onPlace(BlockState p_60566_, Level p_60567_, BlockPos p_60568_, BlockState p_60569_, boolean p_60570_) {
 		super.onPlace(p_60566_, p_60567_, p_60568_, p_60569_, p_60570_);
@@ -67,6 +72,30 @@ public class EngramBlock extends WaterloggableBlock {
 		if (!worldIn.isClientSide && fromPos.equals(pos.below())
 				&& !worldIn.getBlockState(fromPos).isSolidRender(worldIn, fromPos)) {
 			worldIn.destroyBlock(pos, true);
+		}
+
+	}
+
+	@Override
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+		super.animateTick(state, level, pos, random);
+		if (random.nextInt(10) == 0) {
+			Vec3 translation = new Vec3(0, .5, 0);
+			Vec3 target = pos.above().above().getCenter();
+			Vec3 speedVec = new Vec3(target.x, target.y, target.z);
+
+			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
+					(double) pos.getX() + random.nextDouble(), (double) pos.getY() + 0.1D,
+					(double) pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
+//			level.addParticle(LightningParticleFactory.createData(ParticleColor.YELLOW, 2, 15, 4, 0.6f),
+//					pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
+//					pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
+//			if (random.nextInt(3) == 0) {
+//
+//				translation.add(0, 1, 0);
+//				level.addParticle(LightningParticleFactory.createData(ParticleColor.WHITE, 3, 10, 6, 1f),
+//						pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
+//						pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
 		}
 
 	}
