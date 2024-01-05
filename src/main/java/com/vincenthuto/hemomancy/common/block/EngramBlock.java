@@ -87,15 +87,6 @@ public class EngramBlock extends WaterloggableBlock {
 			level.addParticle(BloodCellParticleFactory.createData(ParticleColor.BLOOD),
 					(double) pos.getX() + random.nextDouble(), (double) pos.getY() + 0.1D,
 					(double) pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
-//			level.addParticle(LightningParticleFactory.createData(ParticleColor.YELLOW, 2, 15, 4, 0.6f),
-//					pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
-//					pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
-//			if (random.nextInt(3) == 0) {
-//
-//				translation.add(0, 1, 0);
-//				level.addParticle(LightningParticleFactory.createData(ParticleColor.WHITE, 3, 10, 6, 1f),
-//						pos.getCenter().add(translation).x, pos.getCenter().add(translation).y,
-//						pos.getCenter().add(translation).z, speedVec.x, speedVec.y, speedVec.z);
 		}
 
 	}
