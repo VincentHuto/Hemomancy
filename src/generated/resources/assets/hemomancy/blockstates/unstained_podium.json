@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/unstained_podium"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/unstained_podium",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/unstained_podium",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/unstained_podium",
+			"y": 90
+		}
+	}
+}

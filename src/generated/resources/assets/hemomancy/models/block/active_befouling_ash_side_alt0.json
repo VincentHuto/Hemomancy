@@ -1,0 +1,7 @@
+{
+  "parent" : "hemomancy:block/active_befouling_ash_side_alt",
+  "render_type" : "cutout",
+  "textures" : {
+    "line" : "hemomancy:block/active_befouling_ash_line0"
+  }
+}

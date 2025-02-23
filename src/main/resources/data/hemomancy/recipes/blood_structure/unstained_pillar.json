@@ -1,0 +1,25 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 50,
+  "heldItem": "minecraft:glowstone_dust",
+  "hitBlock": "hemomancy:hematic_iron_block",
+  "pattern": [
+  	 ["   ", "   ", "SSS"],
+     [" T ", " P ", "SPS"],
+ 	 ["   ", "   ", "SSS"]
+  ],
+  "key": {
+    "P": {
+      "block": "minecraft:quartz_pillar"
+    },
+    "S": {
+      "block": "minecraft:quartz_block"
+    },
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:unstained_podium"
+  }
+}

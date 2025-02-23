@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hemomancy",
+  "subtitle": "No its not THAT kind of Blood Magic",
+  "text": "Welcome to Hemomancy! My first(released) major mod, This is a magic mod centered around blood, and blood control, focusing more so on the quality and efficency of blood rather than quantity.",
+  "icon": "hemomancy:sanguine_formation"
+}

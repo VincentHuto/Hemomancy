@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Visceral Recaller",
+  "subtitle": "Jog your memory",
+  "text": "ejfiuoejhwiofehjwiofhnjewifnhjuew",
+  "icon": "hemomancy:visceral_artificial_recaller"
+}

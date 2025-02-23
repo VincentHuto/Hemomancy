@@ -1,0 +1,8 @@
+{
+  "parent" : "minecraft:block/outer_stairs",
+  "textures" : {
+    "bottom" : "hemomancy:block/venous_stone",
+    "top" : "hemomancy:block/venous_stone",
+    "side" : "hemomancy:block/venous_stone"
+  }
+}

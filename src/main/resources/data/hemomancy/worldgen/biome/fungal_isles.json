@@ -1,0 +1,92 @@
+{
+  "temperature": 0.9,
+  "downfall": 1,
+  "has_precipitation": true,
+  "effects": {
+    "sky_color": 5571840,
+    "fog_color": 5571840,
+    "water_color": 10980608,
+    "water_fog_color": 10980608,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    }
+  },
+  "spawners": {
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    ],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:mooshroom",
+        "weight": 8,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
+    "misc": [],
+    "monster": [
+     {
+        "type": "minecraft:zombie",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    
+    ],
+    "underground_water_creature": [
+      
+    ],
+    "water_ambient": [{
+        "type": "hemomancy:barbed_urchin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 3
+      }],
+    "water_creature": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:cave_extra_underground",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [
+     
+    ],
+    [
+    ],
+    [
+    ],
+    [],
+    [],
+    [
+    	  "hemomancy:hyphae_tendril",
+	  "hemomancy:huge_fungus"
+    ],
+    [],
+    [
+    ],
+    [
+      "minecraft:glow_lichen",
+      "hemomancy:small_infected_fungus",
+      "minecraft:mushroom_island_vegetation",
+      "minecraft:brown_mushroom_taiga",
+      "minecraft:red_mushroom_taiga"
+    ],
+    [
+    ]
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+	  "hemomancy:blood_wood_log",
+	  "hemomancy:blood_wood_planks",
+	  "hemomancy:infected_stem",
+	  "hemomancy:hyphae_block",
+	  "hemomancy:infected_cap",
+	  "hemomancy:fruiting_infected_cap",
+	  "hemomancy:dendritic_distributor"
+  ]
+}

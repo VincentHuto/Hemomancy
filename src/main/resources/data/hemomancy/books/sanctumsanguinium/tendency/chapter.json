@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.4,0,0",
+  "title": "Tendency",
+  "subtitle": "Old Habits Never Die",
+  "icon": "hemomancy:blood_stained_stone"
+}

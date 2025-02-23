@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:bleeding_heart"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:dicentra_sap",
+    "count": 3
+  }
+}

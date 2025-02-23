@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Unstained Pillar",
+  "subtitle": "A Clean Slate",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:unstained_podium",
+  "structureloc": "hemomancy:blood_structure/unstained_pillar"
+}

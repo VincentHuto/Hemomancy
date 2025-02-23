@@ -1,0 +1,9 @@
+{
+  "type" : "minecraft:smelting",
+  "ingredient" : {
+    "item" : "hemomancy:gourd"
+  },
+  "result" : "hemomancy:dried_gourd",
+  "experience" : 1.0,
+  "cookingtime" : 200
+}

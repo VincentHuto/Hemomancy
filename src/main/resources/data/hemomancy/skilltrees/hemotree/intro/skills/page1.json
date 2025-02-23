@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Intro",
+  "subtitle": "What even is this?",
+  "text": "Hey! hows it going? Huto here hope your days well! Thanks for downloading my library, this probably means your using some other larger mod ive authored that warented explanation in guide form! With that said welcome to Hemomancy!  While the main purpose of this library mod is to contain shared code my other mods use, I added a few small misc. things in this mod as well.  Most of these are mainly aesthetic in purpose but a few are also utilitarian like Knappers.  With all that out of the way, thanks again and I hope you enjoy the mods!",
+  "icon": "hutoslib:hl_guide_book",
+  "parents":[],
+  "posX": 0,
+  "posY": 1
+}

@@ -1,0 +1,10 @@
+{
+  "type" : "hemomancy:juiceinator",
+  "ingredient" : {
+    "item" : "hemomancy:venous_stone"
+  },
+  "result" : "hemomancy:sanguine_formation",
+  "count" : 4,
+  "experience" : 1.0,
+  "cookingtime" : 200
+}

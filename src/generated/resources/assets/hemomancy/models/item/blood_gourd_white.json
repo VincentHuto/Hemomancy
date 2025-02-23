@@ -1,0 +1,20 @@
+{
+	"parent": "item/generated",
+	"textures": {
+		"layer0": "hemomancy:item/blood_gourd_white"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"hemomancy:open": 0
+			},
+			"model": "hemomancy:item/blood_gourd_white"
+		},
+		{
+			"predicate": {
+				"hemomancy:open": 1
+			},
+			"model": "hemomancy:item/blood_gourd_white_open"
+		}
+	]
+}

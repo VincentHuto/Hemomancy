@@ -1,0 +1,55 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "16",
+	"texture_size": [64, 64],
+	"textures": {
+		"1": "hemomancy:block/dendritic_stem_2",
+		"particle": "hemomancy:block/dendritic_stem_2"
+	},
+	"elements": [
+		{
+			"from": [5, 0, 5],
+			"to": [11, 2, 11],
+			"faces": {
+				"north": {"uv": [3, 8, 4.5, 9.5], "texture": "#1"},
+				"east": {"uv": [9, 9, 10.5, 10.5], "texture": "#1"},
+				"south": {"uv": [3, 13, 4.5, 14.5], "texture": "#1"},
+				"west": {"uv": [8, 2, 9.5, 3.5], "texture": "#1"},
+				"up": {"uv": [0, 0, 1.5, 1.5], "texture": "#1"},
+				"down": {"uv": [4, 3, 5.5, 4.5], "texture": "#1"}
+			}
+		},
+		{
+			"from": [2, 1, 2],
+			"to": [14, 10, 14],
+			"faces": {
+				"north": {"uv": [9, 8.5, 12, 10.75], "texture": "#1"},
+				"east": {"uv": [1, 10.5, 4, 12.75], "texture": "#1"},
+				"south": {"uv": [11, 2.5, 14, 4.75], "texture": "#1"},
+				"west": {"uv": [0, 1.5, 3, 3.75], "texture": "#1"},
+				"up": {"uv": [6, 0.5, 9, 2.75], "texture": "#1"},
+				"down": {"uv": [3, 4.5, 6, 6.75], "texture": "#1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"thirdperson_lefthand": {
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [0, 25, 0],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "VoxelShapes",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

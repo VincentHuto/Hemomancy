@@ -1,0 +1,124 @@
+{
+  "variants" : {
+    "facing=north,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=false,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=true,waterlogged=true" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=false,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=true,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    },
+    "facing=north,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model"
+    },
+    "facing=south,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 180
+    },
+    "facing=west,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 270
+    },
+    "facing=east,stented=false,named=true,waterlogged=false" : {
+      "model" : "hemomancy:blank_model",
+      "y" : 90
+    }
+  }
+}

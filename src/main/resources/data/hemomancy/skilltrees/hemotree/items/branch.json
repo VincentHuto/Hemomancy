@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:branch",
+  "ordinality": 3,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "color": "1,1,0",
+  "title": "Misc Items",
+  "subtitle": "Flasks,Flakes, Oh My!.",
+  "icon": "hutoslib:cured_clay_flask"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 150,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "minecraft:iron_bars",
+  "pattern": [
+  	 ["V","I","I","V"]
+  ],
+  "key": {
+    "I": {
+      "block": "minecraft:iron_bars"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:living_staff"
+  }
+}

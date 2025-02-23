@@ -1,0 +1,65 @@
+{
+  "Hemomancy": {
+    "index": 0,
+    "category": "hemomancy",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Advanced Blood Control"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "Hemomancy",
+            "italic": true,
+            "bold": true,
+            "color": "dark_red"
+          },
+          {
+            "text": " ",
+            "italic": true,
+            "bold": true,
+            "color": "black"
+          },
+          {
+            "text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.",
+            "italic": true,
+            "color": "black"
+          }
+        ]
+      }
+    ],
+    "related_recipes": []
+  },
+  "Revenger Dodo": {
+    "index": 0,
+    "category": "hemomancy",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Revenger Dodo"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "The "
+          },
+          {
+            "text": "Revenger Dodo",
+            "bold": true,
+            "color": "dark_red"
+          },
+          {
+            "text": " is a blood-forged avian monstrosity, summoned from the crimson ether of Hemomancy. Though resembling the extinct, flightless bird in stature, this dodo is anything but harmless. It is a relentless force of vengeance, designed to exact retribution upon those who harm its master."
+          }
+        ]
+      }
+    ],
+    "related_recipes": []
+  },
+  "version": "1.0.0a"
+}

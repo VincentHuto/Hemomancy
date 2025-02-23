@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 2,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Patterns",
+  "subtitle": "Custom Designs",
+  "text": "Hutoslib and other mods using it also tend to include craftable banner designs as well!  These are made with paper and another resource and work at the standard loom for application.",
+  "icon": "hutoslib:hutoslib_logo",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

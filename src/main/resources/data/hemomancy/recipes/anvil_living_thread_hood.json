@@ -1,0 +1,8 @@
+{
+	"type": "mna:runeforging",
+	"tier": 2,
+	"material": "mna:superheated_purified_vinteum_ingot",
+	"hits": 5,
+	"pattern": "mna:constructs/rune_pattern_claw",
+	"output": "mna:constructs/rune_claw"
+}

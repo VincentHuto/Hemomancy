@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "hemomancy:polished_venous_stone_slab"
+    }
+  },
+  "pattern": [
+    "C",
+    "C"
+  ],
+  "result": {
+    "item": "hemomancy:chiseled_polished_venous_stone"
+  },
+  "show_notification": true
+}

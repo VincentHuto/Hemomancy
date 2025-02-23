@@ -1,0 +1,30 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 250,
+  "heldItem": "hemomancy:befouling_ash",
+  "hitBlock": "hemomancy:conscious_mass",
+  "pattern": [
+  	 ["      ","SSSSSS"],
+     ["  BB  ","SBTTBS"],
+ 	 [" BCCB ","STVVTS"],
+ 	 [" BCCB ","STVVTS"],
+ 	 ["  BB  ","SBTTBS"],
+ 	 ["      ","SSSSSS"]
+  ],
+  "key": {
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },"T": {
+      "block": "hemomancy:hematic_iron_block"
+    },"B": {
+      "block": "hemomancy:befouling_ash_trail"
+    },"S": {
+      "block": "hemomancy:smouldering_ash_trail"
+    },"C": {
+      "block": "hemomancy:conscious_mass"
+    }
+  },
+  "result": {
+    "item": "hemomancy:semi_sentient_construct"
+  }
+}

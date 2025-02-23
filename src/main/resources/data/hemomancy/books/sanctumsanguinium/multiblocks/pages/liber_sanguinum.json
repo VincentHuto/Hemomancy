@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Liber Sanguinum",
+  "subtitle": "Aka The Bloody Book",
+  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "icon": "hemomancy:liber_sanguinum",
+  "structureloc": "hemomancy:blood_structure/liber_sanguinum"
+}

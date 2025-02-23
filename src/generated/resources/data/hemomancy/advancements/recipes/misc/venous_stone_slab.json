@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "hemomancy:venous_stone_slab"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_venous_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:venous_stone"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_venous_stone",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "hemomancy:venous_stone_slab"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,29 @@
+{
+    "type": "hemomancy:blood_gourd_fill",
+   
+    "pattern":
+    [
+        " S ",
+        "SPS",
+        " S "
+    ],
+   
+    "key":
+    {
+        "S":
+        {
+            "item": "hemomancy:sanguine_formation"
+        },
+        
+         "P":
+        {
+            "item": "hemomancy:blood_gourd_black"
+        }
+    },
+    
+    "result":
+    {
+        "item": "hemomancy:blood_gourd_black",
+        "count": 1
+    }
+}

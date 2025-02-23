@@ -1,0 +1,13 @@
+{
+  "variants" : {
+    "type=bottom" : {
+      "model" : "hemomancy:block/venous_stone_slab"
+    },
+    "type=double" : {
+      "model" : "hemomancy:block/venous_stone"
+    },
+    "type=top" : {
+      "model" : "hemomancy:block/venous_stone_slab_top"
+    }
+  }
+}

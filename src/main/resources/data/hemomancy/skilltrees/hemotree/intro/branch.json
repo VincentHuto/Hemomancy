@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:branch",
+  "ordinality": 0,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "color": "1,1,1",
+  "title": "Intro To Everything!",
+  "subtitle": "what even is this?",
+  "icon": "hutoslib:display_pedestal"
+}

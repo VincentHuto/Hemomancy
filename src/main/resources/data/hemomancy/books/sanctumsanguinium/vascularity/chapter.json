@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.8,0,0",
+  "title": "Vascularity",
+  "subtitle": "Hemomancy",
+  "icon": "hemomancy:blood_stained_stone"
+}

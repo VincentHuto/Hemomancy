@@ -1,0 +1,12 @@
+{
+  "type": "hutoslib:skill",
+  "ordinality": 1,
+  "texture": "hutoslib:textures/gui/guide/page.png",
+  "title": "Glimmer",
+  "subtitle": "Shiny!",
+  "text": "Glimmer is a completly aesthetic enchantment thats only available by crafting its only use is to apply an enchantment glimmer to items/blocks that normally couldnt obtain them(note blocks given it will lose it when placed)",
+  "icon": "minecraft:glow_berries",
+  "parents":[1],
+  "posX": 0,
+  "posY": 1
+}

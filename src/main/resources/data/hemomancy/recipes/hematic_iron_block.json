@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TT",
+    "TT"
+  ],
+  "key": {
+    "T": {
+      "item": "hemomancy:chiseled_hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:hematic_iron_block",
+    "count": 4
+  }
+}
