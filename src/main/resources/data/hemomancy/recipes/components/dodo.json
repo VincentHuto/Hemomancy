@@ -1,0 +1,15 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/dodo",
+	"tier": 1,
+	"items":
+	[
+		"minecraft:feather",
+		"minecraft:porkchop",
+		"hemomancy:sanguine_formation"		
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/circle"
+	]
+}

@@ -343,5 +343,7 @@
 	"item.hemomancy.living_thread_hood": "Living Thread Hood",
 	"item.hemomancy.living_thread_robes": "Living Thread Robes",
 	"item.hemomancy.living_thread_leggings": "Living Thread Leggings",
-	"item.hemomancy.living_thread_boots": "Living Thread Boots"
+	"item.hemomancy.living_thread_boots": "Living Thread Boots",
+	"item.hemomancy.harbinger_grimore": "Tome of the Impending End",
+	"item.hemomancy.harbinger_grimore.subtitle": "Harbinger Faction Grimoire"
 }

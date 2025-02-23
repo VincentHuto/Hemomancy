@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/mark_of_blood"
+    "layer0": "hemomancy:item/mna/mark_of_blood"
   }
 }

@@ -1,0 +1,59 @@
+package com.vincenthuto.hemomancy.compat.mna.faction;
+
+import com.mna.Registries;
+import com.mna.api.events.CastingResourceGuiRegistrationEvent;
+import com.mna.api.events.CastingResourceRegistrationEvent;
+import com.mna.api.faction.BaseFaction;
+import com.mna.items.ItemInit;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeableLeatherItem;
+import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.RegisterEvent;
+
+public class HarbingerEventHandler {
+
+	public static final ResourceLocation FACTION_HARBINGERS_ID = Hemomancy.rloc("harbingers_faction");
+	public static final ResourceLocation HARBINGERS_MANA = Hemomancy.rloc("harbingers_mana");
+	public static final ResourceLocation HARBINGERS_HUD_TEXTURE = Hemomancy
+			.rloc("textures/mna/gui_harbingers_manabars.png");
+	public static final BaseFaction HARBINGERS_FACTION = new HarbingersFaction();
+
+	// Faction
+	public static void registerFactions(RegisterEvent event) {
+		event.register(Registries.Factions.get().getRegistryKey(), (helper) -> {
+			helper.register(FACTION_HARBINGERS_ID, HARBINGERS_FACTION);
+		});
+	}
+
+	public static void onCastingResourceRegistrationEvent(CastingResourceRegistrationEvent event) {
+		event.getRegistry().register(HARBINGERS_MANA, HarbingersMana.class);
+	}
+
+	// client event
+	public static class MnAPluginClient {
+		public static void onCastingResourceRegistrationEventClient(CastingResourceGuiRegistrationEvent event) {
+			event.getRegistry().registerResourceGui(HARBINGERS_MANA, new HarbingersManaGui());
+		}
+
+		public static void onRegisterSpecialModels(ModelEvent.RegisterAdditional event) {
+			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_open"));
+			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_closed"));
+		}
+
+		@SubscribeEvent
+		public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+			event.register((stack, layer) -> layer > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack),
+					new ItemLike[] { (ItemLike) MnAPluginItemInit.living_thread_boots.get(),
+							(ItemLike) MnAPluginItemInit.living_thread_robes.get(),
+							(ItemLike) MnAPluginItemInit.living_thread_leggings.get(),
+							(ItemLike) MnAPluginItemInit.living_thread_hood.get() });
+		}
+	}
+
+}

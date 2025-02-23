@@ -120,8 +120,6 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.hemomancy.category");
-	public static final KeyMapping toggleMorphlingJarPickup = new KeyMapping("key.hemomancy.morphjarpickup.desc",
-			GLFW.GLFW_KEY_LEFT_CONTROL, "key.hemomancy.category");
 	public static final KeyMapping toggleMorphlingOpenJar = new KeyMapping("key.hemomancy.openjar.desc",
 			GLFW.GLFW_KEY_F, "key.hemomancy.category");
 	public static final KeyMapping cycleSelectedManip = new KeyMapping("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
@@ -155,9 +153,6 @@ public class ClientEvents {
 		if (toggleMorphlingOpenJar.consumeClick()) {
 			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
 
-		}
-		if (toggleMorphlingJarPickup.consumeClick()) {
-			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new JarTogglePickupPacket());
 		}
 		if (cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
@@ -390,7 +385,6 @@ public class ClientEvents {
 			event.register(ClientEvents.bloodFormation);
 			event.register(ClientEvents.bloodCrafting);
 			event.register(ClientEvents.bloodDraw);
-			event.register(ClientEvents.toggleMorphlingJarPickup);
 			event.register(ClientEvents.toggleMorphlingOpenJar);
 			event.register(ClientEvents.cycleSelectedManip);
 			event.register(ClientEvents.useQuickManip);
@@ -419,7 +413,7 @@ public class ClientEvents {
 		// Overlay
 		@SubscribeEvent
 		public static void registerGuiOverlays(RegisterGuiOverlaysEvent event) {
-			//event.registerAboveAll("bloodvolume", BloodVolumeOverlay.HUD_BLOODVOLUME);
+			// event.registerAboveAll("bloodvolume", BloodVolumeOverlay.HUD_BLOODVOLUME);
 			event.registerAboveAll("bloodvolume", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				BloodVolumeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);

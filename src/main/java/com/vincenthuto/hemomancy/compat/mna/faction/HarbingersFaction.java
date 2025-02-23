@@ -1,12 +1,12 @@
-package com.vincenthuto.hemomancy.compat.mna;
+package com.vincenthuto.hemomancy.compat.mna.faction;
 
 import javax.annotation.Nullable;
 
 import com.mna.api.faction.BaseFaction;
 import com.mna.api.sound.SFX;
 import com.mna.api.tools.RLoc;
-import com.mna.items.ItemInit;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,12 +19,12 @@ import net.minecraft.world.item.ItemStack;
 public class HarbingersFaction extends BaseFaction {
 
 	public HarbingersFaction() {
-		super(MnAPlugin.FACTION_HARBINGERS_ID, MnAPlugin.HARBINGERS_MANA);
+		super(HarbingerEventHandler.FACTION_HARBINGERS_ID, HarbingerEventHandler.HARBINGERS_MANA);
 	}
 	
 	@Override
 	public ResourceLocation getCastingResource(Player player) {
-		return MnAPlugin.HARBINGERS_MANA;
+		return HarbingerEventHandler.HARBINGERS_MANA;
 	}
 
 	@Override
@@ -34,17 +34,17 @@ public class HarbingersFaction extends BaseFaction {
 //Did this too just to be sure
 	@Override
 	public ResourceLocation[] getCastingResources() {
-		return new ResourceLocation[] { MnAPlugin.HARBINGERS_MANA };
+		return new ResourceLocation[] { HarbingerEventHandler.HARBINGERS_MANA };
 	}
 
 	@Override
 	public ItemStack getFactionGrimoire() {
-		return new ItemStack(ItemInit.GRIMOIRE_DEMON.get());
+		return new ItemStack(MnAPluginItemInit.harbinger_grimore.get());
 	}
 
 	@Override
 	public ResourceLocation getFactionIcon() {
-		return Hemomancy.rloc("textures/item/faction_icon_harbinger.png");
+		return Hemomancy.rloc("textures/mna/faction_icon_harbinger.png");
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class HarbingersFaction extends BaseFaction {
 
 	@Override
 	public Item getTokenItem() {
-		return MnAPlugin.mark_of_blood.get();
+		return MnAPluginItemInit.mark_of_blood.get();
 	}
 
 	@Override

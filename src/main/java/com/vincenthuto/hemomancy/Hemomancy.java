@@ -26,8 +26,12 @@ import com.vincenthuto.hemomancy.common.init.StructureInit;
 import com.vincenthuto.hemomancy.common.init.VillagerInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
-import com.vincenthuto.hemomancy.compat.mna.MnAPlugin.MnAPluginClient;
+import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
+import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler.MnAPluginClient;
+import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
+import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 
@@ -137,16 +141,29 @@ public class Hemomancy {
 		if (modList.isLoaded("mna")) {
 			LOGGER.info("MNA WAS LOADED");
 			forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
-			MnAPlugin.MNAITEMS.register(modEventBus);
-			modEventBus.addListener(MnAPlugin::buildMnaCompatContents);
-			modEventBus.addListener(MnAPlugin::registerFactions);
-			forgeBus.addListener(MnAPlugin::onCastingResourceRegistrationEvent);
+			MnAPluginItemInit.MNAITEMS.register(modEventBus);
+			modEventBus.addListener(MnAPluginItemInit::buildMnaCompatContents);
+			modEventBus.addListener(HarbingerEventHandler::registerFactions);
+			forgeBus.addListener(HarbingerEventHandler::onCastingResourceRegistrationEvent);
 			forgeBus.addListener(MnAPlugin::playerInteractAnvil);
 			forgeBus.addListener(MnAPlugin::onRunicAnvil);
+			modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
 
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 				return () -> {
 					forgeBus.addListener(MnAPluginClient::onCastingResourceRegistrationEventClient);
+					modEventBus.addListener(MnAPluginClient::onRegisterSpecialModels);
+					modEventBus.addListener(MnAPluginClient::registerItemColors);
+
+				};
+			});
+		}
+		if (modList.isLoaded("curios")) {
+			LOGGER.info("CURIOS WAS LOADED");
+			modEventBus.addListener(CuriosPlugin::initCuriosSlots);
+			modEventBus.addListener(CuriosPlugin::clientCurioSetup);
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
+				return () -> {
 
 				};
 			});

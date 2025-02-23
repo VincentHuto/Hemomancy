@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.compat.mna;
+package com.vincenthuto.hemomancy.compat.mna.faction;
 
 import com.mna.api.capabilities.resource.SimpleCastingResource;
 
@@ -17,7 +17,7 @@ public class HarbingersMana extends SimpleCastingResource {
 	}
 
 	public ResourceLocation getRegistryName() {
-		return MnAPlugin.HARBINGERS_MANA;
+		return HarbingerEventHandler.HARBINGERS_MANA;
 	}
 
 	public void setMaxAmountByLevel(int level) {

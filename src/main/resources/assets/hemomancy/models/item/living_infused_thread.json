@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/living_infused_thread"
+    "layer0": "hemomancy:item/mna/living_infused_thread"
   }
 }

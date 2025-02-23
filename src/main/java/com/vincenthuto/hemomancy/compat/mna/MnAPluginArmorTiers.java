@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.compat.mna;
 import com.google.common.base.Supplier;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -17,7 +18,7 @@ public enum MnAPluginArmorTiers implements ArmorMaterial {
 
 	LIVING_THREAD(Hemomancy.MOD_ID + ":living_thread", 37, new int[] { 3, 6, 8, 3 }, 15,
 			SoundEvents.ARMOR_EQUIP_GENERIC, 3.0F, 0.1F, () -> {
-				return Ingredient.of(MnAPlugin.living_infused_thread.get());
+				return Ingredient.of(MnAPluginItemInit.living_infused_thread.get());
 			}),
 
 	;

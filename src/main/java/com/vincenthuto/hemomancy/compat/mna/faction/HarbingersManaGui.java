@@ -1,17 +1,18 @@
-package com.vincenthuto.hemomancy.compat.mna;
+package com.vincenthuto.hemomancy.compat.mna.faction;
 
 import com.mna.api.capabilities.resource.ICastingResourceGuiProvider;
+import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class HarbingersManaGui implements ICastingResourceGuiProvider {
     public ResourceLocation getTexture() {
-        return MnAPlugin.HARBINGERS_HUD_TEXTURE;
+        return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
     }
 
     public ItemStack getBadgeItem() {
-        return new ItemStack(MnAPlugin.mark_of_blood.get());
+        return new ItemStack(MnAPluginItemInit.mark_of_blood.get());
     }
 
     public int getXPBarColor() {
