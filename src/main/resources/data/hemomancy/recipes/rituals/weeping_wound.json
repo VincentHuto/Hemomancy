@@ -1,0 +1,69 @@
+{
+	"type": "mna:ritual",
+	"tier": 2,
+	"pattern":
+	[
+		[ 0, 0, 1, 1, 1, 0, 0 ],
+		[ 0, 0, 0, 1, 0, 0, 0 ],
+		[ 0, 1, 0, 1, 0, 1, 0 ],
+		[ 0, 1, 1, 1, 1, 1, 0 ],
+		[ 0, 1, 0, 1, 0, 1, 0 ],
+		[ 0, 0, 0, 1, 0, 0, 0 ],
+		[ 0, 0, 1, 1, 1, 0, 0 ]
+	],
+	"displayPattern":
+	[
+		[ 0, 0, 2,-1, 4, 0, 0 ],
+		[ 0, 0, 0,-1, 0, 0, 0 ],
+		[ 0, 1, 0, 3, 0, 5, 0 ],
+		[ 0,-1,-1,-1,-1,-1, 0 ],
+		[ 0,10, 0, 8, 0, 6, 0 ],
+		[ 0, 0, 0,-1, 0, 0, 0 ],
+		[ 0, 0, 9,-1, 7, 0, 0 ]
+	],
+	"reagents":
+	[
+		"   E   ",
+		"       ",
+		"       ",
+		" G P G ",
+		"       ",
+		"       ",
+		"   E   "
+	],
+	"keys":
+	{
+		"P": 
+		{ 
+			"item": "netherrack",
+			"optional": false,
+			"consume": true
+		},
+		"G": 
+		{ 
+			"item": "red_stained_glass",
+			"optional": false,
+			"consume": true
+		},
+		"E": 
+		{ 
+			"item": "porkchop",
+			"optional": false,
+			"consume": true
+		}
+	},
+	"manaweave":
+	[
+		"mna:manaweave_patterns/inverted_triangle",
+		"mna:manaweave_patterns/circle",
+		"mna:manaweave_patterns/triangle"
+	],
+	"parameters":
+	{
+		"innerColor": "0x5a1000",
+		"outerColor": "0xbc8d00 ",
+		"displayIndexes": false,
+		"beamColor": "0x8d1900"
+	},
+	"createsItem":	"hemomancy:mote_blood"
+}

@@ -1,0 +1,5 @@
+# Blender MTL File: 'horn.blend'
+# Material Count: 1
+
+newmtl MAIN
+map_Kd hemomancy:item/mna/horn_harbinger

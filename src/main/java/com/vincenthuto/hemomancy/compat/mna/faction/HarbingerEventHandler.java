@@ -1,19 +1,27 @@
 package com.vincenthuto.hemomancy.compat.mna.faction;
 
+import java.util.HashMap;
+
 import com.mna.Registries;
+import com.mna.api.entities.FactionRaidRegistry;
+import com.mna.api.entities.IFactionEnemy;
 import com.mna.api.events.CastingResourceGuiRegistrationEvent;
 import com.mna.api.events.CastingResourceRegistrationEvent;
 import com.mna.api.faction.BaseFaction;
-import com.mna.items.ItemInit;
+import com.mna.factions.Factions;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 public class HarbingerEventHandler {
@@ -35,6 +43,28 @@ public class HarbingerEventHandler {
 		event.getRegistry().register(HARBINGERS_MANA, HarbingersMana.class);
 	}
 
+	public static void loadCompleteEventHandler(FMLLoadCompleteEvent event) {
+//		FactionRaidRegistry.registerSoldier(HARBINGERS_FACTION,
+//				(EntityType<? extends IFactionEnemy<? extends Mob>>) ((EntityType) EntityInit.fungling.get()),
+//				new HashMap<Integer, Integer>() {
+//					{
+//						this.put(25, 0);
+//						this.put(35, 1);
+//						this.put(45, 2);
+//					}
+//
+//				});
+//		FactionRaidRegistry.registerSoldier(HARBINGERS_FACTION,
+//				(EntityType<? extends IFactionEnemy<? extends Mob>>) ((EntityType) EntityInit.abhorent_thought.get()),
+//				new HashMap<Integer, Integer>() {
+//					{
+//						this.put(30, 0);
+//						this.put(65, 1);
+//						this.put(100, 2);
+//					}
+//				});
+	}
+
 	// client event
 	public static class MnAPluginClient {
 		public static void onCastingResourceRegistrationEventClient(CastingResourceGuiRegistrationEvent event) {
@@ -44,6 +74,8 @@ public class HarbingerEventHandler {
 		public static void onRegisterSpecialModels(ModelEvent.RegisterAdditional event) {
 			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_open"));
 			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_closed"));
+			event.register(Hemomancy.rloc("item/faction_horn_harbingers"));
+
 		}
 
 		@SubscribeEvent

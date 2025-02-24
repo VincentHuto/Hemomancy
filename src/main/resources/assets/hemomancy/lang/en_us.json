@@ -316,18 +316,15 @@
 	"item.minecraft.lingering_potion.effect.potion_of_blood_binding": "Lingering Potion of Blood Binding",
 	"item.minecraft.lingering_potion.effect.potion_of_blood_loss": "Lingering Potion of Blood Loss",
 	"item.minecraft.lingering_potion.effect.potion_of_blood_rush": "Lingering Potion of Blood Rush",
-		"item.minecraft.lingering_potion.effect.potion_of_hemolysis": "Lingering Potion of Hemolysis",
-	
+	"item.minecraft.lingering_potion.effect.potion_of_hemolysis": "Lingering Potion of Hemolysis",
 	"item.minecraft.potion.effect.potion_of_blood_binding": "Potion of Blood Binding",
 	"item.minecraft.potion.effect.potion_of_blood_loss": "Potion of Blood Loss",
 	"item.minecraft.potion.effect.potion_of_blood_rush": "Potion of Blood Rush",
-		"item.minecraft.potion.effect.potion_of_hemolysis": "Potion of Hemolysis",
-	
+	"item.minecraft.potion.effect.potion_of_hemolysis": "Potion of Hemolysis",
 	"item.minecraft.splash_potion.effect.potion_of_blood_binding": "Spash Potion of Blood Binding",
 	"item.minecraft.splash_potion.effect.potion_of_blood_loss": "Spash Potion of Blood Loss",
 	"item.minecraft.splash_potion.effect.potion_of_blood_rush": "Spash Potion of Blood Rush",
-		"item.minecraft.splash_potion.effect.potion_of_hemolysis": "Spash Potion of Hemolysis",
-	
+	"item.minecraft.splash_potion.effect.potion_of_hemolysis": "Spash Potion of Hemolysis",
 	"item.minecraft.tipped_arrow.effect.potion_of_blood_binding": "Arrow of Blood Binding",
 	"item.minecraft.tipped_arrow.effect.potion_of_blood_loss": "Arrow of Blood Loss",
 	"item.minecraft.tipped_arrow.effect.potion_of_blood_rush": "Arrow of Blood Rush",
@@ -351,6 +348,9 @@
 	"item.hemomancy.living_thread_leggings": "Living Thread Leggings",
 	"item.hemomancy.living_thread_boots": "Living Thread Boots",
 	"item.hemomancy.harbinger_grimore": "Tome of the Impending End",
+	"item.hemomancy.faction_horn_harbingers": "Horn of the Impending End",
 	"item.hemomancy.harbinger_grimore.subtitle": "Harbinger Faction Grimoire",
+	"item.hemomancy.mote_blood": "Mote of Blood",
+	"item.mna.greater_mote_blood": "Greater Mote of Blood",
 	"hemomancy:living_armor_set_bonus": "(3) Set Bonus:\n +500 Max Mana\n +50% Mana Regen"
 }

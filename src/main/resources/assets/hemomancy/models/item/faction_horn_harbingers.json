@@ -1,0 +1,48 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:composite",
+  "children": {
+    "crystal": {
+      "loader": "forge:obj",
+      "automatic_culling": true,
+	  "shade_quads": true,
+	  "flip_v": true,
+	  "emissive_ambient": false,
+      "model": "hemomancy:models/item/obj/horns/horn_harbinger.obj",
+      "textures": {
+        "#MAIN": "hemomancy:item/mna/horn_harbinger"
+      }
+    }
+  },
+  "display": {
+		"thirdperson_righthand": {
+			"rotation": [90, 270, 0],
+			"translation": [-8, -6, 5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [90, 90, 0],
+			"translation": [8, -6, 5]	
+		},
+		"firstperson_righthand": {
+			"rotation": [40, 270, 0],
+			"translation": [-8, -4, 5]
+		},
+		"firstperson_lefthand": {
+			"rotation": [40, 90, 0],
+			"translation": [8, -4, 5]
+		},
+		"ground": {
+			"scale": [1,1,1],
+			"translation": [8,6,8]
+		},
+		"gui": {
+			"rotation": [29, 45, 0],
+			"translation": [13, 4, -2]
+		},		
+		"fixed": {
+			"rotation": [-90, -45, 0],
+			"translation": [1, 13, -8],
+			"scale": [1,1,1]
+		}
+	}
+}

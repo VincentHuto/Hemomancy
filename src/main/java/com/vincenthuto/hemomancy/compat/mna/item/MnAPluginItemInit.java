@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.compat.mna.item;
 
-import com.mna.items.armor.DyeableMageArmor;
+import com.mna.api.faction.FactionIDs;
+import com.mna.items.ItemInit;
+import com.mna.items.artifice.ItemFactionHorn;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginArmorTiers;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
@@ -26,6 +28,8 @@ public class MnAPluginItemInit {
 			() -> new ItemHarbingerGrimoire(new Item.Properties().rarity(Rarity.EPIC),
 					HarbingerEventHandler.FACTION_HARBINGERS_ID, Hemomancy.rloc("item/special/grimoire_harbinger_open"),
 					Hemomancy.rloc("item/special/grimoire_harbinger_closed"), true));
+	public static final RegistryObject<ItemFactionHorn> faction_horn_harbingers = MNAITEMS.register(
+			"faction_horn_harbingers", () -> new ItemFactionHorn(HarbingerEventHandler.FACTION_HARBINGERS_ID));
 
 	// Items
 
@@ -33,6 +37,8 @@ public class MnAPluginItemInit {
 			() -> new Item(new Item.Properties()));
 
 	public static final RegistryObject<Item> living_infused_thread = MNAITEMS.register("living_infused_thread",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> mote_blood = MNAITEMS.register("mote_blood",
 			() -> new Item(new Item.Properties()));
 
 	// Robes
@@ -52,6 +58,8 @@ public class MnAPluginItemInit {
 	public static void buildMnaCompatContents(BuildCreativeModeTabContentsEvent populator) {
 		if (populator.getTabKey() == Hemomancy.hemomancytab.getKey()) {
 			MNAITEMS.getEntries().forEach(i -> populator.accept(i.get()));
+			populator.accept(ItemInit.GREATER_MOTE_BLOOD.get());
+
 		}
 	}
 

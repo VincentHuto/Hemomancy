@@ -31,6 +31,7 @@ import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler.MnAPluginClient;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
+import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
@@ -145,10 +146,11 @@ public class Hemomancy {
 			modEventBus.addListener(MnAPluginItemInit::buildMnaCompatContents);
 			modEventBus.addListener(HarbingerEventHandler::registerFactions);
 			forgeBus.addListener(HarbingerEventHandler::onCastingResourceRegistrationEvent);
+			modEventBus.addListener(HarbingerEventHandler::loadCompleteEventHandler);
 			forgeBus.addListener(MnAPlugin::playerInteractAnvil);
 			forgeBus.addListener(MnAPlugin::onRunicAnvil);
 			modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
-
+			modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 				return () -> {
 					forgeBus.addListener(MnAPluginClient::onCastingResourceRegistrationEventClient);

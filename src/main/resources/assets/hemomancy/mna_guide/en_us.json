@@ -61,5 +61,46 @@
     ],
     "related_recipes": []
   },
+  "Ritual of the Weeping Wound": {
+    "index": 0,
+    "category": "hemomancy",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Ritual of the Weeping Wound"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "The "
+          },
+          {
+            "text": "Ritual of the Weeping Wound",
+            "bold": true,
+            "color": "dark_purple"
+          },
+          {
+            "text": " is a Hemomantic rite designed to compress raw, carnal energy—pain, suffering, and vitality—into a concentrated "
+          },
+          {
+            "text": "Mote of Blood",
+            "bold": true,
+            "color": "dark_red"
+          },
+          {
+            "text": ", a crystalline essence of life force that can be used for powerful Hemomantic spells and enchantments. This ritual is not for the faint-hearted, as it requires the Hemomancer to channel and contain immense suffering within a single, tangible core."
+          }
+        ]
+      }
+    ],
+    "related_recipes": [
+      {
+        "type": "ritual",
+        "location": "hemomancy:rituals/weeping_wound"
+      }
+    ]
+  },
   "version": "1.0.0a"
 }
