@@ -12,7 +12,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,13 +23,17 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class AttributeInit {
 
+	public enum TriState {
+		ALLOW, DEFAULT, DENY
+	}
+
 	public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES,
 			Hemomancy.MOD_ID);
 
 	private static final RegistryObject<Attribute> FALL_FLYING = ATTRIBUTES.register("fall_flying",
-			() -> new RangedAttribute("hemomancy.fallFlying", 0.0d, 0.0d, 1.0d).setSyncable(true));
+			() -> new RangedAttribute("hemomancy.fallFlying", 0.1d, 0.0d, 1.0d).setSyncable(true));
 	private static final AttributeModifier ELYTRA_MODIFIER = new AttributeModifier(
-			UUID.fromString("2e701a8a-9eb0-11ee-8c90-0242ac120002"), "Elytra modifier", 1.0f,
+			UUID.fromString("5b6c3728-9c24-42ae-83ac-70d61d8b8199"), "Elytra modifier", 1.0f,
 			AttributeModifier.Operation.ADDITION);
 
 	@SubscribeEvent
@@ -49,13 +52,36 @@ public class AttributeInit {
 		return ELYTRA_MODIFIER;
 	}
 
-	public static boolean canFly(LivingEntity livingEntity) {
-		AttributeInstance attribute = livingEntity.getAttribute(FALL_FLYING.get());
+	public static TriState canFallFly(LivingEntity livingEntity) {
+		Attribute fallFlying = FALL_FLYING.get();
+		AttributeInstance attribute = livingEntity.getAttribute(fallFlying);
 
 		if (attribute != null) {
-			return attribute.getValue() >= 1.0d;
+			double val = attribute.getValue();
+			double baseValue = attribute.getBaseValue();
+			double actualBaseValue = fallFlying.getDefaultValue();
+
+			if (baseValue != actualBaseValue) {
+				attribute.setBaseValue(actualBaseValue);
+			}
+
+			if (val >= 1.0d) {
+				return TriState.ALLOW;
+			} else if (val > 0.0d) {
+				return TriState.DEFAULT;
+			}
+			return TriState.DENY;
 		}
 		ItemStack stack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-		return stack.canElytraFly(livingEntity);
+
+		if (stack.canElytraFly(livingEntity)) {
+			return TriState.ALLOW;
+		}
+		return TriState.DEFAULT;
 	}
+
+	public boolean canFly(LivingEntity livingEntity) {
+		return canFallFly(livingEntity) == TriState.ALLOW;
+	}
+
 }

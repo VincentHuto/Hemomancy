@@ -48,4 +48,10 @@ public class EffectInit {
 	public static final RegistryObject<Potion> potion_of_blood_rush = POTION_TYPES.register("potion_of_blood_rush",
 			() -> new Potion("potion_of_blood_rush", new MobEffectInstance(blood_rush.get(), 1000, 3)));
 
+	public static final RegistryObject<MobEffect> hemolysis = EFFECTS.register("hemolysis",
+			() -> new HemolysisEffect(MobEffectCategory.NEUTRAL, 15186121));
+
+	public static final RegistryObject<Potion> potion_of_hemolysis = POTION_TYPES.register("potion_of_hemolysis",
+			() -> new Potion("potion_of_hemolysis", new MobEffectInstance(hemolysis.get(), 1000, 3)));
+
 }

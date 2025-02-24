@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.runes;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
+import com.vincenthuto.hemomancy.common.init.AttributeInit.TriState;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,20 +19,21 @@ public final class CPacketFlight {
 		return new CPacketFlight();
 	}
 
-	  @SuppressWarnings("ConstantConditions")
-	  public static void handle(CPacketFlight msg, Supplier<NetworkEvent.Context> ctx) {
-	    ctx.get().enqueueWork(() -> {
-	      ServerPlayer sender = ctx.get().getSender();
+	@SuppressWarnings("ConstantConditions")
+	public static void handle(CPacketFlight msg, Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			ServerPlayer sender = ctx.get().getSender();
 
-	      if (sender != null) {
-	        sender.stopFallFlying();
+			if (sender != null) {
+				sender.stopFallFlying();
 
-	        if (!sender.onGround() && !sender.isFallFlying() && !sender.isInWater() && !sender
-	            .hasEffect(MobEffects.LEVITATION) && AttributeInit.canFly(sender)) {
-	          sender.startFallFlying();
-	        }
-	      }
-	    });
-	    ctx.get().setPacketHandled(true);
-	  }
+				if (!sender.onGround() && !sender.isFallFlying() && !sender.isInWater()
+						&& !sender.hasEffect(MobEffects.LEVITATION)
+						&& AttributeInit.canFallFly(sender) != TriState.DENY) {
+					sender.startFallFlying();
+				}
+			}
+		});
+		ctx.get().setPacketHandled(true);
 	}
+}

@@ -7,6 +7,7 @@ public class ServerProxy implements ISidedProxy {
 
 	@Override
 	public void setFlySpeed(Player player, float speed) {
+
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
+import com.vincenthuto.hemomancy.mixin.util.MixinHooks;
 
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -22,10 +23,6 @@ public abstract class MixinLivingEntity extends Entity {
 	@SuppressWarnings("ConstantConditions")
 	@ModifyArg(at = @At(value = "INVOKE", target = "net/minecraft/world/entity/LivingEntity.setSharedFlag(IZ)V"), method = "updateFallFlying")
 	private boolean hemomancy$setFlag(boolean value) {
-		boolean bl = this.getSharedFlag(7);
-		bl = bl && !((LivingEntity) (Object) this).onGround() && !((LivingEntity) (Object) this).isPassenger()
-				&& !((LivingEntity) (Object) this).hasEffect(MobEffects.LEVITATION)
-				&& AttributeInit.canFly(((LivingEntity) (Object) this));
-		return bl;
+		return MixinHooks.canFly((LivingEntity) (Object) this, this.getSharedFlag(7), value);
 	}
 }

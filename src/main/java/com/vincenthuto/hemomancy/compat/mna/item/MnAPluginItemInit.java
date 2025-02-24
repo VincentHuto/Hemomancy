@@ -23,9 +23,9 @@ public class MnAPluginItemInit {
 			() -> new Item(new Item.Properties()));
 
 	public static final RegistryObject<Item> harbinger_grimore = MNAITEMS.register("harbinger_grimore",
-			() -> new ItemHarbingerGrimoire(new Item.Properties().rarity(Rarity.EPIC), HarbingerEventHandler.FACTION_HARBINGERS_ID,
-					Hemomancy.rloc("item/special/grimoire_harbinger_open"), Hemomancy.rloc("item/special/grimoire_harbinger_closed"),
-					true));
+			() -> new ItemHarbingerGrimoire(new Item.Properties().rarity(Rarity.EPIC),
+					HarbingerEventHandler.FACTION_HARBINGERS_ID, Hemomancy.rloc("item/special/grimoire_harbinger_open"),
+					Hemomancy.rloc("item/special/grimoire_harbinger_closed"), true));
 
 	// Items
 

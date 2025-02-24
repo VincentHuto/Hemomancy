@@ -24,11 +24,11 @@ public class ElytraEffect extends MobEffect {
 
 	@Override
 	public void applyEffectTick(@NotNull LivingEntity livingEntity, int amplifier) {
+		// System.out.println("fef");
 		if (livingEntity instanceof Player player) {
 			Hemomancy.instance.proxy.setFlightEnabled(player, true);
 			if (!player.isCreative() && !player.isSpectator()) {
-
-				Hemomancy.instance.proxy.setFlySpeed(player, amplifier*5/100f);
+				Hemomancy.instance.proxy.setFlySpeed(player, amplifier * 5 / 100f);
 			} else {
 				Hemomancy.instance.proxy.setFlySpeed(player, 0.05F);
 			}
@@ -51,8 +51,6 @@ public class ElytraEffect extends MobEffect {
 					}
 					player.setDeltaMovement(pos);
 				} else {
-					// magic.getCastingResource().consume(player,
-					// CommonConfig.getElytraManaCostPerTick() / 2.0f);
 
 					pos = player.getDeltaMovement();
 					maxLength = 0.1F;
@@ -84,6 +82,8 @@ public class ElytraEffect extends MobEffect {
 			int p_111187_3_) {
 		super.removeAttributeModifiers(living, attributemods, p_111187_3_);
 		if (living instanceof ServerPlayer) {
+			System.out.println(Hemomancy.instance.toString());
+
 			Hemomancy.instance.proxy.setFlightEnabled((ServerPlayer) living, false);
 		} else if (living instanceof Player && living.level().isClientSide) {
 			Hemomancy.instance.proxy.setFlySpeed((Player) living, 0.05F);
