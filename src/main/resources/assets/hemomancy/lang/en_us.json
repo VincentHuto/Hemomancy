@@ -352,5 +352,6 @@
 	"item.hemomancy.harbinger_grimore.subtitle": "Harbinger Faction Grimoire",
 	"item.hemomancy.mote_blood": "Mote of Blood",
 	"item.mna.greater_mote_blood": "Greater Mote of Blood",
+	"hemomancy:rituals/weeping_wound": "Ritual of The Weeping Wound",
 	"hemomancy:living_armor_set_bonus": "(3) Set Bonus:\n +500 Max Mana\n +50% Mana Regen"
 }

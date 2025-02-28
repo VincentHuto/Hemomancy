@@ -1,89 +1,175 @@
 package com.vincenthuto.hemomancy.compat.mna.ritual;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import com.mna.api.particles.MAParticleType;
+import com.mna.api.particles.ParticleInit;
 import com.mna.api.rituals.IRitualContext;
+import com.mna.api.rituals.RitualEffect;
 import com.mna.api.sound.SFX;
-import com.mna.rituals.effects.RitualEffectCreateEssence;
+import com.mna.entities.utility.PresentItem;
+import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.block.EngramBlock;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.math.Vector3;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class RitualEffectBloodMote extends RitualEffectCreateEssence {
+public class RitualEffectBloodMote extends RitualEffect {
 	public RitualEffectBloodMote(ResourceLocation ritualName) {
 		super(ritualName);
 	}
 
 	@Override
-	public Component canRitualStart(IRitualContext context) {
-		if (this.getBookshelfLocations(context).size() < 10) {
-			return Component.translatable((String) "ritual.mna.forgotten_lore.no_bookshelves");
-		}
-		return null;
-	}
-
-	private ArrayList<BlockPos> getBookshelfLocations(IRitualContext context) {
-		int searchDist = 4;
-		int lb = context.getRecipe().getLowerBound();
-		ArrayList<BlockPos> searched = new ArrayList<BlockPos>();
-		ArrayList<BlockPos> found = new ArrayList<BlockPos>();
-		for (int i = -lb - 1; i <= lb + 1; ++i) {
-			BlockPos a = context.getCenter().offset(-searchDist, 0, i);
-			BlockPos b = context.getCenter().offset(searchDist, 0, i);
-			BlockPos c = context.getCenter().offset(i, 0, -searchDist);
-			BlockPos d = context.getCenter().offset(i, 0, searchDist);
-			if (!searched.contains(a)) {
-				searched.add(a);
-			}
-			if (!searched.contains(b)) {
-				searched.add(b);
-			}
-			if (!searched.contains(c)) {
-				searched.add(c);
-			}
-			if (searched.contains(d))
-				continue;
-			searched.add(d);
-		}
-		for (BlockPos pos : searched) {
-			BlockState state = context.getLevel().getBlockState(pos);
-			if (!(state.getEnchantPowerBonus((LevelReader) context.getLevel(), pos) > 0.0f))
-				continue;
-			found.add(pos);
-		}
-		return found;
-	}
-
-	@Override
-	public SoundEvent getLoopSound(IRitualContext context) {
-		return SFX.Loops.ARCANE;
-	}
-
-	@Override
-	public boolean spawnRitualParticles(IRitualContext context) {
-		ArrayList<BlockPos> shelves = this.getBookshelfLocations(context);
-		if (shelves.size() == 0) {
-			return false;
-		}
-		BlockPos end = context.getCenter().above();
-		BlockPos start = shelves.get((int) (Math.random() * (double) shelves.size()));
-		context.getLevel().addParticle((ParticleOptions) ParticleTypes.CRIMSON_SPORE, (double) end.getX() + 0.5,
-				(double) end.getY() + 0.5, (double) end.getZ() + 0.5, (double) (-(end.getX() - start.getX())), -0.5,
-				(double) (-(end.getZ() - start.getZ())));
+	public boolean applyStartCheckInCreative() {
 		return true;
 	}
 
 	@Override
+	protected boolean applyRitualEffect(IRitualContext context) {
+
+		Player player = context.getCaster();
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+		if (!volume.wouldOverstrain(1000)) {
+			volume.drain(1000);
+			System.out.println("drained player");
+			this.SpawnItem(context.getCenter(), context.getLevel());
+			return true;
+		} else {
+			ItemStack offHandItem = player.getOffhandItem();
+			if (offHandItem.getItem() instanceof BloodGourdItem gourd) {
+				IBloodVolume itemstackCap = offHandItem.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+						.orElseThrow(NullPointerException::new);
+				if (!itemstackCap.wouldOverstrain(1000)) {
+					itemstackCap.drain(1000);
+					System.out.println("drained offhand");
+
+					return true;
+				}
+			}
+		}
+		System.out.println("Couldnt craft");
+
+		return false;
+	}
+
+	protected void SpawnItem(BlockPos ritualCenter, Level world) {
+		PresentItem entity = new PresentItem(world, (float) ritualCenter.getX() + 0.5f, ritualCenter.above().getY(),
+				(float) ritualCenter.getZ() + 0.5f, this.getOutputStack());
+		world.addFreshEntity((Entity) entity);
+	}
+
+	@Override
+	public Component canRitualStart(IRitualContext context) {
+		if (!this.areEngramsPresent(context)) {
+			return Component.literal("This ritual requires")
+					.append(Component.literal(" MORE").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.RED)
+							.withStyle(ChatFormatting.UNDERLINE))
+					.withStyle(ChatFormatting.RESET).append(Component.literal(" from you..."));
+		}
+		return null;
+	}
+
+	private boolean areEngramsPresent(IRitualContext context) {
+		BlockPos a = context.getCenter().offset(-1, 0, 0);
+		BlockPos b = context.getCenter().offset(1, 0, 0);
+		BlockPos c = context.getCenter().offset(0, 0, -1);
+		BlockPos d = context.getCenter().offset(0, 0, 1);
+		if (checkPos(context, a) && checkPos(context, b) && checkPos(context, c) && checkPos(context, d)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean checkPos(IRitualContext context, BlockPos pos) {
+		BlockState state = context.getLevel().getBlockState(pos);
+		if (state.getBlock() instanceof EngramBlock engram) {
+			return state.getValue(EngramBlock.LIT);
+		}
+		return false;
+	}
+
+	@Override
+	public SoundEvent getLoopSound(IRitualContext context) {
+		return SFX.Loops.ENDER;
+	}
+
+	@Override
+	public boolean spawnRitualParticles(IRitualContext context) {
+
+		Level world = context.getLevel();
+
+		double time = world.getGameTime() * 0.2f;
+
+		BlockPos center = context.getCenter();
+		Vector3 centerVec = new Vector3(center.getX() + .5, center.getY(), center.getZ() + .5);
+		List<ParticleColor> chakraColors = new ArrayList<ParticleColor>();
+		Collections.addAll(chakraColors, new ParticleColor(162, 86, 160), new ParticleColor(96, 96, 186),
+				new ParticleColor(66, 184, 212), new ParticleColor(110, 200, 80), new ParticleColor(255, 165, 44),
+				new ParticleColor(243, 124, 59), new ParticleColor(229, 60, 81));
+
+		for (int j = 0; j < chakraColors.size(); j++) {
+			world.addParticle(AbsrobedBloodCellParticleFactory.createData(chakraColors.get(j)),
+					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),
+					centerVec.y + (j * 0.5) + 0.1f + HLParticleUtils.inRange(-0.1, 0.1),
+					centerVec.z + Math.cos(time + j) + HLParticleUtils.inRange(-0.1, 0.1), 0, -0.05, 0);
+			
+			//Collections.reverse(chakraColors);
+
+			
+			
+			world.addParticle(AbsrobedBloodCellParticleFactory.createData(chakraColors.get(j)),
+					centerVec.x + Math.sin(time + j) + HLParticleUtils.inRange(-0.1, 0.1),
+					centerVec.y + (j * 0.5) + 0.1f + HLParticleUtils.inRange(-0.1, 0.1),
+					centerVec.z + Math.cos(time + j) + HLParticleUtils.inRange(-0.1, 0.1), 0, -0.05, 0);
+
+
+
+		}
+
+		double radius = context.getRecipe().getLowerBound();
+		for (float i = 0.0f; i < 360.0f; i += 15.0f) {
+			double angleR = Math.toRadians(i);
+			double offsetX = Math.cos(angleR) * radius;
+			double offsetZ = Math.sin(angleR) * radius;
+			Vector3 start = centerVec.add(offsetX, 0.0, offsetZ);
+			context.getLevel().addParticle(
+					(ParticleOptions) new MAParticleType(ParticleInit.ENDER.get()),
+					start.x, start.y, start.z, center.getX() + .5, center.getY() + 1, center.getZ() + .5);
+		}
+
+		return true;
+	}
+
 	public ItemStack getOutputStack() {
 		return new ItemStack((ItemLike) MnAPluginItemInit.mote_blood.get());
+	}
+
+	@Override
+	protected int getApplicationTicks(IRitualContext arg0) {
+		return 0;
 	}
 }

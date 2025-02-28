@@ -102,5 +102,47 @@
       }
     ]
   },
+  "Living Infused Thread": {
+    "index": 0,
+    "category": "hemomancy",
+    "sections": [
+      {
+        "type": "title",
+        "value": "Living Infused Thread"
+      },
+      {
+        "type": "text",
+        "value": "",
+        "json": [
+          {
+            "text": "Living Infused Thread",
+            "bold": true,
+            "color": "dark_red"
+          },
+          {
+            "text": " ",
+            "color": "dark_red"
+          },
+          {
+            "text": "is a rare, Hemomantic construct—an organic filament woven from the very essence of blood and life force. It is neither fully alive nor entirely inanimate, existing in a state of perpetual vitality, pulsating faintly with the rhythmic thrum of a heartbeat. Created through forbidden Hemomantic practices, these threads are prized for their ability to bind, mend, and control life itself.\n\nA staple among master Hemomancers, "
+          },
+          {
+            "text": "Living Infused Thread",
+            "bold": true,
+            "color": "dark_red"
+          },
+          {
+            "text": " represents the fusion of flesh and craftsmanship, a perfect balance between creation and consumption. Those who wield it must understand its hunger—lest they become its next meal."
+          }
+        ]
+      }
+    ],
+    "related_recipes": [
+      {
+        "type": "manaweaving_altar",
+        "location": "hemomancy:manaweaving/living_infused_thread"
+      }
+    ]
+  },
   "version": "1.0.0a"
 }

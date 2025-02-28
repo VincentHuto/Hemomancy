@@ -10,7 +10,7 @@ public class MnAPluginRitualInit {
 
 	public static void registerRitualEffects(RegisterEvent event) {
 		event.register(Registries.RitualEffect.get().getRegistryKey(), (helper) -> {
-			helper.register(RLoc.create("weeping_wound"),
+			helper.register(Hemomancy.rloc("ritual-weeping_wound"),
 					new RitualEffectBloodMote(Hemomancy.rloc("rituals/weeping_wound")));
 		});
 	}

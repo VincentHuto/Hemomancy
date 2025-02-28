@@ -151,6 +151,7 @@ public class Hemomancy {
 			forgeBus.addListener(MnAPlugin::onRunicAnvil);
 			modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
 			modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
+			
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 				return () -> {
 					forgeBus.addListener(MnAPluginClient::onCastingResourceRegistrationEventClient);
