@@ -1,148 +1,212 @@
 {
-  "Hemomancy": {
-    "index": 0,
-    "category": "hemomancy",
-    "sections": [
-      {
-        "type": "title",
-        "value": "Advanced Blood Control"
-      },
-      {
-        "type": "text",
-        "value": "",
-        "json": [
-          {
-            "text": "Hemomancy",
-            "italic": true,
-            "bold": true,
-            "color": "dark_red"
-          },
-          {
-            "text": " ",
-            "italic": true,
-            "bold": true,
-            "color": "black"
-          },
-          {
-            "text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.",
-            "italic": true,
-            "color": "black"
-          }
-        ]
-      }
-    ],
-    "related_recipes": []
-  },
-  "Revenger Dodo": {
-    "index": 0,
-    "category": "hemomancy",
-    "sections": [
-      {
-        "type": "title",
-        "value": "Revenger Dodo"
-      },
-      {
-        "type": "text",
-        "value": "",
-        "json": [
-          {
-            "text": "The "
-          },
-          {
-            "text": "Revenger Dodo",
-            "bold": true,
-            "color": "dark_red"
-          },
-          {
-            "text": " is a blood-forged avian monstrosity, summoned from the crimson ether of Hemomancy. Though resembling the extinct, flightless bird in stature, this dodo is anything but harmless. It is a relentless force of vengeance, designed to exact retribution upon those who harm its master."
-          }
-        ]
-      }
-    ],
-    "related_recipes": []
-  },
-  "Ritual of the Weeping Wound": {
-    "index": 0,
-    "category": "hemomancy",
-    "sections": [
-      {
-        "type": "title",
-        "value": "Ritual of the Weeping Wound"
-      },
-      {
-        "type": "text",
-        "value": "",
-        "json": [
-          {
-            "text": "The "
-          },
-          {
-            "text": "Ritual of the Weeping Wound",
-            "bold": true,
-            "color": "dark_purple"
-          },
-          {
-            "text": " is a Hemomantic rite designed to compress raw, carnal energy—pain, suffering, and vitality—into a concentrated "
-          },
-          {
-            "text": "Mote of Blood",
-            "bold": true,
-            "color": "dark_red"
-          },
-          {
-            "text": ", a crystalline essence of life force that can be used for powerful Hemomantic spells and enchantments. This ritual is not for the faint-hearted, as it requires the Hemomancer to channel and contain immense suffering within a single, tangible core."
-          }
-        ]
-      }
-    ],
-    "related_recipes": [
-      {
-        "type": "ritual",
-        "location": "hemomancy:rituals/weeping_wound"
-      }
-    ]
-  },
-  "Living Infused Thread": {
-    "index": 0,
-    "category": "hemomancy",
-    "sections": [
-      {
-        "type": "title",
-        "value": "Living Infused Thread"
-      },
-      {
-        "type": "text",
-        "value": "",
-        "json": [
-          {
-            "text": "Living Infused Thread",
-            "bold": true,
-            "color": "dark_red"
-          },
-          {
-            "text": " ",
-            "color": "dark_red"
-          },
-          {
-            "text": "is a rare, Hemomantic construct—an organic filament woven from the very essence of blood and life force. It is neither fully alive nor entirely inanimate, existing in a state of perpetual vitality, pulsating faintly with the rhythmic thrum of a heartbeat. Created through forbidden Hemomantic practices, these threads are prized for their ability to bind, mend, and control life itself.\n\nA staple among master Hemomancers, "
-          },
-          {
-            "text": "Living Infused Thread",
-            "bold": true,
-            "color": "dark_red"
-          },
-          {
-            "text": " represents the fusion of flesh and craftsmanship, a perfect balance between creation and consumption. Those who wield it must understand its hunger—lest they become its next meal."
-          }
-        ]
-      }
-    ],
-    "related_recipes": [
-      {
-        "type": "manaweaving_altar",
-        "location": "hemomancy:manaweaving/living_infused_thread"
-      }
-    ]
-  },
-  "version": "1.0.0a"
+	"Hemomancy": {
+		"index": 0,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Advanced Blood Control"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Hemomancy",
+						"italic": true,
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " ",
+						"italic": true,
+						"bold": true,
+						"color": "black"
+					},
+					{
+						"text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.",
+						"italic": true,
+						"color": "black"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Revenger Dodo": {
+		"index": 0,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Revenger Dodo"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Revenger Dodo",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a blood-forged avian monstrosity, summoned from the crimson ether of Hemomancy. Though resembling the extinct, flightless bird in stature, this dodo is anything but harmless. It is a relentless force of vengeance, designed to exact retribution upon those who harm its master."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Ritual of the Weeping Wound": {
+		"index": 0,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Ritual of the Weeping Wound"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Ritual of the Weeping Wound",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " is a Hemomantic rite designed to compress raw, carnal energy—pain, suffering, and vitality—into a concentrated "
+					},
+					{
+						"text": "Mote of Blood",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": ", a crystalline essence of life force that can be used for powerful Hemomantic spells and enchantments. This ritual is not for the faint-hearted, as it requires the Hemomancer to channel and contain immense suffering within a single, tangible core."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "ritual",
+				"location": "hemomancy:rituals/weeping_wound"
+			}
+		]
+	},
+	"Living Infused Thread": {
+		"index": 0,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Living Infused Thread"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Living Infused Thread",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " ",
+						"color": "dark_red"
+					},
+					{
+						"text": "is a rare, Hemomantic construct—an organic filament woven from the very essence of blood and life force. It is neither fully alive nor entirely inanimate, existing in a state of perpetual vitality, pulsating faintly with the rhythmic thrum of a heartbeat. Created through forbidden Hemomantic practices, these threads are prized for their ability to bind, mend, and control life itself.\n\nA staple among master Hemomancers, "
+					},
+					{
+						"text": "Living Infused Thread",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " represents the fusion of flesh and craftsmanship, a perfect balance between creation and consumption. Those who wield it must understand its hunger—lest they become its next meal."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "manaweaving_altar",
+				"location": "hemomancy:manaweaving/living_infused_thread"
+			}
+		]
+	},
+	"Greater Mote of Bood": {
+		"index": 0,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Greater Mote of Bood"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Greater Mote of Blood",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " ",
+						"color": "dark_red"
+					},
+					{
+						"text": "is a rare and immensely powerful Hemomantic artifact—a dense, pulsating sphere of crystallized carnal energy that serves as a near-limitless reservoir of blood magic. Unlike a standard "
+					},
+					{
+						"text": "Mote of Blood",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": ",",
+						"color": "black"
+					},
+					{
+						"text": " which is a condensed essence of life force, the "
+					},
+					{
+						"text": "Greater Mote",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is an apex-tier manifestation of suffering, vitality, and raw Hemocraft, capable of fueling advanced rituals, forging legendary artifacts, and even sustaining a Hemomancer’s existence beyond normal mortality."
+					}
+				]
+			},
+			{
+				"type": "recipe",
+				"location": "hemomancy:veldrin_altar/greater_mote_blood",
+				"recipeType": "eldrin_altar"
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "recipe",
+				"location": "hemomancy:eldrin_altar/greater_mote_blood"
+			}
+		]
+	},
+	"version": "1.0.0a"
 }
