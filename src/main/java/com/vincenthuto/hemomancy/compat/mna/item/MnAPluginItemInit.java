@@ -36,6 +36,9 @@ public class MnAPluginItemInit {
 	public static final RegistryObject<Item> befouled_vinteum_dust = MNAITEMS.register("befouled_vinteum_dust",
 			() -> new Item(new Item.Properties()));
 
+	public static final RegistryObject<Item> foul_vinteum_ingot = MNAITEMS.register("foul_vinteum_ingot",
+			() -> new Item(new Item.Properties()));
+	
 	public static final RegistryObject<Item> living_infused_thread = MNAITEMS.register("living_infused_thread",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> mote_blood = MNAITEMS.register("mote_blood",

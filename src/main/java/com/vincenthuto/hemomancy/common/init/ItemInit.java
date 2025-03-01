@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.item.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.ChitiniteArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.ChitiniteShieldItem;
 import com.vincenthuto.hemomancy.common.item.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.common.item.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.UnstainedArmorItem;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
@@ -70,7 +71,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -315,6 +315,11 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> engram_stamp = SPECIALITEMS.register("engram_stamp",
 			() -> new EngramStampItem(new Item.Properties().stacksTo(1)));
+
+	// Artifacts
+	public static final RegistryObject<Item> marrow_crown = BASEITEMS.register("marrow_crown",
+			() -> new MarrowCrownArmorItem(EnumModArmorTiers.MARROW_CROWN, ArmorItem.Type.HELMET)
+					);
 
 	// Hematic
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",

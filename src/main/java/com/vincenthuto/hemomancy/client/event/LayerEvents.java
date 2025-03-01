@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
+import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
 import com.vincenthuto.hemomancy.client.model.block.CentrifugeArmsModel;
 import com.vincenthuto.hemomancy.client.model.block.EarthenVeinModel;
@@ -100,7 +101,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(ChthonianQueenModel.LAYER_LOCATION, ChthonianQueenModel::createBodyLayer);
 		event.registerLayerDefinition(ChitiniteModel.LAYER_LOCATION, ChitiniteModel::createBodyLayer);
 		event.registerLayerDefinition(FerventChitiniteModel.LAYER_LOCATION, FerventChitiniteModel::createBodyLayer);
-		event.registerLayerDefinition(FerventChitiniteModel.CRYSTAL_LAYER_LOCATION, FerventChitiniteModel::createCrystalLayer);
+		event.registerLayerDefinition(FerventChitiniteModel.CRYSTAL_LAYER_LOCATION,
+				FerventChitiniteModel::createCrystalLayer);
 
 		event.registerLayerDefinition(DrudgeModel.LAYER_LOCATION, DrudgeModel::createBodyLayer);
 		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
@@ -122,6 +124,10 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinModel.LAYER_LOCATION, BarbedUrchinModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
+
+		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
+				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
+
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_LAYER,
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_TENGU_LAYER,
