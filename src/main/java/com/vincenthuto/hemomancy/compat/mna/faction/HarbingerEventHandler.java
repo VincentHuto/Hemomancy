@@ -65,27 +65,5 @@ public class HarbingerEventHandler {
 //				});
 	}
 
-	// client event
-	public static class MnAPluginClient {
-		public static void onCastingResourceRegistrationEventClient(CastingResourceGuiRegistrationEvent event) {
-			event.getRegistry().registerResourceGui(HARBINGERS_MANA, new HarbingersManaGui());
-		}
-
-		public static void onRegisterSpecialModels(ModelEvent.RegisterAdditional event) {
-			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_open"));
-			event.register(Hemomancy.rloc("item/special/grimoire_harbinger_closed"));
-			event.register(Hemomancy.rloc("item/faction_horn_harbingers"));
-
-		}
-
-		@SubscribeEvent
-		public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-			event.register((stack, layer) -> layer > 0 ? -1 : ((DyeableLeatherItem) stack.getItem()).getColor(stack),
-					new ItemLike[] { (ItemLike) MnAPluginItemInit.living_thread_boots.get(),
-							(ItemLike) MnAPluginItemInit.living_thread_robes.get(),
-							(ItemLike) MnAPluginItemInit.living_thread_leggings.get(),
-							(ItemLike) MnAPluginItemInit.living_thread_hood.get() });
-		}
-	}
 
 }

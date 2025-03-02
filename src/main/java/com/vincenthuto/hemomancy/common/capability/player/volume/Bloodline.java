@@ -12,15 +12,16 @@ import net.minecraft.world.level.Level;
 public class Bloodline {
 
 	public static Bloodline NOBLOODLINE = new Bloodline();
+
 	public static Bloodline deserialize(CompoundTag nbt) {
 		if (nbt != null && !nbt.isEmpty()) {
 			if (nbt.contains("name") && nbt.contains("leader") && nbt.contains("bloodlineUUID")
 					&& nbt.contains("players")) {
-				if (nbt.get("players")instanceof ListTag listtag) {
+				if (nbt.get("players") instanceof ListTag listtag) {
 					List<UUID> playerUUIDS = new ArrayList<>();
 					if (!listtag.isEmpty()) {
 						for (int i = 0; i < listtag.size(); i++) {
-							if (listtag.get(i)instanceof CompoundTag comp) {
+							if (listtag.get(i) instanceof CompoundTag comp) {
 								comp.getUUID("player" + i);
 								Bloodline line = new Bloodline(nbt.getString("name"), nbt.getUUID("leader"),
 										nbt.getUUID("bloodlineUUID"), playerUUIDS);
@@ -38,6 +39,7 @@ public class Bloodline {
 		}
 		return Bloodline.NOBLOODLINE;
 	}
+
 	String name;
 	float bloodVolume, maxBloodVolume;
 	UUID leaderUUID, bloodlineUUID;

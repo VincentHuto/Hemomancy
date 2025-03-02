@@ -58,10 +58,15 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 					.immediate(Tesselator.getInstance().getBuilder());
 
 			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_blade));
+			if (p_239207_2_ == ItemDisplayContext.GROUND) {
+				ms.translate(-0.6, -0.5, 0.25);
+				ms.scale(.5f, .5f, .5f);
+
+			}
 			ms.translate(-0.6, 0.5, 0.25);
 			ms.scale(1.25f, 1.25f, 1.25f);
 			if (p_239207_2_ == ItemDisplayContext.GUI) {
-				ms.translate(0.10, -0.45, 0);
+				ms.translate(0.05, -0.45, 0);
 				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
 
 			}

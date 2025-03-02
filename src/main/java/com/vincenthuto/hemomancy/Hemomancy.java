@@ -28,8 +28,9 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
+import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
+import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
-import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler.MnAPluginClient;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
@@ -151,12 +152,16 @@ public class Hemomancy {
 			forgeBus.addListener(MnAPlugin::onRunicAnvil);
 			modEventBus.addListener(MnAPluginSpellInit::registerSpellBits);
 			modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
-			
+			MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
+			modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
+
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 				return () -> {
-					forgeBus.addListener(MnAPluginClient::onCastingResourceRegistrationEventClient);
-					modEventBus.addListener(MnAPluginClient::onRegisterSpecialModels);
-					modEventBus.addListener(MnAPluginClient::registerItemColors);
+					forgeBus.addListener(MnAPluginClientEvents::onCastingResourceRegistrationEventClient);
+					modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
+					modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
+					modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
+					modEventBus.addListener(MnAPluginClientEvents::renderEntities);
 
 				};
 			});

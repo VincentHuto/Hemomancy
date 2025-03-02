@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy.compat.mna.item;
 
-import com.mna.api.faction.FactionIDs;
 import com.mna.items.ItemInit;
 import com.mna.items.artifice.ItemFactionHorn;
 import com.vincenthuto.hemomancy.Hemomancy;
