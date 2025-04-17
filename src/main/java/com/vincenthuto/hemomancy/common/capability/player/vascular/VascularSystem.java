@@ -28,10 +28,10 @@ public class VascularSystem implements IVascularSystem {
 			return EnumBloodFlow.STABLE;
 
 		} else if (vascularSystem.get(sectionIn) < 50 && vascularSystem.get(sectionIn) >= 15) {
-			return EnumBloodFlow.ClOTTED;
+			return EnumBloodFlow.VARICOSE;
 
 		} else if (vascularSystem.get(sectionIn) < 15 && vascularSystem.get(sectionIn) > 0) {
-			return EnumBloodFlow.VARICOSE;
+			return EnumBloodFlow.ClOTTED;
 		} else if (vascularSystem.get(sectionIn) < 0) {
 			return EnumBloodFlow.DEAD;
 		}

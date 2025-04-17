@@ -174,6 +174,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_rock = BASEITEMS.register("blood_rock",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> vivianite_cluster = BASEITEMS.register("vivianite_cluster",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",

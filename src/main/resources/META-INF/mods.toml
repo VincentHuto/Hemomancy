@@ -88,5 +88,12 @@ After all its just sitting there!
     versionRange="[2.2.0.154,)"
     ordering="AFTER"
     side="BOTH"
+
+    [[dependencies.hemomancy]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="[4.2.2,)"
+    ordering="NONE"
+    side="BOTH"
     
     

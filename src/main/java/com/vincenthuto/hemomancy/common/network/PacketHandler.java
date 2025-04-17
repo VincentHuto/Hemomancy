@@ -22,13 +22,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentManipPa
 import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentVeinPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseContManipKeyPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
-import com.vincenthuto.hemomancy.common.network.capa.runes.CPacketFlight;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRuneBinder;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenSporeInv;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketRuneSync;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketUpdateChiselRunes;
+import com.vincenthuto.hemomancy.common.network.capa.runes.*;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
@@ -88,6 +82,8 @@ public class PacketHandler {
 
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenSporeInv.class, PacketOpenSporeInv::decode,
 				PacketOpenSporeInv::new, PacketOpenSporeInv::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketOpenVascularView.class, PacketOpenVascularView::decode,
+				PacketOpenVascularView::new, PacketOpenVascularView::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,

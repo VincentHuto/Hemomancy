@@ -14,14 +14,11 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
-//	//@CapabilityInject(IBloodVolume.class)
+
 	public static final Capability<IBloodVolume> VOLUME_CAPA = CapabilityManager
 			.get(new CapabilityToken<IBloodVolume>() {
 			});
 
-	public static double getPlayerbloodVolume(Player player) {
-		return player.getCapability(VOLUME_CAPA).orElseThrow(IllegalStateException::new).getBloodVolume();
-	}
 	BloodVolume capability = new BloodVolume();
 
 	private LazyOptional<IBloodVolume> instance = LazyOptional.of(() -> capability);

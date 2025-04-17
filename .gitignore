@@ -25,3 +25,4 @@ run
 forge*changelog.txt
 /.apt_generated/
 /.apt_generated_tests/
+/libs/magichem-0.4.7-pre17.jar

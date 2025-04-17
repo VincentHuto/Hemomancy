@@ -7,8 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class HarbingersManaGui implements ICastingResourceGuiProvider {
+	
     public ResourceLocation getTexture() {
-        return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
+         return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
     }
 
     public ItemStack getBadgeItem() {
@@ -16,11 +17,11 @@ public class HarbingersManaGui implements ICastingResourceGuiProvider {
     }
 
     public int getXPBarColor() {
-        return 0xdaa520;
+        return 0xffd700;
     }
 
     public int getBarColor() {
-        return 0xdaa520;
+        return 0xffd700;
     }
 
     public int getBarManaCostEstimateColor() {

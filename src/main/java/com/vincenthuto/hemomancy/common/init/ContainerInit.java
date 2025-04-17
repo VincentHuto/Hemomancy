@@ -1,16 +1,8 @@
 package com.vincenthuto.hemomancy.common.init;
 
+import com.mna.gui.containers.block.ContainerOcculus;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.menu.CharmGourdMenu;
-import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
-import com.vincenthuto.hemomancy.common.menu.JuiceinatorMenu;
-import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
-import com.vincenthuto.hemomancy.common.menu.LivingSyringeMenu;
-import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
-import com.vincenthuto.hemomancy.common.menu.RuneBinderInventoryMenu;
-import com.vincenthuto.hemomancy.common.menu.SporeImplantMenu;
-import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
-import com.vincenthuto.hemomancy.common.menu.VisceralRecallerMenu;
+import com.vincenthuto.hemomancy.common.menu.*;
 
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -53,5 +45,9 @@ public class ContainerInit {
 
 	public static final RegistryObject<MenuType<SporeImplantMenu>> fungal_implantation = CONTAINERS
 			.register("fungal_implantation", () -> IForgeMenuType.create(SporeImplantMenu::new));
+
+	public static final RegistryObject<MenuType<VascularViewMenu>> vascular_view =
+			CONTAINERS.register("vascular_view", () -> IForgeMenuType.create(VascularViewMenu::new));
+
 
 }

@@ -14,12 +14,15 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BloodCrystalBlock extends Block {
 	public static final DirectionProperty FACING = DirectionalBlock.FACING;
+	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	private static final VoxelShape SHAPE_U = Block.box(3, 0, 3, 13, 12, 13);
 	private static final VoxelShape SHAPE_N = Block.box(3, 3, 4, 13, 13, 16);
 	private static final VoxelShape SHAPE_S = Block.box(3, 3, 0, 13, 13, 12);

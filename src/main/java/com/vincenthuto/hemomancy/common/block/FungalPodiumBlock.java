@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenVascularView;
 import com.vincenthuto.hemomancy.common.tile.FungalPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -122,16 +123,16 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
+				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenVascularView());
 			}
 		} else {
-			if (!worldIn.isClientSide) {
-				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
-						new ItemStack(BlockInit.infected_fungus.get(), 1));
-				worldIn.destroyBlock(pos, false);
-				worldIn.addFreshEntity(spawn);
-				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
-			}
+//			if (!worldIn.isClientSide) {
+//				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+//						new ItemStack(BlockInit.infected_fungus.get(), 1));
+//				worldIn.destroyBlock(pos, false);
+//				worldIn.addFreshEntity(spawn);
+//				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
+//			}
 		}
 //		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
 //			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());

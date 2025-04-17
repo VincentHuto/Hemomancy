@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy;
 
+import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
+import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,6 +67,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
+import software.bernie.geckolib.GeckoLib;
 
 @Mod(Hemomancy.MOD_ID)
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
@@ -133,7 +136,7 @@ public class Hemomancy {
 				this.proxy = new ServerProxy();
 			};
 		});
-
+		GeckoLib.initialize();
 		modEventBus.addListener(this::clientSetup);
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::buildContents);
@@ -144,7 +147,13 @@ public class Hemomancy {
 			LOGGER.info("MNA WAS LOADED");
 			forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
 			MnAPluginItemInit.MNAITEMS.register(modEventBus);
-			modEventBus.addListener(MnAPluginItemInit::buildMnaCompatContents);
+			MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
+			MnAPluginBlockEntityInit.MNATILES.register(modEventBus);
+
+			modEventBus.addListener(MnAPluginItemInit::buildMnaCompatItemContents);
+			modEventBus.addListener(MnAPluginBlockInit::onRegisterItems);
+			modEventBus.addListener(MnAPluginBlockInit::buildMnaCompatBlockContents);
+
 			modEventBus.addListener(HarbingerEventHandler::registerFactions);
 			forgeBus.addListener(HarbingerEventHandler::onCastingResourceRegistrationEvent);
 			modEventBus.addListener(HarbingerEventHandler::loadCompleteEventHandler);
@@ -154,7 +163,6 @@ public class Hemomancy {
 			modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
 			MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
 			modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
-
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
 				return () -> {
 					forgeBus.addListener(MnAPluginClientEvents::onCastingResourceRegistrationEventClient);
@@ -162,7 +170,7 @@ public class Hemomancy {
 					modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
 					modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
 					modEventBus.addListener(MnAPluginClientEvents::renderEntities);
-
+					modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
 				};
 			});
 		}

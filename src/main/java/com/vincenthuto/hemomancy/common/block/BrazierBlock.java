@@ -62,7 +62,6 @@ public class BrazierBlock extends Block implements EntityBlock {
 		double d2 = (double) pPos.getZ() + 0.5D;
 		if (pState.getValue(LIT)) {
 			pLevel.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
-
 		}
 	}
 

@@ -45,7 +45,7 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemDisplayContext p_239207_2_, PoseStack ms, MultiBufferSource buffers,
+	public void renderByItem(ItemStack stack, ItemDisplayContext itemContext, PoseStack ms, MultiBufferSource buffers,
 			int light, int overlay) {
 
 		if (stack.getItem() instanceof MarrowCrownArmorItem) {
@@ -58,17 +58,37 @@ public class MarrowCrownItemRenderer extends BlockEntityWithoutLevelRenderer {
 					.immediate(Tesselator.getInstance().getBuilder());
 
 			VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(living_blade));
-			if (p_239207_2_ == ItemDisplayContext.GROUND) {
+			if (itemContext == ItemDisplayContext.GROUND) {
 				ms.translate(-0.6, -0.5, 0.25);
 				ms.scale(.5f, .5f, .5f);
 
 			}
 			ms.translate(-0.6, 0.5, 0.25);
 			ms.scale(1.25f, 1.25f, 1.25f);
-			if (p_239207_2_ == ItemDisplayContext.GUI) {
+			if (itemContext == ItemDisplayContext.GUI) {
 				ms.translate(0.05, -0.45, 0);
 				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
 
+			}
+			if(itemContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+				ms.translate(0.05, -0.75, 0.2);
+				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
+				ms.scale(0.3f,	 0.3f, 0.3f);
+			}
+			if(itemContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
+				ms.translate(0.05, -0.75, 0.2);
+				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
+				ms.scale(0.3f,	 0.3f, 0.3f);
+			}
+			if(itemContext == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
+				ms.translate(0.05, -0.75, 0.2);
+				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
+				ms.scale(0.3f,	 0.3f, 0.3f);
+			}
+			if(itemContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) {
+				ms.translate(0.05, -0.75, 0.2);
+				ms.mulPose(new Quaternion(Vector3.XP, 10, true).toMoj());
+				ms.scale(0.3f,	 0.3f, 0.3f);
 			}
 			model = crownModel;
 			if (model == crownModel) {

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.compat.mna.item;
 import java.util.function.Consumer;
 
 import com.mna.items.renderers.books.SpellBookRenderer;
-import com.mna.items.sorcery.ItemSpellGrimoire;
+import com.mna.items.sorcery.Grimoire;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.client.Minecraft;
@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.NonNullLazy;
 
-public class ItemHarbingerGrimoire extends ItemSpellGrimoire {
+public class HarbingerGrimoireItem extends Grimoire {
 
-	public ItemHarbingerGrimoire(Properties properties, ResourceLocation factionHarbingersId,
+	public HarbingerGrimoireItem(Properties properties, ResourceLocation factionHarbingersId,
 			ResourceLocation open_model, ResourceLocation closed_model, boolean b) {
 		super(properties, factionHarbingersId, open_model, closed_model, b);
 	}

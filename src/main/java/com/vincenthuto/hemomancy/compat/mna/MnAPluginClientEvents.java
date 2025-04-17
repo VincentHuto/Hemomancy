@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.compat.mna;
 
 import com.mna.api.events.CastingResourceGuiRegistrationEvent;
+import com.mna.api.tools.RLoc;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.compat.mna.block.render.BrokenManaTrapazahedronRenderer;
 import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
 import com.vincenthuto.hemomancy.compat.mna.entity.SanguilithModel;
 import com.vincenthuto.hemomancy.compat.mna.entity.SanguilithRenderer;
@@ -9,12 +11,15 @@ import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingersManaGui;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
+import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class MnAPluginClientEvents {
 	public static void onCastingResourceRegistrationEventClient(CastingResourceGuiRegistrationEvent event) {
@@ -25,6 +30,9 @@ public class MnAPluginClientEvents {
 		event.register(Hemomancy.rloc("item/special/grimoire_harbinger_open"));
 		event.register(Hemomancy.rloc("item/special/grimoire_harbinger_closed"));
 		event.register(Hemomancy.rloc("item/faction_horn_harbingers"));
+		event.register(Hemomancy.rloc("block/broken_mana_trapazahedron"));
+		event.register(BrokenManaTrapazahedronRenderer.crystal);
+		event.register(BrokenManaTrapazahedronRenderer.runes);
 
 	}
 
@@ -43,6 +51,11 @@ public class MnAPluginClientEvents {
 
 	public static void renderEntities(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerEntityRenderer(MnAPluginEntityInit.sanguilith.get(), SanguilithRenderer::new);
+
+	}
+
+	public static void onClientSetupEvent(FMLClientSetupEvent event) {
+		BlockEntityRenderers.register(MnAPluginBlockEntityInit.broken_mana_trapazahedron.get(), BrokenManaTrapazahedronRenderer::new);
 
 	}
 

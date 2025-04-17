@@ -9,4 +9,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 1
-map_Kd C:/Users/Vince/Desktop/My MC Mods/CURRENT/Hemomancy/src/main/resources/assets/hemomancy/textures/item/mna/spellbook_h.png
+map_Kd hemomancy:item/mna/spellbook_h

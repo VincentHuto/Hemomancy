@@ -10,8 +10,10 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -61,12 +63,12 @@ public class VascularSystemEvents {
 						.orElseThrow(IllegalArgumentException::new);
 				for (EnumVeinSections section : system.getVascularSystem().keySet()) {
 
-					if (section != EnumVeinSections.HEART) {
-						system.setVascularSectionHealth(section, -player.level().random.nextFloat() * 3f);
-						PacketHandler.CHANNELVASCULARSYSTEM.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new VascularSystemServerPacket(system.getVascularSystem()));
-					}
+//					if (section != EnumVeinSections.HEART) {
+//						system.setVascularSectionHealth(section, -player.level().random.nextFloat() * 3f);
+//						PacketHandler.CHANNELVASCULARSYSTEM.send(
+//								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+//								new VascularSystemServerPacket(system.getVascularSystem()));
+//					}
 				}
 			}
 		}
@@ -89,8 +91,8 @@ public class VascularSystemEvents {
 				Item item = stack.getItem();
 
 				// Allegiance Identifier overlay
-				if (item == ItemInit.sanguine_conduit.get()) {
-					Item renderItem = ItemInit.sanguine_conduit.get();
+				if (item == ItemInit.dried_leech.get()) {
+					Item renderItem = ItemInit.dried_leech.get();
 					int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - 6;
 					int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2) - 15;
 					double angleBetweenEach = 360.0 / EnumVeinSections.values().length;
@@ -108,101 +110,9 @@ public class VascularSystemEvents {
 								new Color(255, 0, 0, 255).getRGB());
 						event.getGuiGraphics().renderItem(new ItemStack(renderItem), point.x, point.y);
 
-						// GlStateManager._popMatrix();
-						/*
-						 * if (selectedSection.equals(EnumVeinSections.SELF)) { renderItem =
-						 * Items.CRAFTING_TABLE; } else if
-						 * (selectedSection.equals(EnumVeinSections.HASTUR)) { renderItem =
-						 * ItemInit.yellow_sign.get(); } else if
-						 * (selectedSection.equals(EnumVeinSections.ELDRITCH)) { renderItem =
-						 * ItemInit.everwatchful_pendant.get(); } else if
-						 * (selectedSection.equals(EnumVeinSections.ASCENDENT)) { renderItem =
-						 * ItemInit.crossed_keys.get(); } else if
-						 * (selectedSection.equals(EnumVeinSections.MACHINE)) { renderItem =
-						 * ItemInit.integral_cog.get(); } else if
-						 * (selectedSection.equals(EnumVeinSections.BEAST)) { renderItem =
-						 * ItemInit.breath_of_the_beast.get(); } else { renderItem = Items.BARRIER; }
-						 */
-						// GlStateManager._pushMatrix();
-						//// GlStateManager._enableAlphaTest();
-						// GlStateManager._enableBlend();
 						event.getGuiGraphics().renderItem(new ItemStack(renderItem), point.x, point.y);
-						// GuiUtil.drawScaledTexturedModalRect(point.x, point.y, 0, 0, 16, 16, 0.062f);
-						// GlStateManager._disableBlend();
-						// GlStateManager._disableAlphaTest();
-						// GlStateManager._popMatrix();
+
 						point = rotatePointAbout(point, center, angleBetweenEach);
-					}
-				}
-
-				// Redraws Icons so they dont get overwrote
-				// GuiUtil.drawTexturedModalRect(0, 0, 0, 0, 16, 16);
-				Minecraft.getInstance().textureManager
-						.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-
-				// Coven color Overlay
-				/*
-				 * if (player.getItemStackFromSlot(EquipmentSlot.HEAD).getItem() !=
-				 * ItemInit.influence_supressor.get() &&
-				 * !(EnchantmentHelper.getEnchantments(player.getItemStackFromSlot(
-				 * EquipmentSlot.HEAD))
-				 * .containsKey(EnchantmentInit.influence_suppression.get()))) {}
-				 */
-				for (EnumVeinSections sections : section.getVascularSystem().keySet()) {
-					if (section.getHealthBySection(sections) >= 10) {
-						float devoMult = (section.getHealthBySection(sections) / 3) < 250
-								? (section.getHealthBySection(sections) / 3)
-								: 250;
-						switch (sections) {
-						/*
-						 * case HASTUR: AbstractGui.fill(event.getPoseStack(), 0, 0,
-						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(255,
-						 * 255, 0, devoMult).getRGB()); fontRenderer.drawString(event.getPoseStack(),
-						 * "Hasturs View", 5, 5, new Color(255, 0, 0, 15).getRGB());
-						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
-						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break; case
-						 * ELDRITCH: AbstractGui.fill(event.getPoseStack(), 0, 0,
-						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(255,
-						 * 0, 255, devoMult).getRGB()); fontRenderer.drawString(event.getPoseStack(),
-						 * "Azathoth View", 5, 5, new Color(255, 0, 0, 15).getRGB());
-						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
-						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break; case
-						 * ASCENDENT: AbstractGui.fill(event.getPoseStack(), 0, 0,
-						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(255,
-						 * 255, 255, devoMult).getRGB()); fontRenderer.drawString(event.getPoseStack(),
-						 * "Seraph View", 5, 5, new Color(255, 0, 0, 15).getRGB());
-						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
-						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break; case BEAST:
-						 * AbstractGui.fill(event.getPoseStack(), 0, 0, event.getWindow().getWidth(),
-						 * event.getWindow().getHeight(), new Color(255, 0, 0, devoMult).getRGB());
-						 * fontRenderer.drawString(event.getPoseStack(), "Beast View", 5, 5, new
-						 * Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
-						 * .bindForSetupTexture(new ResourceLocation("minecraft",
-						 * "textures/gui/icons.png")); break;
-						 *
-						 * case MACHINE: AbstractGui.fill(event.getPoseStack(), 0, 0,
-						 * event.getWindow().getWidth(), event.getWindow().getHeight(), new Color(218,
-						 * 96, 28, devoMult).getRGB()); fontRenderer.drawString(event.getPoseStack(),
-						 * "Machine View", 5, 5, new Color(255, 0, 0, 15).getRGB());
-						 * Minecraft.getInstance().textureManager .bindForSetupTexture(new
-						 * ResourceLocation("minecraft", "textures/gui/icons.png")); break;
-						 *
-						 * case SELF: fontRenderer.drawString(event.getPoseStack(), "Self Devotee", 5,
-						 * 5, new Color(255, 0, 0, 15).getRGB()); Minecraft.getInstance().textureManager
-						 * .bindForSetupTexture(new ResourceLocation("minecraft",
-						 * "textures/gui/icons.png")); break;
-						 */
-						default:
-							/*
-							 * AbstractGui.fill(event.getPoseStack(), 0, 0, event.getWindow().getWidth(),
-							 * event.getWindow().getHeight(), new Color(0, 0, 0, 0).getRGB());
-							 * fontRenderer.drawString(event.getPoseStack(), "No BloodTendency", 5, 5, new
-							 * Color(0, 0, 0, 0).getRGB());
-							 */
-							Minecraft.getInstance().textureManager
-									.bindForSetup(new ResourceLocation("minecraft", "textures/gui/icons.png"));
-							break;
-						}
 					}
 				}
 			}
@@ -229,8 +139,8 @@ public class VascularSystemEvents {
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
 				new VascularSystemServerPacket(BloodFlow));
-//		player.displayClientMessage(
-//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
+		player.displayClientMessage(
+				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent

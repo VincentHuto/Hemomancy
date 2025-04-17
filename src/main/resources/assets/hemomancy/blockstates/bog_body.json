@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,harvested=false,waterlogged=false": {
+      "model": "hemomancy:block/bog_body"
+    },
+    "facing=south,harvested=false,waterlogged=false": {
+      "model": "hemomancy:block/bog_body",
+      "y": 180
+    },
+    "facing=west,harvested=false,waterlogged=false": {
+      "model": "hemomancy:block/bog_body",
+      "y": 270
+    },
+    "facing=east,harvested=false,waterlogged=false": {
+      "model": "hemomancy:block/bog_body",
+      "y": 90
+    },
+    "facing=north,harvested=true,waterlogged=false": {
+      "model": "hemomancy:block/bog_body_harvested"
+    },
+    "facing=south,harvested=true,waterlogged=false": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 180
+    },
+    "facing=west,harvested=true,waterlogged=false": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 270
+    },
+    "facing=east,harvested=true,waterlogged=false": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 90
+    },
+   "facing=north,harvested=false,waterlogged=true": {
+      "model": "hemomancy:block/bog_body"
+    },
+    "facing=south,harvested=false,waterlogged=true": {
+      "model": "hemomancy:block/bog_body",
+      "y": 180
+    },
+    "facing=west,harvested=false,waterlogged=true": {
+      "model": "hemomancy:block/bog_body",
+      "y": 270
+    },
+    "facing=east,harvested=false,waterlogged=true": {
+      "model": "hemomancy:block/bog_body",
+      "y": 90
+    },
+    "facing=north,harvested=true,waterlogged=true": {
+      "model": "hemomancy:block/bog_body_harvested"
+    },
+    "facing=south,harvested=true,waterlogged=true": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 180
+    },
+    "facing=west,harvested=true,waterlogged=true": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 270
+    },
+    "facing=east,harvested=true,waterlogged=true": {
+      "model": "hemomancy:block/bog_body_harvested",
+      "y": 90
+    }
+  }
+}

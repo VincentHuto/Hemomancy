@@ -6,34 +6,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.block.ActiveBefoulingAshTrailBlock;
-import com.vincenthuto.hemomancy.common.block.ActiveSmoulderingAshTrailBlock;
-import com.vincenthuto.hemomancy.common.block.BefoulingAshTrailBlock;
-import com.vincenthuto.hemomancy.common.block.BleedingHeartBlock;
-import com.vincenthuto.hemomancy.common.block.BlockChiselStation;
-import com.vincenthuto.hemomancy.common.block.BloodCrystalBlock;
-import com.vincenthuto.hemomancy.common.block.BrazierBlock;
-import com.vincenthuto.hemomancy.common.block.CrimsonFlameBlock;
-import com.vincenthuto.hemomancy.common.block.DendriticDistributorBlock;
-import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
-import com.vincenthuto.hemomancy.common.block.EngramBlock;
-import com.vincenthuto.hemomancy.common.block.ErythrocyticMyceliumBlock;
-import com.vincenthuto.hemomancy.common.block.FungalImplantationPylonBlock;
-import com.vincenthuto.hemomancy.common.block.FungalPodiumBlock;
-import com.vincenthuto.hemomancy.common.block.GourdBlock;
-import com.vincenthuto.hemomancy.common.block.HyphaeBlock;
-import com.vincenthuto.hemomancy.common.block.InfectedCapBlock;
-import com.vincenthuto.hemomancy.common.block.InfectedFungusBlock;
-import com.vincenthuto.hemomancy.common.block.JuiceinatorBlock;
-import com.vincenthuto.hemomancy.common.block.MorphlingIncubatorBlock;
-import com.vincenthuto.hemomancy.common.block.MortalDisplayBlock;
-import com.vincenthuto.hemomancy.common.block.PuffballFungusBlock;
-import com.vincenthuto.hemomancy.common.block.ScryingPodiumBlock;
-import com.vincenthuto.hemomancy.common.block.SemiSentientConstructBlock;
-import com.vincenthuto.hemomancy.common.block.SmoulderingAshTrailBlock;
-import com.vincenthuto.hemomancy.common.block.UnstainedPodiumBlock;
-import com.vincenthuto.hemomancy.common.block.VialCentrifugeBlock;
-import com.vincenthuto.hemomancy.common.block.VisceralRecallerBlock;
+import com.vincenthuto.hemomancy.common.block.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 
@@ -173,7 +146,7 @@ public class BlockInit {
 					.sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
-			() -> new CrimsonFlameBlock(BlockBehaviour.Properties.copy(Blocks.FIRE),1.5f));
+            CrimsonFlameBlock::new);
 
 	// Plants
 
@@ -323,6 +296,9 @@ public class BlockInit {
 			() -> new BloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.METAL)));
 
+	public static final RegistryObject<Block> bog_body = MODELEDBLOCKS.register("bog_body",
+			() -> new BogBodyBlock(BlockBehaviour.Properties.of().noOcclusion().strength(1.5F, 6.0F).sound(SoundType.WART_BLOCK)));
+
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
 		BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
@@ -371,6 +347,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.bog_body.get(), RenderType.translucent());
 
 	}
 

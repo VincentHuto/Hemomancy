@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -47,11 +48,6 @@ import com.vincenthuto.hemomancy.client.render.tile.ScryingPodiumRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.UnstainedPodiumRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.VisceralRecallerRenderer;
-import com.vincenthuto.hemomancy.client.screen.CharmGourdScreen;
-import com.vincenthuto.hemomancy.client.screen.JuiceinatorScreen;
-import com.vincenthuto.hemomancy.client.screen.SporeImplantScreen;
-import com.vincenthuto.hemomancy.client.screen.VialCentrifugeScreen;
-import com.vincenthuto.hemomancy.client.screen.VisceralRecallerScreen;
 import com.vincenthuto.hemomancy.client.screen.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarScreen;
@@ -360,6 +356,7 @@ public class ClientEvents {
 			BlockEntityRenderers.register(BlockEntityInit.fungal_implantation_pylon.get(),
 					FungalImplantationPylonRenderer::new);
 
+
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
@@ -377,6 +374,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
 			MenuScreens.register(ContainerInit.runic_chisel_station.get(), ChiselStationScreen::new);
 			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen::new);
+			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
 
 		}
 
