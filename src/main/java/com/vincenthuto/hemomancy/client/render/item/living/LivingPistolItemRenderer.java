@@ -19,6 +19,7 @@ public class LivingPistolItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public LivingPistolItemRenderer(BlockEntityRenderDispatcher p_172550_, EntityModelSet p_172551_) {
 		super(p_172550_, p_172551_);
+
 	}
 
 	@Override
