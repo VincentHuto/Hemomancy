@@ -49,5 +49,8 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<VascularViewMenu>> vascular_view =
 			CONTAINERS.register("vascular_view", () -> IForgeMenuType.create(VascularViewMenu::new));
 
+	public static final RegistryObject<MenuType<TendancyViewMenu>> tendancy_view =
+			CONTAINERS.register("tendancy_view", () -> IForgeMenuType.create(TendancyViewMenu::new));
+
 
 }

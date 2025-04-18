@@ -3,19 +3,15 @@ package com.vincenthuto.hemomancy.common.block;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenVascularView;
+import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenVascularView;
 import com.vincenthuto.hemomancy.common.tile.FungalPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -123,7 +119,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenVascularView());
+				PacketHandler.CHANNELVASCULARSYSTEM.sendToServer(new PacketOpenVascularView());
 			}
 		} else {
 //			if (!worldIn.isClientSide) {

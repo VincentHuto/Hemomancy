@@ -375,6 +375,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.runic_chisel_station.get(), ChiselStationScreen::new);
 			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen::new);
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
+			MenuScreens.register(ContainerInit.tendancy_view.get(), TendancyViewScreen::new);
 
 		}
 

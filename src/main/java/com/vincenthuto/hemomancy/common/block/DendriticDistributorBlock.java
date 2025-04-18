@@ -5,6 +5,9 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenTendancyView;
+import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenVascularView;
 import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
 
@@ -113,25 +116,24 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
-//		if (worldIn.isClientSide)
-//			return InteractionResult.PASS;
-//		worldIn.playSound(player, pos, SoundEvents.ZOMBIE_AMBIENT, SoundSource.BLOCKS, 0.25f, 1f);
-//		List<LivingEntity> ents = worldIn.getEntitiesOfClass(LivingEntity.class,
-//				worldIn.getBlockEntity(pos).getRenderBoundingBox().inflate(5));
-//		if (!ents.isEmpty()) {
-//			for (LivingEntity ent : ents) {
-//				if (ent instanceof EntityDrudge) {
-//					EntityDrudge drudge = (EntityDrudge) ent;
-//					ServerPlayer sPlay = (ServerPlayer) player;
-//					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 100, 100));
-//					sPlay.setCamera(drudge);
-//					player.displayClientMessage(Component.literal(drudge.getRoleTitle().name()), false);
-//
-//				}
+								 BlockHitResult result) {
+		if (!player.isShiftKeyDown()) {
+			if (worldIn.isClientSide) {
+				PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendancyView());
+			}
+		} else {
+//			if (!worldIn.isClientSide) {
+//				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
+//						new ItemStack(BlockInit.infected_fungus.get(), 1));
+//				worldIn.destroyBlock(pos, false);
+//				worldIn.addFreshEntity(spawn);
+//				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
 //			}
+		}
+//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
+//			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
+//
 //		}
-
 		return InteractionResult.SUCCESS;
 
 	}

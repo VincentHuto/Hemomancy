@@ -122,8 +122,6 @@ public class VeinMinerHelper {
 					}
 				}
 			}
-		
-			System.out.println(numMined);
 		}
 		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
 			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {

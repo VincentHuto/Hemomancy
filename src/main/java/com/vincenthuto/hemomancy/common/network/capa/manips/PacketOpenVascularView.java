@@ -1,7 +1,5 @@
-package com.vincenthuto.hemomancy.common.network.capa.runes;
+package com.vincenthuto.hemomancy.common.network.capa.manips;
 
-import com.vincenthuto.hemomancy.common.menu.RuneMenuProvider;
-import com.vincenthuto.hemomancy.common.menu.VascularViewMenu;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;

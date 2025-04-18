@@ -11,17 +11,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.DisplayKnownManipsPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationClientPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.StartCentrifugeButtonPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.TeleportToVeinPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentManipPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.UpdateCurrentVeinPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.UseContManipKeyPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
+import com.vincenthuto.hemomancy.common.network.capa.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.runes.*;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
@@ -82,8 +72,7 @@ public class PacketHandler {
 
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenSporeInv.class, PacketOpenSporeInv::decode,
 				PacketOpenSporeInv::new, PacketOpenSporeInv::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenVascularView.class, PacketOpenVascularView::decode,
-				PacketOpenVascularView::new, PacketOpenVascularView::handle);
+
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
 				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
@@ -119,6 +108,8 @@ public class PacketHandler {
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyServerPacket.class,
 				BloodTendencyServerPacket::encode, BloodTendencyServerPacket::decode,
 				BloodTendencyServerPacket::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketOpenTendancyView.class, PacketOpenTendancyView::decode,
+				PacketOpenTendancyView::new, PacketOpenTendancyView::handle);
 
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, KnownManipulationClientPacket.class,
 				KnownManipulationClientPacket::encode, KnownManipulationClientPacket::decode,
@@ -154,6 +145,10 @@ public class PacketHandler {
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemServerPacket.class,
 				VascularSystemServerPacket::encode, VascularSystemServerPacket::decode,
 				VascularSystemServerPacket::handle);
+
+		CHANNELVASCULARSYSTEM.registerMessage(networkID++, PacketOpenVascularView.class, PacketOpenVascularView::decode,
+				PacketOpenVascularView::new, PacketOpenVascularView::handle);
+
 
 		CHANNELBLOODVOLUME.registerMessage(networkID++, BloodVolumeClientPacket.class, BloodVolumeClientPacket::encode,
 				BloodVolumeClientPacket::decode, BloodVolumeClientPacket::handle);
