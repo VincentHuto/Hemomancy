@@ -136,8 +136,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int x, int y) {
 		// this.font.draw(matrixStack, "Vial Centrifuge", 8, 4, 0);
-		graphics.drawString(font, String.valueOf(te.getBloodVolume()), 26, 85, 0000);
-		graphics.drawString(font, "Inventory", 8, this.imageHeight - 90, 000000);
+		graphics.drawString(font, String.valueOf(te.getBloodVolume()), 26, 85, 16777215);
+//		graphics.drawString(font, "Inventory", 8, this.imageHeight - 90, 000000);
 
 	}
 

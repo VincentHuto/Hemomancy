@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.living.SanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.SanguisLanceaEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
@@ -107,11 +107,10 @@ public class SanguisLanceaItem extends LivingToolItem {
 		int i = this.getUseDuration(stack) - timeLeft;
 		if (i >= 10) {
 			if (entityLiving instanceof Player player) {
-				ThrownTrident throwntrident = new ThrownTrident(worldIn, player, stack);
+				SanguisLanceaEntity throwntrident = new SanguisLanceaEntity(worldIn, player, stack);
 				throwntrident.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F,
 						2.5F + (float) 0 * 0.5F, 1.0F);
 					throwntrident.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-
 				worldIn.addFreshEntity(throwntrident);
 				worldIn.playSound((Player) null, throwntrident, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F,
 						1.0F);
@@ -122,14 +121,6 @@ public class SanguisLanceaItem extends LivingToolItem {
 
 			((Player) entityLiving).awardStat(Stats.ITEM_USED.get(this));
 		}
-	}
-
-	public void summonDirectedOrb(Level worldIn, Player playerIn) {
-		DirectedBloodOrbEntity miss = new DirectedBloodOrbEntity(playerIn, false);
-		Vector3 vec = Vector3.fromEntityCenter(playerIn);
-		miss.setPos(vec.x - 0.5, vec.y + 1, vec.z - 0.5);
-		miss.shootFromRotation(playerIn, playerIn.getXRot(), playerIn.getYRot(), 0.0F, 1.0F, 1.0F);
-		worldIn.addFreshEntity(miss);
 	}
 
 	@Override

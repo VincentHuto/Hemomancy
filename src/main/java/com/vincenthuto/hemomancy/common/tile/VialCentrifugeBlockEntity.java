@@ -126,14 +126,12 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	private void outputResults() {
-		System.out.println("Done");
 		for (int i = 0; i < getVialSlots().size(); i++) {
 			ItemStack vialStack = getVialSlots().get(i);
 			if (!getVialSlots().get(i).isEmpty()) {
 				if (vialStack.getItem() instanceof BloodVialItem) {
 					EntityType<?> sampledMob = BloodVialItem.getEntityType(vialStack);
 					ItemStack resultStack = getResultFromVial(sampledMob);
-					System.out.println(resultStack);
 					vialStack = new ItemStack(ItemInit.bloody_vial.get(), 1);
 					// Only outputs to slot if it is not already occupied
 					if (inventory.get(inOutMap.get(i + 2)).isEmpty()) {
@@ -182,42 +180,52 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			if (sampledMob.create(level) instanceof LivingEntity living) {
 				float maxHealth = living.getMaxHealth();
 				// Check what enzyme tags contain entity and run based on that
+				System.out.println(sampledMob);
 				ArrayList<ItemStack> outputList = new ArrayList<ItemStack>();
 				if (sampledMob.is(EntityInit.FUNGAL_TAG)) {
+					System.out.println("FUNGAL_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(BlockInit.infected_fungus.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.UMBRAL_TAG)) {
+					System.out.println("UMBRAL_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.umbral_enzyme.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.INCANDESCENT_TAG)) {
+					System.out.println("INCANDESCENT_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.incandescent_enzyme.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.FERRIC_TAG)) {
+					System.out.println("FERRIC_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.ferric_enzyme.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.VIVACIOUS_TAG)) {
+					System.out.println("VIVACIOUS_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.vivacious_enzyme.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.RUINOUS_TAG)) {
+					System.out.println("RUINOUS_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.ruinous_enzyme.get(), amountOfEnzyme));
 
 				}
 				if (sampledMob.is(EntityInit.NEUROTIC_TAG)) {
+					System.out.println("NEUROTIC_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.neurotic_enzyme.get(), amountOfEnzyme));
 
 				}
 				if (sampledMob.is(EntityInit.FERVENT_TAG)) {
+					System.out.println("FERVENT_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.fervent_enzyme.get(), amountOfEnzyme));
 				}
 				if (sampledMob.is(EntityInit.FRIGID_TAG)) {
+					System.out.println("FRIGID_TAG");
 					int amountOfEnzyme = (int) (((maxHealth / 10) * level.getRandom().nextInt(5 - 1) + 1));
 					outputList.add(new ItemStack(ItemInit.frigid_enzyme.get(), amountOfEnzyme));
 				}

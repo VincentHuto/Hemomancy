@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.event;
 
+import com.vincenthuto.hemomancy.client.render.entity.blood.*;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -7,15 +8,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodBoltRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodBulletRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodCloudCarrierRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodCloudRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodNeedleRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodOrbDirectedRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodOrbTrackingRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.BloodShotRenderer;
-import com.vincenthuto.hemomancy.client.render.entity.blood.WretchedWillRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronPillarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronSpikeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRenderer;
@@ -340,6 +332,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
 			event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
 			event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
+			event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
 
 		}
 
