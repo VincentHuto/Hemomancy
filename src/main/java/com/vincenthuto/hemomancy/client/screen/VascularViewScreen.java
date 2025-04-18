@@ -23,10 +23,12 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
 
     public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
             "textures/gui/vascular_view.png");
+    public static final ResourceLocation border = new ResourceLocation(Hemomancy.MOD_ID,
+            "textures/gui/vascular_border.png");
     public double dragLeftRight = 0.0;
     public double dragUpDown = 0.0;
-    public int guiHeight = 228;
-    public int guiWidth = 174;
+    public int guiHeight = 254;
+    public int guiWidth = 190;
     protected int left;
     protected int top;
     protected Minecraft mc = Minecraft.getInstance();
@@ -66,7 +68,9 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         this.renderTooltip(graphics, mouseX, mouseY); // renderHoveredToolTip
         this.oldMouseX = mouseX;
         this.oldMouseY = mouseY;
-
+        int centerX = this.width / 2 - this.guiWidth / 2;
+        int centerY = this.height / 2 - this.guiHeight / 2;
+        graphics.blit(border, centerX, centerY, 0, 0, this.guiWidth, this.guiHeight);
     }
 
     @Override
@@ -82,7 +86,7 @@ public class VascularViewScreen extends EffectRenderingInventoryScreen<VascularV
         this.top = this.height / 2 - this.guiHeight / 2;
         int centerX = this.width / 2 - this.guiWidth / 2;
         int centerY = this.height / 2 - this.guiHeight / 2;
-        graphics.blit(background, centerX, centerY, 0, 0, this.guiWidth, this.guiHeight);
+        graphics.blit(background, centerX+16, centerY+14, 0, 0, this.guiWidth, this.guiHeight);
         int k = this.leftPos;
         int l = this.topPos;
 
