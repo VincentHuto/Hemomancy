@@ -1,22 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.EarthenVeinBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.FungalImplantationPylonBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.FungalPodiumBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.HumaneIdolBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.MorphlingIncubatorBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.MortalDisplayBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.ScryingPodiumBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.SemiSentientConstructBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.SerpentineIdolBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.UnstainedPodiumBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.VialCentrifugeBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.VisceralRecallerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.*;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -88,4 +73,8 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES
 			.register("vial_centrifuge", () -> BlockEntityType.Builder
 					.of(VialCentrifugeBlockEntity::new, BlockInit.vial_centrifuge.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<SuspendedVivianiteBlockEntity>> suspended_vivianite = TILES
+			.register("suspended_vivianite", () -> BlockEntityType.Builder
+					.of(SuspendedVivianiteBlockEntity::new, BlockInit.suspended_vivianite.get()).build(null));
 }

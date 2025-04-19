@@ -10,11 +10,7 @@ import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
-import com.vincenthuto.hemomancy.client.model.block.CentrifugeArmsModel;
-import com.vincenthuto.hemomancy.client.model.block.EarthenVeinModel;
-import com.vincenthuto.hemomancy.client.model.block.FloatingEyeModel;
-import com.vincenthuto.hemomancy.client.model.block.FloatingHeartModel;
-import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
+import com.vincenthuto.hemomancy.client.model.block.*;
 import com.vincenthuto.hemomancy.client.model.entity.BloodBulletModel;
 import com.vincenthuto.hemomancy.client.model.entity.IronPillarModel;
 import com.vincenthuto.hemomancy.client.model.entity.IronSpikeModel;
@@ -87,6 +83,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
+		event.registerLayerDefinition(SuspendedVivianiteModel.LAYER_LOCATION, SuspendedVivianiteModel::createBodyLayer);
 
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);

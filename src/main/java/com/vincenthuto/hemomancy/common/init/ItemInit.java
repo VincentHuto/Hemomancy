@@ -3,14 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.item.BloodVialItem;
-import com.vincenthuto.hemomancy.common.item.BloodyBookItem;
-import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.item.EngramStampItem;
-import com.vincenthuto.hemomancy.common.item.EnumBloodGourdTiers;
-import com.vincenthuto.hemomancy.common.item.EnzymeItem;
-import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
-import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.*;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedShieldItem;
 import com.vincenthuto.hemomancy.common.item.armor.BloodLustArmorItem;
@@ -176,6 +169,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> vivianite_cluster = BASEITEMS.register("vivianite_cluster",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> vivianite_scalpel = BASEITEMS.register("vivianite_scalpel",
+			() -> new VivianiteScalpelItem(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",

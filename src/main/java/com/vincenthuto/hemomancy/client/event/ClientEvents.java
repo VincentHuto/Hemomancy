@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.client.render.entity.blood.*;
+import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -29,17 +30,6 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.ChiselStationRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.DendriticDistributorRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.EarthenVeinRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.FungalImplantationPylonRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.FungalPodiumRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.MorphlingIncubatorRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.MortalDisplayRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.ScryingPodiumRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.UnstainedPodiumRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.VialCentrifugeRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.VisceralRecallerRenderer;
 import com.vincenthuto.hemomancy.client.screen.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarScreen;
@@ -348,8 +338,8 @@ public class ClientEvents {
 			BlockEntityRenderers.register(BlockEntityInit.fungal_podium.get(), FungalPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.fungal_implantation_pylon.get(),
 					FungalImplantationPylonRenderer::new);
-
-
+			BlockEntityRenderers.register(BlockEntityInit.suspended_vivianite.get(),
+					SuspendedVivaniteRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
