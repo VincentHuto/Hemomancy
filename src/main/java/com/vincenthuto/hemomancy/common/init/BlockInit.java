@@ -300,6 +300,10 @@ public class BlockInit {
 			() -> new SuspendedVivianiteBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
 
+	public static final RegistryObject<Block> suspended_blood_crystal = MODELEDBLOCKS.register("suspended_blood_crystal",
+			() -> new SuspendedBloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
+
 	public static final RegistryObject<Block> bog_body = MODELEDBLOCKS.register("bog_body",
 			() -> new BogBodyBlock(BlockBehaviour.Properties.of().noOcclusion().strength(1.5F, 6.0F).sound(SoundType.WART_BLOCK)));
 
@@ -353,6 +357,7 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.bog_body.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_vivianite.get(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_blood_crystal.get(), RenderType.translucent());
 
 	}
 

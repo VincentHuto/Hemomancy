@@ -26,3 +26,5 @@ forge*changelog.txt
 /.apt_generated/
 /.apt_generated_tests/
 /libs/magichem-0.4.7-pre17.jar
+/src/generated/resources/data/hemomancy/tags/entity_types/Generate.py
+/src/main/resources/data/hemomancy/tags/entity_types/Generate.py

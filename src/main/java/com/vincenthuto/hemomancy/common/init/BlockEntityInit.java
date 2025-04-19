@@ -77,4 +77,8 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<SuspendedVivianiteBlockEntity>> suspended_vivianite = TILES
 			.register("suspended_vivianite", () -> BlockEntityType.Builder
 					.of(SuspendedVivianiteBlockEntity::new, BlockInit.suspended_vivianite.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<SuspendedBloodCrystalBlockEntity>> suspended_blood_crystal = TILES
+			.register("suspended_blood_crystal", () -> BlockEntityType.Builder
+					.of(SuspendedBloodCrystalBlockEntity::new, BlockInit.suspended_blood_crystal.get()).build(null));
 }

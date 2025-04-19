@@ -1,0 +1,13 @@
+{
+  "credit": "Made with Blockbench",
+  "parent" : "block/block",
+  "render_type" : "cutout",
+  "groups": [
+    {
+      "name": "empty",
+      "origin": [8, 8, 8],
+      "color": 0,
+      "children": []
+    }
+  ]
+}

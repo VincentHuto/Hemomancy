@@ -340,6 +340,8 @@ public class ClientEvents {
 					FungalImplantationPylonRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.suspended_vivianite.get(),
 					SuspendedVivaniteRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.suspended_blood_crystal.get(),
+					SuspendedBloodCrystalRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);
