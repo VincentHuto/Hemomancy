@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.common.init;
+package com.vincenthuto.hemomancy.common.effect;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;

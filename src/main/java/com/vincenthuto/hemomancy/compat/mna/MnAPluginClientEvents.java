@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
 import com.vincenthuto.hemomancy.compat.mna.entity.SanguilithModel;
 import com.vincenthuto.hemomancy.compat.mna.entity.SanguilithRenderer;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
-import com.vincenthuto.hemomancy.compat.mna.faction.HarbingersManaGui;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 
 import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
@@ -22,9 +21,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class MnAPluginClientEvents {
-	public static void onCastingResourceRegistrationEventClient(CastingResourceGuiRegistrationEvent event) {
-		event.getRegistry().registerResourceGui(HarbingerEventHandler.HARBINGERS_MANA, new HarbingersManaGui());
-	}
 
 	public static void onRegisterSpecialModels(ModelEvent.RegisterAdditional event) {
 		event.register(Hemomancy.rloc("item/special/grimoire_harbinger_open"));

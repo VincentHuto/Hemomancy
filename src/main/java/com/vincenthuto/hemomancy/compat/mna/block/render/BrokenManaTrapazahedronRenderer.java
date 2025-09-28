@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.compat.mna.block.render;
 
 import com.mna.ManaAndArtifice;
-import com.mna.api.tools.RLoc;
 import com.mna.tools.render.ModelUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -89,7 +88,7 @@ public class BrokenManaTrapazahedronRenderer extends GeoBlockRenderer<BrokenMana
                 String var17 = bone.getName();
                 switch (var17) {
                     case "BINDING_RING":
-                        stack.mulPose(Axis.YP.rotationDegrees((partialTick + (float)ManaAndArtifice.instance.proxy.getGameTicks()) / 8.0F));
+                        stack.mulPose(Axis.YP.rotationDegrees((partialTick + (float) ManaAndArtifice.instance.proxy.getGameTicks()) / 8.0F));
                         ModelUtils.renderModel(bufferSource, this.mc.level, pos, state, runes, stack, packedLight, packedOverlay);
                         break;
                     case "CRYSTAL":

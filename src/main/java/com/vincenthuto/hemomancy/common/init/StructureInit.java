@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.world.structure.BloodTempleStructure;
 
+import com.vincenthuto.hemomancy.client.world.structure.UnstainedChurchStructure;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -26,6 +27,9 @@ public class StructureInit {
 
 	public static final RegistryObject<StructureType<BloodTempleStructure>> blood_temple = STRUCTURES
 			.register("blood_temple", () -> explicitStructureTypeTyping(BloodTempleStructure.CODEC));
+
+	public static final RegistryObject<StructureType<UnstainedChurchStructure>> unstained_church = STRUCTURES
+			.register("unstained_church", () -> explicitStructureTypeTyping(UnstainedChurchStructure.CODEC));
 
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(Codec<T> structureCodec) {
 		return () -> structureCodec;

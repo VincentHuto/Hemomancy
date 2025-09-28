@@ -18,8 +18,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class SuspendedVivianiteBlockEntity extends BlockEntity {
 
-	public final AnimationState idleAnimationState = new AnimationState();
-
 	public int time;
 
 	public static <T> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {

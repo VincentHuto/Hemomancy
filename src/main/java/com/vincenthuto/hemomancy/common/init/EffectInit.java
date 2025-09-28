@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.effect.BloodBindingEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodLossEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodRushEffect;
 import com.vincenthuto.hemomancy.common.effect.ElytraEffect;
+import com.vincenthuto.hemomancy.common.effect.HemolysisEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
