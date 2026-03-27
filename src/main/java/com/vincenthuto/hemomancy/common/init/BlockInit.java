@@ -406,7 +406,6 @@ public class BlockInit {
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.bog_body.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_vivianite.get(), RenderType.translucent());
 		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_blood_crystal.get(), RenderType.translucent());
-
 	}
 
 	@SubscribeEvent
