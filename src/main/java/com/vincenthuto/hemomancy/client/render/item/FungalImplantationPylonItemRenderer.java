@@ -1,0 +1,55 @@
+package com.vincenthuto.hemomancy.client.render.item;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+
+public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevelRenderer {
+
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
+
+	private FungalImplantationPylonModel model;
+
+	public FungalImplantationPylonItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
+		super(dispatcher, modelSet);
+		if (modelSet != null) {
+			this.model = new FungalImplantationPylonModel(
+					modelSet.bakeLayer(FungalImplantationPylonModel.LAYER_LOCATION));
+		}
+	}
+
+	@Override
+	public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
+			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+
+		if (this.model == null) {
+			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
+			this.model = new FungalImplantationPylonModel(
+					modelSet.bakeLayer(FungalImplantationPylonModel.LAYER_LOCATION));
+		}
+
+		poseStack.pushPose();
+		poseStack.translate(0.5, 0.5, 0.5);
+		poseStack.scale(0.4f, 0.4f, 0.4f);
+		poseStack.translate(0.0, 1.51, 0.0);
+		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+
+		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
+				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+		poseStack.popPose();
+	}
+}
+

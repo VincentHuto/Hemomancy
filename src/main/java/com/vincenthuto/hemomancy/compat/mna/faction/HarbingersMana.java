@@ -31,7 +31,7 @@ public class HarbingersMana extends SimpleCastingResource {
 
 		public ResourceLocation getTexture() {
 			// TODO: this texture is not being loaded, and the default MnA texture is being used instead.
-			return new ResourceLocation("mna", "textures/gui/resource_bars.png");
+			return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
 		}
 
 		public int getXPBarColor() {

@@ -49,6 +49,11 @@ public class SuspendedVivianiteBlock extends Block implements EntityBlock{
 
 
 	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return SHAPE_N;
 	}

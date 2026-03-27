@@ -5,14 +5,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
+import com.vincenthuto.hemomancy.common.item.block.FungalImplantationPylonBlockItem;
+import com.vincenthuto.hemomancy.common.item.block.SuspendedBloodCrystalBlockItem;
+import com.vincenthuto.hemomancy.common.item.block.SuspendedVivianiteBlockItem;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.Block;
@@ -39,9 +46,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD)
 public class BlockInit {
 	public static final DeferredRegister<Block> BASEBLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);
@@ -330,6 +338,46 @@ public class BlockInit {
 				.flatMap(Collection::stream);
 
 		return combinedStream;
+	}
+
+	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
+		Block b = block.getFirst();
+		if (b == BlockInit.fungal_implantation_pylon.get()) {
+			return Pair.of(block.getSecond(),
+					new FungalImplantationPylonBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.suspended_vivianite.get()) {
+			return Pair.of(block.getSecond(),
+					new SuspendedVivianiteBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.suspended_blood_crystal.get()) {
+			return Pair.of(block.getSecond(),
+					new SuspendedBloodCrystalBlockItem(b, new Item.Properties()));
+		}
+		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
+	}
+
+	@SubscribeEvent
+	public static void onRegisterItems(final RegisterEvent event) {
+		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+			return;
+		}
+
+		var b = getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
+				.map(BlockInit::createItemBlock);
+		b.forEach(item -> {
+			if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
+					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
+					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
+					|| item.getSecond().getBlock() != BlockInit.engram_block.get()) {
+				registerBlockItem(event, item);
+			}
+		});
+	}
+
+	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
+		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 
 	@SuppressWarnings("deprecation")

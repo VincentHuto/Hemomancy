@@ -1,6 +1,5 @@
 package com.vincenthuto.hemomancy;
 
-import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -23,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +42,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -161,9 +158,6 @@ public class Hemomancy {
 
     }
 
-    public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
-        return Pair.of(block.getSecond(), new BlockItem(block.getFirst(), new Item.Properties()));
-    }
 
     // Combined a few methods into one more generic one
     public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
@@ -180,29 +174,6 @@ public class Hemomancy {
         return ItemStack.EMPTY;
     }
 
-    @SubscribeEvent
-    public static void onRegisterItems(final RegisterEvent event) {
-        if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
-            return;
-        }
-
-        var b = BlockInit.getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
-                .map(t -> createItemBlock(t));
-        b.forEach(item -> {
-            if (item.getSecond().getBlock() != BlockInit.attached_gourd_stem.get()
-                    || item.getSecond().getBlock() != BlockInit.gourd_stem.get()
-                    || item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
-                    || item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
-                    || item.getSecond().getBlock() != BlockInit.engram_block.get()) {
-                registerBlockItem(event, item);
-            }
-        });
-
-    }
-
-    private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
-        event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
-    }
 
     public static ResourceLocation rloc(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -237,15 +208,6 @@ public class Hemomancy {
         event.enqueueWork(() -> {
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
-
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.bleeding_heart.getId(),
-                    BlockInit.potted_bleeding_heart);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.stinkhorn_fungus.getId(),
-                    BlockInit.potted_stinkhorn_fungus);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.infected_fungus.getId(),
-                    BlockInit.potted_infected_fungus);
-            ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(),
-                    BlockInit.potted_puffball_fungus);
 
         });
 
