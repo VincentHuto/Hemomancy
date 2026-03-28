@@ -1,20 +1,50 @@
 {
-	"parent": "item/generated",
+	"parent": "builtin/entity",
 	"textures": {
-		"layer0": "hemomancy:item/blood_gourd_black"
+		"layer0": "hemomancy:item/blood_gourd_black",
+		"particle": "hemomancy:item/blood_gourd_black"
 	},
-	"overrides": [
-		{
-			"predicate": {
-				"hemomancy:open": 0
-			},
-			"model": "hemomancy:item/blood_gourd_black"
+	"gui_light": "front",
+	"display": {
+		"gui": {
+			"rotation": [30, 225, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.625, 0.625, 0.625]
 		},
-		{
-			"predicate": {
-				"hemomancy:open": 1
-			},
-			"model": "hemomancy:item/blood_gourd_black_open"
+		"ground": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"head": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [1, 1, 1]
+		},
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 225, 0],
+			"translation": [0, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
 		}
-	]
+	}
 }

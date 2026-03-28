@@ -3,9 +3,11 @@ package com.vincenthuto.hemomancy.common.menu;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
+import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.menu.slot.ChiselSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RunePatternSlot;
+import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ChiselStationMenu extends AbstractContainerMenu {
-	private final int numRows;
 	private final ChiselStationBlockEntity te;
 	public int[] activatedRunes;
 
@@ -29,8 +30,6 @@ public class ChiselStationMenu extends AbstractContainerMenu {
 	public ChiselStationMenu(final int windowId, final Inventory playerInv, final ChiselStationBlockEntity te) {
 		super(ContainerInit.runic_chisel_station.get(), windowId);
 		this.te = te;
-		this.numRows = 4;
-		// te.openInventory(player);
 		// SLOTS
 		addSlot(new ChiselSlot(te, 3, 8, 14));
 		addSlot(new Slot(te, 0, 8, 18 + 1 * 18));
@@ -82,34 +81,94 @@ public class ChiselStationMenu extends AbstractContainerMenu {
 		super.setItem(p_182407_, p_182408_, p_182409_);
 	}
 
+	private static final int PATTERN_SLOT_INDEX = 3;
+
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
+		checkPatternSlotCleared();
 		te.sendUpdates();
+	}
+
+	/**
+	 * If the pattern slot no longer contains an ItemRunePattern, clear the rune grid.
+	 */
+	private void checkPatternSlotCleared() {
+		ItemStack patternStack = this.slots.get(PATTERN_SLOT_INDEX).getItem();
+		if (patternStack.isEmpty() || !(patternStack.getItem() instanceof ItemRunePattern)) {
+			te.setRuneList(ChiselRecipe.blank());
+		}
 	}
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack stack = ItemStack.EMPTY;
-		te.sendUpdates();
+		// Slot indices in this container:
+		// 0 = ChiselSlot (knapper tool)
+		// 1 = Ingredient 1
+		// 2 = Ingredient 2
+		// 3 = RunePatternSlot
+		// 4 = OutputSlot
+		// 5-31 = Player inventory (27 slots)
+		// 32-40 = Hotbar (9 slots)
+		final int CONTAINER_START = 0;
+		final int CONTAINER_END = 5; // exclusive
+		final int PLAYER_INV_START = 5;
+		final int PLAYER_INV_END = 32; // exclusive
+		final int HOTBAR_START = 32;
+		final int HOTBAR_END = 41; // exclusive
+
+		ItemStack returnStack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			ItemStack itemStack = slot.getItem();
-			stack = itemStack.copy();
-			if (index < this.numRows * 9) {
-				if (!this.moveItemStackTo(itemStack, this.numRows * 9, this.slots.size(), true)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (!this.moveItemStackTo(itemStack, 0, this.numRows * 9, false)) {
+		if (slot == null || !slot.hasItem()) {
+			return returnStack;
+		}
+
+		ItemStack slotStack = slot.getItem();
+		returnStack = slotStack.copy();
+
+		if (index >= CONTAINER_START && index < CONTAINER_END) {
+			// Shift-click FROM a container slot -> move to player inventory
+			if (!this.moveItemStackTo(slotStack, PLAYER_INV_START, HOTBAR_END, true)) {
 				return ItemStack.EMPTY;
 			}
-			if (itemStack.isEmpty()) {
-				slot.set(ItemStack.EMPTY);
-			} else {
-				slot.setChanged();
+		} else {
+			// Shift-click FROM player inventory/hotbar -> try to place in the right container slot
+			// Try chisel slot first (slot 0) for knappers
+			if (this.slots.get(0).mayPlace(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, 0, 1, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+			// Try rune pattern slot (slot 3) for patterns/binders
+			else if (this.slots.get(3).mayPlace(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, 3, 4, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+			// Try ingredient slots (slots 1–2) for anything else
+			else if (!this.moveItemStackTo(slotStack, 1, 3, false)) {
+				// If ingredient slots are full, move between inventory <-> hotbar
+				if (index >= PLAYER_INV_START && index < PLAYER_INV_END) {
+					if (!this.moveItemStackTo(slotStack, HOTBAR_START, HOTBAR_END, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index >= HOTBAR_START && index < HOTBAR_END) {
+					if (!this.moveItemStackTo(slotStack, PLAYER_INV_START, PLAYER_INV_END, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+				return ItemStack.EMPTY;
 			}
 		}
-		return stack;
+
+		if (slotStack.isEmpty()) {
+			slot.set(ItemStack.EMPTY);
+		} else {
+			slot.setChanged();
+		}
+		checkPatternSlotCleared();
+		te.sendUpdates();
+		return returnStack;
 	}
 
 	public ChiselStationBlockEntity getTe() {

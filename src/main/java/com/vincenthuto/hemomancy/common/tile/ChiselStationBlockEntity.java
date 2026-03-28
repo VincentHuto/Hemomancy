@@ -96,14 +96,16 @@ public class ChiselStationBlockEntity extends BaseContainerBlockEntity implement
 	}
 
 	public ChiselRecipe getCurrentRecipe() {
+		if (level == null) {
+			currentRecipe = null;
+			return null;
+		}
 
 		for (ChiselRecipe recipe : ChiselRecipe.getAllRecipes(level)) {
-
 			if (recipe.getIngredients().size() == 1) {
 				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
 					currentRecipe = recipe;
 					return currentRecipe;
-
 				}
 			}
 			if (recipe.getIngredients().size() == 2) {
@@ -111,27 +113,37 @@ public class ChiselStationBlockEntity extends BaseContainerBlockEntity implement
 						&& recipe.getIngredients().get(1).test(this.getItems().get(1))) {
 					currentRecipe = recipe;
 					return currentRecipe;
-
 				}
 			}
 		}
-		return currentRecipe;
-
+		// Clear stale recipe when no match is found
+		currentRecipe = null;
+		return null;
 	}
 
 	public boolean hasValidRecipe() {
-		for (ChiselRecipe recipe : ChiselRecipe.getAllRecipes(level)) {
-			if (recipe.getIngredients().size() == 1) {
-				if (recipe.getIngredients().get(0).test(this.getItems().get(0))) {
-					return true;
+		return getCurrentRecipe() != null;
+	}
 
+	/**
+	 * Attempts to auto-fill the rune grid from an ItemRunePattern in slot 4.
+	 * Returns true if a pattern was loaded (so the screen can refresh buttons).
+	 */
+	public boolean tryLoadPatternFromSlot() {
+		ItemStack patternStack = this.getItem(4);
+		if (!patternStack.isEmpty() && patternStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern) {
+			com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern patternItem =
+					(com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern) patternStack.getItem();
+			ChiselRecipe patternRecipe = patternItem.getRecipe();
+			if (patternRecipe != null && patternRecipe.getPattern() != null) {
+				byte[][] recipePattern = patternRecipe.getPattern();
+				// Deep copy so we don't modify the recipe's array
+				byte[][] copy = new byte[recipePattern.length][];
+				for (int i = 0; i < recipePattern.length; i++) {
+					copy[i] = recipePattern[i].clone();
 				}
-			}
-			if (recipe.getIngredients().size() == 2) {
-				if (recipe.getIngredients().get(0).test(this.getItems().get(0))
-						&& recipe.getIngredients().get(1).test(this.getItems().get(1))) {
-					return true;
-				}
+				this.setRuneList(copy);
+				return true;
 			}
 		}
 
@@ -286,22 +298,19 @@ public class ChiselStationBlockEntity extends BaseContainerBlockEntity implement
 			}
 			if (Arrays.deepEquals(runesList, currentRecipe.getPattern()) && matcher) {
 				ItemStack output = recipe.getResultItem().copy();
-				contents.set(0, output);
-				currentRecipe = null;
-				for (int i = 0; i < getContainerSize(); i++) {
-					contents.set(0, ItemStack.EMPTY);
-					contents.set(1, ItemStack.EMPTY);
-					contents.set(2, output);
-					ItemStack knapperIn = contents.get(3);
-					if (knapperIn.getItem() instanceof ItemKnapper) {
-						ItemStack newKnapper = knapperIn.copy();
-						newKnapper.hurt(recipe.getPattern().length, level.random, null);
-						contents.set(3, newKnapper);
-					}
-					runesList = ChiselRecipe.blank();
-					this.sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
+				contents.set(0, ItemStack.EMPTY);
+				contents.set(1, ItemStack.EMPTY);
+				contents.set(2, output);
+				ItemStack knapperIn = contents.get(3);
+				if (knapperIn.getItem() instanceof ItemKnapper) {
+					ItemStack newKnapper = knapperIn.copy();
+					newKnapper.hurt(recipe.getPattern().length, level.random, null);
+					contents.set(3, newKnapper);
 				}
+				currentRecipe = null;
+				runesList = ChiselRecipe.blank();
+				this.sendUpdates();
+				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, worldPosition);
 			}
 		}
 	}

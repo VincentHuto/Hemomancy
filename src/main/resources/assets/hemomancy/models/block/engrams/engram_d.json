@@ -1,5 +1,6 @@
 {
     "parent": "block/carpet",
+    "render_type": "translucent",
     "textures": {
         "particle": "block/red_wool",
         "wool": "hemomancy:block/engrams/engram_d"

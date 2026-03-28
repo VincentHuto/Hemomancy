@@ -10,8 +10,10 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
+import com.vincenthuto.hemomancy.common.network.capa.runes.PacketLoadChiselPattern;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
 import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
@@ -21,6 +23,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMenu> {
@@ -33,12 +36,23 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 	int guiWidth = 176;
 	int guiHeight = 186;
 	public ChiselButton[][] runeButtonArray = new ChiselButton[8][8];
-	public ChiselButton[][] runePatternButtonArray = new ChiselButton[8][8];
 	int CLEARBUTTONID = 70;
 	HLButtonTextured clearButton;
 	int CHISELBUTTONID = 71;
 	HLButtonTextured chiselButton;
+	int LOADPATTERNBUTTONID = 72;
+	HLButtonTextured loadPatternButton;
 	public byte[][] pattern = ChiselRecipe.blank();
+	public byte[][] preview = ChiselRecipe.blank();
+	private ItemStack lastPatternSlotItem = ItemStack.EMPTY;
+
+	// --- Click-and-drag rune painting state ---
+	/** Whether the player is currently dragging across the rune grid. */
+	private boolean isDragging = false;
+	/** The paint mode for the current drag: true = activate runes, false = deactivate. */
+	private boolean dragPaintOn = true;
+	/** Tracks which buttons have already been toggled during this drag to avoid re-processing. */
+	private final boolean[][] dragVisited = new boolean[8][8];
 
 	public ChiselStationScreen(ChiselStationMenu screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
@@ -48,22 +62,35 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 		this.imageHeight = 186;
 		this.playerInv = inv;
 		this.te = screenContainer.getTe();
+		// Sync local pattern from TE so reopening the screen preserves grid state
+		if (te.runesList != null) {
+			for (int i = 0; i < te.runesList.length && i < pattern.length; i++) {
+				pattern[i] = te.runesList[i].clone();
+			}
+		}
 	}
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
+		// Render glowing borders: red for confirmed, purple for preview
+		ChiselButtonGlowRenderer.renderGlowGrid(graphics, runeButtonArray, pattern, preview);
 		this.renderTooltip(graphics, mouseX, mouseY);
 
 		List<Component> cat1 = new ArrayList<Component>();
 		cat1.add(Component.literal("Clear Runes"));
-		if (clearButton.isHoveredOrFocused()) {
-			graphics.renderComponentTooltip(font, cat1, left + guiWidth - (guiWidth - 120), top + guiHeight - (170));
+		if (clearButton.isHovered()) {
+			graphics.renderComponentTooltip(font, cat1, mouseX, mouseY);
 		}
 		List<Component> cat9 = new ArrayList<Component>();
 		cat9.add(Component.literal("Chisel Rune"));
-		if (chiselButton.isHoveredOrFocused()) {
-			graphics.renderComponentTooltip(font, cat9, left + guiWidth - (guiWidth - 120), top + guiHeight - (150));
+		if (chiselButton.isHovered()) {
+			graphics.renderComponentTooltip(font, cat9, mouseX, mouseY);
+		}
+		List<Component> cat10 = new ArrayList<Component>();
+		cat10.add(Component.literal("Load Pattern"));
+		if (loadPatternButton.isHovered()) {
+			graphics.renderComponentTooltip(font, cat10, mouseX, mouseY);
 		}
 
 	}
@@ -74,37 +101,24 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 		for (int i = 0; i < renderables.size(); i++) {
 			renderables.get(i).render(graphics, 0, 00, 10);
 		}
-		/// THIS IS FOR THE BLUEPRINT THING
-//		if (te.getLevel().getGameTime() % 2 == 0) {
-//			if (te.getItem(4) != null && this.te.getItem(4) != ItemStack.EMPTY) {
-//				Minecraft.getInstance().textureManager.bindForSetup(GUI_Chisel);
-//				if (te.getItem(4).getItem() instanceof ItemRunePattern) {
-//					ItemRunePattern runePattern = (ItemRunePattern) te.getItem(4).getItem();
-//					int incPattern = 100;
-//					for (int i = 0; i < runePatternButtonArray.length; i++) {
-//						for (int j = 0; j < runePatternButtonArray.length; j++) {
-//
-//							renderables.add(runePatternButtonArray[i][j] = new ChiselButton(GUI_Chisel, incPattern,
-//									left + guiWidth - (guiWidth + 80 - (i * 8)), top + guiHeight - (160 - (j * 8)), 8,
-//									8, 176, 0, runePattern.getRecipe().getActivatedRunes().contains(incPattern - 100),
-//									(press) -> {
-//									}));
-//							incPattern++;
-//						}
-//					}
-//				}
-//			} else {
-//				for (int i = 0; i < renderables.size(); i++) {
-//					if (renderables.get(i) instanceof HLButtonTextured) {
-//						HLButtonTextured test = (HLButtonTextured) renderables.get(i);
-//						if (test.getId() > 99) {
-//							renderables.remove(test);
-//						}
-//
-//					}
-//				}
-//			}
-//		}
+		// Auto-detect when a pattern item is placed/removed in slot 4
+		ItemStack currentPatternSlot = te.getItem(4);
+		if (!ItemStack.isSameItemSameTags(currentPatternSlot, lastPatternSlotItem)) {
+			lastPatternSlotItem = currentPatternSlot.copy();
+			if (currentPatternSlot.getItem() instanceof ItemRunePattern) {
+				ItemRunePattern runePattern = (ItemRunePattern) currentPatternSlot.getItem();
+				ChiselRecipe patternRecipe = runePattern.getRecipe();
+				if (patternRecipe != null && patternRecipe.getPattern() != null) {
+					loadPatternIntoGrid(patternRecipe.getPattern());
+				}
+			} else {
+				// Pattern was removed — clear the grid and preview
+				pattern = ChiselRecipe.blank();
+				preview = ChiselRecipe.blank();
+				refreshButtonsFromPattern();
+				PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
+			}
+		}
 	}
 
 	@Override
@@ -145,10 +159,35 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
 		this.renderBackground(graphics);
-//		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//		RenderSystem.setShaderTexture(0, GUI_Chisel);
 		graphics.blit(GUI_Chisel, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+	}
+
+	/**
+	 * Loads a pattern as a preview overlay (purple glow).
+	 * The player must click each rune to confirm it (turns red).
+	 */
+	private void loadPatternIntoGrid(byte[][] sourcePattern) {
+		// Clear any existing confirmed pattern
+		pattern = ChiselRecipe.blank();
+		refreshButtonsFromPattern();
+		PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
+		// Set the preview (purple highlight, client-side only)
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				preview[i][j] = sourcePattern[i][j];
+			}
+		}
+	}
+
+	/**
+	 * Refreshes all button visual states from the current local pattern array.
+	 */
+	private void refreshButtonsFromPattern() {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				runeButtonArray[i][j].setState(pattern[i][j] != 0);
+			}
+		}
 	}
 
 	@Override
@@ -162,61 +201,124 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 			for (int j = 0; j < runeButtonArray.length; j++) {
 				this.addRenderableWidget(runeButtonArray[i][j] = new ChiselButton(GUI_Chisel, inc, i, j,
 						left + guiWidth - (guiWidth - 50 - (j * 8)), top + guiHeight - (160 - (i * 8)), 8, 8, 176, 0,
-						te.runesList[i][j] == 0 ? false : true, (press) -> {
-							if (press instanceof ChiselButton) {
-								ChiselButton button = (ChiselButton) press;
-								if (button.getId() <= 64) {
-									if (renderables.get(button.getId()) instanceof ChiselButton) {
-										ChiselButton test = (ChiselButton) renderables.get(button.getId());
-										if (test.getState() == false) {
-											test.setState(true);
-											pattern[test.getI()][test.getJ()] = 1;
-											PacketHandler.CHANNELRUNES
-													.sendToServer(new PacketUpdateChiselRunes(pattern));
-										} else if (test.getState() == true) {
-											test.setState(false);
-											pattern[test.getI()][test.getJ()] = 0;
-											PacketHandler.CHANNELRUNES
-													.sendToServer(new PacketUpdateChiselRunes(pattern));
-										}
-									}
-								}
-							}
+						te.runesList[i][j] != 0, (press) -> {
+							// Handled by click-and-drag system in mouseClicked/mouseDragged/mouseReleased
 						}));
 				inc++;
 			}
 		}
 		this.addRenderableWidget(clearButton = new HLButtonTextured(GUI_Chisel, CLEARBUTTONID,
 				left + guiWidth - (guiWidth - 120), top + guiHeight - (170), 16, 16, 176, 16, (press) -> {
-					for (int i = 0; i < 64; i++) {
-						if (renderables.get(i) instanceof HLButtonTextured) {
-							HLButtonTextured test = (HLButtonTextured) renderables.get(i);
-							if (test.getState() == true) {
-								test.setState(false);
-								pattern = ChiselRecipe.blank();
-								PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
-							}
-						}
-					}
+					pattern = ChiselRecipe.blank();
+					preview = ChiselRecipe.blank();
+					refreshButtonsFromPattern();
+					PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
 				}));
 		this.addRenderableWidget(chiselButton = new HLButtonTextured(GUI_Chisel, CHISELBUTTONID,
 				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, (press) -> {
 					if (te.contents.get(3).getItem() != Items.AIR) {
 						PacketHandler.CHANNELRUNES.sendToServer(new PacketChiselCraftingEvent());
-						for (int i = 0; i < 64; i++) {
-							if (renderables.get(i) instanceof HLButtonTextured) {
-								HLButtonTextured test = (HLButtonTextured) renderables.get(i);
-								if (test.getState() == true) {
-									test.setState(false);
-									pattern = ChiselRecipe.blank();
-									PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
-								}
-
-							}
+						pattern = ChiselRecipe.blank();
+						preview = ChiselRecipe.blank();
+						refreshButtonsFromPattern();
+						PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
+					}
+				}));
+		this.addRenderableWidget(loadPatternButton = new HLButtonTextured(GUI_Chisel, LOADPATTERNBUTTONID,
+				left + 28, top + 80, 16, 16, 176, 32, (press) -> {
+					ItemStack patternStack = te.getItem(4);
+					if (patternStack.getItem() instanceof ItemRunePattern runePattern) {
+						ChiselRecipe patternRecipe = runePattern.getRecipe();
+						if (patternRecipe != null && patternRecipe.getPattern() != null) {
+							loadPatternIntoGrid(patternRecipe.getPattern());
 						}
 					}
 				}));
 
+	}
+
+	// --- Click-and-drag rune painting ---
+
+	/**
+	 * Finds the ChiselButton under the given mouse coordinates and applies
+	 * the current drag paint mode to it (if not already visited this drag).
+	 */
+	private void paintRuneAt(double mouseX, double mouseY) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				ChiselButton button = runeButtonArray[i][j];
+				if (!dragVisited[i][j]
+						&& mouseX >= button.getX() && mouseX < button.getX() + button.getWidth()
+						&& mouseY >= button.getY() && mouseY < button.getY() + button.getHeight()) {
+					dragVisited[i][j] = true;
+					if (dragPaintOn) {
+						// Activate rune
+						button.setState(true);
+						pattern[i][j] = 1;
+					} else {
+						// Deactivate rune
+						button.setState(false);
+						pattern[i][j] = 0;
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) { // Left click only
+			// Check if click landed on any rune button
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					ChiselButton cb = runeButtonArray[i][j];
+					if (mouseX >= cb.getX() && mouseX < cb.getX() + cb.getWidth()
+							&& mouseY >= cb.getY() && mouseY < cb.getY() + cb.getHeight()) {
+						// Start a drag session
+						isDragging = true;
+						// Determine paint mode from the first button clicked:
+						// If it has a preview waiting and isn't confirmed yet, paint ON
+						// If it's already active, paint OFF (toggle off)
+						// If it's inactive, paint ON
+						if (preview[i][j] != 0 && pattern[i][j] == 0) {
+							dragPaintOn = true;
+						} else {
+							dragPaintOn = (pattern[i][j] == 0);
+						}
+						// Clear visited tracking
+						for (int x = 0; x < 8; x++) {
+							for (int y = 0; y < 8; y++) {
+								dragVisited[x][y] = false;
+							}
+						}
+						// Paint the first button
+						paintRuneAt(mouseX, mouseY);
+						return true;
+					}
+				}
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (isDragging && button == 0) {
+			paintRuneAt(mouseX, mouseY);
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (isDragging && button == 0) {
+			isDragging = false;
+			// Sync the final pattern to the server in one batch
+			PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
+			return true;
+		}
+		return super.mouseReleased(mouseX, mouseY, button);
 	}
 
 	@Override

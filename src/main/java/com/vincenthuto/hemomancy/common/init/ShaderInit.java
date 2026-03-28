@@ -23,6 +23,9 @@ public class ShaderInit {
 			DefaultVertexFormat.POSITION_COLOR_TEX, "Speed", "TimeOffset", "Intensity", "XFrequency", "YFrequency",
 			"UVCoordinates");
 
+	public static ShaderHolder RUNE_GLOW = new ShaderHolder(Hemomancy.rloc("screen/rune_glow"),
+			DefaultVertexFormat.POSITION_COLOR_TEX, "Speed", "Intensity", "BorderWidth");
+
 	@SubscribeEvent
 	public static void register(RegisterShadersEvent event) throws IOException {
         ResourceProvider provider = event.getResourceProvider();
@@ -36,6 +39,7 @@ public class ShaderInit {
 					RadiantPortalRendertype.RAY_SHADER = instance;
 				});
         registerShader(event, DISTORTED_TEXTURE.createInstance(provider));
+        registerShader(event, RUNE_GLOW.createInstance(provider));
 
 	}
 	   public static void registerShader(RegisterShadersEvent event, ExtendedShaderInstance extendedShaderInstance) {

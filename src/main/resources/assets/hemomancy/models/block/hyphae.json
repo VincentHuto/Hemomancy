@@ -1,5 +1,6 @@
 {
   "parent": "hemomancy:block/shapes/cross",
+  "render_type": "cutout",
   "textures": {
     "cross": "hemomancy:block/hyphae"
   }

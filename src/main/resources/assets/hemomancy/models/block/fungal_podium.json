@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
+	"render_type": "cutout",
 	"textures": {
 		"3": "hemomancy:block/hematic_iron_block",
 		"4": "hemomancy:block/infected_fungus",

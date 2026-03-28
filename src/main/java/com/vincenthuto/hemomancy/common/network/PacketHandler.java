@@ -87,10 +87,10 @@ public class PacketHandler {
 
 		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
-				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
 		CHANNELRUNES.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
 				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
+		CHANNELRUNES.registerMessage(networkID++, PacketLoadChiselPattern.class, PacketLoadChiselPattern::encode,
+				PacketLoadChiselPattern::decode, PacketLoadChiselPattern.Handler::handle);
 
 		CHANNELRUNEBINDER.registerMessage(networkID++, PacketOpenRuneBinder.class, PacketOpenRuneBinder::encode,
 				PacketOpenRuneBinder::decode, PacketOpenRuneBinder::handle);

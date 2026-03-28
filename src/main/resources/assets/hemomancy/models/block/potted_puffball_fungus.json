@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"ambientocclusion": false,
 	"textures": {
 		"3": "hemomancy:block/dendritic_stem_2",

@@ -1,4 +1,5 @@
 {
+  "render_type": "cutout_mipped",
     "parent": "hemomancy:block/smouldering_ash_side",
     "textures": {
         "line": "hemomancy:block/smouldering_ash_line0"
