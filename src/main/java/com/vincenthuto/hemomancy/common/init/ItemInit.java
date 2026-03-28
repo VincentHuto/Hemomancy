@@ -173,6 +173,8 @@ public class ItemInit {
 			() -> new VivianiteScalpelItem(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> fungal_spine = BASEITEMS.register("fungal_spine",
+			() -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
 			() -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
 

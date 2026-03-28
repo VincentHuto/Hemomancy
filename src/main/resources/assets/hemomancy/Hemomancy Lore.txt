@@ -1,0 +1,307 @@
+﻿Hemomancy   
+
+
+
+
+Hemomancy is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.
+Getting Started
+The guide book below is the source of truth for everything in the mod using my homebrewed guidebook system all my mods use, while not complete because well…im lazy, it is a good start
+  
+the power to control blood is actually the result of a special fungal infection, said fungus came from outer space as part of a chunk of a larger ball of hive mind fungus(which itself is actually the manifestation of an outer god type thing) that deliberately broke off and landed on earth/Minecraft and is slowly taking hold
+
+One of the main groups who don't shun the existence of it and instead indulge are called "The Harbingers" and they cultivate and innoculate themselves and their surroundings to spread it 
+The green goo jar is called a morphling jar and contains special strains of the fungus that the user can use for special effects temporarily, and the flesh heart acts as a source of nutrition for the fungus on the book
+
+another group that acts as the resistance are "The Unstained" a group of antiblood zealots whose role is to purge the influence of the fungus from the world wherever it spreads, focusing on using liquid weapons that spew Hemolytic enzymes and antifungals as well as blessed copper weapons to combat the spread
+
+
+The Blood Temple
+This is a structure found around the world which when the pedestal in the middle is clicked unlocks the ability to use the mods features
+  
+
+
+
+
+
+Scrying Podium and huds
+When you activate the blood temple it unlocks a blood volume hud to the left of the screen which shows how much blood you have to use currently, T
+
+
+  
+
+
+
+he mods extra slots for the “Charm of vascularium”(Enables the use of blood manipulations and allegiance to the scarlet cult) and Blood gourds(Extra blood storage) are access when right clicking on a “Scrying Podium”
+  
+  
+
+  
+
+
+
+Different blood gourds
+  
+
+
+
+
+
+Blood manipulations
+    Blood manipulations(manips for short) are sort of the bread and butter of the mod, lore wise they are memories that everyone has access to but just needs a way to remember them,
+        these are in the form of "Hematic memories" which when used allows you access to the base level of each manip
+
+
+Current Memories
+  
+
+
+
+Radial Selection menu  
+
+
+
+
+
+
+        Manipulations have different levels of power which are increased based on use as well as a ritual type system you can perform on yourself to force a higher strength(WIP)
+Visceral Recaller
+        The way these memories are accessed is through a station called the “Visceral Recaller”.
+The Recaller acts as a form of artificial brain, since probing your own while your still using it isn't the best idea..it uses a combination of your own blood, a blank memory and a certain combinations of items called enzymes which act as ways of forcing the memory back to a state where it can be recalled and therefore used.
+
+
+        The current way that it displays it is using this radial display that floats above the block and changes the sharpness of each section based on how many of the corresponding enzymes have been used and the corresponding “Catalyst” item above the blank memory
+
+
+  
+
+
+
+
+
+Enzymes and blood tendency
+Each enzyme item is based on a blood tendency which is a value for how far into each area you tend to be, sorta like Mana and Artifices affinity system,It also provides ambient buffs depending on if a player has aligned far enough into each tendency,as below
+
+
+Name
+	Concepts
+	Sprite
+	Name
+	Concepts
+	
+
+	Fervent
+	Fire, Heat
+The Nether
+	  
+
+	Frigid
+	Cold, Ice, Water
+	  
+
+	Vivacious
+	Life,Regen,
+Living tools
+	  
+
+	Ruinous
+	Death, Decay, Withering
+	  
+
+	Incandescent
+	Light, Flight,
+AOEs, Flashiness
+	  
+
+	Umbral
+	Darkness, Stealth, the End
+	  
+
+	Neurotic
+	Lightning,
+Speed, Nervous Energy
+Amorphous
+	  
+
+	Ferric
+	Iron, Barbs, Urchins,
+Solidity, Unchanging
+	  
+
+	
+
+
+
+Enzymes are obtained using a tool called the “Living Syringe” and blood vials which when a mob is hit with a primed syringe, it allows you to gather their blood for processing in…..
+
+
+  
+  
+
+Blood Centrifuge
+By spinning down blood vials obtained as above, enzymes and hematic dust(The iron powder in the blood) can be extracted
+  
+  
+
+
+
+
+
+Structure crafting
+
+
+  
+
+The mod has a system of not necessarily multiblock structures, but turning a structure into a desired block or item by infusing the structure with a certain catalyst and some blood from the player for example, to make the guide book it's this structure, and hitting the bookshelf with a Sanguine formation
+ Or 
+  
+
+Factions(Scarlets/The Unstained)
+Basically just users of blood manipulations vs those who are against it, the player can choose either factions and npcs/mobs around the world interact with the player differently based on which side they align with
+
+
+
+
+Arms and Armor
+Living tools
+Living Staff
+	Living Blade(Inert)
+	Living Blade(Active)
+	  
+
+	  
+
+	  
+
+	
+
+
+
+Armors
+Blood Lust Armor
+	
+
+	  
+
+	  
+
+
+
+	
+
+Blood Lust Armor(Tengu mask)
+	Blood Lust Armor(Smiling Mask)
+	  
+
+	
+
+  
+
+	
+
+
+
+Barbed Armor
+	
+
+	  
+
+	  
+
+	
+
+
+
+
+
+
+
+Chitinite Armor
+	
+
+	  
+
+	  
+
+	
+
+Mobs
+Insects(Have shells and barbs made of solid iron, merges well with blood)  
+Blood Themed(Either want your blood, or are made of it)
+  
+  
+
+  
+
+Fungal(they are pretty FUN GUYS)
+
+
+  
+
+
+
+
+
+The Infection
+        A fungal spread scattered around the world known colloquially as Erythromycelium, while not necessarily malicious, it can be dangerous if not managed or worked with when encountered
+  
+
+
+
+Morphlings
+One of the beneficial uses for the infection comes in the forms of small symbiotic parasites which can take on a variety of forms are called morphlings, which using a base polyp and some enzymes can be nursed into usable forms
+  
+
+
+
+These can be used with the living staff to allow it to perform a variety of attacks and actions, like summoning an army of leeches to fight for you and gain some blood, a chitin shield, or a paralyzing serpent that can hold enemies in place.
+
+
+Morphling incubator and items 
+  
+
+
+
+Once grown they can be stored in a morphling jar that they sorta bounce around in and your staff can cycle through
+  
+
+
+
+Some example staff toppers to show which morphling is in use
+Default
+  
+
+Changed
+
+
+  
+  
+  
+  
+
+
+
+
+
+With this said, here is sorta 
+Blood gourd, hollowed out white gourd with red stripes which is corked and has a red robe that holds blood for later use
+    This is based on the japanese style of decorative sake/wine gourds
+
+
+Hematic memory
+    Pretty abstract,used as a template for other memory items to be based off of
+
+
+Hematic Iron Scrap
+    an iron based alloy which is infused with blood that allows for better malleability and infusion potential
+
+
+Hemolytic plating
+    a silver metal based plating thats imbued with a solution the destroys blood on contact
+
+
+Lethian Brew
+    A cursed clay jar which filled with liquid from the River Lethe, which is found in the nether, and allows the forgetting of memories https://en.wikipedia.org/wiki/Lethe
+
+
+Morphling polyp and fungal
+    A symbiotic parasite that can morph between different forms, think venom type stuff

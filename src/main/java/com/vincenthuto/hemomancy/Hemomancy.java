@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
+import com.vincenthuto.hemomancy.common.util.EngramTextureCache;
 import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -197,6 +199,11 @@ public class Hemomancy {
                 }
             });
         }
+    }
+
+    @SubscribeEvent
+    public void onServerAboutToStart(ServerAboutToStartEvent event) {
+        EngramTextureCache.loadAll();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

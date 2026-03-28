@@ -5,10 +5,12 @@ import java.util.function.Supplier;
 
 import org.joml.Vector3d;
 
+import com.vincenthuto.hemomancy.common.block.EngramBlock;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.util.EngramTextureCache;
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.BitLocation;
@@ -19,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkEvent;
@@ -141,7 +144,39 @@ public class GroundBloodDrawPacket {
 
 							Block[] bannedBlocks = { BlockInit.befouling_ash_trail.get(),
 									BlockInit.smouldering_ash_trail.get(), BlockInit.active_befouling_ash_trail.get(),
-									BlockInit.active_smouldering_ash_trail.get() };
+									BlockInit.active_smouldering_ash_trail.get(), BlockInit.engram_block.get() };
+
+							// Engram particle projection: spawn a particle at each non-transparent pixel
+							BlockState hitState = sLevel.getBlockState(bHit.getBlockPos());
+							if (hitState.getBlock() instanceof EngramBlock) {
+								int charIndex = hitState.getValue(EngramBlock.CHARACTERINDEX);
+								EngramTextureCache.loadAll(); // Lazy-load if not yet cached
+								boolean[][] pixels = EngramTextureCache.getPixels(charIndex);
+								int[][] colors = EngramTextureCache.getColors(charIndex);
+								if (pixels != null && colors != null) {
+									for (int px = 0; px < 16; px++) {
+										for (int pz = 0; pz < 16; pz++) {
+											if (pixels[px][pz]) {
+												// Map pixel grid to world position on the block face
+												// px maps to X axis (0-15 -> 0/16 to 15/16)
+												// pz maps to Z axis (texture Y -> world Z)
+												double particleX = x + (px + 0.5) / 16.0;
+												double particleY = y + 0.1; // Slightly above the engram surface
+												double particleZ = z + (pz + 0.5) / 16.0;
+
+												int argb = colors[px][pz];
+												int r = (argb >> 16) & 0xFF;
+												int g = (argb >> 8) & 0xFF;
+												int b = argb & 0xFF;
+
+												sLevel.sendParticles(
+														GlowParticleFactory.createData(new ParticleColor(r, g, b)),
+														particleX, particleY, particleZ, 1, 0, 0, 0, 0);
+											}
+										}
+									}
+								}
+							}
 							if (!Arrays.asList(bannedBlocks)
 									.contains(sLevel.getBlockState(bHit.getBlockPos()).getBlock())) {
 								sLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(255, 0, 0)),

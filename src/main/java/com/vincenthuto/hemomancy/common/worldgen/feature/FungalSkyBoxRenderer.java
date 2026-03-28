@@ -33,7 +33,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class FungalSkyBoxRenderer {
 
-	private static VertexBuffer starBuffer;
+	private static final int STAR_LAYER_COUNT = 4;
+	private static VertexBuffer[] starBuffers;
+	private static boolean starsCreated = false;
 	public static VertexBuffer skyBuffer;
 
 	private static final ResourceLocation EARTH_LOCATION = Hemomancy.rloc("textures/environment/earth.png");
@@ -65,27 +67,92 @@ public class FungalSkyBoxRenderer {
 		ShaderInstance shaderinstance = RenderSystem.getShader();
 		LevelRenderer levelRenderer = Minecraft.getInstance().levelRenderer;
 
-		
-		
-		
+		RenderSystem.depthMask(false);
+
+		// === 1) Draw the Earth and Moon first, writing to the depth buffer so stars are occluded ===
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.depthMask(true);  // write Earth/Moon to depth buffer
+		RenderSystem.enableDepthTest();
+
+		stack.pushPose();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f11);
+		stack.mulPose(Axis.ZP.rotationDegrees(level.getTimeOfDay(partialTicks) * 360.0F));
+		Matrix4f matrix4f1 = stack.last().pose();
+		float moondistance = 30.0F;
+		stack.mulPose(Axis.YN.rotationDegrees(level.getGameTime()*1.5f + partialTicks));
+
+		stack.pushPose();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
+        RenderSystem.setShaderTexture(0, EARTH_LOCATION);
+        int l = 4% 4;
+        int i1 = 4/ 4 % 2;
+        float f13 = (float)(l + 0) / 4.0F;
+        float f14 = (float)(i1 + 0) / 2.0F;
+        float f15 = (float)(l + 1) / 4.0F;
+        float f16 = (float)(i1 + 1) / 2.0F;
+
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, moondistance).uv(f15, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, moondistance).uv(f13, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, -moondistance).uv(f13, f14).endVertex();
+        bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, -moondistance).uv(f15, f14).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
+
 		stack.pushPose();
 
-	      RenderSystem.depthMask(false);
-	      RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(0.5F, 0.0F, 0.0F, f11);
-		stack.mulPose(Axis.YP.rotationDegrees(level.getGameTime() + partialTicks));
+		 moondistance = 5.0F;
+	        RenderSystem.setShaderTexture(0, MOON_LOCATION);
+
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, moondistance+21).uv(f15, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, moondistance+21).uv(f13, f16).endVertex();
+        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, -moondistance+21).uv(f13, f14).endVertex();
+        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, -moondistance+21).uv(f15, f14).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
+		stack.popPose();
+
+
+		stack.popPose();
+
+
+		stack.popPose();
+
+		// === 2) Draw stars with additive blending, depth test ON so they are occluded by Earth/Moon ===
+		RenderSystem.depthMask(false); // stars don't write to depth
+		// depth test stays enabled so stars behind Earth/Moon are rejected
+
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
 		createStars();
 
-		RenderSystem.setShaderColor(1.0F, 1.0F, 0.0F, 1.0F);
-		FogRenderer.setupNoFog();
+		// Each star layer rotates at a different speed and axis tilt
+		float[] layerSpeeds = { 1.0f, 0.6f, 0.35f, 0.15f };
+		float[] layerTilts = { 0.0f, 15.0f, -25.0f, 40.0f };
+		float[] layerAxisTilts = { 0.0f, 10.0f, -20.0f, 30.0f };
 
-		starBuffer.bind();
-		starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
-		stack.popPose();
+		for (int layer = 0; layer < STAR_LAYER_COUNT; layer++) {
+			stack.pushPose();
+			// Apply a unique axis tilt per layer so they don't all share the same rotation plane
+			stack.mulPose(Axis.XP.rotationDegrees(layerTilts[layer]));
+			stack.mulPose(Axis.ZP.rotationDegrees(layerAxisTilts[layer]));
+			stack.mulPose(Axis.YP.rotationDegrees((level.getGameTime() + partialTicks) * layerSpeeds[layer]));
+
+			RenderSystem.setShaderColor(1.0F, 1.0F, 0.0F, 1.0F);
+			FogRenderer.setupNoFog();
+
+			starBuffers[layer].bind();
+			starBuffers[layer].drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
+			stack.popPose();
+		}
+
+		// Turn off depth test for the remaining sky elements
+		RenderSystem.disableDepthTest();
+
+		// === 3) Dark buffer, light sky, sunrise color ===
 		RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
 		double d0 = camera.getEntity().getEyePosition(partialTicks).y(); // -
 																			// from 63 to 0
@@ -114,75 +181,30 @@ public class FungalSkyBoxRenderer {
 			float f4 = afloat[0];
 			float f5 = afloat[1];
 			float f6 = afloat[2];
-			Matrix4f matrix4f = stack.last().pose();
+			Matrix4f matrix4f2 = stack.last().pose();
 			bufferbuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-			bufferbuilder.vertex(matrix4f, 0.0F, 100.0F, 0.0F).color(f4, f5, f6, afloat[3]).endVertex();
+			bufferbuilder.vertex(matrix4f2, 0.0F, 100.0F, 0.0F).color(f4, f5, f6, afloat[3]).endVertex();
 
 			for (int j = 0; j <= 16; ++j) {
 				float f7 = (float) j * ((float) Math.PI * 2F) / 16.0F;
 				float f8 = Mth.sin(f7);
 				float f9 = Mth.cos(f7);
-				bufferbuilder.vertex(matrix4f, f8 * 120.0F, f9 * 120.0F, -f9 * 40.0F * afloat[3])
+				bufferbuilder.vertex(matrix4f2, f8 * 120.0F, f9 * 120.0F, -f9 * 40.0F * afloat[3])
 						.color(afloat[0], afloat[1], afloat[2], 0.0F).endVertex();
 			}
 
 			BufferUploader.drawWithShader(bufferbuilder.end());
 			stack.popPose();
 		}
-		
 
+		// === 4) Skybox cube drawn last with transparency (original behavior) ===
+		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
 				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		stack.pushPose();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, f11);
-		stack.mulPose(Axis.ZP.rotationDegrees(level.getTimeOfDay(partialTicks) * 360.0F));
-		Matrix4f matrix4f1 = stack.last().pose();
-		float moondistance = 30.0F;
-		stack.mulPose(Axis.YN.rotationDegrees(level.getGameTime()*1.5f + partialTicks));
-
-		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
-				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		stack.pushPose();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
-        RenderSystem.setShaderTexture(0, EARTH_LOCATION);
-        int l = 4% 4;
-        int i1 = 4/ 4 % 2;
-        float f13 = (float)(l + 0) / 4.0F;
-        float f14 = (float)(i1 + 0) / 2.0F;
-        float f15 = (float)(l + 1) / 4.0F;
-        float f16 = (float)(i1 + 1) / 2.0F;
-        
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, moondistance).uv(f15, f16).endVertex();
-        bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, moondistance).uv(f13, f16).endVertex();
-        bufferbuilder.vertex(matrix4f1, moondistance, -100.0F, -moondistance).uv(f13, f14).endVertex();
-        bufferbuilder.vertex(matrix4f1, -moondistance, -100.0F, -moondistance).uv(f15, f14).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
-        
-		stack.pushPose();
-
-		 moondistance = 5.0F;
-	        RenderSystem.setShaderTexture(0, MOON_LOCATION);
-
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, moondistance+21).uv(f15, f16).endVertex();
-        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, moondistance+21).uv(f13, f16).endVertex();
-        bufferbuilder.vertex(matrix4f1, moondistance+21, -100.0F, -moondistance+21).uv(f13, f14).endVertex();
-        bufferbuilder.vertex(matrix4f1, -moondistance+21, -100.0F, -moondistance+21).uv(f15, f14).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
-		stack.popPose();
-
-        
-		stack.popPose();
-
-		
-		stack.popPose();
-
-
 		Tesselator tesselator = Tesselator.getInstance();
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.setShaderTexture(0, END_SKY_LOCATION);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 		for (int i = 0; i < 6; ++i) {
 			stack.pushPose();
@@ -222,10 +244,10 @@ public class FungalSkyBoxRenderer {
 
 		// BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder(); TF -
 
-	
+
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.depthMask(true);
-		
+
 
 		return true;
 
@@ -260,30 +282,41 @@ public class FungalSkyBoxRenderer {
 		return pBuilder.end();
 	}
 
-	// [VanillaCopy] LevelRenderer.createStars
+	// [VanillaCopy] LevelRenderer.createStars - split into multiple layers
 	private static void createStars() {
+		if (starsCreated && starBuffers != null) {
+			return;
+		}
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
-		if (starBuffer != null) {
-			starBuffer.close();
+
+		if (starBuffers != null) {
+			for (VertexBuffer buf : starBuffers) {
+				if (buf != null) buf.close();
+			}
 		}
 
-		starBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		starBuffers = new VertexBuffer[STAR_LAYER_COUNT];
+		long[] seeds = { 10842L, 27519L, 54637L, 83291L };
+		int starsPerLayer = 3000 / STAR_LAYER_COUNT;
 
-		BufferBuilder.RenderedBuffer renderedBuffer = drawStars(bufferbuilder);
-		starBuffer.bind();
-		starBuffer.upload(renderedBuffer);
-		VertexBuffer.unbind();
+		for (int layer = 0; layer < STAR_LAYER_COUNT; layer++) {
+			starBuffers[layer] = new VertexBuffer(VertexBuffer.Usage.STATIC);
+			BufferBuilder.RenderedBuffer renderedBuffer = drawStars(bufferbuilder, starsPerLayer, seeds[layer]);
+			starBuffers[layer].bind();
+			starBuffers[layer].upload(renderedBuffer);
+			VertexBuffer.unbind();
+		}
+		starsCreated = true;
 	}
 
 	// [VanillaCopy] of LevelRenderer.drawStars but with double the number of them
-	private static BufferBuilder.RenderedBuffer drawStars(BufferBuilder bufferBuilder) {
-		RandomSource random = RandomSource.create(10842L);
+	private static BufferBuilder.RenderedBuffer drawStars(BufferBuilder bufferBuilder, int starCount, long seed) {
+		RandomSource random = RandomSource.create(seed);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
-		// TF - 1500 -> 3000
-		for (int i = 0; i < 3000; ++i) {
+		for (int i = 0; i < starCount; ++i) {
 
 			double spreadX = random.nextFloat() * 2.0F - 1F;
 			double spreadY = random.nextFloat() * 2.0F - 1F;
