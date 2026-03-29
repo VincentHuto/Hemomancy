@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:cave",
+  "config": {
+    "probability": 0.15,
+    "y": {
+      "type": "minecraft:uniform",
+      "min_inclusive": {
+        "above_bottom": 8
+      },
+      "max_inclusive": {
+        "absolute": 180
+      }
+    },
+    "yScale": 0.5,
+    "lava_level": {
+      "above_bottom": 0
+    },
+    "aquifers_enabled": false,
+    "replaceable": "#minecraft:overworld_carver_replaceables",
+    "debug_settings": {
+      "debug_mode": false,
+      "air_state": {
+        "Name": "minecraft:air"
+      },
+      "water_state": {
+        "Name": "minecraft:water",
+        "Properties": {
+          "level": "0"
+        }
+      },
+      "lava_state": {
+        "Name": "minecraft:lava",
+        "Properties": {
+          "level": "0"
+        }
+      },
+      "barrier_state": {
+        "Name": "minecraft:barrier"
+      }
+    },
+    "horizontal_radius_multiplier": 1.0,
+    "vertical_radius_multiplier": 1.0,
+    "floor_level": -0.7
+  }
+}
+

@@ -41,6 +41,7 @@ public class BiomeInit {
 
 	public static final ResourceKey<Biome> FUNGAL_GARDENS = register("fungal_gardens");
 	public static final ResourceKey<Biome> FUNGAL_ISLES = register("fungal_isles");
+	public static final ResourceKey<Biome> SPORECROWN_THICKET = register("sporecrown_thicket");
 
 	private static ResourceKey<Biome> register(String name) {
 		ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, new ResourceLocation(Hemomancy.MOD_ID, name));
@@ -55,9 +56,8 @@ public class BiomeInit {
 		HolderGetter<ConfiguredWorldCarver<?>> carverGetter = context.lookup(Registries.CONFIGURED_CARVER);
 		HolderGetter<PlacedFeature> placedFeatureGetter = context.lookup(Registries.PLACED_FEATURE);
 		register(context, FUNGAL_GARDENS, fungalGardens(placedFeatureGetter, carverGetter));
-
 		register(context, FUNGAL_ISLES, fungalIsles(placedFeatureGetter, carverGetter));
-
+		register(context, SPORECROWN_THICKET, sporecrownThicket(placedFeatureGetter, carverGetter));
 	}
 
 	private static Biome fungalIsles(HolderGetter<PlacedFeature> placedFeatureGetter,
@@ -120,6 +120,55 @@ public class BiomeInit {
 								new AmbientMoodSettings(SoundEvents.AMBIENT_SOUL_SAND_VALLEY_MOOD, 6000, 8, 2.0D))
 						.ambientAdditionsSound(
 								new AmbientAdditionsSettings(SoundEvents.AMBIENT_CRIMSON_FOREST_ADDITIONS, 0.0111D))
+						.build())
+				.mobSpawnSettings(spawnBuilder.build()).generationSettings(biomeBuilder.build()).build();
+	}
+
+	private static Biome sporecrownThicket(HolderGetter<PlacedFeature> placedFeatureGetter,
+			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
+		// Mob spawns - dense and hostile
+		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.erythromycelium_eruptus.get(), 15, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.chthonian.get(), 8, 1, 2));
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.fargone.get(), 6, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.fungling.get(), 12, 2, 5));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.chitinite.get(), 8, 2, 4));
+		spawnBuilder.addSpawn(MobCategory.AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityType.BAT, 10, 4, 8));
+
+		// Biome features - dense fungal overgrowth
+		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
+				carverGetter);
+		biomeBuilder.addCarver(GenerationStep.Carving.AIR, Carvers.NETHER_CAVE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HYPHAE_TENDRIL);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HUGE_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_INFESTED_VENOUS_STONE_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_MYCELIUM_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_DENSE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
+				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
+
+		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(1.2F).downfall(0.9F)
+				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(10980608).waterFogColor(10980608)
+						.fogColor(0x330000).skyColor(0x260000).grassColorOverride(0x6B5B0F).foliageColorOverride(0x6B5B0F)
+						.ambientLoopSound(SoundEvents.AMBIENT_CRIMSON_FOREST_LOOP)
+						.ambientMoodSound(
+								new AmbientMoodSettings(SoundEvents.AMBIENT_CRIMSON_FOREST_MOOD, 6000, 8, 2.0D))
+						.ambientAdditionsSound(
+								new AmbientAdditionsSettings(SoundEvents.AMBIENT_CRIMSON_FOREST_ADDITIONS, 0.0111D))
+						.ambientParticle(new net.minecraft.world.level.biome.AmbientParticleSettings(
+								net.minecraft.core.particles.ParticleTypes.CRIMSON_SPORE, 0.025F))
 						.build())
 				.mobSpawnSettings(spawnBuilder.build()).generationSettings(biomeBuilder.build()).build();
 	}

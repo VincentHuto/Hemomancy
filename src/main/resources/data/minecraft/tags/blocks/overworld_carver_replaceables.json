@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "hemomancy:venous_stone",
+    "hemomancy:erythrocytic_dirt",
+    "hemomancy:erythrocytic_mycelium",
+    "hemomancy:infested_venous_stone",
+    "hemomancy:conscious_mass",
+    "hemomancy:hyphae_block"
+  ]
+}
+

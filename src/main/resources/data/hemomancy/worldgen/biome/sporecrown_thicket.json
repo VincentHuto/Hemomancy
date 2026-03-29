@@ -1,25 +1,27 @@
 {
-  "temperature": 0.9,
-  "downfall": 1,
-  "has_precipitation": true,
+  "temperature": 1.2,
+  "downfall": 0.9,
+  "has_precipitation": false,
   "effects": {
-    "sky_color": 5571840,
-    "fog_color": 5571840,
+    "sky_color": 2490368,
+    "fog_color": 3342336,
     "water_color": 10980608,
     "water_fog_color": 10980608,
+    "grass_color": 7034895,
+    "foliage_color": 7034895,
     "particle": {
-      "type": "minecraft:warped_spore",
-      "probability": 0.005
+      "type": "minecraft:crimson_spore",
+      "probability": 0.025
     },
-    "ambient_sound": "minecraft:ambient.nether_wastes.loop",
+    "ambient_sound": "minecraft:ambient.crimson_forest.loop",
     "mood_sound": {
-      "sound": "minecraft:ambient.soul_sand_valley.mood",
+      "sound": "minecraft:ambient.crimson_forest.mood",
       "tick_delay": 6000,
       "block_search_extent": 8,
       "offset": 2
     },
     "additions_sound": {
-      "sound": "minecraft:ambient.nether_wastes.additions",
+      "sound": "minecraft:ambient.crimson_forest.additions",
       "tick_probability": 0.0111
     }
   },
@@ -36,13 +38,13 @@
     "creature": [
       {
         "type": "hemomancy:fungling",
-        "weight": 8,
+        "weight": 12,
         "minCount": 2,
-        "maxCount": 4
+        "maxCount": 5
       },
       {
-        "type": "minecraft:mooshroom",
-        "weight": 5,
+        "type": "hemomancy:chitinite",
+        "weight": 8,
         "minCount": 2,
         "maxCount": 4
       }
@@ -50,22 +52,22 @@
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:abhorent_thought",
-        "weight": 8,
+        "type": "hemomancy:erythromycelium_eruptus",
+        "weight": 15,
         "minCount": 1,
         "maxCount": 3
       },
       {
-        "type": "hemomancy:thirster",
-        "weight": 10,
-        "minCount": 1,
-        "maxCount": 4
-      },
-      {
-        "type": "hemomancy:lump_of_thought",
-        "weight": 5,
+        "type": "hemomancy:chthonian",
+        "weight": 8,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "hemomancy:fargone",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 3
       }
     ],
     "underground_water_creature": [],
@@ -74,7 +76,7 @@
         "type": "hemomancy:barbed_urchin",
         "weight": 1,
         "minCount": 1,
-        "maxCount": 3
+        "maxCount": 2
       }
     ],
     "water_creature": []
@@ -96,17 +98,22 @@
     [],
     [
       "hemomancy:hyphae_tendril",
+      "hemomancy:mushroom/canopy_mushrooms_dense",
       "hemomancy:huge_fungus",
-      "hemomancy:mycelium_blob"
-
+      "hemomancy:infested_venous_stone_blob",
+      "hemomancy:mycelium_blob",
+      "hemomancy:conscious_mass_blob"
     ],
     [],
     [],
     [
+      "hemomancy:patch_hyphae",
       "hemomancy:small_infected_fungus",
       "hemomancy:bleeding_hearts",
-      "hemomancy:stink_horns"
+      "hemomancy:stink_horns",
+      "hemomancy:patch_crimson_flames"
     ],
     []
   ]
 }
+
