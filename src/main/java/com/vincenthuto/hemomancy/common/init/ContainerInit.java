@@ -22,8 +22,6 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<RuneBinderInventoryMenu>> rune_binder = CONTAINERS
 			.register("rune_binder", () -> IForgeMenuType.create(RuneBinderInventoryMenu::new));
 
-	public static final RegistryObject<MenuType<VisceralRecallerMenu>> visceral_recaller = CONTAINERS
-			.register("visceral_recaller", () -> IForgeMenuType.create(VisceralRecallerMenu::new));
 
 	public static final RegistryObject<MenuType<VialCentrifugeMenu>> vial_centrifuge = CONTAINERS
 			.register("vial_centrifuge", () -> IForgeMenuType.create(VialCentrifugeMenu::new));

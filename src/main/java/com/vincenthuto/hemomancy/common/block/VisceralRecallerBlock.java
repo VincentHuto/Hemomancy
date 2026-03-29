@@ -122,6 +122,18 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
 	}
 
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			BlockEntity tile = level.getBlockEntity(pos);
+			if (tile instanceof VisceralRecallerBlockEntity te) {
+				te.dropContents();
+			}
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
+	}
+
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
@@ -134,10 +146,13 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 					te.sendUpdates();
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
-				} else if (player.isCrouching()) {
-					boolean resultt = te.addItem(player, stack, handIn);
-					te.sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+				} else {
+					// Empty hand — remove items (shift for memory, normal for item)
+					boolean resultt = te.removeItem(player, player.isCrouching());
+					if (resultt) {
+						te.sendUpdates();
+						VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+					}
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				}
 			}

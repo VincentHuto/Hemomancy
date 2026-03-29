@@ -96,6 +96,23 @@ public class RenderTypeInit extends RenderType {
 					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
 					.createCompositeState(false));
 
+	// Visceral Recaller beam render types — always render on top of world geometry
+	public static final RenderType RECALLER_BEAM_CORE = create("RecallerBeamCore",
+			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
+					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
+					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
+
+	public static final RenderType RECALLER_BEAM_GLOW = create("RecallerBeamGlow",
+			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
+					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
+					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
+
 	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",
 			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)

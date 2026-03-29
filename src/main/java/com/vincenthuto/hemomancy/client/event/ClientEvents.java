@@ -352,7 +352,6 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
 			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
-			MenuScreens.register(ContainerInit.visceral_recaller.get(), VisceralRecallerScreen::new);
 			MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
 			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
