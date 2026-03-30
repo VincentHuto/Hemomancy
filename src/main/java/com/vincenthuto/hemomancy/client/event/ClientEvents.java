@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.client.render.entity.blood.*;
+import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
@@ -41,10 +42,13 @@ import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
+import com.vincenthuto.hemomancy.client.render.item.RunePatternItemColor;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
@@ -68,14 +72,17 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.ModelEvent.BakingCompleted;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -89,6 +96,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientEvents {
@@ -385,6 +394,14 @@ public class ClientEvents {
 
 		}
 
+		@SubscribeEvent
+		public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+			RunePatternItemColor runePatternColor = new RunePatternItemColor();
+			ItemInit.BASEITEMS.getEntries().stream()
+				.filter(entry -> entry.get() instanceof ItemRunePattern)
+				.forEach(entry -> event.register(runePatternColor, entry.get()));
+		}
+
 		public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
 
 		@SubscribeEvent
@@ -398,7 +415,20 @@ public class ClientEvents {
 		public static void onModelBake(BakingCompleted evt) {
 			bloodAbsorptionModel = evt.getModels().get(Hemomancy.rloc("item/blood_absorption_texture"));
 			bloodProjectionModel = evt.getModels().get(Hemomancy.rloc("item/blood_projection_texture"));
+		}
 
+		@SubscribeEvent
+		public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
+			// Wrap all rune pattern item models so the overlay layer is shrunk down
+			for (RegistryObject<Item> entry : ItemInit.BASEITEMS.getEntries()) {
+				if (entry.get() instanceof ItemRunePattern) {
+					ModelResourceLocation modelLoc = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(entry.get()), "inventory");
+					BakedModel existing = evt.getModels().get(modelLoc);
+					if (existing != null) {
+						evt.getModels().put(modelLoc, new RunePatternBakedModel(existing));
+					}
+				}
+			}
 		}
 
 		// Overlay

@@ -36,8 +36,13 @@ public class HemoItemModelProvider extends ItemModelProvider {
 			registerBlockModel(b.get());
 		}
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
-			if(item.get() instanceof ItemRunePattern) {
-				singleTexture("rune_pattern", mcLoc("item/generated"), "layer0", modLoc("item/rune_pattern"));
+			if(item.get() instanceof ItemRunePattern patternItem) {
+				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
+				String runePath = ForgeRegistries.ITEMS.getKey(patternItem.getRune().get()).getPath();
+				getBuilder(itemPath)
+					.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+					.texture("layer0", modLoc("item/rune_pattern"))
+					.texture("layer1", modLoc("item/" + runePath));
 			}else {
 				basicItem(item.get());
 			}
