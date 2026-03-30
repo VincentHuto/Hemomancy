@@ -50,6 +50,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipP
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
@@ -110,6 +111,8 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90,
 			"key.hemomancy.category");
+	public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
+			"key.hemomancy.category");
 
 	private static boolean menuKey = false;
 
@@ -131,6 +134,9 @@ public class ClientEvents {
 		if (toggleMorphlingOpenJar.consumeClick()) {
 			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
 
+		}
+		if (toggleGourd.consumeClick()) {
+			PacketHandler.CHANNELRUNES.sendToServer(new ToggleGourdKeyPacket());
 		}
 		if (cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
@@ -206,6 +212,7 @@ public class ClientEvents {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void cameraView(EntityEvent.Size event) {
 		if (event.getEntity() instanceof Player player) {
@@ -374,6 +381,7 @@ public class ClientEvents {
 			event.register(ClientEvents.useContManip);
 			event.register(ClientEvents.OPEN_CHARM_SLOT_KEYBIND);
 			event.register(ClientEvents.openVascCharmMenu);
+			event.register(ClientEvents.toggleGourd);
 
 		}
 

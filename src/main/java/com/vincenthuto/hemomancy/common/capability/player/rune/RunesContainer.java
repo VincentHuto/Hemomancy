@@ -56,7 +56,28 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 
 	@Override
 	protected void onContentsChanged(int slot) {
+		// Mark for network sync
 		this.changed[slot] = true;
+
+		// Make equip/unequip airtight: drive side effects from the capability container,
+		// not from UI slots, so shift-click/drag/hotkey swaps can't bypass cleanup.
+		if (!blockEvents && holder != null) {
+			ItemStack prev = previous[slot];
+			ItemStack now = getStackInSlot(slot);
+
+			if (!ItemStack.isSameItemSameTags(prev, now)) {
+				// Unequip previous
+				if (!prev.isEmpty()) {
+					prev.getCapability(RunesCapabilities.ITEM_RUNE, null)
+							.ifPresent(r -> r.onUnequipped(holder));
+				}
+				// Equip new
+				if (!now.isEmpty()) {
+					now.getCapability(RunesCapabilities.ITEM_RUNE, null)
+							.ifPresent(r -> r.onEquipped(holder));
+				}
+			}
+		}
 	}
 
 	@Override

@@ -22,16 +22,16 @@ public class ChiselStationRenderer implements BlockEntityRenderer<ChiselStationB
 
 	public ChiselStationRenderer(BlockEntityRendererProvider.Context p_173636_) {
 	}
-	
+
 	@Override
 	public void render(ChiselStationBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		// Add items above block
-		// 
+		//
 		// GlStateManager._color4f(1F, 1F, 1F, 1F);
 		// GlStateManager._translatef(te.getBlockPos().getX(), te.getBlockPos().getY(),
 		// te.getBlockPos().getZ());
-		// 
+		//
 		Minecraft.getInstance().textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
 
@@ -163,6 +163,38 @@ public class ChiselStationRenderer implements BlockEntityRenderer<ChiselStationB
 				matrixStackIn.mulPose(new Quaternion(Vector3.YP,0, true).toMoj());
 				matrixStackIn.mulPose(new Quaternion(Vector3.XP,-45, true).toMoj());
 				matrixStackIn.translate(1f, 0.35f, 1.80f);
+			}
+			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
+					matrixStackIn, bufferIn, te.getLevel(), 0);
+		}
+		matrixStackIn.popPose();
+
+		// Binder / Pattern - flat on top surface facing the player
+		matrixStackIn.pushPose();
+		if (te.contents.get(4) != ItemStack.EMPTY) {
+			ItemStack stack = te.contents.get(4);
+			if (te.getBlockState().getValues().get(FACING).toString().toUpperCase().equals(FaceInfo.WEST.toString())) {
+				matrixStackIn.translate(0.1, 0.51, 0.5);
+				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
+				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, -90, true).toMoj());
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceInfo.EAST.toString())) {
+				matrixStackIn.translate(0.9, 0.51, 0.5);
+				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
+				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, 90, true).toMoj());
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceInfo.NORTH.toString())) {
+				matrixStackIn.translate(0.5, 0.51, 0.1);
+				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
+				matrixStackIn.mulPose(new Quaternion(Vector3.ZP, 180, true).toMoj());
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
+			} else if (te.getBlockState().getValues().get(FACING).toString().toUpperCase()
+					.equals(FaceInfo.SOUTH.toString())) {
+				matrixStackIn.translate(0.5, 0.51, .9);
+				matrixStackIn.mulPose(new Quaternion(Vector3.XP, -90, true).toMoj());
+				matrixStackIn.scale(0.5f, 0.5f, 0.5f);
 			}
 			mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, combinedLightIn, combinedOverlayIn,
 					matrixStackIn, bufferIn, te.getLevel(), 0);

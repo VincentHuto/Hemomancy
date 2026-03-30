@@ -206,6 +206,10 @@ public class ItemInit {
 	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
 			() -> new RecycledEnzymeItem());
 
+	// Blood Tendency Gauge
+	public static final RegistryObject<Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",
+			() -> new BloodTendencyGaugeItem(new Item.Properties().stacksTo(1)));
+
 	// Hematic Memories
 	public static final RegistryObject<Item> lethian_dew = BASEITEMS.register("lethian_dew",
 			() -> new LethianDewItem(new Item.Properties()));
@@ -264,7 +268,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> living_spear = SPECIALITEMS.register("living_spear",
 			() -> new LivingSpearItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> living_baghnakh = SPECIALITEMS.register("living_baghnakh",
-			() -> new LivingBaghnakhItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties()));
+			() -> new LivingBaghnakhItem(25f, 1, EnumModToolTiers.LIVING, new Item.Properties().stacksTo(1)));
 
 	public static final RegistryObject<Item> living_crossbow = SPECIALITEMS.register("living_crossbow",
 			() -> new LivingCrossbowItem(new Item.Properties().stacksTo(1)));
@@ -456,35 +460,35 @@ public class ItemInit {
 	public static final RegistryObject<Item> ferric_spores = BASEITEMS.register("ferric_spores",
 			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
 
-	// Contract Runes
+	// Fungal Runes
 
 	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
 
 	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
 			"rune_pattern_transcendence",
 			() -> new ItemRunePattern(new Item.Properties(), rune_transcendence, "rune_transcendence"));
 
 	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
 
 	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
 			() -> new ItemRunePattern(new Item.Properties(), rune_sol, "rune_sol"));
 
 	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 
 	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
 			() -> new ItemRunePattern(new Item.Properties(), rune_heart, "rune_heart"));
 
 	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
 
 	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
 			() -> new ItemRunePattern(new Item.Properties(), rune_descendence, "rune_descendence"));
 
 	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
 
 	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
 			() -> new ItemRunePattern(new Item.Properties(), rune_moon, "rune_moon"));

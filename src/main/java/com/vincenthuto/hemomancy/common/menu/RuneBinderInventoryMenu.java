@@ -75,8 +75,22 @@ public class RuneBinderInventoryMenu extends AbstractContainerMenu {
 	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slot, dragType, clickTypeIn, player);
 		if (slot >= 0 && clickTypeIn != ClickType.SWAP
-				&& !(getSlot(slot).getItem().getItem() instanceof ItemRuneBinder))
+				&& !(getSlot(slot).getItem().getItem() instanceof ItemRuneBinder)) {
 			getSlot(slot).container.setChanged();
+		}
+		// Persist binder contents after any click interaction
+		if (handler != null) {
+			handler.save();
+		}
+	}
+
+	@Override
+	public void removed(Player playerIn) {
+		super.removed(playerIn);
+		// Ensure binder contents are saved to NBT when the menu is closed
+		if (handler != null) {
+			handler.save();
+		}
 	}
 
 	private void addPlayerSlots(Inventory playerInventory) {
@@ -141,20 +155,28 @@ public class RuneBinderInventoryMenu extends AbstractContainerMenu {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
+			int bagslotcount = slotcount;
 			ItemStack itemstack1 = slot.getItem();
-			if (itemstack1.getCount() < 1) {
-				itemstack = itemstack1.copy();
-				if (index < bagslotcount) {
-					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
-						return ItemStack.EMPTY;
-				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+			itemstack = itemstack1.copy();
+			if (index < bagslotcount) {
+				// Moving from binder slots -> player inventory
+				if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true)) {
 					return ItemStack.EMPTY;
 				}
-				if (itemstack1.isEmpty())
-					slot.set(ItemStack.EMPTY);
-				else
-					slot.setChanged();
+			} else {
+				// Moving from player inventory -> binder slots
+				if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+			if (itemstack1.isEmpty()) {
+				slot.set(ItemStack.EMPTY);
+			} else {
+				slot.setChanged();
+			}
+			// Persist binder contents to NBT so changes survive
+			if (handler != null) {
+				handler.save();
 			}
 		}
 		return itemstack;

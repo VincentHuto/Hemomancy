@@ -92,7 +92,10 @@ public class TendancyViewScreen extends EffectRenderingInventoryScreen<TendancyV
         int centerX = this.width / 2 - this.guiWidth / 2;
         int centerY = this.height / 2 - this.guiHeight / 2;
         graphics.blit(border, centerX, centerY, 0, 0, this.guiWidth, this.guiHeight);
-        drawCenter(graphics, centerX-3, centerY+60);
+        // Pass the true center of the GUI panel to drawCenter
+        int starCenterX = this.width / 2;
+        int starCenterY = this.height / 2;
+        drawCenter(graphics, starCenterX, starCenterY);
 
     }
 
@@ -212,46 +215,58 @@ public class TendancyViewScreen extends EffectRenderingInventoryScreen<TendancyV
 
     }
 
-    private void drawCenter(GuiGraphics graphics, int xOff, int yOff) {
+    private void drawCenter(GuiGraphics graphics, int centerX, int centerY) {
         LocalPlayer player = this.minecraft.player;
         player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
             Map<EnumBloodTendency, Float> affs = tendency.getTendency();
-            int centerOffset = 8;
-            int cx = 0, cy = 0;
             float rotAngle = -90f;
             int iconDiameter = 95;
-            int diameter =15;
+            int diameter = 15;
             float spikeBaseWidth = 23.5f;
+            int itemSize = 16;
+            int halfItem = itemSize / 2;
             for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-               float affVal = (float) Mth.clamp(affs.get(tend),0,1);
-                int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 90;
-                int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 90;
-                int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 47;
-                int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 47;
-                double depthDist = ((iconDiameter - diameter) *  affVal* 0.5 + diameter);
-                int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 90;
-                int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 47;
-                int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
-                        / 2f);
+                float affVal = (float) Mth.clamp(affs.get(tend), 0, 1);
+
+                // Spike base points (left and right edges of the base)
+                int cx1 = centerX + (int) (Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+                int cy1 = centerY + (int) (Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+                int cx2 = centerX + (int) (Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+                int cy2 = centerY + (int) (Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+
+                // Spike tip (extends outward based on tendency value)
+                double depthDist = ((iconDiameter - diameter) * affVal * 0.5 + diameter);
+                int lx = centerX + (int) (Math.cos(Math.toRadians(rotAngle)) * depthDist);
+                int ly = centerY + (int) (Math.sin(Math.toRadians(rotAngle)) * depthDist);
+
+                int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2)) / 2f);
                 int zLevel = 10;
-                HLGuiUtils.fracLine(graphics.pose(), lx + centerOffset, ly + centerOffset, cx1 + centerOffset,
-                        cy1 + centerOffset, zLevel, tend.getColor(), displace, 1.1);
-                HLGuiUtils.fracLine(graphics.pose(), lx + centerOffset, ly + centerOffset, cx2 + centerOffset,
-                        cy2 + centerOffset, zLevel, tend.getColor(), displace, 1.1);
-                HLGuiUtils.fracLine(graphics.pose(), cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset,
-                        zLevel, tend.getColor(), displace, 0.8);
-                HLGuiUtils.fracLine(graphics.pose(), cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset,
-                        ly + centerOffset, zLevel, tend.getColor(), displace, 0.8);
-                int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-                int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-                graphics.drawCenteredString(font,
-                        HLTextUtils.toProperCase(tend.toString()),  newX + xOff + 95, newY + yOff + 27,
-                        new Color(255, 0, 0, 255).getRGB());
-                graphics.drawCenteredString(font,
-                        String.valueOf(tendency.getAlignmentByTendency(tend)),    newX + xOff + 90,newY + yOff + 37,
-                        new Color(255, 0, 0, 255).getRGB());
+
+                // Draw the four fractal lines forming the spike
+                HLGuiUtils.fracLine(graphics.pose(), lx, ly, cx1, cy1, zLevel, tend.getColor(), displace, 1.1);
+                HLGuiUtils.fracLine(graphics.pose(), lx, ly, cx2, cy2, zLevel, tend.getColor(), displace, 1.1);
+                HLGuiUtils.fracLine(graphics.pose(), cx1, cy1, lx, ly, zLevel, tend.getColor(), displace, 0.8);
+                HLGuiUtils.fracLine(graphics.pose(), cx2, cy2, lx, ly, zLevel, tend.getColor(), displace, 0.8);
+
+                // Radial icon position (outside the star) - spikes point here
+                double iconDist = iconDiameter / 1.75;
+                int iconCenterX = centerX + (int) (Math.cos(Math.toRadians(rotAngle)) * iconDist);
+                int iconCenterY = centerY + (int) (Math.sin(Math.toRadians(rotAngle)) * iconDist);
+
+                // Enzyme item icon (centered on the radial point)
                 HLGuiUtils.renderItemStackInGui(graphics, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
-                        newX + xOff + 90, newY + yOff + 47);
+                        iconCenterX - halfItem, iconCenterY - halfItem);
+
+                // Tendency value (centered above the icon)
+                graphics.drawCenteredString(font,
+                        String.valueOf(tendency.getAlignmentByTendency(tend)), iconCenterX, iconCenterY - halfItem - 10,
+                        new Color(255, 0, 0, 255).getRGB());
+
+                // Tendency name (centered above the value)
+                graphics.drawCenteredString(font,
+                        HLTextUtils.toProperCase(tend.toString()), iconCenterX, iconCenterY - halfItem - 20,
+                        new Color(255, 0, 0, 255).getRGB());
+
                 rotAngle += 45;
             }
         });

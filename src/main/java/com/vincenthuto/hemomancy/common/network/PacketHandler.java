@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.capa.manips.*;
 import com.vincenthuto.hemomancy.common.network.capa.runes.*;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
+import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenLivingStaffPacket;
@@ -84,6 +85,9 @@ public class PacketHandler {
 
 		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
+
+		CHANNELRUNES.registerMessage(networkID++, ToggleGourdKeyPacket.class, ToggleGourdKeyPacket::encode,
+				ToggleGourdKeyPacket::decode, ToggleGourdKeyPacket::handle);
 
 		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
 				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);

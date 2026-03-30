@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
+import com.vincenthuto.hemomancy.common.item.block.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedVivianiteBlockItem;
@@ -87,6 +88,9 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> engram_block = SPECIALBLOCKS.register("engram_block", EngramBlock::new);
 
+	public static final RegistryObject<Block> filler_block = SPECIALBLOCKS.register("filler_block",
+			() -> new FillerBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()));
+
 	// Blocks
 
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
@@ -94,6 +98,14 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final RegistryObject<Block> sanguine_pane = SPECIALBLOCKS.register("sanguine_pane",
+			() -> new IronBarsBlock(
+					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
+
+	public static final RegistryObject<Block> vivianite_glass = BASEBLOCKS.register("vivianite_glass",
+			() -> new GlassBlock(
+					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
+
+	public static final RegistryObject<Block> vivianite_pane = SPECIALBLOCKS.register("vivianite_pane",
 			() -> new IronBarsBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
@@ -346,6 +358,10 @@ public class BlockInit {
 			return Pair.of(block.getSecond(),
 					new FungalImplantationPylonBlockItem(b, new Item.Properties()));
 		}
+		if (b == BlockInit.earthen_vein.get()) {
+			return Pair.of(block.getSecond(),
+					new EarthenVeinBlockItem(b, new Item.Properties()));
+		}
 		if (b == BlockInit.suspended_vivianite.get()) {
 			return Pair.of(block.getSecond(),
 					new SuspendedVivianiteBlockItem(b, new Item.Properties()));
@@ -370,7 +386,8 @@ public class BlockInit {
 					|| item.getSecond().getBlock() != BlockInit.gourd_stem.get()
 					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
 					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
-					|| item.getSecond().getBlock() != BlockInit.engram_block.get()) {
+					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
+					|| item.getSecond().getBlock() != BlockInit.filler_block.get()) {
 				registerBlockItem(event, item);
 			}
 		});

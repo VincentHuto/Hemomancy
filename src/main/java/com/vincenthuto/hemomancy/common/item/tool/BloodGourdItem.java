@@ -27,6 +27,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import net.minecraft.core.Direction;
 
 public class BloodGourdItem extends Item implements IRune {
 
@@ -143,6 +152,20 @@ public class BloodGourdItem extends Item implements IRune {
 	@Override
 	public boolean willAutoSync(LivingEntity player) {
 		return true;
+	}
+
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+		final IRune self = this;
+		return new ICapabilityProvider() {
+			private final LazyOptional<IRune> opt = LazyOptional.of(() -> self);
+
+			@Nonnull
+			@Override
+			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+				return RunesCapabilities.ITEM_RUNE.orEmpty(cap, opt);
+			}
+		};
 	}
 
 }

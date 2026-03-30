@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.item.rune.functional;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
+import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-public class RespergillusItem extends ItemContractRune {
+public class RespergillusItem extends ItemFungalRune {
 
 	public RespergillusItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
 		super(properties, tendencyIn, deepenAmountIn);

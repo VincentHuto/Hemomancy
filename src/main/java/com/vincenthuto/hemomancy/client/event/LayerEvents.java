@@ -9,6 +9,8 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloo
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
+import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
+import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
 import com.vincenthuto.hemomancy.client.model.armor.UnstainedArmorModel;
 import com.vincenthuto.hemomancy.client.model.block.*;
 import com.vincenthuto.hemomancy.client.model.entity.BloodBulletModel;
@@ -94,6 +96,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(WretchedWillModel.wretched_will, WretchedWillModel::createBodyLayer);
 		event.registerLayerDefinition(BloodGourdModel.blood_gourd, BloodGourdModel::createBodyLayer);
 		event.registerLayerDefinition(CurvedHornModel.curved_horn, CurvedHornModel::createBodyLayer);
+		event.registerLayerDefinition(OpenBloodGourdModel.open_blood_gourd, OpenBloodGourdModel::createBodyLayer);
+		event.registerLayerDefinition(OpenCurvedHornModel.open_curved_horn, OpenCurvedHornModel::createBodyLayer);
 		event.registerLayerDefinition(ChthonianModel.LAYER_LOCATION, ChthonianModel::createBodyLayer);
 		event.registerLayerDefinition(ChthonianQueenModel.LAYER_LOCATION, ChthonianQueenModel::createBodyLayer);
 		event.registerLayerDefinition(ChitiniteModel.LAYER_LOCATION, ChitiniteModel::createBodyLayer);

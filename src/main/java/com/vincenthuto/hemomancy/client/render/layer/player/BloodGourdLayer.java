@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
+import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
+import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -27,13 +29,19 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 	public static ResourceLocation black = getGourdTexture("black");
 	public static ResourceLocation curved = getGourdTexture("curved_horn");
 
+	public static ResourceLocation white_open = getGourdTexture("white_open");
+	public static ResourceLocation red_open = getGourdTexture("red_open");
+	public static ResourceLocation black_open = getGourdTexture("black_open");
+	public static ResourceLocation curved_open = getGourdTexture("curved_horn_open");
+
 	public static ResourceLocation getGourdTexture(String path) {
 		return Hemomancy.rloc("textures/entity/blood_gourd/" + path + ".png");
 
 	}
 	private final BloodGourdModel<T> modelBloodGourd;
-
 	private final CurvedHornModel<T> modelCurvedHorn;
+	private final OpenBloodGourdModel<T> modelOpenBloodGourd;
+	private final OpenCurvedHornModel<T> modelOpenCurvedHorn;
 
 	public BloodGourdLayer(LivingEntityRenderer<T, M> owner) {
 		super(owner);
@@ -41,6 +49,10 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 				Minecraft.getInstance().getEntityModels().bakeLayer(BloodGourdModel.blood_gourd));
 		modelCurvedHorn = new CurvedHornModel<>(
 				Minecraft.getInstance().getEntityModels().bakeLayer(CurvedHornModel.curved_horn));
+		modelOpenBloodGourd = new OpenBloodGourdModel<>(
+				Minecraft.getInstance().getEntityModels().bakeLayer(OpenBloodGourdModel.open_blood_gourd));
+		modelOpenCurvedHorn = new OpenCurvedHornModel<>(
+				Minecraft.getInstance().getEntityModels().bakeLayer(OpenCurvedHornModel.open_curved_horn));
 	}
 
 	@Override
@@ -48,26 +60,50 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
 			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
-				if (inv.getStackInSlot(6).getItem()instanceof BloodGourdItem gourd) {
+				var stack = inv.getStackInSlot(6);
+				if (stack.getItem() instanceof BloodGourdItem gourd) {
 					this.translateToBody(matrixStack);
-					ResourceLocation text = gourd == ItemInit.blood_gourd_white.get() ? white
-							: gourd == ItemInit.blood_gourd_red.get() ? red
-									: gourd == ItemInit.blood_gourd_black.get() ? black : curved;
+
+					// Check if the gourd is open
+					boolean isOpen = stack.hasTag() && stack.getTag().getBoolean(BloodGourdItem.TAG_STATE);
+
+					ResourceLocation text;
+					if (gourd == ItemInit.curved_horn.get()) {
+						text = isOpen ? curved_open : curved;
+					} else if (gourd == ItemInit.blood_gourd_white.get()) {
+						text = isOpen ? white_open : white;
+					} else if (gourd == ItemInit.blood_gourd_red.get()) {
+						text = isOpen ? red_open : red;
+					} else if (gourd == ItemInit.blood_gourd_black.get()) {
+						text = isOpen ? black_open : black;
+					} else {
+						text = isOpen ? curved_open : curved;
+					}
 
 					if (gourd == ItemInit.curved_horn.get()) {
 						MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 								.immediate(Tesselator.getInstance().getBuilder());
 						VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(text));
-						modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						if (isOpen) {
+							modelOpenCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						} else {
+							modelCurvedHorn.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						}
 						irendertypebuffer$impl.endBatch();
 
 					} else {
 						MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 								.immediate(Tesselator.getInstance().getBuilder());
 						VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.text(text));
-						modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
-								OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						if (isOpen) {
+							modelOpenBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						} else {
+							modelBloodGourd.renderToBuffer(matrixStack, ivertexbuilder, lightness,
+									OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+						}
 						irendertypebuffer$impl.endBatch();
 
 					}

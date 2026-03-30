@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.item;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
+import com.vincenthuto.hemomancy.client.render.tile.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,6 +24,7 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 			"textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png");
 
 	private FungalImplantationPylonModel model;
+	private final FungalImplantationPylonAnimContext animCtx = new FungalImplantationPylonAnimContext(new AnimationState());
 
 	public FungalImplantationPylonItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
@@ -29,6 +32,7 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 			this.model = new FungalImplantationPylonModel(
 					modelSet.bakeLayer(FungalImplantationPylonModel.LAYER_LOCATION));
 		}
+		animCtx.state().start(0);
 	}
 
 	@Override
@@ -43,9 +47,15 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 
 		poseStack.pushPose();
 		poseStack.translate(0.5, 0.5, 0.5);
-		poseStack.scale(0.4f, 0.4f, 0.4f);
-		poseStack.translate(0.0, 1.51, 0.0);
+		poseStack.scale(0.3f, 0.3f, 0.3f);
 		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+
+		// Drive the wiggle animation using the client level's game time
+		if (Minecraft.getInstance().level != null) {
+			float partialTicks = Minecraft.getInstance().getPartialTick();
+			model.setupAnimation(Minecraft.getInstance().level, partialTicks, animCtx);
+		}
 
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.rune.functional;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
+import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -18,7 +18,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 
-public class NoctiluminaDevoransItem extends ItemContractRune {
+public class NoctiluminaDevoransItem extends ItemFungalRune {
 
 	public NoctiluminaDevoransItem(Properties properties, EnumBloodTendency tendencyIn, float deepenAmountIn) {
 		super(properties, tendencyIn, deepenAmountIn);

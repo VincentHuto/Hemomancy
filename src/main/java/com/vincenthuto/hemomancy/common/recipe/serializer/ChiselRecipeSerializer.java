@@ -38,10 +38,7 @@ public class ChiselRecipeSerializer implements RecipeSerializer<ChiselRecipe> {
 			tier = pJson.get("tier").getAsInt();
 		}
 		if (pJson.has("runetype")) {
-			runetype = pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.CONTRACT.toString())
-					? RuneType.CONTRACT
-					: pJson.get("runetype").getAsString().toUpperCase().equals(RuneType.RUNE.toString()) ? RuneType.RUNE
-							: RuneType.OVERRIDE;
+			runetype = RuneType.fromString(pJson.get("runetype").getAsString());
 		}
 		JsonArray arr = pJson.getAsJsonArray("pattern");
 		pattern = new byte[arr.size()][];
@@ -78,7 +75,7 @@ public class ChiselRecipeSerializer implements RecipeSerializer<ChiselRecipe> {
 			Ingredient input1 = Ingredient.of(pBuffer.readItem());
 			Ingredient input2 = Ingredient.of(pBuffer.readItem());
 			int tier = pBuffer.readInt();
-			RuneType runetype = RuneType.valueOf(pBuffer.readUtf());
+			RuneType runetype = RuneType.fromString(pBuffer.readUtf());
 			int len = pBuffer.readInt();
 			byte[][] pattern = new byte[len][];
 			for (int i = 0; i < len; ++i) {

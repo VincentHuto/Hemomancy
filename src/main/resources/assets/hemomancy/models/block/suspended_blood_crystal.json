@@ -2,6 +2,9 @@
   "credit": "Made with Blockbench",
   "parent" : "block/block",
   "render_type" : "cutout",
+  "textures" : {
+    "particle" : "hemomancy:block/sanguine_glass"
+  },
   "groups": [
     {
       "name": "empty",
@@ -11,3 +14,4 @@
     }
   ]
 }
+

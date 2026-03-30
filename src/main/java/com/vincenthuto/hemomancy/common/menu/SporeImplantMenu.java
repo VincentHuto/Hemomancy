@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
+import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
@@ -23,7 +23,6 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.ResultContainer;
-import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +72,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
-		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 124, 36));
+		this.addSlot(new SelectiveRuneTypeSlot(player, ItemFungalRune.class, runes, 0, 124, 36));
 		this.addSlot(new RuneSlot(player, runes, 1, 106, 18));
 		this.addSlot(new RuneSlot(player, runes, 2, 142, 18));
 		this.addSlot(new RuneSlot(player, runes, 3, 106, 54));
@@ -101,25 +100,102 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			ItemStack itemStack = slot.getItem();
-			stack = itemStack.copy();
-			if (index < 3 * 9) {
-				if (!this.moveItemStackTo(itemStack, 3 * 9, this.slots.size(), true)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (!this.moveItemStackTo(itemStack, 0, 3 * 9, false)) {
+		if (slot == null || !slot.hasItem()) {
+			return ItemStack.EMPTY;
+		}
+
+		ItemStack stackInSlot = slot.getItem();
+		ItemStack originalStack = stackInSlot.copy();
+
+		// Slot layout for SporeImplantMenu:
+		// 0-3: armor (4 slots)
+		// 4: fungal rune slot (runes handler slot 0)
+		// 5-8: rune slots (runes handler slots 1-4)
+		// 9: charm slot (runes handler slot 5)
+		// 10: gourd slot (runes handler slot 6)
+		// 11-37: player inv (27 slots)
+		// 38-46: hotbar (9 slots)
+		// 47: offhand
+		final int containerEnd = 11;
+		final int playerInvStart = 11;
+		final int hotbarStart = 38;
+		final int playerInvEnd = 47;
+		final int fungalSlotUI = 4;
+		final int runeSlotStart = 5;
+		final int runeSlotEnd = 8;
+		final int charmSlotUI = 9;
+		final int gourdSlotUI = 10;
+
+		if (index < containerEnd) {
+			// Moving FROM container TO player inventory
+			if (!this.moveItemStackTo(stackInSlot, playerInvStart, playerInvEnd + 1, true)) {
 				return ItemStack.EMPTY;
 			}
-			if (itemStack.isEmpty()) {
-				slot.set(ItemStack.EMPTY);
-			} else {
-				slot.setChanged();
+		} else {
+			// Moving FROM player inventory TO container
+			boolean moved = false;
+
+			// Try charm slot if it's a charm
+			if (stackInSlot.getItem() instanceof VasculariumCharmItem) {
+				Slot charmSlot = this.slots.get(charmSlotUI);
+				if (!charmSlot.hasItem() && charmSlot.mayPlace(stackInSlot)) {
+					charmSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+			// Try gourd slot if it's a gourd
+			else if (stackInSlot.getItem() instanceof BloodGourdItem) {
+				Slot gourdSlot = this.slots.get(gourdSlotUI);
+				if (!gourdSlot.hasItem() && gourdSlot.mayPlace(stackInSlot)) {
+					gourdSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+			// Try fungal rune slot if it's a fungal rune
+			else if (stackInSlot.getItem() instanceof ItemFungalRune) {
+				Slot fungalSlot = this.slots.get(fungalSlotUI);
+				if (!fungalSlot.hasItem() && fungalSlot.mayPlace(stackInSlot)) {
+					fungalSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+			// Try regular rune slots for other runes
+			else {
+				for (int i = runeSlotStart; i <= runeSlotEnd && !moved; i++) {
+					Slot runeSlot = this.slots.get(i);
+					if (!runeSlot.hasItem() && runeSlot.mayPlace(stackInSlot)) {
+						runeSlot.set(stackInSlot.split(1));
+						moved = true;
+					}
+				}
+			}
+
+			// If not moved, swap between inv and hotbar
+			if (!moved) {
+				if (index >= playerInvStart && index < hotbarStart) {
+					// Main inventory -> hotbar
+					if (!this.moveItemStackTo(stackInSlot, hotbarStart, playerInvEnd, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index >= hotbarStart && index <= playerInvEnd) {
+					// Hotbar -> main inventory
+					if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarStart, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else {
+					return ItemStack.EMPTY;
+				}
 			}
 		}
-		return stack;
+
+		if (stackInSlot.isEmpty()) {
+			slot.set(ItemStack.EMPTY);
+		} else {
+			slot.setChanged();
+		}
+
+		return originalStack;
 	}
 
 	@Override

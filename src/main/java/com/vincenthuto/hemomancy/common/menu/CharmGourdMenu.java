@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
@@ -72,7 +71,7 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
-//		this.addSlot(new SelectiveRuneTypeSlot(player, ItemContractRune.class, runes, 0, 77, 8));
+//		this.addSlot(new SelectiveRuneTypeSlot(player, ItemFungalRune.class, runes, 0, 77, 8));
 //		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
 //		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
 //		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
@@ -99,25 +98,75 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			ItemStack itemStack = slot.getItem();
-			stack = itemStack.copy();
-			if (index < 3 * 9) {
-				if (!this.moveItemStackTo(itemStack, 3 * 9, this.slots.size(), true)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (!this.moveItemStackTo(itemStack, 0, 3 * 9, false)) {
+		if (slot == null || !slot.hasItem()) {
+			return ItemStack.EMPTY;
+		}
+
+		ItemStack stackInSlot = slot.getItem();
+		ItemStack originalStack = stackInSlot.copy();
+
+		// Slot layout:
+		// 0: result, 1-4: craft grid, 5-8: armor, 9: charm, 10: gourd
+		// 11-37: player inv (27), 38-46: hotbar (9), 47: offhand
+		final int containerEnd = 11;
+		final int playerInvStart = 11;
+		final int hotbarStart = 38;
+		final int playerInvEnd = 47;
+		final int charmSlotUI = 9;
+		final int gourdSlotUI = 10;
+
+		if (index < containerEnd) {
+			// Moving FROM container TO player inventory
+			if (!this.moveItemStackTo(stackInSlot, playerInvStart, playerInvEnd + 1, true)) {
 				return ItemStack.EMPTY;
 			}
-			if (itemStack.isEmpty()) {
-				slot.set(ItemStack.EMPTY);
-			} else {
-				slot.setChanged();
+		} else {
+			// Moving FROM player inventory TO container
+			boolean moved = false;
+
+			// Try charm slot if it's a charm and slot is empty
+			if (stackInSlot.getItem() instanceof VasculariumCharmItem) {
+				Slot charmSlot = this.slots.get(charmSlotUI);
+				if (!charmSlot.hasItem() && charmSlot.mayPlace(stackInSlot)) {
+					charmSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+			// Try gourd slot if it's a gourd and slot is empty
+			else if (stackInSlot.getItem() instanceof BloodGourdItem) {
+				Slot gourdSlot = this.slots.get(gourdSlotUI);
+				if (!gourdSlot.hasItem() && gourdSlot.mayPlace(stackInSlot)) {
+					gourdSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+
+			// If not a charm/gourd (or slot was full), just swap between inv and hotbar
+			if (!moved) {
+				if (index >= playerInvStart && index < hotbarStart) {
+					// Main inventory -> hotbar
+					if (!this.moveItemStackTo(stackInSlot, hotbarStart, playerInvEnd, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index >= hotbarStart && index <= playerInvEnd) {
+					// Hotbar -> main inventory
+					if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarStart, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else {
+					return ItemStack.EMPTY;
+				}
 			}
 		}
-		return stack;
+
+		if (stackInSlot.isEmpty()) {
+			slot.set(ItemStack.EMPTY);
+		} else {
+			slot.setChanged();
+		}
+
+		return originalStack;
 	}
 
 	@Override

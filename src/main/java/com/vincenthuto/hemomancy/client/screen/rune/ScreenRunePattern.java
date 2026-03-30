@@ -94,6 +94,12 @@ public class ScreenRunePattern extends Screen {
 			}
 		}
 
+		// Back button to return to the binder viewer
+		this.addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
+				Component.literal("← Back"), (press) -> {
+					ScreenRuneBinderViewer.openScreen(false);
+				}).bounds(left, top - 20, 55, 18).build());
+
 		super.init();
 	}
 
@@ -109,6 +115,11 @@ public class ScreenRunePattern extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+		// Right-click anywhere to go back to the binder viewer
+		if (mouseButton == 1) {
+			ScreenRuneBinderViewer.openScreen(false);
+			return true;
+		}
 		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
@@ -120,7 +131,12 @@ public class ScreenRunePattern extends Screen {
 	@Override
 	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 		InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-		if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+		// Backspace or Escape goes back to the binder viewer
+		if (pKeyCode == InputConstants.KEY_BACKSPACE || pKeyCode == InputConstants.KEY_ESCAPE) {
+			ScreenRuneBinderViewer.openScreen(false);
+			return true;
+		}
+		if (this.minecraft != null && this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
 			this.onClose();
 		}
 		return super.keyPressed(pKeyCode, pScanCode, pModifiers);

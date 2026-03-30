@@ -2,6 +2,9 @@
   "credit": "Made with Blockbench",
   "parent" : "block/block",
   "render_type" : "cutout",
+  "textures" : {
+    "particle" : "hemomancy:block/vivianite_crystal"
+  },
   "groups": [
     {
       "name": "empty",

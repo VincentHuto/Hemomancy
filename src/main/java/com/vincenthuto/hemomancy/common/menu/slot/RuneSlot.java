@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.rune.ItemContractRune;
+import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ public class RuneSlot extends SlotItemHandler {
 
 	@Override
 	public boolean mayPlace(ItemStack stack) {
-		if (stack.getItem() instanceof IRune && !(stack.getItem() instanceof ItemContractRune)
+		if (stack.getItem() instanceof IRune && !(stack.getItem() instanceof ItemFungalRune)
 				&& !(stack.getItem() instanceof VasculariumCharmItem)) {
 			return true;
 		} else {

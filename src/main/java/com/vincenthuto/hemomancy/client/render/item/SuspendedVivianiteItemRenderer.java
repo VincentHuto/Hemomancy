@@ -42,7 +42,7 @@ public class SuspendedVivianiteItemRenderer extends BlockEntityWithoutLevelRende
 		}
 
 		poseStack.pushPose();
-		poseStack.translate(0.5, 0.5, 0.5);
+		poseStack.translate(0.5, 1, 0.5);
 		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		poseStack.translate(0.0, -0.5, 0.0);
 
