@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu;
 
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -18,26 +19,30 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 public class MorphlingJarMenu extends AbstractContainerMenu {
+
 	public int slotcount = 0;
-
+	/** Inventory slot index, or -106 for offhand, or -200 for rune-equip slot. */
 	private int slotID;
-
 	public String itemKey = "";
-
 	private Inventory playerInv;
-
 	public MorphlingJarItemHandler handler;
+
+	// ─── Constructors ────────────────────────────────────────────────────────────
+
 	public MorphlingJarMenu(int openType, int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		this(windowId, world, pos, playerInventory, playerEntity);
 	}
+
 	public MorphlingJarMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
 				playerInventory.player);
 	}
+
 	public MorphlingJarMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory);
 	}
+
 	public MorphlingJarMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory,
 			Player playerEntity) {
 		super(ContainerInit.morphling_jar.get(), windowId);
@@ -52,74 +57,68 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 
 		IItemHandler tmp = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
 
-		if (tmp instanceof MorphlingJarItemHandler) {
-			handler = (MorphlingJarItemHandler) tmp;
+		if (tmp instanceof MorphlingJarItemHandler mjh) {
+			handler = mjh;
 			handler.load();
 			slotcount = tmp.getSlots();
 			itemKey = stack.getDescriptionId();
-
 			addMySlots(stack);
 			addPlayerSlots(playerInv);
-		} else
+		} else {
 			playerEntity.closeContainer();
+		}
 	}
 
+	// ─── Slot layout ─────────────────────────────────────────────────────────────
+
+	/**
+	 * Places morphling slots in a 3-wide grid, horizontally centred in the jar GUI.
+	 * Slot origin (61, 32) keeps them inside the jar belly graphic.
+	 */
 	private void addMySlots(ItemStack stack) {
 		if (handler == null)
 			return;
 
-		int cols = slotcount % 2 == 0 ? 2 : 10;
-		int rows = slotcount / cols;
-		int slotindex = 0;
+		// 3 columns – jars hold 6 morphlings (3×2)
+		final int COLS = 3;
+		int rows = (int) Math.ceil((double) slotcount / COLS);
+		int slotIndex = 0;
 
 		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				int x = 70 + col * 18;
-				int y = 95 + row * 18;
-
-				this.addSlot(new MorphlingJarSlot(handler, slotindex, x + 1, y + 1));
-				slotindex++;
-				if (slotindex >= slotcount)
+			for (int col = 0; col < COLS; col++) {
+				if (slotIndex >= slotcount)
 					break;
+				// 61 centres a 3-wide (54px) block in a 176-wide GUI
+				int x = 62 + col * 18;
+				int y = 36 + row * 18;
+				this.addSlot(new MorphlingJarSlot(handler, slotIndex, x, y));
+				slotIndex++;
 			}
 		}
-
 	}
 
+	/**
+	 * Player inventory / hotbar sit below the jar slots at a fixed origin that
+	 * works for the single 4-slot jar size.
+	 */
 	private void addPlayerSlots(Inventory playerInventory) {
-		int originX = 0;
-		int originY = 0;
-		switch (slotcount) {
-		case 4:
-			originX = 7;
-			originY = 145;
-			break;
-		case 16:
-			originX = 7;
-			originY = 85;
-			break;
-		default:
-			originX = 25;
-			originY = 193;
-		}
+		// Fits a standard 176×166 GUI: inventory at y=84, hotbar at y=142
+		final int originX = 8;
+		final int originY = 86;
 
-		// Player Inventory
+		// Main inventory (3 rows × 9 cols)
 		for (int row = 0; row < 3; row++) {
 			for (int col = 0; col < 9; col++) {
-				int x = originX + col * 18;
-				int y = originY + row * 18;
-				int index = (col + row * 9) + 9;
-				this.addSlot(new Slot(playerInventory, index, x + 1, y + 1));
+				this.addSlot(new Slot(playerInventory, col + row * 9 + 9, originX + col * 18, originY + row * 18));
 			}
 		}
-
 		// Hotbar
 		for (int col = 0; col < 9; col++) {
-			int x = originX + col * 18;
-			int y = originY + 58;
-			this.addSlot(new Slot(playerInventory, col, x + 1, y + 1));
+			this.addSlot(new Slot(playerInventory, col, originX + col * 18, originY + 58));
 		}
 	}
+
+	// ─── Menu behaviour ──────────────────────────────────────────────────────────
 
 	@Override
 	public void clicked(int slot, int dragType, ClickType clickTypeIn, Player player) {
@@ -128,62 +127,91 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 				&& !(getSlot(slot).getItem().getItem() instanceof ItemMorphlingJar)) {
 			getSlot(slot).container.setChanged();
 		}
+		if (handler != null)
+			handler.save();
 	}
 
-	private ItemStack findMorphlingJar(Player playerEntity) {
-		Inventory inv = playerEntity.getInventory();
-
-		if (playerEntity.getMainHandItem().getItem() instanceof ItemMorphlingJar) {
-			for (int i = 0; i <= 35; i++) {
-				ItemStack stack = inv.getItem(i);
-				if (stack == playerEntity.getMainHandItem()) {
-					slotID = i;
-					return stack;
-				}
-			}
-		} else if (playerEntity.getOffhandItem().getItem() instanceof ItemMorphlingJar) {
-			slotID = -106;
-			return playerEntity.getOffhandItem();
-		} else {
-			for (int i = 0; i <= 35; i++) {
-				ItemStack stack = inv.getItem(i);
-				if (stack.getItem() instanceof ItemMorphlingJar) {
-					slotID = i;
-					return stack;
-				}
-			}
-		}
-		return ItemStack.EMPTY;
+	@Override
+	public void removed(Player playerIn) {
+		super.removed(playerIn);
+		if (handler != null)
+			handler.save();
 	}
 
 	@Override
 	public ItemStack quickMoveStack(Player playerIn, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
+		ItemStack result = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
-			int bagslotcount = slots.size() - playerIn.getInventory().items.size();
-			ItemStack itemstack1 = slot.getItem();
-			if (itemstack1.getCount() < 1) {
-				itemstack = itemstack1.copy();
-				if (index < bagslotcount) {
-					if (!this.moveItemStackTo(itemstack1, bagslotcount, this.slots.size(), true))
-						return ItemStack.EMPTY;
-				} else if (!this.moveItemStackTo(itemstack1, 0, bagslotcount, false)) {
+			ItemStack stack = slot.getItem();
+			result = stack.copy();
+			if (index < slotcount) {
+				// Jar → player inventory
+				if (!this.moveItemStackTo(stack, slotcount, this.slots.size(), true))
 					return ItemStack.EMPTY;
-				}
-				if (itemstack1.isEmpty())
-					slot.set(ItemStack.EMPTY);
-				else
-					slot.setChanged();
+			} else {
+				// Player inventory → jar
+				if (!this.moveItemStackTo(stack, 0, slotcount, false))
+					return ItemStack.EMPTY;
 			}
+			if (stack.isEmpty())
+				slot.set(ItemStack.EMPTY);
+			else
+				slot.setChanged();
+			if (handler != null)
+				handler.save();
 		}
-		return itemstack;
+		return result;
 	}
 
 	@Override
 	public boolean stillValid(Player playerIn) {
+		// Equipped in rune slot
+		if (slotID == -200) {
+			return playerIn.getCapability(RunesCapabilities.RUNES)
+					.map(r -> r.getStackInSlot(7).getItem() instanceof ItemMorphlingJar)
+					.orElse(false);
+		}
 		if (slotID == -106)
 			return playerIn.getOffhandItem().getItem() instanceof ItemMorphlingJar;
-		return playerIn.getInventory().getItem(slotID).getItem() instanceof ItemMorphlingJar;
+		ItemStack s = playerIn.getInventory().getItem(slotID);
+		return !s.isEmpty() && s.getItem() instanceof ItemMorphlingJar;
+	}
+
+	// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+	private ItemStack findMorphlingJar(Player playerEntity) {
+		// 1. Main hand
+		if (playerEntity.getMainHandItem().getItem() instanceof ItemMorphlingJar) {
+			Inventory inv = playerEntity.getInventory();
+			for (int i = 0; i <= 35; i++) {
+				if (inv.getItem(i) == playerEntity.getMainHandItem()) {
+					slotID = i;
+					return inv.getItem(i);
+				}
+			}
+		}
+		// 2. Offhand
+		if (playerEntity.getOffhandItem().getItem() instanceof ItemMorphlingJar) {
+			slotID = -106;
+			return playerEntity.getOffhandItem();
+		}
+		// 3. Rune-equip slot (slot 7 in the RUNES capability)
+		ItemStack runeSlotJar = playerEntity.getCapability(RunesCapabilities.RUNES)
+				.map(r -> r.getStackInSlot(7)).orElse(ItemStack.EMPTY);
+		if (runeSlotJar.getItem() instanceof ItemMorphlingJar) {
+			slotID = -200;
+			return runeSlotJar;
+		}
+		// 4. Anywhere in inventory
+		Inventory inv = playerEntity.getInventory();
+		for (int i = 0; i <= 35; i++) {
+			ItemStack s = inv.getItem(i);
+			if (s.getItem() instanceof ItemMorphlingJar) {
+				slotID = i;
+				return s;
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 }

@@ -96,7 +96,7 @@ public class ScreenRunePattern extends Screen {
 
 		// Back button to return to the binder viewer
 		this.addRenderableWidget(net.minecraft.client.gui.components.Button.builder(
-				Component.literal("← Back"), (press) -> {
+				Component.literal("Back"), (press) -> {
 					ScreenRuneBinderViewer.openScreen(false);
 				}).bounds(left, top - 20, 55, 18).build());
 

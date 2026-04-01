@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
@@ -15,6 +16,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 public class OpenMorphlingJarPacket {
@@ -30,7 +32,18 @@ public class OpenMorphlingJarPacket {
 	public static void handle(final OpenMorphlingJarPacket message, final Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer player = ctx.get().getSender();
-			if (!Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class).isEmpty()) {
+			if (player == null) return;
+
+			// Find jar in inventory first, then check rune slot 7
+			ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+			if (jarStack.isEmpty()) {
+				jarStack = player.getCapability(RunesCapabilities.RUNES)
+						.map(r -> r.getStackInSlot(7))
+						.filter(s -> s.getItem() instanceof ItemMorphlingJar)
+						.orElse(ItemStack.EMPTY);
+			}
+			if (!jarStack.isEmpty()) {
+				final ItemStack finalJar = jarStack;
 				player.openMenu(new MenuProvider() {
 					@Nullable
 					@Override
@@ -42,7 +55,7 @@ public class OpenMorphlingJarPacket {
 
 					@Override
 					public Component getDisplayName() {
-						return Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class).getHoverName();
+						return finalJar.getHoverName();
 					}
 				});
 			}

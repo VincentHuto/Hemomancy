@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
@@ -159,22 +160,17 @@ public class LivingSyringeItem extends LivingItemItem {
 					 * "Abuse of Power does not come without consequence"), true); }
 					 */
 					if (!player.isCrouching()) {
-						CompoundTag CompoundTag = stack.getOrCreateTag();
-						CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-						if (items != null) {
-							if (items.contains("Items", 9)) {
-								@SuppressWarnings("static-access")
-								ItemStack selectedStack = ItemStack.of(((ListTag) items.get("Items")).getCompound(0));
-								if (selectedStack.getItem() instanceof IMorphling) {
-									IMorphling morphling = (IMorphling) selectedStack.getItem();
-									morphling.use(player, player.getUsedItemHand(), stack, worldIn);
-									playerVolume.drain(morphling.getBloodCost());
-									PacketHandler.CHANNELBLOODVOLUME.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new BloodVolumeServerPacket(playerVolume));
-								}
+						player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+							ItemStack selectedStack = cap.getEquippedMorphling();
+							if (!selectedStack.isEmpty() && selectedStack.getItem() instanceof IMorphling) {
+								IMorphling morphling = (IMorphling) selectedStack.getItem();
+								morphling.use(player, player.getUsedItemHand(), stack, worldIn);
+								playerVolume.drain(morphling.getBloodCost());
+								PacketHandler.CHANNELBLOODVOLUME.send(
+										PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+										new BloodVolumeServerPacket(playerVolume));
 							}
-						}
+						});
 
 					} else {
 						this.summonDirectedOrb(worldIn, player);

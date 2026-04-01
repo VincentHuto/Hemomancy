@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.item;
 
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
@@ -45,6 +47,16 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 					modelSet.bakeLayer(FungalImplantationPylonModel.LAYER_LOCATION));
 		}
 
+		// Ensure no stale shader color tints the model dark
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		// GUI contexts need the inventory lighting setup; other contexts (ground,
+		// hand, frame) already have correct 3-D lighting from the item pipeline.
+		boolean isGui = displayContext == ItemDisplayContext.GUI;
+		if (isGui) {
+			Lighting.setupForEntityInInventory();
+		}
+
 		poseStack.pushPose();
 		poseStack.translate(0.5, 0.5, 0.5);
 		poseStack.scale(0.3f, 0.3f, 0.3f);
@@ -60,6 +72,11 @@ public class FungalImplantationPylonItemRenderer extends BlockEntityWithoutLevel
 		model.renderToBuffer(poseStack, buffer.getBuffer(model.renderType(TEXTURE)), combinedLight,
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 		poseStack.popPose();
+
+		// Restore 3-D item lighting so subsequent renders are unaffected
+		if (isGui) {
+			Lighting.setupFor3DItems();
+		}
 	}
 }
 

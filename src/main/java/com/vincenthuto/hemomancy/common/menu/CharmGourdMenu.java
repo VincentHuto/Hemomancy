@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
@@ -37,6 +38,8 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
 	public final static int GOURD_SLOT_INDEX = 6;
 	public final static int CHARM_SLOT_INDEX = 5;
+	public final static int JAR_SLOT_INDEX = 7; // Index in the rune capability handler for the Morphling jar slot
+
 	private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;
@@ -75,8 +78,9 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 //		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
 //		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
 //		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
-		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26));
-		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));
+		this.addSlot(new SelectiveRuneTypeSlot(player, ItemMorphlingJar.class, runes, JAR_SLOT_INDEX, 77, 8));    // UI slot 9
+		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26)); // UI slot 10
+		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));    // UI slot 11
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {
@@ -106,35 +110,68 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 		ItemStack stackInSlot = slot.getItem();
 		ItemStack originalStack = stackInSlot.copy();
 
-		// Slot layout:
-		// 0: result, 1-4: craft grid, 5-8: armor, 9: charm, 10: gourd
-		// 11-37: player inv (27), 38-46: hotbar (9), 47: offhand
-		final int containerEnd = 11;
-		final int playerInvStart = 11;
-		final int hotbarStart = 38;
-		final int playerInvEnd = 47;
-		final int charmSlotUI = 9;
-		final int gourdSlotUI = 10;
+		// Actual slot layout (order added in constructor):
+		// 0        : result
+		// 1-4      : craft grid (2x2)
+		// 5-8      : armor (head, chest, legs, feet)
+		// 9        : jar slot   (rune cap slot 7)
+		// 10       : charm slot (rune cap slot 5)
+		// 11       : gourd slot (rune cap slot 6)
+		// 12-38    : player main inventory (27 slots)
+		// 39-47    : hotbar (9 slots)
+		// 48       : offhand
+		final int armorStart    = 5;
+		final int armorEnd      = 8;   // inclusive
+		final int jarSlotUI     = 9;
+		final int charmSlotUI   = 10;
+		final int gourdSlotUI   = 11;
+		final int containerEnd  = 12;  // first player-inv slot
+		final int playerInvStart = 12;
+		final int hotbarStart   = 39;
+		final int hotbarEnd     = 47;  // inclusive
+		final int offhandSlot   = 48;
 
 		if (index < containerEnd) {
-			// Moving FROM container TO player inventory
-			if (!this.moveItemStackTo(stackInSlot, playerInvStart, playerInvEnd + 1, true)) {
+			// ── Moving FROM a container slot → player inventory ──
+			if (!this.moveItemStackTo(stackInSlot, playerInvStart, offhandSlot + 1, true)) {
 				return ItemStack.EMPTY;
 			}
 		} else {
-			// Moving FROM player inventory TO container
+			// ── Moving FROM player inventory / hotbar / offhand → container ──
 			boolean moved = false;
 
-			// Try charm slot if it's a charm and slot is empty
-			if (stackInSlot.getItem() instanceof VasculariumCharmItem) {
+			// Armor items → armor slots
+			if (!moved) {
+				for (int i = armorStart; i <= armorEnd; i++) {
+					Slot armorSlot = this.slots.get(i);
+					if (!armorSlot.hasItem() && armorSlot.mayPlace(stackInSlot)) {
+						armorSlot.set(stackInSlot.split(stackInSlot.getMaxStackSize()));
+						moved = true;
+						break;
+					}
+				}
+			}
+
+			// Morphling jar → jar slot
+			if (!moved && stackInSlot.getItem() instanceof ItemMorphlingJar) {
+				Slot jarSlot = this.slots.get(jarSlotUI);
+				if (!jarSlot.hasItem() && jarSlot.mayPlace(stackInSlot)) {
+					jarSlot.set(stackInSlot.split(1));
+					moved = true;
+				}
+			}
+
+			// Vascularium charm → charm slot
+			if (!moved && stackInSlot.getItem() instanceof VasculariumCharmItem) {
 				Slot charmSlot = this.slots.get(charmSlotUI);
 				if (!charmSlot.hasItem() && charmSlot.mayPlace(stackInSlot)) {
 					charmSlot.set(stackInSlot.split(1));
 					moved = true;
 				}
 			}
-			// Try gourd slot if it's a gourd and slot is empty
-			else if (stackInSlot.getItem() instanceof BloodGourdItem) {
+
+			// Blood gourd → gourd slot
+			if (!moved && stackInSlot.getItem() instanceof BloodGourdItem) {
 				Slot gourdSlot = this.slots.get(gourdSlotUI);
 				if (!gourdSlot.hasItem() && gourdSlot.mayPlace(stackInSlot)) {
 					gourdSlot.set(stackInSlot.split(1));
@@ -142,15 +179,13 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 				}
 			}
 
-			// If not a charm/gourd (or slot was full), just swap between inv and hotbar
+			// Nothing matched — swap between hotbar and main inventory
 			if (!moved) {
 				if (index >= playerInvStart && index < hotbarStart) {
-					// Main inventory -> hotbar
-					if (!this.moveItemStackTo(stackInSlot, hotbarStart, playerInvEnd, false)) {
+					if (!this.moveItemStackTo(stackInSlot, hotbarStart, hotbarEnd + 1, false)) {
 						return ItemStack.EMPTY;
 					}
-				} else if (index >= hotbarStart && index <= playerInvEnd) {
-					// Hotbar -> main inventory
+				} else if (index >= hotbarStart && index <= offhandSlot) {
 					if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarStart, false)) {
 						return ItemStack.EMPTY;
 					}

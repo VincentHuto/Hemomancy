@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.block.vein.IEarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
@@ -26,6 +27,7 @@ public class CapabilityInit {
 		event.register(IEarthenVeinLoc.class);
 		event.register(IRune.class);
 		event.register(IRunesItemHandler.class);
+		event.register(IEquippedMorphling.class);
 
 	}
 

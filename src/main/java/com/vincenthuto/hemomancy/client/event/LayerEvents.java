@@ -47,6 +47,7 @@ import com.vincenthuto.hemomancy.client.model.item.SanguisLanceaModel;
 import com.vincenthuto.hemomancy.client.render.layer.player.BloodAvatarLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.EquippedMorphlingLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.FungalElytraLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.RenderRunesLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
@@ -196,6 +197,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new RenderRunesLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));
+			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 
 		}
 	}

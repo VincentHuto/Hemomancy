@@ -34,9 +34,11 @@ import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
 import com.vincenthuto.hemomancy.client.screen.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarScreen;
+import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
 import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
@@ -56,6 +58,7 @@ import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPac
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.ChangeMorphKeyPacket;
+import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungalSkyBoxRenderer;
@@ -65,6 +68,7 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -122,6 +126,8 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
 			"key.hemomancy.category");
+	public static final KeyMapping openMorphlingJarViewer = new KeyMapping("key.hemomancy.openmorphlingjar.desc",
+			GLFW.GLFW_KEY_J, "key.hemomancy.category");
 
 	private static boolean menuKey = false;
 
@@ -146,6 +152,13 @@ public class ClientEvents {
 		}
 		if (toggleGourd.consumeClick()) {
 			PacketHandler.CHANNELRUNES.sendToServer(new ToggleGourdKeyPacket());
+		}
+		if (openMorphlingJarViewer.consumeClick()) {
+			if (Screen.hasShiftDown()) {
+				PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new OpenMorphlingJarPacket());
+			} else {
+				MorphlingJarViewerScreen.openScreen();
+			}
 		}
 		if (cycleSelectedManip.consumeClick()) {
 			PacketHandler.CHANNELKNOWNMANIPS
@@ -346,6 +359,7 @@ public class ClientEvents {
 		public static void clientSetup(FMLClientSetupEvent event) {
 			MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 			BloodVolumeOverlay.instance = new BloodVolumeOverlay();
+			EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
@@ -391,6 +405,7 @@ public class ClientEvents {
 			event.register(ClientEvents.OPEN_CHARM_SLOT_KEYBIND);
 			event.register(ClientEvents.openVascCharmMenu);
 			event.register(ClientEvents.toggleGourd);
+			event.register(ClientEvents.openMorphlingJarViewer);
 
 		}
 
@@ -439,6 +454,10 @@ public class ClientEvents {
 				gui.setupOverlayRenderState(true, false);
 				BloodVolumeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 				// BloodVolumeOverlay.HUD_BLOODVOLUME;
+			});
+			event.registerAboveAll("equipped_morphling", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+				gui.setupOverlayRenderState(true, false);
+				EquippedMorphlingOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}

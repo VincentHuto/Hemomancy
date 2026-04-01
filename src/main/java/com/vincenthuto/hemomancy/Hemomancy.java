@@ -163,7 +163,7 @@ public class Hemomancy {
 
     // Combined a few methods into one more generic one
     public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
-        if (item.isInstance(player.getOffhandItem().getItem()))
+        if (item.isInstance(player.getMainHandItem().getItem()))
             return player.getMainHandItem();
         if (item.isInstance(player.getOffhandItem().getItem()))
             return player.getOffhandItem();

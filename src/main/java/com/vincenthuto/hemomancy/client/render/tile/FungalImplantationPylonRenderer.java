@@ -4,16 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.block.FloatingEyeModel;
 import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
-import com.vincenthuto.hemomancy.client.render.tile.EarthenVeinRenderer.EarthenVeinAnimContext;
-import com.vincenthuto.hemomancy.common.block.EarthenVeinBlock;
 import com.vincenthuto.hemomancy.common.tile.FungalImplantationPylonBlockEntity;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -44,15 +44,16 @@ public class FungalImplantationPylonRenderer implements BlockEntityRenderer<Fung
 		pPoseStack.pushPose();
 		pPoseStack.translate(0.5, 1.51, 0.5);
 		pPoseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
- 
+
 		vein.setupAnimation(te.getLevel(), partialTicks, animCtx);
-//		Boolean stented = te.getBlockState().getValue(EarthenVeinBlock.STENTED);
-//		Boolean named = te.getBlockState().getValue(EarthenVeinBlock.NAMED);
 
-//		vein.getRoot().getChild("stent").visible =stented;
-//		vein.getRoot().getChild("stent").getChild("nametag").visible =named;
+		// The filler blocks at +1 and +2 above this block occlude the skylight, causing
+		// combinedLightIn to be nearly zero (completely dark). Sample light from one
+		// block above the top filler (+3) so the model is lit correctly.
+		BlockPos abovePos = te.getBlockPos().above(3);
+		int light = LevelRenderer.getLightColor(te.getLevel(), abovePos);
 
-		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), combinedLightIn,
+		vein.renderToBuffer(pPoseStack, bufferIn.getBuffer(vein.renderType(texture)), light,
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 		pPoseStack.popPose();
 //

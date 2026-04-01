@@ -280,7 +280,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",
 			() -> new ItemMorphlingPolyp(new Item.Properties()));
 	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
-			() -> new ItemMorphlingJar("morphling_jar", 4, Rarity.UNCOMMON));
+			() -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
 			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",

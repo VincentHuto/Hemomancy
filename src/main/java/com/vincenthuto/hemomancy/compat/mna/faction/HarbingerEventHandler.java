@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.compat.mna.faction;
 
 import com.mna.Registries;
-import com.mna.api.capabilities.resource.ICastingResourceGuiProvider;
 import com.mna.api.faction.IFaction;
 import com.mna.capabilities.playerdata.magic.resources.CastingResourceGuiRegistry;
 import com.mna.capabilities.playerdata.magic.resources.CastingResourceRegistry;
@@ -12,7 +11,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 

@@ -126,12 +126,7 @@ public class BefoulingAshTrailBlock extends Block {
 
 	}
 
-	/**
-	 * Called periodically clientside on blocks near the player to show effects
-	 * (like furnace fire particles). Note that this method is unrelated to
-	 * {@link randomTick} and {@link #needsRandomTick}, and will always be called
-	 * regardless of whether the block can receive random update ticks
-	 */
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
@@ -170,11 +165,6 @@ public class BefoulingAshTrailBlock extends Block {
 		builder.add(NORTH, EAST, SOUTH, WEST, POWER);
 	}
 
-	/**
-	 * @deprecated call via
-	 *             {@link IBlockState#getStrongPower(IBlockAccess,BlockPos,EnumFacing)}
-	 *             whenever possible. Implementing/overriding is fine.
-	 */
 	@Deprecated
 	@Override
 	public int getDirectSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
@@ -210,11 +200,7 @@ public class BefoulingAshTrailBlock extends Block {
 				!worldIn.getBlockState(pos.above()).isRedstoneConductor(worldIn, pos));
 	}
 
-	/**
-	 * @deprecated call via
-	 *             {@link IBlockState#getWeakPower(IBlockAccess,BlockPos,EnumFacing)}
-	 *             whenever possible. Implementing/overriding is fine.
-	 */
+
 	@Deprecated
 	@Override
 	public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
@@ -292,26 +278,14 @@ public class BefoulingAshTrailBlock extends Block {
 		}
 	}
 
-	/**
-	 * Can this block provide power. Only wire currently seems to have this change
-	 * based on its state.
-	 *
-	 * @deprecated call via {@link IBlockState#canProvidePower()} whenever possible.
-	 *             Implementing/overriding is fine.
-	 */
+
 	@Deprecated
 	@Override
 	public boolean isSignalSource(BlockState state) {
 		return this.canProvidePower;
 	}
 
-	/**
-	 * Returns the blockstate with the given mirror of the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 *
-	 * @deprecated call via {@link IBlockState#withMirror(Mirror)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
+
 	@Deprecated
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
@@ -416,13 +390,7 @@ public class BefoulingAshTrailBlock extends Block {
 								: RedstoneSide.SIDE;
 	}
 
-	/**
-	 * Returns the blockstate with the given rotation from the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 *
-	 * @deprecated call via {@link IBlockState#withRotation(Rotation)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
+
 	@Deprecated
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
@@ -467,11 +435,7 @@ public class BefoulingAshTrailBlock extends Block {
 
 	}
 
-	/**
-	 * performs updates on diagonal neighbors of the target position and passes in
-	 * the flags. The flags can be referenced from the docs for
-	 * {@link LevelAccessorWriter#setBlockState(IBlockState, BlockPos, int)}.
-	 */
+
 	@Override
 	public void updateIndirectNeighbourShapes(BlockState state, LevelAccessor worldIn, BlockPos pos, int flags,
 			int recursionLeft) {

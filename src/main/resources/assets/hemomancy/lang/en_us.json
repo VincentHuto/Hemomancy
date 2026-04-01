@@ -342,6 +342,7 @@
 	"key.hemomancy.cyclemanip.desc": "Cycle Known Manipulations",
 	"key.hemomancy.drawtest.desc": "Blood Draw",
 	"key.hemomancy.openjar.desc": "Open Morphling Jar",
+	"key.hemomancy.openmorphlingjar.desc": "Open Morphling Jar Viewer",
 	"key.hemomancy.togglegourd.desc": "Toggle Gourd Open/Closed",
 	"key.hemomancy.quickusemanip.desc": "Use Quick Manipulation",
 	"key.hemomancy.runebinderpickup.desc": "Toggle Rune Binder Pickup",

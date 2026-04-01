@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.network.morphling.JarTogglePickupPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenLivingStaffPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.OpenMorphlingJarPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.PacketUpdateLivingStaffMorph;
+import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
 import com.vincenthuto.hemomancy.common.network.morphling.ToggleMorphlingJarMessagePacket;
 import com.vincenthuto.hemomancy.common.network.particle.AirBloodDrawPacket;
 import com.vincenthuto.hemomancy.common.network.particle.EntityHitParticlePacket;
@@ -202,6 +203,10 @@ public class PacketHandler {
 
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, ChangeMorphKeyPacket.class, ChangeMorphKeyPacket::encode,
 				ChangeMorphKeyPacket::decode, ChangeMorphKeyPacket.Handler::handle);
+
+		CHANNELMORPHLINGJAR.registerMessage(networkID++, SyncEquippedMorphlingPacket.class,
+				SyncEquippedMorphlingPacket::encode, SyncEquippedMorphlingPacket::decode,
+				SyncEquippedMorphlingPacket::handle);
 
 	}
 

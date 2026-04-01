@@ -1,12 +1,9 @@
 package com.vincenthuto.hemomancy.client.screen.living;
 
-import org.joml.Vector3f;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
-import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -14,65 +11,68 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
+/**
+ * The insertion screen opened with Shift+Right-click on the Morphling Jar.
+ * Players drag Morphling items into the 2×2 slot grid to store them.
+ */
 public class MorphlingJarScreen extends AbstractContainerScreen<MorphlingJarMenu> {
-	private ResourceLocation GUI;
 
-	public MorphlingJarScreen(MorphlingJarMenu container, Inventory playerInventory, Component name) {
-		super(container, playerInventory, name);
+    // Single GUI texture – matches the refactored 2×2 slot layout (176×166)
+    private static final ResourceLocation GUI =
+            Hemomancy.rloc("textures/gui/morphling_jar_gui.png");
 
-		switch (container.slotcount) {
-		case 4:
-			GUI = Hemomancy.rloc("textures/gui/morphling_jar_gui.png");
-			imageWidth = 176;
-			imageHeight = 228;
-			break;
-		case 8:
-			GUI = Hemomancy.rloc("textures/gui/morphling_jar_large.png");
-			imageWidth = 176;
-			imageHeight = 168;
-			break;
-		case 12:
-			GUI = Hemomancy.rloc("textures/gui/morphling_jar_max.png");
-			imageWidth = 176;
-			imageHeight = 184;
-			break;
-		default:
-			GUI = Hemomancy.rloc("textures/gui/morphling_jar.png");
-			imageWidth = 212;
-			imageHeight = 276;
-			break;
-		}
-	}
+    public MorphlingJarScreen(MorphlingJarMenu container, Inventory playerInventory, Component name) {
+        super(container, playerInventory, name);
+        imageWidth = 176;
+        imageHeight = 166;
+    }
 
-	@Override
-	protected void init() {
-		super.init();
-	}
+    @Override
+    protected void init() {
+        super.init();
+        // Push inventory/title labels into the correct relative positions
+        titleLabelX = 8;
+        titleLabelY = 6;
+        inventoryLabelX = 8;
+        inventoryLabelY = imageHeight - 94;
+    }
 
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    // ─── Rendering ───────────────────────────────────────────────────────────────
 
-		return super.keyPressed(keyCode, scanCode, modifiers);
-	}
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(graphics, mouseX, mouseY);
+    }
 
-	@Override
-	public void render(GuiGraphics graphics, int p_render_1_, int p_render_2_, float p_render_3_) {
-		this.renderBackground(graphics);
-		super.render(graphics, p_render_1_, p_render_2_, p_render_3_);
-		this.renderTooltip(graphics, p_render_1_, p_render_2_);
-	}
+    @Override
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.blit(GUI, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    }
 
-	@Override
-	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.getModelViewMatrix().translate(new Vector3f(0, 78, 0));
-		RenderSystem.setShaderTexture(0, GUI);
-		HLGuiUtils.drawTexturedModalRect(getGuiLeft(), getGuiTop(), 0, 0, imageWidth, imageHeight);
-	}
+    @Override
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+        // Title in a deep crimson to match the jar's biological theme
+        graphics.drawString(font, this.title.getString(), titleLabelX, titleLabelY, 0x5C1010, false);
+        // "Inventory" label in subdued grey
+        graphics.drawString(font, this.playerInventoryTitle.getString(),
+                inventoryLabelX, inventoryLabelY, 0x404040, false);
+    }
 
-	@Override
-	protected void renderLabels(GuiGraphics graphics, int x, int y) {
-		graphics.drawString(font,this.title.getString(), 7, 6, 0x404040);
-	}
+    // ─── Input ───────────────────────────────────────────────────────────────────
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Allow the inventory key to close the screen
+        InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
+        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
 }
+

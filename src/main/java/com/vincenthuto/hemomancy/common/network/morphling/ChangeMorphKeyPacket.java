@@ -1,18 +1,19 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
@@ -23,69 +24,41 @@ public class ChangeMorphKeyPacket {
 	public static class Handler {
 		public static void handle(final ChangeMorphKeyPacket msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
-				ItemStack staff = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), LivingStaffItem.class);
-				ItemStack jar = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), ItemMorphlingJar.class);
-				if (staff.getItem() instanceof LivingStaffItem) {
-					if (jar.getItem() instanceof ItemMorphlingJar) {
-						IItemHandler staffHandler = staff.getCapability(ForgeCapabilities.ITEM_HANDLER)
-								.orElseThrow(NullPointerException::new);
-						IItemHandler jarHandler = jar.getCapability(ForgeCapabilities.ITEM_HANDLER)
-								.orElseThrow(NullPointerException::new);
-						if (staffHandler instanceof LivingStaffItemHandler) {
-							LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
-							if (jarHandler instanceof MorphlingJarItemHandler) {
-								MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-								castedJar.setDirty();
-								castedStaff.setDirty();
-								CompoundTag CompoundTag = jar.getOrCreateTag();
-								CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-								if (items != null) {
-									Random rand = new Random();
-									int randSlot = rand.nextInt(4);
-									if (items.contains("Items", 9)) {
-										@SuppressWarnings("static-access")
-										ItemStack selectedStack = ItemStack
-												.of(((ListTag) items.get("Items")).getCompound(randSlot));
-										if (selectedStack.getItem() instanceof IMorphling) {
-											CompoundTag staffnbt = staff.getOrCreateTag();
-											CompoundTag staffItems = (CompoundTag) staffnbt.get("Inventory");
-											if (staffItems != null) {
-												if (staffItems.contains("Items", 9)) {
-													@SuppressWarnings("static-access")
-													ItemStack selectedStaffStack = ItemStack
-															.of(((ListTag) staffItems.get("Items")).getCompound(0));
+				ServerPlayer player = ctx.get().getSender();
+				if (player == null)
+					return;
 
-													castedJar.setDirty();
-													castedStaff.setDirty();
-													castedJar.setStackInSlot(randSlot, selectedStaffStack);
-													castedJar.setDirty();
-													castedStaff.setStackInSlot(0, selectedStack);
-													castedStaff.setDirty();
-												}
+				ItemStack jar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+				if (!(jar.getItem() instanceof ItemMorphlingJar))
+					return;
 
-											}
-										}
+				IItemHandler rawHandler = jar.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+				if (!(rawHandler instanceof MorphlingJarItemHandler jarHandler))
+					return;
 
-									}
-								}
-							}
-						}
+				jarHandler.load();
 
+				// Collect non-empty morphling slots
+				List<Integer> validSlots = new ArrayList<>();
+				for (int i = 0; i < jarHandler.getSlots(); i++) {
+					ItemStack s = jarHandler.getStackInSlot(i);
+					if (!s.isEmpty() && s.getItem() instanceof IMorphling) {
+						validSlots.add(i);
 					}
 				}
-				/*
-				 * if (jarHandler instanceof MorphlingJarItemHandler && staffHandler instanceof
-				 * LivingStaffItemHandler) { System.out.println("IS WORKING");
-				 * MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-				 *
-				 * LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
-				 * // ItemStack originalFocus = castedStaff.getStackInSlot(0).copy(); ItemStack
-				 * inJar = castedJar.getStackInSlot(msg.selected).copy(); if (inJar.getItem() !=
-				 * Items.AIR) { castedStaff.extractItem(0, 1, false); //
-				 * castedJar.extractItem(msg.selected, 1, false); castedStaff.setStackInSlot(0,
-				 * inJar); // castedJar.setStackInSlot(msg.selected, originalFocus); } }
-				 */
+				if (validSlots.isEmpty())
+					return;
 
+				Random rand = new Random();
+				int chosen = validSlots.get(rand.nextInt(validSlots.size()));
+				ItemStack selectedStack = jarHandler.getStackInSlot(chosen);
+
+				// Equip to player capability
+				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+					cap.setEquippedMorphling(selectedStack.copy());
+				});
+
+				EquippedMorphlingEvents.syncToClient(player);
 			});
 			ctx.get().setPacketHandled(true);
 		}

@@ -3,88 +3,82 @@ package com.vincenthuto.hemomancy.common.network.morphling;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
-import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
-import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkEvent;
 
 public class PacketUpdateLivingStaffMorph {
+
 	public static class Handler {
 		public static void handle(final PacketUpdateLivingStaffMorph msg, Supplier<NetworkEvent.Context> ctx) {
 			ctx.get().enqueueWork(() -> {
-				ItemStack staff = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), LivingStaffItem.class);
-				ItemStack jar = Hemomancy.findItemInPlayerInv(ctx.get().getSender(), ItemMorphlingJar.class);
-				if (staff.getItem() instanceof LivingStaffItem) {
-					if (jar.getItem() instanceof ItemMorphlingJar) {
-						IItemHandler staffHandler = staff.getCapability(ForgeCapabilities.ITEM_HANDLER)
-								.orElseThrow(NullPointerException::new);
-						IItemHandler jarHandler = jar.getCapability(ForgeCapabilities.ITEM_HANDLER)
-								.orElseThrow(NullPointerException::new);
-						if (staffHandler instanceof LivingStaffItemHandler) {
-							LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
-							if (jarHandler instanceof MorphlingJarItemHandler) {
-								MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-								castedJar.setDirty();
-								castedStaff.setDirty();
-								CompoundTag CompoundTag = jar.getOrCreateTag();
-								CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-								if (items != null) {
-									if (items.contains("Items", 9)) {
-										@SuppressWarnings("static-access")
-										ItemStack selectedStack = ItemStack
-												.of(((ListTag) items.get("Items")).getCompound(msg.selected));
-										if (selectedStack.getItem() instanceof IMorphling) {
-											CompoundTag staffnbt = staff.getOrCreateTag();
-											CompoundTag staffItems = (CompoundTag) staffnbt.get("Inventory");
-											if (staffItems != null) {
-												if (staffItems.contains("Items", 9)) {
-													@SuppressWarnings("static-access")
-													ItemStack selectedStaffStack = ItemStack
-															.of(((ListTag) staffItems.get("Items")).getCompound(0));
-													castedJar.setDirty();
-													castedStaff.setDirty();
-													castedJar.setStackInSlot(msg.selected, selectedStaffStack);
-													castedJar.setDirty();
-													castedStaff.setStackInSlot(0, selectedStack);
-													castedStaff.setDirty();
-												}
+				ServerPlayer player = ctx.get().getSender();
+				if (player == null)
+					return;
 
-											}
-										}
-
-									}
-								}
-							}
-						}
-
-					}
+				// ── Unequip: selected == -1 means clear the equipped morphling ──────────
+				if (msg.selected == -1) {
+					player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+						cap.clearMorphling();
+					});
+					EquippedMorphlingEvents.syncToClient(player);
+					return;
 				}
-				/*
-				 * if (jarHandler instanceof MorphlingJarItemHandler && staffHandler instanceof
-				 * LivingStaffItemHandler) { System.out.println("IS WORKING");
-				 * MorphlingJarItemHandler castedJar = (MorphlingJarItemHandler) jarHandler;
-				 *
-				 * LivingStaffItemHandler castedStaff = (LivingStaffItemHandler) staffHandler;
-				 * // ItemStack originalFocus = castedStaff.getStackInSlot(0).copy(); ItemStack
-				 * inJar = castedJar.getStackInSlot(msg.selected).copy(); if (inJar.getItem() !=
-				 * Items.AIR) { castedStaff.extractItem(0, 1, false); //
-				 * castedJar.extractItem(msg.selected, 1, false); castedStaff.setStackInSlot(0,
-				 * inJar); // castedJar.setStackInSlot(msg.selected, originalFocus); } }
-				 */
 
+				// ── Locate the morphling jar (inventory, offhand, or rune slot 7) ───────
+				ItemStack jarStack = findJar(player);
+				if (jarStack.isEmpty())
+					return;
+
+				MorphlingJarItemHandler jarHandler = (MorphlingJarItemHandler) jarStack.getCapability(ForgeCapabilities.ITEM_HANDLER)
+						.orElse(null);
+				if (jarHandler == null)
+					return;
+				jarHandler.load();
+
+				// ── Validate the requested index ─────────────────────────────────────────
+				int idx = msg.selected;
+				if (idx < 0 || idx >= jarHandler.getSlots())
+					return;
+
+				ItemStack fromJar = jarHandler.getStackInSlot(idx);
+				if (fromJar.isEmpty() || !(fromJar.getItem() instanceof IMorphling))
+					return;
+
+				// ── Equip to player capability ───────────────────────────────────────────
+				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+					cap.setEquippedMorphling(fromJar.copy());
+				});
+
+				// Sync to client
+				EquippedMorphlingEvents.syncToClient(player);
 			});
 			ctx.get().setPacketHandled(true);
 		}
+
+		/** Finds the jar in hand, offhand, rune slot 7, or anywhere in inventory. */
+		private static ItemStack findJar(Player player) {
+			// Main / offhand
+			ItemStack jar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
+			if (!jar.isEmpty())
+				return jar;
+			// Rune equip slot 7
+			return player.getCapability(RunesCapabilities.RUNES).map(r -> r.getStackInSlot(7))
+					.filter(s -> s.getItem() instanceof ItemMorphlingJar).orElse(ItemStack.EMPTY);
+		}
 	}
+
+	// ─── Codec ───────────────────────────────────────────────────────────────────
 
 	public static PacketUpdateLivingStaffMorph decode(FriendlyByteBuf buf) {
 		return new PacketUpdateLivingStaffMorph(buf.readInt());
@@ -94,7 +88,7 @@ public class PacketUpdateLivingStaffMorph {
 		buf.writeInt(msg.selected);
 	}
 
-	private int selected;
+	private final int selected;
 
 	public PacketUpdateLivingStaffMorph(int selectedIn) {
 		this.selected = selectedIn;

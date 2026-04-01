@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
@@ -109,14 +110,17 @@ public class LivingStaffItem extends LivingItemItem {
 		super(properties);
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		CompoundTag CompoundTag = stack.getOrCreateTag();
-		CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-		if (items != null) {
-			if (items.contains("Items", 9)) {
-				tooltip.add(ItemStack.of(((ListTag) items.get("Items")).getCompound(0)).getHoverName());
+		if (worldIn != null && worldIn.isClientSide) {
+			net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+			if (player != null) {
+				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+					ItemStack equipped = cap.getEquippedMorphling();
+					if (!equipped.isEmpty()) {
+						tooltip.add(equipped.getHoverName());
+					}
+				});
 			}
 		}
 	}
@@ -206,23 +210,18 @@ public class LivingStaffItem extends LivingItemItem {
 					 * "Abuse of Power does not come without consequence"), true); }
 					 */
 					if (!player.isCrouching()) {
-						CompoundTag CompoundTag = stack.getOrCreateTag();
-						CompoundTag items = (CompoundTag) CompoundTag.get("Inventory");
-						if (items != null) {
-							if (items.contains("Items", 9)) {
-								@SuppressWarnings("static-access")
-								ItemStack selectedStack = ItemStack.of(((ListTag) items.get("Items")).getCompound(0));
-								if (selectedStack.getItem() instanceof IMorphling) {
-									IMorphling morphling = (IMorphling) selectedStack.getItem();
-									morphling.use(player, player.getUsedItemHand(), stack, worldIn);
-									playerVolume.drain(morphling.getBloodCost());
+						player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+							ItemStack selectedStack = cap.getEquippedMorphling();
+							if (!selectedStack.isEmpty() && selectedStack.getItem() instanceof IMorphling) {
+								IMorphling morphling = (IMorphling) selectedStack.getItem();
+								morphling.use(player, player.getUsedItemHand(), stack, worldIn);
+								playerVolume.drain(morphling.getBloodCost());
 
-									PacketHandler.CHANNELBLOODVOLUME.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new BloodVolumeServerPacket(playerVolume));
-								}
+								PacketHandler.CHANNELBLOODVOLUME.send(
+										PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+										new BloodVolumeServerPacket(playerVolume));
 							}
-						}
+						});
 
 					} else {
 						this.summonDirectedOrb(worldIn, player);
