@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Unstained",
+  "subtitle": "Anti-blood zealots",
+  "text": "The Unstained are a resistance faction devoted to purging the infection’s influence. They favor blessed copper, antifungals, and hemolytic solutions that destroy blood on contact. Expect hostility as your scarlet power grows.",
+  "icon": "hemomancy:hemolytic_solution"
+}

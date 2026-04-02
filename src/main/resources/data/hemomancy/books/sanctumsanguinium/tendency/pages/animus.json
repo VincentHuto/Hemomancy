@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 9,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Animus",
+  "subtitle": "Vivacious by another name",
+  "text": "Animus is the in-code name for the Vivacious tendency (life, growth, renewal). In Hemomancy, the Vivacious Enzyme represents this tendency. If you see ANIMUS requirements on a manipulation, you’ll generally want Vivacious-aligned enzymes and creatures.",
+  "icon": "hemomancy:vivacious_enzyme"
+}

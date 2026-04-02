@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 10,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Lux",
+  "subtitle": "Incandescent by another name",
+  "text": "Lux is the in-code name for the Incandescent tendency (light, flight, brilliance). In Hemomancy, the Incandescent Enzyme represents this tendency. If you see LUX requirements, lean into light-aligned enzymes and effects.",
+  "icon": "hemomancy:incandescent_enzyme"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood Volume",
+  "subtitle": "Your fuel source",
+  "text": "Blood Volume is the core resource used by Manipulations. When your blood is Active, casting will drain your current volume. Blood can be stored in Blood Gourds and other vessels, then returned to you when needed. If you run dry, your body can’t manifest the memory strongly enough to act.",
+  "icon": "hemomancy:blood_tendency_gauge"
+}

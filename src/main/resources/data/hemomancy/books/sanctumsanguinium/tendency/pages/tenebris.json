@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 11,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Tenebris",
+  "subtitle": "Umbral by another name",
+  "text": "Tenebris is the in-code name for the Umbral tendency (darkness, stealth, the End). In Hemomancy, the Umbral Enzyme represents this tendency. If you see TENEBRIS requirements, use umbral-aligned enzymes and tactics.",
+  "icon": "hemomancy:umbral_enzyme"
+}

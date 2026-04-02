@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 8,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ferric",
+  "subtitle": "Iron, barbs, certainty",
+  "text": "Ferric tendency is solidity and unchanging resolve. It manifests as iron-hard growths, barbs, and rigid constructs. Ferric enzymes help recall defensive techniques and transmutations tied to metal and structure.",
+  "icon": "hemomancy:ferric_enzyme"
+}

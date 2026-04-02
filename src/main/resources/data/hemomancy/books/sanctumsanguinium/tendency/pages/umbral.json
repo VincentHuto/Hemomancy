@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Umbral",
+  "subtitle": "Darkness, silence, the End",
+  "text": "Umbral tendency is shadow and concealment. It favors stealth, misdirection, and the quiet between heartbeats. Umbral enzymes help recall manipulations that hide, confuse, or strike unseen.",
+  "icon": "hemomancy:umbral_enzyme"
+}

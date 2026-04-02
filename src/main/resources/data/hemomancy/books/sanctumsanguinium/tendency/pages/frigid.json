@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Frigid",
+  "subtitle": "Cold, ice, stillness",
+  "text": "Frigid tendency is the quiet bite of winter and the slow certainty of ice. It favors control, patience, and preservation. Frigid enzymes push memories toward slowing, freezing, and defensive uses.",
+  "icon": "hemomancy:frigid_enzyme"
+}

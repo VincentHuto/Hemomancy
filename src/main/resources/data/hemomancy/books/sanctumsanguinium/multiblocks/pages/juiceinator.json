@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Juiceinator",
+  "subtitle": "Refine and recycle",
+  "text": "The Juiceinator is a processing station for turning biological materials into useful components. If you’re low on enzymes or need to recycle leftovers, the Juiceinator can help stretch your resources.",
+  "icon": "hemomancy:juiceinator"
+}

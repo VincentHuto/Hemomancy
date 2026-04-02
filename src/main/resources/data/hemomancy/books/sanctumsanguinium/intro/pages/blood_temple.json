@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Blood Temple",
+  "subtitle": "The first awakening",
+  "text": "Somewhere in the world lies a Blood Temple. Activating the central pedestal is the first step toward true Hemomancy, waking the infection and allowing your blood to become Active. If your journey feels ‘locked’, find the Temple.",
+  "icon": "hemomancy:sanguine_formation"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Morphlings",
+  "subtitle": "Symbiotic parasites",
+  "text": "Morphlings are beneficial strains of the infection shaped into usable forms. Start with a polyp, then nurse it with enzymes inside the Morphling Incubator to produce specialized strains. Equip them using the Living Staff for powerful, situational effects.",
+  "icon": "hemomancy:morphling_polyp"
+}

@@ -54,35 +54,35 @@ public class ManipulationInit {
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
 
 	public static final RegistryObject<BloodManipulation> summon_avatar = MANIPS.register("summon_avatar",
-			() -> new SummonAvatarManip("summon_avatar", 100, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
+			() -> new SummonAvatarManip("summon_avatar", 500, 50, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> blood_needle = MANIPS.register("blood_needle",
 			() -> new BloodNeedleManip("blood_needle", 100, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
 
 	public static final RegistryObject<BloodManipulation> blood_cloud = MANIPS.register("blood_cloud",
-			() -> new BloodCloudManip("blood_cloud", 100, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
+			() -> new BloodCloudManip("blood_cloud", 300, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.HEAD));
 
 	public static final RegistryObject<BloodManipulation> blood_rush = MANIPS.register("blood_rush",
 			() -> new BloodRushManip("blood_rush", 100, 0, 0, EnumManipulationType.PASSIVE,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> blood_aneurysm = MANIPS.register("blood_aneurysm",
-			() -> new BloodAneurysmManip("blood_aneurysm", 100, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
+			() -> new BloodAneurysmManip("blood_aneurysm", 400, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> ferric_transmutation = MANIPS.register("ferric_transmutation",
-			() -> new FerricTransmutationManip("ferric_transmutation", 1000, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.BODY));
+			() -> new FerricTransmutationManip("ferric_transmutation", 1000, 50, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.FERRIC, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> activation_potential = MANIPS.register("activation_potential",
-			() -> new ActivationPotentialManip("activation_potential", 100, 0, 0, EnumManipulationType.QUICK,
+			() -> new ActivationPotentialManip("activation_potential", 200, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> sanguine_ward = MANIPS.register("sanguine_ward",
-			() -> new SanguineWardManip("sanguine_ward", 5, 0, 0, EnumManipulationType.CONTINUOUS,
+			() -> new SanguineWardManip("sanguine_ward", 10, 10, 0, EnumManipulationType.CONTINUOUS,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
 
 	public static final RegistryObject<BloodManipulation> conjure_blade = MANIPS.register("conjure_blade",

@@ -43,14 +43,14 @@ public class BloodTendencyEvents {
 	@SubscribeEvent
 	public static void attachCapabilitiesEntity(final AttachCapabilitiesEvent<Entity> event) {
 		if (event.getObject() instanceof Player) {
-			event.addCapability(Hemomancy.rloc("bloodtendancy"), new BloodTendencyProvider());
+			event.addCapability(Hemomancy.rloc("bloodtendency"), new BloodTendencyProvider());
 		}
 	}
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
 		if (event.getObject() instanceof VisceralRecallerBlockEntity) {
-			event.addCapability(Hemomancy.rloc("bloodtendancy"), new BloodTendencyProvider());
+			event.addCapability(Hemomancy.rloc("bloodtendency"), new BloodTendencyProvider());
 		}
 	}
 

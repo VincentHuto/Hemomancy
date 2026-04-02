@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Incandescent",
+  "subtitle": "Light, flight, brilliance",
+  "text": "Incandescent tendency is radiant intensity: light, elevation, and spectacle. It’s tied to mobility and bright, outward force. Incandescent enzymes guide recall into luminous traversal and wide-reaching effects.",
+  "icon": "hemomancy:incandescent_enzyme"
+}

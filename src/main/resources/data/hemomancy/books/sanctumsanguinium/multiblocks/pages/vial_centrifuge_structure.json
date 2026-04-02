@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Vial Centrifuge",
+  "subtitle": "Spin, separate, refine",
+  "text": "The Vial Centrifuge processes filled blood vials into enzymes and other useful remnants. Different blood sources can yield different results, so experiment.",
+  "icon": "hemomancy:vial_centrifuge",
+  "structureloc": "hemomancy:blood_structure/vial_centrifuge"
+}

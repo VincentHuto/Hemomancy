@@ -44,6 +44,7 @@ import com.vincenthuto.hemomancy.common.item.tool.living.LivingSpearItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.SanguisLanceaItem;
+import com.vincenthuto.hemomancy.common.util.HemoItemProperties;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
@@ -558,33 +559,10 @@ public class ItemInit {
 	public static void itemPropOverrideClient(final FMLClientSetupEvent event) {
 
 		ItemProperties.register(unsigned_ancestral_ledger.get(), Hemomancy.rloc("unsigned"),
-				new ItemPropertyFunction() {
-					@Override
-					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-						if (stack.hasTag()) {
-							if (stack.getTag().getBoolean("state")) {
-								return 1;
-							} else {
-								return 0;
-							}
-						}
-						return 0;
-					}
-				});
+				HemoItemProperties.booleanTag("state"));
 
-		ItemProperties.register(bloody_vial.get(), Hemomancy.rloc("state"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
+		ItemProperties.register(bloody_vial.get(), Hemomancy.rloc("state"),
+				HemoItemProperties.booleanTag("state"));
 
 		ItemProperties.register(barbed_shield.get(), new ResourceLocation("blocking"),
 				(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
@@ -621,101 +599,23 @@ public class ItemInit {
 							&& LivingCrossbowItem.hasChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F;
 				});
 
-		ItemProperties.register(living_syringe.get(), Hemomancy.rloc("open"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
+		ItemProperties.register(living_syringe.get(), Hemomancy.rloc("open"),
+				HemoItemProperties.booleanTag("state"));
 
-//		ItemProperties.register(living_blade.get(), Hemomancy.rloc("open"),
-//				new ItemPropertyFunction() {
-//					@Override
-//					public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-//						if (stack.hasTag()) {
-//							if (stack.getTag().getBoolean("state")) {
-//								return 1;
-//							} else {
-//								return 0;
-//							}
-//						}
-//						return 0;
-//					}
-//				});
+		ItemProperties.register(curved_horn.get(), Hemomancy.rloc("open"),
+				HemoItemProperties.booleanTag("state"));
 
-		ItemProperties.register(curved_horn.get(), Hemomancy.rloc("open"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
+		ItemProperties.register(blood_gourd_white.get(), Hemomancy.rloc("open"),
+				HemoItemProperties.booleanTag("state"));
 
-		ItemProperties.register(blood_gourd_white.get(), Hemomancy.rloc("open"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
+		ItemProperties.register(blood_gourd_red.get(), Hemomancy.rloc("open"),
+				HemoItemProperties.booleanTag("state"));
 
-		ItemProperties.register(blood_gourd_red.get(), Hemomancy.rloc("open"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
+		ItemProperties.register(blood_gourd_black.get(), Hemomancy.rloc("open"),
+				HemoItemProperties.booleanTag("state"));
 
-		ItemProperties.register(blood_gourd_black.get(), Hemomancy.rloc("open"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					if (stack.getTag().getBoolean("state")) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-				return 0;
-			}
-		});
-
-		ItemProperties.register(morphling_jar.get(), Hemomancy.rloc("size"), new ItemPropertyFunction() {
-			@Override
-			public float call(ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) {
-				if (stack.hasTag()) {
-					return stack.getTag().getInt("size");
-				} else {
-					return 0;
-				}
-			}
-		});
+		ItemProperties.register(morphling_jar.get(), Hemomancy.rloc("size"),
+				HemoItemProperties.intTag("size"));
 
 		ItemProperties.register(living_staff.get(), Hemomancy.rloc("morph"), new ItemPropertyFunction() {
 

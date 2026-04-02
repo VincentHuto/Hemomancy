@@ -30,7 +30,7 @@ public class RecipeInit {
 
 	// Types
 
-	public static final RegistryObject<RecipeType<ChiselRecipe>> chisel_recipe = RECIPE_TYPES.register("chisel_recipse",
+	public static final RegistryObject<RecipeType<ChiselRecipe>> chisel_recipe = RECIPE_TYPES.register("chisel_recipe",
 			() -> RecipeType.simple(Hemomancy.rloc("chisel_recipe")));
 
 	public static final RegistryObject<RecipeType<JuiceinatorRecipe>> juiceinator_recipe_type = RECIPE_TYPES

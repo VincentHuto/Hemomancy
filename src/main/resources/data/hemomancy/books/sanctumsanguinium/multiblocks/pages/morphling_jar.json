@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Morphling Jar",
+  "subtitle": "Contain the strain",
+  "text": "A Morphling Jar stores grown morphlings safely. The Living Staff can cycle through stored morphlings to change its behavior. Keep several strains on hand for different encounters.",
+  "icon": "hemomancy:morphling_jar"
+}

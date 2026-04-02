@@ -1,12 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -50,10 +49,20 @@ public class BloodVolumeEvents {
 
 	@SubscribeEvent
 	public static void playerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
 		Player player = event.player;
+		if (player.level().isClientSide) return;
+
 		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
-			if(volume.isActive()) {
-			//	volume.fill(1f);
+			if (volume.isActive() && HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
+				int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
+				if (player.tickCount % interval == 0 && !volume.isFull()) {
+					double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get();
+					volume.fill(regenRate);
+					PacketHandler.CHANNELBLOODVOLUME.send(
+							PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+							new BloodVolumeServerPacket(volume));
+				}
 			}
 		});
 	}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Neurotic",
+  "subtitle": "Lightning, speed, nerves",
+  "text": "Neurotic tendency is nervous energy and crackling motion. It leans toward speed, reaction, and volatile discharge. Neurotic enzymes can unlock rapid, high-tempo manipulations.",
+  "icon": "hemomancy:neurotic_enzyme"
+}

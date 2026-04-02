@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 6,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Harbingers",
+  "subtitle": "Cultivators of the infection",
+  "text": "The Harbingers embrace the infection and cultivate it deliberately. They inoculate themselves and the land to spread the strain, seeing Hemomancy as a gift rather than a curse. Many advanced tools and memories trace back to Harbinger practices.",
+  "icon": "hemomancy:morphling_jar"
+}

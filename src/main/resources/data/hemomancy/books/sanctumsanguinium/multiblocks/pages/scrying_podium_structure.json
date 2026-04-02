@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 7,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Scrying Podium",
+  "subtitle": "A window into the veins",
+  "text": "The Scrying Podium lets you access extra equipment slots for Hemomancy tools, including Charms and Blood Gourds. Use it to manage your loadout.",
+  "icon": "hemomancy:scrying_podium",
+  "structureloc": "hemomancy:blood_structure/scrying_podium"
+}

@@ -112,8 +112,6 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping bloodDraw = new KeyMapping("key.hemomancy.drawtest.desc", GLFW.GLFW_KEY_LEFT_CONTROL,
 			"key.hemomancy.category");
-	public static final KeyMapping toggleMorphlingOpenJar = new KeyMapping("key.hemomancy.openjar.desc",
-			GLFW.GLFW_KEY_F, "key.hemomancy.category");
 	public static final KeyMapping cycleSelectedManip = new KeyMapping("key.hemomancy.cyclemanip.desc", GLFW.GLFW_KEY_C,
 			"key.hemomancy.category");
 	public static final KeyMapping useQuickManip = new KeyMapping("key.hemomancy.quickusemanip.desc", GLFW.GLFW_KEY_R,
@@ -127,7 +125,7 @@ public class ClientEvents {
 	public static final KeyMapping toggleGourd = new KeyMapping("key.hemomancy.togglegourd.desc", GLFW.GLFW_KEY_H,
 			"key.hemomancy.category");
 	public static final KeyMapping openMorphlingJarViewer = new KeyMapping("key.hemomancy.openmorphlingjar.desc",
-			GLFW.GLFW_KEY_J, "key.hemomancy.category");
+			GLFW.GLFW_KEY_B, "key.hemomancy.category");
 
 	private static boolean menuKey = false;
 
@@ -145,10 +143,6 @@ public class ClientEvents {
 
 		if (bloodDraw.isDown()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
-		}
-		if (toggleMorphlingOpenJar.consumeClick()) {
-			PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new ChangeMorphKeyPacket());
-
 		}
 		if (toggleGourd.consumeClick()) {
 			PacketHandler.CHANNELRUNES.sendToServer(new ToggleGourdKeyPacket());
@@ -398,7 +392,6 @@ public class ClientEvents {
 			event.register(ClientEvents.bloodFormation);
 			event.register(ClientEvents.bloodCrafting);
 			event.register(ClientEvents.bloodDraw);
-			event.register(ClientEvents.toggleMorphlingOpenJar);
 			event.register(ClientEvents.cycleSelectedManip);
 			event.register(ClientEvents.useQuickManip);
 			event.register(ClientEvents.useContManip);

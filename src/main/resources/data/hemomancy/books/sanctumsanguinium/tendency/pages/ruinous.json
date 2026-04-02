@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Ruinous",
+  "subtitle": "Death, decay, withering",
+  "text": "Ruinous tendency is rot, entropy, and the inevitable end. It thrives on decay and lingering harm. Ruinous enzymes skew memories toward draining, withering, and corrosive applications.",
+  "icon": "hemomancy:ruinous_enzyme"
+}
