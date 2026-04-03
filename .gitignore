@@ -25,6 +25,8 @@ run
 forge*changelog.txt
 /.apt_generated/
 /.apt_generated_tests/
+mna/
+mna
 libs/
 /src/generated/resources/data/hemomancy/tags/entity_types/Generate.py
 /src/main/resources/data/hemomancy/tags/entity_types/Generate.py
