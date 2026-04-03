@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.effect.BloodLossEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodRushEffect;
 import com.vincenthuto.hemomancy.common.effect.ElytraEffect;
 import com.vincenthuto.hemomancy.common.effect.HemolysisEffect;
+import com.vincenthuto.hemomancy.common.effect.SanguineFertilityEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -54,5 +55,12 @@ public class EffectInit {
 
 	public static final RegistryObject<Potion> potion_of_hemolysis = POTION_TYPES.register("potion_of_hemolysis",
 			() -> new Potion("potion_of_hemolysis", new MobEffectInstance(hemolysis.get(), 1000, 3)));
+
+	public static final RegistryObject<MobEffect> sanguine_fertility = EFFECTS.register("sanguine_fertility",
+			() -> new SanguineFertilityEffect(MobEffectCategory.BENEFICIAL, 0xCC3344));
+	public static final RegistryObject<Potion> potion_of_sanguine_fertility = POTION_TYPES.register(
+			"potion_of_sanguine_fertility",
+			() -> new Potion("potion_of_sanguine_fertility",
+					new MobEffectInstance(sanguine_fertility.get(), 1200, 0)));
 
 }

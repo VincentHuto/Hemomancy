@@ -178,6 +178,23 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 		return !s.isEmpty() && s.getItem() instanceof ItemMorphlingJar;
 	}
 
+	// ─── Accessors ───────────────────────────────────────────────────────────────
+
+	/** Returns the number of occupied morphling slots. */
+	public int getFilledSlotCount() {
+		if (handler == null) return 0;
+		int count = 0;
+		for (int i = 0; i < slotcount; i++) {
+			if (!handler.getStackInSlot(i).isEmpty()) count++;
+		}
+		return count;
+	}
+
+	/** Returns 0.0–1.0 representing how full the jar is. */
+	public float getFillRatio() {
+		return slotcount == 0 ? 0f : (float) getFilledSlotCount() / slotcount;
+	}
+
 	// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 	private ItemStack findMorphlingJar(Player playerEntity) {
