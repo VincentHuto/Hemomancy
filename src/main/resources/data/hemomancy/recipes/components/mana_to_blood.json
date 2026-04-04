@@ -1,0 +1,16 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/mana_to_blood",
+	"tier": 2,
+	"items":
+	[
+		"hemomancy:sanguine_formation",
+		"mna:animus_dust",
+		"hemomancy:blood_jar"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/circle",
+		"mna:manaweave_patterns/slash"
+	]
+}

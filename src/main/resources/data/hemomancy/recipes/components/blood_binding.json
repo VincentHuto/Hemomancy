@@ -1,0 +1,16 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/blood_binding",
+	"tier": 2,
+	"items":
+	[
+		"hemomancy:sanguine_formation",
+		"minecraft:chain",
+		"hemomancy:blood_jar"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/knot3",
+		"mna:manaweave_patterns/circle"
+	]
+}

@@ -1,0 +1,15 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/sanguine_fertility",
+	"tier": 1,
+	"items":
+	[
+		"minecraft:bone_meal",
+		"minecraft:wheat_seeds",
+		"hemomancy:sanguine_formation"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/circle"
+	]
+}

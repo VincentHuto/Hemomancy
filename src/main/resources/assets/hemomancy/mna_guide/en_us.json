@@ -24,7 +24,18 @@
 						"color": "black"
 					},
 					{
-						"text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.",
+						"text": "is a blood magic mod based around the quality of blood manipulation vs just a large quantity of blood, it covers topics of gore, magic, pretty exaggerated biology and much much more.\n\nWhen combined with ",
+						"italic": true,
+						"color": "black"
+					},
+					{
+						"text": "Mana and Artifice",
+						"italic": true,
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": ", new spell components, blood manipulations, a custom faction, crafting materials, and armor become available—bridging the gap between arcane sorcery and the primal art of Hemocraft.",
 						"italic": true,
 						"color": "black"
 					}
@@ -34,28 +45,195 @@
 		"related_recipes": [
 		]
 	},
-	"Revenger Dodo": {
-		"index": 0,
+	"Sanguine Fertility": {
+		"index": 1,
 		"category": "hemomancy",
 		"sections": [
 			{
 				"type": "title",
-				"value": "Revenger Dodo"
+				"value": "Sanguine Fertility"
 			},
 			{
 				"type": "text",
 				"value": "",
 				"json": [
 					{
-						"text": "The "
-					},
-					{
-						"text": "Revenger Dodo",
+						"text": "Sanguine Fertility",
 						"bold": true,
 						"color": "dark_red"
 					},
 					{
-						"text": " is a blood-forged avian monstrosity, summoned from the crimson ether of Hemomancy. Though resembling the extinct, flightless bird in stature, this dodo is anything but harmless. It is a relentless force of vengeance, designed to exact retribution upon those who harm its master."
+						"text": " is a spell component that applies the Sanguine Fertility effect to target entities. Animals under its influence will breed and grow at an accelerated rate, enveloped in green and red glow particles as the blood magic infuses their vitality.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 120s base (30s–600s)\n• Magnitude: 1 base (1–3 levels)\n• Affinity: Blood\n• Complexity: 15\n• Rote XP: 100"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/sanguine_fertility"
+			}
+		]
+	},
+	"Sanguine Transmutation": {
+		"index": 2,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Sanguine Transmutation"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Sanguine Transmutation",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a spell component that converts the caster's "
+					},
+					{
+						"text": "Mana",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " into "
+					},
+					{
+						"text": "Blood Volume",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": ". The magnitude attribute controls how much mana is consumed per cast, and the blood received is scaled by a conversion ratio of 5 blood per 1 mana spent.\n\nThe spell will fail if the caster lacks sufficient mana or if their blood is already full.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Magnitude: 50 mana base (10–200)\n• Affinity: Blood\n• Complexity: 20\n• Rote XP: 150\n• Tag: Friendly"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/mana_to_blood"
+			}
+		]
+	},
+	"Blood Binding": {
+		"index": 3,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Blood Binding"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Blood Binding",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a harmful spell component that applies the "
+					},
+					{
+						"text": "Blood Binding",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " effect to the target. Affected entities become frozen in place, their blood hardened into crystalline shackles that prevent all movement. Sinister crimson particles writhe around bound victims as the Hemomantic chains take hold.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 60 ticks base (20–300)\n• Magnitude: 1 base (1–4 levels)\n• Affinity: Blood\n• Complexity: 25\n• Rote XP: 150"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/blood_binding"
+			}
+		]
+	},
+	"Sanguine Transfusion": {
+		"index": 4,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Sanguine Transfusion"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Sanguine Transfusion",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a "
+					},
+					{
+						"text": "Blood Manipulation",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " that converts the Hemomancer's blood into "
+					},
+					{
+						"text": "Mana",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": ". When activated, 200 blood is consumed and converted at a ratio of 0.2 mana per blood, yielding 40 mana. Blue and purple glow particles rise from the caster as the transfusion completes.\n\nThis manipulation is the inverse of "
+					},
+					{
+						"text": "Sanguine Transmutation",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": "—together they allow a Hemomancer to freely exchange between the two magical resources.\n\n"
+					},
+					{
+						"text": "Requires: ",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "Mana and Artifice to be installed.\nRank: Mediocritas\nType: Quick\nCost: 200 Blood"
 					}
 				]
 			}
@@ -64,7 +242,7 @@
 		]
 	},
 	"Ritual of the Weeping Wound": {
-		"index": 0,
+		"index": 5,
 		"category": "hemomancy",
 		"sections": [
 			{
@@ -105,7 +283,7 @@
 		]
 	},
 	"Living Infused Thread": {
-		"index": 0,
+		"index": 6,
 		"category": "hemomancy",
 		"sections": [
 			{
@@ -146,13 +324,58 @@
 			}
 		]
 	},
-	"Greater Mote of Bood": {
-		"index": 0,
+	"Living Thread Armor": {
+		"index": 7,
 		"category": "hemomancy",
 		"sections": [
 			{
 				"type": "title",
-				"value": "Greater Mote of Bood"
+				"value": "Living Thread Armor"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Living Thread",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " armor set is crafted from "
+					},
+					{
+						"text": "Living Infused Thread",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": ", a Hemomantic material that pulses with faint vitality. The set consists of a Hood, Robes, Leggings, and Boots. Each piece is dyeable, allowing Hemomancers to customize their appearance.\n\n"
+					},
+					{
+						"text": "Set Bonus (3 pieces):\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "+500 Max Mana\n+50% Mana Regen\n\nThe living fibers of the armor draw upon blood-infused mana channels to amplify the wearer's arcane capacity, making this set ideal for Hemomancers who also practice sorcery."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Greater Mote of Blood": {
+		"index": 8,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Greater Mote of Blood"
 			},
 			{
 				"type": "text",
@@ -191,13 +414,13 @@
 						"color": "dark_red"
 					},
 					{
-						"text": " is an apex-tier manifestation of suffering, vitality, and raw Hemocraft, capable of fueling advanced rituals, forging legendary artifacts, and even sustaining a Hemomancer’s existence beyond normal mortality."
+						"text": " is an apex-tier manifestation of suffering, vitality, and raw Hemocraft, capable of fueling advanced rituals, forging legendary artifacts, and even sustaining a Hemomancer's existence beyond normal mortality."
 					}
 				]
 			},
 			{
 				"type": "recipe",
-				"location": "hemomancy:veldrin_altar/greater_mote_blood",
+				"location": "hemomancy:eldrin_altar/greater_mote_blood",
 				"recipeType": "eldrin_altar"
 			}
 		],
@@ -206,6 +429,135 @@
 				"type": "recipe",
 				"location": "hemomancy:eldrin_altar/greater_mote_blood"
 			}
+		]
+	},
+	"The Harbingers": {
+		"index": 9,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "The Harbingers"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The Harbingers",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " are a Hemomantic faction available to those who walk the path of blood. By pledging allegiance to the Harbingers, a mage gains access to a unique casting resource—"
+					},
+					{
+						"text": "Harbinger's Mana",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": "—and the "
+					},
+					{
+						"text": "Tome of the Impending End",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": ", their faction grimoire. The "
+					},
+					{
+						"text": "Horn of the Impending End",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " can be sounded to declare your allegiance.\n\nHarbingers see blood not merely as a resource, but as a conduit—a bridge between the mundane and the arcane. Their magic is visceral and direct, fueled by sacrifice and the raw will to reshape the world through carnal power."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Broken Mana Trapezohedron": {
+		"index": 10,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Broken Mana Trapezohedron"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Broken Mana Trapezohedron",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a corrupted arcane focus—a mana trapezohedron that has been shattered and infused with Hemomantic energy. Its crystalline structure still hums with residual mana, but the cracks glow with a dark crimson light, evidence of the blood magic that now courses through it."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Befouled Vinteum": {
+		"index": 11,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Befouled Vinteum"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Befouled Vinteum Dust",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " and "
+					},
+					{
+						"text": "Foul Vinteum Ingot",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " are corrupted forms of the arcane material Vinteum, tainted by prolonged exposure to Hemomantic energy. While standard Vinteum serves as the backbone of Mana and Artifice's crafting, its befouled counterpart channels blood-infused mana—making it essential for crafting Hemomantic artifacts that require both arcane and carnal components.\n\nThe "
+					},
+					{
+						"text": "Mana Infused Memory Blank",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is crafted from these materials and serves as the vessel for encoding MnA-dependent blood manipulations such as "
+					},
+					{
+						"text": "Sanguine Transfusion",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": "."
+					}
+				]
+			}
+		],
+		"related_recipes": [
 		]
 	},
 	"version": "1.0.0a"
