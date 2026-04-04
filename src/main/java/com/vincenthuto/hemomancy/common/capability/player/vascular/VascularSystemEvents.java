@@ -1,29 +1,21 @@
 package com.vincenthuto.hemomancy.common.capability.player.vascular;
 
-import java.awt.Color;
-import java.awt.Point;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
-import com.vincenthuto.hutoslib.client.HLTextUtils;
+import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -42,17 +34,208 @@ public class VascularSystemEvents {
 		}
 	}
 
+	/**
+	 * When the player takes damage, degrade a vascular section based on damage type.
+	 * <ul>
+	 *   <li>Fall damage → legs</li>
+	 *   <li>Projectile (arrow, trident) → body/chest</li>
+	 *   <li>Explosion → random section</li>
+	 *   <li>Melee/generic → random section weighted toward body/arms</li>
+	 * </ul>
+	 */
+	@SubscribeEvent
+	public static void onPlayerDamaged(LivingDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (player.level().isClientSide) return;
+		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED.get()) return;
+
+		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.map(vol -> vol.isActive()).orElse(false);
+		if (!bloodActive) return;
+
+		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+			float strain = (float) (event.getAmount() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue());
+			EnumVeinSections section = determineSectionFromDamage(event, player);
+
+			// Negative value = damage to the section
+			vascular.setVascularSectionHealth(section, -strain);
+
+			// Clamp to 0 minimum
+			if (vascular.getHealthBySection(section) < 0) {
+				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+				sys.put(section, 0f);
+				vascular.setVascularSystem(sys);
+			}
+
+			syncVascular((ServerPlayer) player, vascular);
+		});
+	}
+
+	/**
+	 * Determine which vein section is affected based on the damage source type.
+	 */
+	private static EnumVeinSections determineSectionFromDamage(LivingDamageEvent event, Player player) {
+		var source = event.getSource();
+
+		// Fall damage hits the legs
+		if (source.is(DamageTypes.FALL)) {
+			return player.level().random.nextBoolean() ? EnumVeinSections.LEFTLEG : EnumVeinSections.RIGHTLEG;
+		}
+
+		// Projectiles hit the body
+		if (source.is(DamageTypes.ARROW) || source.is(DamageTypes.TRIDENT)) {
+			return EnumVeinSections.BODY;
+		}
+
+		// Explosions hit a random section
+		if (source.is(DamageTypes.EXPLOSION) || source.is(DamageTypes.PLAYER_EXPLOSION)) {
+			return getRandomSection(player);
+		}
+
+		// Drowning / suffocation hits the head
+		if (source.is(DamageTypes.DROWN) || source.is(DamageTypes.IN_WALL)) {
+			return EnumVeinSections.HEAD;
+		}
+
+		// Fire / lava spreads across the body
+		if (source.is(DamageTypes.ON_FIRE) || source.is(DamageTypes.LAVA) || source.is(DamageTypes.IN_FIRE)) {
+			return EnumVeinSections.BODY;
+		}
+
+		// Melee/generic — weighted random favoring body and arms
+		EnumVeinSections[] meleePool = {
+				EnumVeinSections.BODY, EnumVeinSections.BODY,
+				EnumVeinSections.LEFTARM, EnumVeinSections.RIGHTARM,
+				EnumVeinSections.HEAD
+		};
+		return meleePool[player.level().random.nextInt(meleePool.length)];
+	}
+
+	private static EnumVeinSections getRandomSection(Player player) {
+		EnumVeinSections[] all = EnumVeinSections.values();
+		return all[player.level().random.nextInt(all.length)];
+	}
+
+	/**
+	 * Public helper for other systems (e.g. KnownManipulationEvents) to apply
+	 * vascular strain when the player uses a blood manipulation.
+	 */
+	public static void applyManipStrain(ServerPlayer player, EnumVeinSections section) {
+		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) return;
+
+		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+			float strain = HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue();
+			vascular.setVascularSectionHealth(section, -strain);
+
+			if (vascular.getHealthBySection(section) < 0) {
+				Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+				sys.put(section, 0f);
+				vascular.setVascularSystem(sys);
+			}
+
+			syncVascular(player, vascular);
+		});
+	}
+
+	/**
+	 * Passive vascular healing and debuff application per tick.
+	 * <ul>
+	 *   <li>All sections slowly heal back toward 100 when the player is well-fed.</li>
+	 *   <li>Sections in CLOTTED or DEAD state apply debuffs:</li>
+	 *   <li>  HEAD (DEAD) → Blindness, (CLOTTED) → Nausea</li>
+	 *   <li>  HEART (DEAD) → Wither, (CLOTTED) → Weakness</li>
+	 *   <li>  BODY (DEAD) → Hunger, (CLOTTED) → Mining Fatigue</li>
+	 *   <li>  LEG sections (DEAD) → Slowness II, (CLOTTED) → Slowness I</li>
+	 *   <li>  ARM sections (DEAD) → Mining Fatigue II, (CLOTTED) → Weakness</li>
+	 * </ul>
+	 */
+	@SubscribeEvent
+	public static void playerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+		Player player = event.player;
+		if (player.level().isClientSide) return;
+
+		boolean bloodActive = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.map(vol -> vol.isActive()).orElse(false);
+		if (!bloodActive) return;
+
+		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+			boolean changed = false;
+
+			// Passive healing
+			if (HemoServerConfig.VASCULAR_PASSIVE_HEAL_ENABLED.get()) {
+				int healInterval = HemoServerConfig.VASCULAR_HEAL_INTERVAL.get();
+				if (player.tickCount % healInterval == 0) {
+					float healRate = HemoServerConfig.VASCULAR_HEAL_RATE.get().floatValue();
+
+					// Only heal if the player has enough food / saturation
+					boolean wellFed = player.getFoodData().getFoodLevel() > 6;
+
+					for (EnumVeinSections section : EnumVeinSections.values()) {
+						float health = vascular.getHealthBySection(section);
+						if (health < 100f && wellFed) {
+							float newHealth = Math.min(100f, health + healRate);
+							Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+							sys.put(section, newHealth);
+							vascular.setVascularSystem(sys);
+							changed = true;
+						}
+					}
+				}
+			}
+
+			// Debuffs from damaged sections — check every 2 seconds
+			if (HemoServerConfig.VASCULAR_DEBUFFS_ENABLED.get() && player.tickCount % 40 == 0) {
+				applyVascularDebuffs(player, vascular);
+			}
+
+			if (changed) {
+				syncVascular((ServerPlayer) player, vascular);
+			}
+		});
+	}
+
+	/**
+	 * Apply debuffs based on the flow state of each vein section.
+	 */
+	private static void applyVascularDebuffs(Player player, IVascularSystem vascular) {
+		for (EnumVeinSections section : EnumVeinSections.values()) {
+			EnumBloodFlow flow = vascular.getBloodFlowBySection(section);
+
+			if (flow == EnumBloodFlow.DEAD) {
+				switch (section) {
+					case HEAD -> player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, false, true));
+					case HEART -> player.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0, false, false, true));
+					case BODY -> player.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 1, false, false, true));
+					case LEFTLEG, RIGHTLEG -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1, false, false, true));
+					case LEFTARM, RIGHTARM -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 1, false, false, true));
+				}
+			} else if (flow == EnumBloodFlow.ClOTTED) {
+				switch (section) {
+					case HEAD -> player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60, 0, false, false, true));
+					case HEART -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, false, true));
+					case BODY -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 0, false, false, true));
+					case LEFTLEG, RIGHTLEG -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, false, true));
+					case LEFTARM, RIGHTARM -> player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, false, false, true));
+				}
+			}
+		}
+	}
+
+	// ───── Sync & Lifecycle ─────
+
+	public static void syncVascular(ServerPlayer player, IVascularSystem vascular) {
+		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
+				new VascularSystemServerPacket(vascular.getVascularSystem()));
+	}
+
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
 				new VascularSystemServerPacket(BloodFlow));
-//		player.displayClientMessage(
-//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
-
-
 
 	@SubscribeEvent
 	public static void playerDeath(PlayerEvent.Clone event) {
@@ -74,8 +257,6 @@ public class VascularSystemEvents {
 		Map<EnumVeinSections, Float> BloodFlow = VascularSystemProvider.getPlayerVascularSystem(player);
 		PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> player),
 				new VascularSystemServerPacket(BloodFlow));
-//		player.displayClientMessage(
-//				Component.literal("Welcome! Current Vascular System: " + ChatFormatting.GOLD + BloodFlow), false);
 	}
 
 	@SubscribeEvent

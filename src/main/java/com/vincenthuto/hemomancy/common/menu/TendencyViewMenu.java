@@ -12,19 +12,19 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
-public class TendancyViewMenu extends AbstractContainerMenu {
+public class TendencyViewMenu extends AbstractContainerMenu {
 
-    private TendancyViewMenu(@Nullable MenuType<?> type, int id, Inventory playerInv, ItemStack heldItem) {
+    private TendencyViewMenu(@Nullable MenuType<?> type, int id, Inventory playerInv, ItemStack heldItem) {
         super(type, id);
     }
-    public TendancyViewMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
-        super(ContainerInit.tendancy_view.get(), windowId);
+    public TendencyViewMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player playerEntity) {
+        super(ContainerInit.tendency_view.get(), windowId);
     }
-    public TendancyViewMenu(final int windowId, final Inventory playerInventory) {
+    public TendencyViewMenu(final int windowId, final Inventory playerInventory) {
         this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
                 playerInventory.player);
     }
-    public TendancyViewMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
+    public TendencyViewMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
         this(windowId, playerInventory);
     }
 

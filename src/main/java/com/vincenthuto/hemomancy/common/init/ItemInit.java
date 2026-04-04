@@ -211,6 +211,10 @@ public class ItemInit {
 	public static final RegistryObject<Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",
 			() -> new BloodTendencyGaugeItem(new Item.Properties().stacksTo(1)));
 
+	// Vascular Status Gauge
+	public static final RegistryObject<Item> vascular_status_gauge = BASEITEMS.register("vascular_status_gauge",
+			() -> new VascularStatusGaugeItem(new Item.Properties().stacksTo(1)));
+
 	// Hematic Memories
 	public static final RegistryObject<Item> lethian_dew = BASEITEMS.register("lethian_dew",
 			() -> new LethianDewItem(new Item.Properties()));

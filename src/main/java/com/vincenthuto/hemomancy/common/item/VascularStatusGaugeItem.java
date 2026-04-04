@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.common.item;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenTendencyView;
+import com.vincenthuto.hemomancy.client.screen.VascularStatusScreen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -15,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class BloodTendencyGaugeItem extends Item {
+public class VascularStatusGaugeItem extends Item {
 
-	public BloodTendencyGaugeItem(Properties properties) {
+	public VascularStatusGaugeItem(Properties properties) {
 		super(properties);
 	}
 
@@ -25,7 +24,7 @@ public class BloodTendencyGaugeItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (level.isClientSide) {
-			PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendencyView());
+			VascularStatusScreen.openScreen();
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}
@@ -33,7 +32,7 @@ public class BloodTendencyGaugeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, level, tooltip, flag);
-		tooltip.add(Component.literal("Right-click to view your Blood Tendency").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.literal("Right-click to view your Vascular Status").withStyle(ChatFormatting.DARK_RED));
+		tooltip.add(Component.literal("Shows the health of each vein section").withStyle(ChatFormatting.GRAY));
 	}
 }
-

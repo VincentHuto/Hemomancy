@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -116,6 +117,9 @@ public class BloodManipulation  {
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 								new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);
+
+						// Apply cross-system consequences: vascular strain, tendency shift, XP
+						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);

@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenTendancyView;
+import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenTendencyView;
 import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenVascularView;
 import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
 import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
@@ -119,7 +119,7 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 								 BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendancyView());
+				PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendencyView());
 			}
 		} else {
 //			if (!worldIn.isClientSide) {

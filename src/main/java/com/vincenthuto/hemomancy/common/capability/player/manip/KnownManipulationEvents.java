@@ -4,6 +4,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
@@ -147,6 +151,34 @@ public class KnownManipulationEvents {
 	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
 		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
 			syncAvatar(player, receivers, manips.isAvatarActive());
+		});
+	}
+
+	/**
+	 * Call this from BloodManipulation.performAction (or wherever manipulations are executed)
+	 * to apply cross-system consequences when a manipulation is used:
+	 * <ul>
+	 *   <li>Strain the manipulation's associated vein section</li>
+	 *   <li>Shift tendency alignment toward the manipulation's tendency</li>
+	 *   <li>Grant XP to the manipulation's level</li>
+	 * </ul>
+	 */
+	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip) {
+		// 1. Vascular strain on the manip's associated vein section
+		VascularSystemEvents.applyManipStrain(player, manip.getSection());
+
+		// 2. Tendency shift toward the manip's tendency
+		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend());
+
+		// 3. Grant XP to the manipulation's level
+		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(known -> {
+			ManipLevel level = known.getManipLevel(manip);
+			if (level != null && level != ManipLevel.BLANK) {
+				level.setXp(level.getXp() + 1.0);
+			}
+			PacketHandler.CHANNELKNOWNMANIPS.send(
+					PacketDistributor.PLAYER.with(() -> player),
+					new KnownManipulationServerPacket(known));
 		});
 	}
 

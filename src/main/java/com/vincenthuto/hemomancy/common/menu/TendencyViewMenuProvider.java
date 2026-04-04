@@ -8,17 +8,17 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import javax.annotation.Nullable;
 
-public class TendancyViewMenuProvider implements MenuProvider {
+public class TendencyViewMenuProvider implements MenuProvider {
 
 
 	@Nullable
 	@Override
 	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
-		return new TendancyViewMenu(id, playerInventory);
+		return new TendencyViewMenu(id, playerInventory);
 	}
 
 	@Override
 	public Component getDisplayName() {
-		return Component.literal("Tendancy View");
+		return Component.literal("Tendency View");
 	}
 }

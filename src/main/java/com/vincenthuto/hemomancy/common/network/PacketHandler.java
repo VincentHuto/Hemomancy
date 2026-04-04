@@ -113,8 +113,8 @@ public class PacketHandler {
 		CHANNELBLOODTENDENCY.registerMessage(networkID++, BloodTendencyServerPacket.class,
 				BloodTendencyServerPacket::encode, BloodTendencyServerPacket::decode,
 				BloodTendencyServerPacket::handle);
-		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketOpenTendancyView.class, PacketOpenTendancyView::decode,
-				PacketOpenTendancyView::new, PacketOpenTendancyView::handle);
+		CHANNELBLOODTENDENCY.registerMessage(networkID++, PacketOpenTendencyView.class, PacketOpenTendencyView::decode,
+				PacketOpenTendencyView::new, PacketOpenTendencyView::handle);
 
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, KnownManipulationClientPacket.class,
 				KnownManipulationClientPacket::encode, KnownManipulationClientPacket::decode,
