@@ -17,6 +17,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -52,7 +53,18 @@ public class MnAPluginClientEvents {
 
 	public static void onClientSetupEvent(FMLClientSetupEvent event) {
 		BlockEntityRenderers.register(MnAPluginBlockEntityInit.broken_mana_trapazahedron.get(), BrokenManaTrapazahedronRenderer::new);
+		// Generate composited spell icons (base icon + bloody border) on the render thread
+		event.enqueueWork(HemoSpellIconCompositor::generateAll);
+	}
 
+	/**
+	 * Advances the animated bloody border on hemomancy spell icons each tick.
+	 * Must be registered on the FORGE bus (not MOD bus).
+	 */
+	public static void onClientTick(TickEvent.ClientTickEvent event) {
+		if (event.phase == TickEvent.Phase.START) {
+			HemoSpellIconCompositor.tick();
+		}
 	}
 
 }

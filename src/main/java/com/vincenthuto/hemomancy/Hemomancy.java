@@ -146,6 +146,8 @@ public class Hemomancy {
                     modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
                     modEventBus.addListener(MnAPluginClientEvents::renderEntities);
                     modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
+
+                    forgeBus.addListener(MnAPluginClientEvents::onClientTick);
                 };
             });
         }
