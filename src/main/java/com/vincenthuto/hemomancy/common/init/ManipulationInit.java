@@ -99,9 +99,12 @@ public class ManipulationInit {
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM));
 
 	public static List<BloodManipulation> getAllEntries() {
-		List<BloodManipulation> blocks = new ArrayList<>();
-		MANIPS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));
-		return blocks;
+		List<BloodManipulation> entries = new ArrayList<>();
+		IForgeRegistry<BloodManipulation> registry = MANIPS_TYPE_REGISTRY.get();
+		if (registry != null) {
+			entries.addAll(registry.getValues());
+		}
+		return entries;
 	}
 
 	public static BloodManipulation getByName(String name) {

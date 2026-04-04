@@ -53,7 +53,7 @@ import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
-import com.vincenthuto.hemomancy.common.network.capa.manips.UseQuickManipKeyPacket;
+import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
@@ -118,6 +118,8 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping useContManip = new KeyMapping("key.hemomancy.contusemanip.desc", GLFW.GLFW_KEY_G,
 			"key.hemomancy.category");
+	public static final KeyMapping useManip = new KeyMapping("key.hemomancy.usemanip.desc", GLFW.GLFW_KEY_R,
+			"key.hemomancy.category");
 	public static final KeyMapping OPEN_CHARM_SLOT_KEYBIND = new KeyMapping("key.charm_slot.slot", GLFW.GLFW_KEY_B,
 			"key.hemomancy.category");
 	public static final KeyMapping openVascCharmMenu = new KeyMapping("key.charm_slot.open", 90,
@@ -158,12 +160,20 @@ public class ClientEvents {
 			PacketHandler.CHANNELKNOWNMANIPS
 					.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
 		}
-		if (useQuickManip.consumeClick()) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UseQuickManipKeyPacket(HLClientUtils.getPartialTicks()));
+		if (useManip.consumeClick()) {
+			Minecraft mc = Minecraft.getInstance();
+			if (mc.player != null) {
+				mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
+					if (manip.getSelectedManip() != null
+							&& manip.getSelectedManip().getName().equals("venous_travel")) {
+						mc.setScreen(new RadialChooseVeinScreen(manip));
+					} else {
+						PacketHandler.CHANNELKNOWNMANIPS
+								.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
+					}
+				});
+			}
 		}
-//		if (useContManip.isDown()) {
-//			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UseContManipKeyPacket(HLClientUtils.getPartialTicks()));
-//		}
 
 		// Radial
 		if (event.phase != TickEvent.Phase.START)
@@ -172,8 +182,6 @@ public class ClientEvents {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.screen == null) {
 			boolean vascCharmKeyIsDown = openVascCharmMenu.isDown();
-
-			boolean useContKeyIsDown = useContManip.isDown();
 
 			if (vascCharmKeyIsDown && !menuKey) {
 
@@ -187,20 +195,7 @@ public class ClientEvents {
 					}
 				}
 			}
-
-			if (useContKeyIsDown && !menuKey) {
-				while (useContManip.consumeClick()) {
-					if (mc.screen == null) {
-						mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manip -> {
-							if (manip.getSelectedManip().getName().equals("venous_travel")) {
-
-								mc.setScreen(new RadialChooseVeinScreen(manip));
-							}
-						});
-					}
-				}
-			}
-			menuKey = vascCharmKeyIsDown || useContKeyIsDown;
+			menuKey = vascCharmKeyIsDown;
 
 		} else {
 			menuKey = true;
@@ -393,8 +388,7 @@ public class ClientEvents {
 			event.register(ClientEvents.bloodCrafting);
 			event.register(ClientEvents.bloodDraw);
 			event.register(ClientEvents.cycleSelectedManip);
-			event.register(ClientEvents.useQuickManip);
-			event.register(ClientEvents.useContManip);
+			event.register(ClientEvents.useManip);
 			event.register(ClientEvents.OPEN_CHARM_SLOT_KEYBIND);
 			event.register(ClientEvents.openVascCharmMenu);
 			event.register(ClientEvents.toggleGourd);

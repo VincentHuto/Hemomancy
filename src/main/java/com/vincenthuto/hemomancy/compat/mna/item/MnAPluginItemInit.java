@@ -5,6 +5,8 @@ import com.mna.items.artifice.ItemFactionHorn;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginArmorTiers;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
+import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
+import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -43,11 +45,18 @@ public class MnAPluginItemInit {
 
 	public static final RegistryObject<Item> foul_vinteum_ingot = MNAITEMS.register("foul_vinteum_ingot",
 			() -> new Item(new Item.Properties()));
-	
+	public static final RegistryObject<Item> mana_infushed_memory_blank = MNAITEMS.register("mana_infushed_memory_blank",
+			() -> new Item(new Item.Properties()));
+
 	public static final RegistryObject<Item> living_infused_thread = MNAITEMS.register("living_infused_thread",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> mote_blood = MNAITEMS.register("mote_blood",
 			() -> new Item(new Item.Properties()));
+
+	// Memories (MnA-dependent manipulations)
+	public static final RegistryObject<Item> mana_memory_sanguine_transfusion = MNAITEMS.register(
+			"mana_memory_sanguine_transfusion",
+			() -> new BloodMemoryItem(new Item.Properties(), MnAPluginManipulationInit.mana_memory_sanguine_transfusion));
 
 	// Robes
 	public static final RegistryObject<Item> living_thread_hood = MNAITEMS.register("living_thread_hood",

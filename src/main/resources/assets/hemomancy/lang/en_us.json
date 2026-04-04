@@ -234,6 +234,7 @@
 	"item.hemomancy.memory_blood_shot": "Memory Blood Shot",
 	"item.hemomancy.memory_deadly_gaze": "Memory Deadly Gaze",
 	"item.hemomancy.memory_ferric_transmutation": "Memory Ferric Transmutation",
+	"item.hemomancy.mana_memory_sanguine_transfusion": "Mana Memory Sanguine Transfusion",
 	"item.hemomancy.memory_living_blade": "Memory Living Blade",
 	"item.hemomancy.memory_sanguine_ward": "Memory Sanguine Ward",
 	"item.hemomancy.memory_summon_avatar": "Memory Summon Avatar",
@@ -344,6 +345,7 @@
 	"key.hemomancy.bloodformation.desc": "Blood Formation",
 	"key.hemomancy.category": "Hemomancy",
 	"key.hemomancy.contusemanip.desc": "Use Continous Manipulation",
+	"key.hemomancy.usemanip.desc": "Use Manipulation",
 	"key.hemomancy.cyclemanip.desc": "Cycle Known Manipulations",
 	"key.hemomancy.drawtest.desc": "Blood Draw",
 	"key.hemomancy.openjar.desc": "Open Morphling Jar",
@@ -355,6 +357,7 @@
 	"item.hemomancy.befouled_vinteum_dust": "Befouled Vinteum Dust",
 	"item.hemomancy.mark_of_blood": "Mark of the Harbingers",
 	"item.hemomancy.foul_vinteum_ingot": "Foul Vinteum Ingot",
+	"item.hemomancy.mana_infushed_memory_blank": "Mana Infused Memory Blank",
 	"item.hemomancy.living_infused_thread": "Living Infused Thread",
 	"item.hemomancy.living_thread_hood": "Living Thread Hood",
 	"item.hemomancy.living_thread_robes": "Living Thread Robes",
@@ -366,5 +369,8 @@
 	"item.hemomancy.mote_blood": "Mote of Blood",
 	"item.mna.greater_mote_blood": "Greater Mote of Blood",
 	"hemomancy:rituals/weeping_wound": "Ritual of The Weeping Wound",
+	"hemomancy:components/sanguine_fertility": "Sanguine Fertility",
+	"hemomancy:components/mana_to_blood": "Sanguine Transmutation",
+	"hemomancy:components/blood_binding": "Blood Binding",
 	"hemomancy:living_armor_set_bonus": "(3) Set Bonus:\n +500 Max Mana\n +50% Mana Regen"
 }

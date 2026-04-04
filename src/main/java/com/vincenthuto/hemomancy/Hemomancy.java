@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
 import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
+import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
 import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
@@ -128,6 +129,7 @@ public class Hemomancy {
             MnAPluginItemInit.MNAITEMS.register(modEventBus);
             MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
             MnAPluginBlockEntityInit.MNATILES.register(modEventBus);
+            MnAPluginManipulationInit.MNA_MANIPS.register(modEventBus);
             modEventBus.addListener(MnAPluginItemInit::buildMnaCompatItemContents);
             modEventBus.addListener(MnAPluginBlockInit::onRegisterItems);
             modEventBus.addListener(MnAPluginBlockInit::buildMnaCompatBlockContents);

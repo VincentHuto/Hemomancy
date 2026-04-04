@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/mna/mana_memory_sanguine_transfusion"
+  }
+}

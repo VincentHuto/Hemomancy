@@ -18,6 +18,12 @@ public class MnAPluginSpellInit {
 			helper.register(Hemomancy.rloc("components/dodo"), new ComponentDodo(Hemomancy.rloc("textures/mna/dodo.png")));
 			helper.register(Hemomancy.rloc("components/pork_warrior"),
 					new ComponentPorkWarrior(Hemomancy.rloc("textures/mna/pork_warrior.png")));
+			helper.register(Hemomancy.rloc("components/sanguine_fertility"),
+					new ComponentSanguineFertility(Hemomancy.rloc("textures/mna/sanguine_fertility.png")));
+			helper.register(Hemomancy.rloc("components/mana_to_blood"),
+					new ComponentManaToBlood(Hemomancy.rloc("textures/mna/mana_to_blood.png")));
+			helper.register(Hemomancy.rloc("components/blood_binding"),
+					new ComponentBloodBinding(Hemomancy.rloc("textures/mna/blood_binding.png")));
 		});
 	}
 }
