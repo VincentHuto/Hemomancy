@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "title": {
+      "text": "Iron in the Blood",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Create your first Hematic Iron Block using a blood structure recipe"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/ashen_beginnings",
+  "criteria": {
+    "has_hematic_iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:hematic_iron_block"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hematic_iron"
+    ]
+  ]
+}

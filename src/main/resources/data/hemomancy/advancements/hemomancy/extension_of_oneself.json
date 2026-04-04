@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:living_staff"
+    },
+    "title": {
+      "text": "An Extension of Oneself",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Craft a Living Staff to channel morphlings and blood magic"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/sanctum_sanguinium",
+  "criteria": {
+    "has_staff": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:living_staff"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_staff"
+    ]
+  ]
+}

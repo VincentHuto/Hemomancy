@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:liber_sanguinum"
+    },
+    "title": {
+      "text": "Sanctum Sanguinium",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain the Liber Sanguinum, your guide to Hemomancy"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/ashen_beginnings",
+  "criteria": {
+    "has_book": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:liber_sanguinum"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_book"
+    ]
+  ]
+}

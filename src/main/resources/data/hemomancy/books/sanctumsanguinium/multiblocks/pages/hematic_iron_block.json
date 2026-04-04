@@ -4,7 +4,7 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Hematic Iron",
   "subtitle": "Blood and Iron",
-  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "text": "Hematic Iron is iron infused with blood, forming the basis of early Hemomancy equipment. Place an Iron Block surrounded by Befouling Ash, then right-click it while holding an Ink Sac. This costs 50 blood and is your first blood structure recipe. Break the block into scraps to craft armor and tools.",
   "icon": "hemomancy:hematic_iron_block",
   "structureloc": "hemomancy:blood_structure/hematic_iron_block"
 }

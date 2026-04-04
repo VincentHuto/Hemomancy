@@ -4,7 +4,7 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Living Staff",
   "subtitle": "An Extension Of Ones Self",
-  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "text": "The Living Staff is a versatile blood-channeling weapon. Build the structure from Iron Bars and Venous Stone, then activate it with a Sanguine Formation for 150 blood. The staff fires projectiles that change based on which Morphling is loaded into it. It is the foundation of ranged Hemomancy.",
   "icon": "hemomancy:living_staff",
   "structureloc": "hemomancy:blood_structure/living_staff"
 }

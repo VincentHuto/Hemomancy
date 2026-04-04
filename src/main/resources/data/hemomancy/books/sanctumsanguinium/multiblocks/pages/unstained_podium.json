@@ -4,7 +4,7 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Unstained Pillar",
   "subtitle": "A Clean Slate",
-  "text": "This is a test for when I need to type up a description underneath the multiblock itself",
+  "text": "The Unstained Pillar is a structure tied to the anti-blood faction. Building one aligns you with the Unstained, granting access to hemolytic recipes and purification tools. This path opposes the infection rather than embracing it. Choose wisely.",
   "icon": "hemomancy:unstained_podium",
   "structureloc": "hemomancy:blood_structure/unstained_pillar"
 }

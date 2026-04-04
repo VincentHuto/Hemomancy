@@ -1,0 +1,48 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:memory_blood_shot"
+    },
+    "title": {
+      "text": "Inherited Memory",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain any Hematic Memory to learn a Blood Manipulation"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/the_first_awakening",
+  "criteria": {
+    "has_memory": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:memory_blood_shot",
+              "hemomancy:memory_blood_rush",
+              "hemomancy:memory_blood_needle",
+              "hemomancy:memory_blood_cloud",
+              "hemomancy:memory_blood_absorption",
+              "hemomancy:memory_blood_projection",
+              "hemomancy:memory_blood_aneurysm",
+              "hemomancy:memory_venous_travel",
+              "hemomancy:memory_deadly_gaze",
+              "hemomancy:memory_sanguine_ward",
+              "hemomancy:memory_activation_potential",
+              "hemomancy:memory_living_blade"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_memory"
+    ]
+  ]
+}

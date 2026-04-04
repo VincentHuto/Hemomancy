@@ -1,0 +1,52 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:hematic_iron_sword"
+    },
+    "title": {
+      "text": "Armed to the Veins",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Equip a full set of Hematic Iron armor"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/iron_in_the_blood",
+  "criteria": {
+    "has_full_set": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:hematic_iron_helm"
+            ]
+          },
+          {
+            "items": [
+              "hemomancy:hematic_iron_chestplate"
+            ]
+          },
+          {
+            "items": [
+              "hemomancy:hematic_iron_leggings"
+            ]
+          },
+          {
+            "items": [
+              "hemomancy:hematic_iron_boots"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_full_set"
+    ]
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:befouling_ash"
+    },
+    "title": {
+      "text": "Ashen Beginnings",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Craft Befouling Ash, a key ingredient for blood structure recipes"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/root",
+  "criteria": {
+    "has_befouling_ash": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:befouling_ash"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_befouling_ash"
+    ]
+  ]
+}

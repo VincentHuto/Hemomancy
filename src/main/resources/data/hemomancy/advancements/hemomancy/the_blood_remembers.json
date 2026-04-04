@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:living_blade"
+    },
+    "title": {
+      "text": "The Blood Remembers",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain a Living Blade, a weapon that feeds on blood"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/inherited_memory",
+  "criteria": {
+    "has_blade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:living_blade"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_blade"
+    ]
+  ]
+}

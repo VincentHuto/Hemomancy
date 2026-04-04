@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:gourd_seeds"
+    },
+    "title": {
+      "text": "Strange Seeds",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Find Gourd Seeds while breaking grass"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "background": "minecraft:textures/gui/advancements/backgrounds/nether.png"
+  },
+  "criteria": {
+    "has_gourd_seeds": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:gourd_seeds"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_gourd_seeds"
+    ]
+  ]
+}

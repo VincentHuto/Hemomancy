@@ -4,6 +4,6 @@
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Hematic Memory",
   "subtitle": "Remembering your potential",
-  "text": "Welcome to Hemomancy! My first(released) major mod, This is a magic mod centered around blood, and blood control, focusing more so on the quality and efficency of blood rather than quantity.",
+  "text": "A Hematic Memory is a crystallized fragment of blood knowledge. Each one encodes a specific manipulation. Blank memories can be found in the world or crafted, and the Visceral Recaller imprints them with a specific technique. Once imprinted, consume the memory to permanently learn the manipulation it contains.",
   "icon": "hemomancy:hematic_memory"
 }

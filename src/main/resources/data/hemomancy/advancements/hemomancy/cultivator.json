@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:morphling_jar"
+    },
+    "title": {
+      "text": "Cultivator",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain a Morphling Jar and begin cultivating the infection"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/extension_of_oneself",
+  "criteria": {
+    "has_jar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:morphling_jar"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_jar"
+    ]
+  ]
+}

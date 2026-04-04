@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:charm_of_vascularium"
+    },
+    "title": {
+      "text": "Scarlet Tradition",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain the Charm of Vascularium"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/the_first_awakening",
+  "criteria": {
+    "has_charm": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:charm_of_vascularium"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_charm"
+    ]
+  ]
+}

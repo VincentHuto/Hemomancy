@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:recycled_enzyme"
+    },
+    "title": {
+      "text": "Old Habits",
+      "color": "dark_red"
+    },
+    "description": {
+      "text": "Obtain any enzyme and begin tuning your Blood Tendency"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/the_first_awakening",
+  "criteria": {
+    "has_enzyme": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:vivacious_enzyme",
+              "hemomancy:ruinous_enzyme",
+              "hemomancy:neurotic_enzyme",
+              "hemomancy:ferric_enzyme",
+              "hemomancy:fervent_enzyme",
+              "hemomancy:frigid_enzyme",
+              "hemomancy:incandescent_enzyme",
+              "hemomancy:umbral_enzyme",
+              "hemomancy:recycled_enzyme"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_enzyme"
+    ]
+  ]
+}

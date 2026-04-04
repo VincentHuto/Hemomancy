@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:hemolytic_solution"
+    },
+    "title": {
+      "text": "Unstained",
+      "color": "white"
+    },
+    "description": {
+      "text": "Obtain Hemolytic Solution, the weapon of anti-blood zealots"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/the_first_awakening",
+  "criteria": {
+    "has_solution": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:hemolytic_solution"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_solution"
+    ]
+  ]
+}
