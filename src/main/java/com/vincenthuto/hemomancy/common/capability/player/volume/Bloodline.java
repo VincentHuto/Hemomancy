@@ -19,21 +19,17 @@ public class Bloodline {
 					&& nbt.contains("players")) {
 				if (nbt.get("players") instanceof ListTag listtag) {
 					List<UUID> playerUUIDS = new ArrayList<>();
-					if (!listtag.isEmpty()) {
-						for (int i = 0; i < listtag.size(); i++) {
-							if (listtag.get(i) instanceof CompoundTag comp) {
-								comp.getUUID("player" + i);
-								Bloodline line = new Bloodline(nbt.getString("name"), nbt.getUUID("leader"),
-										nbt.getUUID("bloodlineUUID"), playerUUIDS);
-								return line;
-							}
+					for (int i = 0; i < listtag.size(); i++) {
+						if (listtag.get(i) instanceof CompoundTag comp) {
+							playerUUIDS.add(comp.getUUID("player" + i));
 						}
-					} else {
-						Bloodline line = new Bloodline(nbt.getString("name"), nbt.getUUID("leader"),
-								nbt.getUUID("bloodlineUUID"), playerUUIDS);
-						return line;
 					}
-
+					Bloodline line = new Bloodline(nbt.getString("name"), nbt.getUUID("leader"),
+							nbt.getUUID("bloodlineUUID"), playerUUIDS);
+					if (nbt.contains("sharedBloodVolume")) {
+						line.setBloodVolume(nbt.getFloat("sharedBloodVolume"));
+					}
+					return line;
 				}
 			}
 		}
@@ -51,18 +47,67 @@ public class Bloodline {
 		this.bloodVolume = 0;
 		this.maxBloodVolume = 0;
 		this.leaderUUID = new UUID(0, 0);
-		this.bloodlineUUID = UUID.randomUUID();
+		this.bloodlineUUID = new UUID(0, 0);
 		this.playerUUIDS = new ArrayList<>();
 	}
 
 	public Bloodline(String name, UUID leaderUUID, UUID bloodlineUUID, List<UUID> playerUUIDS) {
 		this.name = name;
 		this.bloodVolume = 0;
-		this.maxBloodVolume = playerUUIDS.size() * 1000f;
 		this.leaderUUID = leaderUUID;
 		this.bloodlineUUID = bloodlineUUID;
-		playerUUIDS.add(leaderUUID);
+		if (!playerUUIDS.contains(leaderUUID)) {
+			playerUUIDS.add(leaderUUID);
+		}
 		this.playerUUIDS = playerUUIDS;
+		this.maxBloodVolume = this.playerUUIDS.size() * 1000f;
+	}
+
+	public boolean isValid() {
+		return !bloodlineUUID.equals(new UUID(0, 0));
+	}
+
+	public boolean hasMember(UUID playerUUID) {
+		return playerUUIDS.contains(playerUUID);
+	}
+
+	public boolean addMember(UUID playerUUID) {
+		if (!playerUUIDS.contains(playerUUID)) {
+			playerUUIDS.add(playerUUID);
+			this.maxBloodVolume = playerUUIDS.size() * 1000f;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean removeMember(UUID playerUUID) {
+		if (playerUUIDS.remove(playerUUID)) {
+			this.maxBloodVolume = playerUUIDS.size() * 1000f;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean contributeBlood(float amount) {
+		if (bloodVolume + amount <= maxBloodVolume) {
+			bloodVolume += amount;
+			return true;
+		} else if (bloodVolume < maxBloodVolume) {
+			bloodVolume = maxBloodVolume;
+			return true;
+		}
+		return false;
+	}
+
+	public float drawBlood(float amount) {
+		if (bloodVolume >= amount) {
+			bloodVolume -= amount;
+			return amount;
+		} else {
+			float drawn = bloodVolume;
+			bloodVolume = 0;
+			return drawn;
+		}
 	}
 
 	public UUID getBloodlineUUID() {
@@ -92,7 +137,10 @@ public class Bloodline {
 	public List<Player> getPlayers(Level level) {
 		List<Player> players = new ArrayList<>();
 		playerUUIDS.forEach(id -> {
-			players.add(level.getPlayerByUUID(id));
+			Player p = level.getPlayerByUUID(id);
+			if (p != null) {
+				players.add(p);
+			}
 		});
 		return players;
 	}
@@ -106,6 +154,7 @@ public class Bloodline {
 		tag.putString("name", name);
 		tag.putUUID("leader", getLeaderUUID());
 		tag.putUUID("bloodlineUUID", getBloodlineUUID());
+		tag.putFloat("sharedBloodVolume", bloodVolume);
 		ListTag playerList = new ListTag();
 		if (!playerUUIDS.isEmpty()) {
 			for (int i = 0; i < playerUUIDS.size(); i++) {

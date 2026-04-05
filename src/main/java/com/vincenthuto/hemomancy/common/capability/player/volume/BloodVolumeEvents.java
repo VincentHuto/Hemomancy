@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -87,6 +88,53 @@ public class BloodVolumeEvents {
 				if (volume.getBloodVolume() < threshold && volume.getBloodVolume() > 0) {
 					volume.fill(lastWindRegen);
 					syncVolume((ServerPlayer) player, volume);
+				}
+			}
+
+			// ── Bloodline: Shared Blood Pool Contribution ──
+			Bloodline bloodline = volume.getBloodLine();
+			if (bloodline.isValid() && HemoServerConfig.BLOODLINE_POOL_ENABLED.get()) {
+				int poolInterval = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_INTERVAL.get();
+				if (player.tickCount % poolInterval == 0 && volume.getBloodVolume() > volume.getMaxBloodVolume() * 0.25) {
+					double contributionRate = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_RATE.get();
+					ServerLevel overworld = ((ServerLevel) player.level()).getServer().overworld();
+					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+					Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+					if (globalLine != null && volume.drain(contributionRate)) {
+						globalLine.contributeBlood((float) contributionRate);
+						savedData.setDirty();
+						syncVolume((ServerPlayer) player, volume);
+					}
+				}
+			}
+
+			// ── Bloodline: Nearby Member Healing ──
+			if (bloodline.isValid() && HemoServerConfig.BLOODLINE_HEAL_ENABLED.get()) {
+				int healInterval = HemoServerConfig.BLOODLINE_HEAL_INTERVAL.get();
+				if (player.tickCount % healInterval == 0) {
+					float healthThreshold = (float) (player.getMaxHealth()
+							* HemoServerConfig.BLOODLINE_HEAL_HEALTH_THRESHOLD.get());
+					if (player.getHealth() < healthThreshold && player.getHealth() > 0) {
+						double healRange = HemoServerConfig.BLOODLINE_HEAL_RANGE.get();
+						boolean hasNearbyMember = false;
+						for (Player other : player.level().players()) {
+							if (!other.getUUID().equals(player.getUUID())
+									&& bloodline.hasMember(other.getUUID())
+									&& other.distanceTo(player) <= healRange) {
+								hasNearbyMember = true;
+								break;
+							}
+						}
+						if (hasNearbyMember) {
+							ServerLevel overworld = ((ServerLevel) player.level()).getServer().overworld();
+							BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+							float healAmount = (float) HemoServerConfig.BLOODLINE_HEAL_AMOUNT.get();
+							float drawn = savedData.drawBlood(bloodline.getBloodlineUUID(), healAmount);
+							if (drawn > 0) {
+								player.heal(drawn);
+							}
+						}
+					}
 				}
 			}
 		});
@@ -204,6 +252,15 @@ public class BloodVolumeEvents {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
+
+		// Re-associate player with their global bloodline from saved data
+		ServerLevel overworld = player.server.overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline globalLine = savedData.getBloodlineForPlayer(player.getUUID());
+		if (globalLine != null) {
+			volume.setBloodLine(globalLine);
+		}
+
 		syncVolume(player, volume);
 
 		// Sync skill tree to client
@@ -218,9 +275,17 @@ public class BloodVolumeEvents {
 				Component.literal(
 						"Welcome! Current Blood Volume: " + ChatFormatting.GOLD + volume.getBloodVolume() + "ml"),
 				false);
+		Bloodline currentLine = volume.getBloodLine();
 		player.displayClientMessage(
-				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + volume.getBloodLine().name),
+				Component.literal("Welcome! Current Bloodline: " + ChatFormatting.GOLD + currentLine.getName()),
 				false);
+		if (currentLine.isValid()) {
+			player.displayClientMessage(
+					Component.literal("Bloodline Pool: " + ChatFormatting.DARK_RED
+							+ String.format("%.1f", currentLine.getBloodVolume()) + "/"
+							+ String.format("%.0f", currentLine.getMaxBloodVolume()) + "ml"),
+					false);
+		}
 	}
 
 	@SubscribeEvent
