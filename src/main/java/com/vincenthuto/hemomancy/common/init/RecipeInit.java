@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
@@ -9,6 +10,7 @@ import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.JuiceinatorSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.RecallerRecipeSerializer;
@@ -42,6 +44,9 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeType<BloodStructureRecipe>> blood_structure_recipe_type = RECIPE_TYPES
 			.register("blood_structure_recipe", () -> RecipeType.simple(Hemomancy.rloc("blood_structure_recipe")));
 
+	public static final RegistryObject<RecipeType<CardinalRiteRecipe>> cardinal_rite_recipe_type = RECIPE_TYPES
+			.register("cardinal_rite_recipe", () -> RecipeType.simple(Hemomancy.rloc("cardinal_rite_recipe")));
+
 	// Serialize
 	public static final RegistryObject<RecipeSerializer<?>> juiceinator_serializer = SERIALIZERS.register("juiceinator",
 			JuiceinatorSerializer::new);
@@ -63,5 +68,8 @@ public class RecipeInit {
 
 	public static final RegistryObject<RecipeSerializer<?>> chisel_recipe_serializer = SERIALIZERS
 			.register("chisel_recipe", ChiselRecipeSerializer::new);
+
+	public static final RegistryObject<RecipeSerializer<?>> cardinal_rite_recipe_serializer = SERIALIZERS
+			.register("cardinal_rite_recipe", CardinalRiteRecipeSerializer::new);
 
 }
