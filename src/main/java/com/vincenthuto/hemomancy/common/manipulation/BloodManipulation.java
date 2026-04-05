@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -58,8 +58,10 @@ public class BloodManipulation  {
 
 	EnumManipulationType type;
 
+	private static final double TICKS_PER_SECOND = 20.0;
+
 	int cooldownTicks;
-	private final Map<UUID, Long> cooldownMap = new HashMap<>();
+	private final Map<UUID, Long> cooldownMap = new ConcurrentHashMap<>();
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -127,7 +129,14 @@ public class BloodManipulation  {
 			return false;
 		}
 		Long expiryTick = cooldownMap.get(player.getUUID());
-		return expiryTick != null && player.level().getGameTime() < expiryTick;
+		if (expiryTick == null) {
+			return false;
+		}
+		if (player.level().getGameTime() >= expiryTick) {
+			cooldownMap.remove(player.getUUID());
+			return false;
+		}
+		return true;
 	}
 
 	public long getRemainingCooldownTicks(Player player) {
@@ -157,7 +166,7 @@ public class BloodManipulation  {
 		if (!player.level().isClientSide) {
 			if (isOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
-				double seconds = remaining / 20.0;
+				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
 						Component.literal(String.format("Manipulation on cooldown! (%.1fs)", seconds))
 								.withStyle(ChatFormatting.RED),
