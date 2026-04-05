@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,7 +9,6 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -22,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -57,8 +54,7 @@ public class CardinalRiteEvents {
 
 		List<UUID> toRemove = new ArrayList<>();
 
-		for (Iterator<Map.Entry<UUID, ActiveCardinalRite>> it = activeRites.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<UUID, ActiveCardinalRite> entry = it.next();
+		for (Map.Entry<UUID, ActiveCardinalRite> entry : activeRites.entrySet()) {
 			UUID playerUUID = entry.getKey();
 			ActiveCardinalRite rite = entry.getValue();
 

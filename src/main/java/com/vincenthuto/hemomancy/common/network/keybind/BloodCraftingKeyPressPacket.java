@@ -173,10 +173,10 @@ public class BloodCraftingKeyPressPacket {
 			BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
 			if (match != null) {
 				// Calculate the center of the matched pattern
-				int cw = recipe.getPattern().getBlockPattern().getWidth() / 2;
-				int ch = recipe.getPattern().getBlockPattern().getHeight() / 2;
-				int cd = recipe.getPattern().getBlockPattern().getDepth() / 2;
-				BlockPos centerPos = match.getBlock(cw, ch, cd).getPos();
+				int centerWidth = recipe.getPattern().getBlockPattern().getWidth() / 2;
+				int centerHeight = recipe.getPattern().getBlockPattern().getHeight() / 2;
+				int centerDepth = recipe.getPattern().getBlockPattern().getDepth() / 2;
+				BlockPos centerPos = match.getBlock(centerWidth, centerHeight, centerDepth).getPos();
 
 				// Start the rite
 				int castingDuration = recipe.getRiteType().getCastingDurationTicks();
