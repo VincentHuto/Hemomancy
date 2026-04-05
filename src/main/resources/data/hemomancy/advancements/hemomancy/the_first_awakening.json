@@ -4,11 +4,10 @@
       "item": "hemomancy:sanguine_formation"
     },
     "title": {
-      "text": "The First Awakening",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.the_first_awakening.title"
     },
     "description": {
-      "text": "Activate a Blood Temple's Mortal Display and awaken your blood"
+      "translate": "advancements.hemomancy.the_first_awakening.description"
     },
     "frame": "goal",
     "show_toast": true,
@@ -17,16 +16,7 @@
   "parent": "hemomancy:hemomancy/root",
   "criteria": {
     "activate_temple": {
-      "trigger": "minecraft:item_used_on_block",
-      "conditions": {
-        "location": {
-          "block": {
-            "blocks": [
-              "hemomancy:mortal_display"
-            ]
-          }
-        }
-      }
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [

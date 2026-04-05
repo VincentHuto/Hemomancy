@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -59,11 +60,32 @@ public class BloodVolumeEvents {
 		if (player.level().isClientSide) return;
 
 		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
-			if (volume.isActive() && HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
+			if (!volume.isActive()) return;
+
+			// ── Skill: Capacity — add flat bonus to max blood ──
+			double baseMax = 5000.0;
+			double capacityBonus = SkillPointHelper.getCapacityBonus();
+			double desiredMax = baseMax + capacityBonus;
+			if (Math.abs(volume.getMaxBloodVolume() - desiredMax) > 0.01) {
+				volume.setMaxBloodVolume(desiredMax);
+			}
+
+			// ── Passive blood regen ──
+			if (HemoServerConfig.BLOOD_REGEN_ENABLED.get()) {
 				int interval = HemoServerConfig.BLOOD_REGEN_INTERVAL.get();
 				if (player.tickCount % interval == 0 && !volume.isFull()) {
 					double regenRate = HemoServerConfig.BLOOD_REGEN_RATE.get();
 					volume.fill(regenRate);
+					syncVolume((ServerPlayer) player, volume);
+				}
+			}
+
+			// ── Skill: Last Wind — emergency regen when blood is critically low ──
+			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick();
+			if (lastWindRegen > 0) {
+				double threshold = volume.getMaxBloodVolume() * SkillPointHelper.getLastWindThreshold();
+				if (volume.getBloodVolume() < threshold && volume.getBloodVolume() > 0) {
+					volume.fill(lastWindRegen);
 					syncVolume((ServerPlayer) player, volume);
 				}
 			}
@@ -126,6 +148,9 @@ public class BloodVolumeEvents {
 					gain *= HemoServerConfig.BLOOD_GAIN_BOSS_MULTIPLIER.get();
 				}
 
+				// Skill: Feeding Frenzy — bonus blood from kills
+				gain *= SkillPointHelper.getFeedingFrenzyMultiplier();
+
 				volume.fill(gain);
 				syncVolume((ServerPlayer) player, volume);
 			}
@@ -180,6 +205,13 @@ public class BloodVolumeEvents {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
 		syncVolume(player, volume);
+
+		// Sync skill tree to client
+		com.vincenthuto.hemomancy.common.network.PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> player),
+				new com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills(
+						com.vincenthuto.hemomancy.common.init.SkillPointInit.serializeAll()));
+
 		player.displayClientMessage(
 				Component.literal("Welcome! Blood Active? " + ChatFormatting.LIGHT_PURPLE + volume.isActive()), false);
 		player.displayClientMessage(

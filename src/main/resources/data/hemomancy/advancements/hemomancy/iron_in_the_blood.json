@@ -4,11 +4,10 @@
       "item": "hemomancy:hematic_iron_scrap"
     },
     "title": {
-      "text": "Iron in the Blood",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.iron_in_the_blood.title"
     },
     "description": {
-      "text": "Create your first Hematic Iron Block using a blood structure recipe"
+      "translate": "advancements.hemomancy.iron_in_the_blood.description"
     },
     "frame": "task",
     "show_toast": true,

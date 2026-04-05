@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ISI",
+    "SGS",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "S": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "result": {
+    "item": "hemomancy:self_reflection_mirror"
+  }
+}

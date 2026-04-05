@@ -4,11 +4,10 @@
       "item": "hemomancy:liber_sanguinum"
     },
     "title": {
-      "text": "Sanctum Sanguinium",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.sanctum_sanguinium.title"
     },
     "description": {
-      "text": "Obtain the Liber Sanguinum, your guide to Hemomancy"
+      "translate": "advancements.hemomancy.sanctum_sanguinium.description"
     },
     "frame": "goal",
     "show_toast": true,

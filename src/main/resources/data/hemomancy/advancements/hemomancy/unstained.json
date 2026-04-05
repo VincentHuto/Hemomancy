@@ -4,11 +4,10 @@
       "item": "hemomancy:hemolytic_solution"
     },
     "title": {
-      "text": "Unstained",
-      "color": "white"
+      "translate": "advancements.hemomancy.unstained.title"
     },
     "description": {
-      "text": "Obtain Hemolytic Solution, the weapon of anti-blood zealots"
+      "translate": "advancements.hemomancy.unstained.description"
     },
     "frame": "task",
     "show_toast": true,

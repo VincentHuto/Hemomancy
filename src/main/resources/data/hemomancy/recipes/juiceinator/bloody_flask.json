@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:juiceinator",
+  "ingredient": {
+    "item": "hemomancy:bloody_flask"
+  },
+  "result": "hemomancy:bloody_vial",
+  "count": 2,
+  "experience": 0.3,
+  "cookingtime": 80
+}

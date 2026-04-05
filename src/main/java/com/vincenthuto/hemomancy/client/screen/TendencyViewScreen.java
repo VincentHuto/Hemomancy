@@ -117,8 +117,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         // Animated vein background clipped to the GUI bounds
         renderVeinBackground(graphics, centerX, centerY, this.guiWidth, this.guiHeight);
 
-        // Border frame on top of the vein background
-        graphics.blit(border, centerX, centerY, 0, 0, this.guiWidth, this.guiHeight);
+        // Programmatic dark-red border frame on top of the vein background
+        drawBorder(graphics, centerX, centerY, this.guiWidth, this.guiHeight);
 
         // Pass the true center of the GUI panel to drawCenter
         int starCenterX = this.width / 2;
@@ -300,6 +300,22 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         });
 
 
+    }
+
+    // ───── Programmatic Dark-Red Border ─────
+
+    private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+        int outer = 0xFF330808;
+        gfx.fill(x, y, x + w, y + 1, outer);
+        gfx.fill(x, y + h - 1, x + w, y + h, outer);
+        gfx.fill(x, y, x + 1, y + h, outer);
+        gfx.fill(x + w - 1, y, x + w, y + h, outer);
+
+        int inner = 0xFF220606;
+        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
+        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
+        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
+        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
     }
 
     // ───── Procedural Animated Vein Background ─────

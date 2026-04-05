@@ -4,11 +4,10 @@
       "item": "hemomancy:hematic_iron_sword"
     },
     "title": {
-      "text": "Armed to the Veins",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.armed_to_the_veins.title"
     },
     "description": {
-      "text": "Equip a full set of Hematic Iron armor"
+      "translate": "advancements.hemomancy.armed_to_the_veins.description"
     },
     "frame": "goal",
     "show_toast": true,

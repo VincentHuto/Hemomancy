@@ -90,8 +90,8 @@ public class VascularStatusScreen extends Screen {
 		// Animated vein background clipped to the GUI bounds
 		renderVeinBackground(graphics, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT);
 
-		// Draw the border frame on top
-		graphics.blit(BACKGROUND, guiLeft, guiTop, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+		// Programmatic dark-red border frame on top of the vein background
+		drawBorder(graphics, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT);
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
@@ -104,6 +104,22 @@ public class VascularStatusScreen extends Screen {
 			renderBodyPartOverlays(graphics, vascular, centerX, centerY);
 			renderSectionLabels(graphics, vascular, centerX, centerY, mouseX, mouseY);
 		});
+	}
+
+	// ───── Programmatic Dark-Red Border ─────
+
+	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		int outer = 0xFF330808;
+		gfx.fill(x, y, x + w, y + 1, outer);
+		gfx.fill(x, y + h - 1, x + w, y + h, outer);
+		gfx.fill(x, y, x + 1, y + h, outer);
+		gfx.fill(x + w - 1, y, x + w, y + h, outer);
+
+		int inner = 0xFF220606;
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
+		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
+		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
+		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
 	}
 
 	// ───── Procedural Animated Vein Background ─────

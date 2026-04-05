@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block;
 
 import java.util.stream.Stream;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -10,10 +11,13 @@ import com.vincenthuto.hemomancy.common.tile.MortalDisplayBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
+import net.minecraft.advancements.Advancement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -108,6 +112,14 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 			volume.setActive(true);
 			player.displayClientMessage(
 					Component.literal("Activated Blood Control!").withStyle(ChatFormatting.DARK_RED), true);
+			// Grant the advancement programmatically
+			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+				Advancement adv = serverPlayer.server.getAdvancements()
+						.getAdvancement(new ResourceLocation(Hemomancy.MOD_ID, "hemomancy/the_first_awakening"));
+				if (adv != null) {
+					serverPlayer.getAdvancements().award(adv, "activate_temple");
+				}
+			}
 			for (int i = 0; i < 10; i++) {
 				Vec3 startVec = new Vec3(pos.getX(), pos.getY(), pos.getZ()).add(0.5, 0.5, 0.5);
 				Vec3 endVec = player.position().add(0, player.getBbHeight() - worldIn.random.nextDouble(), 0).add(

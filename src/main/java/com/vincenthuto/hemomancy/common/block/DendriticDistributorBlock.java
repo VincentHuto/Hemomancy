@@ -5,11 +5,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenTendencyView;
-import com.vincenthuto.hemomancy.common.network.capa.manips.PacketOpenVascularView;
 import com.vincenthuto.hemomancy.common.tile.DendriticDistributorBlockEntity;
-import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +25,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -117,23 +112,11 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 								 BlockHitResult result) {
-		if (!player.isShiftKeyDown()) {
-			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendencyView());
-			}
-		} else {
-//			if (!worldIn.isClientSide) {
-//				ItemEntity spawn = new ItemEntity(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(),
-//						new ItemStack(BlockInit.infected_fungus.get(), 1));
-//				worldIn.destroyBlock(pos, false);
-//				worldIn.addFreshEntity(spawn);
-//				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
-//			}
+		// Opens the Skill Tree screen (client-only)
+		if (worldIn.isClientSide) {
+			net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
+					() -> () -> com.vincenthuto.hemomancy.client.screen.skilltree.SkillTreeScreen.openScreen());
 		}
-//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
-//			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
-//
-//		}
 		return InteractionResult.SUCCESS;
 
 	}

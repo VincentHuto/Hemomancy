@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:recaller_recipe",
+  "ingredient": {
+    "item": "hemomancy:vivacious_enzyme"
+  },
+  "animus": 1.5,
+  "mortem": 0,
+  "ductilis": 0,
+  "ferric": 0,
+  "lux": 0,
+  "tenebris": 0,
+  "flammeus": 0,
+  "congeatio": 0,
+  "result": "hemomancy:memory_blood_shot",
+  "count": 1
+}

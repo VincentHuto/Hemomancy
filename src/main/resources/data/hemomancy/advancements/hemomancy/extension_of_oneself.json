@@ -4,11 +4,10 @@
       "item": "hemomancy:living_staff"
     },
     "title": {
-      "text": "An Extension of Oneself",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.extension_of_oneself.title"
     },
     "description": {
-      "text": "Craft a Living Staff to channel morphlings and blood magic"
+      "translate": "advancements.hemomancy.extension_of_oneself.description"
     },
     "frame": "goal",
     "show_toast": true,

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HIH",
+    "HIH",
+    " I "
+  ],
+  "key": {
+    "H": {
+      "item": "hemomancy:chitinous_husk"
+    },
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "result": {
+    "item": "hemomancy:chitinite_shield"
+  }
+}

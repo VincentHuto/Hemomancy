@@ -110,9 +110,11 @@ public class BloodManipulation  {
 
 		if (!player.level().isClientSide) {
 			if (volume.isActive()) {
-				if (volume.getBloodVolume() > cost) {
+				// Apply Efficiency skill discount to manipulation cost
+				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier();
+				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
-						volume.drain(cost);
+						volume.drain(effectiveCost);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 								new BloodVolumeServerPacket(volume));

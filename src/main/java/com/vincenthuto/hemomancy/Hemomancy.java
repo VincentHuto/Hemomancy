@@ -224,6 +224,7 @@ public class Hemomancy {
 
         HemoEntityPredicates.init();
         SkillPointInit.init();
+        ManipulationTreeInit.init();
         PolypRecipes.initRecipes();
         PacketHandler.registerChannels();
 

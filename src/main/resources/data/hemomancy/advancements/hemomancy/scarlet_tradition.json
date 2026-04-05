@@ -4,11 +4,10 @@
       "item": "hemomancy:charm_of_vascularium"
     },
     "title": {
-      "text": "Scarlet Tradition",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.scarlet_tradition.title"
     },
     "description": {
-      "text": "Obtain the Charm of Vascularium"
+      "translate": "advancements.hemomancy.scarlet_tradition.description"
     },
     "frame": "task",
     "show_toast": true,

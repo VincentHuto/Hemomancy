@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IBI",
+    "BCB",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "B": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "C": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "result": {
+    "item": "hemomancy:sanguine_conduit"
+  }
+}

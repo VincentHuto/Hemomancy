@@ -4,11 +4,10 @@
       "item": "hemomancy:memory_blood_shot"
     },
     "title": {
-      "text": "Inherited Memory",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.inherited_memory.title"
     },
     "description": {
-      "text": "Obtain any Hematic Memory to learn a Blood Manipulation"
+      "translate": "advancements.hemomancy.inherited_memory.description"
     },
     "frame": "goal",
     "show_toast": true,

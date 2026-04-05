@@ -4,11 +4,10 @@
       "item": "hemomancy:morphling_jar"
     },
     "title": {
-      "text": "Cultivator",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.cultivator.title"
     },
     "description": {
-      "text": "Obtain a Morphling Jar and begin cultivating the infection"
+      "translate": "advancements.hemomancy.cultivator.description"
     },
     "frame": "goal",
     "show_toast": true,

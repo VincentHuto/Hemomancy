@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hematic Iron",
+  "subtitle": "First steps in blood-smithing",
+  "text": "Hematic Iron is your entry-level material. Create a Hematic Iron Block via blood structure recipe, then break it into Hematic Iron Scraps. These scraps craft into a full armor set, a sword, and tools using the Knapper. Hematic Iron is roughly on par with iron but carries the taint of blood, making it compatible with further Hemomancy upgrades.",
+  "icon": "hemomancy:hematic_iron_scrap"
+}

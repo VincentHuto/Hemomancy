@@ -21,6 +21,8 @@ build
 eclipse
 run
 
+project_history.mp4
+
 # Files from Forge MDK
 forge*changelog.txt
 /.apt_generated/

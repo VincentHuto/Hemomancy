@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
@@ -64,45 +66,62 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 	public void draw(RecallerRecipe recipe, IRecipeSlotsView recipeSlotsView,GuiGraphics graphics, double mouseX,
 			double mouseY) {
 		overlay.draw(graphics);
-		int centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
-		int centerY = (Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2);
+
+		// JEI's draw() has the pose stack pre-translated so (0,0) = recipe area top-left.
+		// HLGuiUtils.fracLine / renderItemStackInGui apply the pose stack transform internally,
+		// so we must extract the current translation to compute absolute screen coords,
+		// then reset to identity for drawing — exactly matching TendencyViewScreen's approach.
 		PoseStack ms = graphics.pose();
-		ms.translate(87, 45, 0);
-		drawCenter(graphics, recipe.getTendency(), centerX, centerY);
+		Matrix4f mat = ms.last().pose();
+
+		// Extract the JEI translation (recipe area top-left in screen coords)
+		float recipeAreaX = mat.m30();
+		float recipeAreaY = mat.m31();
+
+		// Compute the absolute screen position of the center of the recipe area
+		int absCenterX = (int) recipeAreaX + 94;
+		int absCenterY = (int) recipeAreaY + 52;
+
+		// Undo JEI's translation so we draw with raw screen coords
+		ms.pushPose();
+		ms.translate(-recipeAreaX, -recipeAreaY, 0);
+
+		drawCenter(graphics, recipe.getTendency(), absCenterX, absCenterY);
+
+		ms.popPose();
 	}
 
-	private void drawCenter(GuiGraphics graphics, Map<EnumBloodTendency, Float> tends, int xOff, int yOff) {
-		float guiHeight = 228, guiWidth = 174;
-		float left = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiWidth / 2;
-		float top = (Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2) - guiHeight / 2;
-		int centerOffset = 8;
-		int cx = 0, cy = 0;
+	private void drawCenter(GuiGraphics graphics, Map<EnumBloodTendency, Float> tends, int centerX, int centerY) {
 		float rotAngle = -90f;
 		int iconDiameter = 70;
 		int diameter = 15;
 		float spikeBaseWidth = 23.5f;
+		int itemSize = 16;
+		int halfItem = itemSize / 2;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			int cx1 = (int) (cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + xOff + 3;
-			int cx2 = (int) (cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + xOff + 3;
-			int cy1 = (int) (cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter) + yOff + 23;
-			int cy2 = (int) (cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter) + yOff + 23;
+			int cx1 = centerX + (int) (Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+			int cx2 = centerX + (int) (Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
+			int cy1 = centerY + (int) (Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter);
+			int cy2 = centerY + (int) (Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter);
 			double depthDist = ((iconDiameter - diameter) * tends.get(tend) * 0.2 + diameter);
-			int lx = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * depthDist) + xOff + 3;
-			int ly = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * depthDist) + yOff + 23;
+			int lx = centerX + (int) (Math.cos(Math.toRadians(rotAngle)) * depthDist);
+			int ly = centerY + (int) (Math.sin(Math.toRadians(rotAngle)) * depthDist);
 			int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2))
 					/ 2f);
 			PoseStack ms = graphics.pose();
-			HLGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx1 + centerOffset, cy1 + centerOffset,
+			HLGuiUtils.fracLine(ms, lx, ly, cx1, cy1,
 					this.zLevel, tend.getColor(), displace, 1.1);
-			HLGuiUtils.fracLine(ms, lx + centerOffset, ly + centerOffset, cx2 + centerOffset, cy2 + centerOffset,
+			HLGuiUtils.fracLine(ms, lx, ly, cx2, cy2,
 					this.zLevel, tend.getColor(), displace, 1.1);
-			HLGuiUtils.fracLine(ms, cx1 + centerOffset, cy1 + 8, lx + centerOffset, ly + centerOffset, this.zLevel,
+			HLGuiUtils.fracLine(ms, cx1, cy1, lx, ly, this.zLevel,
 					tend.getColor(), displace, 0.8);
-			HLGuiUtils.fracLine(ms, cx2 + centerOffset, cy2 + centerOffset, lx + centerOffset, ly + centerOffset,
+			HLGuiUtils.fracLine(ms, cx2, cy2, lx, ly,
 					this.zLevel, tend.getColor(), displace, 0.8);
-			int newX = (int) (cx + Math.cos(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			int newY = (int) (cy + Math.sin(Math.toRadians(rotAngle)) * iconDiameter / 1.75);
-			HLGuiUtils.renderItemStackInGui(graphics, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), newX, newY);
+			double iconDist = iconDiameter / 1.75;
+			int iconCenterX = centerX + (int) (Math.cos(Math.toRadians(rotAngle)) * iconDist);
+			int iconCenterY = centerY + (int) (Math.sin(Math.toRadians(rotAngle)) * iconDist);
+			HLGuiUtils.renderItemStackInGui(graphics, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
+					iconCenterX - halfItem, iconCenterY - halfItem);
 			rotAngle += 45;
 		}
 	}
@@ -131,16 +150,22 @@ public class RecallerRecipeCategory implements IRecipeCategory<RecallerRecipe> {
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, RecallerRecipe recipe, IFocusGroup focuses) {
-		List<List<ItemStack>> list = new ArrayList<>();
-		for (Ingredient ingr : recipe.getIngredients()) {
-			list.add(Arrays.asList(ingr.getItems()));
-		}
+		// Hematic Memory input - always required
 		builder.addSlot(RecipeIngredientRole.INPUT, 5, 11).addIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(ItemInit.hematic_memory.get()));
 
-		if (list.size() > 0) {
+		// Enzyme/catalyst ingredient slot - show if recipe has a non-empty ingredient
+		List<List<ItemStack>> list = new ArrayList<>();
+		for (Ingredient ingr : recipe.getIngredients()) {
+			if (ingr != null && ingr != Ingredient.EMPTY && ingr.getItems().length > 0) {
+				list.add(Arrays.asList(ingr.getItems()));
+			}
+		}
+		if (!list.isEmpty()) {
 			builder.addSlot(RecipeIngredientRole.INPUT, 23, 11).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
 		}
+
+		// Output slot
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 149, 77).addIngredient(VanillaTypes.ITEM_STACK,
 				recipe.getResultItem(null));
 

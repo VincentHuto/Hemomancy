@@ -4,11 +4,10 @@
       "item": "hemomancy:gourd_seeds"
     },
     "title": {
-      "text": "Strange Seeds",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.root.title"
     },
     "description": {
-      "text": "Find Gourd Seeds while breaking grass"
+      "translate": "advancements.hemomancy.root.description"
     },
     "frame": "task",
     "show_toast": true,

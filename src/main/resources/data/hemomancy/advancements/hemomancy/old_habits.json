@@ -4,11 +4,10 @@
       "item": "hemomancy:recycled_enzyme"
     },
     "title": {
-      "text": "Old Habits",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.old_habits.title"
     },
     "description": {
-      "text": "Obtain any enzyme and begin tuning your Blood Tendency"
+      "translate": "advancements.hemomancy.old_habits.description"
     },
     "frame": "task",
     "show_toast": true,

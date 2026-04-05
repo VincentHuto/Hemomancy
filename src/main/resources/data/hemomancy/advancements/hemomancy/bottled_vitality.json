@@ -4,11 +4,10 @@
       "item": "hemomancy:blood_gourd_white"
     },
     "title": {
-      "text": "Bottled Vitality",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.bottled_vitality.title"
     },
     "description": {
-      "text": "Obtain a Blood Gourd to store your blood on the go"
+      "translate": "advancements.hemomancy.bottled_vitality.description"
     },
     "frame": "task",
     "show_toast": true,

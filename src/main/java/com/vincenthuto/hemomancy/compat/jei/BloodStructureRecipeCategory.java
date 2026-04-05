@@ -2,9 +2,6 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -40,6 +37,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
@@ -65,17 +63,21 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX,
 			double mouseY) {
 		overlay.draw(graphics);
-		MutableComponent experienceString = Component.literal(String.valueOf(recipe.getResult()));
+		// Show blood cost, not result.toString()
+		MutableComponent costString = Component.literal("Blood Cost: " + (int) recipe.getBloodCost());
 		Minecraft minecraft = Minecraft.getInstance();
 		Font fontRenderer = minecraft.font;
-		int stringWidth = fontRenderer.width(experienceString);
-		graphics.drawString(fontRenderer, experienceString, background.getWidth() - stringWidth, 0, 0xFF808080);
+		int stringWidth = fontRenderer.width(costString);
+		graphics.drawString(fontRenderer, costString, background.getWidth() - stringWidth, 0, 0xFFAA0000);
 		Window mainWindow = Minecraft.getInstance().getWindow();
+		double guiScaleFactor = mainWindow.getGuiScale();
+		// Offset the 3D render into the right half of the background
+		graphics.pose().translate(8, 16, 0);
 		int scissorX = 27;
 		int scissorY = 0;
-		double guiScaleFactor = mainWindow.getGuiScale();
-		graphics.pose().translate(8, 16, 0);
-		ScreenArea scissorBounds = new ScreenArea(scissorX, scissorY, 70, 70);
+		int scissorW = 70;
+		int scissorH = 70;
+		ScreenArea scissorBounds = new ScreenArea(scissorX, scissorY, scissorW, scissorH);
 		AABB dims = new AABB(0, 0, 0, 0, 0, 0);
 		Lighting.setupForFlatItems();
 		renderRecipe(recipe, graphics, dims, guiScaleFactor, scissorBounds);
@@ -106,28 +108,29 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	private void renderRecipe(BloodStructureRecipe recipe, GuiGraphics graphics, AABB dims, double guiScaleFactor,
 			ScreenArea scissorBounds) {
 		try {
-			graphics.fill(scissorBounds.x, scissorBounds.y, scissorBounds.x + scissorBounds.width, scissorBounds.height,
+			graphics.fill(scissorBounds.x, scissorBounds.y, scissorBounds.x + scissorBounds.width, scissorBounds.y + scissorBounds.height,
 					0xFF404040);
 			MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
 			final double scale = Minecraft.getInstance().getWindow().getGuiScale();
 			final Matrix4f matrix = graphics.pose().last().pose();
 			final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-			matrix.set(buf);
+			matrix.get(buf);
 			Lighting.setupLevel(matrix);
 
 			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
-			scissorBounds.x *= scale;
-			scissorBounds.y *= scale;
-			scissorBounds.width *= scale;
-			scissorBounds.height *= scale;
-			final int scissorX = Math.round(Math.round(translation.x + scissorBounds.x));
-			final int scissorY = Math.round(Math.round(Minecraft.getInstance().getWindow().getHeight() - scissorBounds.y
-					- scissorBounds.height - translation.y));
-			final int scissorW = Math.round(scissorBounds.width);
-			final int scissorH = Math.round(scissorBounds.height);
-			RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
+			// Use separate scaled values instead of mutating scissorBounds
+			final int scaledX = (int) (scissorBounds.x * scale);
+			final int scaledY = (int) (scissorBounds.y * scale);
+			final int scaledW = (int) (scissorBounds.width * scale);
+			final int scaledH = (int) (scissorBounds.height * scale);
+			final int scissorXFinal = Math.round(Math.round(translation.x + scaledX));
+			final int scissorYFinal = Math.round(Math.round(Minecraft.getInstance().getWindow().getHeight() - scaledY
+					- scaledH - translation.y));
+			final int scissorWFinal = Math.round(scaledW);
+			final int scissorHFinal = Math.round(scaledH);
+			RenderSystem.enableScissor(scissorXFinal, scissorYFinal, scissorWFinal, scissorHFinal);
 			graphics.pose().pushPose();
-			graphics.pose().translate(27 + (35), scissorBounds.y + (35), 100);
+			graphics.pose().translate(scissorBounds.x + (scissorBounds.width / 2), scissorBounds.y + (scissorBounds.height / 2), 100);
 			Vec3 dimsVec = new Vec3(dims.getXsize(), dims.getYsize(), dims.getZsize());
 			float recipeAvgDim = (float) dimsVec.length();
 			double explodeMulti = 1.5;
@@ -174,25 +177,32 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, BloodStructureRecipe recipe, IFocusGroup focuses) {
 
-		List<List<ItemStack>> list = new ArrayList<>();
-		List<ItemStack> heldStack = new ArrayList<>() {
-			{
-				add(recipe.getHeldItem());
-			}
-		};
-		List<ItemStack> hitStack = new ArrayList<>() {
-			{
-				add(new ItemStack(recipe.getHitBlock().asItem()));
-			}
-		};
-		Collections.addAll(list, heldStack, hitStack);
+		// Input slots: held item and hit block
+		builder.addSlot(RecipeIngredientRole.INPUT, 5, 21)
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHeldItem());
 
-		if (list.size() > 1) {
-			builder.addSlot(RecipeIngredientRole.INPUT, 5, 31).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
-			builder.addSlot(RecipeIngredientRole.INPUT, 5, 51).addIngredients(VanillaTypes.ITEM_STACK, list.get(1));
-			builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 41).addIngredient(VanillaTypes.ITEM_STACK,
-					recipe.getResult());
+		builder.addSlot(RecipeIngredientRole.INPUT, 5, 41)
+				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.getHitBlock().asItem()));
+
+		// Show the pattern blocks as additional required ingredients
+		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
+			int slotIndex = 0;
+			for (java.util.Map.Entry<String, Block> entry : recipe.getPattern().getSymbolList().entrySet()) {
+				Block block = entry.getValue();
+				if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
+					ItemStack blockStack = new ItemStack(block.asItem());
+					if (!blockStack.isEmpty()) {
+						builder.addSlot(RecipeIngredientRole.INPUT, 5, 61 + (slotIndex * 20))
+								.addIngredient(VanillaTypes.ITEM_STACK, blockStack);
+						slotIndex++;
+					}
+				}
+			}
 		}
+
+		// Output slot
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 41)
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
 	}
 
 }

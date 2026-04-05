@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:juiceinator",
+  "ingredient": {
+    "item": "hemomancy:blood_stained_stone"
+  },
+  "result": "hemomancy:sanguine_formation",
+  "count": 2,
+  "experience": 0.7,
+  "cookingtime": 200
+}

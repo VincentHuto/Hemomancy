@@ -128,19 +128,25 @@ public class JuiceinatorRecipeCategory implements IRecipeCategory<JuiceinatorRec
 	@Nonnull
 	@Override
 	public Component getTitle() {
-		return Component.literal("Juiceinator");
+		return Component.translatable("block.hemomancy.juiceinator");
 	}
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, JuiceinatorRecipe recipe, IFocusGroup focuses) {
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM_STACK,
-				recipe.getResultItem(null));
+		// Input ingredient slot
 		List<List<ItemStack>> list = new ArrayList<>();
 		for (Ingredient ingr : recipe.getIngredients()) {
 			list.add(Arrays.asList(ingr.getItems()));
 		}
 		builder.addSlot(RecipeIngredientRole.INPUT, 56, 17).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
 
+		// Fuel slot - show common fuels as catalyst hint
+		builder.addSlot(RecipeIngredientRole.CATALYST, 56, 53)
+				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(net.minecraft.world.item.Items.COAL));
+
+		// Output slot
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 117, 36).addIngredient(VanillaTypes.ITEM_STACK,
+				recipe.getResultItem(null));
 	}
 
 }

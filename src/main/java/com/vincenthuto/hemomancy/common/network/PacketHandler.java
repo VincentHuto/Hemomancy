@@ -8,7 +8,9 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
 import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
+import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.*;
@@ -175,6 +177,14 @@ public class PacketHandler {
 				.consumerNetworkThread(EntityHitParticlePacket::handle).add();
 		CHANNELBLOODVOLUME.messageBuilder(AirBloodDrawPacket.class, networkID++).decoder(AirBloodDrawPacket::decode)
 				.encoder(AirBloodDrawPacket::encode).consumerNetworkThread(AirBloodDrawPacket::handle).add();
+
+		// Skill tree packets
+		CHANNELBLOODVOLUME.messageBuilder(PacketUnlockSkill.class, networkID++)
+				.decoder(PacketUnlockSkill::decode).encoder(PacketUnlockSkill::encode)
+				.consumerNetworkThread(PacketUnlockSkill::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncSkills.class, networkID++)
+				.decoder(PacketSyncSkills::decode).encoder(PacketSyncSkills::encode)
+				.consumerNetworkThread(PacketSyncSkills::handle).add();
 
 		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
 				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)

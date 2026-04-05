@@ -4,11 +4,10 @@
       "item": "hemomancy:befouling_ash"
     },
     "title": {
-      "text": "Ashen Beginnings",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.ashen_beginnings.title"
     },
     "description": {
-      "text": "Craft Befouling Ash, a key ingredient for blood structure recipes"
+      "translate": "advancements.hemomancy.ashen_beginnings.description"
     },
     "frame": "task",
     "show_toast": true,

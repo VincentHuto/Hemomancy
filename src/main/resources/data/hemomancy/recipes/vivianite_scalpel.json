@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  V",
+    " S ",
+    "N  "
+  ],
+  "key": {
+    "V": {
+      "item": "hemomancy:vivianite_cluster"
+    },
+    "S": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "N": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "hemomancy:vivianite_scalpel"
+  }
+}

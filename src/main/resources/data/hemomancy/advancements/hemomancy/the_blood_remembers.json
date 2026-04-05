@@ -4,11 +4,10 @@
       "item": "hemomancy:living_blade"
     },
     "title": {
-      "text": "The Blood Remembers",
-      "color": "dark_red"
+      "translate": "advancements.hemomancy.the_blood_remembers.title"
     },
     "description": {
-      "text": "Obtain a Living Blade, a weapon that feeds on blood"
+      "translate": "advancements.hemomancy.the_blood_remembers.description"
     },
     "frame": "challenge",
     "show_toast": true,
