@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.effect.ArachnidAnastomosisEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodBindingEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodLossEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodRushEffect;
@@ -62,5 +63,12 @@ public class EffectInit {
 			"potion_of_sanguine_fertility",
 			() -> new Potion("potion_of_sanguine_fertility",
 					new MobEffectInstance(sanguine_fertility.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> arachnid_anastomosis = EFFECTS.register("arachnid_anastomosis",
+			() -> new ArachnidAnastomosisEffect(MobEffectCategory.BENEFICIAL, 0x8B0000));
+	public static final RegistryObject<Potion> potion_of_arachnid_anastomosis = POTION_TYPES.register(
+			"potion_of_arachnid_anastomosis",
+			() -> new Potion("potion_of_arachnid_anastomosis",
+					new MobEffectInstance(arachnid_anastomosis.get(), 1200, 0)));
 
 }

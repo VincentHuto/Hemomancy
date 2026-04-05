@@ -296,6 +296,8 @@ public class ItemInit {
 			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
 			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_spider = BASEITEMS.register("morphling_spider",
+			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
@@ -642,6 +644,8 @@ public class ItemInit {
 								return 4;
 							} else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
 								return 5;
+							} else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
+								return 6;
 							} else {
 								return 0;
 							}
