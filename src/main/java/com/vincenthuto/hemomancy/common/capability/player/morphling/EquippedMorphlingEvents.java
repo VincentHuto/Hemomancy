@@ -3,8 +3,6 @@ package com.vincenthuto.hemomancy.common.capability.player.morphling;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.common.init.EffectInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.morphling.SyncEquippedMorphlingPacket;
@@ -13,7 +11,6 @@ import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -79,14 +76,9 @@ public class EquippedMorphlingEvents {
 				}
 			});
 
-			// Spider morphling: apply Arachnid Anastomosis to slowly repair vascular damage
-			// Duration of 100 ticks (5 sec) exceeds the drain interval so the effect stays
-			// active while equipped, but expires quickly if the morphling is removed.
-			if (morphCap.getEquippedMorphling().getItem() == ItemInit.morphling_spider.get()) {
-				if (!player.hasEffect(EffectInit.arachnid_anastomosis.get())) {
-					player.addEffect(new MobEffectInstance(EffectInit.arachnid_anastomosis.get(),
-							100, 0, false, true, true));
-				}
+			// Delegate morphling-specific passive effects to the item itself
+			if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedTick(player);
 			}
 		});
 	}

@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.item.memories.LethianDewItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
@@ -297,7 +298,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
 			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_spider = BASEITEMS.register("morphling_spider",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
