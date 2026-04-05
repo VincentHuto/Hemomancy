@@ -133,7 +133,7 @@ public class UnsignedLedgerItem extends Item {
 
 							// Notify online bloodline members
 							for (Player member : globalLine.getPlayers(worldIn)) {
-								if (member != null && !member.getUUID().equals(playerIn.getUUID())) {
+								if (!member.getUUID().equals(playerIn.getUUID())) {
 									member.displayClientMessage(
 											Component.literal(playerIn.getName().getString()
 													+ " has joined your bloodline!")

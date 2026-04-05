@@ -95,7 +95,8 @@ public class BloodVolumeEvents {
 			Bloodline bloodline = volume.getBloodLine();
 			if (bloodline.isValid() && HemoServerConfig.BLOODLINE_POOL_ENABLED.get()) {
 				int poolInterval = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_INTERVAL.get();
-				if (player.tickCount % poolInterval == 0 && volume.getBloodVolume() > volume.getMaxBloodVolume() * 0.25) {
+				double minThreshold = HemoServerConfig.BLOODLINE_POOL_MIN_BLOOD_THRESHOLD.get();
+				if (player.tickCount % poolInterval == 0 && volume.getBloodVolume() > volume.getMaxBloodVolume() * minThreshold) {
 					double contributionRate = HemoServerConfig.BLOODLINE_POOL_CONTRIBUTION_RATE.get();
 					ServerLevel overworld = ((ServerLevel) player.level()).getServer().overworld();
 					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);

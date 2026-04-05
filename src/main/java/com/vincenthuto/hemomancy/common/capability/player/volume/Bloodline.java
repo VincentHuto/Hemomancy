@@ -11,6 +11,9 @@ import net.minecraft.world.level.Level;
 
 public class Bloodline {
 
+	public static final UUID INVALID_UUID = new UUID(0, 0);
+	public static final float BLOOD_VOLUME_PER_MEMBER = 1000f;
+
 	public static Bloodline NOBLOODLINE = new Bloodline();
 
 	public static Bloodline deserialize(CompoundTag nbt) {
@@ -46,8 +49,8 @@ public class Bloodline {
 		this.name = "No Bloodline";
 		this.bloodVolume = 0;
 		this.maxBloodVolume = 0;
-		this.leaderUUID = new UUID(0, 0);
-		this.bloodlineUUID = new UUID(0, 0);
+		this.leaderUUID = INVALID_UUID;
+		this.bloodlineUUID = INVALID_UUID;
 		this.playerUUIDS = new ArrayList<>();
 	}
 
@@ -60,11 +63,11 @@ public class Bloodline {
 			playerUUIDS.add(leaderUUID);
 		}
 		this.playerUUIDS = playerUUIDS;
-		this.maxBloodVolume = this.playerUUIDS.size() * 1000f;
+		this.maxBloodVolume = this.playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
 	}
 
 	public boolean isValid() {
-		return !bloodlineUUID.equals(new UUID(0, 0));
+		return !bloodlineUUID.equals(INVALID_UUID);
 	}
 
 	public boolean hasMember(UUID playerUUID) {
@@ -74,7 +77,7 @@ public class Bloodline {
 	public boolean addMember(UUID playerUUID) {
 		if (!playerUUIDS.contains(playerUUID)) {
 			playerUUIDS.add(playerUUID);
-			this.maxBloodVolume = playerUUIDS.size() * 1000f;
+			this.maxBloodVolume = playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
 			return true;
 		}
 		return false;
@@ -82,7 +85,7 @@ public class Bloodline {
 
 	public boolean removeMember(UUID playerUUID) {
 		if (playerUUIDS.remove(playerUUID)) {
-			this.maxBloodVolume = playerUUIDS.size() * 1000f;
+			this.maxBloodVolume = playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
 			return true;
 		}
 		return false;
