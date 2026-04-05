@@ -20,5 +20,6 @@ public class MnAPluginManipulationInit {
 	public static final RegistryObject<BloodManipulation> mana_memory_sanguine_transfusion = MNA_MANIPS.register(
 			"mana_memory_sanguine_transfusion",
 			() -> new SanguineTransfusionManip("mana_memory_sanguine_transfusion", 200, 1, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY));
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.DUCTILIS, EnumVeinSections.BODY)
+					.setCooldownTicks(20));
 }

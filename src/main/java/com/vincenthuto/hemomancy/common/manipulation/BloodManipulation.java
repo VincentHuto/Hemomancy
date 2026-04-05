@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -37,6 +41,9 @@ public class BloodManipulation  {
 						EnumManipulationRank.valueOf(nbt.getString("rank")),
 						EnumBloodTendency.valueOf(nbt.getString("tendency")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
+				if (nbt.contains("cooldown")) {
+					manip.cooldownTicks = nbt.getInt("cooldown");
+				}
 
 				return manip;
 			}
@@ -51,6 +58,9 @@ public class BloodManipulation  {
 
 	EnumManipulationType type;
 
+	int cooldownTicks;
+	private final Map<UUID, Long> cooldownMap = new HashMap<>();
+
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		this.name = name;
@@ -60,6 +70,7 @@ public class BloodManipulation  {
 		this.tend = tendency;
 		this.rank = rank;
 		this.section = section;
+		this.cooldownTicks = 0;
 	}
 
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
@@ -102,6 +113,41 @@ public class BloodManipulation  {
 		return xpCost;
 	}
 
+	public int getCooldownTicks() {
+		return cooldownTicks;
+	}
+
+	public BloodManipulation setCooldownTicks(int cooldownTicks) {
+		this.cooldownTicks = cooldownTicks;
+		return this;
+	}
+
+	public boolean isOnCooldown(Player player) {
+		if (cooldownTicks <= 0) {
+			return false;
+		}
+		Long expiryTick = cooldownMap.get(player.getUUID());
+		return expiryTick != null && player.level().getGameTime() < expiryTick;
+	}
+
+	public long getRemainingCooldownTicks(Player player) {
+		if (cooldownTicks <= 0) {
+			return 0;
+		}
+		Long expiryTick = cooldownMap.get(player.getUUID());
+		if (expiryTick == null) {
+			return 0;
+		}
+		long remaining = expiryTick - player.level().getGameTime();
+		return Math.max(0, remaining);
+	}
+
+	private void startCooldown(Player player) {
+		if (cooldownTicks > 0) {
+			cooldownMap.put(player.getUUID(), player.level().getGameTime() + cooldownTicks);
+		}
+	}
+
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
@@ -109,6 +155,15 @@ public class BloodManipulation  {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
+			if (isOnCooldown(player)) {
+				long remaining = getRemainingCooldownTicks(player);
+				double seconds = remaining / 20.0;
+				player.displayClientMessage(
+						Component.literal(String.format("Manipulation on cooldown! (%.1fs)", seconds))
+								.withStyle(ChatFormatting.RED),
+						true);
+				return;
+			}
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier();
@@ -122,6 +177,7 @@ public class BloodManipulation  {
 
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
+						startCooldown(player);
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);
@@ -150,6 +206,7 @@ public class BloodManipulation  {
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
 		nbt.putString("section", section.name());
+		nbt.putInt("cooldown", cooldownTicks);
 		return nbt;
 	}
 
