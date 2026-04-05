@@ -20,8 +20,8 @@ public class ManipCooldownOverlay {
 
 	public static ManipCooldownOverlay instance;
 
-	private static int cooldownDuration = 0;
-	private static int cooldownRemaining = 0;
+	private static volatile int cooldownDuration = 0;
+	private static volatile int cooldownRemaining = 0;
 
 	public static void startCooldown(int ticks) {
 		cooldownDuration = ticks;
