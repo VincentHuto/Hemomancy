@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.ErythromyceliumEruptus
 import com.vincenthuto.hemomancy.client.render.entity.mob.FargoneRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.FerventChitiniteRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.FunglingRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.HemolymphopodaRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.LumpOfThoughtRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.MorphlingPolypRenderer;
@@ -337,6 +338,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
 			event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);
 			event.registerEntityRenderer(EntityInit.barbed_urchin.get(), BarbedUrchinRenderer::new);
+			event.registerEntityRenderer(EntityInit.hemolymphopoda.get(), HemolymphopodaRenderer::new);
 			event.registerEntityRenderer(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusRenderer::new);
 			event.registerEntityRenderer(EntityInit.morphling_polyp.get(), MorphlingPolypRenderer::new);
 			event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);

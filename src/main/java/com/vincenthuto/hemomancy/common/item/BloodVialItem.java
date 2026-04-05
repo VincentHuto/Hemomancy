@@ -2,10 +2,14 @@ package com.vincenthuto.hemomancy.common.item;
 
 import java.util.List;
 
+import com.vincenthuto.hemomancy.common.entity.mob.HemolymphopodaEntity;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -58,6 +62,15 @@ public class BloodVialItem extends Item {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (entity != null) {
 			if (entity instanceof LivingEntity living) {
+				// Special case: Hemolymphopoda produces Cleansing Hemolymph instead of a standard sample
+				if (living instanceof HemolymphopodaEntity) {
+					if (!player.level().isClientSide) {
+						ItemStack hemolymphStack = new ItemStack(ItemInit.cleansing_hemolymph.get());
+						player.setItemInHand(InteractionHand.MAIN_HAND, hemolymphStack);
+						player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
+					}
+					return true;
+				}
 				tag.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString());
 				tag.putBoolean(TAG_STATE, true);
 			}

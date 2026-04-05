@@ -166,6 +166,10 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> cleansed_blood_crystal_shard = BASEITEMS.register("cleansed_blood_crystal_shard",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> cleansing_hemolymph = SPECIALITEMS.register("cleansing_hemolymph",
+			() -> new CleansingHemolymphItem(new Item.Properties()));
 	public static final RegistryObject<Item> blood_rock = BASEITEMS.register("blood_rock",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> vivianite_cluster = BASEITEMS.register("vivianite_cluster",
@@ -555,6 +559,10 @@ public class ItemInit {
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
 			"spawn_egg_enthralled_doll",
 			() -> new ForgeSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
+
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
+			"spawn_egg_hemolymphopoda",
+			() -> new ForgeSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
 
 	// Item Property Override
 	@SuppressWarnings("deprecation")
