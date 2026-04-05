@@ -39,6 +39,7 @@ import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
 import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
 import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
@@ -133,6 +134,10 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void onClientTick(ClientTickEvent event) {
+
+		if (event.phase == TickEvent.Phase.END) {
+			ManipCooldownOverlay.tick();
+		}
 
 		if (bloodFormation.consumeClick()) {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodFormationKeyPressPacket());
@@ -349,6 +354,7 @@ public class ClientEvents {
 			MinecraftForge.EVENT_BUS.register(RenderBloodLaserEvent.class);
 			BloodVolumeOverlay.instance = new BloodVolumeOverlay();
 			EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
+			ManipCooldownOverlay.instance = new ManipCooldownOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
@@ -445,6 +451,10 @@ public class ClientEvents {
 			event.registerAboveAll("equipped_morphling", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				EquippedMorphlingOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			});
+			event.registerAboveAll("manip_cooldown", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+				gui.setupOverlayRenderState(true, false);
+				ManipCooldownOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}

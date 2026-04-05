@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -60,8 +61,9 @@ public class BloodManipulation  {
 
 	private static final double TICKS_PER_SECOND = 20.0;
 
+	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
+
 	int cooldownTicks;
-	private final Map<UUID, Long> cooldownMap = new ConcurrentHashMap<>();
 
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
@@ -128,22 +130,23 @@ public class BloodManipulation  {
 		if (cooldownTicks <= 0) {
 			return false;
 		}
-		Long expiryTick = cooldownMap.get(player.getUUID());
+		return isAnyManipOnCooldown(player);
+	}
+
+	public static boolean isAnyManipOnCooldown(Player player) {
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
 		if (expiryTick == null) {
 			return false;
 		}
 		if (player.level().getGameTime() >= expiryTick) {
-			cooldownMap.remove(player.getUUID());
+			UNIVERSAL_COOLDOWN_MAP.remove(player.getUUID());
 			return false;
 		}
 		return true;
 	}
 
 	public long getRemainingCooldownTicks(Player player) {
-		if (cooldownTicks <= 0) {
-			return 0;
-		}
-		Long expiryTick = cooldownMap.get(player.getUUID());
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
 		if (expiryTick == null) {
 			return 0;
 		}
@@ -151,9 +154,14 @@ public class BloodManipulation  {
 		return Math.max(0, remaining);
 	}
 
+	public static long getUniversalCooldownExpiry(Player player) {
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
+		return expiryTick != null ? expiryTick : 0;
+	}
+
 	private void startCooldown(Player player) {
 		if (cooldownTicks > 0) {
-			cooldownMap.put(player.getUUID(), player.level().getGameTime() + cooldownTicks);
+			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + cooldownTicks);
 		}
 	}
 
@@ -164,7 +172,7 @@ public class BloodManipulation  {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
-			if (isOnCooldown(player)) {
+			if (isAnyManipOnCooldown(player)) {
 				long remaining = getRemainingCooldownTicks(player);
 				double seconds = remaining / TICKS_PER_SECOND;
 				player.displayClientMessage(
@@ -187,6 +195,9 @@ public class BloodManipulation  {
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
 						startCooldown(player);
+						PacketHandler.CHANNELKNOWNMANIPS.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+								new ManipCooldownPacket(cooldownTicks));
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);

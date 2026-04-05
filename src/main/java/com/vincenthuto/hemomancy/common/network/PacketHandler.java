@@ -135,6 +135,8 @@ public class PacketHandler {
 				UseContManipKeyPacket::decode, UseContManipKeyPacket::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, UseManipKeyPacket.class, UseManipKeyPacket::encode,
 				UseManipKeyPacket::decode, UseManipKeyPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, ManipCooldownPacket.class, ManipCooldownPacket::encode,
+				ManipCooldownPacket::decode, ManipCooldownPacket::handle);
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, UpdateCurrentManipPacket.class,
 				UpdateCurrentManipPacket::encode, UpdateCurrentManipPacket::decode,
 				UpdateCurrentManipPacket.Handler::handle);

@@ -42,6 +42,11 @@ public class UseManipKeyPacket {
 				return;
 			if (!player.level().isClientSide) {
 				float pTic = message.parTick;
+				if (BloodManipulation.isAnyManipOnCooldown(player)) {
+					player.displayClientMessage(Component.literal("Manipulation on cooldown!")
+							.withStyle(ChatFormatting.RED), true);
+					return;
+				}
 				IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 						.orElseThrow(NullPointerException::new);
 				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
