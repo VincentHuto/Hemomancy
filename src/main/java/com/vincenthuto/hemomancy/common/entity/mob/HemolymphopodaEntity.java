@@ -19,7 +19,6 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -52,10 +51,9 @@ public class HemolymphopodaEntity extends PathfinderMob {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new PanicGoal(this, 1.4D));
-		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 0.6D));
-		this.goalSelector.addGoal(2, new RandomStrollGoal(this, 0.5D));
-		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
-		this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(1, new RandomStrollGoal(this, 0.5D));
+		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 	}
 
 	public static boolean canSpawnHere(EntityType<? extends HemolymphopodaEntity> type, LevelAccessor world,

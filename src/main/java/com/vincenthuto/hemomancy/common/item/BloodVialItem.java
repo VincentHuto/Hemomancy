@@ -69,6 +69,7 @@ public class BloodVialItem extends Item {
 						player.setItemInHand(InteractionHand.MAIN_HAND, hemolymphStack);
 						player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
 					}
+					// Return true on both sides to cancel the attack; inventory syncs from server
 					return true;
 				}
 				tag.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()).toString());
