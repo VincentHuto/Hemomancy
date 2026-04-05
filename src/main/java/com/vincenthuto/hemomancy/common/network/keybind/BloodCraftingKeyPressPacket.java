@@ -9,7 +9,11 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
+import com.vincenthuto.hemomancy.common.rite.CardinalRiteSavedData;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -59,6 +63,9 @@ public class BloodCraftingKeyPressPacket {
 			if (player == null)
 				return;
 
+			boolean handled = false;
+
+			// === Blood Structure Recipes (instant crafting) ===
 			for (BloodStructureRecipe pattern : BloodStructureRecipe.getAllRecipes(player.level())) {
 				if (player.getMainHandItem().getItem() == pattern.getHeldItem().getItem()) {
 					IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -106,6 +113,7 @@ public class BloodCraftingKeyPressPacket {
 													PacketHandler.CHANNELBLOODVOLUME.send(
 															PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 															new BloodVolumeServerPacket(bloodVolume));
+													handled = true;
 												}
 											}
 										}
@@ -115,6 +123,7 @@ public class BloodCraftingKeyPressPacket {
 										sLevel.playLocalSound(player.blockPosition().getX(),
 												player.blockPosition().getY(), player.blockPosition().getZ(),
 												SoundEvents.ENDERMAN_SCREAM, null, 1f, 1f, false);
+										handled = true;
 									}
 								}
 
@@ -124,8 +133,74 @@ public class BloodCraftingKeyPressPacket {
 				}
 			}
 
+			// === Cardinal Rite Recipes (delayed casting) ===
+			if (!handled) {
+				tryStartCardinalRite(player, ctx);
+			}
+
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	private static void tryStartCardinalRite(Player player, Supplier<NetworkEvent.Context> ctx) {
+		ServerLevel sLevel = (ServerLevel) player.level();
+		ServerPlayer serverPlayer = (ServerPlayer) player;
+
+		// Check if player already has an active rite
+		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
+		if (savedData.hasActiveRite(player.getUUID())) {
+			player.displayClientMessage(
+					Component.literal("A rite is already in progress...")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					true);
+			return;
+		}
+
+		IBloodVolume bloodVolume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.orElseThrow(NullPointerException::new);
+
+		HitResult rayTrace = player.pick(5, 0, false);
+		if (rayTrace.getType() != HitResult.Type.BLOCK) return;
+
+		BlockHitResult blockResult = (BlockHitResult) rayTrace;
+		BlockPos hitPos = blockResult.getBlockPos();
+
+		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(player.level())) {
+			if (bloodVolume.getBloodVolume() < recipe.getBloodCost()) {
+				continue;
+			}
+
+			BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
+			if (match != null) {
+				// Calculate the center of the matched pattern
+				int cw = recipe.getPattern().getBlockPattern().getWidth() / 2;
+				int ch = recipe.getPattern().getBlockPattern().getHeight() / 2;
+				int cd = recipe.getPattern().getBlockPattern().getDepth() / 2;
+				BlockPos centerPos = match.getBlock(cw, ch, cd).getPos();
+
+				// Start the rite
+				int castingDuration = recipe.getRiteType().getCastingDurationTicks();
+				ActiveCardinalRite rite = new ActiveCardinalRite(
+						player.getUUID(), centerPos, recipe.getId(),
+						castingDuration, recipe.getRiteType().getSize());
+				savedData.startRite(rite);
+
+				// Play start sound
+				sLevel.playSound(null, centerPos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.5f);
+
+				// Notify the player
+				int seconds = castingDuration / 20;
+				player.displayClientMessage(
+						Component.literal("The " + recipe.getRiteName() + " begins... (" + seconds + "s)")
+								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+						false);
+				player.displayClientMessage(
+						Component.literal("Do not leave the ritual circle!")
+								.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+		}
 	}
 
 	public ItemStack heldStack;

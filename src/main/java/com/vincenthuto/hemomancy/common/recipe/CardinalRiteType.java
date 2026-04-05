@@ -1,17 +1,19 @@
 package com.vincenthuto.hemomancy.common.recipe;
 
 public enum CardinalRiteType {
-	MINOR(3, "minor"),
-	LESSER(5, "lesser"),
-	GREATER(7, "greater"),
-	GRAND(9, "grand");
+	MINOR(3, "minor", 100),
+	LESSER(5, "lesser", 200),
+	GREATER(7, "greater", 400),
+	GRAND(9, "grand", 800);
 
 	private final int size;
 	private final String serializedName;
+	private final int castingDurationTicks;
 
-	CardinalRiteType(int size, String serializedName) {
+	CardinalRiteType(int size, String serializedName, int castingDurationTicks) {
 		this.size = size;
 		this.serializedName = serializedName;
+		this.castingDurationTicks = castingDurationTicks;
 	}
 
 	public int getSize() {
@@ -20,6 +22,10 @@ public enum CardinalRiteType {
 
 	public String getSerializedName() {
 		return serializedName;
+	}
+
+	public int getCastingDurationTicks() {
+		return castingDurationTicks;
 	}
 
 	public static CardinalRiteType byName(String name) {
