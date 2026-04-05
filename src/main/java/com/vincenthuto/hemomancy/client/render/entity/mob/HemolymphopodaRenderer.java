@@ -18,7 +18,7 @@ public class HemolymphopodaRenderer
 		super(renderManagerIn,
 				new HemolymphopodaModel<HemolymphopodaEntity>(
 						renderManagerIn.bakeLayer(HemolymphopodaModel.LAYER_LOCATION)),
-				0.3F);
+				0.5F);
 	}
 
 	@Override

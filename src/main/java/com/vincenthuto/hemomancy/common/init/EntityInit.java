@@ -101,7 +101,7 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<HemolymphopodaEntity>> hemolymphopoda = ENTITY_TYPES.register(
             "hemolymphopoda",
-            () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.WATER_CREATURE).sized(0.6F, 0.2F)
+            () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.WATER_CREATURE).sized(0.9F, 0.3F)
                     .build(Hemomancy.rloc("hemolymphopoda").toString()));
 
     public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",

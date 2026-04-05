@@ -34,7 +34,7 @@ public class HemolymphopodaEntity extends PathfinderMob {
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 5.0D)
+				.add(Attributes.MAX_HEALTH, 8.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.12D);
 	}
 
