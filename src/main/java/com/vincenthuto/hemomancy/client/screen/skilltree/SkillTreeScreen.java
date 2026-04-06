@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
@@ -19,14 +20,25 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
+import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 /**
  * Skill tree screen opened from the Dendritic Distributor block.
@@ -44,7 +56,9 @@ public class SkillTreeScreen extends Screen {
 	// ── Tabs ──
 	private enum Tab {
 		SKILLS("Skills", 0xFFCC3333),
-		MANIPULATIONS("Manipulations", 0xFFCC8833);
+		MANIPULATIONS("Manipulations", 0xFFCC8833),
+		CRAFTING("Crafting", 0xFFAA2222),
+		RITES("Rites", 0xFF8844CC);
 
 		final String label;
 		final int color;
@@ -84,6 +98,14 @@ public class SkillTreeScreen extends Screen {
 	private static final float ZOOM_MAX = 3.0f;
 	private boolean isDragging;
 
+	// ── Pan limits: how far (in screen pixels) the content edge can be
+	//    dragged past the viewport edge before clamping kicks in ──
+	private static final int PAN_MARGIN = 150;
+
+	// ── Home button (top-left of GUI viewport) ──
+	private static final int HOME_BTN_SIZE = 16;
+	private static final int HOME_BTN_PAD  = 4;
+
 	// ── Vein background (same system as TendencyViewScreen) ──
 	private static final int VEIN_COUNT = 28;
 	private float[][] veinParams;
@@ -96,6 +118,29 @@ public class SkillTreeScreen extends Screen {
 	private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
 	private final Set<String> knownManipNames = new HashSet<>();
 	private int manipContentW, manipContentH;
+
+	// ── Cardinal Rites data ──
+	private final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
+	private int selectedRiteIndex = 0;
+	private float riteRotationAngle = 0f;
+	private boolean riteDragging = false;
+	private double riteDragLastX = 0;
+	private int riteVisibleLayer = -1;  // -1 = show all layers
+	private int riteMaxLayer = 0;
+
+	// ── Blood Crafting data ──
+	private final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
+	private int selectedCraftingIndex = 0;
+	private float craftingRotationAngle = 0f;
+	private boolean craftingDragging = false;
+	private double craftingDragLastX = 0;
+	private int craftingVisibleLayer = -1;  // -1 = show all layers
+	private int craftingMaxLayer = 0;
+
+	// Shared nav button dimensions
+	private static final int RITE_NAV_BTN_W = 24;
+	private static final int RITE_NAV_BTN_H = 18;
+	private static final int LAYER_BTN_SIZE = 16;
 
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
@@ -130,6 +175,8 @@ public class SkillTreeScreen extends Screen {
 		buildManipLayout();
 		seedVeinParams();
 		cacheKnownManipulations();
+		cacheRiteRecipes();
+		cacheCraftingRecipes();
 
 		// Centre each tab's content
 		skillPanX = (guiWidth  - skillContentW * skillZoom) / 2.0;
@@ -142,6 +189,8 @@ public class SkillTreeScreen extends Screen {
 
 	/** Save current pan/zoom into the active tab's slot. */
 	private void savePan() {
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return; // Browse tabs don't use pan/zoom
+		clampPan();
 		if (activeTab == Tab.SKILLS) {
 			skillPanX = panX; skillPanY = panY; skillZoom = zoom;
 		} else {
@@ -151,11 +200,48 @@ public class SkillTreeScreen extends Screen {
 
 	/** Restore pan/zoom from the active tab's slot. */
 	private void restorePan() {
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return; // Browse tabs don't use pan/zoom
 		if (activeTab == Tab.SKILLS) {
 			panX = skillPanX; panY = skillPanY; zoom = skillZoom;
 		} else {
 			panX = manipPanX; panY = manipPanY; zoom = manipZoom;
 		}
+	}
+
+	/**
+	 * Clamp pan so the tree content can never be dragged entirely off-screen.
+	 * The content edge is allowed PAN_MARGIN pixels past the viewport edge
+	 * so there's a comfortable "rubber band" feel without getting lost.
+	 */
+	private void clampPan() {
+		int contentW = (activeTab == Tab.SKILLS) ? skillContentW : manipContentW;
+		int contentH = (activeTab == Tab.SKILLS) ? skillContentH : manipContentH;
+
+		double scaledW = contentW * zoom;
+		double scaledH = contentH * zoom;
+
+		// panX: content left edge must not go further right than (guiWidth + margin),
+		//       content right edge must not go further left than (-margin).
+		double minPanX = -scaledW + (-PAN_MARGIN);
+		double maxPanX = guiWidth + PAN_MARGIN;
+		panX = Mth.clamp(panX, minPanX, maxPanX);
+
+		double minPanY = -scaledH + (-PAN_MARGIN);
+		double maxPanY = guiHeight + PAN_MARGIN;
+		panY = Mth.clamp(panY, minPanY, maxPanY);
+	}
+
+	/** Reset pan/zoom to the centred default view for the active tab. */
+	private void resetToHome() {
+		zoom = 1.0f;
+		if (activeTab == Tab.SKILLS) {
+			panX = (guiWidth  - skillContentW * zoom) / 2.0;
+			panY = (guiHeight - skillContentH * zoom) / 2.0;
+		} else {
+			panX = (guiWidth  - manipContentW * zoom) / 2.0;
+			panY = (guiHeight - manipContentH * zoom) / 2.0;
+		}
+		savePan();
 	}
 
 	/** Switch to a different tab. */
@@ -263,6 +349,26 @@ public class SkillTreeScreen extends Screen {
 		}
 	}
 
+	private void cacheRiteRecipes() {
+		riteRecipes.clear();
+		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
+			riteRecipes.addAll(CardinalRiteRecipe.getAllRecipes(minecraft.level));
+		}
+		if (selectedRiteIndex >= riteRecipes.size()) {
+			selectedRiteIndex = 0;
+		}
+	}
+
+	private void cacheCraftingRecipes() {
+		craftingRecipes.clear();
+		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
+			craftingRecipes.addAll(BloodStructureRecipe.getAllRecipes(minecraft.level));
+		}
+		if (selectedCraftingIndex >= craftingRecipes.size()) {
+			selectedCraftingIndex = 0;
+		}
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  Coordinate helpers  (content ↔ screen)
 	// ────────────────────────────────────────────────────────────
@@ -292,6 +398,12 @@ public class SkillTreeScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mx, double my, int btn) {
 		if (btn == 0) {
+			// Check home button click first (not on browse tabs)
+			if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && isOverHomeButton(mx, my)) {
+				resetToHome();
+				return true;
+			}
+
 			// Check tab clicks first
 			Tab clickedTab = tabUnder(mx, my);
 			if (clickedTab != null) {
@@ -300,6 +412,66 @@ public class SkillTreeScreen extends Screen {
 			}
 
 			if (insideGui(mx, my)) {
+				if (activeTab == Tab.CRAFTING) {
+					// Check crafting nav buttons
+					if (isOverCraftingPrevButton(mx, my) && !craftingRecipes.isEmpty()) {
+						selectedCraftingIndex = (selectedCraftingIndex - 1 + craftingRecipes.size()) % craftingRecipes.size();
+						craftingVisibleLayer = -1;
+						return true;
+					}
+					if (isOverCraftingNextButton(mx, my) && !craftingRecipes.isEmpty()) {
+						selectedCraftingIndex = (selectedCraftingIndex + 1) % craftingRecipes.size();
+						craftingVisibleLayer = -1;
+						return true;
+					}
+					// Check layer buttons
+					if (isOverLayerUpButton(mx, my, Tab.CRAFTING)) {
+						if (craftingVisibleLayer == -1) craftingVisibleLayer = craftingMaxLayer;
+						else if (craftingVisibleLayer < craftingMaxLayer) craftingVisibleLayer++;
+						else craftingVisibleLayer = -1; // wrap to "all"
+						return true;
+					}
+					if (isOverLayerDownButton(mx, my, Tab.CRAFTING)) {
+						if (craftingVisibleLayer == -1) craftingVisibleLayer = 0;
+						else if (craftingVisibleLayer > 0) craftingVisibleLayer--;
+						else craftingVisibleLayer = -1; // wrap to "all"
+						return true;
+					}
+					// Start rotation drag
+					craftingDragging = true;
+					craftingDragLastX = mx;
+					return true;
+				}
+				if (activeTab == Tab.RITES) {
+					// Check rite nav buttons
+					if (isOverRitePrevButton(mx, my) && !riteRecipes.isEmpty()) {
+						selectedRiteIndex = (selectedRiteIndex - 1 + riteRecipes.size()) % riteRecipes.size();
+						riteVisibleLayer = -1;
+						return true;
+					}
+					if (isOverRiteNextButton(mx, my) && !riteRecipes.isEmpty()) {
+						selectedRiteIndex = (selectedRiteIndex + 1) % riteRecipes.size();
+						riteVisibleLayer = -1;
+						return true;
+					}
+					// Check layer buttons
+					if (isOverLayerUpButton(mx, my, Tab.RITES)) {
+						if (riteVisibleLayer == -1) riteVisibleLayer = riteMaxLayer;
+						else if (riteVisibleLayer < riteMaxLayer) riteVisibleLayer++;
+						else riteVisibleLayer = -1; // wrap to "all"
+						return true;
+					}
+					if (isOverLayerDownButton(mx, my, Tab.RITES)) {
+						if (riteVisibleLayer == -1) riteVisibleLayer = 0;
+						else if (riteVisibleLayer > 0) riteVisibleLayer--;
+						else riteVisibleLayer = -1; // wrap to "all"
+						return true;
+					}
+					// Start rotation drag
+					riteDragging = true;
+					riteDragLastX = mx;
+					return true;
+				}
 				if (activeTab == Tab.SKILLS) {
 					SkillPoint hit = nodeUnder(mx, my);
 					if (hit != null) {
@@ -316,12 +488,26 @@ public class SkillTreeScreen extends Screen {
 
 	@Override
 	public boolean mouseReleased(double mx, double my, int btn) {
-		if (btn == 0) isDragging = false;
+		if (btn == 0) {
+			isDragging = false;
+			riteDragging = false;
+			craftingDragging = false;
+		}
 		return super.mouseReleased(mx, my, btn);
 	}
 
 	@Override
 	public boolean mouseDragged(double mx, double my, int btn, double dx, double dy) {
+		if (craftingDragging && btn == 0 && activeTab == Tab.CRAFTING) {
+			craftingRotationAngle += (float)(mx - craftingDragLastX) * 0.8f;
+			craftingDragLastX = mx;
+			return true;
+		}
+		if (riteDragging && btn == 0 && activeTab == Tab.RITES) {
+			riteRotationAngle += (float)(mx - riteDragLastX) * 0.8f;
+			riteDragLastX = mx;
+			return true;
+		}
 		if (isDragging && btn == 0) {
 			panX += dx;
 			panY += dy;
@@ -334,6 +520,32 @@ public class SkillTreeScreen extends Screen {
 	@Override
 	public boolean mouseScrolled(double mx, double my, double delta) {
 		if (!insideGui(mx, my)) return super.mouseScrolled(mx, my, delta);
+
+		// Rites tab: scroll to cycle through rites
+		if (activeTab == Tab.RITES) {
+			if (!riteRecipes.isEmpty()) {
+				if (delta > 0) {
+					selectedRiteIndex = (selectedRiteIndex - 1 + riteRecipes.size()) % riteRecipes.size();
+				} else {
+					selectedRiteIndex = (selectedRiteIndex + 1) % riteRecipes.size();
+				}
+				riteVisibleLayer = -1;
+			}
+			return true;
+		}
+
+		// Crafting tab: scroll to cycle through crafting recipes
+		if (activeTab == Tab.CRAFTING) {
+			if (!craftingRecipes.isEmpty()) {
+				if (delta > 0) {
+					selectedCraftingIndex = (selectedCraftingIndex - 1 + craftingRecipes.size()) % craftingRecipes.size();
+				} else {
+					selectedCraftingIndex = (selectedCraftingIndex + 1) % craftingRecipes.size();
+				}
+				craftingVisibleLayer = -1;
+			}
+			return true;
+		}
 
 		// Remember the content-space point under the cursor
 		double cxBefore = cx(mx);
@@ -374,6 +586,14 @@ public class SkillTreeScreen extends Screen {
 		// Dim world behind GUI
 		renderBackground(gfx);
 
+		// Auto-rotate rite model when not dragging
+		if (activeTab == Tab.RITES && !riteDragging) {
+			riteRotationAngle += partial * 0.4f;
+		}
+		if (activeTab == Tab.CRAFTING && !craftingDragging) {
+			craftingRotationAngle += partial * 0.4f;
+		}
+
 		// ── 1. Animated vein background (scissored to GUI bounds) ──
 		renderVeinBackground(gfx, guiLeft, guiTop, guiWidth, guiHeight);
 
@@ -387,9 +607,13 @@ public class SkillTreeScreen extends Screen {
 		if (activeTab == Tab.SKILLS) {
 			drawConnections(gfx);
 			drawNodes(gfx);
-		} else {
+		} else if (activeTab == Tab.MANIPULATIONS) {
 			drawManipConnections(gfx);
 			drawManipNodes(gfx);
+		} else if (activeTab == Tab.CRAFTING) {
+			drawCraftingContent(gfx, mouseX, mouseY, partial);
+		} else if (activeTab == Tab.RITES) {
+			drawRiteContent(gfx, mouseX, mouseY, partial);
 		}
 
 		gfx.disableScissor();
@@ -397,19 +621,26 @@ public class SkillTreeScreen extends Screen {
 		// ── 4. Tab buttons (top-right, outside scissor) ──
 		drawTabs(gfx, mouseX, mouseY);
 
+		// ── 4b. Home button (top-left, outside scissor; not on browse tabs) ──
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
+			drawHomeButton(gfx, mouseX, mouseY);
+		}
+
 		// ── 5. Overlay text ──
 		gfx.drawCenteredString(font,
 				Component.literal(activeTab.label),
 				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
 
-		gfx.drawString(font,
-				String.format("%.0f%%", zoom * 100),
-				guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
+			gfx.drawString(font,
+					String.format("%.0f%%", zoom * 100),
+					guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
+		}
 
 		// ── 6. Tooltip (must be outside scissor) ──
 		if (activeTab == Tab.SKILLS) {
 			drawTooltip(gfx, mouseX, mouseY);
-		} else {
+		} else if (activeTab == Tab.MANIPULATIONS) {
 			drawManipTooltip(gfx, mouseX, mouseY);
 		}
 
@@ -885,6 +1116,37 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
+	//  Home button (top-left corner of the GUI)
+	// ────────────────────────────────────────────────────────────
+
+	private void drawHomeButton(GuiGraphics gfx, int mouseX, int mouseY) {
+		int bx = guiLeft + HOME_BTN_PAD;
+		int by = guiTop + HOME_BTN_PAD;
+		int bs = HOME_BTN_SIZE;
+		boolean hovered = isOverHomeButton(mouseX, mouseY);
+
+		// Background
+		int bg = hovered ? 0xDD1A0505 : 0x99120303;
+		gfx.fill(bx, by, bx + bs, by + bs, bg);
+
+		// Border
+		int bc = hovered ? 0xFFCC3333 : 0xFF444444;
+		gfx.fill(bx, by, bx + bs, by + 1, bc);
+		gfx.fill(bx, by + bs - 1, bx + bs, by + bs, bc);
+		gfx.fill(bx, by, bx + 1, by + bs, bc);
+		gfx.fill(bx + bs - 1, by, bx + bs, by + bs, bc);
+
+		// House icon — draw a simple ⌂ symbol centered in the button
+		int textCol = hovered ? 0xFFFFAAAA : 0xFF888888;
+		gfx.drawCenteredString(font, "\u2302", bx + bs / 2, by + (bs - 8) / 2, textCol);
+
+		// Tooltip on hover
+		if (hovered) {
+			gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
+		}
+	}
+
+	// ────────────────────────────────────────────────────────────
 	//  Tabs (top-right corner of the GUI)
 	// ────────────────────────────────────────────────────────────
 
@@ -942,6 +1204,630 @@ public class SkillTreeScreen extends Screen {
 			x = tx - TAB_PAD;
 		}
 		return null;
+	}
+
+	/** Returns true if the mouse is over the home button. */
+	private boolean isOverHomeButton(double mx, double my) {
+		int bx = guiLeft + HOME_BTN_PAD;
+		int by = guiTop + HOME_BTN_PAD;
+		return mx >= bx && mx <= bx + HOME_BTN_SIZE
+			&& my >= by && my <= by + HOME_BTN_SIZE;
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Blood Crafting tab
+	// ────────────────────────────────────────────────────────────
+
+	private void drawCraftingContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+		if (craftingRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No Blood Crafting recipes found",
+					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
+			return;
+		}
+
+		BloodStructureRecipe recipe = craftingRecipes.get(selectedCraftingIndex);
+
+		// Layout: left half = 3D model, right half = info panel
+		int midX = guiLeft + guiWidth / 2;
+
+		// ── 3D multiblock preview (left half) ──
+		drawCraftingModel(gfx, recipe, guiLeft + 10, guiTop + 30,
+				midX - guiLeft - 20, guiHeight - 60);
+
+		// ── Layer buttons (left side of model area) ──
+		drawLayerButtons(gfx, mouseX, mouseY, Tab.CRAFTING, craftingVisibleLayer, craftingMaxLayer);
+
+		// ── Info panel (right half) ──
+		drawCraftingInfoPanel(gfx, recipe, midX + 10, guiTop + 30, guiWidth / 2 - 20);
+
+		// ── Navigation buttons (bottom center) ──
+		drawCraftingNavButtons(gfx, mouseX, mouseY);
+
+		// ── Page indicator ──
+		String pageStr = (selectedCraftingIndex + 1) + " / " + craftingRecipes.size();
+		gfx.drawCenteredString(font, pageStr,
+				guiLeft + guiWidth / 2, guiTop + guiHeight - 18, 0xFF888888);
+
+		// ── Drag hint ──
+		gfx.drawCenteredString(font, "Drag to rotate",
+				guiLeft + (midX - guiLeft) / 2 + 5, guiTop + guiHeight - 18, 0x44888888);
+	}
+
+	/**
+	 * Renders the blood structure multiblock as an isometric 3D model preview.
+	 * Supports layer-by-layer viewing via craftingVisibleLayer.
+	 */
+	private void drawCraftingModel(GuiGraphics gfx, BloodStructureRecipe recipe,
+								   int areaX, int areaY, int areaW, int areaH) {
+		if (recipe.getPattern() == null) return;
+
+		List<BlockPosBlockPair> blockPairs = recipe.getPattern().getBlockPosBlockList();
+		if (blockPairs.isEmpty()) return;
+
+		// Determine bounding box of the structure
+		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+		for (BlockPosBlockPair pair : blockPairs) {
+			BlockPos pos = pair.getPos();
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			minX = Math.min(minX, pos.getX()); maxX = Math.max(maxX, pos.getX());
+			minY = Math.min(minY, pos.getY()); maxY = Math.max(maxY, pos.getY());
+			minZ = Math.min(minZ, pos.getZ()); maxZ = Math.max(maxZ, pos.getZ());
+		}
+		if (minX > maxX) return; // all air
+
+		// Track max layer for the layer buttons
+		craftingMaxLayer = maxY - minY;
+
+		float sizeX = maxX - minX + 1;
+		float sizeY = maxY - minY + 1;
+		float sizeZ = maxZ - minZ + 1;
+		float maxDim = Math.max(sizeX, Math.max(sizeY, sizeZ));
+
+		float scale = Math.min(areaW, areaH) / (maxDim * 1.8f);
+		int centerX = areaX + areaW / 2;
+		int centerY = areaY + areaH / 2;
+
+		PoseStack pose = gfx.pose();
+		pose.pushPose();
+
+		pose.translate(centerX, centerY, 300);
+		pose.scale(scale, -scale, scale);
+
+		// Isometric tilt + user rotation
+		pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
+		pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(craftingRotationAngle));
+
+		// Center the structure at origin
+		float offX = -(minX + sizeX / 2f);
+		float offY = -(minY + sizeY / 2f);
+		float offZ = -(minZ + sizeZ / 2f);
+
+		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+
+		for (BlockPosBlockPair pair : blockPairs) {
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			BlockPos pos = pair.getPos();
+
+			int relativeY = pos.getY() - minY;
+
+			// If a specific layer is selected, skip blocks above it
+			if (craftingVisibleLayer >= 0 && relativeY > craftingVisibleLayer) continue;
+
+			pose.pushPose();
+			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
+
+			// Dim blocks below the selected layer to highlight the current one
+			boolean dimmed = craftingVisibleLayer >= 0 && relativeY < craftingVisibleLayer;
+
+			try {
+				if (dimmed) {
+					// Render with reduced brightness
+					RenderSystem.enableBlend();
+					RenderSystem.defaultBlendFunc();
+				}
+				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
+						block.defaultBlockState(), pose, bufferSource,
+						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+			} catch (Exception e) {
+				// Silently skip blocks that can't be rendered
+			}
+
+			pose.popPose();
+		}
+
+		bufferSource.endBatch();
+		pose.popPose();
+	}
+
+	/**
+	 * Draws the information panel for the selected blood crafting recipe.
+	 */
+	private void drawCraftingInfoPanel(GuiGraphics gfx, BloodStructureRecipe recipe,
+									   int panelX, int panelY, int panelW) {
+		int y = panelY;
+		int lineH = 12;
+
+		// ── Recipe name (derived from ID) ──
+		String name = HLTextUtils.toProperCase(recipe.getId().getPath().replace("_", " "));
+		gfx.drawString(font, Component.literal(name)
+				.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
+		y += lineH + 4;
+
+		// ── Separator line ──
+		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442222);
+		y += 6;
+
+		// ── Blood cost ──
+		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal((int) recipe.getBloodCost() + " mL").withStyle(s -> s.withColor(0xAA4444))), panelX, y, 0);
+		y += lineH + 4;
+
+		// ── Held item ──
+		ItemStack heldItem = recipe.getHeldItem();
+		if (heldItem != null && !heldItem.isEmpty()) {
+			gfx.drawString(font, Component.literal("Held Item:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+
+			gfx.renderItem(heldItem, panelX, y);
+			gfx.renderItemDecorations(font, heldItem, panelX, y);
+			gfx.drawString(font, heldItem.getHoverName().copy()
+					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
+			y += 20;
+		}
+
+		// ── Hit block ──
+		Block hitBlock = recipe.getHitBlock();
+		if (hitBlock != null && hitBlock != Blocks.AIR) {
+			gfx.drawString(font, Component.literal("Activate on:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+
+			ItemStack hitStack = new ItemStack(hitBlock);
+			if (!hitStack.isEmpty()) {
+				gfx.renderItem(hitStack, panelX, y);
+				gfx.drawString(font, hitStack.getHoverName().copy()
+						.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
+				y += 20;
+			}
+		}
+
+		y += 4;
+
+		// ── Result item ──
+		ItemStack result = recipe.getResult();
+		if (result != null && !result.isEmpty()) {
+			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+
+			gfx.renderItem(result, panelX, y);
+			gfx.renderItemDecorations(font, result, panelX, y);
+			gfx.drawString(font, result.getHoverName().copy()
+					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
+			y += 20;
+		}
+
+		y += 6;
+
+		// ── Block materials list ──
+		if (recipe.getPattern() != null) {
+			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
+			if (!blockCounts.isEmpty()) {
+				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+				y += lineH;
+
+				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+					Block block = entry.getKey();
+					if (block == null || block == Blocks.AIR) continue;
+					int count = entry.getValue();
+
+					ItemStack blockStack = new ItemStack(block);
+					if (!blockStack.isEmpty()) {
+						gfx.renderItem(blockStack, panelX + 2, y);
+						gfx.drawString(font, Component.literal(" x" + count + "  ")
+								.append(blockStack.getHoverName().copy())
+								.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4, 0);
+						y += 18;
+					}
+				}
+			}
+		}
+	}
+
+	// ── Crafting nav buttons ──
+
+	private void drawCraftingNavButtons(GuiGraphics gfx, int mouseX, int mouseY) {
+		if (craftingRecipes.size() <= 1) return;
+
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+
+		int prevX = centerX - RITE_NAV_BTN_W - 30;
+		boolean prevHov = isOverCraftingPrevButton(mouseX, mouseY);
+		drawNavButton(gfx, prevX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25C0", prevHov, Tab.CRAFTING.color);
+
+		int nextX = centerX + 30;
+		boolean nextHov = isOverCraftingNextButton(mouseX, mouseY);
+		drawNavButton(gfx, nextX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25B6", nextHov, Tab.CRAFTING.color);
+	}
+
+	private boolean isOverCraftingPrevButton(double mx, double my) {
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+		int prevX = centerX - RITE_NAV_BTN_W - 30;
+		return mx >= prevX && mx <= prevX + RITE_NAV_BTN_W
+			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
+	}
+
+	private boolean isOverCraftingNextButton(double mx, double my) {
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+		int nextX = centerX + 30;
+		return mx >= nextX && mx <= nextX + RITE_NAV_BTN_W
+			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Cardinal Rites tab
+	// ────────────────────────────────────────────────────────────
+
+	private void drawRiteContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+		if (riteRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No Cardinal Rites found",
+					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
+			return;
+		}
+
+		CardinalRiteRecipe rite = riteRecipes.get(selectedRiteIndex);
+
+		// Layout: left half = 3D model, right half = info panel
+		int midX = guiLeft + guiWidth / 2;
+
+		// ── 3D multiblock preview (left half) ──
+		drawRiteModel(gfx, rite, guiLeft + 10, guiTop + 30,
+				midX - guiLeft - 20, guiHeight - 60, partial);
+
+		// ── Layer buttons (left side of model area) ──
+		drawLayerButtons(gfx, mouseX, mouseY, Tab.RITES, riteVisibleLayer, riteMaxLayer);
+
+		// ── Info panel (right half) ──
+		drawRiteInfoPanel(gfx, rite, midX + 10, guiTop + 30, guiWidth / 2 - 20, mouseX, mouseY);
+
+		// ── Navigation buttons (bottom center) ──
+		drawRiteNavButtons(gfx, mouseX, mouseY);
+
+		// ── Page indicator ──
+		String pageStr = (selectedRiteIndex + 1) + " / " + riteRecipes.size();
+		gfx.drawCenteredString(font, pageStr,
+				guiLeft + guiWidth / 2, guiTop + guiHeight - 18, 0xFF888888);
+
+		// ── Drag hint ──
+		gfx.drawCenteredString(font, "Drag to rotate",
+				guiLeft + (midX - guiLeft) / 2 + 5, guiTop + guiHeight - 18, 0x44888888);
+	}
+
+	/**
+	 * Renders the multiblock pattern as an isometric 3D model preview.
+	 * Uses Minecraft's block renderer to draw actual block models.
+	 * Supports layer-by-layer viewing via riteVisibleLayer.
+	 */
+	private void drawRiteModel(GuiGraphics gfx, CardinalRiteRecipe rite,
+							   int areaX, int areaY, int areaW, int areaH, float partial) {
+		if (rite.getPattern() == null) return;
+
+		List<BlockPosBlockPair> blockPairs = rite.getPattern().getBlockPosBlockList();
+		if (blockPairs.isEmpty()) return;
+
+		// Determine bounding box of the structure
+		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+		for (BlockPosBlockPair pair : blockPairs) {
+			BlockPos pos = pair.getPos();
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			minX = Math.min(minX, pos.getX()); maxX = Math.max(maxX, pos.getX());
+			minY = Math.min(minY, pos.getY()); maxY = Math.max(maxY, pos.getY());
+			minZ = Math.min(minZ, pos.getZ()); maxZ = Math.max(maxZ, pos.getZ());
+		}
+		if (minX > maxX) return; // all air
+
+		// Track max layer for the layer buttons
+		riteMaxLayer = maxY - minY;
+
+		float sizeX = maxX - minX + 1;
+		float sizeY = maxY - minY + 1;
+		float sizeZ = maxZ - minZ + 1;
+		float maxDim = Math.max(sizeX, Math.max(sizeY, sizeZ));
+
+		// Scale so the structure fits within the area
+		float scale = Math.min(areaW, areaH) / (maxDim * 1.8f);
+		// Center of the rendering area
+		int centerX = areaX + areaW / 2;
+		int centerY = areaY + areaH / 2;
+
+		PoseStack pose = gfx.pose();
+		pose.pushPose();
+
+		// Move to the center of the rendering area
+		pose.translate(centerX, centerY, 300);
+
+		// Apply scale
+		pose.scale(scale, -scale, scale);
+
+		// Apply isometric tilt
+		pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
+		pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(riteRotationAngle));
+
+		// Center the structure at origin
+		float offX = -(minX + sizeX / 2f);
+		float offY = -(minY + sizeY / 2f);
+		float offZ = -(minZ + sizeZ / 2f);
+
+		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+
+		for (BlockPosBlockPair pair : blockPairs) {
+			Block block = pair.getBlock();
+			if (block == null || block == Blocks.AIR) continue;
+			BlockPos pos = pair.getPos();
+
+			int relativeY = pos.getY() - minY;
+
+			// If a specific layer is selected, skip blocks above it
+			if (riteVisibleLayer >= 0 && relativeY > riteVisibleLayer) continue;
+
+			pose.pushPose();
+			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
+
+			// Dim blocks below the selected layer to highlight the current one
+			boolean dimmed = riteVisibleLayer >= 0 && relativeY < riteVisibleLayer;
+
+			try {
+				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
+						block.defaultBlockState(), pose, bufferSource,
+						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+			} catch (Exception e) {
+				// Silently skip blocks that can't be rendered
+			}
+
+			pose.popPose();
+		}
+
+		bufferSource.endBatch();
+		pose.popPose();
+	}
+
+	/**
+	 * Draws the information panel for the selected cardinal rite.
+	 */
+	private void drawRiteInfoPanel(GuiGraphics gfx, CardinalRiteRecipe rite,
+								   int panelX, int panelY, int panelW, int mouseX, int mouseY) {
+		int y = panelY;
+		int lineH = 12;
+
+		// ── Rite name ──
+		String name = rite.getRiteName();
+		if (name == null || name.isEmpty()) {
+			name = HLTextUtils.toProperCase(rite.getId().getPath().replace("_", " "));
+		}
+		gfx.drawString(font, Component.literal(name)
+				.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
+		y += lineH + 4;
+
+		// ── Separator line ──
+		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442244);
+		y += 6;
+
+		// ── Description ──
+		String desc = rite.getRiteDescription();
+		if (desc != null && !desc.isEmpty()) {
+			// Word-wrap the description
+			List<String> lines = wrapText(desc, panelW);
+			for (String line : lines) {
+				gfx.drawString(font, Component.literal(line)
+						.withStyle(s -> s.withColor(0x999999).withItalic(true)), panelX, y, 0);
+				y += lineH;
+			}
+			y += 4;
+		}
+
+		// ── Rite type ──
+		CardinalRiteType type = rite.getRiteType();
+		String typeStr = HLTextUtils.toProperCase(type.getSerializedName()) + " (" + type.getSize() + "x" + type.getSize() + ")";
+		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal(typeStr).withStyle(s -> s.withColor(0xBB88CC))), panelX, y, 0);
+		y += lineH;
+
+		// ── Blood cost ──
+		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal((int) rite.getBloodCost() + " mL").withStyle(s -> s.withColor(0xAA4444))), panelX, y, 0);
+		y += lineH;
+
+		// ── Cast time ──
+		int ticks = type.getCastingDurationTicks();
+		float seconds = ticks / 20f;
+		gfx.drawString(font, Component.literal("Cast Time: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal(String.format("%.1fs", seconds)).withStyle(s -> s.withColor(0xAAAA88))), panelX, y, 0);
+		y += lineH + 6;
+
+		// ── Result item ──
+		ItemStack result = rite.getResult();
+		if (result != null && !result.isEmpty()) {
+			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+
+			// Render the item icon
+			gfx.renderItem(result, panelX, y);
+			gfx.renderItemDecorations(font, result, panelX, y);
+
+			// Item name next to the icon
+			gfx.drawString(font, result.getHoverName().copy()
+					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
+			y += 20;
+		}
+
+		y += 6;
+
+		// ── Block materials list ──
+		if (rite.getPattern() != null) {
+			Map<Block, Integer> blockCounts = rite.getPattern().getBlockCount(false);
+			if (!blockCounts.isEmpty()) {
+				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+				y += lineH;
+
+				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+					Block block = entry.getKey();
+					if (block == null || block == Blocks.AIR) continue;
+					int count = entry.getValue();
+
+					// Render block as item
+					ItemStack blockStack = new ItemStack(block);
+					if (!blockStack.isEmpty()) {
+						gfx.renderItem(blockStack, panelX + 2, y);
+						gfx.drawString(font, Component.literal(" x" + count + "  ")
+								.append(blockStack.getHoverName().copy())
+								.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4, 0);
+						y += 18;
+					}
+				}
+			}
+		}
+	}
+
+	/** Simple word-wrap helper. */
+	private List<String> wrapText(String text, int maxWidth) {
+		List<String> lines = new ArrayList<>();
+		String[] words = text.split(" ");
+		StringBuilder current = new StringBuilder();
+		for (String word : words) {
+			if (current.length() > 0 && font.width(current + " " + word) > maxWidth) {
+				lines.add(current.toString());
+				current = new StringBuilder(word);
+			} else {
+				if (current.length() > 0) current.append(" ");
+				current.append(word);
+			}
+		}
+		if (current.length() > 0) lines.add(current.toString());
+		return lines;
+	}
+
+	// ── Rite nav buttons ──
+
+	private void drawRiteNavButtons(GuiGraphics gfx, int mouseX, int mouseY) {
+		if (riteRecipes.size() <= 1) return;
+
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+
+		// ◀ Prev button
+		int prevX = centerX - RITE_NAV_BTN_W - 30;
+		boolean prevHov = isOverRitePrevButton(mouseX, mouseY);
+		drawNavButton(gfx, prevX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25C0", prevHov, Tab.RITES.color);
+
+		// ▶ Next button
+		int nextX = centerX + 30;
+		boolean nextHov = isOverRiteNextButton(mouseX, mouseY);
+		drawNavButton(gfx, nextX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25B6", nextHov, Tab.RITES.color);
+	}
+
+	private void drawNavButton(GuiGraphics gfx, int x, int y, int w, int h, String symbol, boolean hovered, int hoverColor) {
+		int bg = hovered ? 0xDD1A0505 : 0x99120303;
+		gfx.fill(x, y, x + w, y + h, bg);
+
+		int bc = hovered ? hoverColor : 0xFF444444;
+		gfx.fill(x, y, x + w, y + 1, bc);
+		gfx.fill(x, y + h - 1, x + w, y + h, bc);
+		gfx.fill(x, y, x + 1, y + h, bc);
+		gfx.fill(x + w - 1, y, x + w, y + h, bc);
+
+		int textCol = hovered ? 0xFFEEDDFF : 0xFF888888;
+		gfx.drawCenteredString(font, symbol, x + w / 2, y + (h - 8) / 2, textCol);
+	}
+
+	private boolean isOverRitePrevButton(double mx, double my) {
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+		int prevX = centerX - RITE_NAV_BTN_W - 30;
+		return mx >= prevX && mx <= prevX + RITE_NAV_BTN_W
+			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
+	}
+
+	private boolean isOverRiteNextButton(double mx, double my) {
+		int centerX = guiLeft + guiWidth / 2;
+		int btnY = guiTop + guiHeight - 38;
+		int nextX = centerX + 30;
+		return mx >= nextX && mx <= nextX + RITE_NAV_BTN_W
+			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Layer buttons (shared between Crafting & Rites)
+	// ────────────────────────────────────────────────────────────
+
+	/** Returns the X position for layer buttons (left edge of model area). */
+	private int layerBtnX() { return guiLeft + 14; }
+
+	/** Returns the Y center for layer buttons (vertically centred in model area). */
+	private int layerBtnCenterY() { return guiTop + guiHeight / 2; }
+
+	/**
+	 * Draws ▲ (layer up) and ▼ (layer down) buttons and a layer indicator label
+	 * on the left side of the 3D model area.
+	 */
+	private void drawLayerButtons(GuiGraphics gfx, int mouseX, int mouseY,
+								  Tab tab, int visibleLayer, int maxLayer) {
+		if (maxLayer <= 0) return; // single-layer structure, no buttons needed
+
+		int bx = layerBtnX();
+		int cy = layerBtnCenterY();
+		int bs = LAYER_BTN_SIZE;
+		int color = tab.color;
+
+		// ▲ Up button
+		int upY = cy - bs - 14;
+		boolean upHov = isOverLayerUpButton(mouseX, mouseY, tab);
+		drawNavButton(gfx, bx, upY, bs, bs, "\u25B2", upHov, color);
+
+		// ▼ Down button
+		int downY = cy + 14;
+		boolean downHov = isOverLayerDownButton(mouseX, mouseY, tab);
+		drawNavButton(gfx, bx, downY, bs, bs, "\u25BC", downHov, color);
+
+		// Layer indicator between the buttons
+		String label = visibleLayer < 0 ? "All" : "Y:" + (visibleLayer + 1);
+		gfx.drawCenteredString(font, label, bx + bs / 2, cy - 4, 0xFFAAAAAA);
+
+		// Tooltip on hover
+		if (upHov) {
+			gfx.renderTooltip(font, Component.literal("Layer Up"), mouseX, mouseY);
+		} else if (downHov) {
+			gfx.renderTooltip(font, Component.literal("Layer Down"), mouseX, mouseY);
+		}
+	}
+
+	private boolean isOverLayerUpButton(double mx, double my, Tab tab) {
+		if (tab != Tab.CRAFTING && tab != Tab.RITES) return false;
+		int maxL = (tab == Tab.CRAFTING) ? craftingMaxLayer : riteMaxLayer;
+		if (maxL <= 0) return false;
+		int bx = layerBtnX();
+		int cy = layerBtnCenterY();
+		int upY = cy - LAYER_BTN_SIZE - 14;
+		return mx >= bx && mx <= bx + LAYER_BTN_SIZE
+			&& my >= upY && my <= upY + LAYER_BTN_SIZE;
+	}
+
+	private boolean isOverLayerDownButton(double mx, double my, Tab tab) {
+		if (tab != Tab.CRAFTING && tab != Tab.RITES) return false;
+		int maxL = (tab == Tab.CRAFTING) ? craftingMaxLayer : riteMaxLayer;
+		if (maxL <= 0) return false;
+		int bx = layerBtnX();
+		int cy = layerBtnCenterY();
+		int downY = cy + 14;
+		return mx >= bx && mx <= bx + LAYER_BTN_SIZE
+			&& my >= downY && my <= downY + LAYER_BTN_SIZE;
 	}
 
 	// ────────────────────────────────────────────────────────────

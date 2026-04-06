@@ -10,46 +10,69 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.EnzymeItem;
+import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
+import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.common.recipe.RecipePolyp;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
-import com.vincenthuto.hutoslib.common.block.entity.SimpleInventoryBlockEntity;
-import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity implements IBloodTile {
+public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity implements IBloodTile {
 
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 	private static final int CRAFT_TIME = 200;
+	private static final int ENZYME_TIME_BASE = 100;
+	private static final int ENZYME_TIME_PER_ITEM = 60;
+	private static final float BLOOD_COST_PER_TICK = 0.5f;
 
-	int spinningProgress;
-	int spinningTotalTime;
-	int canSpin;
+	// Slot layout:
+	// 0 = center (polyp or morphling)
+	// 1-4 = catalysts / enzymes
+	// 5 = output
+	// 6 = blood flask/gourd
+	public static final int SLOT_CENTER = 0;
+	public static final int SLOT_CATALYST_START = 1;
+	public static final int SLOT_CATALYST_END = 4;
+	public static final int SLOT_OUTPUT = 5;
+	public static final int SLOT_BLOOD = 6;
+	public static final int INVENTORY_SIZE = 7;
+
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
+
+	int craftingProgress;
+	int craftingTotalTime;
+	int mode; // 0 = idle, 1 = polyp crafting, 2 = enzyme feeding
 
 	public final ContainerData dataAccess = new ContainerData() {
 		@Override
 		public int get(int index) {
 			return switch (index) {
-				case 0 -> spinningProgress;
-				case 1 -> spinningTotalTime;
-				case 2 -> canSpin;
+				case 0 -> craftingProgress;
+				case 1 -> craftingTotalTime;
+				case 2 -> mode;
 				default -> 0;
 			};
 		}
@@ -62,18 +85,18 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 		@Override
 		public void set(int index, int val) {
 			switch (index) {
-				case 0 -> spinningProgress = val;
-				case 1 -> spinningTotalTime = val;
-				case 2 -> canSpin = val;
+				case 0 -> craftingProgress = val;
+				case 1 -> craftingTotalTime = val;
+				case 2 -> mode = val;
 			}
 		}
 	};
 
 	public MorphlingIncubatorBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.morphling_incubator.get(), pos, state, 5);
+		super(BlockEntityInit.morphling_incubator.get(), pos, state);
 	}
 
-	// ---- Lazy capability access (avoids crash in field initializer) ----
+	// ---- Lazy capability access ----
 
 	@Nullable
 	private IBloodVolume resolveVolume() {
@@ -95,97 +118,94 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 		}
 	}
 
-	// ---- Blood container handling ----
+	public static void serverTick(Level level, BlockPos pos, BlockState blockState, MorphlingIncubatorBlockEntity te) {
+		// Process blood flask / gourd in the blood slot
+		te.processBloodSlot();
 
-	@Override
-	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
-		IBloodVolume vol = resolveVolume();
+		boolean changed = false;
 
-		// Blood flask handling — fill the block's blood volume
-		if (stack.getItem() instanceof BloodyFlaskItem flask) {
-			if (vol != null && !vol.isFull()) {
-				float amount = flask.getAmount();
-				vol.addBloodVolume(amount);
-				if (player == null || !player.getAbilities().instabuild) {
-					stack.shrink(1);
-					if (stack.isEmpty() && player != null) {
-						player.setItemInHand(hand, ItemStack.EMPTY);
-					}
+		if (te.craftingProgress > 0) {
+			// Check blood — consume per tick
+			IBloodVolume vol = te.resolveVolume();
+			if (vol != null && vol.getBloodVolume() >= BLOOD_COST_PER_TICK) {
+				vol.subtractBloodVolume(BLOOD_COST_PER_TICK);
+				te.craftingProgress--;
+				changed = true;
+
+				HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.MYCELIUM);
+
+				if (te.craftingProgress <= 0) {
+					HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.REVERSE_PORTAL);
+					te.finishCrafting();
 				}
-				sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-				return true;
 			}
-			return false;
+			// Not enough blood — pause (don't reset progress)
+		} else {
+			// Try to start a new craft
+			if (te.tryStartPolypCraft()) {
+				changed = true;
+			} else if (te.tryStartEnzymeFeed()) {
+				changed = true;
+			} else {
+				if (te.mode != 0) {
+					te.mode = 0;
+					changed = true;
+				}
+			}
 		}
 
-		// Blood gourd handling — drain blood from the gourd into the block
-		if (stack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume gourdVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-			if (vol != null && gourdVolume != null && gourdVolume.getBloodVolume() > 0 && !vol.isFull()) {
+		if (changed) {
+			te.sendUpdates();
+			setChanged(level, pos, blockState);
+		}
+	}
+
+	// ---- Blood slot processing ----
+
+	private void processBloodSlot() {
+		ItemStack bloodStack = inventory.get(SLOT_BLOOD);
+		if (bloodStack.isEmpty()) return;
+
+		IBloodVolume vol = resolveVolume();
+		if (vol == null || vol.isFull()) return;
+
+		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
+			float amount = flask.getAmount();
+			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
+				vol.addBloodVolume(amount);
+				bloodStack.shrink(1);
+				sendUpdates();
+			}
+		} else if (bloodStack.getItem() instanceof BloodGourdItem) {
+			IBloodVolume gourdVolume = bloodStack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+			if (gourdVolume != null && gourdVolume.getBloodVolume() > 0) {
 				double transfer = Math.min(gourdVolume.getBloodVolume(), vol.getMaxBloodVolume() - vol.getBloodVolume());
+				transfer = Math.min(transfer, 10); // Transfer rate limit
 				if (transfer > 0) {
 					gourdVolume.subtractBloodVolume(transfer);
 					vol.addBloodVolume(transfer);
 					sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-					return true;
 				}
 			}
-			return false;
-		}
-
-		// Everything else — delegate to the base inventory logic
-		return super.addItem(player, stack, hand);
-	}
-
-	public static void serverTick(Level level, BlockPos pos, BlockState blockState, MorphlingIncubatorBlockEntity te) {
-		if (te.spinningProgress > 0) {
-			te.spinningProgress--;
-			te.sendUpdates();
-			setChanged(level, pos, blockState);
-			HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.MYCELIUM);
-
-			if (te.spinningProgress <= 1) {
-				HLParticleUtils.spawnPoof((ServerLevel) level, pos, ParticleTypes.REVERSE_PORTAL);
-				te.outputResults();
-			}
 		}
 	}
 
-	// ---- Inventory helpers ----
+	// ---- Polyp crafting ----
 
-	public ItemStack getCenterStack() {
-		return inventory.get(0);
-	}
-
-	public List<ItemStack> getCatalystStacks() {
-		return inventory.subList(1, inventory.size());
-	}
-
-	/**
-	 * Collects all non-empty catalyst items (slots 1-4) for recipe matching.
-	 */
-	private List<Item> collectCatalystItems() {
-		List<Item> items = new ArrayList<>();
-		for (int i = 1; i < inventory.size(); i++) {
-			ItemStack stack = inventory.get(i);
-			if (!stack.isEmpty()) {
-				items.add(stack.getItem());
-			}
+	private boolean tryStartPolypCraft() {
+		RecipePolyp recipe = findMatchingRecipe();
+		if (recipe != null && inventory.get(SLOT_OUTPUT).isEmpty()) {
+			craftingProgress = CRAFT_TIME;
+			craftingTotalTime = CRAFT_TIME;
+			mode = 1;
+			return true;
 		}
-		return items;
+		return false;
 	}
 
-	// ---- Recipe matching ----
-
-	/**
-	 * Finds the matching PolypRecipe for the current inventory contents.
-	 * Slot 0 must contain a morphling polyp. Slots 1-4 supply the catalyst ingredients.
-	 */
 	@Nullable
 	public RecipePolyp findMatchingRecipe() {
-		ItemStack center = getCenterStack();
+		ItemStack center = inventory.get(SLOT_CENTER);
 		if (center.isEmpty() || center.getItem() != ItemInit.morphling_polyp.get()) {
 			return null;
 		}
@@ -201,97 +221,235 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 		return null;
 	}
 
-	// ---- Crafting ----
-
-	/**
-	 * Attempts to start incubation. Validates that a recipe match exists before
-	 * beginning the crafting timer.
-	 *
-	 * @return true if crafting began, false otherwise
-	 */
-	public boolean attemptStartup() {
-		if (spinningProgress > 0) {
-			return false;
+	private List<Item> collectCatalystItems() {
+		List<Item> items = new ArrayList<>();
+		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
+			ItemStack stack = inventory.get(i);
+			if (!stack.isEmpty()) {
+				items.add(stack.getItem());
+			}
 		}
-		RecipePolyp recipe = findMatchingRecipe();
-		if (recipe != null) {
-			spinningProgress = CRAFT_TIME;
-			spinningTotalTime = CRAFT_TIME;
-			sendUpdates();
-			return true;
-		}
-		return false;
+		return items;
 	}
 
-	/**
-	 * Called when the crafting timer reaches zero. Matches the recipe again (in case
-	 * contents changed mid-craft), clears consumed ingredients, and drops the result.
-	 */
-	private void outputResults() {
-		if (spinningProgress > 1) return;
+	// ---- Enzyme feeding ----
 
+	private boolean tryStartEnzymeFeed() {
+		ItemStack center = inventory.get(SLOT_CENTER);
+		if (center.isEmpty() || !(center.getItem() instanceof IMorphling)) {
+			return false;
+		}
+		// Need at least one enzyme in catalyst slots
+		int enzymeCount = 0;
+		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
+			if (inventory.get(i).getItem() instanceof EnzymeItem || inventory.get(i).getItem() instanceof RecycledEnzymeItem) {
+				enzymeCount++;
+			}
+		}
+		if (enzymeCount == 0) return false;
+		if (!inventory.get(SLOT_OUTPUT).isEmpty()) return false;
+
+		// More enzymes = proportionally longer craft time
+		int totalTime = ENZYME_TIME_BASE + (enzymeCount * ENZYME_TIME_PER_ITEM);
+		craftingProgress = totalTime;
+		craftingTotalTime = totalTime;
+		mode = 2;
+		return true;
+	}
+
+	// ---- Finish crafting ----
+
+	private void finishCrafting() {
+		if (mode == 1) {
+			finishPolypCraft();
+		} else if (mode == 2) {
+			finishEnzymeFeed();
+		}
+		craftingProgress = 0;
+		craftingTotalTime = 0;
+		mode = 0;
+		sendUpdates();
+	}
+
+	private void finishPolypCraft() {
 		RecipePolyp recipe = findMatchingRecipe();
 		if (recipe == null) {
-			// Recipe no longer valid — abort, keep items
-			spinningProgress = 0;
-			sendUpdates();
 			return;
 		}
 
-		// Consume all slots
-		for (int i = 0; i < inventory.size(); i++) {
-			inventory.set(i, ItemStack.EMPTY);
+		// Consume center polyp
+		inventory.get(SLOT_CENTER).shrink(1);
+
+		// Consume catalysts
+		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
+			inventory.get(i).shrink(1);
 		}
 
-		// Spawn result entity
-		double dx = Mth.randomBetween(level.random, -0.2F, 0.2F);
-		double dy = Mth.randomBetween(level.random, -0.2F, 0.2F);
-		double dz = Mth.randomBetween(level.random, -0.2F, 0.2F);
-		ItemStack result = new ItemStack(recipe.getOutput());
-		getLevel().addFreshEntity(new ItemEntity(level,
-				worldPosition.getX() + 0.5, worldPosition.getY() + 1, worldPosition.getZ() + 0.5,
-				result, dx, dy, dz));
+		// Place result in output
+		inventory.set(SLOT_OUTPUT, new ItemStack(recipe.getOutput()));
+	}
 
-		spinningProgress = 0;
-		sendUpdates();
+	private void finishEnzymeFeed() {
+		ItemStack center = inventory.get(SLOT_CENTER);
+		if (center.isEmpty() || !(center.getItem() instanceof IMorphling)) return;
+
+		// Count enzymes and compute total strength boost
+		int enzymeCount = 0;
+		float totalStrength = 0;
+		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
+			ItemStack stack = inventory.get(i);
+			if (stack.getItem() instanceof EnzymeItem enzyme) {
+				enzymeCount++;
+				totalStrength += enzyme.getAmount();
+			} else if (stack.getItem() instanceof RecycledEnzymeItem recycled) {
+				enzymeCount++;
+				totalStrength += recycled.getAmount();
+			}
+		}
+
+		if (enzymeCount == 0) return;
+
+		// Consume enzymes
+		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
+			ItemStack stack = inventory.get(i);
+			if (stack.getItem() instanceof EnzymeItem || stack.getItem() instanceof RecycledEnzymeItem) {
+				stack.shrink(1);
+			}
+		}
+
+		// Remove center morphling and create enhanced copy in output
+		ItemStack result = center.copy();
+
+		// Store enzyme power as NBT on the morphling
+		CompoundTag tag = result.getOrCreateTag();
+		float existingPower = tag.getFloat("EnzymePower");
+		tag.putFloat("EnzymePower", existingPower + totalStrength);
+		int existingFeedings = tag.getInt("EnzymeFeedings");
+		tag.putInt("EnzymeFeedings", existingFeedings + enzymeCount);
+
+		// Move center to output
+		inventory.set(SLOT_CENTER, ItemStack.EMPTY);
+		inventory.set(SLOT_OUTPUT, result);
+	}
+
+	// ---- Inventory helpers (for renderer) ----
+
+	public ItemStack getCenterStack() {
+		return inventory.get(SLOT_CENTER);
+	}
+
+	public List<ItemStack> getCatalystStacks() {
+		return inventory.subList(SLOT_CATALYST_START, SLOT_CATALYST_END + 1);
+	}
+
+	// ---- Container implementation ----
+
+	@Override
+	public int getContainerSize() {
+		return INVENTORY_SIZE;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack stack : inventory) {
+			if (!stack.isEmpty()) return false;
+		}
+		return true;
+	}
+
+	@Override
+	public ItemStack getItem(int slot) {
+		return inventory.get(slot);
+	}
+
+	@Override
+	public ItemStack removeItem(int slot, int amount) {
+		return ContainerHelper.removeItem(inventory, slot, amount);
+	}
+
+	@Override
+	public ItemStack removeItemNoUpdate(int slot) {
+		return ContainerHelper.takeItem(inventory, slot);
+	}
+
+	@Override
+	public void setItem(int slot, ItemStack stack) {
+		ItemStack oldStack = inventory.get(slot);
+		boolean isSameItem = !stack.isEmpty() && ItemStack.isSameItemSameTags(stack, oldStack);
+		inventory.set(slot, stack);
+		if (stack.getCount() > getMaxStackSize()) {
+			stack.setCount(getMaxStackSize());
+		}
+		// Reset crafting progress when an input slot changes during active crafting
+		if (!isSameItem && (slot == SLOT_CENTER || (slot >= SLOT_CATALYST_START && slot <= SLOT_CATALYST_END))) {
+			if (craftingProgress > 0) {
+				craftingProgress = 0;
+				craftingTotalTime = 0;
+				mode = 0;
+				setChanged();
+			}
+		}
+	}
+
+	@Override
+	public boolean stillValid(Player player) {
+		if (this.level.getBlockEntity(this.worldPosition) != this) return false;
+		return player.distanceToSqr(this.worldPosition.getX() + 0.5D,
+				this.worldPosition.getY() + 0.5D,
+				this.worldPosition.getZ() + 0.5D) <= 64.0D;
+	}
+
+	@Override
+	public void clearContent() {
+		inventory.clear();
+	}
+
+	@Override
+	protected AbstractContainerMenu createMenu(int containerId, Inventory playerInventory) {
+		return new MorphlingIncubatorMenu(containerId, playerInventory, this, this.dataAccess);
+	}
+
+	@Override
+	protected Component getDefaultName() {
+		return Component.literal("Morphling Incubator");
 	}
 
 	// ---- Serialization ----
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
-		this.spinningProgress = tag.getInt("SpinTime");
-		this.spinningTotalTime = tag.getInt("SpinTimeTotal");
-	}
-
-	@Override
-	public void load(CompoundTag pTag) {
-		super.load(pTag);
-		this.spinningProgress = pTag.getInt("SpinTime");
-		this.spinningTotalTime = pTag.getInt("SpinTimeTotal");
+	public void load(CompoundTag tag) {
+		super.load(tag);
+		this.inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.inventory);
+		this.craftingProgress = tag.getInt("CraftProgress");
+		this.craftingTotalTime = tag.getInt("CraftTotalTime");
+		this.mode = tag.getInt("Mode");
 		IBloodVolume vol = resolveVolume();
-		if (vol != null && pTag.contains(TAG_BLOOD_LEVEL)) {
-			vol.setBloodVolume(pTag.getFloat(TAG_BLOOD_LEVEL));
+		if (vol != null && tag.contains(TAG_BLOOD_LEVEL)) {
+			vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 		}
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag pTag) {
-		super.saveAdditional(pTag);
-		pTag.putInt("SpinTime", this.spinningProgress);
-		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
+	protected void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+		ContainerHelper.saveAllItems(tag, this.inventory);
+		tag.putInt("CraftProgress", this.craftingProgress);
+		tag.putInt("CraftTotalTime", this.craftingTotalTime);
+		tag.putInt("Mode", this.mode);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
-			pTag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
+			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
 		}
 	}
 
 	@Override
 	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
-		tag.putInt("SpinTime", this.spinningProgress);
-		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
+		CompoundTag tag = new CompoundTag();
+		ContainerHelper.saveAllItems(tag, this.inventory);
+		tag.putInt("CraftProgress", this.craftingProgress);
+		tag.putInt("CraftTotalTime", this.craftingTotalTime);
+		tag.putInt("Mode", this.mode);
 		IBloodVolume vol = resolveVolume();
 		if (vol != null) {
 			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
@@ -300,12 +458,28 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 	}
 
 	@Override
+	public void handleUpdateTag(CompoundTag tag) {
+		super.handleUpdateTag(tag);
+		this.inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.inventory);
+		this.craftingProgress = tag.getInt("CraftProgress");
+		this.craftingTotalTime = tag.getInt("CraftTotalTime");
+		this.mode = tag.getInt("Mode");
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
 			IBloodVolume vol = resolveVolume();
-			if (vol != null) {
+			if (vol != null && tag.contains(TAG_BLOOD_LEVEL)) {
 				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
 			}
 		}
@@ -328,9 +502,10 @@ public class MorphlingIncubatorBlockEntity extends SimpleInventoryBlockEntity im
 		return vol != null ? vol.getMaxBloodVolume() : 0;
 	}
 
-	@Override
-	protected Component getDefaultName() {
-		return Component.translatable("container.hemomancy.morphlingincubator");
+	public void sendUpdates() {
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
 	}
 
 }

@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
@@ -205,6 +206,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketRequestPoolData.class, networkID++)
 				.decoder(PacketRequestPoolData::decode).encoder(PacketRequestPoolData::encode)
 				.consumerNetworkThread(PacketRequestPoolData::handle).add();
+
+		// Cardinal rite sync packet
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncActiveRites.class, networkID++)
+				.decoder(PacketSyncActiveRites::decode).encoder(PacketSyncActiveRites::encode)
+				.consumerNetworkThread(PacketSyncActiveRites::handle).add();
 
 		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
 				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)

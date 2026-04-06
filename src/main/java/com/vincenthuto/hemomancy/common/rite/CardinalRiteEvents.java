@@ -6,11 +6,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -32,6 +35,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Server-side event handler for managing active cardinal rite casting.
@@ -46,9 +50,7 @@ public class CardinalRiteEvents {
 	private static final float SACRIFICE_DAMAGE_PER_TICK = 0.5f;
 	private static final int SACRIFICE_DAMAGE_INTERVAL = 10;
 	private static final int PARTICLE_SPAWN_INTERVAL = 2;
-	private static final int BOUNDARY_PARTICLE_INTERVAL = 3;
-	private static final double BOUNDARY_WALL_HEIGHT = 3.0;
-	private static final int BOUNDARY_WALL_STEPS = 6;
+	private static final int RITE_SYNC_INTERVAL = 10;
 
 	@SubscribeEvent
 	public static void onLevelTick(TickEvent.LevelTickEvent event) {
@@ -75,7 +77,7 @@ public class CardinalRiteEvents {
 
 			BlockPos center = rite.getCenterPos();
 			int halfSize = rite.getRiteSize() / 2;
-			AABB bounds = new AABB(center).inflate(halfSize);
+			AABB bounds = new AABB(center).inflate(halfSize + 1); // +1 on each side = riteSize + 2 total buffer
 
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
@@ -104,10 +106,6 @@ public class CardinalRiteEvents {
 				spawnHelixParticles(sLevel, rite);
 			}
 
-			// === Spawn boundary wall particles ===
-			if (sLevel.getGameTime() % BOUNDARY_PARTICLE_INTERVAL == 0) {
-				spawnBoundaryParticles(sLevel, rite);
-			}
 
 			// Tick the rite
 			rite.tick();
@@ -122,6 +120,18 @@ public class CardinalRiteEvents {
 
 		for (UUID uuid : toRemove) {
 			savedData.removeRite(uuid);
+		}
+
+		// Sync active rites to clients for boundary circle rendering
+		if (sLevel.getGameTime() % RITE_SYNC_INTERVAL == 0 || !toRemove.isEmpty()) {
+			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
+			for (ActiveCardinalRite rite : activeRites.values()) {
+				entries.add(new ActiveRiteClientData.RiteEntry(
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress()));
+			}
+			PacketHandler.CHANNELBLOODVOLUME.send(
+					PacketDistributor.ALL.noArg(),
+					new PacketSyncActiveRites(entries));
 		}
 	}
 
@@ -139,6 +149,16 @@ public class CardinalRiteEvents {
 					Component.literal("The rite has been broken by your death...")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
+
+			// Sync updated rite list to clients so boundary circle is removed
+			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
+			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
+				entries.add(new ActiveRiteClientData.RiteEntry(
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress()));
+			}
+			PacketHandler.CHANNELBLOODVOLUME.send(
+					PacketDistributor.ALL.noArg(),
+					new PacketSyncActiveRites(entries));
 		}
 	}
 
@@ -211,59 +231,6 @@ public class CardinalRiteEvents {
 		}
 	}
 
-	/**
-	 * Spawns a glowing red particle boundary around the rite area so players
-	 * can clearly see the confinement zone. Draws vertical pillars at corners
-	 * and connecting lines along each edge of the bounding box.
-	 */
-	private static void spawnBoundaryParticles(ServerLevel sLevel, ActiveCardinalRite rite) {
-		BlockPos center = rite.getCenterPos();
-		double halfSize = rite.getRiteSize() / 2.0;
-		double cx = center.getX() + 0.5;
-		double cy = center.getY();
-		double cz = center.getZ() + 0.5;
-		long gameTime = sLevel.getGameTime();
-
-		// Pulsing brightness — oscillates between dim red and bright red
-		double pulse = (Math.sin(gameTime * 0.1) + 1.0) * 0.5;
-		int red = (int) (150 + 105 * pulse);
-
-		// Four corners of the boundary
-		double[][] corners = {
-				{ cx - halfSize, cz - halfSize },
-				{ cx + halfSize, cz - halfSize },
-				{ cx + halfSize, cz + halfSize },
-				{ cx - halfSize, cz + halfSize }
-		};
-
-		// Vertical pillars at each corner
-		for (double[] corner : corners) {
-			for (int step = 0; step <= BOUNDARY_WALL_STEPS; step++) {
-				double y = cy + (BOUNDARY_WALL_HEIGHT * step / BOUNDARY_WALL_STEPS);
-				sLevel.sendParticles(
-						BloodCellParticleFactory.createData(new ParticleColor(red, 0, 0)),
-						corner[0], y, corner[1], 1, 0.01, 0.01, 0.01, 0);
-			}
-		}
-
-		// Horizontal connecting lines along the edges (at base, mid, and top)
-		double[] edgeHeights = { cy + 0.1, cy + BOUNDARY_WALL_HEIGHT / 2.0, cy + BOUNDARY_WALL_HEIGHT };
-		int edgeParticles = Math.max(4, rite.getRiteSize());
-		for (int i = 0; i < 4; i++) {
-			double[] from = corners[i];
-			double[] to = corners[(i + 1) % 4];
-			for (double edgeY : edgeHeights) {
-				for (int p = 0; p <= edgeParticles; p++) {
-					double t = (double) p / edgeParticles;
-					double ex = from[0] + (to[0] - from[0]) * t;
-					double ez = from[1] + (to[1] - from[1]) * t;
-					sLevel.sendParticles(
-							BloodCellParticleFactory.createData(new ParticleColor(red, 0, 0)),
-							ex, edgeY, ez, 1, 0.01, 0.01, 0.01, 0);
-				}
-			}
-		}
-	}
 
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());

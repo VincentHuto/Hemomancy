@@ -6,17 +6,15 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.MorphlingIncubatorBlockEntity;
-import com.vincenthuto.hutoslib.common.container.HLInvHelper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -36,6 +34,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 
 @SuppressWarnings("deprecation")
 public class MorphlingIncubatorBlock extends Block implements EntityBlock {
@@ -54,9 +53,7 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 	public MorphlingIncubatorBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
-
 	}
-
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
@@ -83,7 +80,6 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 		return new MorphlingIncubatorBlockEntity(arg0, arg1);
 	}
 
-
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
@@ -92,8 +88,8 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 	@Override
 	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
 		super.triggerEvent(state, world, pos, id, param);
-		BlockEntity BlockEntity = world.getBlockEntity(pos);
-		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
+		BlockEntity blockEntity = world.getBlockEntity(pos);
+		return blockEntity != null && blockEntity.triggerEvent(id, param);
 	}
 
 	@Nullable
@@ -117,27 +113,29 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
-		MorphlingIncubatorBlockEntity te = (MorphlingIncubatorBlockEntity) worldIn.getBlockEntity(pos);
-
-		ItemStack stack = player.getItemInHand(handIn);
-
-		if (player.isShiftKeyDown()) {
-			HLInvHelper.withdrawFromInventory(te,player);
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+		if (level.isClientSide) {
 			return InteractionResult.SUCCESS;
-		} else if (!stack.isEmpty()) {
-			
-			boolean hit = te.addItem(player, stack, handIn);
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-			return hit ? InteractionResult.SUCCESS : InteractionResult.PASS;
-		}else {
-			te.attemptStartup();
-	
 		}
 
-		return InteractionResult.PASS;
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		if (blockEntity instanceof MorphlingIncubatorBlockEntity te) {
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
+			NetworkHooks.openScreen((ServerPlayer) player, te, pos);
+		}
+		return InteractionResult.CONSUME;
 	}
 
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			BlockEntity blockEntity = level.getBlockEntity(pos);
+			if (blockEntity instanceof MorphlingIncubatorBlockEntity te) {
+				Containers.dropContents(level, pos, te);
+				level.updateNeighbourForOutputSignal(pos, this);
+			}
+			super.onRemove(state, level, pos, newState, isMoving);
+		}
+	}
 }

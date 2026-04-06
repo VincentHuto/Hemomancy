@@ -50,5 +50,7 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<TendencyViewMenu>> tendency_view =
 			CONTAINERS.register("tendency_view", () -> IForgeMenuType.create(TendencyViewMenu::new));
 
+	public static final RegistryObject<MenuType<MorphlingIncubatorMenu>> morphling_incubator = CONTAINERS
+			.register("morphling_incubator", () -> IForgeMenuType.create(MorphlingIncubatorMenu::new));
 
 }

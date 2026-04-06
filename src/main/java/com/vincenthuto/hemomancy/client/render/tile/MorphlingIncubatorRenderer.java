@@ -49,19 +49,12 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
-//		ms.pushPose();
-//		ms.translate(0.5, 0.5, 0.5);
-//        this.renderNameTag(te,Component.literal(te.getBloodVolume()+""), ms, bufferIn, combinedLightIn);
-//		ms.popPose();
-
 		// ── Blood volume ring ────────────────────────────────────────────────────
 		double bloodVolume = te.getBloodVolume();
 		double maxBloodVolume = te.getMaxBloodVolume();
 		if (maxBloodVolume > 0) {
 			double fillRatio = Mth.clamp(bloodVolume / maxBloodVolume, 0, 1);
 
-			// Use the same coordinate trick as the Recaller so the beam helpers
-			// (which translate by -camera internally) produce correct positions.
 			ms.pushPose();
 			ms.scale(0.5f, 0.5f, 0.5f);
 			ms.translate(0.5f, 0.5f, 0.5f);
@@ -75,98 +68,82 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			ms.popPose();
 		}
 
+		// ── Render center item ──────────────────────────────────────────────────
+		ItemStack centerStack = te.getCenterStack();
+		if (!centerStack.isEmpty()) {
+			ms.pushPose();
+			ms.translate(0.5F, 1.05F, 0.5F);
+			ms.mulPose(Vector3.YP.rotationDegrees(te.getLevel().getGameTime() * 2f).toMoj());
+			ms.scale(0.5f, 0.5f, 0.5f);
 
+			Vec3 loc = new Vec3(te.getBlockPos().getX() + 0.5F,
+					te.getBlockPos().getY() + 1.05F,
+					te.getBlockPos().getZ() + 0.5F);
+			te.getLevel().addParticle(ParticleTypes.MYCELIUM, loc.x, loc.y, loc.z, 0.0D, 0.0D, 0.0D);
+
+			Minecraft.getInstance().getItemRenderer().renderStatic(null, centerStack, ItemDisplayContext.FIXED, true,
+					ms, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
+			ms.popPose();
+		}
+
+		// ── Render orbiting catalyst items ──────────────────────────────────────
+		java.util.List<ItemStack> catalysts = te.getCatalystStacks();
 		int items = 0;
-		for (int i = 1; i < te.inventory.size(); i++) {
-			if (te.inventory.get(i).isEmpty()) {
-				break;
-			} else {
-				items++;
-			}
-		}
-		float[] angles = new float[te.inventory.size() - 1];
-
-		float anglePer = 360F / items - 1;
-		float totalAngle = 0F;
-		for (int i = 1; i < angles.length; i++) {
-			angles[i] = totalAngle += anglePer;
+		for (ItemStack s : catalysts) {
+			if (!s.isEmpty()) items++;
 		}
 
-		double time = te.dataAccess.get(0);
+		if (items > 0) {
+			double time = te.dataAccess.get(0);
+			int idx = 0;
+			for (int i = 0; i < catalysts.size(); i++) {
+				ItemStack stack = catalysts.get(i);
+				if (stack.isEmpty()) continue;
 
-		for (int i = 0; i < te.inventory.size(); i++) {
-			if (!(i > 0)) {
-				ms.pushPose();
-				ms.translate(0.5F, 1.55F, 0.5F);
-				ms.mulPose(Vector3.YP.rotationDegrees(angles[i] + te.getLevel().getGameTime()).toMoj()); // Edit
-				ms.translate(0.025F, -0.5F, 0.025F);
-				ms.mulPose(Vector3.YP.rotationDegrees(90f).toMoj()); // Edit Radius Movement
-				ms.translate(0D, 0.175D + i * 0.25, 0F); // Block/Item Scale
-				ms.scale(0.5f, 0.5f, 0.5f);
-				ItemStack stack = te.inventory.get(i);
-				if (!stack.isEmpty()) {
-					Vec3 loc = new Vec3(te.getBlockPos().getX() + 0.5F + 0.025F,
-							te.getBlockPos().getY() + 1.55F - 0.5F + 0.175D + i * 0.25,
-							te.getBlockPos().getZ() + 0.5F + 0.025F);
-					te.getLevel().addParticle(ParticleTypes.MYCELIUM, (double) loc.x, (double) loc.y, (double) loc.z,
-							0.0D, 0.0D, 0.0D);
-					Minecraft.getInstance().getItemRenderer().renderStatic(null, stack, ItemDisplayContext.FIXED, true,
-							ms, bufferIn, null, combinedLightIn, combinedOverlayIn, i);
-				}
-				ms.popPose();
-			} else {
 				ms.pushPose();
 
-				float r = 1.5f; // Radius of the circle
-				float w = 1.0f; // Angular speed (radians per unit time)
-				float t = (float) time * 0.125f; // Time variable
-				float Cx = te.getBlockPos().getX() + 0.5f; // Center X-coordinate
-				float Cy = te.getBlockPos().getY() + 1; // Center Y-coordinate
-				float Cz = te.getBlockPos().getZ() + 0.5f; // Center Z-coordinate (constant in this example)
+				float r = 1.5f;
+				float w = 1.0f;
+				float t = (float) time * 0.125f;
+				float Cx = te.getBlockPos().getX() + 0.5f;
+				float Cy = te.getBlockPos().getY() + 1;
+				float Cz = te.getBlockPos().getZ() + 0.5f;
 
 				if (t < 1.5 && t > 0) {
 					r = r - (1.5f - t);
 				}
 
-				double angle = w * t + i * Math.PI / 2;
+				double angle = w * t + idx * Math.PI / 2;
 				float x = (float) (Cx + r * Math.cos(angle));
 				float y;
-				if (i % 2 == 0) {
+				if (idx % 2 == 0) {
 					y = Cy + (float) (Math.sin(te.getLevel().getGameTime() * 0.1f) * 0.1f);
 				} else {
 					y = Cy + (float) (Math.cos(te.getLevel().getGameTime() * 0.1f) * 0.1f);
 				}
-				float z = (float) (Cz + r * Math.sin(angle)); // Since the circle is in the XY plane, z remains constant
+				float z = (float) (Cz + r * Math.sin(angle));
 
-				Vector3f loc = new Vector3f(x, y, z);
+				Vector3f locVec = new Vector3f(x, y, z);
 
 				ms.translate(x - te.getBlockPos().getX(), y - te.getBlockPos().getY() - 0.1865f,
 						z - te.getBlockPos().getZ());
 
-				ItemStack stack = te.inventory.get(i);
-				Minecraft mc = Minecraft.getInstance();
-				if (!stack.isEmpty()) {
+				te.getLevel().addParticle(EmberParticleFactory.createData(ParticleColor.PURPLE, 2, 0.12f, 14),
+						locVec.x(), locVec.y(), locVec.z(), 0.0D, 0.0D, 0.0D);
 
-					// System.out.println(loc);
-					te.getLevel().addParticle(EmberParticleFactory.createData(ParticleColor.PURPLE, 2, 0.12f, 14),
-							(double) loc.x, (double) loc.y, (double) loc.z, 0.0D, 0.0D, 0.0D);
-
-					if (time > 0 && time < 25) {
-						for (Vec3 v : HLParticleUtils.randomSphere((int) 4, 0.25f, 0.25f)) {
-							te.getLevel().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
-									(double) loc.x + v.x, (double) loc.y + v.y, (double) loc.z + v.z, 0.0D, 0.0D, 0.0D);
-						}
-
+				if (time > 0 && time < 25) {
+					for (Vec3 v : HLParticleUtils.randomSphere(4, 0.25f, 0.25f)) {
+						te.getLevel().addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack),
+								locVec.x() + v.x, locVec.y() + v.y, locVec.z() + v.z, 0.0D, 0.0D, 0.0D);
 					}
-
-					mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn,
-							combinedOverlayIn, ms, bufferIn, te.getLevel(), 0);
 				}
+
+				mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn,
+						combinedOverlayIn, ms, bufferIn, te.getLevel(), 0);
 				ms.popPose();
+				idx++;
 			}
-
 		}
-
 	}
 
 	protected void renderNameTag(MorphlingIncubatorBlockEntity te, Component component, PoseStack pose,
@@ -188,11 +165,6 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 
 	// ========================== BLOOD VOLUME RING ==========================
 
-	/**
-	 * Draws a circular blood-volume ring around the incubator, identical in style
-	 * to the Visceral Recaller's ring.  Filled segments glow bright crimson while
-	 * empty segments remain dim.  The ring slowly rotates and gently undulates.
-	 */
 	private void drawBloodVolumeRing(PoseStack stack, MultiBufferSource bufferIn,
 			Vec3 center, double fillRatio, float currentTime) {
 		double ringRadius = 1.1;
@@ -208,7 +180,6 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			float angle1 = rotOffset + (360f / segments) * i;
 			float angle2 = rotOffset + (360f / segments) * (i + 1);
 
-			// Gentle wave undulation on the ring height
 			double wave1 = Math.sin(Math.toRadians(angle1 * 3) + currentTime * 0.1) * 0.03;
 			double wave2 = Math.sin(Math.toRadians(angle2 * 3) + currentTime * 0.1) * 0.03;
 
@@ -221,11 +192,9 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			Vec3 to = new Vec3(x2, ringY + wave2, z2);
 
 			if (i < filledSegments) {
-				// Filled — bright core + glow
 				drawBeamSegment(stack, bufferIn, from, to, 0.8f, 0.08f, 0.08f, 1.0f, 0.03f);
 				drawBeamSegmentGlow(stack, bufferIn, from, to, 0.9f, 0.15f, 0.1f, 0.5f, 0.06f);
 			} else {
-				// Empty — dim
 				drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.02f);
 			}
 		}

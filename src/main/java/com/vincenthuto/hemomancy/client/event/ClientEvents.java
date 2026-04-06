@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.event;
 import com.vincenthuto.hemomancy.client.render.entity.blood.*;
 import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
+import com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -226,7 +227,9 @@ public class ClientEvents {
 
 	@SubscribeEvent
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
-
+		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), event.getPartialTick());
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -387,6 +390,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen::new);
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
 			MenuScreens.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
+			MenuScreens.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
 
 		}
 

@@ -5,9 +5,9 @@
   "riteName": "Rite of Sanguine Initiation",
   "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
   "pattern": [
-    ["E E", " C ", "E E"],
-    ["   ", " P ", "   "],
-    ["E E", " C ", "E E"]
+    ["ECE"],
+    ["EPE"],
+    ["ECE"]
   ],
   "key": {
     "E": {
