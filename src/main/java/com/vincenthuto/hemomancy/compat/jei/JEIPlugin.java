@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
 
@@ -31,6 +32,8 @@ public class JEIPlugin implements IModPlugin {
 			"recaller", RecallerRecipe.class);
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
 			.create(Hemomancy.MOD_ID, "blood_structure", BloodStructureRecipe.class);
+	public static final RecipeType<ChiselRecipe> chisel_station_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
+			"chisel_station", ChiselRecipe.class);
 
 	@Nonnull
 	@Override
@@ -43,6 +46,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCategories(new JuiceinatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new RecallerRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new ChiselStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 
 	}
 
@@ -51,6 +55,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.juiceinator.get()), juiceinator_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.visceral_artificial_recaller.get()), recaller_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), chisel_station_recipe_type);
 	}
 
 	@Override
@@ -59,6 +64,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(juiceinator_recipe_type, JuiceinatorRecipe.getAllRecipes(world));
 		registry.addRecipes(recaller_recipe_type, RecallerRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
+		registry.addRecipes(chisel_station_recipe_type, ChiselRecipe.getAllRecipes(world));
 
 	}
 
