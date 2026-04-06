@@ -158,6 +158,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_stained_stone = BASEITEMS.register("blood_stained_stone",
 			() -> new BloodStainedStoneItem(new Item.Properties()));
+	public static final RegistryObject<Item> sanguine_salve = BASEITEMS.register("sanguine_salve",
+			() -> new SanguineSalveItem(new Item.Properties(), 25f));
 	public static final RegistryObject<Item> bleeding_bulb = BASEITEMS.register("bleeding_bulb",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> dicentra_sap = BASEITEMS.register("dicentra_sap",

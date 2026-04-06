@@ -26,7 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /**
@@ -42,11 +41,19 @@ import net.minecraft.util.Mth;
  */
 public class SkillTreeScreen extends Screen {
 
-	// ── Textures ──
-	private static final ResourceLocation BACKGROUND_TEX = new ResourceLocation(
-			Hemomancy.MOD_ID, "textures/gui/tendency_view.png");
-	private static final ResourceLocation BORDER_TEX = new ResourceLocation(
-			Hemomancy.MOD_ID, "textures/gui/tendency_border.png");
+	// ── Tabs ──
+	private enum Tab {
+		SKILLS("Skills", 0xFFCC3333),
+		MANIPULATIONS("Manipulations", 0xFFCC8833);
+
+		final String label;
+		final int color;
+		Tab(String label, int color) { this.label = label; this.color = color; }
+	}
+
+	private Tab activeTab = Tab.SKILLS;
+	private static final int TAB_HEIGHT = 16;
+	private static final int TAB_PAD = 4;
 
 	// ── Node layout (content-space pixels) ──
 	private static final int NODE_SIZE = 26;
@@ -64,7 +71,13 @@ public class SkillTreeScreen extends Screen {
 	// ── GUI viewport (screen-space pixels, set in init()) ──
 	private int guiLeft, guiTop, guiWidth, guiHeight;
 
-	// ── Pan / zoom ──
+	// ── Per-tab pan / zoom ──
+	private double skillPanX, skillPanY;
+	private float skillZoom = 1.0f;
+	private double manipPanX, manipPanY;
+	private float manipZoom = 1.0f;
+
+	// Active references (point to the current tab's values)
 	private double panX, panY;
 	private float zoom = 1.0f;
 	private static final float ZOOM_MIN = 0.35f;
@@ -77,11 +90,12 @@ public class SkillTreeScreen extends Screen {
 
 	// ── Skill tree data ──
 	private final Map<SkillPoint, int[]> nodePositions = new HashMap<>();
-	private int contentW, contentH;
+	private int skillContentW, skillContentH;
 
 	// ── Manipulation tree data ──
 	private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
 	private final Set<String> knownManipNames = new HashSet<>();
+	private int manipContentW, manipContentH;
 
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
@@ -117,9 +131,39 @@ public class SkillTreeScreen extends Screen {
 		seedVeinParams();
 		cacheKnownManipulations();
 
-		// Centre the content in the viewport
-		panX = (guiWidth  - contentW * zoom) / 2.0;
-		panY = (guiHeight - contentH * zoom) / 2.0;
+		// Centre each tab's content
+		skillPanX = (guiWidth  - skillContentW * skillZoom) / 2.0;
+		skillPanY = (guiHeight - skillContentH * skillZoom) / 2.0;
+		manipPanX = (guiWidth  - manipContentW * manipZoom) / 2.0;
+		manipPanY = (guiHeight - manipContentH * manipZoom) / 2.0;
+
+		restorePan();
+	}
+
+	/** Save current pan/zoom into the active tab's slot. */
+	private void savePan() {
+		if (activeTab == Tab.SKILLS) {
+			skillPanX = panX; skillPanY = panY; skillZoom = zoom;
+		} else {
+			manipPanX = panX; manipPanY = panY; manipZoom = zoom;
+		}
+	}
+
+	/** Restore pan/zoom from the active tab's slot. */
+	private void restorePan() {
+		if (activeTab == Tab.SKILLS) {
+			panX = skillPanX; panY = skillPanY; zoom = skillZoom;
+		} else {
+			panX = manipPanX; panY = manipPanY; zoom = manipZoom;
+		}
+	}
+
+	/** Switch to a different tab. */
+	private void switchTab(Tab tab) {
+		if (tab == activeTab) return;
+		savePan();
+		activeTab = tab;
+		restorePan();
 	}
 
 	private void seedVeinParams() {
@@ -144,8 +188,8 @@ public class SkillTreeScreen extends Screen {
 
 	private void buildLayout() {
 		nodePositions.clear();
-		contentW = 0;
-		contentH = 0;
+		skillContentW = 0;
+		skillContentH = 0;
 
 		for (List<SkillPoint> branch : SkillPointInit.SKILL_TREE) {
 			if (branch.isEmpty()) continue;
@@ -174,8 +218,8 @@ public class SkillTreeScreen extends Screen {
 				for (int i = 0; i < n; i++) {
 					int x = x0 + i * NODE_GAP_X;
 					nodePositions.put(row.get(i), new int[]{x, y});
-					contentW = Math.max(contentW, x + NODE_SIZE);
-					contentH = Math.max(contentH, y + NODE_SIZE + 24);
+					skillContentW = Math.max(skillContentW, x + NODE_SIZE);
+					skillContentH = Math.max(skillContentH, y + NODE_SIZE + 24);
 				}
 			}
 		}
@@ -193,14 +237,16 @@ public class SkillTreeScreen extends Screen {
 
 	private void buildManipLayout() {
 		manipPositions.clear();
+		manipContentW = 0;
+		manipContentH = 0;
 		if (ManipulationTreeInit.ENTRIES.isEmpty()) ManipulationTreeInit.init();
 
 		for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
 			int x = entry.getX();
 			int y = entry.getY();
 			manipPositions.put(entry, new int[]{x, y});
-			contentW = Math.max(contentW, x + NODE_SIZE + 20);
-			contentH = Math.max(contentH, y + NODE_SIZE + 24);
+			manipContentW = Math.max(manipContentW, x + NODE_SIZE + 20);
+			manipContentH = Math.max(manipContentH, y + NODE_SIZE + 24);
 		}
 	}
 
@@ -245,14 +291,25 @@ public class SkillTreeScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double mx, double my, int btn) {
-		if (btn == 0 && insideGui(mx, my)) {
-			SkillPoint hit = nodeUnder(mx, my);
-			if (hit != null) {
-				tryUnlock(hit);
+		if (btn == 0) {
+			// Check tab clicks first
+			Tab clickedTab = tabUnder(mx, my);
+			if (clickedTab != null) {
+				switchTab(clickedTab);
 				return true;
 			}
-			isDragging = true;
-			return true;
+
+			if (insideGui(mx, my)) {
+				if (activeTab == Tab.SKILLS) {
+					SkillPoint hit = nodeUnder(mx, my);
+					if (hit != null) {
+						tryUnlock(hit);
+						return true;
+					}
+				}
+				isDragging = true;
+				return true;
+			}
 		}
 		return super.mouseClicked(mx, my, btn);
 	}
@@ -268,6 +325,7 @@ public class SkillTreeScreen extends Screen {
 		if (isDragging && btn == 0) {
 			panX += dx;
 			panY += dy;
+			savePan();
 			return true;
 		}
 		return super.mouseDragged(mx, my, btn, dx, dy);
@@ -287,6 +345,7 @@ public class SkillTreeScreen extends Screen {
 		// Adjust pan so that point stays under the cursor
 		panX += cxBefore * (oldZoom - zoom);
 		panY += cyBefore * (oldZoom - zoom);
+		savePan();
 		return true;
 	}
 
@@ -324,27 +383,35 @@ public class SkillTreeScreen extends Screen {
 		// ── 3. Tree content (scissored so it clips when panned) ──
 		gfx.enableScissor(guiLeft + 2, guiTop + 2,
 				guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
-		drawConnections(gfx);
-		drawNodes(gfx);
-		drawManipConnections(gfx);
-		drawManipNodes(gfx);
 
-		// Section labels (inside scissor so they pan with content)
-		drawSectionLabels(gfx);
+		if (activeTab == Tab.SKILLS) {
+			drawConnections(gfx);
+			drawNodes(gfx);
+		} else {
+			drawManipConnections(gfx);
+			drawManipNodes(gfx);
+		}
+
 		gfx.disableScissor();
 
-		// ── 4. Overlay text ──
+		// ── 4. Tab buttons (top-right, outside scissor) ──
+		drawTabs(gfx, mouseX, mouseY);
+
+		// ── 5. Overlay text ──
 		gfx.drawCenteredString(font,
-				Component.translatable("screen.hemomancy.skill_tree"),
-				guiLeft + guiWidth / 2, guiTop + 5, 0xFFCC3333);
+				Component.literal(activeTab.label),
+				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
 
 		gfx.drawString(font,
 				String.format("%.0f%%", zoom * 100),
 				guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
 
-		// ── 5. Tooltip (must be outside scissor) ──
-		drawTooltip(gfx, mouseX, mouseY);
-		drawManipTooltip(gfx, mouseX, mouseY);
+		// ── 6. Tooltip (must be outside scissor) ──
+		if (activeTab == Tab.SKILLS) {
+			drawTooltip(gfx, mouseX, mouseY);
+		} else {
+			drawManipTooltip(gfx, mouseX, mouseY);
+		}
 
 		super.render(gfx, mouseX, mouseY, partial);
 	}
@@ -818,24 +885,63 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Section labels (rendered in content-space, inside scissor)
+	//  Tabs (top-right corner of the GUI)
 	// ────────────────────────────────────────────────────────────
 
-	private void drawSectionLabels(GuiGraphics gfx) {
-		if (zoom < 0.4f) return;
+	private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
+		int x = guiLeft + guiWidth - TAB_PAD;
+		int y = guiTop + TAB_PAD;
 
-		// "Skills" label over skill tree
-		int skillLabelX = sx(contentW / 4);   // approximate centre of skill area
-		int skillLabelY = sy(15);
-		gfx.drawCenteredString(font, Component.literal("Skills")
-				.withStyle(s -> s.withColor(0xCC3333).withBold(true)), skillLabelX, skillLabelY, 0xFFCC3333);
+		// Draw tabs right-to-left so the first tab is rightmost
+		for (int i = Tab.values().length - 1; i >= 0; i--) {
+			Tab tab = Tab.values()[i];
+			int tw = font.width(tab.label) + 10;
+			int tx = x - tw;
 
-		// "Manipulations" label over manipulation tree
-		int manipCenterX = ManipulationTreeInit.TREE_OFFSET_X + 260;
-		int manipLabelX = sx(manipCenterX);
-		int manipLabelY = sy(15);
-		gfx.drawCenteredString(font, Component.literal("Manipulations")
-				.withStyle(s -> s.withColor(0xCC8833).withBold(true)), manipLabelX, manipLabelY, 0xFFCC8833);
+			boolean active = (tab == activeTab);
+			boolean hovered = mouseX >= tx && mouseX <= tx + tw
+					&& mouseY >= y && mouseY <= y + TAB_HEIGHT;
+
+			// Background
+			int bg = active ? 0xDD1A0505 : (hovered ? 0xBB180404 : 0x99120303);
+			gfx.fill(tx, y, tx + tw, y + TAB_HEIGHT, bg);
+
+			// Border
+			int bc = active ? tab.color : 0xFF444444;
+			gfx.fill(tx, y, tx + tw, y + 1, bc);               // top
+			gfx.fill(tx, y + TAB_HEIGHT - 1, tx + tw, y + TAB_HEIGHT, bc); // bottom
+			gfx.fill(tx, y, tx + 1, y + TAB_HEIGHT, bc);        // left
+			gfx.fill(tx + tw - 1, y, tx + tw, y + TAB_HEIGHT, bc); // right
+
+			// Active tab: bright underline
+			if (active) {
+				gfx.fill(tx + 1, y + TAB_HEIGHT - 2, tx + tw - 1, y + TAB_HEIGHT - 1, tab.color);
+			}
+
+			// Label
+			int textCol = active ? tab.color : (hovered ? 0xFFAAAAAA : 0xFF777777);
+			gfx.drawCenteredString(font, tab.label, tx + tw / 2, y + (TAB_HEIGHT - 8) / 2, textCol);
+
+			x = tx - TAB_PAD;
+		}
+	}
+
+	/** Returns the tab under the mouse, or null. */
+	private Tab tabUnder(double mx, double my) {
+		int x = guiLeft + guiWidth - TAB_PAD;
+		int y = guiTop + TAB_PAD;
+
+		for (int i = Tab.values().length - 1; i >= 0; i--) {
+			Tab tab = Tab.values()[i];
+			int tw = font.width(tab.label) + 10;
+			int tx = x - tw;
+
+			if (mx >= tx && mx <= tx + tw && my >= y && my <= y + TAB_HEIGHT) {
+				return tab;
+			}
+			x = tx - TAB_PAD;
+		}
+		return null;
 	}
 
 	// ────────────────────────────────────────────────────────────
