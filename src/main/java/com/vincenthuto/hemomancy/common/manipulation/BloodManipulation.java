@@ -1,5 +1,9 @@
 package com.vincenthuto.hemomancy.common.manipulation;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -9,6 +13,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.manips.ManipCooldownPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 
 import net.minecraft.ChatFormatting;
@@ -37,6 +42,9 @@ public class BloodManipulation  {
 						EnumManipulationRank.valueOf(nbt.getString("rank")),
 						EnumBloodTendency.valueOf(nbt.getString("tendency")),
 						EnumVeinSections.valueOf(nbt.getString("section")));
+				if (nbt.contains("cooldown")) {
+					manip.cooldownTicks = nbt.getInt("cooldown");
+				}
 
 				return manip;
 			}
@@ -51,6 +59,12 @@ public class BloodManipulation  {
 
 	EnumManipulationType type;
 
+	private static final double TICKS_PER_SECOND = 20.0;
+
+	private static final Map<UUID, Long> UNIVERSAL_COOLDOWN_MAP = new ConcurrentHashMap<>();
+
+	int cooldownTicks;
+
 	public BloodManipulation(String name, double cost, double alignLevel, double xpCost, EnumManipulationType type,
 			EnumManipulationRank rank, EnumBloodTendency tendency, EnumVeinSections section) {
 		this.name = name;
@@ -60,6 +74,7 @@ public class BloodManipulation  {
 		this.tend = tendency;
 		this.rank = rank;
 		this.section = section;
+		this.cooldownTicks = 0;
 	}
 
 	public void getAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
@@ -102,6 +117,54 @@ public class BloodManipulation  {
 		return xpCost;
 	}
 
+	public int getCooldownTicks() {
+		return cooldownTicks;
+	}
+
+	public BloodManipulation setCooldownTicks(int cooldownTicks) {
+		this.cooldownTicks = cooldownTicks;
+		return this;
+	}
+
+	public boolean isOnCooldown(Player player) {
+		if (cooldownTicks <= 0) {
+			return false;
+		}
+		return isAnyManipOnCooldown(player);
+	}
+
+	public static boolean isAnyManipOnCooldown(Player player) {
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
+		if (expiryTick == null) {
+			return false;
+		}
+		if (player.level().getGameTime() >= expiryTick) {
+			UNIVERSAL_COOLDOWN_MAP.remove(player.getUUID());
+			return false;
+		}
+		return true;
+	}
+
+	public long getRemainingCooldownTicks(Player player) {
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
+		if (expiryTick == null) {
+			return 0;
+		}
+		long remaining = expiryTick - player.level().getGameTime();
+		return Math.max(0, remaining);
+	}
+
+	public static long getUniversalCooldownExpiry(Player player) {
+		Long expiryTick = UNIVERSAL_COOLDOWN_MAP.get(player.getUUID());
+		return expiryTick != null ? expiryTick : 0;
+	}
+
+	private void startCooldown(Player player) {
+		if (cooldownTicks > 0) {
+			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + cooldownTicks);
+		}
+	}
+
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
@@ -109,6 +172,15 @@ public class BloodManipulation  {
 				.orElseThrow(NullPointerException::new);
 
 		if (!player.level().isClientSide) {
+			if (isAnyManipOnCooldown(player)) {
+				long remaining = getRemainingCooldownTicks(player);
+				double seconds = remaining / TICKS_PER_SECOND;
+				player.displayClientMessage(
+						Component.literal(String.format("Manipulation on cooldown! (%.1fs)", seconds))
+								.withStyle(ChatFormatting.RED),
+						true);
+				return;
+			}
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier();
@@ -122,6 +194,10 @@ public class BloodManipulation  {
 
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
+						startCooldown(player);
+						PacketHandler.CHANNELKNOWNMANIPS.send(
+								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+								new ManipCooldownPacket(cooldownTicks));
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);
@@ -150,6 +226,7 @@ public class BloodManipulation  {
 		nbt.putString("rank", rank.name());
 		nbt.putString("tendency", tend.name());
 		nbt.putString("section", section.name());
+		nbt.putInt("cooldown", cooldownTicks);
 		return nbt;
 	}
 
