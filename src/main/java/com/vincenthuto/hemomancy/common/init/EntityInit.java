@@ -99,6 +99,11 @@ public class EntityInit {
             () -> EntityType.Builder.of(FunglingEntity::new, MobCategory.CREATURE).sized(1F, 1F)
                     .build(Hemomancy.rloc("fungling").toString()));
 
+    public static final RegistryObject<EntityType<HemolymphopodaEntity>> hemolymphopoda = ENTITY_TYPES.register(
+            "hemolymphopoda",
+            () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.WATER_CREATURE).sized(0.9F, 0.3F)
+                    .build(Hemomancy.rloc("hemolymphopoda").toString()));
+
     public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
             () -> EntityType.Builder.of(ChitiniteEntity::new, MobCategory.CREATURE).sized(1F, 0.3F)
                     .build(Hemomancy.rloc("chitinite").toString()));
@@ -220,6 +225,8 @@ public class EntityInit {
     public static void commonSetup(final FMLCommonSetupEvent event) {
         SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
+        SpawnPlacements.register(EntityInit.hemolymphopoda.get(), SpawnPlacements.Type.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere);
         SpawnPlacements.register(EntityInit.fargone.get(), SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
         SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
@@ -244,6 +251,7 @@ public class EntityInit {
         event.put(EntityInit.chthonian_queen.get(), ChthonianQueenEntity.setAttributes().build());
         event.put(EntityInit.lump_of_thought.get(), LumpOfThoughtEntity.setAttributes().build());
         event.put(EntityInit.barbed_urchin.get(), BarbedUrchinEntity.setAttributes().build());
+        event.put(EntityInit.hemolymphopoda.get(), HemolymphopodaEntity.setAttributes().build());
         event.put(EntityInit.abhorent_thought.get(), AbhorentThoughtEntity.setAttributes().build());
         event.put(EntityInit.erythromycelium_eruptus.get(), ErythromyceliumEruptusEntity.setAttributes().build());
         event.put(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerEntity.setAttributes().build());
