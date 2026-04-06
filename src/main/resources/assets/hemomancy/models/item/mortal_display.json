@@ -1,3 +1,3 @@
 {
-  "parent": "hemomancy:block/mortal_display"
+  "parent": "builtin/entity"
 }

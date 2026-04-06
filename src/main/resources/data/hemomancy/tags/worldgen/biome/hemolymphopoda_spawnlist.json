@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:beach",
+    "minecraft:snowy_beach",
+    "minecraft:stony_shore",
+    "minecraft:river",
+    "minecraft:frozen_river",
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "minecraft:mushroom_fields",
+    "minecraft:lush_caves",
+    "minecraft:dripstone_caves",
+    "#forge:is_swamp"
+  ]
+}

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.block.FloatingHeartModel;
@@ -42,12 +41,9 @@ public class MortalDisplayRenderer implements BlockEntityRenderer<MortalDisplayB
 		float scale = (float) Math.abs(Math.cos(currentTime * 0.045f) * 0.25f) + 0.4f;
 		matrixStackIn.scale(scale, scale, scale);
 		matrixStackIn.translate(0, -scale * 0.7f - 0.2f +.5, 0);
-		MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
-				.immediate(Tesselator.getInstance().getBuilder());
-		VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(heart.renderType(texture));
+		VertexConsumer ivertexbuilder = bufferIn.getBuffer(heart.renderType(texture));
 		heart.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F,
 				1.0F, 1.0F);
-		irendertypebuffer$impl.endBatch();
 		matrixStackIn.popPose();
 
 	}

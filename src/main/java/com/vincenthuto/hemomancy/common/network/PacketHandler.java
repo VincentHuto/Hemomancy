@@ -9,6 +9,10 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
 import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
+import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
+import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
@@ -187,6 +191,20 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncSkills.class, networkID++)
 				.decoder(PacketSyncSkills::decode).encoder(PacketSyncSkills::encode)
 				.consumerNetworkThread(PacketSyncSkills::handle).add();
+
+		// Bloodline pool packets
+		CHANNELBLOODVOLUME.messageBuilder(PacketLumpDonate.class, networkID++)
+				.decoder(PacketLumpDonate::decode).encoder(PacketLumpDonate::encode)
+				.consumerNetworkThread(PacketLumpDonate::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(PacketUpdatePoolSettings.class, networkID++)
+				.decoder(PacketUpdatePoolSettings::decode).encoder(PacketUpdatePoolSettings::encode)
+				.consumerNetworkThread(PacketUpdatePoolSettings::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncBloodlinePool.class, networkID++)
+				.decoder(PacketSyncBloodlinePool::decode).encoder(PacketSyncBloodlinePool::encode)
+				.consumerNetworkThread(PacketSyncBloodlinePool::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(PacketRequestPoolData.class, networkID++)
+				.decoder(PacketRequestPoolData::decode).encoder(PacketRequestPoolData::encode)
+				.consumerNetworkThread(PacketRequestPoolData::handle).add();
 
 		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
 				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)

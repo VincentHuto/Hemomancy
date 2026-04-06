@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.item.block.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.FungalImplantationPylonBlockItem;
+import com.vincenthuto.hemomancy.common.item.block.MortalDisplayBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedVivianiteBlockItem;
 
@@ -361,6 +362,10 @@ public class BlockInit {
 		if (b == BlockInit.earthen_vein.get()) {
 			return Pair.of(block.getSecond(),
 					new EarthenVeinBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.mortal_display.get()) {
+			return Pair.of(block.getSecond(),
+					new MortalDisplayBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.suspended_vivianite.get()) {
 			return Pair.of(block.getSecond(),

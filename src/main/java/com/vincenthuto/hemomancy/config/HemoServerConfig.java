@@ -39,6 +39,7 @@ public class HemoServerConfig {
 	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_CONTRIBUTION_RATE;
 	public static ForgeConfigSpec.IntValue BLOODLINE_POOL_CONTRIBUTION_INTERVAL;
 	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_MIN_BLOOD_THRESHOLD;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_AUTO_DRAW_MAX_RATE;
 	public static ForgeConfigSpec.BooleanValue BLOODLINE_HEAL_ENABLED;
 	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_AMOUNT;
 	public static ForgeConfigSpec.IntValue BLOODLINE_HEAL_INTERVAL;
@@ -160,6 +161,10 @@ public class HemoServerConfig {
 		BLOODLINE_POOL_MIN_BLOOD_THRESHOLD = builder
 				.comment("Minimum blood percentage a player must have to contribute to the shared pool (0.0-1.0).")
 				.defineInRange("bloodlinePoolMinBloodThreshold", 0.25, 0.0, 1.0);
+
+		BLOODLINE_AUTO_DRAW_MAX_RATE = builder
+				.comment("Maximum blood per tick that auto-draw can pull from the shared bloodline pool.")
+				.defineInRange("bloodlineAutoDrawMaxRate", 2.0, 0.1, 100.0);
 
 		BLOODLINE_HEAL_ENABLED = builder
 				.comment("Whether bloodline members can heal each other when nearby.")

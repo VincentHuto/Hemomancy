@@ -457,5 +457,6 @@
 	"skill.hemomancy.skill_last_wind.desc": "Regenerate +2 blood/tick when below 10% blood. Per level.",
 	"skill.hemomancy.skill_dynamic_use.desc": "+10% manipulation power when tendency matches. Per level.",
 	"skill.hemomancy.skill_feeding_frenzy.desc": "+25% blood gained from kills. Per level.",
-	"item.hemomancy.sanguine_salve": "Sanguine Salve"
+	"item.hemomancy.sanguine_salve": "Sanguine Salve",
+	"item.hemomancy.bloodline_pool_monitor": "Bloodline Pool Monitor"
 }

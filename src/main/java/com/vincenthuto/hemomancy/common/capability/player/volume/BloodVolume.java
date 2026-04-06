@@ -6,6 +6,12 @@ public class BloodVolume implements IBloodVolume {
 	private double maxBloodVolume = 5000.0F;
 	private Bloodline bloodLine = Bloodline.NOBLOODLINE;
 
+	// ── Bloodline Pool Donation & Auto-Draw Settings ──
+	private boolean trickleEnabled = false;
+	private double trickleRate = 0.5;
+	private boolean autoDrawEnabled = false;
+	private double autoDrawThreshold = 0.25;
+
 	/***
 	 * only use if you want to explicitly bypass max volume limits
 	 */
@@ -140,6 +146,48 @@ public class BloodVolume implements IBloodVolume {
 	@Override
 	public boolean wouldOverstrain(double points) {
 		return bloodVolume - points < 0;
+	}
+
+	// ── Bloodline Pool Donation & Auto-Draw ──
+
+	@Override
+	public boolean isTrickleEnabled() {
+		return trickleEnabled;
+	}
+
+	@Override
+	public void setTrickleEnabled(boolean enabled) {
+		this.trickleEnabled = enabled;
+	}
+
+	@Override
+	public double getTrickleRate() {
+		return trickleRate;
+	}
+
+	@Override
+	public void setTrickleRate(double rate) {
+		this.trickleRate = rate;
+	}
+
+	@Override
+	public boolean isAutoDrawEnabled() {
+		return autoDrawEnabled;
+	}
+
+	@Override
+	public void setAutoDrawEnabled(boolean enabled) {
+		this.autoDrawEnabled = enabled;
+	}
+
+	@Override
+	public double getAutoDrawThreshold() {
+		return autoDrawThreshold;
+	}
+
+	@Override
+	public void setAutoDrawThreshold(double threshold) {
+		this.autoDrawThreshold = threshold;
 	}
 
 }

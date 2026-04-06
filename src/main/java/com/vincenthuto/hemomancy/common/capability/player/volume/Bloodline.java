@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 public class Bloodline {
 
 	public static final UUID INVALID_UUID = new UUID(0, 0);
-	public static final float BLOOD_VOLUME_PER_MEMBER = 1000f;
+	public static final float BLOOD_VOLUME_PER_MEMBER = 5000f;
 
 	public static Bloodline NOBLOODLINE = new Bloodline();
 

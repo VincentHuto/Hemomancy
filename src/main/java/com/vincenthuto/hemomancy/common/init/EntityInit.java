@@ -101,7 +101,7 @@ public class EntityInit {
 
     public static final RegistryObject<EntityType<HemolymphopodaEntity>> hemolymphopoda = ENTITY_TYPES.register(
             "hemolymphopoda",
-            () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.WATER_CREATURE).sized(0.9F, 0.3F)
+            () -> EntityType.Builder.of(HemolymphopodaEntity::new, MobCategory.AMBIENT).sized(0.9F, 0.3F)
                     .build(Hemomancy.rloc("hemolymphopoda").toString()));
 
     public static final RegistryObject<EntityType<ChitiniteEntity>> chitinite = ENTITY_TYPES.register("chitinite",
@@ -223,14 +223,18 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
-        SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
-        SpawnPlacements.register(EntityInit.hemolymphopoda.get(), SpawnPlacements.Type.NO_RESTRICTIONS,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere);
-        SpawnPlacements.register(EntityInit.fargone.get(), SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
-        SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules);
+        event.enqueueWork(() -> {
+            Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
+            SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.hemolymphopoda.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemolymphopodaEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.fargone.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules);
+            Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
+        });
     }
 
 

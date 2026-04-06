@@ -46,6 +46,11 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 				instance.setMaxBloodVolume(entry.getDouble("Max"));
 				instance.setBloodVolume(entry.getDouble("Volume"));
 				instance.setBloodLine(Bloodline.deserialize(entry.getCompound("Bloodline")));
+				// Bloodline pool donation & auto-draw settings
+				instance.setTrickleEnabled(entry.getBoolean("TrickleEnabled"));
+				instance.setTrickleRate(entry.getDouble("TrickleRate"));
+				instance.setAutoDrawEnabled(entry.getBoolean("AutoDrawEnabled"));
+				instance.setAutoDrawThreshold(entry.getDouble("AutoDrawThreshold"));
 			}
 		}
 
@@ -63,6 +68,11 @@ public class BloodVolumeProvider implements ICapabilitySerializable<Tag> {
 		entry.putDouble("Max", instance.getMaxBloodVolume());
 		entry.putDouble("Volume", instance.getBloodVolume());
 		entry.put("Bloodline", instance.getBloodLine().serialize());
+		// Bloodline pool donation & auto-draw settings
+		entry.putBoolean("TrickleEnabled", instance.isTrickleEnabled());
+		entry.putDouble("TrickleRate", instance.getTrickleRate());
+		entry.putBoolean("AutoDrawEnabled", instance.isAutoDrawEnabled());
+		entry.putDouble("AutoDrawThreshold", instance.getAutoDrawThreshold());
 		return entry;
 	}
 }

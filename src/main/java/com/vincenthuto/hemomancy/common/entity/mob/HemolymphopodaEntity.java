@@ -22,7 +22,6 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 
 public class HemolymphopodaEntity extends PathfinderMob {
 
@@ -59,9 +58,8 @@ public class HemolymphopodaEntity extends PathfinderMob {
 	public static boolean canSpawnHere(EntityType<? extends HemolymphopodaEntity> type, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();
-		return (world.getBlockState(below).isSolidRender(world, below)
-				|| world.getBlockState(pos).is(Blocks.WATER))
-				&& pos.getY() <= world.getSeaLevel() + 3;
+		return world.getBlockState(below).isSolidRender(world, below)
+				&& pos.getY() <= world.getSeaLevel() + 16;
 	}
 
 	@Override

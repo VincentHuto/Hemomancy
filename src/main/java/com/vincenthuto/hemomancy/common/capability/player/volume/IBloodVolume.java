@@ -44,4 +44,22 @@ public interface IBloodVolume {
 
 	public boolean wouldOverstrain(double points);
 
+	// ── Bloodline Pool Donation & Auto-Draw Settings ──
+
+	public boolean isTrickleEnabled();
+
+	public void setTrickleEnabled(boolean enabled);
+
+	public double getTrickleRate();
+
+	public void setTrickleRate(double rate);
+
+	public boolean isAutoDrawEnabled();
+
+	public void setAutoDrawEnabled(boolean enabled);
+
+	public double getAutoDrawThreshold();
+
+	public void setAutoDrawThreshold(double threshold);
+
 }
