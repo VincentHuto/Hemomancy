@@ -1,12 +1,18 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.effect.ArachnidAnastomosisEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodBindingEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodLossEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodRushEffect;
+import com.vincenthuto.hemomancy.common.effect.ChitinousBulwarkEffect;
 import com.vincenthuto.hemomancy.common.effect.ElytraEffect;
 import com.vincenthuto.hemomancy.common.effect.HemolysisEffect;
+import com.vincenthuto.hemomancy.common.effect.MycorrhizalMendingEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineFertilityEffect;
+import com.vincenthuto.hemomancy.common.effect.SanguineSiphonEffect;
+import com.vincenthuto.hemomancy.common.effect.SerpentineGuileEffect;
+import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -62,5 +68,53 @@ public class EffectInit {
 			"potion_of_sanguine_fertility",
 			() -> new Potion("potion_of_sanguine_fertility",
 					new MobEffectInstance(sanguine_fertility.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> arachnid_anastomosis = EFFECTS.register("arachnid_anastomosis",
+			() -> new ArachnidAnastomosisEffect(MobEffectCategory.BENEFICIAL, 0x8B0000));
+	public static final RegistryObject<Potion> potion_of_arachnid_anastomosis = POTION_TYPES.register(
+			"potion_of_arachnid_anastomosis",
+			() -> new Potion("potion_of_arachnid_anastomosis",
+					new MobEffectInstance(arachnid_anastomosis.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> mycorrhizal_mending = EFFECTS.register("mycorrhizal_mending",
+			() -> new MycorrhizalMendingEffect(MobEffectCategory.BENEFICIAL, 0x7B4F2A));
+	public static final RegistryObject<Potion> potion_of_mycorrhizal_mending = POTION_TYPES.register(
+			"potion_of_mycorrhizal_mending",
+			() -> new Potion("potion_of_mycorrhizal_mending",
+					new MobEffectInstance(mycorrhizal_mending.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> sanguine_siphon = EFFECTS.register("sanguine_siphon",
+			() -> new SanguineSiphonEffect(MobEffectCategory.BENEFICIAL, 0x8B0000));
+	public static final RegistryObject<Potion> potion_of_sanguine_siphon = POTION_TYPES.register(
+			"potion_of_sanguine_siphon",
+			() -> new Potion("potion_of_sanguine_siphon",
+					new MobEffectInstance(sanguine_siphon.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> chitinous_bulwark = EFFECTS.register("chitinous_bulwark",
+			() -> new ChitinousBulwarkEffect(MobEffectCategory.BENEFICIAL, 0x556B2F)
+					.addAttributeModifier(Attributes.ARMOR_TOUGHNESS, "A1C3E5F7-9B0D-4E2F-8A6C-1D3F5B7E9A0C",
+							4.0D, AttributeModifier.Operation.ADDITION));
+	public static final RegistryObject<Potion> potion_of_chitinous_bulwark = POTION_TYPES.register(
+			"potion_of_chitinous_bulwark",
+			() -> new Potion("potion_of_chitinous_bulwark",
+					new MobEffectInstance(chitinous_bulwark.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> serpentine_guile = EFFECTS.register("serpentine_guile",
+			() -> new SerpentineGuileEffect(MobEffectCategory.BENEFICIAL, 0x2E8B57)
+					.addAttributeModifier(Attributes.MOVEMENT_SPEED, "B2D4F6A8-0C1E-3F5B-7D9A-2E4C6F8A0B1D",
+							0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)
+					.addAttributeModifier(Attributes.ATTACK_SPEED, "C3E5A7B9-1D0F-4A2C-6E8B-3F5D7A9C1E0B",
+							0.1F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+	public static final RegistryObject<Potion> potion_of_serpentine_guile = POTION_TYPES.register(
+			"potion_of_serpentine_guile",
+			() -> new Potion("potion_of_serpentine_guile",
+					new MobEffectInstance(serpentine_guile.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> verminous_aura = EFFECTS.register("verminous_aura",
+			() -> new VerminousAuraEffect(MobEffectCategory.BENEFICIAL, 0x4A3728));
+	public static final RegistryObject<Potion> potion_of_verminous_aura = POTION_TYPES.register(
+			"potion_of_verminous_aura",
+			() -> new Potion("potion_of_verminous_aura",
+					new MobEffectInstance(verminous_aura.get(), 1200, 0)));
 
 }

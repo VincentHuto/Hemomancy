@@ -19,9 +19,15 @@ import com.vincenthuto.hemomancy.common.item.memories.FerventHuskItem;
 import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
 import com.vincenthuto.hemomancy.common.item.memories.LethianBrewItem;
 import com.vincenthuto.hemomancy.common.item.memories.LethianDewItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.ChitiniteMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.FungalMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
+import com.vincenthuto.hemomancy.common.item.morphlings.LeechesMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.PestsMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
@@ -287,15 +293,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> morphling_jar = SPECIALITEMS.register("morphling_jar",
 			() -> new ItemMorphlingJar("morphling_jar", 6, Rarity.UNCOMMON));
 	public static final RegistryObject<Item> morphling_fungal = BASEITEMS.register("morphling_fungal",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new FungalMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_leeches = BASEITEMS.register("morphling_leeches",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new LeechesMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_chitinite = BASEITEMS.register("morphling_chitinite",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new ChitiniteMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_serpent = BASEITEMS.register("morphling_serpent",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new SerpentMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_pests = BASEITEMS.register("morphling_pests",
-			() -> new MorphlingItem(new Item.Properties().stacksTo(1)));
+			() -> new PestsMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_spider = BASEITEMS.register("morphling_spider",
+			() -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
@@ -642,6 +650,8 @@ public class ItemInit {
 								return 4;
 							} else if (selectedStack.getItem() == ItemInit.morphling_chitinite.get()) {
 								return 5;
+							} else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
+								return 6;
 							} else {
 								return 0;
 							}
