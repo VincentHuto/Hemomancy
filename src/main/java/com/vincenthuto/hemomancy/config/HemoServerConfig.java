@@ -34,6 +34,17 @@ public class HemoServerConfig {
 	public static ForgeConfigSpec.IntValue VASCULAR_HEAL_INTERVAL;
 	public static ForgeConfigSpec.BooleanValue VASCULAR_DEBUFFS_ENABLED;
 
+	// ===== Bloodline =====
+	public static ForgeConfigSpec.BooleanValue BLOODLINE_POOL_ENABLED;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_CONTRIBUTION_RATE;
+	public static ForgeConfigSpec.IntValue BLOODLINE_POOL_CONTRIBUTION_INTERVAL;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_MIN_BLOOD_THRESHOLD;
+	public static ForgeConfigSpec.BooleanValue BLOODLINE_HEAL_ENABLED;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_AMOUNT;
+	public static ForgeConfigSpec.IntValue BLOODLINE_HEAL_INTERVAL;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_HEALTH_THRESHOLD;
+	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_RANGE;
+
 	// ===== Morphling =====
 	public static ForgeConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
 	public static ForgeConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
@@ -128,6 +139,47 @@ public class HemoServerConfig {
 		VASCULAR_DEBUFFS_ENABLED = builder
 				.comment("Whether damaged vascular sections apply debuffs (e.g. slowness for dead legs).")
 				.define("vascularDebuffsEnabled", true);
+
+		builder.pop();
+
+		// ───── Bloodline ─────
+		builder.comment("Bloodline Settings").push("bloodline");
+
+		BLOODLINE_POOL_ENABLED = builder
+				.comment("Whether bloodline members passively contribute blood to the shared pool.")
+				.define("bloodlinePoolEnabled", true);
+
+		BLOODLINE_POOL_CONTRIBUTION_RATE = builder
+				.comment("Amount of blood contributed to the shared pool per tick interval.")
+				.defineInRange("bloodlinePoolContributionRate", 0.5, 0.01, 100.0);
+
+		BLOODLINE_POOL_CONTRIBUTION_INTERVAL = builder
+				.comment("How many ticks between each bloodline pool contribution. 20 ticks = 1 second.")
+				.defineInRange("bloodlinePoolContributionInterval", 100, 1, 6000);
+
+		BLOODLINE_POOL_MIN_BLOOD_THRESHOLD = builder
+				.comment("Minimum blood percentage a player must have to contribute to the shared pool (0.0-1.0).")
+				.defineInRange("bloodlinePoolMinBloodThreshold", 0.25, 0.0, 1.0);
+
+		BLOODLINE_HEAL_ENABLED = builder
+				.comment("Whether bloodline members can heal each other when nearby.")
+				.define("bloodlineHealEnabled", true);
+
+		BLOODLINE_HEAL_AMOUNT = builder
+				.comment("Amount of health restored per heal tick from the shared bloodline pool.")
+				.defineInRange("bloodlineHealAmount", 1.0, 0.1, 20.0);
+
+		BLOODLINE_HEAL_INTERVAL = builder
+				.comment("How many ticks between each bloodline heal tick. 20 ticks = 1 second.")
+				.defineInRange("bloodlineHealInterval", 40, 1, 6000);
+
+		BLOODLINE_HEAL_HEALTH_THRESHOLD = builder
+				.comment("Player health percentage below which bloodline healing activates (0.0-1.0).")
+				.defineInRange("bloodlineHealHealthThreshold", 0.5, 0.05, 1.0);
+
+		BLOODLINE_HEAL_RANGE = builder
+				.comment("Maximum distance (in blocks) between bloodline members for healing to work.")
+				.defineInRange("bloodlineHealRange", 32.0, 1.0, 256.0);
 
 		builder.pop();
 
