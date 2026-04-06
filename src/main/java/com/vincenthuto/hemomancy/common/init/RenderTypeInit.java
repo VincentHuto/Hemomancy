@@ -96,6 +96,29 @@ public class RenderTypeInit extends RenderType {
 					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
 					.createCompositeState(false));
 
+	// Cardinal Rite boundary circle — renders inside the world, occluded by blocks
+	public static final RenderType RITE_BOUNDARY_CORE = create("RiteBoundaryCore",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
+	public static final RenderType RITE_BOUNDARY_GLOW = create("RiteBoundaryGlow",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	// Visceral Recaller beam render types — always render on top of world geometry
 	public static final RenderType RECALLER_BEAM_CORE = create("RecallerBeamCore",
 			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
