@@ -17,4 +17,12 @@ public interface IMorphling {
 
 	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn);
 
+	/**
+	 * Called every drain interval while this morphling is equipped on the player.
+	 * Override to apply passive effects, e.g. the spider morphling applies
+	 * Arachnid Anastomosis here.
+	 */
+	default void onEquippedTick(Player player) {
+	}
+
 }

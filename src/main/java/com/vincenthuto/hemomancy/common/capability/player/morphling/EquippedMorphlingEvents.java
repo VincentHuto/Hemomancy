@@ -75,6 +75,11 @@ public class EquippedMorphlingEvents {
 									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC), true);
 				}
 			});
+
+			// Delegate morphling-specific passive effects to the item itself
+			if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedTick(player);
+			}
 		});
 	}
 
