@@ -1,0 +1,26 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 100,
+  "riteType": "minor",
+  "riteName": "Rite of Sanguine Initiation",
+  "riteDescription": "A basic initiation rite that awakens the hematic potential within the practitioner.",
+  "pattern": [
+    ["E E", " C ", "E E"],
+    ["   ", " P ", "   "],
+    ["E E", " C ", "E E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "C": {
+      "block": "hemomancy:venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:sanguine_formation"
+  }
+}
