@@ -464,6 +464,14 @@
 	"skill.hemomancy.skill_last_wind.desc": "Regenerate +2 blood/tick when below 10% blood. Per level.",
 	"skill.hemomancy.skill_dynamic_use.desc": "+10% manipulation power when tendency matches. Per level.",
 	"skill.hemomancy.skill_feeding_frenzy.desc": "+25% blood gained from kills. Per level.",
+	"skill.hemomancy.skill_hemostasis.desc": "Reduces blood lost when taking damage by 10% per level.",
+	"skill.hemomancy.skill_sanguine_surge.desc": "Passive blood regen of +1 per tick per level.",
+	"skill.hemomancy.skill_crimson_mastery.desc": "+15% manipulation damage/effectiveness per level.",
+	"skill.hemomancy.skill_vital_link.desc": "+10% chance to heal on dealing manipulation damage. Per level.",
+	"skill.hemomancy.skill_iron_will.desc": "10% damage reduction per level when blood is below 15%.",
+	"skill.hemomancy.skill_blood_flow.desc": "Reduces manipulation cooldowns by 5% per level.",
+	"skill.hemomancy.skill_coagulation.desc": "+15% chance to block incoming bleed effects. Per level.",
+	"skill.hemomancy.skill_sanguine_reach.desc": "+15% range for ranged blood manipulations. Per level.",
 	"item.hemomancy.sanguine_salve": "Sanguine Salve",
 	"item.hemomancy.bloodline_pool_monitor": "Bloodline Pool Monitor"
 }

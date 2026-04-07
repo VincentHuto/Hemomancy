@@ -631,6 +631,14 @@ public class SkillTreeScreen extends Screen {
 				Component.literal(activeTab.label),
 				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
 
+		if (activeTab == Tab.SKILLS) {
+			// Display current skill points in top-left area of the GUI
+			String spText = "Skill Points: " + SkillPointInit.skillPoints;
+			gfx.drawString(font, Component.literal(spText)
+					.withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
+					guiLeft + 5, guiTop + 18, 0);
+		}
+
 		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
 			gfx.drawString(font,
 					String.format("%.0f%%", zoom * 100),
@@ -898,7 +906,8 @@ public class SkillTreeScreen extends Screen {
 					tip.add(Component.literal("Requires: " + pn)
 							.withStyle(s -> s.withColor(0xAA4444)));
 				} else {
-					tip.add(Component.literal("Click to unlock! Cost: " + (int) sp.getLevelUpCost() + " mL")
+					tip.add(Component.literal("Click to unlock! Cost: " + (int) sp.getLevelUpCost() + " mL + "
+							+ sp.getSkillPointCost() + " SP")
 							.withStyle(s -> s.withColor(0xBB8833)));
 				}
 			} else if (sp.getState() == EnumSkillStates.UNLOCKED) {
@@ -906,7 +915,8 @@ public class SkillTreeScreen extends Screen {
 					tip.add(Component.literal("MAX LEVEL")
 							.withStyle(s -> s.withColor(0x44AA44).withBold(true)));
 				} else {
-					tip.add(Component.literal("Click to level up! Cost: " + (int) sp.getLevelUpCost() + " mL")
+					tip.add(Component.literal("Click to level up! Cost: " + (int) sp.getLevelUpCost() + " mL + "
+							+ sp.getSkillPointCost() + " SP")
 							.withStyle(s -> s.withColor(0xBB8833)));
 				}
 			}
@@ -1836,13 +1846,21 @@ public class SkillTreeScreen extends Screen {
 
 	private static String getSkillInitial(SkillPoint sp) {
 		return switch (sp.getName()) {
-			case "base"                -> "\u2726";
-			case "skill_capacity"      -> "C";
-			case "skill_efficiency"    -> "E";
-			case "skill_last_wind"     -> "W";
-			case "skill_dynamic_use"   -> "D";
-			case "skill_feeding_frenzy"-> "F";
-			default                    -> "?";
+			case "base"                  -> "\u2726";
+			case "skill_capacity"        -> "C";
+			case "skill_efficiency"      -> "E";
+			case "skill_last_wind"       -> "W";
+			case "skill_dynamic_use"     -> "D";
+			case "skill_feeding_frenzy"  -> "F";
+			case "skill_hemostasis"      -> "H";
+			case "skill_sanguine_surge"  -> "S";
+			case "skill_crimson_mastery" -> "M";
+			case "skill_vital_link"      -> "V";
+			case "skill_iron_will"       -> "I";
+			case "skill_blood_flow"      -> "B";
+			case "skill_coagulation"     -> "G";
+			case "skill_sanguine_reach"  -> "R";
+			default                      -> "?";
 		};
 	}
 

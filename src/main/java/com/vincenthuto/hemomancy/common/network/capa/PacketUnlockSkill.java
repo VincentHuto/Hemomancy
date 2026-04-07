@@ -56,7 +56,13 @@ public class PacketUnlockSkill {
 					return;
 				}
 				double cost = skill.getLevelUpCost();
-				if (!tryDrainBlood(player, cost)) return;
+				int spCost = skill.getSkillPointCost();
+				if (!tryDrainSkillPoints(player, spCost)) return;
+				if (!tryDrainBlood(player, cost)) {
+					// Refund skill points if blood drain failed
+					SkillPointInit.skillPoints += spCost;
+					return;
+				}
 
 				skill.setState(EnumSkillStates.UNLOCKED);
 				skill.setCurrentLevel(1);
@@ -78,7 +84,13 @@ public class PacketUnlockSkill {
 					return;
 				}
 				double cost = skill.getLevelUpCost();
-				if (!tryDrainBlood(player, cost)) return;
+				int spCost = skill.getSkillPointCost();
+				if (!tryDrainSkillPoints(player, spCost)) return;
+				if (!tryDrainBlood(player, cost)) {
+					// Refund skill points if blood drain failed
+					SkillPointInit.skillPoints += spCost;
+					return;
+				}
 
 				skill.tryLevelUp();
 				player.displayClientMessage(
@@ -90,6 +102,22 @@ public class PacketUnlockSkill {
 			}
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	/**
+	 * Check and consume skill points. Returns true on success.
+	 */
+	private static boolean tryDrainSkillPoints(ServerPlayer player, int cost) {
+		if (cost <= 0) return true;
+		if (SkillPointInit.skillPoints < cost) {
+			player.displayClientMessage(
+					Component.literal("Not enough skill points! Need " + cost
+							+ " (have " + SkillPointInit.skillPoints + ")")
+							.withStyle(ChatFormatting.RED), true);
+			return false;
+		}
+		SkillPointInit.skillPoints -= cost;
+		return true;
 	}
 
 	/**
