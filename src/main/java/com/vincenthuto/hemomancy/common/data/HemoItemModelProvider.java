@@ -24,26 +24,40 @@ public class HemoItemModelProvider extends ItemModelProvider {
 		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
+		for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+			registerBlockModel(b.get());
+		}
+		for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+			registerBlockModel(b.get());
+		}
+		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+			registerBlockModel(b.get());
+		}
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
-			if(b != BlockInit.sanguine_pane || b != BlockInit.active_befouling_ash_trail
-					|| b != BlockInit.active_smouldering_ash_trail
-					|| b != BlockInit.befouling_ash_trail
-					|| b != BlockInit.smouldering_ash_trail) {
-				registerBlockModel(b.get());
+			Block block = b.get();
+			if (block != BlockInit.sanguine_pane.get()
+					&& block != BlockInit.active_befouling_ash_trail.get()
+					&& block != BlockInit.active_smouldering_ash_trail.get()
+					&& block != BlockInit.befouling_ash_trail.get()
+					&& block != BlockInit.smouldering_ash_trail.get()
+					&& block != BlockInit.engram_block.get()
+					&& block != BlockInit.filler_block.get()
+					&& block != BlockInit.crimson_flames.get()) {
+				registerBlockModel(block);
 			}
 		}
 		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
 			registerBlockModel(b.get());
 		}
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
-			if(item.get() instanceof ItemRunePattern patternItem) {
+			if (item.get() instanceof ItemRunePattern patternItem) {
 				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
 				String runePath = ForgeRegistries.ITEMS.getKey(patternItem.getRune().get()).getPath();
 				getBuilder(itemPath)
-					.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
-					.texture("layer0", modLoc("item/rune_pattern"))
-					.texture("layer1", modLoc("item/" + runePath));
-			}else {
+						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+						.texture("layer0", modLoc("item/rune_pattern"))
+						.texture("layer1", modLoc("item/" + runePath));
+			} else {
 				basicItem(item.get());
 			}
 		}
@@ -60,19 +74,13 @@ public class HemoItemModelProvider extends ItemModelProvider {
 		getBuilder(path).parent(new ModelFile.UncheckedModelFile(modLoc("block/" + path)));
 	}
 
-	private void registerBasicItem(Item item) {
-		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
-		singleTexture(path, mcLoc("item/generated"), "layer0", modLoc("item/" + path));
-
-	}
-
 	private void registerHandheldItem(Item item) {
 		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
 		singleTexture(path, mcLoc("item/handheld"), "layer0", modLoc("item/" + path));
 	}
 
 	private void registerSpawnEggItem(Item item) {
-		String path =ForgeRegistries.ITEMS.getKey(item).getPath();
+		String path = ForgeRegistries.ITEMS.getKey(item).getPath();
 		withExistingParent(path, mcLoc("item/template_spawn_egg"));
 	}
 
