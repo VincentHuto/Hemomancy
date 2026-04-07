@@ -41,21 +41,25 @@ public enum EnumInitiatoryDegree {
 		return "hemomancy.degree." + number;
 	}
 
-	public int getNumber() {
-		return number;
-	}
-
+	/**
+	 * Returns the hardcoded English title for this degree.
+	 * <p>
+	 * <b>Note:</b> This is intended for internal/fallback use only.
+	 * For localised display, use {@link #getLangKey()} with
+	 * {@code Component.translatable()}.
+	 * </p>
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	public int getNumber() {
+		return number;
+	}
+
 	/** Returns the degree that follows this one, or null if already at the highest. */
 	public EnumInitiatoryDegree next() {
-		int nextNum = this.number + 1;
-		for (EnumInitiatoryDegree d : values()) {
-			if (d.number == nextNum) return d;
-		}
-		return null;
+		return (number < 7) ? values()[number] : null;
 	}
 
 	/** Returns the degree with the given number (1–7), or null if not found. */
