@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
@@ -211,6 +212,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncActiveRites.class, networkID++)
 				.decoder(PacketSyncActiveRites::decode).encoder(PacketSyncActiveRites::encode)
 				.consumerNetworkThread(PacketSyncActiveRites::handle).add();
+
+		// Initiatory degree sync packet
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncDegree.class, networkID++)
+				.decoder(PacketSyncDegree::decode).encoder(PacketSyncDegree::encode)
+				.consumerNetworkThread(PacketSyncDegree::handle).add();
 
 		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
 				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)
