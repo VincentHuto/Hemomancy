@@ -62,6 +62,8 @@ public class ConfiguredFeatureInit {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> STINK_HORNS = FeatureUtils
 			.createKey("stink_horns");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = createKey("lethean_poppies");
+
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
 	}
@@ -172,6 +174,9 @@ public class ConfiguredFeatureInit {
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
 						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
 								BlockStateProvider.simple(BlockInit.stinkhorn_fungus.get())))))));
+
+		register(context, LETHEAN_POPPIES, Feature.FLOWER,
+				grassPatch(BlockStateProvider.simple(BlockInit.lethean_poppy.get()), 1));
 		
 	}
 

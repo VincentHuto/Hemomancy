@@ -44,6 +44,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> STINK_HORNS = createKey("stink_horns");
 
+	public static final ResourceKey<PlacedFeature> LETHEAN_POPPIES = createKey("lethean_poppies");
+
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -71,6 +73,12 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.STINK_HORNS, STINK_HORNS, RarityFilter.onAverageOnceEvery(7),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
+		final Holder<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.LETHEAN_POPPIES);
+
+		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(32),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 		
 		

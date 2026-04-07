@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "state=0": {
+      "model": "hemomancy:block/lethean_poppy_bloomed"
+    },
+    "state=1": {
+      "model": "hemomancy:block/lethean_poppy_dormant"
+    }
+  }
+}
