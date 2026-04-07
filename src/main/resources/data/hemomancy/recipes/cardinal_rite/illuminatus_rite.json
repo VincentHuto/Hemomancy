@@ -5,32 +5,23 @@
   "riteName": "Rite of the Crimson Lodge",
   "riteDescription": "The fifth rite of the Hematic Order, illuminating the inner secrets of the Crimson Lodge.",
   "pattern": [
-    ["H C H C H", "  V   V  ", "    P    ", "  V   V  ", "H C H C H"],
-    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
-    ["         ", "  H   H  ", "  H C H  ", "  H   H  ", "         "],
-    ["    G    ", "  G C G  ", " G C G C ", "  G C G  ", "    G    "],
-    ["         ", "  H   H  ", "  H C H  ", "  H   H  ", "         "],
-    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
-    ["H C H C H", "  V   V  ", "    P    ", "  V   V  ", "H C H C H"]
+    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"],
+    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
+    ["       ", " C   C ", "   HGH ", "   G G ", "   GGG ", "   HGH ", " C   C "],
+    ["       ", " C G C ", "   G G ", "   GGG ", "  GCG  ", "   GGG ", " C G C "],
+    ["       ", " C   C ", "   HGH ", "   G G ", "   GGG ", "   HGH ", " C   C "],
+    ["       ", " CCCCC ", " C   C ", " C G C ", " C   C ", " CCCCC ", "       "],
+    ["HCGCGCH", "C     C", "G     G", "C  G  C", "G     G", "C     C", "HCGCGCH"]
   ],
   "key": {
     "H": {
       "block": "hemomancy:hematic_iron_pillar"
     },
-    "V": {
-      "block": "hemomancy:venous_stone"
-    },
     "C": {
       "block": "hemomancy:chiseled_polished_venous_stone"
     },
-    "P": {
-      "block": "hemomancy:hemolytic_plating_block"
-    },
     "G": {
       "block": "hemomancy:gilded_venous_stone"
-    },
-    "B": {
-      "block": "hemomancy:hematic_iron_block"
     }
   },
   "result": {

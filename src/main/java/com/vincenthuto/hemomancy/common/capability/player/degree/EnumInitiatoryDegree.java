@@ -36,6 +36,11 @@ public enum EnumInitiatoryDegree {
 		this.title = title;
 	}
 
+	/** Returns the translation key for this degree (e.g., {@code hemomancy.degree.1}). */
+	public String getLangKey() {
+		return "hemomancy.degree." + number;
+	}
+
 	public int getNumber() {
 		return number;
 	}

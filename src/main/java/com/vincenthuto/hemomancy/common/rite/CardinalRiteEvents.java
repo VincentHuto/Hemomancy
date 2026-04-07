@@ -305,7 +305,7 @@ public class CardinalRiteEvents {
 						caster.displayClientMessage(
 								Component.literal("You have attained the ")
 										.withStyle(ChatFormatting.DARK_RED)
-										.append(Component.literal(newDegree.getTitle())
+										.append(Component.translatable(newDegree.getLangKey())
 												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
 										.append(Component.literal("!")
 												.withStyle(ChatFormatting.DARK_RED)),
