@@ -1,0 +1,39 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 2000,
+  "riteType": "greater",
+  "riteName": "Rite of the Crimson Lodge",
+  "riteDescription": "The fifth rite of the Hematic Order, illuminating the inner secrets of the Crimson Lodge.",
+  "pattern": [
+    ["H C H C H", "  V   V  ", "    P    ", "  V   V  ", "H C H C H"],
+    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
+    ["         ", "  H   H  ", "  H C H  ", "  H   H  ", "         "],
+    ["    G    ", "  G C G  ", " G C G C ", "  G C G  ", "    G    "],
+    ["         ", "  H   H  ", "  H C H  ", "  H   H  ", "         "],
+    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
+    ["H C H C H", "  V   V  ", "    P    ", "  V   V  ", "H C H C H"]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hemolytic_plating_block"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "B": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:stabilized_sanguine_formation"
+  }
+}

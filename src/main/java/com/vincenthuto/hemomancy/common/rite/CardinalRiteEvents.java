@@ -9,6 +9,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
+import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -232,6 +235,18 @@ public class CardinalRiteEvents {
 	}
 
 
+	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
+
+	static {
+		DEGREE_RITE_PATHS.put("cardinal_rite/sanguine_initiation", 1); // Neophyte of the Crimson Veil
+		DEGREE_RITE_PATHS.put("cardinal_rite/votary_rite", 2);          // Votary of the Hematic Covenant
+		DEGREE_RITE_PATHS.put("cardinal_rite/initiate_rite", 3);        // Initiate of the Scarlet Sanctum
+		DEGREE_RITE_PATHS.put("cardinal_rite/adept_rite", 4);           // Adept of the Sanguine Brotherhood
+		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
+		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
+		DEGREE_RITE_PATHS.put("cardinal_rite/archon_rite", 7);          // Archon of the Hematic Order
+	}
+
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
 		if (recipe == null) return;
@@ -275,5 +290,29 @@ public class CardinalRiteEvents {
 				Component.literal("The " + recipe.getRiteName() + " is complete!")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
+
+		// Check if this rite grants an initiatory degree
+		String ritePath = rite.getRecipeId().getPath();
+		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
+		if (targetDegree != null) {
+			caster.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
+				int currentDegree = degree.getDegreeNumber();
+				if (currentDegree < targetDegree) {
+					degree.setDegreeNumber(targetDegree);
+					InitiatoryDegreeEvents.syncDegree(caster, degree);
+					EnumInitiatoryDegree newDegree = degree.getDegree();
+					if (newDegree != null) {
+						caster.displayClientMessage(
+								Component.literal("You have attained the ")
+										.withStyle(ChatFormatting.DARK_RED)
+										.append(Component.literal(newDegree.getTitle())
+												.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+										.append(Component.literal("!")
+												.withStyle(ChatFormatting.DARK_RED)),
+								false);
+					}
+				}
+			});
+		}
 	}
 }

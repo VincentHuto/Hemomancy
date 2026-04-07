@@ -1,0 +1,39 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 3000,
+  "riteType": "greater",
+  "riteName": "Rite of the Bloodline Covenant",
+  "riteDescription": "The sixth rite of the Hematic Order, consecrating the practitioner fully to the Bloodline Covenant.",
+  "pattern": [
+    ["H G H G H", "  V   V  ", "    P    ", "  V   V  ", "H G H G H"],
+    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
+    ["         ", "  H   H  ", "  H G H  ", "  H   H  ", "         "],
+    ["    C    ", "  C G C  ", " C G C G ", "  C G C  ", "    C    "],
+    ["         ", "  H   H  ", "  H G H  ", "  H   H  ", "         "],
+    ["         ", "  H   H  ", "  H B H  ", "  H   H  ", "         "],
+    ["H G H G H", "  V   V  ", "    P    ", "  V   V  ", "H G H G H"]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "V": {
+      "block": "hemomancy:polished_venous_stone_bricks"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hemolytic_plating_block"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:stabilized_sanguine_formation"
+  }
+}
