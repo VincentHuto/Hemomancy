@@ -12,6 +12,8 @@ import java.util.Set;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
@@ -142,6 +144,9 @@ public class SkillTreeScreen extends Screen {
 	private static final int RITE_NAV_BTN_H = 18;
 	private static final int LAYER_BTN_SIZE = 16;
 
+	// ── Player initiatory degree (cached for rendering) ──
+	private int playerDegree = 0;
+
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
 	// ────────────────────────────────────────────────────────────
@@ -177,6 +182,14 @@ public class SkillTreeScreen extends Screen {
 		cacheKnownManipulations();
 		cacheRiteRecipes();
 		cacheCraftingRecipes();
+
+		// Cache the player's initiatory degree for rendering
+		if (Minecraft.getInstance().player != null) {
+			playerDegree = Minecraft.getInstance().player
+					.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+					.map(d -> d.getDegreeNumber())
+					.orElse(0);
+		}
 
 		// Centre each tab's content
 		skillPanX = (guiWidth  - skillContentW * skillZoom) / 2.0;
@@ -300,7 +313,8 @@ public class SkillTreeScreen extends Screen {
 				int n = row.size();
 				int rowWidth = (n - 1) * NODE_GAP_X;
 				int x0 = (widestRow - rowWidth) / 2;
-				int y  = 40 + d * NODE_GAP_Y;
+				// Invert Y so root is at the bottom and deeper skills rise upward
+				int y  = 40 + (maxDepth - d) * NODE_GAP_Y;
 				for (int i = 0; i < n; i++) {
 					int x = x0 + i * NODE_GAP_X;
 					nodePositions.put(row.get(i), new int[]{x, y});
@@ -573,6 +587,10 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	private void tryUnlock(SkillPoint sp) {
+		// Block interaction if player hasn't reached the required initiation degree
+		if (sp.isDegreeLocked(playerDegree)) {
+			return;
+		}
 		// Send packet to server — server validates cost, drains blood, applies change
 		PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketUnlockSkill(sp.getId()));
 	}
@@ -819,24 +837,30 @@ public class SkillTreeScreen extends Screen {
 			int nx = sx(pos[0]);
 			int ny = sy(pos[1]);
 
+			boolean degreeLocked = sp.isDegreeLocked(playerDegree);
+
 			// ── determine border colour ──
 			int border;
-			switch (sp.getState()) {
-				case UNLOCKED -> {
-					border = COL_NODE_BORDER_UNLOCK;
-					// pulsing glow
-					float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
-					int ga = (int)(40 * p);
-					gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
-							(ga << 24) | 0x00AA0000);
+			if (degreeLocked) {
+				border = COL_NODE_BORDER_LOCK;
+			} else {
+				switch (sp.getState()) {
+					case UNLOCKED -> {
+						border = COL_NODE_BORDER_UNLOCK;
+						// pulsing glow
+						float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
+						int ga = (int)(40 * p);
+						gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
+								(ga << 24) | 0x00AA0000);
+					}
+					case LOCKED -> {
+						border = COL_NODE_BORDER_LOCK;
+						if (sp.getParent() != null
+								&& sp.getParent().getState() == EnumSkillStates.UNLOCKED)
+							border = COL_NODE_BORDER_AVAIL;
+					}
+					default -> border = COL_NODE_BORDER_LOCK;
 				}
-				case LOCKED -> {
-					border = COL_NODE_BORDER_LOCK;
-					if (sp.getParent() != null
-							&& sp.getParent().getState() == EnumSkillStates.UNLOCKED)
-						border = COL_NODE_BORDER_AVAIL;
-				}
-				default -> border = COL_NODE_BORDER_LOCK;
 			}
 
 			// ── node fill ──
@@ -847,6 +871,15 @@ public class SkillTreeScreen extends Screen {
 			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, border);
 			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, border);
 			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, border);
+
+			// ── degree-locked overlay: dark fill + black "?" ──
+			if (degreeLocked) {
+				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				if (zoom >= 0.5f) {
+					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
+				}
+				continue; // skip normal text rendering for degree-locked nodes
+			}
 
 			// ── text (only when zoomed in enough) ──
 			if (zoom >= 0.5f) {
@@ -883,41 +916,53 @@ public class SkillTreeScreen extends Screen {
 
 			List<Component> tip = new ArrayList<>();
 
-			String pretty = HLTextUtils.toProperCase(
-					sp.getName().replace("skill_", "").replace("_", " "));
-			tip.add(Component.literal(pretty)
-					.withStyle(s -> s.withColor(0xCC3333).withBold(true)));
+			boolean degreeLocked = sp.isDegreeLocked(playerDegree);
 
-			// Level info
-			if (sp.getMaxLevels() > 0) {
-				tip.add(Component.literal("Level: " + sp.getCurrentLevel() + " / " + sp.getMaxLevels())
-						.withStyle(s -> s.withColor(sp.isMaxed() ? 0x44AA44 : 0x888888)));
-			}
+			if (degreeLocked) {
+				// Degree-locked: obscure the name and show the requirement
+				tip.add(Component.literal("???")
+						.withStyle(s -> s.withColor(0x555555).withBold(true)));
+				EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(sp.getRequiredDegree());
+				String degreeName = needed != null ? needed.getTitle() : ("Degree " + sp.getRequiredDegree());
+				tip.add(Component.literal("Requires: " + degreeName)
+						.withStyle(s -> s.withColor(0xAA4444)));
+			} else {
+				String pretty = HLTextUtils.toProperCase(
+						sp.getName().replace("skill_", "").replace("_", " "));
+				tip.add(Component.literal(pretty)
+						.withStyle(s -> s.withColor(0xCC3333).withBold(true)));
 
-			// Description
-			tip.add(Component.translatable("skill.hemomancy." + sp.getName() + ".desc")
-					.withStyle(s -> s.withColor(0x999999).withItalic(true)));
-
-			// Action / cost info
-			if (sp.getState() == EnumSkillStates.LOCKED) {
-				if (sp.getParent() != null && sp.getParent().getState() != EnumSkillStates.UNLOCKED) {
-					String pn = HLTextUtils.toProperCase(
-							sp.getParent().getName().replace("skill_", "").replace("_", " "));
-					tip.add(Component.literal("Requires: " + pn)
-							.withStyle(s -> s.withColor(0xAA4444)));
-				} else {
-					tip.add(Component.literal("Click to unlock! Cost: " + (int) sp.getLevelUpCost() + " mL + "
-							+ sp.getSkillPointCost() + " SP")
-							.withStyle(s -> s.withColor(0xBB8833)));
+				// Level info
+				if (sp.getMaxLevels() > 0) {
+					tip.add(Component.literal("Level: " + sp.getCurrentLevel() + " / " + sp.getMaxLevels())
+							.withStyle(s -> s.withColor(sp.isMaxed() ? 0x44AA44 : 0x888888)));
 				}
-			} else if (sp.getState() == EnumSkillStates.UNLOCKED) {
-				if (sp.isMaxed()) {
-					tip.add(Component.literal("MAX LEVEL")
-							.withStyle(s -> s.withColor(0x44AA44).withBold(true)));
-				} else {
-					tip.add(Component.literal("Click to level up! Cost: " + (int) sp.getLevelUpCost() + " mL + "
-							+ sp.getSkillPointCost() + " SP")
-							.withStyle(s -> s.withColor(0xBB8833)));
+
+				// Description
+				tip.add(Component.translatable("skill.hemomancy." + sp.getName() + ".desc")
+						.withStyle(s -> s.withColor(0x999999).withItalic(true)));
+
+				// Action / cost info
+				if (sp.getState() == EnumSkillStates.LOCKED) {
+					if (sp.getParent() != null && sp.getParent().getState() != EnumSkillStates.UNLOCKED) {
+						String pn = HLTextUtils.toProperCase(
+								sp.getParent().getName().replace("skill_", "").replace("_", " "));
+						tip.add(Component.literal("Requires: " + pn)
+								.withStyle(s -> s.withColor(0xAA4444)));
+					} else {
+						tip.add(Component.literal("Click to unlock! Cost: " + (int) sp.getLevelUpCost() + " mL + "
+								+ sp.getSkillPointCost() + " SP")
+								.withStyle(s -> s.withColor(0xBB8833)));
+					}
+				} else if (sp.getState() == EnumSkillStates.UNLOCKED) {
+					if (sp.isMaxed()) {
+						tip.add(Component.literal("MAX LEVEL")
+								.withStyle(s -> s.withColor(0x44AA44).withBold(true)));
+					} else {
+						tip.add(Component.literal("Click to level up! Cost: " + (int) sp.getLevelUpCost() + " mL + "
+								+ sp.getSkillPointCost() + " SP")
+								.withStyle(s -> s.withColor(0xBB8833)));
+					}
 				}
 			}
 

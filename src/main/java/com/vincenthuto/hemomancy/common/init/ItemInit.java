@@ -273,6 +273,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_ferric_transmutation = BASEITEMS.register(
 			"memory_ferric_transmutation",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_transmutation));
+	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
+			"memory_crimson_flame_conjuration",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));

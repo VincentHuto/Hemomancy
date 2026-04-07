@@ -35,39 +35,39 @@ public class SkillPointInit {
 				new SkillPoint(2, "skill_efficiency", 100, 5, EnumSkillStates.LOCKED, base_skill));
 		skill_last_wind = registerSkill(BASE,
 				new SkillPoint(3, "skill_last_wind", 300, 3, EnumSkillStates.LOCKED, skill_capacity)
-						.setSkillPointCost(2));
+						.setSkillPointCost(2).setRequiredDegree(2));
 		skill_dynamic_use = registerSkill(BASE,
 				new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, skill_efficiency)
-						.setSkillPointCost(2));
+						.setSkillPointCost(2).setRequiredDegree(2));
 		skill_feeding_frenzy = registerSkill(BASE,
 				new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, skill_last_wind)
-						.setSkillPointCost(3));
+						.setSkillPointCost(3).setRequiredDegree(3));
 
 		// ── New skills ──
 		skill_hemostasis = registerSkill(BASE,
 				new SkillPoint(6, "skill_hemostasis", 200, 3, EnumSkillStates.LOCKED, skill_efficiency)
-						.setSkillPointCost(2));
+						.setSkillPointCost(2).setRequiredDegree(2));
 		skill_sanguine_surge = registerSkill(BASE,
 				new SkillPoint(7, "skill_sanguine_surge", 200, 3, EnumSkillStates.LOCKED, skill_capacity)
-						.setSkillPointCost(2));
+						.setSkillPointCost(2).setRequiredDegree(2));
 		skill_crimson_mastery = registerSkill(BASE,
 				new SkillPoint(8, "skill_crimson_mastery", 400, 3, EnumSkillStates.LOCKED, skill_dynamic_use)
-						.setSkillPointCost(3));
+						.setSkillPointCost(3).setRequiredDegree(4));
 		skill_vital_link = registerSkill(BASE,
 				new SkillPoint(9, "skill_vital_link", 600, 3, EnumSkillStates.LOCKED, skill_feeding_frenzy)
-						.setSkillPointCost(4));
+						.setSkillPointCost(4).setRequiredDegree(5));
 		skill_iron_will = registerSkill(BASE,
 				new SkillPoint(10, "skill_iron_will", 400, 3, EnumSkillStates.LOCKED, skill_last_wind)
-						.setSkillPointCost(3));
+						.setSkillPointCost(3).setRequiredDegree(3));
 		skill_blood_flow = registerSkill(BASE,
 				new SkillPoint(11, "skill_blood_flow", 300, 5, EnumSkillStates.LOCKED, skill_hemostasis)
-						.setSkillPointCost(2));
+						.setSkillPointCost(2).setRequiredDegree(3));
 		skill_coagulation = registerSkill(BASE,
 				new SkillPoint(12, "skill_coagulation", 500, 3, EnumSkillStates.LOCKED, skill_hemostasis)
-						.setSkillPointCost(3));
+						.setSkillPointCost(3).setRequiredDegree(4));
 		skill_sanguine_reach = registerSkill(BASE,
 				new SkillPoint(13, "skill_sanguine_reach", 400, 3, EnumSkillStates.LOCKED, skill_crimson_mastery)
-						.setSkillPointCost(3));
+						.setSkillPointCost(3).setRequiredDegree(5));
 
 		registerSkillBranch(BASE);
 	}

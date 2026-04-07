@@ -49,6 +49,7 @@ public class ManipulationTreeInit {
 		register("blood_shot",     ax,        TREE_TOP_Y);
 		register("blood_needle",   ax + 80,   TREE_TOP_Y);
 		register("blood_rush",     ax + 160,  TREE_TOP_Y);
+		register("crimson_flame_conjuration", ax + 240, TREE_TOP_Y);
 
 		// Row 1  — MEDIOCRITAS (mid-tier, descend from basics)
 		register("deadly_gaze",    ax,        TREE_TOP_Y + 70,  "blood_shot");

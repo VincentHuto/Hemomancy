@@ -10,6 +10,7 @@ public class SkillPoint {
 	double cost;           // Blood cost per level-up
 	int skillPointCost;    // Skill-point currency cost per level-up
 	int currentLevel;      // How many times this skill has been leveled
+	int requiredDegree;    // Minimum initiatory degree required (0 = none)
 	EnumSkillStates state;
 	SkillPoint parent;
 
@@ -21,6 +22,7 @@ public class SkillPoint {
 		this.cost = cost;
 		this.skillPointCost = 1;
 		this.currentLevel = 0;
+		this.requiredDegree = 0;
 		this.state = state;
 		this.parent = parent;
 	}
@@ -55,6 +57,21 @@ public class SkillPoint {
 	public SkillPoint setSkillPointCost(int cost) {
 		this.skillPointCost = cost;
 		return this;
+	}
+
+	public int getRequiredDegree() {
+		return requiredDegree;
+	}
+
+	/** Builder-style setter for the minimum initiatory degree required to unlock this skill. */
+	public SkillPoint setRequiredDegree(int degree) {
+		this.requiredDegree = degree;
+		return this;
+	}
+
+	/** Returns true if the player's degree is too low to interact with this skill. */
+	public boolean isDegreeLocked(int playerDegree) {
+		return requiredDegree > 0 && playerDegree < requiredDegree;
 	}
 
 	public int getCurrentLevel() {

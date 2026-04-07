@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.manipulation.quick.BloodNeedleManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodRushManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodShotManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonFlameConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.DeadlyGazeManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.FerricTransmutationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonAvatarManip;
@@ -117,6 +118,11 @@ public class ManipulationInit {
 			() -> new SummonThrallManip("summon_thrall", 500, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
 					.setCooldownTicks(60));
+
+	public static final RegistryObject<BloodManipulation> crimson_flame_conjuration = MANIPS.register("crimson_flame_conjuration",
+			() -> new CrimsonFlameConjurationManip("crimson_flame_conjuration", 150, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.RIGHTARM)
+					.setCooldownTicks(15));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();
