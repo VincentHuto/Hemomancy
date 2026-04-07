@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyE
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
@@ -139,6 +140,12 @@ public class KnownManipulationEvents {
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new KnownManipulationServerPacket(known));
 
+	}
+
+	@SubscribeEvent
+	public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+		// Clean up any pending thrall awaiting target selection
+		SummonThrallManip.clearPendingThrall(event.getEntity().getUUID());
 	}
 
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {

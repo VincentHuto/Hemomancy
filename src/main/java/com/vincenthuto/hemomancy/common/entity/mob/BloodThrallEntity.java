@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -30,7 +29,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -62,6 +60,8 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             SynchedEntityData.defineId(BloodThrallEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
     private static final EntityDataAccessor<Float> DATA_CARRIED_BLOOD =
             SynchedEntityData.defineId(BloodThrallEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> DATA_AWAITING_TARGET =
+            SynchedEntityData.defineId(BloodThrallEntity.class, EntityDataSerializers.BOOLEAN);
 
     /** Maximum mL the thrall can carry in a single trip */
     public static final float MAX_CARRY = 1000f;
@@ -69,9 +69,13 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
     public static final float TRANSFER_RATE = 50f;
 
     // ── State machine ──
-    public enum ThrallState { IDLE, GOING_TO_SOURCE, ABSORBING, GOING_TO_DEST, DEPOSITING }
+    public enum ThrallState { IDLE, AWAITING_TARGET, GOING_TO_SOURCE, ABSORBING, GOING_TO_DEST, DEPOSITING }
     private ThrallState thrallState = ThrallState.IDLE;
     private int workTimer = 0;
+    /** Server-side counter for how long the thrall has been awaiting target selection */
+    private int awaitingTimer = 0;
+    /** Maximum ticks to wait for target selection before discarding (~30 seconds) */
+    private static final int AWAITING_TIMEOUT = 600;
 
     // ── Constructor ──
 
@@ -115,6 +119,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         this.entityData.define(DATA_SOURCE_POS, Optional.empty());
         this.entityData.define(DATA_DEST_POS, Optional.empty());
         this.entityData.define(DATA_CARRIED_BLOOD, 0f);
+        this.entityData.define(DATA_AWAITING_TARGET, false);
     }
 
     // ── Getters / Setters ──
@@ -164,6 +169,17 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         return Math.min(1f, getCarriedBlood() / MAX_CARRY);
     }
 
+    public boolean getAwaitingTarget() {
+        return this.entityData.get(DATA_AWAITING_TARGET);
+    }
+
+    public void setAwaitingTarget(boolean awaiting) {
+        this.entityData.set(DATA_AWAITING_TARGET, awaiting);
+        if (awaiting) {
+            this.awaitingTimer = 0;
+        }
+    }
+
     // ── Tick & Particles ──
 
     @Override
@@ -171,6 +187,16 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         super.tick();
         if (level().isClientSide) {
             spawnBloodParticles();
+        }
+        // Server-side: timeout for awaiting target selection
+        if (!level().isClientSide && getAwaitingTarget()) {
+            awaitingTimer++;
+            if (awaitingTimer > AWAITING_TIMEOUT) {
+                // Timed out waiting for target — discard with blood splatter
+                level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
+                playSound(SoundEvents.SLIME_DEATH, 0.6f, 1.0f);
+                discard();
+            }
         }
     }
 
@@ -189,6 +215,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         );
     }
 
+
     // ── Persistence ──
 
     @Override
@@ -199,6 +226,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         if (getDestPos() != null) tag.put("DestPos", NbtUtils.writeBlockPos(getDestPos()));
         tag.putFloat("CarriedBlood", getCarriedBlood());
         tag.putInt("ThrallState", thrallState.ordinal());
+        tag.putBoolean("AwaitingTarget", getAwaitingTarget());
     }
 
     @Override
@@ -211,6 +239,9 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         int stOrd = tag.getInt("ThrallState");
         if (stOrd >= 0 && stOrd < ThrallState.values().length) {
             thrallState = ThrallState.values()[stOrd];
+        }
+        if (tag.contains("AwaitingTarget")) {
+            setAwaitingTarget(tag.getBoolean("AwaitingTarget"));
         }
     }
 
@@ -267,24 +298,22 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
             }
 
             if (player.isShiftKeyDown()) {
-                // ── Shift+click: pick up as effigy item ──
-                ItemStack stack = new ItemStack(ItemInit.blood_thrall_effigy.get());
-                CompoundTag tag = stack.getOrCreateTag();
-                if (getSourcePos() != null) tag.put("ThrallSource", NbtUtils.writeBlockPos(getSourcePos()));
-                if (getDestPos() != null)   tag.put("ThrallDest", NbtUtils.writeBlockPos(getDestPos()));
-
-                // Give carried blood back to the player
-                if (getCarriedBlood() > 0) {
-                    IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-                    if (playerVol != null) {
-                        playerVol.fill(getCarriedBlood());
+                // ── Shift+click: reabsorb thrall back into blood volume ──
+                IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+                if (playerVol != null) {
+                    double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
+                    playerVol.fill(bloodBack);
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        PacketHandler.CHANNELBLOODVOLUME.send(
+                                PacketDistributor.PLAYER.with(() -> serverPlayer),
+                                new BloodVolumeServerPacket(playerVol));
                     }
+                    player.displayClientMessage(
+                            net.minecraft.network.chat.Component.literal(
+                                    "§4Thrall reabsorbed. §7Recovered §c" + (int) bloodBack + " mL§7."), true);
                 }
 
-                if (!player.getInventory().add(stack)) {
-                    player.drop(stack, false);
-                }
-
+                level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
                 playSound(SoundEvents.SLIME_SQUISH, 0.6f, 1.2f);
                 discard();
                 return InteractionResult.SUCCESS;
@@ -358,7 +387,8 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
 
         @Override
         public boolean canUse() {
-            return thrall.getSourcePos() != null && thrall.getDestPos() != null;
+            return !thrall.getAwaitingTarget()
+                    && thrall.getSourcePos() != null && thrall.getDestPos() != null;
         }
 
         @Override

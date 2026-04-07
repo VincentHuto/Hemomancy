@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -42,7 +43,18 @@ public class UseManipKeyPacket {
 				return;
 			if (!player.level().isClientSide) {
 				float pTic = message.parTick;
-				if (BloodManipulation.isAnyManipOnCooldown(player)) {
+
+				// Allow SummonThrallManip through cooldown when selecting a destination
+				boolean bypassCooldown = false;
+				IKnownManipulations knownCheck = player.getCapability(KnownManipulationProvider.MANIP_CAPA).orElse(null);
+				if (knownCheck != null && knownCheck.getSelectedManip() != null) {
+					BloodManipulation selManip = ManipulationInit.getByName(knownCheck.getSelectedManip().getName());
+					if (selManip instanceof SummonThrallManip && SummonThrallManip.hasPendingThrall(player.getUUID())) {
+						bypassCooldown = true;
+					}
+				}
+
+				if (!bypassCooldown && BloodManipulation.isAnyManipOnCooldown(player)) {
 					player.displayClientMessage(Component.literal("Manipulation on cooldown!")
 							.withStyle(ChatFormatting.RED), true);
 					return;

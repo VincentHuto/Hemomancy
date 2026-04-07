@@ -35,8 +35,7 @@ public class VascularStatusScreen extends Screen {
 	 * [i][0] = startX ratio, [i][1] = startY ratio,
 	 * [i][2] = base angle (radians), [i][3] = speed multiplier,
 	 * [i][4] = amplitude, [i][5] = frequency, [i][6] = length (steps),
-	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness),
-	 * [i][9] = curvature per step
+	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness)
 	 */
 	private float[][] veinParams;
 
@@ -53,18 +52,17 @@ public class VascularStatusScreen extends Screen {
 		super.init();
 		// Seed vein parameters deterministically so they stay stable while the screen is open
 		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][10];
+		veinParams = new float[VEIN_COUNT][9];
 		for (int i = 0; i < VEIN_COUNT; i++) {
 			veinParams[i][0] = rand.nextFloat();                          // startX ratio
 			veinParams[i][1] = rand.nextFloat();                          // startY ratio
 			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
 			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;           // speed mult
-			veinParams[i][4] = 12f + rand.nextFloat() * 24f;             // amplitude (higher = wider swirls)
-			veinParams[i][5] = 0.06f + rand.nextFloat() * 0.12f;         // frequency (higher = tighter curves)
-			veinParams[i][6] = 70 + rand.nextInt(120);                    // length (steps)
+			veinParams[i][4] = 8f + rand.nextFloat() * 18f;              // amplitude
+			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;         // frequency
+			veinParams[i][6] = 60 + rand.nextInt(120);                    // length (steps)
 			veinParams[i][7] = 1 + rand.nextInt(3);                       // thickness
 			veinParams[i][8] = rand.nextFloat();                           // red tint brightness
-			veinParams[i][9] = (rand.nextFloat() - 0.5f) * 0.05f;        // curvature per step
 		}
 	}
 
@@ -188,9 +186,8 @@ public class VascularStatusScreen extends Screen {
 	}
 
 	/**
-	 * Draws a single animated vein tendril that curls and flows organically.
-	 * The heading rotates per step (curvature) producing spirals, with sine
-	 * wobbles layered on top for fine organic detail.
+	 * Draws a single animated vein tendril as a squiggling curve within the GUI bounds.
+	 * The curve is built from small filled rectangles placed along a parametric path.
 	 */
 	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
 								 int gx, int gy, int gw, int gh) {
@@ -204,34 +201,26 @@ public class VascularStatusScreen extends Screen {
 		int length = (int) p[6];
 		int thickness = (int) p[7];
 		float brightness = p[8];
-		float curvature = p[9];
+
+		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
+		float cosA = Mth.cos(angleDrift);
+		float sinA = Mth.sin(angleDrift);
 
 		float timeOffset = time * speed * 2.0f;
-		float liveCurvature = curvature + 0.01f * Mth.sin(time * speed * 0.3f + index * 2.1f);
 
 		int baseRed = (int) (40 + 50 * brightness);
 		int baseGreen = (int) (2 + 8 * brightness);
 		int baseBlue = (int) (5 + 5 * brightness);
 
-		float px = startX;
-		float py = startY;
-		float heading = baseAngle + 0.2f * Mth.sin(time * speed * 0.25f + index);
-
 		for (int step = 0; step < length; step++) {
-			heading += liveCurvature;
+			float t = step;
 
-			float headingWobble = 0.06f * Mth.sin(frequency * 2.0f * step + timeOffset)
-					+ 0.04f * Mth.sin(frequency * 4.0f * step + timeOffset * 1.5f + index);
-			float currentHeading = heading + headingWobble;
+			float squiggle = amplitude * Mth.sin(frequency * t + timeOffset);
+			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * t + timeOffset * 1.4f + index);
+			float displacement = squiggle + microSquiggle;
 
-			float squiggle = amplitude * 0.25f * Mth.sin(frequency * step + timeOffset);
-			float micro = amplitude * 0.1f * Mth.sin(frequency * 3.2f * step + timeOffset * 1.4f + index);
-
-			float cosH = Mth.cos(currentHeading);
-			float sinH = Mth.sin(currentHeading);
-
-			px += cosH * 1.3f - (squiggle + micro) * sinH * 0.12f;
-			py += sinH * 1.3f + (squiggle + micro) * cosH * 0.12f;
+			float px = startX + t * cosA * 1.5f - displacement * sinA;
+			float py = startY + t * sinA * 1.5f + displacement * cosA;
 
 			int ix = (int) px;
 			int iy = (int) py;
