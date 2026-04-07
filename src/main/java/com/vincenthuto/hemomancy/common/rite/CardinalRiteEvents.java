@@ -12,6 +12,8 @@ import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
@@ -300,6 +302,22 @@ public class CardinalRiteEvents {
 				if (currentDegree < targetDegree) {
 					degree.setDegreeNumber(targetDegree);
 					InitiatoryDegreeEvents.syncDegree(caster, degree);
+
+					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
+					caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+						if (unstained.hasBegunPurification()) {
+							unstained.setBegunPurification(false);
+							unstained.setPurity(0);
+							unstained.setClarityUnlocked(false);
+							unstained.setClarity(0);
+							UnstainedProgressEvents.syncProgress(caster, unstained);
+							caster.displayClientMessage(
+									Component.literal("Your purification has been undone by the blood rite.")
+											.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+									false);
+						}
+					});
+
 					EnumInitiatoryDegree newDegree = degree.getDegree();
 					if (newDegree != null) {
 						caster.displayClientMessage(
