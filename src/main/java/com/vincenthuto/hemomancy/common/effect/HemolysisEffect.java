@@ -25,7 +25,7 @@ public class HemolysisEffect extends MobEffect {
 					// Passive purity gain for those on the Unstained path
 					float purityGain = 0.01f * (amplifier + 1);
 					unstained.addPurity(purityGain);
-				} else {
+				} else if (!unstained.hasBegunPurification()) {
 					// Hemomancer (blood active, not on Unstained path) — apply blood drain damage
 					player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
 						if (volume.isActive()) {

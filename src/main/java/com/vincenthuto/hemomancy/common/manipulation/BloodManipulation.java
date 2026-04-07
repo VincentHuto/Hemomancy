@@ -167,6 +167,36 @@ public class BloodManipulation  {
 		}
 	}
 
+	/**
+	 * Checks the Unstained purity state and returns the cost multiplier to apply.
+	 * Returns -1.0 if the manipulation is completely blocked.
+	 * Sends the appropriate chat feedback to the player.
+	 */
+	private double getPurityCostMultiplier(Player player) {
+		var optUnstained = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA);
+		if (!optUnstained.isPresent()) {
+			return 1.0;
+		}
+		var unstained = optUnstained.orElseThrow(IllegalStateException::new);
+		if (!unstained.hasBegunPurification()) {
+			return 1.0;
+		}
+		EnumPurityStage stage = EnumPurityStage.byPurity(unstained.getPurity());
+		if (stage == EnumPurityStage.PURIFIED) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.unstained.manipulation_blocked")
+							.withStyle(ChatFormatting.GRAY), true);
+			return -1.0;
+		}
+		if (stage != EnumPurityStage.CORRUPTED) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.unstained.manipulation_weakened")
+							.withStyle(ChatFormatting.GRAY), true);
+			return 1.0 + stage.getBloodMagicPenalty();
+		}
+		return 1.0;
+	}
+
 	public void performAction(Player player, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.orElseThrow(NullPointerException::new);
@@ -186,31 +216,14 @@ public class BloodManipulation  {
 
 			// Check Unstained purity penalty — must happen before isActive check
 			// so that purified players are fully blocked even if volume is still active
-			boolean[] manipBlocked = {false};
-			double[] costMultiplier = {1.0};
-			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
-				if (unstained.hasBegunPurification()) {
-					EnumPurityStage stage = EnumPurityStage.byPurity(unstained.getPurity());
-					if (stage == EnumPurityStage.PURIFIED) {
-						player.displayClientMessage(
-								Component.translatable("hemomancy.unstained.manipulation_blocked")
-										.withStyle(ChatFormatting.GRAY), true);
-						manipBlocked[0] = true;
-					} else if (stage != EnumPurityStage.CORRUPTED) {
-						costMultiplier[0] = 1.0 + stage.getBloodMagicPenalty();
-						player.displayClientMessage(
-								Component.translatable("hemomancy.unstained.manipulation_weakened")
-										.withStyle(ChatFormatting.GRAY), true);
-					}
-				}
-			});
-			if (manipBlocked[0]) {
+			double costMultiplier = getPurityCostMultiplier(player);
+			if (costMultiplier < 0) {
 				return;
 			}
 
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
-				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier[0];
+				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
