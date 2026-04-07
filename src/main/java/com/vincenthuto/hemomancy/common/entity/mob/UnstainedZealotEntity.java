@@ -73,37 +73,42 @@ public class UnstainedZealotEntity extends PathfinderMob {
             int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
             IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
 
+            // Gracefully check for the UnstainedProgress capability which may not be
+            // present if its PR has not been merged yet.
             boolean hasBegunPurification = false;
             try {
                 Class<?> providerClass = Class.forName(
                         "com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider");
                 Object capa = providerClass.getField("UNSTAINED_CAPA").get(null);
-                net.minecraftforge.common.capabilities.Capability<?> unstainedCapa =
-                        (net.minecraftforge.common.capabilities.Capability<?>) capa;
+                @SuppressWarnings("unchecked")
+                net.minecraftforge.common.capabilities.Capability<Object> unstainedCapa =
+                        (net.minecraftforge.common.capabilities.Capability<Object>) capa;
                 hasBegunPurification = player.getCapability(unstainedCapa)
                         .map(obj -> {
                             try {
                                 return (Boolean) obj.getClass().getMethod("hasBegunPurification").invoke(obj);
-                            } catch (Exception ex) {
+                            } catch (NoSuchMethodException | IllegalAccessException
+                                    | java.lang.reflect.InvocationTargetException ex) {
                                 return false;
                             }
                         }).orElse(false);
-            } catch (Exception e) {
-                // Capability not yet registered — skip check
+            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                // Capability not yet registered — skip this check branch
             }
 
             if (hasBegunPurification) {
                 sendDialogue(player, "hemomancy.zealot.already_on_path");
-            } else if (volume != null && volume.isActive()
-                    && degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
-                sendPleaDialogue(player);
-            } else if (volume != null && volume.isActive()
-                    && degree >= 1
-                    && degree < EnumInitiatoryDegree.VOTARY.getNumber()) {
-                sendDialogue(player, "hemomancy.zealot.too_early");
             } else if (volume == null || !volume.isActive()) {
+                // No blood magic active — dismissive/generic
                 sendDialogue(player, "hemomancy.zealot.no_blood");
+            } else if (degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
+                // VOTARY or higher with active blood — deliver the Plea of the Unstained
+                sendPleaDialogue(player);
+            } else if (degree >= 1) {
+                // Initiated but not yet VOTARY — too early
+                sendDialogue(player, "hemomancy.zealot.too_early");
             } else {
+                // Uninitiated (degree 0) with active blood
                 sendDialogue(player, "hemomancy.zealot.uninitiated");
             }
         }
