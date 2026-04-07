@@ -8,6 +8,7 @@ public class SkillPoint {
 	int id, maxLevels;
 	String name;
 	double cost;           // Blood cost per level-up
+	int skillPointCost;    // Skill-point currency cost per level-up
 	int currentLevel;      // How many times this skill has been leveled
 	EnumSkillStates state;
 	SkillPoint parent;
@@ -18,6 +19,7 @@ public class SkillPoint {
 		this.name = name;
 		this.maxLevels = maxLevel;
 		this.cost = cost;
+		this.skillPointCost = 1;
 		this.currentLevel = 0;
 		this.state = state;
 		this.parent = parent;
@@ -43,6 +45,16 @@ public class SkillPoint {
 
 	public int getMaxLevels() {
 		return maxLevels;
+	}
+
+	public int getSkillPointCost() {
+		return skillPointCost;
+	}
+
+	/** Builder-style setter for the skill-point cost per level. */
+	public SkillPoint setSkillPointCost(int cost) {
+		this.skillPointCost = cost;
+		return this;
 	}
 
 	public int getCurrentLevel() {

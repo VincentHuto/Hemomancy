@@ -69,4 +69,91 @@ public final class SkillPointHelper {
 		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
 		return 1.0 + sp.getCurrentLevel() * 0.25;
 	}
+
+	// ──────────────── Hemostasis ────────────────
+	// Reduces blood lost when taking damage. Each level reduces loss by 10%.
+
+	/** Multiplier for blood lost on damage. e.g. 0.7 = 30% less blood lost */
+	public static double getHemostasisMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_hemostasis;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return Math.max(0.4, 1.0 - sp.getCurrentLevel() * 0.10);
+	}
+
+	// ──────────────── Sanguine Surge ────────────────
+	// Passive blood regeneration per tick. Each level adds +1 regen/tick.
+
+	/** Extra blood regen per tick from Sanguine Surge. */
+	public static double getSanguineSurgeRegen() {
+		SkillPoint sp = SkillPointInit.skill_sanguine_surge;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel() * 1.0;
+	}
+
+	// ──────────────── Crimson Mastery ────────────────
+	// Increases manipulation damage/effectiveness. Each level adds +15%.
+
+	/** Bonus multiplier for manipulation damage. e.g. 1.45 = +45% */
+	public static double getCrimsonMasteryMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_crimson_mastery;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return 1.0 + sp.getCurrentLevel() * 0.15;
+	}
+
+	// ──────────────── Vital Link ────────────────
+	// Chance to heal when dealing damage with manipulations.
+	// Each level adds +10% chance.
+
+	/** Probability (0..1) of healing on hit. */
+	public static double getVitalLinkChance() {
+		SkillPoint sp = SkillPointInit.skill_vital_link;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel() * 0.10;
+	}
+
+	// ──────────────── Iron Will ────────────────
+	// Damage reduction while blood is below 15%. Each level adds +10%.
+
+	/** Damage reduction multiplier when low blood. e.g. 0.7 = 30% less damage */
+	public static double getIronWillMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_iron_will;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return Math.max(0.4, 1.0 - sp.getCurrentLevel() * 0.10);
+	}
+
+	/** Threshold ratio below which Iron Will triggers. */
+	public static double getIronWillThreshold() {
+		return 0.15;
+	}
+
+	// ──────────────── Blood Flow ────────────────
+	// Reduces manipulation cooldown. Each level reduces cooldown by 5%.
+
+	/** Cooldown multiplier. e.g. 0.75 = 25% faster cooldowns */
+	public static double getBloodFlowMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_blood_flow;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return Math.max(0.5, 1.0 - sp.getCurrentLevel() * 0.05);
+	}
+
+	// ──────────────── Coagulation ────────────────
+	// Chance to block incoming bleed/blood-drain effects. Each level +15%.
+
+	/** Probability (0..1) of blocking a bleed effect. */
+	public static double getCoagulationChance() {
+		SkillPoint sp = SkillPointInit.skill_coagulation;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel() * 0.15;
+	}
+
+	// ──────────────── Sanguine Reach ────────────────
+	// Increases effective range of ranged blood manipulations.
+	// Each level adds +15% range bonus.
+
+	/** Range multiplier for ranged manipulations. e.g. 1.45 = +45% range */
+	public static double getSanguineReachMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_sanguine_reach;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return 1.0 + sp.getCurrentLevel() * 0.15;
+	}
 }

@@ -6,10 +6,12 @@ import java.util.Collections;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.SyncTrackingAvatarPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -168,6 +170,7 @@ public class KnownManipulationEvents {
 	 *   <li>Strain the manipulation's associated vein section</li>
 	 *   <li>Shift tendency alignment toward the manipulation's tendency</li>
 	 *   <li>Grant XP to the manipulation's level</li>
+	 *   <li>Grant skill-point currency (higher-rank manips give more)</li>
 	 * </ul>
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip) {
@@ -187,6 +190,20 @@ public class KnownManipulationEvents {
 					PacketDistributor.PLAYER.with(() -> player),
 					new KnownManipulationServerPacket(known));
 		});
+
+		// 4. Grant skill-point currency based on manipulation rank
+		int spGain = switch (manip.getRank()) {
+			case HUMILIS      -> 1;
+			case MEDIOCRITAS   -> 2;
+			case SUMMA         -> 3;
+			case MAGISTER      -> 4;
+			case PERFECTUS     -> 5;
+		};
+		SkillPointInit.skillPoints += spGain;
+		// Sync skill tree (which includes skill-point balance) back to client
+		PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> player),
+				new PacketSyncSkills(SkillPointInit.serializeAll()));
 	}
 
 }
