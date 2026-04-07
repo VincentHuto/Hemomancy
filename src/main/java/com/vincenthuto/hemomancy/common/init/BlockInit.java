@@ -213,6 +213,10 @@ public class BlockInit {
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.stinkhorn_fungus,
 					BlockBehaviour.Properties.of().noCollission()));
 
+	public static final RegistryObject<Block> lethean_poppy = CROSSBLOCKS.register("lethean_poppy",
+			() -> new LetheanPoppyBlock(MobEffects.REGENERATION, 8,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
+
 	public static final RegistryObject<Block> erythrocytic_dirt = BASEBLOCKS.register("erythrocytic_dirt",
 			() -> new Block(
 					BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(0.5F).sound(SoundType.GRAVEL)));
