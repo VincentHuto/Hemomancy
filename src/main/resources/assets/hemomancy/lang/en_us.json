@@ -494,6 +494,15 @@
 	"hemomancy.rite.sanctified_rite.name": "Rite of the Bloodline Covenant",
 	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order",
 
+	"entity.hemomancy.unstained_zealot": "Unstained Zealot",
+	"hemomancy.zealot.plea.line1": "§7[The Zealot regards you with silver eyes]",
+	"hemomancy.zealot.plea.line2": "You carry the stain of the Hematic Covenant upon your blood, Votary...",
+	"hemomancy.zealot.plea.line3": "But it is not too late. The hemolytic rites can cleanse what the Order has corrupted.",
+	"hemomancy.zealot.plea.line4": "Bring hemolytic solution to our podium, and begin the path of the Unstained. Abandon the crimson veil before it consumes you.",
+	"hemomancy.zealot.already_on_path": "You walk the path of purification. Continue your work at the podium, and the stain shall lift.",
+	"hemomancy.zealot.too_early": "You do not yet know the weight of what you carry. Return when the Covenant has shown you its true face.",
+	"hemomancy.zealot.no_blood": "You bear no mark of the crimson arts. Walk in peace, untouched one.",
+	"hemomancy.zealot.uninitiated": "The silver bells toll only for those who have tasted the crimson. You are unburdened."
 	"hemomancy.unstained.purification_begun": "The hemolytic solution sears through your veins... the cleansing has begun.",
 	"hemomancy.unstained.purity_progress": "Purity: %.0f/100 \u2014 The stain fades further...",
 	"hemomancy.unstained.purity_complete": "Your blood is cleansed. You are pure. Seek the Rite of Clarity.",

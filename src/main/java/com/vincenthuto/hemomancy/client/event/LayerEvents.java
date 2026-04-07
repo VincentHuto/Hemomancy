@@ -38,6 +38,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.LeechModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.LumpOfThoughtModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.MorphlingPolypModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ThirsterModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.UnstainedZealotModel;
 import com.vincenthuto.hemomancy.client.model.item.BarbedShieldModel;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
 import com.vincenthuto.hemomancy.client.model.item.ChitiniteShieldModel;
@@ -130,6 +131,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinBigModel.LAYER_LOCATION, BarbedUrchinBigModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
+		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 
 		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
 				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
