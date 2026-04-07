@@ -81,6 +81,14 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 						combinedLightIn, combinedOverlayIn);
 			}
 
+			// === Crafting progress ring ===
+			if (te.isCrafting() && te.getCraftingTotalTime() > 0) {
+				double progressRatio = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
+				boolean pulsing = te.getCraftingPhase() == 2; // awaiting attunement
+				drawCraftingProgressRing(matrixStackIn, bufferIn, te, centerPos, diameter,
+						progressRatio, pulsing, currentTime, combinedLightIn, combinedOverlayIn);
+			}
+
 			matrixStackIn.popPose();
 		}
 	}
@@ -289,6 +297,60 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 			} else {
 				// Empty — dim
 				drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.025f);
+			}
+		}
+	}
+
+	// ========================== CRAFTING PROGRESS RING ==========================
+
+	/**
+	 * Draws a ring that fills as ritual crafting progresses. Positioned above the
+	 * blood volume ring. When {@code pulsing} is true (awaiting attunement), the
+	 * ring oscillates in alpha to prompt the player to interact.
+	 */
+	private void drawCraftingProgressRing(PoseStack stack, MultiBufferSource bufferIn,
+			VisceralRecallerBlockEntity te, Vec3 center, double diameter, double progressRatio,
+			boolean pulsing, float currentTime, int combinedLightIn, int combinedOverlayIn) {
+		double ringRadius = diameter * 0.45;
+		double baseY = center.y + 2;
+		double ringY = funnelY(baseY, ringRadius, diameter) + 1.1;
+		double cx = center.x;
+		double cz = center.z;
+		float rotOffset = -currentTime * 0.8f; // rotate opposite to blood ring
+
+		int segments = 64;
+		int filledSegments = (int) (segments * progressRatio);
+
+		// Pulsing alpha modulation for attunement phase
+		float pulseAlpha = pulsing
+				? 0.5f + 0.5f * Mth.sin(currentTime * 0.3f)
+				: 1.0f;
+
+		for (int i = 0; i < segments; i++) {
+			float angle1 = rotOffset + (360f / segments) * i;
+			float angle2 = rotOffset + (360f / segments) * (i + 1);
+
+			double wave1 = Math.sin(Math.toRadians(angle1 * 4) + currentTime * 0.15) * 0.04;
+			double wave2 = Math.sin(Math.toRadians(angle2 * 4) + currentTime * 0.15) * 0.04;
+
+			double x1 = cx + Math.cos(Math.toRadians(angle1)) * ringRadius;
+			double z1 = cz + Math.sin(Math.toRadians(angle1)) * ringRadius;
+			double x2 = cx + Math.cos(Math.toRadians(angle2)) * ringRadius;
+			double z2 = cz + Math.sin(Math.toRadians(angle2)) * ringRadius;
+
+			Vec3 from = new Vec3(x1, ringY + wave1, z1);
+			Vec3 to = new Vec3(x2, ringY + wave2, z2);
+
+			if (i < filledSegments) {
+				// Filled — purple core + glow
+				drawBeamSegment(stack, bufferIn, from, to,
+						0.55f, 0.1f, 0.7f, pulseAlpha, 0.04f);
+				drawBeamSegmentGlow(stack, bufferIn, from, to,
+						0.7f, 0.2f, 0.9f, 0.4f * pulseAlpha, 0.09f);
+			} else {
+				// Empty — dim
+				drawBeamSegment(stack, bufferIn, from, to,
+						0.15f, 0.03f, 0.18f, 0.4f, 0.025f);
 			}
 		}
 	}

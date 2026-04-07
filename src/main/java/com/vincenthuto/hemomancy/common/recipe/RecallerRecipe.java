@@ -21,6 +21,17 @@ import net.minecraft.world.level.Level;
 
 public class RecallerRecipe extends CustomRecipe {
 
+	/** Blood cost multiplier per unit of tendency. */
+	private static final float BLOOD_COST_PER_TENDENCY = 50f;
+	/** Base crafting time in ticks before tendency scaling. */
+	private static final int BASE_CRAFT_TIME_TICKS = 100;
+	/** Additional ticks per unit of tendency. */
+	private static final int CRAFT_TIME_PER_TENDENCY = 20;
+	/** Tendency sum threshold for 1 attunement (simple recipes). */
+	private static final float ATTUNEMENT_THRESHOLD_SIMPLE = 3f;
+	/** Tendency sum threshold for 2 attunements (moderate recipes). */
+	private static final float ATTUNEMENT_THRESHOLD_MODERATE = 6f;
+
 	@SuppressWarnings("serial")
 	public static final HashMap<EnumBloodTendency, Float> blank() {
 		return new HashMap<>() {
@@ -117,6 +128,44 @@ public class RecallerRecipe extends CustomRecipe {
 
 	public void setTendency(Map<EnumBloodTendency, Float> tendency) {
 		this.tendency = tendency;
+	}
+
+	/**
+	 * Computes the total absolute tendency required by this recipe.
+	 * Used to scale ritual duration and blood cost.
+	 */
+	public float getTotalTendency() {
+		float total = 0;
+		for (Float val : tendency.values()) {
+			if (val != null) {
+				total += Math.abs(val);
+			}
+		}
+		return total;
+	}
+
+	/**
+	 * Blood cost for the ritual, derived from total tendency strength.
+	 */
+	public float getBloodCost() {
+		return getTotalTendency() * BLOOD_COST_PER_TENDENCY;
+	}
+
+	/**
+	 * Crafting time in ticks for the ritual, derived from total tendency.
+	 */
+	public int getCraftTimeTicks() {
+		return BASE_CRAFT_TIME_TICKS + (int) (getTotalTendency() * CRAFT_TIME_PER_TENDENCY);
+	}
+
+	/**
+	 * Number of attunement interactions the player must perform during the ritual.
+	 */
+	public int getRequiredAttunements() {
+		float total = getTotalTendency();
+		if (total <= ATTUNEMENT_THRESHOLD_SIMPLE) return 1;
+		if (total <= ATTUNEMENT_THRESHOLD_MODERATE) return 2;
+		return 3;
 	}
 
 	@Override
