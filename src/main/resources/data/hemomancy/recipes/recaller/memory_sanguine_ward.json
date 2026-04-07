@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:umbral_enzyme"
+    "item": "hemomancy:chitinous_husk"
   },
   "animus": 0,
   "mortem": 0,

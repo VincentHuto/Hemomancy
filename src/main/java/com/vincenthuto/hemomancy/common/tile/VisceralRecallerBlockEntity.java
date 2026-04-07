@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.EnzymeItem;
+import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -177,13 +178,23 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		}
 
 		if (stack.getItem() instanceof EnzymeItem) {
-			ItemStack enzymeStack = stack.copy();
-			if (enzymeStack.getItem() instanceof EnzymeItem) {
-				EnzymeItem enzyme = (EnzymeItem) enzymeStack.getItem();
-				if (getTendency().get(enzyme.getTend()) < 1f) {
-					tendency.addTendencyAlignment(enzyme.getTend(), 0.2f);
+			EnzymeItem enzyme = (EnzymeItem) stack.getItem();
+			if (player != null && player.isCrouching()) {
+				// Shift + enzyme: subtract 0.2 from that tendency
+				float current = tendency.getAlignmentByTendency(enzyme.getTend());
+				if (current > 0f) {
+					float newVal = Math.max(0f, current - 0.2f);
+					float rounded = Math.round(newVal * 10f) / 10f;
+					tendency.setTendencyAlignment(enzyme.getTend(), rounded);
 					stack.shrink(1);
 				}
+			} else {
+				// Normal click: add 0.2 to that tendency
+				tendency.addTendencyAlignment(enzyme.getTend(), 0.2f);
+				// Round to 1 decimal place to avoid floating-point drift
+				float rounded = Math.round(tendency.getAlignmentByTendency(enzyme.getTend()) * 10f) / 10f;
+				tendency.setTendencyAlignment(enzyme.getTend(), rounded);
+				stack.shrink(1);
 				// Adds a recycled chance
 				if (level.random.nextInt(20) % 7 == 0) {
 					ItemEntity recycl = new ItemEntity(level, getBlockPos().getX(), getBlockPos().getY(),
@@ -192,6 +203,30 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 				}
 			}
 			checkRecipe();
+			sendUpdates();
+			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			return true;
+		}
+
+		// Recycled enzyme: subtract 0.2 from the highest non-zero tendency
+		if (stack.getItem() instanceof RecycledEnzymeItem) {
+			EnumBloodTendency highest = null;
+			float highestVal = 0f;
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				float val = tendency.getAlignmentByTendency(tend);
+				if (val > highestVal) {
+					highestVal = val;
+					highest = tend;
+				}
+			}
+			if (highest != null && highestVal > 0f) {
+				float newVal = Math.max(0f, highestVal - 0.2f);
+				float rounded = Math.round(newVal * 10f) / 10f;
+				tendency.setTendencyAlignment(highest, rounded);
+				stack.shrink(1);
+			}
+			checkRecipe();
+			sendUpdates();
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 			return true;
 		}
@@ -232,27 +267,17 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 	}
 
 	/**
-	 * Removes items when the player interacts with an empty hand.
-	 * Shift-click removes from slot 0 (memory), normal click removes from slot 1 (item).
+	 * Removes an item from the given slot and returns it to the player.
+	 * @param removeMemory true = remove slot 0 (memory), false = remove slot 1 (catalyst)
 	 */
-	public boolean removeItem(@Nullable Player player, boolean isCrouching) {
+	public boolean removeItem(@Nullable Player player, boolean removeMemory) {
 		if (player == null) return false;
 
-		// Shift-click: remove memory (slot 0)
-		if (isCrouching && !contents.get(0).isEmpty()) {
-			ItemStack copy = contents.get(0).copy();
+		int slot = removeMemory ? 0 : 1;
+		if (!contents.get(slot).isEmpty()) {
+			ItemStack copy = contents.get(slot).copy();
 			player.getInventory().placeItemBackInInventory(copy);
-			contents.set(0, ItemStack.EMPTY);
-			checkRecipe();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-			return true;
-		}
-
-		// Normal click: remove item (slot 1)
-		if (!isCrouching && !contents.get(1).isEmpty()) {
-			ItemStack copy = contents.get(1).copy();
-			player.getInventory().placeItemBackInInventory(copy);
-			contents.set(1, ItemStack.EMPTY);
+			contents.set(slot, ItemStack.EMPTY);
 			checkRecipe();
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 			return true;
@@ -282,19 +307,42 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
 	}
 
+	/**
+	 * Public entry point to re-evaluate recipe matching.
+	 * Called from the block's use() before checking hasValidRecipe().
+	 */
+	public void recheckRecipe() {
+		checkRecipe();
+	}
+
 	private void checkRecipe() {
-		this.tendency.getTendency();
+		Map<EnumBloodTendency, Float> ourTends = this.tendency.getTendency();
+		curRecipe = null;
+		recipePath = "";
+		if (level == null) return;
 		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
-			if (recipe.getTendency().equals(this.tendency.getTendency())
-					&& recipe.getIngredient().test(contents.get(1))) {
+			boolean tendsMatch = tendenciesMatch(recipe.getTendency(), ourTends);
+			boolean ingredientMatch = recipe.getIngredient().test(contents.get(1));
+			if (tendsMatch && ingredientMatch) {
 				curRecipe = recipe;
 				recipePath = HLTextUtils.getItemRegistryName(recipe.getResultItem(level.registryAccess()).getItem());
 				break;
-			} else {
-				recipePath = "";
-				curRecipe = null;
 			}
 		}
+	}
+
+	/**
+	 * Compares two tendency maps using an epsilon to tolerate floating-point drift.
+	 */
+	private static boolean tendenciesMatch(Map<EnumBloodTendency, Float> a, Map<EnumBloodTendency, Float> b) {
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			float va = a.getOrDefault(tend, 0f);
+			float vb = b.getOrDefault(tend, 0f);
+			if (Math.abs(va - vb) > 0.05f) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public IBloodVolume getBloodCapability() {

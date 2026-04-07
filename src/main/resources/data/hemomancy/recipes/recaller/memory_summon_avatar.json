@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:incandescent_enzyme"
+    "item": "minecraft:nether_star"
   },
   "animus": 5.0,
   "mortem": 2.0,

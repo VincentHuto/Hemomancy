@@ -168,15 +168,20 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				} else {
 					if (player.isCrouching()) {
-						// Shift + empty hand: remove memory (slot 0)
-						boolean resultt = te.removeItem(player, true);
+						// Shift + empty hand: remove item
+						// Try slot 1 (catalyst) first, then slot 0 (memory)
+						boolean resultt = te.removeItem(player, false);
+						if (!resultt) {
+							resultt = te.removeItem(player, true);
+						}
 						if (resultt) {
 							te.sendUpdates();
 							VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 						}
 						return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 					} else {
-						// Empty hand, not crouching
+						// Empty hand, not crouching — re-check recipe freshly
+						te.recheckRecipe();
 						if (te.hasValidRecipe()) {
 							// Valid recipe detected — start the ritual
 							if (te.startRitual(player)) {
@@ -186,19 +191,9 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 							// was already sent inside startRitual()
 							return InteractionResult.PASS;
 						} else {
-							// No valid recipe — try to remove item from slot 1,
-							// or provide tendency feedback if slot 1 is empty
-							if (!te.contents.get(1).isEmpty()) {
-								boolean resultt = te.removeItem(player, false);
-								if (resultt) {
-									te.sendUpdates();
-									VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-								}
-								return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
-							} else {
-								te.provideTendencyFeedback(player);
-								return InteractionResult.SUCCESS;
-							}
+							// No valid recipe — provide tendency feedback
+							te.provideTendencyFeedback(player);
+							return InteractionResult.SUCCESS;
 						}
 					}
 				}

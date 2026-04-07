@@ -2,7 +2,7 @@
 
   "type" : "hemomancy:recaller_recipe",
   "ingredient" : {
-    "item" : "minecraft:cobblestone"
+    "item" : "hemomancy:sanguine_formation"
   },
   "animus" : 0,
   "mortem" : 0.4,

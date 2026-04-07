@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:vivacious_enzyme"
+    "item": "minecraft:ender_pearl"
   },
   "animus": 2.0,
   "mortem": 0,

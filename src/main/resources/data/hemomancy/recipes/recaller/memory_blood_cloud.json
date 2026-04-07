@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:frigid_enzyme"
+    "item": "hemomancy:spore_sac"
   },
   "animus": 0,
   "mortem": 0,

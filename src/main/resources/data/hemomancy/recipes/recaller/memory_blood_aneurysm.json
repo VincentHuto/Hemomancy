@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:ruinous_enzyme"
+    "item": "minecraft:bone"
   },
   "animus": 0,
   "mortem": 3.0,

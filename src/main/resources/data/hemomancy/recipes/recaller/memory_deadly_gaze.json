@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:incandescent_enzyme"
+    "item": "hemomancy:scrying_dish"
   },
   "animus": 0,
   "mortem": 0,

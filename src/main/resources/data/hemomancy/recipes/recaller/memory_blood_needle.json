@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:neurotic_enzyme"
+    "item": "hemomancy:vivianite_cluster"
   },
   "animus": 0,
   "mortem": 0,

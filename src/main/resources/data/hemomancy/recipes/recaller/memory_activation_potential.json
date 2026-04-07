@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:fervent_enzyme"
+    "item": "hemomancy:smouldering_ash"
   },
   "animus": 0,
   "mortem": 0,

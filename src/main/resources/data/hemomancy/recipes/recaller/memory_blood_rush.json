@@ -1,6 +1,9 @@
 {
 
   "type" : "hemomancy:recaller_recipe",
+  "ingredient" : {
+    "item" : "hemomancy:blood_crystal_shard"
+  },
   "animus" : 3,
   "mortem" : 0.4,
   "ductilis" : 0.5,

@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:vivacious_enzyme"
+    "item": "hemomancy:bleeding_bulb"
   },
   "animus": 1.5,
   "mortem": 0,

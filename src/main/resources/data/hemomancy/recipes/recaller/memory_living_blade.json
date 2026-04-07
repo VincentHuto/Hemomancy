@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:recaller_recipe",
   "ingredient": {
-    "item": "hemomancy:ferric_enzyme"
+    "item": "hemomancy:hematic_iron_powder"
   },
   "animus": 2.0,
   "mortem": 0,
