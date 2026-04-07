@@ -86,7 +86,7 @@ public class HemomancyCommand {
 												.executes(ctx -> setDegree(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"),
 														IntegerArgumentType.getInteger(ctx, "degree")))))))
 
-				// ── Skill Points ──
+				// ── Skill Points (global static state, not per-player) ──
 				.then(Commands.literal("skills")
 						.then(Commands.literal("get")
 								.executes(ctx -> getSkills(ctx.getSource())))
