@@ -141,19 +141,66 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 		if (!worldIn.isClientSide) {
 			BlockEntity tile = worldIn.getBlockEntity(pos);
 			if (tile instanceof VisceralRecallerBlockEntity te) {
+
+				// === During an active ritual ===
+				if (te.isCrafting()) {
+					if (stack.isEmpty()) {
+						if (player.isCrouching()) {
+							// Shift-click cancels the ritual
+							te.cancelRitual(player);
+							return InteractionResult.SUCCESS;
+						} else {
+							// Normal click attempts attunement
+							if (te.attune(player)) {
+								return InteractionResult.SUCCESS;
+							}
+						}
+					}
+					// Block all other interactions during the ritual
+					return InteractionResult.PASS;
+				}
+
+				// === Not crafting — normal behaviour ===
 				if (!stack.isEmpty()) {
 					boolean resultt = te.addItem(player, stack, handIn);
 					te.sendUpdates();
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
 					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				} else {
-					// Empty hand — remove items (shift for memory, normal for item)
-					boolean resultt = te.removeItem(player, player.isCrouching());
-					if (resultt) {
-						te.sendUpdates();
-						VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+					if (player.isCrouching()) {
+						// Shift + empty hand: remove memory (slot 0)
+						boolean resultt = te.removeItem(player, true);
+						if (resultt) {
+							te.sendUpdates();
+							VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+						}
+						return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
+					} else {
+						// Empty hand, not crouching
+						if (te.hasValidRecipe()) {
+							// Valid recipe detected — start the ritual
+							if (te.startRitual(player)) {
+								return InteractionResult.SUCCESS;
+							}
+							// Could not start (e.g. not enough blood) — feedback
+							// was already sent inside startRitual()
+							return InteractionResult.PASS;
+						} else {
+							// No valid recipe — try to remove item from slot 1,
+							// or provide tendency feedback if slot 1 is empty
+							if (!te.contents.get(1).isEmpty()) {
+								boolean resultt = te.removeItem(player, false);
+								if (resultt) {
+									te.sendUpdates();
+									VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
+								}
+								return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
+							} else {
+								te.provideTendencyFeedback(player);
+								return InteractionResult.SUCCESS;
+							}
+						}
 					}
-					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
 				}
 			}
 		}

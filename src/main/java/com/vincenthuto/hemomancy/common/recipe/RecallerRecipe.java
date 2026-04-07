@@ -119,6 +119,44 @@ public class RecallerRecipe extends CustomRecipe {
 		this.tendency = tendency;
 	}
 
+	/**
+	 * Computes the total absolute tendency required by this recipe.
+	 * Used to scale ritual duration and blood cost.
+	 */
+	public float getTotalTendency() {
+		float total = 0;
+		for (Float val : tendency.values()) {
+			if (val != null) {
+				total += Math.abs(val);
+			}
+		}
+		return total;
+	}
+
+	/**
+	 * Blood cost for the ritual, derived from total tendency strength.
+	 */
+	public float getBloodCost() {
+		return getTotalTendency() * 50f;
+	}
+
+	/**
+	 * Crafting time in ticks for the ritual, derived from total tendency.
+	 */
+	public int getCraftTimeTicks() {
+		return 100 + (int) (getTotalTendency() * 20);
+	}
+
+	/**
+	 * Number of attunement interactions the player must perform during the ritual.
+	 */
+	public int getRequiredAttunements() {
+		float total = getTotalTendency();
+		if (total <= 3f) return 1;
+		if (total <= 6f) return 2;
+		return 3;
+	}
+
 	@Override
 	public String toString() {
 		return "Recaller Recipe:" + result.toString();
