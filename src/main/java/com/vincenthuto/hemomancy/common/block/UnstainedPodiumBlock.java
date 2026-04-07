@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
@@ -156,10 +157,25 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 	private void handleHemolyticSolution(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
 		if (!unstained.hasBegunPurification()) {
-			// Begin purification
+			// Begin purification — leaving the Harbingers path
 			stack.shrink(1);
 			unstained.setBegunPurification(true);
 			unstained.setPurity(5.0f);
+
+			// Mutual exclusion: reset initiatory degree (Harbingers path)
+			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+				player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
+					if (degree.getDegreeNumber() > 0) {
+						degree.setDegreeNumber(0);
+						InitiatoryDegreeEvents.syncDegree(serverPlayer, degree);
+						player.displayClientMessage(
+								Component.literal("You have renounced the Hematic Order.")
+										.withStyle(net.minecraft.ChatFormatting.GRAY, net.minecraft.ChatFormatting.ITALIC),
+								false);
+					}
+				});
+			}
+
 			player.displayClientMessage(
 					Component.translatable("hemomancy.unstained.purification_begun"), false);
 			worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 1.0f);
