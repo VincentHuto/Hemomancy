@@ -51,6 +51,11 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 	public static final String TAG_CRAFT_PROGRESS = "craftProgress";
 	public static final String TAG_CRAFT_TOTAL = "craftTotal";
 	public static final String TAG_CRAFT_PHASE = "craftPhase";
+	private static final String TAG_CRAFTING_PLAYER = "craftingPlayer";
+	private static final String TAG_BLOOD_COST_PER_TICK = "bloodCostPerTick";
+	private static final String TAG_ATTUNEMENT_COUNT = "attunementCount";
+	private static final String TAG_REQUIRED_ATTUNEMENTS = "requiredAttunements";
+	private static final String TAG_ATTUNEMENT_TIMER = "attunementTimer";
 
 	/** Maximum squared distance a player can be from the recaller during a ritual. */
 	private static final double MAX_RITUAL_DISTANCE_SQ = 36.0; // 6 blocks
@@ -58,6 +63,8 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 	private static final int ATTUNEMENT_WINDOW_TICKS = 100; // 5 seconds
 	/** Ticks the player can be out of range before the ritual collapses. */
 	private static final int MAX_DISTANCE_PENALTY_TICKS = 60; // 3 seconds
+	/** Multiplier for the blood penalty when the player misses an attunement window. */
+	private static final float ATTUNEMENT_TIMEOUT_PENALTY_MULTIPLIER = 20f;
 
 	// ---- Crafting ritual state ----
 	private int craftingProgress = 0;
@@ -587,7 +594,7 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 					Component.literal("The ritual wavers. Precious blood is lost to your hesitation.")
 							.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
 					true);
-			volume.subtractBloodVolume(bloodCostPerTick * 20);
+			volume.subtractBloodVolume(bloodCostPerTick * ATTUNEMENT_TIMEOUT_PENALTY_MULTIPLIER);
 			level.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE,
 					SoundSource.BLOCKS, 0.5f, 0.5f);
 
@@ -777,13 +784,13 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 			craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
 			craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
 			craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
-			if (tag.hasUUID("craftingPlayer")) {
-				craftingPlayerUUID = tag.getUUID("craftingPlayer");
+			if (tag.hasUUID(TAG_CRAFTING_PLAYER)) {
+				craftingPlayerUUID = tag.getUUID(TAG_CRAFTING_PLAYER);
 			}
-			bloodCostPerTick = tag.getFloat("bloodCostPerTick");
-			attunementCount = tag.getInt("attunementCount");
-			requiredAttunements = tag.getInt("requiredAttunements");
-			attunementTimer = tag.getInt("attunementTimer");
+			bloodCostPerTick = tag.getFloat(TAG_BLOOD_COST_PER_TICK);
+			attunementCount = tag.getInt(TAG_ATTUNEMENT_COUNT);
+			requiredAttunements = tag.getInt(TAG_REQUIRED_ATTUNEMENTS);
+			attunementTimer = tag.getInt(TAG_ATTUNEMENT_TIMER);
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
 			}
@@ -822,12 +829,12 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 			tag.putInt(TAG_CRAFT_TOTAL, craftingTotalTime);
 			tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
 			if (craftingPlayerUUID != null) {
-				tag.putUUID("craftingPlayer", craftingPlayerUUID);
+				tag.putUUID(TAG_CRAFTING_PLAYER, craftingPlayerUUID);
 			}
-			tag.putFloat("bloodCostPerTick", bloodCostPerTick);
-			tag.putInt("attunementCount", attunementCount);
-			tag.putInt("requiredAttunements", requiredAttunements);
-			tag.putInt("attunementTimer", attunementTimer);
+			tag.putFloat(TAG_BLOOD_COST_PER_TICK, bloodCostPerTick);
+			tag.putInt(TAG_ATTUNEMENT_COUNT, attunementCount);
+			tag.putInt(TAG_REQUIRED_ATTUNEMENTS, requiredAttunements);
+			tag.putInt(TAG_ATTUNEMENT_TIMER, attunementTimer);
 			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
 				if (tendency.getTendency().get(key) != null) {
 					tag.putFloat(key.toString(), tendency.getTendency().get(key));
