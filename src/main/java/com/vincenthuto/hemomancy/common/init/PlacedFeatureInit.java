@@ -77,8 +77,8 @@ public class PlacedFeatureInit {
 		final Holder<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = configuredFeatureGetter
 				.getOrThrow(ConfiguredFeatureInit.LETHEAN_POPPIES);
 
-		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(32),
-				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
+		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(8),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, CountPlacement.of(3), BiomeFilter.biome());
 
 		
 		

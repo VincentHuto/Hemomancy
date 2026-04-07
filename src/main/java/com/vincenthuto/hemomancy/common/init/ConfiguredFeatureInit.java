@@ -176,8 +176,8 @@ public class ConfiguredFeatureInit {
 								BlockStateProvider.simple(BlockInit.stinkhorn_fungus.get())))))));
 
 		register(context, LETHEAN_POPPIES, Feature.FLOWER,
-				grassPatch(BlockStateProvider.simple(BlockInit.lethean_poppy.get()), 1));
-		
+				grassPatch(BlockStateProvider.simple(BlockInit.lethean_poppy.get()), 6));
+
 	}
 
 	private static RandomPatchConfiguration grassPatch(BlockStateProvider p_195203_, int pTries) {
