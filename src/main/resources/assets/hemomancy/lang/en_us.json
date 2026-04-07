@@ -491,5 +491,27 @@
 	"hemomancy.rite.adept_rite.name": "Rite of the Sanguine Brotherhood",
 	"hemomancy.rite.illuminatus_rite.name": "Rite of the Crimson Lodge",
 	"hemomancy.rite.sanctified_rite.name": "Rite of the Bloodline Covenant",
-	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order"
+	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order",
+
+	"hemomancy.unstained.purification_begun": "The hemolytic solution sears through your veins... the cleansing has begun.",
+	"hemomancy.unstained.purity_progress": "Purity: %.0f/100 \u2014 The stain fades further...",
+	"hemomancy.unstained.purity_complete": "Your blood is cleansed. You are pure. Seek the Rite of Clarity.",
+	"hemomancy.unstained.clarity_unlocked": "The copper resonates with your purified blood. The old ways fall silent. Clarity dawns.",
+	"hemomancy.unstained.clarity_progress": "Clarity: %.0f/100 \u2014 The path to enlightenment sharpens...",
+	"hemomancy.unstained.enlightened": "You have achieved Enlightenment. You are Unstained.",
+	"hemomancy.unstained.not_ready": "You are not yet ready. The Hematic Covenant demands more of you before you may choose.",
+	"hemomancy.unstained.already_purified": "Your blood is already cleansed.",
+	"hemomancy.unstained.already_enlightened": "You have already achieved Enlightenment.",
+	"hemomancy.unstained.manipulation_weakened": "Your purifying blood resists the manipulation...",
+	"hemomancy.unstained.manipulation_blocked": "Your purified blood refuses to obey.",
+	"hemomancy.purity.corrupted": "Corrupted",
+	"hemomancy.purity.tainted": "Tainted",
+	"hemomancy.purity.cleansing": "Cleansing",
+	"hemomancy.purity.absolved": "Absolved",
+	"hemomancy.purity.purified": "Purified",
+	"hemomancy.clarity.awakened": "Awakened",
+	"hemomancy.clarity.discerning": "Discerning",
+	"hemomancy.clarity.vigilant": "Vigilant",
+	"hemomancy.clarity.resolute": "Resolute",
+	"hemomancy.clarity.enlightened": "Enlightened"
 }
