@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 
 import net.minecraft.core.BlockPos;
@@ -21,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -39,6 +42,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
 /**
@@ -244,12 +248,17 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         return 160; // less chatty
     }
 
-    // ── Pickup ──
+    // ── Pickup & Absorb ──
+
+    /** Blood returned when absorbing the thrall (half the summoning cost) */
+    private static final float ABSORB_BLOOD_RETURN = 250f;
+    /** Entity event ID for blood splatter particles (shared with die()) */
+    private static final byte BLOOD_SPLATTER_EVENT = 60;
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!level().isClientSide && player.isShiftKeyDown()) {
-            // Only owner (or creative) can pick up
+        if (!level().isClientSide) {
+            // Only owner (or creative) can interact
             UUID owner = getOwnerUUID();
             if (owner != null && !owner.equals(player.getUUID()) && !player.getAbilities().instabuild) {
                 player.displayClientMessage(
@@ -257,28 +266,48 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                 return InteractionResult.FAIL;
             }
 
-            // Build an item with the source/dest bindings preserved
-            ItemStack stack = new ItemStack(ItemInit.blood_thrall_effigy.get());
-            CompoundTag tag = stack.getOrCreateTag();
-            if (getSourcePos() != null) tag.put("ThrallSource", NbtUtils.writeBlockPos(getSourcePos()));
-            if (getDestPos() != null)   tag.put("ThrallDest", NbtUtils.writeBlockPos(getDestPos()));
+            if (player.isShiftKeyDown()) {
+                // ── Shift+click: pick up as effigy item ──
+                ItemStack stack = new ItemStack(ItemInit.blood_thrall_effigy.get());
+                CompoundTag tag = stack.getOrCreateTag();
+                if (getSourcePos() != null) tag.put("ThrallSource", NbtUtils.writeBlockPos(getSourcePos()));
+                if (getDestPos() != null)   tag.put("ThrallDest", NbtUtils.writeBlockPos(getDestPos()));
 
-            // Give carried blood back to the player
-            if (getCarriedBlood() > 0) {
+                // Give carried blood back to the player
+                if (getCarriedBlood() > 0) {
+                    IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+                    if (playerVol != null) {
+                        playerVol.fill(getCarriedBlood());
+                    }
+                }
+
+                if (!player.getInventory().add(stack)) {
+                    player.drop(stack, false);
+                }
+
+                playSound(SoundEvents.SLIME_SQUISH, 0.6f, 1.2f);
+                discard();
+                return InteractionResult.SUCCESS;
+            } else {
+                // ── Right-click: absorb thrall back into blood volume ──
                 IBloodVolume playerVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
                 if (playerVol != null) {
-                    playerVol.fill(getCarriedBlood());
+                    double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
+                    playerVol.fill(bloodBack);
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        PacketHandler.CHANNELBLOODVOLUME.send(
+                                PacketDistributor.PLAYER.with(() -> serverPlayer),
+                                new BloodVolumeServerPacket(playerVol));
+                    }
                 }
-            }
 
-            // Drop the item to the player
-            if (!player.getInventory().add(stack)) {
-                player.drop(stack, false);
-            }
+                // Blood splatter particles on absorb
+                level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
 
-            playSound(SoundEvents.SLIME_SQUISH, 0.6f, 1.2f);
-            discard();
-            return InteractionResult.SUCCESS;
+                playSound(SoundEvents.SLIME_SQUISH_SMALL, 0.6f, 1.5f);
+                discard();
+                return InteractionResult.SUCCESS;
+            }
         }
         return super.mobInteract(player, hand);
     }
@@ -290,14 +319,14 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
         // When killed, the carried blood is lost (spills out visually via particles)
         if (!level().isClientSide && getCarriedBlood() > 0) {
             // Spawn extra blood particles on death — handled client-side via broadcastEntityEvent
-            level().broadcastEntityEvent(this, (byte) 60);
+            level().broadcastEntityEvent(this, BLOOD_SPLATTER_EVENT);
         }
         super.die(source);
     }
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == 60) {
+        if (id == BLOOD_SPLATTER_EVENT) {
             // Blood splatter particles on death
             for (int i = 0; i < 20; i++) {
                 double dx = (random.nextDouble() - 0.5) * 1.0;

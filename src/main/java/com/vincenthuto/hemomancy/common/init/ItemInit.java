@@ -268,6 +268,8 @@ public class ItemInit {
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.conjure_blade));
 	public static final RegistryObject<Item> memory_summon_avatar = BASEITEMS.register("memory_summon_avatar",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.summon_avatar));
+	public static final RegistryObject<Item> memory_summon_thrall = BASEITEMS.register("memory_summon_thrall",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.summon_thrall));
 	public static final RegistryObject<Item> memory_ferric_transmutation = BASEITEMS.register(
 			"memory_ferric_transmutation",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.ferric_transmutation));

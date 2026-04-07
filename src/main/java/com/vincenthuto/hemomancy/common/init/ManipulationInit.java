@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.DeadlyGazeManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.FerricTransmutationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonAvatarManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -111,6 +112,11 @@ public class ManipulationInit {
 			() -> new ConjurationManip("blood_projection", ItemInit.blood_projection, 1000, 0, 0,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)
 					.setCooldownTicks(40));
+
+	public static final RegistryObject<BloodManipulation> summon_thrall = MANIPS.register("summon_thrall",
+			() -> new SummonThrallManip("summon_thrall", 500, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.ANIMUS, EnumVeinSections.BODY)
+					.setCooldownTicks(60));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();
