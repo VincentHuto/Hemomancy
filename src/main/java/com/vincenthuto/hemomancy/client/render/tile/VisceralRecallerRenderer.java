@@ -84,7 +84,7 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 			// === Crafting progress ring ===
 			if (te.isCrafting() && te.getCraftingTotalTime() > 0) {
 				double progressRatio = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
-				boolean pulsing = te.getCraftingPhase() == 2; // awaiting attunement
+				boolean pulsing = te.getCraftingPhase() == 2; // completing
 				drawCraftingProgressRing(matrixStackIn, bufferIn, te, centerPos, diameter,
 						progressRatio, pulsing, currentTime, combinedLightIn, combinedOverlayIn);
 			}
@@ -126,7 +126,7 @@ public class VisceralRecallerRenderer implements BlockEntityRenderer<VisceralRec
 
 		// Recipe result preview — floating above both items
 		RecallerRecipe currRecipe = RecallerRecipeSerializer
-				.getRecipe(te.getUpdateTag().getString(VisceralRecallerBlockEntity.TAG_RECIPE));
+				.getRecipe(te.getRecipePath());
 		if (currRecipe != null) {
 			matrixStackIn.pushPose();
 			float bob = Mth.sin(gameTime * 0.1f) * 0.05f;

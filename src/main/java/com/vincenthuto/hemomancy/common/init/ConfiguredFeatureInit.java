@@ -64,6 +64,8 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = createKey("lethean_poppies");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> BOG_BODY = createKey("bog_body");
+
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
 	}
@@ -177,6 +179,8 @@ public class ConfiguredFeatureInit {
 
 		register(context, LETHEAN_POPPIES, Feature.FLOWER,
 				grassPatch(BlockStateProvider.simple(BlockInit.lethean_poppy.get()), 6));
+
+		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
 
 	}
 

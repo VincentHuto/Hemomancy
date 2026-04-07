@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.VisceralRecallerBlockEntity;
-import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,89 +117,79 @@ public class VisceralRecallerBlock extends Block implements EntityBlock {
 	@Override
 	public boolean triggerEvent(BlockState state, Level world, BlockPos pos, int id, int param) {
 		super.triggerEvent(state, world, pos, id, param);
-		BlockEntity BlockEntity = world.getBlockEntity(pos);
-		return BlockEntity != null && BlockEntity.triggerEvent(id, param);
+		BlockEntity be = world.getBlockEntity(pos);
+		return be != null && be.triggerEvent(id, param);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
-			BlockEntity tile = level.getBlockEntity(pos);
-			if (tile instanceof VisceralRecallerBlockEntity te) {
+			if (level.getBlockEntity(pos) instanceof VisceralRecallerBlockEntity te) {
 				te.dropContents();
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
+	/**
+	 * All player interaction funnels through here.
+	 *
+	 * <p><b>With an item in hand:</b> delegates to {@code te.addItem()}.
+	 * Enzymes, blood containers, memories, and catalysts are all handled there.</p>
+	 *
+	 * <p><b>Empty hand (not crouching):</b> if a ritual is active, does nothing
+	 * (just stay near the block). Otherwise, freshly checks the recipe state and
+	 * either starts the ritual or shows feedback about what's missing.</p>
+	 *
+	 * <p><b>Empty hand (crouching):</b> during a ritual, cancels it.
+	 * Otherwise, removes items from the block (catalyst first, then memory).</p>
+	 */
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult result) {
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
+			InteractionHand handIn, BlockHitResult result) {
+		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
+
+		BlockEntity tile = worldIn.getBlockEntity(pos);
+		if (!(tile instanceof VisceralRecallerBlockEntity te)) return InteractionResult.PASS;
+
 		ItemStack stack = player.getItemInHand(handIn);
-		if (!worldIn.isClientSide) {
-			BlockEntity tile = worldIn.getBlockEntity(pos);
-			if (tile instanceof VisceralRecallerBlockEntity te) {
 
-				// === During an active ritual ===
-				if (te.isCrafting()) {
-					if (stack.isEmpty()) {
-						if (player.isCrouching()) {
-							// Shift-click cancels the ritual
-							te.cancelRitual(player);
-							return InteractionResult.SUCCESS;
-						} else {
-							// Normal click attempts attunement
-							if (te.attune(player)) {
-								return InteractionResult.SUCCESS;
-							}
-						}
-					}
-					// Block all other interactions during the ritual
-					return InteractionResult.PASS;
-				}
-
-				// === Not crafting — normal behaviour ===
-				if (!stack.isEmpty()) {
-					boolean resultt = te.addItem(player, stack, handIn);
-					te.sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-					return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
-				} else {
-					if (player.isCrouching()) {
-						// Shift + empty hand: remove item
-						// Try slot 1 (catalyst) first, then slot 0 (memory)
-						boolean resultt = te.removeItem(player, false);
-						if (!resultt) {
-							resultt = te.removeItem(player, true);
-						}
-						if (resultt) {
-							te.sendUpdates();
-							VanillaPacketDispatcher.dispatchTEToNearbyPlayers(te);
-						}
-						return resultt ? InteractionResult.SUCCESS : InteractionResult.PASS;
-					} else {
-						// Empty hand, not crouching — re-check recipe freshly
-						te.recheckRecipe();
-						if (te.hasValidRecipe()) {
-							// Valid recipe detected — start the ritual
-							if (te.startRitual(player)) {
-								return InteractionResult.SUCCESS;
-							}
-							// Could not start (e.g. not enough blood) — feedback
-							// was already sent inside startRitual()
-							return InteractionResult.PASS;
-						} else {
-							// No valid recipe — provide tendency feedback
-							te.provideTendencyFeedback(player);
-							return InteractionResult.SUCCESS;
-						}
-					}
-				}
-			}
+		// ---- Holding an item ----
+		if (!stack.isEmpty()) {
+			// Block item interactions during an active ritual
+			if (te.isCrafting()) return InteractionResult.PASS;
+			return te.addItem(player, stack, handIn) ? InteractionResult.SUCCESS : InteractionResult.PASS;
 		}
-		return InteractionResult.SUCCESS;
 
+		// ---- Empty hand + crouching ----
+		if (player.isCrouching()) {
+			if (te.isCrafting()) {
+				te.cancelRitual(player);
+				return InteractionResult.SUCCESS;
+			}
+			// Remove catalyst first, then memory
+			if (te.removeItem(player, false) || te.removeItem(player, true)) {
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.PASS;
+		}
+
+		// ---- Empty hand + standing ----
+		if (te.isCrafting()) {
+			// Nothing to do — just stay near the block
+			return InteractionResult.PASS;
+		}
+
+		// Freshly evaluate recipe before deciding
+		te.refreshRecipe();
+		if (te.hasValidRecipe()) {
+			te.startRitual(player);
+			return InteractionResult.SUCCESS;
+		}
+
+		te.provideTendencyFeedback(player);
+		return InteractionResult.SUCCESS;
 	}
 
 }

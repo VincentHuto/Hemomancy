@@ -27,10 +27,6 @@ public class RecallerRecipe extends CustomRecipe {
 	private static final int BASE_CRAFT_TIME_TICKS = 100;
 	/** Additional ticks per unit of tendency. */
 	private static final int CRAFT_TIME_PER_TENDENCY = 20;
-	/** Tendency sum threshold for 1 attunement (simple recipes). */
-	private static final float ATTUNEMENT_THRESHOLD_SIMPLE = 3f;
-	/** Tendency sum threshold for 2 attunements (moderate recipes). */
-	private static final float ATTUNEMENT_THRESHOLD_MODERATE = 6f;
 
 	@SuppressWarnings("serial")
 	public static final HashMap<EnumBloodTendency, Float> blank() {
@@ -158,15 +154,6 @@ public class RecallerRecipe extends CustomRecipe {
 		return BASE_CRAFT_TIME_TICKS + (int) (getTotalTendency() * CRAFT_TIME_PER_TENDENCY);
 	}
 
-	/**
-	 * Number of attunement interactions the player must perform during the ritual.
-	 */
-	public int getRequiredAttunements() {
-		float total = getTotalTendency();
-		if (total <= ATTUNEMENT_THRESHOLD_SIMPLE) return 1;
-		if (total <= ATTUNEMENT_THRESHOLD_MODERATE) return 2;
-		return 3;
-	}
 
 	@Override
 	public String toString() {

@@ -46,41 +46,60 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTile {
-	public static final String TAG_BLOOD_LEVEL = "bloodLevel";
-	public static final String TAG_BLOOD_TENDENCY = "tendency";
-	public static final String TAG_RECIPE = "recipe";
-	public static final String TAG_CRAFT_PROGRESS = "craftProgress";
-	public static final String TAG_CRAFT_TOTAL = "craftTotal";
-	public static final String TAG_CRAFT_PHASE = "craftPhase";
+
+	// ========================== CONSTANTS ==========================
+
+	private static final String TAG_BLOOD_LEVEL = "bloodLevel";
+	private static final String TAG_RECIPE = "recipe";
+	private static final String TAG_CRAFT_PROGRESS = "craftProgress";
+	private static final String TAG_CRAFT_TOTAL = "craftTotal";
+	private static final String TAG_CRAFT_PHASE = "craftPhase";
 	private static final String TAG_CRAFTING_PLAYER = "craftingPlayer";
 	private static final String TAG_BLOOD_COST_PER_TICK = "bloodCostPerTick";
-	private static final String TAG_ATTUNEMENT_COUNT = "attunementCount";
-	private static final String TAG_REQUIRED_ATTUNEMENTS = "requiredAttunements";
-	private static final String TAG_ATTUNEMENT_TIMER = "attunementTimer";
 
-	/** Maximum squared distance a player can be from the recaller during a ritual. */
-	private static final double MAX_RITUAL_DISTANCE_SQ = 36.0; // 6 blocks
-	/** Ticks the player has to perform an attunement before a penalty is applied. */
-	private static final int ATTUNEMENT_WINDOW_TICKS = 100; // 5 seconds
-	/** Ticks the player can be out of range before the ritual collapses. */
-	private static final int MAX_DISTANCE_PENALTY_TICKS = 60; // 3 seconds
-	/** Multiplier for the blood penalty when the player misses an attunement window. */
-	private static final float ATTUNEMENT_TIMEOUT_PENALTY_MULTIPLIER = 20f;
+	/** How much each enzyme click adjusts a tendency. */
+	private static final float TENDENCY_STEP = 0.2f;
+	/** Tolerance for comparing tendency floats when matching recipes (±0.1). */
+	private static final float TENDENCY_EPSILON = 0.1f;
+	/** Max squared distance the player can be during a ritual (6 blocks). */
+	private static final double MAX_RITUAL_DISTANCE_SQ = 36.0;
+	/** Ticks the player can be out of range before the ritual collapses (3s). */
+	private static final int MAX_DISTANCE_GRACE_TICKS = 60;
 
-	// ---- Crafting ritual state ----
+	// ========================== FIELDS ==========================
+
+	/** Slot 0 = hematic memory, Slot 1 = catalyst item. */
+	public NonNullList<ItemStack> contents = NonNullList.withSize(2, ItemStack.EMPTY);
+
+	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA).orElseThrow(IllegalStateException::new);
+
+	private RecallerRecipe curRecipe = null;
+	String recipePath = "";
+
+	/*
+	 * Crafting state — kept simple on purpose.
+	 * Phase 0 = idle, 1 = channeling (blood drains, progress ticks down),
+	 * 2 = completing (single-tick finalisation).
+	 */
 	private int craftingProgress = 0;
 	private int craftingTotalTime = 0;
-	/** 0=idle, 1=channeling, 2=awaiting attunement, 3=completing */
 	private int craftingPhase = 0;
-	private int attunementTimer = 0;
-	private int attunementCount = 0;
-	private int requiredAttunements = 0;
 	private UUID craftingPlayerUUID = null;
 	private float bloodCostPerTick = 0;
-	private int distancePenaltyTicks = 0;
+	private int distanceGraceTicks = 0;
+
+	// ========================== CONSTRUCTOR ==========================
+
+	public VisceralRecallerBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityInit.visceral_artificial_recaller.get(), pos, state);
+	}
+
+	// ========================== TICK ==========================
 
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
 			VisceralRecallerBlockEntity self) {
+		// Client-side effects can be added here later
 	}
 
 	public static void serverTick(Level level, BlockPos worldPosition, BlockState state,
@@ -88,178 +107,81 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		if (self.craftingPhase == 0) return;
 
 		Player player = self.findCraftingPlayer();
-		boolean tooFar = player == null
-				|| player.distanceToSqr(Vec3.atCenterOf(worldPosition)) > MAX_RITUAL_DISTANCE_SQ;
-
-		if (tooFar) {
-			self.handleDistancePenalty(player);
+		if (player == null || self.isPlayerTooFar(player)) {
+			self.tickDistancePenalty(player);
 			return;
 		}
-		// Player is in range — reset distance penalty counter
-		self.distancePenaltyTicks = 0;
+		self.distanceGraceTicks = 0;
 
-		switch (self.craftingPhase) {
-			case 1 -> self.handleChanneling(player);
-			case 2 -> self.handleAwaitingAttunement(player);
-			case 3 -> self.handleCompletion(player);
+		if (self.craftingPhase == 1) {
+			self.tickChanneling(player);
+		} else if (self.craftingPhase == 2) {
+			self.tickCompletion(player);
 		}
 	}
 
-	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(2, ItemStack.EMPTY);
-	String recipePath = "";
-	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	// ========================== ITEM INTERACTION ==========================
 
-	IBloodTendency tendency = getCapability(BloodTendencyProvider.TENDENCY_CAPA)
-			.orElseThrow(IllegalStateException::new);
-
-	RecallerRecipe curRecipe = null;
-
-	public VisceralRecallerBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityInit.visceral_artificial_recaller.get(), pos, state);
-	}
-
-	@Override
-	public AABB getRenderBoundingBox() {
-		// Effects render up to ~3 blocks above and ~4 blocks out horizontally.
-		// Expand the culling AABB so Minecraft never frustum-culls the renderer
-		// while the effects are still in view.
-		BlockPos pos = getBlockPos();
-		return new AABB(pos).inflate(5.0, 5.0, 5.0);
-	}
-
+	/**
+	 * Handles a player right-clicking the recaller with an item.
+	 * Each item type has its own handler; the first match wins.
+	 *
+	 * @return true if the interaction was consumed
+	 */
 	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
 
+		// --- Lethian dew: reset all tendencies to zero ---
 		if (stack.getItem() == ItemInit.lethian_dew.get()) {
-			if (player == null || !player.getAbilities().instabuild) {
-				stack.shrink(1);
-				if (stack.isEmpty() && player != null) {
-					player.setItemInHand(hand, ItemStack.EMPTY);
-				}
-			}
-			getTendCapability().setTendency(RecallerRecipe.blank());
-			checkRecipe();
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			consumeItem(player, stack, hand);
+			tendency.setTendency(RecallerRecipe.blank());
+			refreshRecipe();
+			markDirtyAndSync();
 			return true;
 		}
 
-		// Blood container handling — fill the block's blood volume
+		// --- Blood flask: fill the blood reservoir ---
 		if (stack.getItem() instanceof BloodyFlaskItem flask) {
-			if (!volume.isFull()) {
-				float amount = flask.getAmount();
-				volume.addBloodVolume(amount);
-				if (player == null || !player.getAbilities().instabuild) {
-					stack.shrink(1);
-					if (stack.isEmpty() && player != null) {
-						player.setItemInHand(hand, ItemStack.EMPTY);
-					}
-				}
-				sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-				return true;
-			}
-			return false;
+			if (volume.isFull()) return false;
+			volume.addBloodVolume(flask.getAmount());
+			consumeItem(player, stack, hand);
+			markDirtyAndSync();
+			return true;
 		}
 
-		// Blood gourd handling — drain blood from the gourd into the block
+		// --- Blood gourd: drain blood from gourd into block ---
 		if (stack.getItem() instanceof BloodGourdItem) {
-			IBloodVolume gourdVolume = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
-			if (gourdVolume != null && gourdVolume.getBloodVolume() > 0 && !volume.isFull()) {
-				double transfer = Math.min(gourdVolume.getBloodVolume(), volume.getMaxBloodVolume() - volume.getBloodVolume());
-				if (transfer > 0) {
-					gourdVolume.subtractBloodVolume(transfer);
-					volume.addBloodVolume(transfer);
-					sendUpdates();
-					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-					return true;
-				}
-			}
-			return false;
-		}
-
-		if (stack.getItem() instanceof EnzymeItem) {
-			EnzymeItem enzyme = (EnzymeItem) stack.getItem();
-			if (player != null && player.isCrouching()) {
-				// Shift + enzyme: subtract 0.2 from that tendency
-				float current = tendency.getAlignmentByTendency(enzyme.getTend());
-				if (current > 0f) {
-					float newVal = Math.max(0f, current - 0.2f);
-					float rounded = Math.round(newVal * 10f) / 10f;
-					tendency.setTendencyAlignment(enzyme.getTend(), rounded);
-					stack.shrink(1);
-				}
-			} else {
-				// Normal click: add 0.2 to that tendency
-				tendency.addTendencyAlignment(enzyme.getTend(), 0.2f);
-				// Round to 1 decimal place to avoid floating-point drift
-				float rounded = Math.round(tendency.getAlignmentByTendency(enzyme.getTend()) * 10f) / 10f;
-				tendency.setTendencyAlignment(enzyme.getTend(), rounded);
-				stack.shrink(1);
-				// Adds a recycled chance
-				if (level.random.nextInt(20) % 7 == 0) {
-					ItemEntity recycl = new ItemEntity(level, getBlockPos().getX(), getBlockPos().getY(),
-							getBlockPos().getZ(), new ItemStack(ItemInit.recycled_enzyme.get()));
-					level.addFreshEntity(recycl);
-				}
-			}
-			checkRecipe();
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			IBloodVolume gourdVol = stack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+			if (gourdVol == null || gourdVol.getBloodVolume() <= 0 || volume.isFull()) return false;
+			double transfer = Math.min(gourdVol.getBloodVolume(),
+					volume.getMaxBloodVolume() - volume.getBloodVolume());
+			if (transfer <= 0) return false;
+			gourdVol.subtractBloodVolume(transfer);
+			volume.addBloodVolume(transfer);
+			markDirtyAndSync();
 			return true;
 		}
 
-		// Recycled enzyme: subtract 0.2 from the highest non-zero tendency
+		// --- Enzyme: adjust a specific tendency ---
+		if (stack.getItem() instanceof EnzymeItem enzyme) {
+			applyEnzyme(player, stack, enzyme);
+			return true;
+		}
+
+		// --- Recycled enzyme: subtract from the highest tendency ---
 		if (stack.getItem() instanceof RecycledEnzymeItem) {
-			EnumBloodTendency highest = null;
-			float highestVal = 0f;
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				float val = tendency.getAlignmentByTendency(tend);
-				if (val > highestVal) {
-					highestVal = val;
-					highest = tend;
-				}
-			}
-			if (highest != null && highestVal > 0f) {
-				float newVal = Math.max(0f, highestVal - 0.2f);
-				float rounded = Math.round(newVal * 10f) / 10f;
-				tendency.setTendencyAlignment(highest, rounded);
-				stack.shrink(1);
-			}
-			checkRecipe();
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			applyRecycledEnzyme(stack);
 			return true;
 		}
 
-		// Memory Slot add (slot 0)
+		// --- Hematic memory: place into slot 0 ---
 		if (contents.get(0).isEmpty() && stack.getItem() == ItemInit.hematic_memory.get()) {
-			ItemStack stackToAdd = stack.copy();
-			stackToAdd.setCount(1);
-			contents.set(0, stackToAdd);
-			if (player == null || !player.getAbilities().instabuild) {
-				stack.shrink(1);
-				if (stack.isEmpty() && player != null) {
-					player.setItemInHand(hand, ItemStack.EMPTY);
-				}
-			}
-			checkRecipe();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			placeInSlot(0, player, stack, hand);
 			return true;
 		}
 
-		// Item Slot add (slot 1)
-		if (contents.get(1).isEmpty() && stack.getItem() != ItemInit.hematic_memory.get() && !stack.isEmpty()) {
-			ItemStack stackToAdd = stack.copy();
-			stackToAdd.setCount(1);
-			contents.set(1, stackToAdd);
-			if (player == null || !player.getAbilities().instabuild) {
-				stack.shrink(1);
-				if (stack.isEmpty() && player != null) {
-					player.setItemInHand(hand, ItemStack.EMPTY);
-				}
-			}
-			checkRecipe();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		// --- Anything else: place as catalyst into slot 1 ---
+		if (contents.get(1).isEmpty() && !stack.isEmpty()) {
+			placeInSlot(1, player, stack, hand);
 			return true;
 		}
 
@@ -267,152 +189,172 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 	}
 
 	/**
-	 * Removes an item from the given slot and returns it to the player.
-	 * @param removeMemory true = remove slot 0 (memory), false = remove slot 1 (catalyst)
+	 * Removes an item from a slot and returns it to the player.
+	 *
+	 * @param removeMemory true = slot 0 (memory), false = slot 1 (catalyst)
 	 */
 	public boolean removeItem(@Nullable Player player, boolean removeMemory) {
 		if (player == null) return false;
-
 		int slot = removeMemory ? 0 : 1;
-		if (!contents.get(slot).isEmpty()) {
-			ItemStack copy = contents.get(slot).copy();
-			player.getInventory().placeItemBackInInventory(copy);
-			contents.set(slot, ItemStack.EMPTY);
-			checkRecipe();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-			return true;
-		}
+		if (contents.get(slot).isEmpty()) return false;
 
-		return false;
+		player.getInventory().placeItemBackInInventory(contents.get(slot).copy());
+		contents.set(slot, ItemStack.EMPTY);
+		refreshRecipe();
+		markDirtyAndSync();
+		return true;
 	}
 
-	/**
-	 * Drops all contents as item entities. Called when the block is broken.
-	 */
-	public void dropContents() {
-		if (level != null && !level.isClientSide) {
-			for (ItemStack stack : contents) {
-				if (!stack.isEmpty()) {
-					Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
-				}
-			}
-			contents.clear();
-		}
-	}
-
+	/** Resets all tendencies to zero. Called from ClearRecallerStatePacket. */
 	public void clearTendency() {
-		getTendCapability().setTendency(RecallerRecipe.blank());
-		checkRecipe();
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		tendency.setTendency(RecallerRecipe.blank());
+		refreshRecipe();
+		markDirtyAndSync();
 	}
 
-	/**
-	 * Public entry point to re-evaluate recipe matching.
-	 * Called from the block's use() before checking hasValidRecipe().
-	 */
-	public void recheckRecipe() {
-		checkRecipe();
+	/** Drops all contents as item entities (called when the block is broken). */
+	public void dropContents() {
+		if (level == null || level.isClientSide) return;
+		for (ItemStack stack : contents) {
+			if (!stack.isEmpty()) {
+				Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(),
+						worldPosition.getZ(), stack);
+			}
+		}
+		contents.clear();
 	}
 
-	private void checkRecipe() {
-		Map<EnumBloodTendency, Float> ourTends = this.tendency.getTendency();
+	// ========================== ENZYME HELPERS ==========================
+
+	private void applyEnzyme(@Nullable Player player, ItemStack stack, EnzymeItem enzyme) {
+		EnumBloodTendency tend = enzyme.getTend();
+		float current = tendency.getAlignmentByTendency(tend);
+
+		boolean subtract = player != null && player.isCrouching();
+		if (subtract) {
+			// Shift-click: subtract
+			if (current <= 0f) return;
+			setTendencyRounded(tend, Math.max(0f, current - TENDENCY_STEP));
+		} else {
+			// Normal click: add
+			setTendencyRounded(tend, current + TENDENCY_STEP);
+			// Small chance to drop a recycled enzyme
+			if (level != null && level.random.nextInt(20) % 7 == 0) {
+				ItemEntity drop = new ItemEntity(level,
+						getBlockPos().getX() + 0.5, getBlockPos().getY() + 1.0,
+						getBlockPos().getZ() + 0.5,
+						new ItemStack(ItemInit.recycled_enzyme.get()));
+				level.addFreshEntity(drop);
+			}
+		}
+		stack.shrink(1);
+		refreshRecipe();
+		markDirtyAndSync();
+	}
+
+	private void applyRecycledEnzyme(ItemStack stack) {
+		EnumBloodTendency highest = null;
+		float highestVal = 0f;
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			float val = tendency.getAlignmentByTendency(tend);
+			if (val > highestVal) {
+				highestVal = val;
+				highest = tend;
+			}
+		}
+		if (highest != null && highestVal > 0f) {
+			setTendencyRounded(highest, Math.max(0f, highestVal - TENDENCY_STEP));
+			stack.shrink(1);
+		}
+		refreshRecipe();
+		markDirtyAndSync();
+	}
+
+	/** Sets a tendency value, rounded to 1 decimal place to prevent float drift. */
+	private void setTendencyRounded(EnumBloodTendency tend, float value) {
+		tendency.setTendencyAlignment(tend, Math.round(value * 10f) / 10f);
+	}
+
+	// ========================== SLOT / CONSUME HELPERS ==========================
+
+	private void placeInSlot(int slot, @Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
+		ItemStack toPlace = stack.copy();
+		toPlace.setCount(1);
+		contents.set(slot, toPlace);
+		consumeItem(player, stack, hand);
+		refreshRecipe();
+		markDirtyAndSync();
+	}
+
+	private void consumeItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
+		if (player != null && player.getAbilities().instabuild) return;
+		stack.shrink(1);
+		if (stack.isEmpty() && player != null && hand != null) {
+			player.setItemInHand(hand, ItemStack.EMPTY);
+		}
+	}
+
+	// ========================== RECIPE MATCHING ==========================
+
+	/** Re-evaluates which recipe (if any) matches the current block state. */
+	public void refreshRecipe() {
 		curRecipe = null;
 		recipePath = "";
 		if (level == null) return;
+
+		Map<EnumBloodTendency, Float> ourTends = tendency.getTendency();
 		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
-			boolean tendsMatch = tendenciesMatch(recipe.getTendency(), ourTends);
-			boolean ingredientMatch = recipe.getIngredient().test(contents.get(1));
-			if (tendsMatch && ingredientMatch) {
+			if (tendenciesMatch(recipe.getTendency(), ourTends)
+					&& recipe.getIngredient().test(contents.get(1))) {
 				curRecipe = recipe;
-				recipePath = HLTextUtils.getItemRegistryName(recipe.getResultItem(level.registryAccess()).getItem());
-				break;
+				recipePath = HLTextUtils.getItemRegistryName(
+						recipe.getResultItem(level.registryAccess()).getItem());
+				return;
 			}
 		}
 	}
 
-	/**
-	 * Compares two tendency maps using an epsilon to tolerate floating-point drift.
-	 */
-	private static boolean tendenciesMatch(Map<EnumBloodTendency, Float> a, Map<EnumBloodTendency, Float> b) {
+	private static boolean tendenciesMatch(Map<EnumBloodTendency, Float> recipe,
+			Map<EnumBloodTendency, Float> block) {
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float va = a.getOrDefault(tend, 0f);
-			float vb = b.getOrDefault(tend, 0f);
-			if (Math.abs(va - vb) > 0.05f) {
-				return false;
-			}
+			float a = recipe.getOrDefault(tend, 0f);
+			float b = block.getOrDefault(tend, 0f);
+			if (Math.abs(a - b) > TENDENCY_EPSILON) return false;
 		}
 		return true;
 	}
 
-	public IBloodVolume getBloodCapability() {
-		return volume;
-	}
+	// ========================== CRAFTING RITUAL ==========================
 
-	public double getBloodVolume() {
-		return volume.getBloodVolume();
-	}
-
-	public RecallerRecipe getCurRecipe() {
-		return curRecipe;
-	}
-
-	public double getMaxBloodVolume() {
-		return volume.getMaxBloodVolume();
-	}
+	public boolean isCrafting() { return craftingPhase > 0; }
+	public boolean hasValidRecipe() { return curRecipe != null; }
+	public int getCraftingProgress() { return craftingProgress; }
+	public int getCraftingTotalTime() { return craftingTotalTime; }
+	public int getCraftingPhase() { return craftingPhase; }
+	public RecallerRecipe getCurRecipe() { return curRecipe; }
+	public String getRecipePath() { return recipePath; }
+	public double getBloodVolume() { return volume.getBloodVolume(); }
+	public double getMaxBloodVolume() { return volume.getMaxBloodVolume(); }
+	public IBloodTendency getTendCapability() { return tendency; }
+	public Map<EnumBloodTendency, Float> getTendency() { return tendency.getTendency(); }
 
 	public ItemStack getResultItem() {
-		return curRecipe != null ? curRecipe.getResultItem(level.registryAccess()) : ItemStack.EMPTY;
-	}
-
-	public IBloodTendency getTendCapability() {
-		return tendency;
-	}
-
-	public Map<EnumBloodTendency, Float> getTendency() {
-		return tendency.getTendency();
-	}
-
-	public boolean hasValidRecipe() {
-		return curRecipe != null;
-	}
-
-	// ========================== RITUAL CRAFTING ==========================
-
-	/** Whether a ritual is currently in progress. */
-	public boolean isCrafting() {
-		return craftingPhase > 0;
-	}
-
-	public int getCraftingProgress() {
-		return craftingProgress;
-	}
-
-	public int getCraftingTotalTime() {
-		return craftingTotalTime;
-	}
-
-	public int getCraftingPhase() {
-		return craftingPhase;
+		return curRecipe != null && level != null
+				? curRecipe.getResultItem(level.registryAccess()) : ItemStack.EMPTY;
 	}
 
 	/**
-	 * Attempts to start the ritual. Called when the player right-clicks with an
-	 * empty hand while a valid recipe is detected.
-	 *
-	 * @return true if the ritual was started
+	 * Starts the crafting ritual.
+	 * Called when the player right-clicks with an empty hand and a valid recipe
+	 * is detected.  The only requirement beyond the recipe match is enough blood.
 	 */
 	public boolean startRitual(Player player) {
-		if (craftingPhase != 0) return false;
-		if (curRecipe == null) return false;
-		if (contents.get(0).isEmpty()) return false;
+		if (isCrafting() || curRecipe == null || contents.get(0).isEmpty()) return false;
 
 		float totalBloodCost = curRecipe.getBloodCost();
 		if (volume.getBloodVolume() < totalBloodCost) {
-			player.displayClientMessage(
-					Component.literal("The recaller thirsts. Feed it more blood to begin the ritual.")
-							.withStyle(ChatFormatting.DARK_RED),
-					true);
+			msg(player, "Not enough blood. Need " + (int) totalBloodCost + ".",
+					ChatFormatting.DARK_RED, true);
 			return false;
 		}
 
@@ -421,158 +363,30 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		bloodCostPerTick = totalBloodCost / craftingTotalTime;
 		craftingPhase = 1;
 		craftingPlayerUUID = player.getUUID();
-		attunementCount = 0;
-		requiredAttunements = curRecipe.getRequiredAttunements();
-		distancePenaltyTicks = 0;
+		distanceGraceTicks = 0;
 
-		player.displayClientMessage(
-				Component.literal("The recaller awakens... Stay close and attune to its call.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
-				false);
-		level.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.7f, 1.5f);
-
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		msg(player, "The recaller awakens...", ChatFormatting.DARK_PURPLE, false);
+		playSound(SoundEvents.BEACON_ACTIVATE, 0.7f, 1.5f);
+		markDirtyAndSync();
 		return true;
 	}
 
-	/**
-	 * Player right-clicks while the ritual is in the AWAITING_ATTUNEMENT phase.
-	 *
-	 * @return true if the attunement was accepted
-	 */
-	public boolean attune(Player player) {
-		if (craftingPhase != 2) return false;
-		if (!player.getUUID().equals(craftingPlayerUUID)) {
-			player.displayClientMessage(
-					Component.literal("This ritual is not yours to attune.")
-							.withStyle(ChatFormatting.RED),
-					true);
-			return false;
-		}
-
-		attunementCount++;
-		craftingPhase = 1;
-		attunementTimer = 0;
-
-		player.displayClientMessage(
-				Component.literal("The attunement resonates through the vessel.")
-						.withStyle(ChatFormatting.GREEN),
-				true);
-		level.playSound(null, worldPosition, SoundEvents.BEACON_ACTIVATE,
-				SoundSource.BLOCKS, 0.5f, 1.5f + attunementCount * 0.3f);
-
-		if (level instanceof ServerLevel serverLevel) {
-			com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
-					serverLevel, worldPosition, ParticleTypes.REVERSE_PORTAL);
-		}
-
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-		return true;
-	}
-
-	/**
-	 * Cancels the active ritual. Called when the player shift-right-clicks during
-	 * an active ritual.
-	 */
+	/** Cancels the active ritual. */
 	public void cancelRitual(@Nullable Player player) {
-		if (craftingPhase == 0) return;
-
+		if (!isCrafting()) return;
 		if (player != null) {
-			player.displayClientMessage(
-					Component.literal("The ritual is disrupted. The blood subsides.")
-							.withStyle(ChatFormatting.RED),
-					true);
+			msg(player, "The ritual is disrupted.", ChatFormatting.RED, true);
 		}
-		level.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE,
-				SoundSource.BLOCKS, 0.7f, 0.8f);
-
+		playSound(SoundEvents.BEACON_DEACTIVATE, 0.7f, 0.8f);
 		resetCraftingState();
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		markDirtyAndSync();
 	}
 
-	/**
-	 * Provides feedback to the player about the current tendency configuration
-	 * when no recipe matches. Shows which tendencies are off and by how much
-	 * compared to the closest matching recipe.
-	 */
-	public void provideTendencyFeedback(Player player) {
-		if (contents.get(0).isEmpty()) {
-			player.displayClientMessage(
-					Component.literal("The recaller lies dormant. It requires a Hematic Memory.")
-							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
-					true);
-			return;
-		}
+	// ---- Tick handlers ----
 
-		if (curRecipe != null) {
-			float totalBloodCost = curRecipe.getBloodCost();
-			if (volume.getBloodVolume() < totalBloodCost) {
-				player.displayClientMessage(
-						Component.literal("A recipe resonates, but the recaller thirsts. (Need "
-								+ (int) totalBloodCost + " blood)")
-								.withStyle(ChatFormatting.DARK_RED),
-						true);
-			} else {
-				player.displayClientMessage(
-						Component.literal("The tendencies align. The recaller is ready.")
-								.withStyle(ChatFormatting.DARK_PURPLE),
-						true);
-			}
-			return;
-		}
-
-		RecallerRecipe closest = findClosestRecipe();
-		if (closest == null) {
-			player.displayClientMessage(
-					Component.literal("The blood tendencies are discordant. No memory can form.")
-							.withStyle(ChatFormatting.GRAY),
-					true);
-			return;
-		}
-
-		StringBuilder hint = new StringBuilder();
-		boolean first = true;
-		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float needed = closest.getTendency().getOrDefault(tend, 0f);
-			float current = tendency.getAlignmentByTendency(tend);
-			float diff = needed - current;
-			if (Math.abs(diff) > 0.01f) {
-				if (!first) hint.append(", ");
-				String direction = diff > 0 ? "+" : "";
-				hint.append(tend.name()).append("(").append(direction)
-						.append(String.format("%.1f", diff)).append(")");
-				first = false;
-			}
-		}
-
-		if (closest.getIngredient() != Ingredient.EMPTY
-				&& !closest.getIngredient().test(contents.get(1))) {
-			if (contents.get(1).isEmpty()) {
-				hint.append(first ? "" : " | ").append("Missing catalyst");
-			} else {
-				hint.append(first ? "" : " | ").append("Wrong catalyst");
-			}
-		}
-
-		if (hint.length() > 0) {
-			player.displayClientMessage(
-					Component.literal("Nearest recipe diverges: " + hint)
-							.withStyle(ChatFormatting.YELLOW),
-					false);
-		}
-	}
-
-	// ---- Ritual tick handlers (server-side only) ----
-
-	private void handleChanneling(Player player) {
+	private void tickChanneling(Player player) {
 		if (volume.getBloodVolume() < bloodCostPerTick) {
-			player.displayClientMessage(
-					Component.literal("The recaller's blood runs dry! The ritual falters!")
-							.withStyle(ChatFormatting.DARK_RED),
-					true);
+			msg(player, "The blood runs dry!", ChatFormatting.DARK_RED, true);
 			cancelRitual(player);
 			return;
 		}
@@ -580,98 +394,36 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		volume.subtractBloodVolume(bloodCostPerTick);
 		craftingProgress--;
 
-		// Spawn ambient particles during channeling
-		if (level instanceof ServerLevel serverLevel && level.getGameTime() % 4 == 0) {
+		// Ambient particles
+		if (level instanceof ServerLevel sl && level.getGameTime() % 4 == 0) {
 			com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
-					serverLevel, worldPosition, ParticleTypes.SOUL_FIRE_FLAME);
+					sl, worldPosition, ParticleTypes.SOUL_FIRE_FLAME);
 		}
 
-		// Check if an attunement checkpoint has been reached
-		if (requiredAttunements > 0 && attunementCount < requiredAttunements) {
-			int interval = craftingTotalTime / (requiredAttunements + 1);
-			int nextCheckpoint = craftingTotalTime - (interval * (attunementCount + 1));
-
-			if (craftingProgress <= nextCheckpoint) {
-				craftingPhase = 2;
-				attunementTimer = ATTUNEMENT_WINDOW_TICKS;
-				player.displayClientMessage(
-						Component.literal("The recaller pulses with urgency. Attune to it!")
-								.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
-						true);
-				level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE,
-						SoundSource.BLOCKS, 1.0f, 0.5f);
-
-				sendUpdates();
-				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-				return;
-			}
-		}
-
-		// Check if complete
+		// Channeling complete → move to completion phase
 		if (craftingProgress <= 0) {
-			craftingPhase = 3;
+			craftingPhase = 2;
 		}
 
-		// Periodic progress feedback
+		// Periodic progress chat feedback
 		if (craftingProgress > 0 && craftingProgress % 40 == 0) {
-			int percent = (int) (((float) (craftingTotalTime - craftingProgress) / craftingTotalTime) * 100);
-			player.displayClientMessage(
-					Component.literal("Ritual progress: " + percent + "%")
-							.withStyle(ChatFormatting.DARK_PURPLE),
-					true);
+			int pct = (int) (((float) (craftingTotalTime - craftingProgress) / craftingTotalTime) * 100);
+			msg(player, "Ritual progress: " + pct + "%", ChatFormatting.DARK_PURPLE, true);
 		}
 
-		// Sync state to client periodically
+		// Sync to client every half-second
 		if (level.getGameTime() % 10 == 0) {
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			markDirtyAndSync();
 		}
 	}
 
-	private void handleAwaitingAttunement(Player player) {
-		attunementTimer--;
-
-		// Continue draining blood at a reduced rate while waiting
-		if (volume.getBloodVolume() >= bloodCostPerTick * 0.5f) {
-			volume.subtractBloodVolume(bloodCostPerTick * 0.5f);
-		}
-
-		if (attunementTimer <= 0) {
-			// Timeout — blood penalty, auto-continue
-			player.displayClientMessage(
-					Component.literal("The ritual wavers. Precious blood is lost to your hesitation.")
-							.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
-					true);
-			volume.subtractBloodVolume(bloodCostPerTick * ATTUNEMENT_TIMEOUT_PENALTY_MULTIPLIER);
-			level.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE,
-					SoundSource.BLOCKS, 0.5f, 0.5f);
-
-			attunementCount++;
-			craftingPhase = 1;
-			attunementTimer = 0;
-
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
-		}
-
-		// Pulsing reminder sound
-		if (attunementTimer > 0 && attunementTimer % 20 == 0) {
-			level.playSound(null, worldPosition, SoundEvents.BEACON_POWER_SELECT,
-					SoundSource.BLOCKS, 0.6f, 0.5f);
-		}
-	}
-
-	private void handleCompletion(Player player) {
-		// Verify recipe is still valid
-		checkRecipe();
+	private void tickCompletion(Player player) {
+		// Re-verify the recipe (in case someone tampered mid-ritual)
+		refreshRecipe();
 		if (curRecipe == null) {
-			player.displayClientMessage(
-					Component.literal("The ritual unravels. The configuration has changed.")
-							.withStyle(ChatFormatting.RED),
-					true);
+			msg(player, "The ritual unravels. Configuration changed.", ChatFormatting.RED, true);
 			resetCraftingState();
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			markDirtyAndSync();
 			return;
 		}
 
@@ -679,77 +431,61 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		ItemStack result = curRecipe.getResultItem(level.registryAccess()).copy();
 
 		// Consume inputs
-		contents.set(0, ItemStack.EMPTY); // hematic memory
-		contents.set(1, ItemStack.EMPTY); // catalyst ingredient
-		tendency.setTendency(RecallerRecipe.blank()); // reset tendencies
+		contents.set(0, ItemStack.EMPTY);
+		contents.set(1, ItemStack.EMPTY);
+		tendency.setTendency(RecallerRecipe.blank());
 
-		// Spawn the result above the block
-		ItemEntity resultEntity = new ItemEntity(level,
+		// Spawn result above the block
+		ItemEntity entity = new ItemEntity(level,
 				worldPosition.getX() + 0.5, worldPosition.getY() + 1.5,
 				worldPosition.getZ() + 0.5, result);
-		resultEntity.setDeltaMovement(0, 0.1, 0);
-		level.addFreshEntity(resultEntity);
+		entity.setDeltaMovement(0, 0.1, 0);
+		level.addFreshEntity(entity);
 
 		// Effects
-		player.displayClientMessage(
-				Component.literal("The memory crystallizes. The recaller has spoken.")
-						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD),
-				false);
-		level.playSound(null, worldPosition, SoundEvents.END_PORTAL_SPAWN,
-				SoundSource.BLOCKS, 0.5f, 1.5f);
-
-		if (level instanceof ServerLevel serverLevel) {
+		msg(player, "The memory crystallizes.", ChatFormatting.DARK_PURPLE, false);
+		playSound(SoundEvents.END_PORTAL_SPAWN, 0.5f, 1.5f);
+		if (level instanceof ServerLevel sl) {
 			com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
-					serverLevel, worldPosition, ParticleTypes.REVERSE_PORTAL);
+					sl, worldPosition, ParticleTypes.REVERSE_PORTAL);
 			com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
-					serverLevel, worldPosition, ParticleTypes.ENCHANT);
+					sl, worldPosition, ParticleTypes.ENCHANT);
 		}
 
 		resetCraftingState();
 		curRecipe = null;
 		recipePath = "";
-		sendUpdates();
-		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+		markDirtyAndSync();
 	}
 
-	private void handleDistancePenalty(@Nullable Player player) {
-		distancePenaltyTicks++;
-
-		if (distancePenaltyTicks > MAX_DISTANCE_PENALTY_TICKS) {
+	private void tickDistancePenalty(@Nullable Player player) {
+		distanceGraceTicks++;
+		if (distanceGraceTicks > MAX_DISTANCE_GRACE_TICKS) {
 			if (player != null) {
-				player.displayClientMessage(
-						Component.literal("The ritual collapses! You strayed too far!")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
-						false);
+				msg(player, "The ritual collapses! You strayed too far!",
+						ChatFormatting.DARK_RED, false);
 			}
-			level.playSound(null, worldPosition, SoundEvents.BEACON_DEACTIVATE,
-					SoundSource.BLOCKS, 1.0f, 0.5f);
+			playSound(SoundEvents.BEACON_DEACTIVATE, 1.0f, 0.5f);
 			resetCraftingState();
-			sendUpdates();
-			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+			markDirtyAndSync();
 			return;
 		}
-
-		if (player != null && distancePenaltyTicks % 20 == 0) {
-			player.displayClientMessage(
-					Component.literal("The connection wavers! Return to the recaller!")
-							.withStyle(ChatFormatting.RED),
-					true);
+		if (player != null && distanceGraceTicks % 20 == 0) {
+			msg(player, "Return to the recaller!", ChatFormatting.RED, true);
 		}
 	}
 
-	// ---- Ritual helpers ----
+	private boolean isPlayerTooFar(Player player) {
+		return player.distanceToSqr(Vec3.atCenterOf(worldPosition)) > MAX_RITUAL_DISTANCE_SQ;
+	}
 
 	private void resetCraftingState() {
 		craftingPhase = 0;
 		craftingProgress = 0;
 		craftingTotalTime = 0;
-		attunementTimer = 0;
-		attunementCount = 0;
-		requiredAttunements = 0;
 		craftingPlayerUUID = null;
 		bloodCostPerTick = 0;
-		distancePenaltyTicks = 0;
+		distanceGraceTicks = 0;
 	}
 
 	@Nullable
@@ -761,6 +497,64 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		return null;
 	}
 
+	// ========================== PLAYER FEEDBACK ==========================
+
+	/**
+	 * Shows the player context-sensitive feedback when they right-click with
+	 * an empty hand and no valid recipe is ready.
+	 */
+	public void provideTendencyFeedback(Player player) {
+		if (contents.get(0).isEmpty()) {
+			msg(player, "Insert a Hematic Memory.", ChatFormatting.GRAY, true);
+			return;
+		}
+
+		if (curRecipe != null) {
+			float cost = curRecipe.getBloodCost();
+			if (volume.getBloodVolume() < cost) {
+				msg(player, "Recipe ready but needs " + (int) cost + " blood.",
+						ChatFormatting.DARK_RED, true);
+			} else {
+				msg(player, "Ready. Right-click to begin the ritual.",
+						ChatFormatting.DARK_PURPLE, true);
+			}
+			return;
+		}
+
+		RecallerRecipe closest = findClosestRecipe();
+		if (closest == null) {
+			msg(player, "No matching recipe found.", ChatFormatting.GRAY, true);
+			return;
+		}
+
+		// Build a hint string showing which tendencies need adjusting
+		StringBuilder hint = new StringBuilder();
+		boolean first = true;
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			float needed = closest.getTendency().getOrDefault(tend, 0f);
+			float current = tendency.getAlignmentByTendency(tend);
+			float diff = needed - current;
+			if (Math.abs(diff) > 0.01f) {
+				if (!first) hint.append(", ");
+				hint.append(tend.name())
+						.append(diff > 0 ? "+" : "")
+						.append(String.format("%.1f", diff));
+				first = false;
+			}
+		}
+
+		if (closest.getIngredient() != Ingredient.EMPTY
+				&& !closest.getIngredient().test(contents.get(1))) {
+			hint.append(first ? "" : " | ");
+			hint.append(contents.get(1).isEmpty() ? "Missing catalyst" : "Wrong catalyst");
+		}
+
+		if (!hint.isEmpty()) {
+			player.displayClientMessage(
+					Component.literal("Nearest: " + hint).withStyle(ChatFormatting.YELLOW), false);
+		}
+	}
+
 	@Nullable
 	private RecallerRecipe findClosestRecipe() {
 		if (level == null) return null;
@@ -769,9 +563,8 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		for (RecallerRecipe recipe : RecallerRecipe.getAllRecipes(level)) {
 			float dist = 0;
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				float recipeVal = recipe.getTendency().getOrDefault(tend, 0f);
-				float ourVal = tendency.getAlignmentByTendency(tend);
-				dist += Math.abs(recipeVal - ourVal);
+				dist += Math.abs(recipe.getTendency().getOrDefault(tend, 0f)
+						- tendency.getAlignmentByTendency(tend));
 			}
 			if (dist < closestDist) {
 				closestDist = dist;
@@ -780,6 +573,84 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		}
 		return closest;
 	}
+
+	// ========================== UTILITY ==========================
+
+	private void msg(Player player, String text, ChatFormatting color, boolean actionBar) {
+		player.displayClientMessage(Component.literal(text).withStyle(color), actionBar);
+	}
+
+	private void playSound(net.minecraft.sounds.SoundEvent sound, float vol, float pitch) {
+		if (level != null) {
+			level.playSound(null, worldPosition, sound, SoundSource.BLOCKS, vol, pitch);
+		}
+	}
+
+	private void markDirtyAndSync() {
+		if (level == null) return;
+		sendUpdates();
+		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+	}
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		return new AABB(getBlockPos()).inflate(5.0, 5.0, 5.0);
+	}
+
+	@Override
+	public void onLoad() {
+		volume.setActive(true);
+	}
+
+	@Override
+	public void sendUpdates() {
+		if (level == null) return;
+		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
+		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		setChanged();
+	}
+
+	// ========================== NBT ==========================
+
+	@Override
+	public void saveAdditional(CompoundTag tag) {
+		super.saveAdditional(tag);
+		ContainerHelper.saveAllItems(tag, this.contents);
+		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		tag.putString(TAG_RECIPE, recipePath);
+		tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
+		tag.putInt(TAG_CRAFT_TOTAL, craftingTotalTime);
+		tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
+		tag.putFloat(TAG_BLOOD_COST_PER_TICK, bloodCostPerTick);
+		if (craftingPlayerUUID != null) {
+			tag.putUUID(TAG_CRAFTING_PLAYER, craftingPlayerUUID);
+		}
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			Float val = tendency.getTendency().get(tend);
+			tag.putFloat(tend.toString(), val != null ? val : 0f);
+		}
+	}
+
+	@Override
+	public void load(CompoundTag tag) {
+		super.load(tag);
+		this.contents = NonNullList.withSize(2, ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(tag, this.contents);
+		recipePath = tag.getString(TAG_RECIPE);
+		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
+		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
+		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
+		bloodCostPerTick = tag.getFloat(TAG_BLOOD_COST_PER_TICK);
+		if (tag.hasUUID(TAG_CRAFTING_PLAYER)) {
+			craftingPlayerUUID = tag.getUUID(TAG_CRAFTING_PLAYER);
+		}
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
+		}
+	}
+
+	// ========================== SYNC ==========================
 
 	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -795,12 +666,9 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 		tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
 		tag.putInt(TAG_CRAFT_TOTAL, craftingTotalTime);
 		tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
-		for (EnumBloodTendency key : tendency.getTendency().keySet()) {
-			if (tendency.getTendency().get(key) != null) {
-				tag.putFloat(key.toString(), tendency.getTendency().get(key));
-			} else {
-				tag.putFloat(key.toString(), 0);
-			}
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			Float val = tendency.getTendency().get(tend);
+			tag.putFloat(tend.toString(), val != null ? val : 0f);
 		}
 		return tag;
 	}
@@ -808,97 +676,31 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 	@Override
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
-		if (tag != null) {
-			recipePath = tag.getString(TAG_RECIPE);
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
-			craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
-			craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
-		}
-	}
-
-	// NBT
-	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		this.contents = NonNullList.withSize(2, ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(tag, this.contents);
-		if (tag != null) {
-			recipePath = tag.getString(TAG_RECIPE);
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
-			craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
-			craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
-			if (tag.hasUUID(TAG_CRAFTING_PLAYER)) {
-				craftingPlayerUUID = tag.getUUID(TAG_CRAFTING_PLAYER);
-			}
-			bloodCostPerTick = tag.getFloat(TAG_BLOOD_COST_PER_TICK);
-			attunementCount = tag.getInt(TAG_ATTUNEMENT_COUNT);
-			requiredAttunements = tag.getInt(TAG_REQUIRED_ATTUNEMENTS);
-			attunementTimer = tag.getInt(TAG_ATTUNEMENT_TIMER);
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
+		if (tag == null) return;
+		recipePath = tag.getString(TAG_RECIPE);
+		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
+		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
+		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
 		}
 	}
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
-		if (pkt.getTag() != null) {
-			CompoundTag tag = pkt.getTag();
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
-			recipePath = tag.getString(TAG_RECIPE);
-			craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
-			craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
-			craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
-			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
-			}
+		if (pkt.getTag() == null) return;
+		CompoundTag tag = pkt.getTag();
+		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		recipePath = tag.getString(TAG_RECIPE);
+		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
+		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
+		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			tendency.getTendency().put(tend, tag.getFloat(tend.toString()));
 		}
 	}
-
-	@Override
-	public void onLoad() {
-		volume.setActive(true);
-	}
-
-	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		ContainerHelper.saveAllItems(tag, this.contents);
-		if (tag != null) {
-			tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
-			tag.putString(TAG_RECIPE, recipePath);
-			tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
-			tag.putInt(TAG_CRAFT_TOTAL, craftingTotalTime);
-			tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
-			if (craftingPlayerUUID != null) {
-				tag.putUUID(TAG_CRAFTING_PLAYER, craftingPlayerUUID);
-			}
-			tag.putFloat(TAG_BLOOD_COST_PER_TICK, bloodCostPerTick);
-			tag.putInt(TAG_ATTUNEMENT_COUNT, attunementCount);
-			tag.putInt(TAG_REQUIRED_ATTUNEMENTS, requiredAttunements);
-			tag.putInt(TAG_ATTUNEMENT_TIMER, attunementTimer);
-			for (EnumBloodTendency key : tendency.getTendency().keySet()) {
-				if (tendency.getTendency().get(key) != null) {
-					tag.putFloat(key.toString(), tendency.getTendency().get(key));
-				} else {
-					tag.putFloat(key.toString(), 0);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void sendUpdates() {
-		level.setBlocksDirty(worldPosition, getBlockState(), getBlockState());
-		level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-		setChanged();
-	}
-
 }
+
 
