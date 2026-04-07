@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
 import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
+import com.vincenthuto.hemomancy.common.worldgen.feature.BogBodyFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.BrownCanopyMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.CheckAbovePatchFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeTendrilFeature;
@@ -45,6 +46,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<HyphaeConfig> PATCH_HYPHAE = register("patch_hyphae",
 			new HyphaeFeature(HyphaeConfig.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> BOG_BODY = register("bog_body",
+			new BogBodyFeature(NoneFeatureConfiguration.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);

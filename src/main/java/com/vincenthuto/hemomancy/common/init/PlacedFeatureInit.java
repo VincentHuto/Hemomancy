@@ -46,6 +46,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> LETHEAN_POPPIES = createKey("lethean_poppies");
 
+	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
+
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -80,7 +82,14 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(8),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, CountPlacement.of(3), BiomeFilter.biome());
 
-		
+		// Bog body — underwater on the ocean floor, rare
+		final Holder<ConfiguredFeature<?, ?>> BOG_BODY = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.BOG_BODY);
+
+		register(context, PlacedFeatureInit.BOG_BODY, BOG_BODY, RarityFilter.onAverageOnceEvery(14),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
+
 		
 		//Blobs
 		context.register(PLACED_MYCELIUM_BLOB,
