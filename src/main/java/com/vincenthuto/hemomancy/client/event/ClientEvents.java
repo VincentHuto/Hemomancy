@@ -44,6 +44,7 @@ import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
 import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
 import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
@@ -364,6 +365,7 @@ public class ClientEvents {
 			BloodVolumeOverlay.instance = new BloodVolumeOverlay();
 			EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
 			ManipCooldownOverlay.instance = new ManipCooldownOverlay();
+			UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
@@ -465,6 +467,10 @@ public class ClientEvents {
 			event.registerAboveAll("manip_cooldown", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				ManipCooldownOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			});
+			event.registerAboveAll("unstained_gauge", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+				gui.setupOverlayRenderState(true, false);
+				UnstainedGaugeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}
