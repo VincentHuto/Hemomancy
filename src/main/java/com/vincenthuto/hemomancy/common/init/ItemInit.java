@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.item.tool.EnumModToolTiers;
 import com.vincenthuto.hemomancy.common.item.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.BloodBoltItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.BloodProjectionItem;
+import com.vincenthuto.hemomancy.common.item.tool.living.BloodThrallItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingAxeItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingBaghnakhItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingBladeItem;
@@ -296,6 +297,10 @@ public class ItemInit {
 
 	public static final RegistryObject<Item> blood_bolt = BASEITEMS.register("blood_bolt",
 			() -> new BloodBoltItem(new Item.Properties()));
+
+	// Blood Thrall — creature-based blood transport
+	public static final RegistryObject<Item> blood_thrall_effigy = BASEITEMS.register("blood_thrall_effigy",
+			() -> new BloodThrallItem(new Item.Properties().stacksTo(16)));
 
 	// Morphlings
 	public static final RegistryObject<Item> morphling_polyp = BASEITEMS.register("morphling_polyp",

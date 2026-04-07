@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.BarbedUrchinBigModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.BarbedUrchinMidModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.BarbedUrchinModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.BloodDrunkPuppeteerModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.BloodThrallModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ChitiniteModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ChthonianModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ChthonianQueenModel;
@@ -117,6 +118,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(ErythromyceliumEruptusModel.LAYER_LOCATION,
 				ErythromyceliumEruptusModel::createBodyLayer);
 		event.registerLayerDefinition(EnthralledDollModel.LAYER_LOCATION, EnthralledDollModel::createBodyLayer);
+		event.registerLayerDefinition(BloodThrallModel.LAYER_LOCATION, BloodThrallModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(ThirsterModel.LAYER_LOCATION, ThirsterModel::createBodyLayer);
 		event.registerLayerDefinition(BloodArmModel.blood_arm, BloodArmModel::createHeadLayer);

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenu;
@@ -16,19 +15,17 @@ import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +35,6 @@ import java.util.stream.Collectors;
 
 public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyViewMenu> {
 
-    public static final ResourceLocation background = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/gui/tendency_view.png");
-    public static final ResourceLocation border = new ResourceLocation(Hemomancy.MOD_ID,
-            "textures/gui/tendency_border.png");
     public double dragLeftRight = 0.0;
     public double dragUpDown = 0.0;
     public int guiHeight = 254;
@@ -79,17 +72,18 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
 
         // Seed vein parameters for the animated background
         Random rand = new Random(42L);
-        veinParams = new float[VEIN_COUNT][9];
+        veinParams = new float[VEIN_COUNT][10];
         for (int i = 0; i < VEIN_COUNT; i++) {
             veinParams[i][0] = rand.nextFloat();                          // startX ratio
             veinParams[i][1] = rand.nextFloat();                          // startY ratio
             veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
             veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;           // speed mult
-            veinParams[i][4] = 8f + rand.nextFloat() * 18f;              // amplitude
-            veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;         // frequency
-            veinParams[i][6] = 60 + rand.nextInt(120);                    // length (steps)
+            veinParams[i][4] = 12f + rand.nextFloat() * 24f;             // amplitude
+            veinParams[i][5] = 0.06f + rand.nextFloat() * 0.12f;         // frequency
+            veinParams[i][6] = 70 + rand.nextInt(120);                    // length (steps)
             veinParams[i][7] = 1 + rand.nextInt(3);                       // thickness
             veinParams[i][8] = rand.nextFloat();                           // red tint brightness
+            veinParams[i][9] = (rand.nextFloat() - 0.5f) * 0.05f;        // curvature per step
         }
     }
 
@@ -120,11 +114,18 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         // Programmatic dark-red border frame on top of the vein background
         drawBorder(graphics, centerX, centerY, this.guiWidth, this.guiHeight);
 
+        // Title
+        graphics.drawCenteredString(font, "Blood Tendency", this.width / 2, centerY + 6, 0xFFCC3344);
+        graphics.drawCenteredString(font, "Alignment by kinship", this.width / 2, centerY + 18, 0xFF553333);
+
         // Pass the true center of the GUI panel to drawCenter
         int starCenterX = this.width / 2;
         int starCenterY = this.height / 2;
         drawCenter(graphics, starCenterX, starCenterY);
 
+        // Footer
+        graphics.drawCenteredString(font, "§4§l— §c§oSanguine Kinship §4§l—",
+                this.width / 2, centerY + this.guiHeight - 14, 0xFF882222);
     }
 
     private void renderBackgrounds(GuiGraphics pGuiGraphics, int pRenderX, int pYOffset, Iterable<MobEffectInstance> pEffects, boolean pIsSmall) {
@@ -237,10 +238,6 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         super.renderBackground(graphics);
         this.left = this.width / 2 - this.guiWidth / 2;
         this.top = this.height / 2 - this.guiHeight / 2;
-        int centerX = this.width / 2 - this.guiWidth / 2;
-        int centerY = this.height / 2 - this.guiHeight / 2;
-        graphics.blit(background, centerX + 16, centerY + 14, 0, 0, this.guiWidth, this.guiHeight);
-
     }
 
     private void drawCenter(GuiGraphics graphics, int centerX, int centerY) {
@@ -285,15 +282,17 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
                 HLGuiUtils.renderItemStackInGui(graphics, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)),
                         iconCenterX - halfItem, iconCenterY - halfItem);
 
-                // Tendency value (centered above the icon)
+                // Tendency value (centered above the icon) — tinted to the tendency's color
+                int tendColor = 0xFF000000 | tend.getColor().getColor();
                 graphics.drawCenteredString(font,
                         String.valueOf(tendency.getAlignmentByTendency(tend)), iconCenterX, iconCenterY - halfItem - 10,
-                        new Color(255, 0, 0, 255).getRGB());
+                        tendColor);
 
-                // Tendency name (centered above the value)
+                // Tendency name (centered above the value) — dimmer version of tendency color
+                int dimColor = ((tendColor >> 1) & 0x7F7F7F) | 0xFF000000;
                 graphics.drawCenteredString(font,
                         HLTextUtils.toProperCase(tend.toString()), iconCenterX, iconCenterY - halfItem - 20,
-                        new Color(255, 0, 0, 255).getRGB());
+                        dimColor);
 
                 rotAngle += 45;
             }
@@ -302,20 +301,31 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
 
     }
 
-    // ───── Programmatic Dark-Red Border ─────
+    // ───── Gradient Dark-Red Border ─────
 
     private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-        int outer = 0xFF330808;
-        gfx.fill(x, y, x + w, y + 1, outer);
-        gfx.fill(x, y + h - 1, x + w, y + h, outer);
-        gfx.fill(x, y, x + 1, y + h, outer);
-        gfx.fill(x + w - 1, y, x + w, y + h, outer);
-
-        int inner = 0xFF220606;
-        gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
-        gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
-        gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
-        gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
+        int[] colors = {
+            0xFF6B1010,  // outermost — bright crimson
+            0xFF4A0C0C,  // mid-outer
+            0xFF300808,  // mid-inner
+            0xFF1A0404,  // innermost — near-black maroon
+        };
+        for (int i = 0; i < colors.length; i++) {
+            int c = colors[i];
+            int xi = x + i;
+            int yi = y + i;
+            int wi = w - i * 2;
+            int hi = h - i * 2;
+            gfx.fill(xi, yi, xi + wi, yi + 1, c);
+            gfx.fill(xi, yi + hi - 1, xi + wi, yi + hi, c);
+            gfx.fill(xi, yi, xi + 1, yi + hi, c);
+            gfx.fill(xi + wi - 1, yi, xi + wi, yi + hi, c);
+        }
+        int hl = 0xFF8A1818;
+        gfx.fill(x, y, x + 2, y + 2, hl);
+        gfx.fill(x + w - 2, y, x + w, y + 2, hl);
+        gfx.fill(x, y + h - 2, x + 2, y + h, hl);
+        gfx.fill(x + w - 2, y + h - 2, x + w, y + h, hl);
     }
 
     // ───── Procedural Animated Vein Background ─────
@@ -369,7 +379,9 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
     }
 
     /**
-     * Draws a single animated vein tendril as a squiggling curve within the GUI bounds.
+     * Draws a single animated vein tendril that curls and flows organically.
+     * The heading rotates per step (curvature) producing spirals, with sine
+     * wobbles layered on top for fine organic detail.
      */
     private void drawVeinTendril(GuiGraphics graphics, int index, float time,
                                  int gx, int gy, int gw, int gh) {
@@ -383,26 +395,34 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         int length = (int) p[6];
         int thickness = (int) p[7];
         float brightness = p[8];
-
-        float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-        float cosA = Mth.cos(angleDrift);
-        float sinA = Mth.sin(angleDrift);
+        float curvature = p[9];
 
         float timeOffset = time * speed * 2.0f;
+        float liveCurvature = curvature + 0.01f * Mth.sin(time * speed * 0.3f + index * 2.1f);
 
         int baseRed = (int) (40 + 50 * brightness);
         int baseGreen = (int) (2 + 8 * brightness);
         int baseBlue = (int) (5 + 5 * brightness);
 
+        float px = startX;
+        float py = startY;
+        float heading = baseAngle + 0.2f * Mth.sin(time * speed * 0.25f + index);
+
         for (int step = 0; step < length; step++) {
-            float st = step;
+            heading += liveCurvature;
 
-            float squiggle = amplitude * Mth.sin(frequency * st + timeOffset);
-            float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * st + timeOffset * 1.4f + index);
-            float displacement = squiggle + microSquiggle;
+            float headingWobble = 0.06f * Mth.sin(frequency * 2.0f * step + timeOffset)
+                    + 0.04f * Mth.sin(frequency * 4.0f * step + timeOffset * 1.5f + index);
+            float currentHeading = heading + headingWobble;
 
-            float px = startX + st * cosA * 1.5f - displacement * sinA;
-            float py = startY + st * sinA * 1.5f + displacement * cosA;
+            float squiggle = amplitude * 0.25f * Mth.sin(frequency * step + timeOffset);
+            float micro = amplitude * 0.1f * Mth.sin(frequency * 3.2f * step + timeOffset * 1.4f + index);
+
+            float cosH = Mth.cos(currentHeading);
+            float sinH = Mth.sin(currentHeading);
+
+            px += cosH * 1.3f - (squiggle + micro) * sinH * 0.12f;
+            py += sinH * 1.3f + (squiggle + micro) * cosH * 0.12f;
 
             int ix = (int) px;
             int iy = (int) py;

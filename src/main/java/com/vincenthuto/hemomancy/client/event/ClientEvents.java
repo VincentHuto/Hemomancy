@@ -17,6 +17,7 @@ import com.vincenthuto.hemomancy.client.render.entity.blood.iron.IronWallRendere
 import com.vincenthuto.hemomancy.client.render.entity.mob.AbhorentThoughtRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.BarbedUrchinRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.BloodDrunkPuppeteerRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.BloodThrallRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.ChitiniteRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.ChthonianQueenRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.ChthonianRenderer;
@@ -342,6 +343,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
 			event.registerEntityRenderer(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerRenderer::new);
 			event.registerEntityRenderer(EntityInit.enthralled_doll.get(), EnthralledDollRenderer::new);
+			event.registerEntityRenderer(EntityInit.blood_thrall.get(), BloodThrallRenderer::new);
 			event.registerEntityRenderer(EntityInit.lump_of_thought.get(), LumpOfThoughtRenderer::new);
 			event.registerEntityRenderer(EntityInit.chthonian_queen.get(), ChthonianQueenRenderer::new);
 			event.registerEntityRenderer(EntityInit.abhorent_thought.get(), AbhorentThoughtRenderer::new);

@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.slot.JuiceinatorFlaskSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.JuiceinatorFuelSlot;
 import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
@@ -27,187 +26,199 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+/**
+ * Juiceinator menu — 3 container slots + player inventory.
+ * <ul>
+ *   <li>Slot 0 (index 0) = Input ingredient</li>
+ *   <li>Slot 1 (index 1) = Flask (cured clay flasks)</li>
+ *   <li>Slot 2 (index 2) = Result output</li>
+ * </ul>
+ * Container data: [0] = heated (0/1), [1] = cookingProgress, [2] = cookingTotalTime
+ */
 public class JuiceinatorMenu extends AbstractContainerMenu {
 
 	public static final int INGREDIENT_SLOT = 0;
-	public static final int FUEL_SLOT = 1;
+	public static final int FLASK_SLOT = 1;
 	public static final int RESULT_SLOT = 2;
-	public static final int SLOT_COUNT = 4;
-	public static final int DATA_COUNT = 4;
-	private static JuicinatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
-		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
-		Objects.requireNonNull(data, "data cannot be null");
-		final BlockEntity tileAtPos = playerInv.player.level().getBlockEntity(data.readBlockPos());
-		if (tileAtPos instanceof JuicinatorBlockEntity) {
-			return (JuicinatorBlockEntity) tileAtPos;
-		}
-		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
-	}
+	public static final int SLOT_COUNT = 3;
+	public static final int DATA_COUNT = 3;
+
+	// Crafting area height — matches the screen's layout
+	public static final int CRAFT_AREA_HEIGHT = 80;
+
+	// Player inventory starts after the 3 container slots
+	private static final int INV_START = SLOT_COUNT;         // 3
+	private static final int INV_END = INV_START + 27;       // 30
+	private static final int HOTBAR_END = INV_END + 9;       // 39
+
 	private final JuicinatorBlockEntity container;
 	private final ContainerData data;
 	protected final Level level;
 	private final RecipeType<? extends AbstractCookingRecipe> recipeType;
+	private final JuicinatorBlockEntity te;
 
-	private JuicinatorBlockEntity te;
+	// ---- Constructors ----
 
+	private static JuicinatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf buf) {
+		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
+		Objects.requireNonNull(buf, "data cannot be null");
+		final BlockEntity tileAtPos = playerInv.player.level().getBlockEntity(buf.readBlockPos());
+		if (tileAtPos instanceof JuicinatorBlockEntity be) {
+			return be;
+		}
+		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
+	}
+
+	/** Network constructor (client side) */
 	public JuiceinatorMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
 		this(windowId, playerInventory, getBlockEntity(playerInventory, data));
 	}
 
-	public JuiceinatorMenu(int windowIdIn, Inventory playerInventoryIn, JuicinatorBlockEntity blockEntityJuicinator) {
-		this(windowIdIn, playerInventoryIn, blockEntityJuicinator, new SimpleContainerData(4));
+	/** Server-side convenience (no explicit data container) */
+	public JuiceinatorMenu(int windowId, Inventory playerInventory, JuicinatorBlockEntity blockEntity) {
+		this(windowId, playerInventory, blockEntity, new SimpleContainerData(DATA_COUNT));
 	}
 
+	/** Full constructor */
 	public JuiceinatorMenu(final int windowId, final Inventory playerInventory, final JuicinatorBlockEntity container,
 			final ContainerData containerData) {
 		super(ContainerInit.juiceinator.get(), windowId);
 		this.te = container;
 		this.recipeType = RecipeInit.juiceinator_recipe_type.get();
-		checkContainerSize(container, 4);
-		checkContainerDataCount(containerData, 4);
+		checkContainerSize(container, SLOT_COUNT);
+		checkContainerDataCount(containerData, DATA_COUNT);
 		this.container = container;
 		this.data = containerData;
 		this.level = playerInventory.player.level();
-		this.addSlot(new Slot(container, 0, 56, 17));
-		this.addSlot(new JuiceinatorFlaskSlot(this, container, 3, 30, 35));
-		this.addSlot(new JuiceinatorFuelSlot(this, container, 1, 56, 53));
-		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, 2, 116, 35));
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 9; ++j) {
-				this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+
+		// Container slots — positions designed for custom-rendered screen
+		// Input slot: left-center of crafting area
+		this.addSlot(new Slot(container, INGREDIENT_SLOT, 44, 32));
+		// Flask slot: underneath the blood volume bar (extraction zone)
+		this.addSlot(new JuiceinatorFlaskSlot(this, container, FLASK_SLOT, 155, 58));
+		// Result slot: right of crafting area
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
+
+		// Player inventory (3 rows) — pushed down below crafting area
+		int invY = CRAFT_AREA_HEIGHT + 14;
+		for (int row = 0; row < 3; ++row) {
+			for (int col = 0; col < 9; ++col) {
+				this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, invY + row * 18));
 			}
 		}
+		// Hotbar
+		int hotbarY = invY + 58;
 		for (int k = 0; k < 9; ++k) {
-			this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
+			this.addSlot(new Slot(playerInventory, k, 8 + k * 18, hotbarY));
 		}
+
 		this.addDataSlots(containerData);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected boolean canSmelt(ItemStack p_38978_) {
-		return this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType,
-				new SimpleContainer(p_38978_), this.level).isPresent();
+	// ---- Data accessors ----
+
+	/** Whether the juiceinator is currently being heated (fire below) */
+	public boolean isHeated() {
+		return this.data.get(0) > 0;
 	}
 
-	public void clearCraftingContent() {
-		this.getSlot(0).set(ItemStack.EMPTY);
-		this.getSlot(2).set(ItemStack.EMPTY);
-	}
-
-	public void fillCraftSlotsStackedContents(StackedContents p_38976_) {
-		if (this.container instanceof StackedContentsCompatible) {
-			((StackedContentsCompatible) this.container).fillStackedContents(p_38976_);
-		}
-	}
-
+	/** Progress scaled 0–24 for rendering */
 	public int getBurnProgress() {
-		int i = this.data.get(2);
-		int j = this.data.get(3);
-		return j != 0 && i != 0 ? i * 24 / j : 0;
+		int progress = this.data.get(1);
+		int total = this.data.get(2);
+		return total != 0 && progress != 0 ? progress * 24 / total : 0;
 	}
 
-	public int getGridHeight() {
-		return 1;
-	}
-
-	public int getGridWidth() {
-		return 1;
-	}
-
-	public int getLitProgress() {
-		int i = this.data.get(1);
-		if (i == 0) {
-			i = 200;
-		}
-		return this.data.get(0) * 13 / i;
-	}
-
-	public int getResultSlotIndex() {
-		return 2;
-	}
-
-	public int getSize() {
-		return 4;
+	/** Whether actively cooking */
+	public boolean isCooking() {
+		return this.data.get(1) > 0 && isHeated();
 	}
 
 	public JuicinatorBlockEntity getTe() {
 		return te;
 	}
 
-	public boolean isFuel(ItemStack p_38989_) {
-		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.recipeType) > 0;
+	// ---- Recipe helpers ----
+
+	@SuppressWarnings("unchecked")
+	protected boolean canSmelt(ItemStack stack) {
+		return this.level.getRecipeManager().getRecipeFor(
+				(RecipeType<AbstractCookingRecipe>) this.recipeType,
+				new SimpleContainer(stack), this.level).isPresent();
 	}
 
-	public boolean isLit() {
-		return this.data.get(0) > 0;
+	public boolean isFlask(ItemStack stack) {
+		return stack.getItem() == HLItemInit.cured_clay_flask.get();
 	}
+
+	// ---- Shift-click logic ----
 
 	@Override
-	public ItemStack quickMoveStack(Player p_38986_, int index) {
-		ItemStack itemstack = ItemStack.EMPTY;
+	public ItemStack quickMoveStack(Player player, int index) {
+		ItemStack copy = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
-		if (slot != null && slot.hasItem()) {
-			ItemStack itemstack1 = slot.getItem();
-			itemstack = itemstack1.copy();
-			if (index == 2) {
-				if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
-					return ItemStack.EMPTY;
-				}
-				slot.onQuickCraft(itemstack1, itemstack);
-			} else if (index != 1 && index != 0) {
-				if (this.canSmelt(itemstack1)) {
-					if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (this.isFuel(itemstack1)) {
-					if (!this.moveItemStackTo(itemstack1, 1, 3, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (itemstack1.getItem() == HLItemInit.cured_clay_flask.get()) {
-					if (!this.moveItemStackTo(itemstack1, 1, 4, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (index >= 3 && index < 30) {
-					if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
-						return ItemStack.EMPTY;
-					}
-				} else if (index >= 30 && index < 39 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
-					return ItemStack.EMPTY;
-				}
-			} else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
-				return ItemStack.EMPTY;
-			}
+		if (slot == null || !slot.hasItem()) return copy;
 
-			if (itemstack1.isEmpty()) {
-				slot.set(ItemStack.EMPTY);
-			} else {
-				slot.setChanged();
-			}
+		ItemStack slotStack = slot.getItem();
+		copy = slotStack.copy();
 
-			if (itemstack1.getCount() == itemstack.getCount()) {
-				return ItemStack.EMPTY;
-			}
-
-			slot.onTake(p_38986_, itemstack1);
+		// Moving FROM container slots to player inventory
+		if (index == RESULT_SLOT) {
+			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
+			slot.onQuickCraft(slotStack, copy);
+		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT) {
+			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, false)) return ItemStack.EMPTY;
 		}
-		return itemstack;
+		// Moving FROM player inventory to container
+		else {
+			if (this.canSmelt(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, INGREDIENT_SLOT, INGREDIENT_SLOT + 1, false)) return ItemStack.EMPTY;
+			} else if (this.isFlask(slotStack)) {
+				if (!this.moveItemStackTo(slotStack, FLASK_SLOT, FLASK_SLOT + 1, false)) return ItemStack.EMPTY;
+			} else if (index >= INV_START && index < INV_END) {
+				if (!this.moveItemStackTo(slotStack, INV_END, HOTBAR_END, false)) return ItemStack.EMPTY;
+			} else if (index >= INV_END && index < HOTBAR_END) {
+				if (!this.moveItemStackTo(slotStack, INV_START, INV_END, false)) return ItemStack.EMPTY;
+			}
+		}
+
+		if (slotStack.isEmpty()) {
+			slot.set(ItemStack.EMPTY);
+		} else {
+			slot.setChanged();
+		}
+
+		if (slotStack.getCount() == copy.getCount()) return ItemStack.EMPTY;
+		slot.onTake(player, slotStack);
+		return copy;
 	}
 
-	public boolean recipeMatches(Recipe<? super JuicinatorBlockEntity> p_38980_) {
-		return p_38980_.matches(this.container, this.level);
+	// ---- Misc ----
+
+	public void clearCraftingContent() {
+		this.getSlot(INGREDIENT_SLOT).set(ItemStack.EMPTY);
+		this.getSlot(RESULT_SLOT).set(ItemStack.EMPTY);
+	}
+
+	public void fillCraftSlotsStackedContents(StackedContents contents) {
+		((StackedContentsCompatible) this.container).fillStackedContents(contents);
+	}
+
+	public int getGridWidth() { return 1; }
+	public int getGridHeight() { return 1; }
+	public int getResultSlotIndex() { return RESULT_SLOT; }
+	public int getSize() { return SLOT_COUNT; }
+
+	public boolean recipeMatches(Recipe<? super JuicinatorBlockEntity> recipe) {
+		return recipe.matches(this.container, this.level);
+	}
+
+	public boolean shouldMoveToInventory(int slotIndex) {
+		return slotIndex != RESULT_SLOT;
 	}
 
 	@Override
-	public void setData(int p_38855_, int p_38856_) {
-		super.setData(p_38855_, p_38856_);
-	}
-
-	public boolean shouldMoveToInventory(int p_150463_) {
-		return p_150463_ != 1;
-	}
-
-	@Override
-	public boolean stillValid(Player p_38974_) {
-		return this.container.stillValid(p_38974_);
+	public boolean stillValid(Player player) {
+		return this.container.stillValid(player);
 	}
 }

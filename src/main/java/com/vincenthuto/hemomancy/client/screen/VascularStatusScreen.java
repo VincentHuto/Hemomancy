@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
@@ -12,7 +11,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
@@ -26,9 +24,6 @@ import java.util.Random;
  */
 public class VascularStatusScreen extends Screen {
 
-	private static final ResourceLocation BACKGROUND = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/gui/vascular_border.png");
-
 	private static final int GUI_WIDTH = 190;
 	private static final int GUI_HEIGHT = 254;
 
@@ -37,10 +32,11 @@ public class VascularStatusScreen extends Screen {
 
 	/**
 	 * Stores per-vein parameters seeded once at init:
-	 * [i][0] = startX ratio (0-1), [i][1] = startY ratio (0-1),
+	 * [i][0] = startX ratio, [i][1] = startY ratio,
 	 * [i][2] = base angle (radians), [i][3] = speed multiplier,
 	 * [i][4] = amplitude, [i][5] = frequency, [i][6] = length (steps),
-	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness)
+	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness),
+	 * [i][9] = curvature per step
 	 */
 	private float[][] veinParams;
 
@@ -57,17 +53,18 @@ public class VascularStatusScreen extends Screen {
 		super.init();
 		// Seed vein parameters deterministically so they stay stable while the screen is open
 		Random rand = new Random(42L);
-		veinParams = new float[VEIN_COUNT][9];
+		veinParams = new float[VEIN_COUNT][10];
 		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();                      // startX ratio
-			veinParams[i][1] = rand.nextFloat();                      // startY ratio
+			veinParams[i][0] = rand.nextFloat();                          // startX ratio
+			veinParams[i][1] = rand.nextFloat();                          // startY ratio
 			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;       // speed mult
-			veinParams[i][4] = 8f + rand.nextFloat() * 18f;          // amplitude
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;     // frequency
-			veinParams[i][6] = 60 + rand.nextInt(120);                // length (steps)
-			veinParams[i][7] = 1 + rand.nextInt(3);                   // thickness
-			veinParams[i][8] = rand.nextFloat();                      // red tint brightness
+			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;           // speed mult
+			veinParams[i][4] = 12f + rand.nextFloat() * 24f;             // amplitude (higher = wider swirls)
+			veinParams[i][5] = 0.06f + rand.nextFloat() * 0.12f;         // frequency (higher = tighter curves)
+			veinParams[i][6] = 70 + rand.nextInt(120);                    // length (steps)
+			veinParams[i][7] = 1 + rand.nextInt(3);                       // thickness
+			veinParams[i][8] = rand.nextFloat();                           // red tint brightness
+			veinParams[i][9] = (rand.nextFloat() - 0.5f) * 0.05f;        // curvature per step
 		}
 	}
 
@@ -95,6 +92,7 @@ public class VascularStatusScreen extends Screen {
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
+		graphics.drawCenteredString(this.font, "Hover sections for details", centerX, guiTop + 18, 0xFF553333);
 
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
@@ -104,22 +102,37 @@ public class VascularStatusScreen extends Screen {
 			renderBodyPartOverlays(graphics, vascular, centerX, centerY);
 			renderSectionLabels(graphics, vascular, centerX, centerY, mouseX, mouseY);
 		});
+
+		// Footer
+		graphics.drawCenteredString(this.font, "§4§l— §c§oVenous Network §4§l—",
+				centerX, guiTop + GUI_HEIGHT - 14, 0xFF882222);
 	}
 
-	// ───── Programmatic Dark-Red Border ─────
+	// ───── Gradient Dark-Red Border ─────
 
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		int outer = 0xFF330808;
-		gfx.fill(x, y, x + w, y + 1, outer);
-		gfx.fill(x, y + h - 1, x + w, y + h, outer);
-		gfx.fill(x, y, x + 1, y + h, outer);
-		gfx.fill(x + w - 1, y, x + w, y + h, outer);
-
-		int inner = 0xFF220606;
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
+		int[] colors = {
+			0xFF6B1010,  // outermost — bright crimson
+			0xFF4A0C0C,  // mid-outer
+			0xFF300808,  // mid-inner
+			0xFF1A0404,  // innermost — near-black maroon
+		};
+		for (int i = 0; i < colors.length; i++) {
+			int c = colors[i];
+			int xi = x + i;
+			int yi = y + i;
+			int wi = w - i * 2;
+			int hi = h - i * 2;
+			gfx.fill(xi, yi, xi + wi, yi + 1, c);
+			gfx.fill(xi, yi + hi - 1, xi + wi, yi + hi, c);
+			gfx.fill(xi, yi, xi + 1, yi + hi, c);
+			gfx.fill(xi + wi - 1, yi, xi + wi, yi + hi, c);
+		}
+		int hl = 0xFF8A1818;
+		gfx.fill(x, y, x + 2, y + 2, hl);
+		gfx.fill(x + w - 2, y, x + w, y + 2, hl);
+		gfx.fill(x, y + h - 2, x + 2, y + h, hl);
+		gfx.fill(x + w - 2, y + h - 2, x + w, y + h, hl);
 	}
 
 	// ───── Procedural Animated Vein Background ─────
@@ -175,11 +188,9 @@ public class VascularStatusScreen extends Screen {
 	}
 
 	/**
-	 * Draws a single animated vein tendril as a squiggling curve within the GUI bounds.
-	 * The curve is built from small filled rectangles placed along a parametric path:
-	 *   x(t) = startX + t * cos(angle) - amplitude * sin(freq * t + timeOffset) * sin(angle)
-	 *   y(t) = startY + t * sin(angle) + amplitude * sin(freq * t + timeOffset) * cos(angle)
-	 * This makes a sine-wave that "swims" perpendicular to its travel direction.
+	 * Draws a single animated vein tendril that curls and flows organically.
+	 * The heading rotates per step (curvature) producing spirals, with sine
+	 * wobbles layered on top for fine organic detail.
 	 */
 	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
 								 int gx, int gy, int gw, int gh) {
@@ -193,49 +204,46 @@ public class VascularStatusScreen extends Screen {
 		int length = (int) p[6];
 		int thickness = (int) p[7];
 		float brightness = p[8];
+		float curvature = p[9];
 
-		// The whole vein drifts slowly: its angle oscillates over time
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-
-		// Time offset makes the wave swim along the tendril
 		float timeOffset = time * speed * 2.0f;
+		float liveCurvature = curvature + 0.01f * Mth.sin(time * speed * 0.3f + index * 2.1f);
 
-		// Color: dark red with varying brightness, semi-transparent
 		int baseRed = (int) (40 + 50 * brightness);
 		int baseGreen = (int) (2 + 8 * brightness);
 		int baseBlue = (int) (5 + 5 * brightness);
 
+		float px = startX;
+		float py = startY;
+		float heading = baseAngle + 0.2f * Mth.sin(time * speed * 0.25f + index);
+
 		for (int step = 0; step < length; step++) {
-			float t = step;
+			heading += liveCurvature;
 
-			// Lateral displacement (the squiggle)
-			float squiggle = amplitude * Mth.sin(frequency * t + timeOffset);
+			float headingWobble = 0.06f * Mth.sin(frequency * 2.0f * step + timeOffset)
+					+ 0.04f * Mth.sin(frequency * 4.0f * step + timeOffset * 1.5f + index);
+			float currentHeading = heading + headingWobble;
 
-			// A secondary smaller squiggle for organic feel
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * t + timeOffset * 1.4f + index);
+			float squiggle = amplitude * 0.25f * Mth.sin(frequency * step + timeOffset);
+			float micro = amplitude * 0.1f * Mth.sin(frequency * 3.2f * step + timeOffset * 1.4f + index);
 
-			float displacement = squiggle + microSquiggle;
+			float cosH = Mth.cos(currentHeading);
+			float sinH = Mth.sin(currentHeading);
 
-			// Position along the main travel direction + perpendicular displacement
-			float px = startX + t * cosA * 1.5f - displacement * sinA;
-			float py = startY + t * sinA * 1.5f + displacement * cosA;
+			px += cosH * 1.3f - (squiggle + micro) * sinH * 0.12f;
+			py += sinH * 1.3f + (squiggle + micro) * cosH * 0.12f;
 
 			int ix = (int) px;
 			int iy = (int) py;
 
-			// Skip if outside GUI bounds (scissor handles clipping, but skip for perf)
 			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
 				continue;
 			}
 
-			// Fade at the tips of the tendril
 			float tipFade = 1f;
 			if (step < 10) tipFade = step / 10f;
 			else if (step > length - 10) tipFade = (length - step) / 10f;
 
-			// Pulsing brightness over time
 			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
 
 			int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
@@ -425,21 +433,27 @@ public class VascularStatusScreen extends Screen {
 		String flowName = HLTextUtils.toProperCase(flow.toString());
 
 		int nameColor = getTextColorForHealth(health);
+		int flowColor = getFlowColor(flow);
 
 		// Section name
 		graphics.drawString(this.font, name, x, y, nameColor, true);
 		// Percentage
 		graphics.drawString(this.font, percent, x, y + 10, nameColor, true);
+		// Flow state (smaller, dimmer)
+		graphics.drawString(this.font, flowName, x, y + 20, flowColor, true);
+		// Colored dot indicator beside the flow name
+		int dotX = x + this.font.width(flowName) + 2;
+		graphics.fill(dotX, y + 22, dotX + 3, y + 25, (0xCC << 24) | (flowColor & 0x00FFFFFF));
 
 		// Tooltip on hover over label area
-		int labelWidth = Math.max(this.font.width(name), this.font.width(percent));
-		if (mouseX >= x && mouseX <= x + labelWidth && mouseY >= y && mouseY <= y + 20) {
+		int labelWidth = Math.max(this.font.width(name), Math.max(this.font.width(percent), this.font.width(flowName)));
+		if (mouseX >= x && mouseX <= x + labelWidth && mouseY >= y && mouseY <= y + 28) {
 			List<Component> tooltip = new ArrayList<>();
 			tooltip.add(Component.literal(name).withStyle(s -> s.withColor(nameColor)));
 			tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
 					.withStyle(s -> s.withColor(0xAAAAAA)));
 			tooltip.add(Component.literal("Flow: " + flowName)
-					.withStyle(s -> s.withColor(getFlowColor(flow))));
+					.withStyle(s -> s.withColor(flowColor)));
 			graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
 		}
 	}

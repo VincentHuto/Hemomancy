@@ -112,6 +112,7 @@
 	"entity.hemomancy.blood_cloud": "Blood Cloud",
 	"entity.hemomancy.blood_cloud_carrier": "Blood Cloud Carrier",
 	"entity.hemomancy.blood_drunk_puppeteer": "Blood Drunk Puppeteer",
+	"entity.hemomancy.blood_thrall": "Blood Thrall",
 	"entity.hemomancy.blood_needle": "Blood Needle",
 	"entity.hemomancy.blood_shot": "Blood Shot",
 	"entity.hemomancy.chitinite": "Chitinite",
@@ -154,6 +155,7 @@
 	"item.hemomancy.bleeding_bulb": "Bleeding Bulb",
 	"item.hemomancy.blood_absorption": "Blood Absorption",
 	"item.hemomancy.blood_bolt": "Blood Bolt",
+	"item.hemomancy.blood_thrall_effigy": "Blood Thrall Effigy",
 	"item.hemomancy.blood_rock": "Blood Rock",
 	"item.hemomancy.blood_crystal_shard": "Blood Crystal Shard",
 	"item.hemomancy.cleansed_blood_crystal_shard": "Cleansed Blood Crystal Shard",
@@ -440,6 +442,11 @@
 	"advancements.hemomancy.old_habits.description": "Obtain any enzyme and begin tuning your Blood Tendency",
 	"advancements.hemomancy.unstained.title": "Unstained",
 	"advancements.hemomancy.unstained.description": "Obtain Hemolytic Solution, the weapon of anti-blood zealots",
+	"advancements.hemomancy.bleeding_a_stone.title": "Bleeding a Stone",
+	"advancements.hemomancy.bleeding_a_stone.description": "Craft a Juiceinator — if you can squeeze blood from this, you can squeeze blood from anything",
+
+	"container.hemomancy.juiceinator": "Juiceinator",
+	"gui.hemomancy.juiceinator.requires_fire": "Requires fire below",
 
 	"item.hemomancy.vivianite_cluster": "Vivianite Cluster",
 	"item.hemomancy.vivianite_scalpel": "Vivianite Scalpel",

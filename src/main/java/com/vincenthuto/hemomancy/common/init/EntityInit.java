@@ -73,6 +73,12 @@ public class EntityInit {
                             .sized(0.6F, 1.8F)
                             .build(Hemomancy.rloc("blood_drunk_puppeteer").toString()));
 
+    public static final RegistryObject<EntityType<BloodThrallEntity>> blood_thrall = ENTITY_TYPES
+            .register("blood_thrall",
+                    () -> EntityType.Builder.<BloodThrallEntity>of(BloodThrallEntity::new, MobCategory.CREATURE)
+                            .sized(0.6F, 0.7F)
+                            .build(Hemomancy.rloc("blood_thrall").toString()));
+
     public static final RegistryObject<EntityType<EnthralledDollEntity>> enthralled_doll = ENTITY_TYPES
             .register("enthralled_doll",
                     () -> EntityType.Builder.<EnthralledDollEntity>of(EnthralledDollEntity::new, MobCategory.MONSTER)
@@ -261,6 +267,7 @@ public class EntityInit {
         event.put(EntityInit.blood_drunk_puppeteer.get(), BloodDrunkPuppeteerEntity.setAttributes().build());
         event.put(EntityInit.morphling_polyp.get(), MorphlingPolypEntity.setAttributes().build());
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
+        event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
 
     }
 

@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.block;
 
-import javax.annotation.Nullable;
-
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
@@ -49,140 +47,148 @@ public class JuiceinatorBlock extends BaseEntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
-	@Nullable
-	protected static <T extends BlockEntity> BlockEntityTicker<T> createFurnaceTicker(Level p_151988_,
-			BlockEntityType<T> p_151989_, BlockEntityType<? extends JuicinatorBlockEntity> p_151990_) {
-		return p_151988_.isClientSide ? null
-				: createTickerHelper(p_151989_, p_151990_, JuicinatorBlockEntity::serverTick);
-	}
-
-	public JuiceinatorBlock(BlockBehaviour.Properties p_48687_) {
-		super(p_48687_);
+	public JuiceinatorBlock(BlockBehaviour.Properties props) {
+		super(props);
 		this.registerDefaultState(
-				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, Boolean.valueOf(false)));
+				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
 	}
 
 	@Override
-	public void animateTick(BlockState p_53635_, Level p_53636_, BlockPos p_53637_, RandomSource p_53638_) {
-		if (p_53635_.getValue(LIT)) {
-			double d0 = p_53637_.getX() + 0.5D;
-			double d1 = p_53637_.getY();
-			double d2 = p_53637_.getZ() + 0.5D;
-			if (p_53638_.nextDouble() < 0.1D) {
-				p_53636_.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F,
-						false);
+	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+		if (state.getValue(LIT)) {
+			double x = pos.getX() + 0.5;
+			double y = pos.getY() + 1.0;
+			double z = pos.getZ() + 0.5;
+
+			// Bubbling / distilling sound
+			if (random.nextDouble() < 0.15) {
+				level.playLocalSound(x, y, z, SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS,
+						0.6F, 0.8F + random.nextFloat() * 0.4F, false);
 			}
-			Direction direction = p_53635_.getValue(FACING);
-			Direction.Axis direction$axis = direction.getAxis();
-			double d4 = p_53638_.nextDouble() * 0.6D - 0.3D;
-			double d5 = direction$axis == Direction.Axis.X ? direction.getStepX() * 0.52D : d4;
-			double d6 = p_53638_.nextDouble() * 6.0D / 16.0D;
-			double d7 = direction$axis == Direction.Axis.Z ? direction.getStepZ() * 0.52D : d4;
-			p_53636_.addParticle(ParticleTypes.LANDING_LAVA, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
-			p_53636_.addParticle(EmberParticleFactory.createData(ParticleColor.RED, 2, 0.15f, 150), d0 + d5, d1 + d6,
-					d2 + d7, 0.0D, 0.0D, 0.0D);
+
+			// Blood drip particles rising from the top like steam
+			for (int i = 0; i < 2; i++) {
+				double ox = (random.nextDouble() - 0.5) * 0.4;
+				double oz = (random.nextDouble() - 0.5) * 0.4;
+				level.addParticle(ParticleTypes.DRIPPING_LAVA, x + ox, y + 0.1, z + oz,
+						0.0, 0.02, 0.0);
+			}
+
+			// Red ember particles
+			if (random.nextDouble() < 0.3) {
+				double ox = (random.nextDouble() - 0.5) * 0.3;
+				double oz = (random.nextDouble() - 0.5) * 0.3;
+				level.addParticle(
+						EmberParticleFactory.createData(ParticleColor.RED, 2, 0.12f, 120),
+						x + ox, y + 0.15, z + oz, 0.0, 0.015, 0.0);
+			}
 		}
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_48725_) {
-		p_48725_.add(FACING, LIT);
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(FACING, LIT);
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState p_48702_, Level p_48703_, BlockPos p_48704_) {
-		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(p_48703_.getBlockEntity(p_48704_));
+	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
 	}
 
 	@Override
 	public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-		return super.getLightEmission(state, world, pos);
+		return state.getValue(LIT) ? 8 : 0;
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState p_48727_) {
+	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext p_48689_) {
-		return this.defaultBlockState().setValue(FACING, p_48689_.getHorizontalDirection().getOpposite());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState p_153213_,
-			BlockEntityType<T> p_153214_) {
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
 		return level.isClientSide ? null
-				: createTickerHelper(p_153214_, BlockEntityInit.juiceinator.get(), JuicinatorBlockEntity::serverTick);
+				: createTickerHelper(type, BlockEntityInit.juiceinator.get(), JuicinatorBlockEntity::serverTick);
 	}
 
 	@Override
-	public boolean hasAnalogOutputSignal(BlockState p_48700_) {
+	public boolean hasAnalogOutputSignal(BlockState state) {
 		return true;
 	}
 
 	@Override
 	@SuppressWarnings("deprecation")
-	public BlockState mirror(BlockState p_48719_, Mirror p_48720_) {
-		return p_48719_.rotate(p_48720_.getRotation(p_48719_.getValue(FACING)));
+	public BlockState mirror(BlockState state, Mirror mirror) {
+		return state.rotate(mirror.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos p_153277_, BlockState p_153278_) {
-		return new JuicinatorBlockEntity(p_153277_, p_153278_);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new JuicinatorBlockEntity(pos, state);
 	}
 
 	@Override
-	public void onRemove(BlockState p_48713_, Level p_48714_, BlockPos p_48715_, BlockState p_48716_,
-			boolean p_48717_) {
-		if (!p_48713_.is(p_48716_.getBlock())) {
-			BlockEntity blockentity = p_48714_.getBlockEntity(p_48715_);
-			if (blockentity instanceof JuicinatorBlockEntity) {
-				if (p_48714_ instanceof ServerLevel) {
-					Containers.dropContents(p_48714_, p_48715_, (JuicinatorBlockEntity) blockentity);
-					((JuicinatorBlockEntity) blockentity).getRecipesToAwardAndPopExperience((ServerLevel) p_48714_,
-							Vec3.atCenterOf(p_48715_));
-				}
-
-				p_48714_.updateNeighbourForOutputSignal(p_48715_, this);
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+		super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+		// Re-check heat when a neighbor changes (e.g. fire placed/removed below)
+		if (!level.isClientSide) {
+			boolean heated = JuicinatorBlockEntity.isHeatSource(level, pos);
+			if (state.getValue(LIT) != heated) {
+				level.setBlock(pos, state.setValue(LIT, heated), 3);
 			}
-			super.onRemove(p_48713_, p_48714_, p_48715_, p_48716_, p_48717_);
+		}
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			BlockEntity be = level.getBlockEntity(pos);
+			if (be instanceof JuicinatorBlockEntity juiceinator) {
+				if (level instanceof ServerLevel serverLevel) {
+					Containers.dropContents(level, pos, juiceinator);
+					juiceinator.getRecipesToAwardAndPopExperience(serverLevel, Vec3.atCenterOf(pos));
+				}
+				level.updateNeighbourForOutputSignal(pos, this);
+			}
+			super.onRemove(state, level, pos, newState, isMoving);
 		}
 	}
 
 	protected void openContainer(Level level, BlockPos pos, Player player) {
-
-		BlockEntity blockEntity = level.getBlockEntity(pos);
-		if (blockEntity instanceof JuicinatorBlockEntity te) {
+		BlockEntity be = level.getBlockEntity(pos);
+		if (be instanceof JuicinatorBlockEntity te) {
 			if (!level.isClientSide) {
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
 				NetworkHooks.openScreen((ServerPlayer) player, te, pos);
 			}
 		}
-
 	}
 
 	@Override
-	public BlockState rotate(BlockState p_48722_, Rotation p_48723_) {
-		return p_48722_.setValue(FACING, p_48723_.rotate(p_48722_.getValue(FACING)));
+	public BlockState rotate(BlockState state, Rotation rotation) {
+		return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	public void setPlacedBy(Level p_48694_, BlockPos p_48695_, BlockState p_48696_, LivingEntity p_48697_,
-			ItemStack p_48698_) {
-		if (p_48698_.hasCustomHoverName()) {
-			BlockEntity blockentity = p_48694_.getBlockEntity(p_48695_);
-			if (blockentity instanceof JuicinatorBlockEntity) {
-				((JuicinatorBlockEntity) blockentity).setCustomName(p_48698_.getHoverName());
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
+		if (stack.hasCustomHoverName()) {
+			BlockEntity be = level.getBlockEntity(pos);
+			if (be instanceof JuicinatorBlockEntity juiceinator) {
+				juiceinator.setCustomName(stack.getHoverName());
 			}
 		}
-
 	}
 
 	@Override
-	public InteractionResult use(BlockState p_48706_, Level p_48707_, BlockPos p_48708_, Player p_48709_,
-			InteractionHand p_48710_, BlockHitResult p_48711_) {
-		this.openContainer(p_48707_, p_48708_, p_48709_);
+	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+			InteractionHand hand, BlockHitResult hit) {
+		this.openContainer(level, pos, player);
 		return InteractionResult.CONSUME;
 	}
 }

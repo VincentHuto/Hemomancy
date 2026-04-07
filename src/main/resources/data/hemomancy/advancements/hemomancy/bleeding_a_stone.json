@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:juiceinator"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.bleeding_a_stone.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.bleeding_a_stone.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/root",
+  "criteria": {
+    "has_juiceinator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:juiceinator"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_juiceinator"
+    ]
+  ]
+}
