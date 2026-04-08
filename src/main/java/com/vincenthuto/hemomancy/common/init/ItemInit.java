@@ -21,15 +21,21 @@ import com.vincenthuto.hemomancy.common.item.memories.FerventHuskItem;
 import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
 import com.vincenthuto.hemomancy.common.item.memories.LethianBrewItem;
 import com.vincenthuto.hemomancy.common.item.memories.LethianDewItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.BatMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.CentipedeMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ChitiniteMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.FungalMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
 import com.vincenthuto.hemomancy.common.item.morphlings.LeechesMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.MoleMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.MothMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.PestsMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.TickMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.UrchinMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
@@ -71,10 +77,12 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -199,6 +207,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
 			() -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
 
+	// Gourd Foods
+	public static final RegistryObject<Item> gourd_slice = BASEITEMS.register("gourd_slice",
+			() -> new Item(new Item.Properties()
+					.food(new FoodProperties.Builder().nutrition(2).saturationMod(0.3F).fast().build())));
+	public static final RegistryObject<Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
+			() -> new Item(new Item.Properties()
+					.food(new FoodProperties.Builder().nutrition(1).saturationMod(0.2F).fast().build())));
+	public static final RegistryObject<Item> gourd_stew = BASEITEMS.register("gourd_stew",
+			() -> new BowlFoodItem(new Item.Properties().stacksTo(1)
+					.food(new FoodProperties.Builder().nutrition(7).saturationMod(0.6F).build())));
+
 	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
 			() -> new Item(new Item.Properties()));
@@ -294,6 +313,27 @@ public class ItemInit {
 			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.KIDNEYS));
 	public static final RegistryObject<Item> echo_of_heart = SPECIALITEMS.register("echo_of_heart",
 			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.HEART));
+	public static final RegistryObject<Item> memory_sanguine_mending = BASEITEMS.register("memory_sanguine_mending",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_mending));
+	public static final RegistryObject<Item> memory_hemosynthesis = BASEITEMS.register("memory_hemosynthesis",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemosynthesis));
+	public static final RegistryObject<Item> memory_blood_lamp = BASEITEMS.register("memory_blood_lamp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_lamp));
+	public static final RegistryObject<Item> memory_crimson_harvest = BASEITEMS.register("memory_crimson_harvest",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_harvest));
+	public static final RegistryObject<Item> memory_glacial_grasp = BASEITEMS.register("memory_glacial_grasp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_grasp));
+	public static final RegistryObject<Item> memory_sanguine_excavation = BASEITEMS.register(
+			"memory_sanguine_excavation",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_excavation));
+	public static final RegistryObject<Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
+	public static final RegistryObject<Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.umbral_step));
+	public static final RegistryObject<Item> memory_crimson_sight = BASEITEMS.register("memory_crimson_sight",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
+	public static final RegistryObject<Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));
@@ -342,6 +382,18 @@ public class ItemInit {
 			() -> new PestsMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_spider = BASEITEMS.register("morphling_spider",
 			() -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_moth = BASEITEMS.register("morphling_moth",
+			() -> new MothMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_tick = BASEITEMS.register("morphling_tick",
+			() -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
+			() -> new CentipedeMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_bat = BASEITEMS.register("morphling_bat",
+			() -> new BatMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_urchin = BASEITEMS.register("morphling_urchin",
+			() -> new UrchinMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_mole = BASEITEMS.register("morphling_mole",
+			() -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
@@ -699,6 +751,18 @@ public class ItemInit {
 								return 5;
 							} else if (selectedStack.getItem() == ItemInit.morphling_spider.get()) {
 								return 6;
+							} else if (selectedStack.getItem() == ItemInit.morphling_moth.get()) {
+								return 7;
+							} else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
+								return 8;
+							} else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
+								return 9;
+							} else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
+								return 10;
+							} else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
+								return 11;
+							} else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
+								return 12;
 							} else {
 								return 0;
 							}

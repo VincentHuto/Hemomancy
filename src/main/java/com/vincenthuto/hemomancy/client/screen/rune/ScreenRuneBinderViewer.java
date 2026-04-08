@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
@@ -18,10 +17,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -56,10 +53,8 @@ public class ScreenRuneBinderViewer extends Screen {
 	}
 
 	// ── Constants ───────────────────────────────────────────────────────
-	private static final ResourceLocation TEXTURE =
-			new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/rune_binder_gui.png");
 
-	/** Dimensions of the background GUI texture. */
+	/** Dimensions of the GUI panel. */
 	private static final int GUI_WIDTH = 200;
 	private static final int GUI_HEIGHT = 228;
 
@@ -166,21 +161,17 @@ public class ScreenRuneBinderViewer extends Screen {
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(graphics);
 
-		// Draw background texture (tiled/stretched to our GUI size)
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, TEXTURE);
-		graphics.blit(TEXTURE, left, top, 0, 0, Math.min(GUI_WIDTH, 175), GUI_HEIGHT);
-		// If the texture is smaller than GUI_WIDTH, fill the right side
-		if (GUI_WIDTH > 175) {
-			graphics.fill(left + 175, top, left + GUI_WIDTH, top + GUI_HEIGHT, 0xFF2B1A1A);
-		}
+		// ── Book-like parchment background ──────────────────────────────
+		renderBookBackground(graphics, left, top, GUI_WIDTH, GUI_HEIGHT);
 
 		// ── Title bar ───────────────────────────────────────────────────
 		int patternCount = entries.size();
-		String titleText = ChatFormatting.GOLD + "Rune Binder" + ChatFormatting.DARK_GRAY
+		String titleText = ChatFormatting.DARK_RED + "Rune Binder" + ChatFormatting.DARK_GRAY
 				+ " (" + patternCount + " pattern" + (patternCount != 1 ? "s" : "") + ")";
-		graphics.drawString(font, titleText, left + 26, top + 8, 0xFFFFFF, true);
+		graphics.drawString(font, titleText, left + 26, top + 8, 0x442200, false);
+
+		// Thin separator line below title
+		graphics.fill(left + 6, top + 20, left + GUI_WIDTH - 6, top + 21, 0x40442200);
 
 		// Binder icon in top-left
 		Lighting.setupFor3DItems();
@@ -242,7 +233,7 @@ public class ScreenRuneBinderViewer extends Screen {
 			graphics.drawString(font, emptyMsg,
 					left + (GUI_WIDTH - textWidth) / 2,
 					top + GUI_HEIGHT / 2 - 4,
-					0x888888, false);
+					0x998877, false);
 		}
 	}
 
@@ -251,12 +242,12 @@ public class ScreenRuneBinderViewer extends Screen {
 	 */
 	private void renderEntry(GuiGraphics graphics, PatternEntry entry,
 							 int x, int y, int entryWidth, boolean hovered, float partialTicks) {
-		// Background fill
-		int bgColor = hovered ? 0x60C8A050 : 0x30FFFFFF;
+		// Background fill — warm parchment tones
+		int bgColor = hovered ? 0x40885530 : 0x18442200;
 		graphics.fill(x, y, x + entryWidth, y + ENTRY_HEIGHT, bgColor);
 
-		// Border
-		int borderColor = hovered ? 0xAAC8A050 : 0x40FFFFFF;
+		// Border — subtle ink lines
+		int borderColor = hovered ? 0x60885530 : 0x25442200;
 		graphics.fill(x, y, x + entryWidth, y + 1, borderColor);                         // top
 		graphics.fill(x, y + ENTRY_HEIGHT - 1, x + entryWidth, y + ENTRY_HEIGHT, borderColor); // bottom
 		graphics.fill(x, y, x + 1, y + ENTRY_HEIGHT, borderColor);                       // left
@@ -276,12 +267,12 @@ public class ScreenRuneBinderViewer extends Screen {
 			}
 			name = name + "...";
 		}
-		int textColor = hovered ? 0xFFFFDD : 0xDDDDDD;
-		graphics.drawString(font, name, x + 24, y + 4, textColor, true);
+		int textColor = hovered ? 0x331100 : 0x553322;
+		graphics.drawString(font, name, x + 24, y + 4, textColor, false);
 
 		// Slot index label
-		String slotLabel = ChatFormatting.DARK_GRAY + "#" + (entry.slotIndex() + 1);
-		graphics.drawString(font, slotLabel, x + 24, y + 16, 0x999999, false);
+		String slotLabel = "#" + (entry.slotIndex() + 1);
+		graphics.drawString(font, slotLabel, x + 24, y + 16, 0x998877, false);
 
 		// Mini 8x8 pattern preview on the right side of the entry
 		if (entry.pattern() != null) {
@@ -297,7 +288,7 @@ public class ScreenRuneBinderViewer extends Screen {
 	private void renderMiniPattern(GuiGraphics graphics, byte[][] pattern, int x, int y, float partialTicks) {
 		// Background for the mini grid
 		int gridSize = 8 * MINI_CELL_SIZE;
-		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x80000000);
+		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x40442200);
 
 		// Pulsing color for active cells
 		float gameTime = (Minecraft.getInstance().level != null
@@ -315,7 +306,7 @@ public class ScreenRuneBinderViewer extends Screen {
 				if (pattern[i][j] != 0) {
 					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, activeColor);
 				} else {
-					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, 0x40333333);
+					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, 0x20886644);
 				}
 			}
 		}
@@ -326,7 +317,7 @@ public class ScreenRuneBinderViewer extends Screen {
 	 */
 	private void renderScrollbar(GuiGraphics graphics, int x, int y, int width, int height, int maxScroll) {
 		// Track background
-		graphics.fill(x, y, x + width, y + height, 0x40000000);
+		graphics.fill(x, y, x + width, y + height, 0x20442200);
 
 		// Thumb
 		float thumbRatio = (float) VISIBLE_ENTRIES / entries.size();
@@ -334,8 +325,57 @@ public class ScreenRuneBinderViewer extends Screen {
 		int scrollRange = height - thumbHeight;
 		int thumbY = y + (maxScroll > 0 ? (int) ((float) scrollOffset / maxScroll * scrollRange) : 0);
 
-		int thumbColor = draggingScrollbar ? 0xCCC8A050 : 0x99AAAAAA;
+		int thumbColor = draggingScrollbar ? 0xBB885530 : 0x77664422;
 		graphics.fill(x + 1, thumbY, x + width - 1, thumbY + thumbHeight, thumbColor);
+	}
+
+	// ── Book-like Background ───────────────────────────────────────────
+
+	/**
+	 * Renders a warm parchment/book-style background with a leather-bound
+	 * border, page crease, and subtle aged-edge shading.
+	 */
+	private void renderBookBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+		// Outer shadow (drop shadow around the book)
+		gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x44000000);
+
+		// Leather cover — dark brown outer frame
+		gfx.fill(x, y, x + w, y + h, 0xFF3B2312);
+
+		// Inner cover bevel — slightly lighter brown
+		gfx.fill(x + 2, y + 2, x + w - 2, y + h - 2, 0xFF4A3020);
+
+		// Parchment page area
+		int px = x + 5;
+		int py = y + 5;
+		int pw = w - 10;
+		int ph = h - 10;
+		gfx.fill(px, py, px + pw, py + ph, 0xFFD8C8A0);
+
+		// Slightly darker parchment edges (aged look)
+		// Top edge
+		gfx.fill(px, py, px + pw, py + 2, 0x18442200);
+		// Bottom edge
+		gfx.fill(px, py + ph - 2, px + pw, py + ph, 0x18442200);
+		// Left edge
+		gfx.fill(px, py, px + 2, py + ph, 0x18442200);
+		// Right edge
+		gfx.fill(px + pw - 2, py, px + pw, py + ph, 0x18442200);
+
+		// Spine crease — vertical shadow line near left edge
+		gfx.fill(px + 8, py + 4, px + 9, py + ph - 4, 0x20442200);
+		gfx.fill(px + 9, py + 4, px + 10, py + ph - 4, 0x10442200);
+
+		// Subtle horizontal ruled lines across the page (like faint notebook lines)
+		for (int ly = py + 22; ly < py + ph - 4; ly += 30) {
+			gfx.fill(px + 12, ly, px + pw - 6, ly + 1, 0x10886644);
+		}
+
+		// Leather border detail — thin highlight on top-left, shadow on bottom-right
+		gfx.fill(x, y, x + w, y + 1, 0xFF5A4030);      // top highlight
+		gfx.fill(x, y, x + 1, y + h, 0xFF5A4030);      // left highlight
+		gfx.fill(x, y + h - 1, x + w, y + h, 0xFF2A1808); // bottom shadow
+		gfx.fill(x + w - 1, y, x + w, y + h, 0xFF2A1808); // right shadow
 	}
 
 	// ── Input handling ──────────────────────────────────────────────────

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -59,6 +60,9 @@ public class PacketUpdateLivingStaffMorph {
 				player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
 					cap.setEquippedMorphling(fromJar.copy());
 				});
+
+				// Award morphling bond milestone
+				SkillPointGainEvents.onMorphlingEquipped(player);
 
 				// Sync to client
 				EquippedMorphlingEvents.syncToClient(player);

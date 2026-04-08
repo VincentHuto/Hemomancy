@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryD
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -317,6 +318,15 @@ public class HemoCommand {
 		source.sendSuccess(() -> Component.literal("Skill Points: ")
 				.append(Component.literal(String.valueOf(SkillPointInit.skillPoints)).withStyle(ChatFormatting.AQUA)),
 				false);
+		source.sendSuccess(() -> Component.literal("Milestones: ")
+				.append(Component.literal(SkillPointInit.completedMilestones.size() + "/" + HemoMilestone.values().length)
+						.withStyle(ChatFormatting.GOLD)),
+				false);
+		source.sendSuccess(() -> Component.literal("  Manip Uses: " + SkillPointInit.totalManipulationUses
+				+ "  Kills: " + SkillPointInit.totalKillsWithBlood
+				+ "  Rites: " + SkillPointInit.totalRitesCompleted
+				+ "  Advancements: " + SkillPointInit.totalHemoAdvancements)
+				.withStyle(ChatFormatting.GRAY), false);
 		return 1;
 	}
 
@@ -333,9 +343,14 @@ public class HemoCommand {
 		SkillPointInit.SKILL_TREE.clear();
 		SkillPointInit.BASE.clear();
 		SkillPointInit.skillPoints = 0;
+		SkillPointInit.completedMilestones.clear();
+		SkillPointInit.totalManipulationUses = 0;
+		SkillPointInit.totalKillsWithBlood = 0;
+		SkillPointInit.totalRitesCompleted = 0;
+		SkillPointInit.totalHemoAdvancements = 0;
 		SkillPointInit.init();
 		syncSkills(player);
-		source.sendSuccess(() -> Component.literal("Reset all skills and skill points").withStyle(ChatFormatting.YELLOW),
+		source.sendSuccess(() -> Component.literal("Reset all skills, milestones, and skill points").withStyle(ChatFormatting.YELLOW),
 				true);
 		return 1;
 	}

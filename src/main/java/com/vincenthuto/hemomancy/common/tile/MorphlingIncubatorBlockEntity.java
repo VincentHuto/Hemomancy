@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
@@ -13,6 +14,7 @@ import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
+import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
@@ -291,19 +293,25 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 	private void finishEnzymeFeed() {
 		ItemStack center = inventory.get(SLOT_CENTER);
-		if (center.isEmpty() || !(center.getItem() instanceof IMorphling)) return;
+		if (center.isEmpty() || !(center.getItem() instanceof IMorphling morphling)) return;
 
-		// Count enzymes and compute total strength boost
+		// Gather the morphling's enzyme preferences
+		EnumBloodTendency preferred = morphling.getPreferredTendency();
+		EnumBloodTendency secondary = morphling.getSecondaryTendency();
+
+		// Count enzymes and compute total effective strength with preference scaling
 		int enzymeCount = 0;
 		float totalStrength = 0;
 		for (int i = SLOT_CATALYST_START; i <= SLOT_CATALYST_END; i++) {
 			ItemStack stack = inventory.get(i);
 			if (stack.getItem() instanceof EnzymeItem enzyme) {
 				enzymeCount++;
-				totalStrength += enzyme.getAmount();
+				totalStrength += MorphlingItem.calculateEffectivePower(
+						enzyme.getAmount(), enzyme.getTend(), preferred, secondary);
 			} else if (stack.getItem() instanceof RecycledEnzymeItem recycled) {
 				enzymeCount++;
-				totalStrength += recycled.getAmount();
+				totalStrength += MorphlingItem.calculateEffectivePower(
+						recycled.getAmount(), recycled.getTend(), preferred, secondary);
 			}
 		}
 

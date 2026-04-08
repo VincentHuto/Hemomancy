@@ -13,10 +13,14 @@ import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
@@ -25,6 +29,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +37,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -298,6 +304,9 @@ public class CardinalRiteEvents {
 				false);
 	}
 
+	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
+	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
+
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
 	static {
@@ -338,10 +347,29 @@ public class CardinalRiteEvents {
 		}
 
 		// Spawn result item
+		String ritePath = rite.getRecipeId().getPath();
 		if (!recipe.getResult().isEmpty()) {
+			ItemStack resultStack = recipe.getResult().copy();
+
+			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
+			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
+				presignBloodlineLedger(sLevel, caster, resultStack);
+			}
+
+			// Bloodline recall rite: re-issue a ledger from the caster's existing bloodline
+			if (BLOODLINE_RECALL_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
+				if (!recallBloodlineLedger(sLevel, caster, resultStack)) {
+					// Caster has no bloodline — the rite still completes but the ledger stays unsigned
+					caster.displayClientMessage(
+							Component.literal("The blood remembers nothing... You have no bloodline to recall.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+				}
+			}
+
 			sLevel.addFreshEntity(new ItemEntity(sLevel,
 					center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-					recipe.getResult().copy()));
+					resultStack));
 		}
 
 		// Play completion sound
@@ -354,8 +382,10 @@ public class CardinalRiteEvents {
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
 
+		// Award rite completion milestone (first rite + tiered)
+		SkillPointGainEvents.onRiteCompleted(caster);
+
 		// Check if this rite grants an initiatory degree
-		String ritePath = rite.getRecipeId().getPath();
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
 		if (targetDegree != null) {
 			caster.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
@@ -363,6 +393,9 @@ public class CardinalRiteEvents {
 				if (currentDegree < targetDegree) {
 					degree.setDegreeNumber(targetDegree);
 					InitiatoryDegreeEvents.syncDegree(caster, degree);
+
+					// Award degree milestone skill points
+					SkillPointGainEvents.onDegreeReached(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
@@ -393,5 +426,68 @@ public class CardinalRiteEvents {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Pre-signs a bloodline ledger with the caster's newly founded bloodline.
+	 * Creates the bloodline, registers it in world data, sets the caster's capability,
+	 * and writes the signed state onto the ledger item so it can be redistributed.
+	 */
+	private static void presignBloodlineLedger(ServerLevel sLevel, ServerPlayer caster, ItemStack ledgerStack) {
+		String bloodLineName = caster.getName().getString() + "'s Blood Line";
+		UUID bloodLineUUID = new UUID(caster.getUUID().getMostSignificantBits(), sLevel.getGameTime());
+		ArrayList<UUID> uuids = new ArrayList<>();
+		Bloodline playerLine = new Bloodline(bloodLineName, caster.getUUID(), bloodLineUUID, uuids);
+
+		// Register bloodline in world-level saved data
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		savedData.registerBloodline(playerLine);
+
+		// Set the caster's bloodline capability
+		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			volume.setBloodLine(playerLine);
+			BloodVolumeEvents.syncVolume(caster, volume);
+		});
+
+		// Write signed state and bloodline data onto the ledger
+		CompoundTag compound = ledgerStack.getOrCreateTag();
+		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
+		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, playerLine.serialize());
+		ledgerStack.setTag(compound);
+
+		caster.displayClientMessage(
+				Component.literal("You have founded: " + playerLine.getName())
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Recalls a lost bloodline ledger by looking up the caster's existing bloodline
+	 * from world data and writing it onto the result item. This is a penitent rite —
+	 * the covenant does not forget, but it demands a price for carelessness.
+	 * Returns false if the caster has no bloodline to recall.
+	 */
+	private static boolean recallBloodlineLedger(ServerLevel sLevel, ServerPlayer caster, ItemStack ledgerStack) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline existingLine = savedData.getBloodlineForPlayer(caster.getUUID());
+
+		if (existingLine == null || !existingLine.isValid()) {
+			return false;
+		}
+
+		// Write the existing bloodline data onto the new ledger as a signed copy
+		CompoundTag compound = ledgerStack.getOrCreateTag();
+		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
+		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, existingLine.serialize());
+		ledgerStack.setTag(compound);
+
+		caster.displayClientMessage(
+				Component.literal("The covenant remembers. Your ledger for " + existingLine.getName()
+						+ " has been restored.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+		return true;
 	}
 }

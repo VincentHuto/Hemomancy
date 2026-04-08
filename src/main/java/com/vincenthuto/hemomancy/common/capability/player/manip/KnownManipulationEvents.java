@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -171,6 +172,7 @@ public class KnownManipulationEvents {
 	 *   <li>Shift tendency alignment toward the manipulation's tendency</li>
 	 *   <li>Grant XP to the manipulation's level</li>
 	 *   <li>Grant skill-point currency (higher-rank manips give more)</li>
+	 *   <li>Check for milestone rewards (first use, tiered totals)</li>
 	 * </ul>
 	 */
 	public static void onManipulationUsed(ServerPlayer player, BloodManipulation manip) {
@@ -200,6 +202,10 @@ public class KnownManipulationEvents {
 			case PERFECTUS     -> 5;
 		};
 		SkillPointInit.skillPoints += spGain;
+
+		// 5. Check manipulation-use milestones (first use, tiered totals)
+		SkillPointGainEvents.onManipulationUsed(player);
+
 		// Sync skill tree (which includes skill-point balance) back to client
 		PacketHandler.CHANNELBLOODVOLUME.send(
 				PacketDistributor.PLAYER.with(() -> player),
