@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.effect.MycorrhizalMendingEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineFertilityEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineSiphonEffect;
 import com.vincenthuto.hemomancy.common.effect.SerpentineGuileEffect;
+import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
 
 import net.minecraft.world.effect.MobEffect;
@@ -116,5 +117,13 @@ public class EffectInit {
 			"potion_of_verminous_aura",
 			() -> new Potion("potion_of_verminous_aura",
 					new MobEffectInstance(verminous_aura.get(), 1200, 0)));
+
+	// Unstained Path Effects
+	public static final RegistryObject<MobEffect> silver_ward = EFFECTS.register("silver_ward",
+			() -> new SilverWardEffect(MobEffectCategory.BENEFICIAL, 0xC0C0C0)
+					.addAttributeModifier(Attributes.ARMOR, "D4E6F8A0-2B1C-4D3E-9F5A-6C8B0E2D4A7F",
+							4.0D, AttributeModifier.Operation.ADDITION)
+					.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "E5F7A9B1-3C2D-5E4F-0A6B-7D9C1F3E5B8A",
+							0.2D, AttributeModifier.Operation.ADDITION));
 
 }
