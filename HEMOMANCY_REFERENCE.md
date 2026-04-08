@@ -978,17 +978,20 @@ Full integration as a faction + spell system:
 **MnA Block/Tile/Entity:**
 - Custom blocks, tiles, and entities in `compat/mna/block`, `compat/mna/tile`, `compat/mna/entity`
 
-**Planned / Brainstormed Features** (see `MNA_COMPATIBILITY_BRAINSTORM.md` for full details):
-- Additional spell components: Blood Loss, Blood Rush, Hemolysis, Blood-to-Mana, Summon Sanguilith
-- New spell shapes: Sanguine Pulse (AoE burst), Hemomantic Tether (beam/channel)
-- New rituals: Sanguine Ascension (degree advancement), Erythromycelic Bloom (fungal spread), Iron Covenant (crafting)
-- Blood Affinity ↔ Tendency synergy system
-- Blood Cost as spell modifier ("Blood Tithe")
-- Harbinger faction tasks, sanctum structure, manaweaving recipes
-- Blood-themed Construct parts and enhanced Sanguilith variant
-- Cross-mod advancements, JEI integration, config options
+**Planned / Brainstormed Features** (see `MNA_COMPATIBILITY_BRAINSTORM.md` for full details — each feature includes an "MnA Justification" explaining why it specifically requires Mana and Artifice):
+- Additional spell components: Blood Loss, Blood Rush, Hemolysis, Blood-to-Mana, Summon Sanguilith — all leverage MnA's composable spell system (shapes + modifiers)
+- New spell shapes: Sanguine Pulse (dual mana+blood cost AoE), Hemomantic Tether (channeled tether draining blood per tick)
+- New MnA rituals: Sanguine Convergence (permanently links mana regen to blood volume), Arcane Crucible (transmutes MnA materials with blood sacrifice), Mana Wound (zone that adds Hemomancy effects to MnA spells)
+- Blood Tithe spell modifier: MnA modifier that replaces mana cost % with blood cost (Harbinger faction perk)
+- Tendency ↔ Affinity mapping: Hemomancy tendencies boost corresponding MnA spell affinities
+- Spell ↔ Manipulation combo system: alternating between both systems grants cost reduction buffs
+- Harbinger faction: Occulus tasks, sanctum structure, manaweaving recipes, raid mobs — all use MnA faction infrastructure
+- Blood Construct: MnA Construct variant fueled by blood instead of mana, built at MnA's workbench
+- Blood-Infused Construct Capabilities: runeforged modules for MnA Constructs
+- Hemomantic Wand Core, Arcane Living Staff, Mote of Mana — crafted via MnA systems (manaweaving, runeforging)
+- Hemomantic enchantments via MnA runeforging
+- Cross-mod advancements, JEI integration for MnA crafting recipes, config options
 - Harbinger Mana HUD texture fix (current TODO)
-- Hemomantic enchantments via runeforging
 
 ### 25.2 Curios
 
