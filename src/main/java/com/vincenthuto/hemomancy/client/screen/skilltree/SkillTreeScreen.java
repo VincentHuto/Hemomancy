@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryD
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -146,6 +147,13 @@ public class SkillTreeScreen extends Screen {
 
 	// ── Player initiatory degree (cached for rendering) ──
 	private int playerDegree = 0;
+
+	// ── Milestone drawer (left side, below home button) ──
+	private static final int MILESTONE_DRAWER_W = 180;
+	private static final int MILESTONE_TAB_W = 14;
+	private static final int MILESTONE_TAB_H = 50;
+	private boolean milestoneDrawerOpen = false;
+	private int milestoneScrollOffset = 0;
 
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
@@ -425,6 +433,13 @@ public class SkillTreeScreen extends Screen {
 				return true;
 			}
 
+			// Check milestone drawer toggle (Skills tab only)
+			if (activeTab == Tab.SKILLS && isOverMilestoneToggle(mx, my)) {
+				milestoneDrawerOpen = !milestoneDrawerOpen;
+				milestoneScrollOffset = 0;
+				return true;
+			}
+
 			if (insideGui(mx, my)) {
 				if (activeTab == Tab.CRAFTING) {
 					// Check crafting nav buttons
@@ -535,6 +550,12 @@ public class SkillTreeScreen extends Screen {
 	public boolean mouseScrolled(double mx, double my, double delta) {
 		if (!insideGui(mx, my)) return super.mouseScrolled(mx, my, delta);
 
+		// Milestone drawer scroll (Skills tab only, when drawer is open)
+		if (activeTab == Tab.SKILLS && milestoneDrawerOpen && isOverMilestoneDrawer(mx, my)) {
+			milestoneScrollOffset = Math.max(0, milestoneScrollOffset - (int)(delta * 12));
+			return true;
+		}
+
 		// Rites tab: scroll to cycle through rites
 		if (activeTab == Tab.RITES) {
 			if (!riteRecipes.isEmpty()) {
@@ -644,6 +665,11 @@ public class SkillTreeScreen extends Screen {
 			drawHomeButton(gfx, mouseX, mouseY);
 		}
 
+		// ── 4c. Milestone drawer (left side, below home button; Skills tab only) ──
+		if (activeTab == Tab.SKILLS) {
+			drawMilestoneDrawer(gfx, mouseX, mouseY);
+		}
+
 		// ── 5. Overlay text ──
 		gfx.drawCenteredString(font,
 				Component.literal(activeTab.label),
@@ -658,14 +684,22 @@ public class SkillTreeScreen extends Screen {
 		}
 
 		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
-			gfx.drawString(font,
-					String.format("%.0f%%", zoom * 100),
-					guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
+			// Hide zoom text when milestone drawer is open to avoid overlap
+			if (!(activeTab == Tab.SKILLS && milestoneDrawerOpen)) {
+				gfx.drawString(font,
+						String.format("%.0f%%", zoom * 100),
+						guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
+			}
 		}
 
 		// ── 6. Tooltip (must be outside scissor) ──
 		if (activeTab == Tab.SKILLS) {
 			drawTooltip(gfx, mouseX, mouseY);
+			// Milestone toggle tooltip
+			if (isOverMilestoneToggle(mouseX, mouseY)) {
+				String tipText = milestoneDrawerOpen ? "Hide Milestones" : "Show Milestones";
+				gfx.renderTooltip(font, Component.literal(tipText), mouseX, mouseY);
+			}
 		} else if (activeTab == Tab.MANIPULATIONS) {
 			drawManipTooltip(gfx, mouseX, mouseY);
 		}
@@ -1883,6 +1917,173 @@ public class SkillTreeScreen extends Screen {
 		int downY = cy + 14;
 		return mx >= bx && mx <= bx + LAYER_BTN_SIZE
 			&& my >= downY && my <= downY + LAYER_BTN_SIZE;
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Milestone drawer (left side, below home button)
+	// ────────────────────────────────────────────────────────────
+
+	/**
+	 * Draws the collapsible milestone drawer on the left side of the skill
+	 * tree screen, below the home button. Mirrors the sidebar pattern from
+	 * {@link UnstainedProgressScreen}.
+	 * <p>
+	 * Milestones whose {@code requiredDegree} exceeds the player's current
+	 * initiatory degree are hidden entirely.
+	 */
+	private void drawMilestoneDrawer(GuiGraphics gfx, int mouseX, int mouseY) {
+		int drawerX = guiLeft + HOME_BTN_PAD;
+		int drawerY = guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 4; // below home button
+		boolean tabHovered = isOverMilestoneToggle(mouseX, mouseY);
+
+		if (!milestoneDrawerOpen) {
+			// ── Collapsed: draw only the toggle tab ──
+			drawMilestoneToggleTab(gfx, drawerX, drawerY, false, tabHovered);
+			return;
+		}
+
+		// ── Expanded drawer ──
+		int drawerW = MILESTONE_DRAWER_W;
+		int drawerH = guiHeight - (drawerY - guiTop) - 4;
+
+		// Semi-transparent panel background
+		gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + drawerH, 0xCC1A0505);
+
+		// Panel border
+		int borderCol = 0xFF332222;
+		gfx.fill(drawerX, drawerY, drawerX + drawerW, drawerY + 1, borderCol);
+		gfx.fill(drawerX, drawerY + drawerH - 1, drawerX + drawerW, drawerY + drawerH, borderCol);
+		gfx.fill(drawerX, drawerY, drawerX + 1, drawerY + drawerH, borderCol);
+		gfx.fill(drawerX + drawerW - 1, drawerY, drawerX + drawerW, drawerY + drawerH, borderCol);
+
+		// Toggle tab on the right edge of the panel (to collapse)
+		drawMilestoneToggleTab(gfx, drawerX + drawerW, drawerY, true, tabHovered);
+
+		// Scissor to the drawer interior
+		gfx.enableScissor(drawerX + 1, drawerY + 1, drawerX + drawerW - 1, drawerY + drawerH - 1);
+
+		int x = drawerX + 6;
+		int y = drawerY + 6 - milestoneScrollOffset;
+		int centerX = drawerX + drawerW / 2;
+
+		// Header
+		gfx.drawCenteredString(font, Component.literal("Milestones"), centerX, y, 0xFFCC3333);
+		y += 12;
+
+		// Summary line
+		int completed = SkillPointInit.completedMilestones.size();
+		int visible = 0;
+		for (HemoMilestone m : HemoMilestone.values()) {
+			if (m.getRequiredDegree() <= playerDegree) visible++;
+		}
+		gfx.drawCenteredString(font,
+				Component.literal(completed + "/" + visible + " completed")
+						.withStyle(s -> s.withColor(0xFF888888)),
+				centerX, y, 0);
+		y += 12;
+
+		// Thin divider
+		gfx.fill(drawerX + 8, y, drawerX + drawerW - 8, y + 1, 0x33804040);
+		y += 5;
+
+		// Render milestones grouped by category
+		HemoMilestone.Category lastCategory = null;
+
+		for (HemoMilestone m : HemoMilestone.values()) {
+			// Hide milestones above the player's current degree
+			if (m.getRequiredDegree() > playerDegree) continue;
+
+			// Category header
+			if (m.getCategory() != lastCategory) {
+				lastCategory = m.getCategory();
+				y += 3;
+				gfx.drawString(font,
+						Component.literal("\u25B8 " + lastCategory.getLabel())
+								.withStyle(s -> s.withColor(lastCategory.getColor()).withBold(true)),
+						x, y, 0, false);
+				y += 11;
+			}
+
+			boolean complete = SkillPointInit.completedMilestones.contains(m);
+
+			// Check/cross icon + milestone name
+			String icon = complete ? "\u2713" : "\u2717";
+			int iconCol = complete ? 0xFF60CC60 : 0xFF605050;
+			int labelCol = complete ? 0xFFBBAAAA : 0xFF776666;
+
+			gfx.drawString(font, icon, x + 4, y, iconCol, false);
+
+			// Milestone name (use lang key via Component.translatable)
+			Component nameComp = Component.translatable(m.getLangKey());
+			gfx.drawString(font, nameComp, x + 14, y, labelCol, false);
+			y += 10;
+
+			// SP reward line
+			String rewardStr = "  +" + m.getSkillPointReward() + " SP";
+			int rewardCol = complete ? 0xFF44BB44 : 0xFF555555;
+			gfx.drawString(font, rewardStr, x + 4, y, rewardCol, false);
+			y += 11;
+		}
+
+		// Record total content height for scroll clamping
+		int totalContentH = y + milestoneScrollOffset - (drawerY + 6);
+		int maxScroll = Math.max(0, totalContentH - (drawerH - 12));
+		if (milestoneScrollOffset > maxScroll) {
+			milestoneScrollOffset = maxScroll;
+		}
+
+		gfx.disableScissor();
+	}
+
+	/**
+	 * Draws the milestone drawer toggle tab — a small clickable arrow on the edge.
+	 * Matches the style from {@link UnstainedProgressScreen#drawSidebarToggleTab}.
+	 */
+	private void drawMilestoneToggleTab(GuiGraphics gfx, int tabX, int tabY,
+										boolean expanded, boolean hovered) {
+		int tw = MILESTONE_TAB_W;
+		int th = MILESTONE_TAB_H;
+
+		// Background — brighter when hovered
+		gfx.fill(tabX, tabY, tabX + tw, tabY + th, hovered ? 0xDD1A0505 : 0xCC120303);
+
+		// Border — highlight on hover
+		int bc = hovered ? 0xFFCC4444 : 0xFF332222;
+		gfx.fill(tabX, tabY, tabX + tw, tabY + 1, bc);
+		gfx.fill(tabX, tabY + th - 1, tabX + tw, tabY + th, bc);
+		gfx.fill(tabX, tabY, tabX + 1, tabY + th, bc);
+		gfx.fill(tabX + tw - 1, tabY, tabX + tw, tabY + th, bc);
+
+		// Arrow character: ◀ when expanded (collapse), ▶ when collapsed (expand)
+		String arrow = expanded ? "\u25C0" : "\u25B6";
+		int arrowCol = hovered ? 0xFFFFAAAA : 0xFF886666;
+		gfx.drawCenteredString(font, arrow, tabX + tw / 2, tabY + th / 2 - 4, arrowCol);
+	}
+
+	/** Hit test for the milestone drawer toggle tab. */
+	private boolean isOverMilestoneToggle(double mx, double my) {
+		int tabY = guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 4;
+		int tabX;
+		if (milestoneDrawerOpen) {
+			// Tab is on the right edge of the expanded drawer
+			tabX = guiLeft + HOME_BTN_PAD + MILESTONE_DRAWER_W;
+		} else {
+			// Tab is at the left edge when collapsed
+			tabX = guiLeft + HOME_BTN_PAD;
+		}
+		return mx >= tabX && mx <= tabX + MILESTONE_TAB_W
+			&& my >= tabY && my <= tabY + MILESTONE_TAB_H;
+	}
+
+	/** Returns true if the mouse is over the expanded milestone drawer area. */
+	private boolean isOverMilestoneDrawer(double mx, double my) {
+		if (!milestoneDrawerOpen) return false;
+		int drawerX = guiLeft + HOME_BTN_PAD;
+		int drawerY = guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 4;
+		int drawerW = MILESTONE_DRAWER_W;
+		int drawerH = guiHeight - (drawerY - guiTop) - 4;
+		return mx >= drawerX && mx <= drawerX + drawerW
+			&& my >= drawerY && my <= drawerY + drawerH;
 	}
 
 	// ────────────────────────────────────────────────────────────
