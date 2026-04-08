@@ -125,7 +125,7 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	/** Progress scaled 0–24 for rendering (0 = idle, 24 = complete) */
 	public int getSpinProgress() {
 		int remaining = this.data.get(0);
-		int total = 200;
+		int total = VialCentrifugeBlockEntity.SPIN_TOTAL_TIME;
 		if (remaining <= 0) return 0;
 		return (total - remaining) * 24 / total;
 	}

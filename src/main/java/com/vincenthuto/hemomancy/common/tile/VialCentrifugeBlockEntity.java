@@ -41,6 +41,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(19, ItemStack.EMPTY);
 	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	public static final int SPIN_TOTAL_TIME = 200;
 	int spinningProgress;
 	int spinningTotalTime;
 	int canSpin;
@@ -242,7 +243,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			if ((checkBalancedSpots(2, 6) && checkBalancedSpots(3, 7) && checkBalancedSpots(4, 8)
 					&& checkBalancedSpots(9, 5))) {
 				if (dataAccess.get(0) <= 0) {
-					dataAccess.set(0, 200);
+					dataAccess.set(0, SPIN_TOTAL_TIME);
 					return true;
 				} else {
 					return false;
