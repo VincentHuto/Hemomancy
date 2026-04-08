@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.block;
 import java.util.stream.Stream;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
+import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 import com.vincenthuto.hemomancy.common.tile.IronBrazierBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -28,19 +29,35 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+/**
+ * Iron Brazier block — a versatile ritual apparatus. In its base form it
+ * can be lit and extinguished by hand. When used for organ echo upgrades,
+ * the ritual phase property tracks the brazier's state:
+ * <ul>
+ *   <li><b>0</b> — Unlit (cold)</li>
+ *   <li><b>1</b> — Normal fire (lit)</li>
+ *   <li><b>2</b> — Sanguine flames (reagents accepted, awaiting echo)</li>
+ * </ul>
+ */
 public class BrazierBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	public static final BooleanProperty LIT = BooleanProperty.create("lit");
+
+	/**
+	 * Ritual phase: 0 = unlit, 1 = normal fire, 2 = sanguine flames (awaiting echo).
+	 */
+	public static final IntegerProperty RITUAL_PHASE = IntegerProperty.create("ritual_phase", 0, 2);
 
 	private static final VoxelShape SHAPE_N = Stream
 			.of(Block.box(4, 0, 4, 12, 2, 12), Block.box(5, 2, 5, 11, 4, 11), Block.box(6, 4, 6, 10, 13, 10),
@@ -50,18 +67,33 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	public BrazierBlock(Properties properties) {
 		super(properties);
-		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(LIT, false));
-
+		this.registerDefaultState(this.stateDefinition.any()
+				.setValue(FACING, Direction.SOUTH)
+				.setValue(RITUAL_PHASE, 0));
 	}
 
 	@Override
 	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
 		super.animateTick(pState, pLevel, pPos, pRandom);
 		double d0 = (double) pPos.getX() + 0.5D;
-		double d1 = (double) pPos.getY() +1.2D;
+		double d1 = (double) pPos.getY() + 1.2D;
 		double d2 = (double) pPos.getZ() + 0.5D;
-		if (pState.getValue(LIT)) {
+		int phase = pState.getValue(RITUAL_PHASE);
+
+		if (phase == 1) {
+			// Normal fire — standard smoke
 			pLevel.addParticle(ParticleTypes.SMOKE, d0, d1, d2, 0.0D, 0.0D, 0.0D);
+		} else if (phase == 2) {
+			// Sanguine flames — dark red blood particles swirling upward
+			for (int i = 0; i < 3; i++) {
+				double ox = (pRandom.nextDouble() - 0.5) * 0.4;
+				double oz = (pRandom.nextDouble() - 0.5) * 0.4;
+				pLevel.addParticle(
+						BloodCellParticleFactory.createData(new ParticleColor(180, 0, 20)),
+						d0 + ox, d1 + pRandom.nextDouble() * 0.3, d2 + oz,
+						0.0D, 0.04D, 0.0D);
+			}
+			pLevel.addParticle(ParticleTypes.SOUL_FIRE_FLAME, d0, d1, d2, 0.0D, 0.02D, 0.0D);
 		}
 	}
 
@@ -72,7 +104,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		builder.add(FACING, LIT);
+		builder.add(FACING, RITUAL_PHASE);
 	}
 
 	@Override
@@ -87,13 +119,13 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(LIT,
-				false);
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
+				.setValue(RITUAL_PHASE, 0);
 	}
 
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.getRotation(state.getValue(FACING))).setValue(LIT, false);
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
 	}
 
 	@Override
@@ -106,46 +138,101 @@ public class BrazierBlock extends Block implements EntityBlock {
 		return new IronBrazierBlockEntity(arg0, arg1);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+			BlockEntityType<T> type) {
+		if (level.isClientSide) return null;
+		return (BlockEntityTicker<T>) (lvl, pos, st, te) -> {
+			if (te instanceof IronBrazierBlockEntity brazierTE) {
+				IronBrazierBlockEntity.serverTick(lvl, pos, st, brazierTE);
+			}
+		};
+	}
+
 	@Override
 	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
 	}
 
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(LIT, false);
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
 			BlockHitResult result) {
+		if (worldIn.isClientSide) return InteractionResult.SUCCESS;
+
 		ItemStack stack = player.getItemInHand(handIn);
-		if (!state.getValue(LIT)) {
+		int phase = state.getValue(RITUAL_PHASE);
+
+		// === Phase 0: Unlit — light the brazier ===
+		if (phase == 0) {
 			if (stack.getItem() == Items.FLINT_AND_STEEL || stack.getItem() == Items.FIRE_CHARGE) {
-				BlockState newState = state.setValue(LIT, true);
-				worldIn.setBlock(pos, newState, 10);
+				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 1), 3);
+				return InteractionResult.SUCCESS;
 			}
 			if (stack.isEmpty()) {
-				BlockState newState = state.setValue(LIT, true);
-				worldIn.setBlock(pos, newState, 10);
+				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 1), 3);
 				player.hurt(player.damageSources().generic(), 1.5f);
 				if (!worldIn.isClientSide) {
 					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos,
 							BloodCellParticleFactory.createData(ParticleColor.BLOOD));
 				}
+				return InteractionResult.SUCCESS;
 			}
-		} else {
-			if (stack.isEmpty()) {
-				BlockState newState = state.setValue(LIT, false);
-				worldIn.setBlock(pos, newState, 10);
+			return InteractionResult.PASS;
+		}
+
+		// === Phase 1: Normal lit — accept reagents or extinguish ===
+		if (phase == 1) {
+			// Try accepting reagent items for the organ rite
+			BlockEntity be = worldIn.getBlockEntity(pos);
+			if (be instanceof IronBrazierBlockEntity brazierTE) {
+				if (!stack.isEmpty() && brazierTE.tryAcceptReagent(player, stack, worldIn, pos, state)) {
+					return InteractionResult.SUCCESS;
+				}
+			}
+
+			// Empty hand sneak = extinguish
+			if (stack.isEmpty() && player.isShiftKeyDown()) {
+				worldIn.setBlock(pos, state.setValue(RITUAL_PHASE, 0), 3);
 				player.hurt(player.damageSources().generic(), 1f);
 				if (!worldIn.isClientSide) {
 					HLParticleUtils.spawnPoof((ServerLevel) worldIn, pos, ParticleTypes.SMOKE);
 				}
+				return InteractionResult.SUCCESS;
 			}
+			return InteractionResult.PASS;
 		}
 
-		return InteractionResult.SUCCESS;
+		// === Phase 2: Sanguine flames — accept echo item for upgrade ===
+		if (phase == 2) {
+			BlockEntity be = worldIn.getBlockEntity(pos);
+			if (be instanceof IronBrazierBlockEntity brazierTE) {
+				if (!stack.isEmpty() && stack.getItem() instanceof OrganEchoItem) {
+					brazierTE.tryAcceptEcho(player, stack, worldIn, pos, state);
+					return InteractionResult.SUCCESS;
+				}
+			}
+			return InteractionResult.PASS;
+		}
 
+		return InteractionResult.PASS;
 	}
 
+	/**
+	 * Convenience to check whether the brazier is in sanguine flame state.
+	 */
+	public static boolean isSanguineFlame(BlockState state) {
+		return state.getBlock() instanceof BrazierBlock && state.getValue(RITUAL_PHASE) == 2;
+	}
+
+	/**
+	 * Returns true if the brazier is lit (any fire state).
+	 */
+	public static boolean isLit(BlockState state) {
+		return state.getBlock() instanceof BrazierBlock && state.getValue(RITUAL_PHASE) > 0;
+	}
 }

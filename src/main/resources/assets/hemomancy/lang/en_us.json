@@ -557,5 +557,10 @@
 	"hemomancy.organ.liver": "Liver",
 	"hemomancy.organ.lungs": "Lungs",
 	"hemomancy.organ.kidneys": "Kidneys",
-	"hemomancy.organ.heart": "Heart"
+	"hemomancy.organ.heart": "Heart",
+
+	"hemomancy.brazier.reagent_accepted": "The brazier consumes the offering...",
+	"hemomancy.brazier.sanguine_ready": "The brazier erupts with sanguine flames — offer an Echo to the fire.",
+	"hemomancy.brazier.echo_consumed": "The echo dissolves into the sanguine flames.",
+	"hemomancy.brazier.echo_max": "This organ echo has already reached its maximum refinement."
 }

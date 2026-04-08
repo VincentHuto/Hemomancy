@@ -373,33 +373,28 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return;
 		}
 
-		// Update the player's organ capability
-		player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).ifPresent(organs -> {
-			int currentLevel = organs.getOrganLevel(targetOrgan);
-			int newLevel = Math.min(currentLevel + 1, 3);
-			organs.setOrganLevel(targetOrgan, newLevel);
+		// Drop the corresponding echo item — the organ is NOT upgraded here.
+		// The player must take the echo to a lit brazier with reagents to
+		// complete the organ upgrade ritual.
+		ItemStack organItem = getOrganItem(targetOrgan);
+		if (!organItem.isEmpty()) {
+			ItemEntity entity = new ItemEntity(level,
+					worldPosition.getX() + 0.5, worldPosition.getY() + 1.5,
+					worldPosition.getZ() + 0.5, organItem);
+			entity.setDeltaMovement(0, 0.1, 0);
+			level.addFreshEntity(entity);
+		}
 
-			// Drop the corresponding echo item
-			ItemStack organItem = getOrganItem(targetOrgan);
-			if (!organItem.isEmpty()) {
-				ItemEntity entity = new ItemEntity(level,
-						worldPosition.getX() + 0.5, worldPosition.getY() + 1.5,
-						worldPosition.getZ() + 0.5, organItem);
-				entity.setDeltaMovement(0, 0.1, 0);
-				level.addFreshEntity(entity);
-			}
-
-			String levelDesc = newLevel == 1 ? "imprinted" : "refined to level " + newLevel;
-			if (targetOrgan == EnumOrgan.HEART) {
-				msg(player, "Through sheer force of will, you command your muscles to contract "
-						+ "rhythmically. Your blood flows still \u2014 without a heart.",
-						ChatFormatting.DARK_RED);
-			} else {
-				msg(player, "An echo of your " + targetOrgan.getName().toLowerCase()
-						+ " coalesces from the mirror \u2014 " + levelDesc + ".",
-						ChatFormatting.GOLD);
-			}
-		});
+		if (targetOrgan == EnumOrgan.HEART) {
+			msg(player, "An echo of your heart coalesces from the mirror \u2014 "
+					+ "take it to a brazier of sanguine flames to complete the rite.",
+					ChatFormatting.DARK_RED);
+		} else {
+			msg(player, "An echo of your " + targetOrgan.getName().toLowerCase()
+					+ " coalesces from the mirror \u2014 "
+					+ "offer it to sanguine flames to refine it.",
+					ChatFormatting.GOLD);
+		}
 
 		phase = RitualPhase.COMPLETE;
 		markDirtyAndSync();
