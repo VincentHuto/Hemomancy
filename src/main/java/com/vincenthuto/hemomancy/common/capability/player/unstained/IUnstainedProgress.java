@@ -50,4 +50,57 @@ public interface IUnstainedProgress {
 
     /** Copper-based anti-blood field radius (scales with clarity: clarity / 100). */
     float getVerdigrisAura();
+
+    // --- Abstinence Tracking (for blood magic restraint purity) ---
+
+    /** Game tick when the player last used a blood manipulation. 0 = never. */
+    long getLastManipulationTick();
+
+    void setLastManipulationTick(long tick);
+
+    // --- Milestone Tracking (for checklist / progress UI) ---
+
+    // Progress counters (repeatable milestones)
+    int getHemoMobKills();
+    void addHemoMobKill();
+
+    int getUndeadKills();
+    void addUndeadKill();
+
+    int getHostileKills();
+    void addHostileKill();
+
+    int getFlawlessKills();
+    void addFlawlessKill();
+
+    int getAnimalsBreed();
+    void addAnimalBreed();
+
+    int getCropsPlanted();
+    void addCropPlanted();
+
+    int getAdvancementsEarned();
+    void addAdvancementEarned();
+
+    int getNightsSlept();
+    void addNightSlept();
+
+    int getPetsHealed();
+    void addPetHealed();
+
+    // One-time milestone flags
+    boolean hasSleptWithHemolysis();
+    void setSleptWithHemolysis(boolean value);
+
+    boolean hasKilledFirstHemoMob();
+    void setKilledFirstHemoMob(boolean value);
+
+    boolean hasReachedAbstinence();
+    void setReachedAbstinence(boolean value);
+
+    boolean hasEmptiedBlood();
+    void setEmptiedBlood(boolean value);
+
+    boolean hasEarnedAdvancement();
+    void setEarnedAdvancement(boolean value);
 }

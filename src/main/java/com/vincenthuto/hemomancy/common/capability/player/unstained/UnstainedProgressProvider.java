@@ -48,6 +48,23 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
         tag.putFloat("purity", inst.getPurity());
         tag.putBoolean("clarityUnlocked", inst.hasClarityUnlocked());
         tag.putFloat("clarity", inst.getClarity());
+        tag.putLong("lastManipulationTick", inst.getLastManipulationTick());
+        // Milestone counters
+        tag.putInt("hemoMobKills", inst.getHemoMobKills());
+        tag.putInt("undeadKills", inst.getUndeadKills());
+        tag.putInt("hostileKills", inst.getHostileKills());
+        tag.putInt("flawlessKills", inst.getFlawlessKills());
+        tag.putInt("animalsBreed", inst.getAnimalsBreed());
+        tag.putInt("cropsPlanted", inst.getCropsPlanted());
+        tag.putInt("advancementsEarned", inst.getAdvancementsEarned());
+        tag.putInt("nightsSlept", inst.getNightsSlept());
+        tag.putInt("petsHealed", inst.getPetsHealed());
+        // One-time flags
+        tag.putBoolean("sleptWithHemolysis", inst.hasSleptWithHemolysis());
+        tag.putBoolean("killedFirstHemoMob", inst.hasKilledFirstHemoMob());
+        tag.putBoolean("reachedAbstinence", inst.hasReachedAbstinence());
+        tag.putBoolean("emptiedBlood", inst.hasEmptiedBlood());
+        tag.putBoolean("earnedAdvancement", inst.hasEarnedAdvancement());
         return tag;
     }
 
@@ -57,6 +74,23 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
             inst.setPurity(tag.getFloat("purity"));
             inst.setClarityUnlocked(tag.getBoolean("clarityUnlocked"));
             inst.setClarity(tag.getFloat("clarity"));
+            inst.setLastManipulationTick(tag.getLong("lastManipulationTick"));
+            // Milestone counters — replay increments from saved counts
+            for (int i = 0; i < tag.getInt("hemoMobKills"); i++) inst.addHemoMobKill();
+            for (int i = 0; i < tag.getInt("undeadKills"); i++) inst.addUndeadKill();
+            for (int i = 0; i < tag.getInt("hostileKills"); i++) inst.addHostileKill();
+            for (int i = 0; i < tag.getInt("flawlessKills"); i++) inst.addFlawlessKill();
+            for (int i = 0; i < tag.getInt("animalsBreed"); i++) inst.addAnimalBreed();
+            for (int i = 0; i < tag.getInt("cropsPlanted"); i++) inst.addCropPlanted();
+            for (int i = 0; i < tag.getInt("advancementsEarned"); i++) inst.addAdvancementEarned();
+            for (int i = 0; i < tag.getInt("nightsSlept"); i++) inst.addNightSlept();
+            for (int i = 0; i < tag.getInt("petsHealed"); i++) inst.addPetHealed();
+            // One-time flags
+            inst.setSleptWithHemolysis(tag.getBoolean("sleptWithHemolysis"));
+            inst.setKilledFirstHemoMob(tag.getBoolean("killedFirstHemoMob"));
+            inst.setReachedAbstinence(tag.getBoolean("reachedAbstinence"));
+            inst.setEmptiedBlood(tag.getBoolean("emptiedBlood"));
+            inst.setEarnedAdvancement(tag.getBoolean("earnedAdvancement"));
         }
     }
 }

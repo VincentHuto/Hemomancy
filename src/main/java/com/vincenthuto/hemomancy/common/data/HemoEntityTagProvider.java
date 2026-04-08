@@ -46,6 +46,19 @@ public class HemoEntityTagProvider extends TagsProvider<EntityType<?>> {
 				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
 		tag(EntityInit.VIVACIOUS_TAG).add(ResourceKey.create(Registries.ENTITY_TYPE,
 				ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fungling.get())));
+
+		// All hemomancy monster entities — used by PurityGainEvents for kill rewards
+		tag(EntityInit.HEMOMANCY_MOB)
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.fargone.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.thirster.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.abhorent_thought.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.erythromycelium_eruptus.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.blood_drunk_puppeteer.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.enthralled_doll.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.lump_of_thought.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.morphling_polyp.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.chthonian.get())))
+				.add(ResourceKey.create(Registries.ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(EntityInit.chthonian_queen.get())));
 	}
 
 }

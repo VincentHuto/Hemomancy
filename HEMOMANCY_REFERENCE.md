@@ -157,6 +157,45 @@ As purity rises, blood magic becomes increasingly penalized:
 
 - **Silver Ward** resistance scales linearly: `purity / 100`
 
+#### Purity Sources
+
+**Combat:**
+
+| Source | Purity Gained | Condition |
+|--------|---------------|-----------|
+| **Killing a Hemomancy mob** | +2.0 | Any entity tagged `hemomancy_mob` |
+| **Killing an Undead mob** | +0.5 | Any MobType.UNDEAD (zombies, skeletons, phantoms, etc.) |
+| **Killing a Hostile mob** | +0.25 | Any other MobCategory.MONSTER |
+| **Flawless kill bonus** | +0.5 extra | Added to any kill reward if player hasn't taken damage in last 5 seconds |
+
+**Survival & Exploration:**
+
+| Source | Purity Gained | Condition |
+|--------|---------------|-----------|
+| **Hemolytic Solution on Podium** | +10.0 | Each use (first use grants +5.0 and begins path) |
+| **Completing an Advancement** | +1.5 | Any advancement (boss kills, exploration, progression) |
+| **Picking up XP orbs** | +0.1 | Requires active **Hemolysis** effect |
+| **Sleeping through the night** | +3.0 | Requires active **Hemolysis** effect; natural wake only |
+| **Hemolysis effect tick** | +0.01/tick | Passive gain while Hemolysis is active (very slow) |
+
+**Farming & Mercy:**
+
+| Source | Purity Gained | Condition |
+|--------|---------------|-----------|
+| **Breeding animals** | +0.3 | Creating life — any successful breeding |
+| **Planting crops/saplings/flowers** | +0.05 | Placing a block tagged as crop, sapling, or flower |
+| **Healing a tamed animal** | +0.2 | When a tamed pet heals (feeding a wolf, etc.) |
+| **Natural self-healing (no blood)** | +0.1 | Healing 2+ hearts with blood volume empty or inactive |
+
+**Restraint & Discipline:**
+
+| Source | Purity Gained | Condition |
+|--------|---------------|-----------|
+| **Blood magic abstinence** | +0.5 | Every 5 minutes without using any blood manipulation |
+| **Empty blood renunciation** | +0.15/min | Blood volume is zero or inactive (abandoned hemomancy) |
+
+*Kill rewards are not gated by Hemolysis — any player on the Unstained path earns purity from kills. XP and sleep rewards require the Hemolysis effect. Abstinence timer resets whenever a blood manipulation is used.*
+
 ### 4.3 Phase 2: Clarity (0–100)
 
 Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper** at the Unstained Podium:

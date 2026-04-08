@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -234,6 +235,7 @@ public class BloodManipulation  {
 
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
+						PurityGainEvents.onBloodManipulationUsed((ServerPlayer) player);
 						startCooldown(player);
 						PacketHandler.CHANNELKNOWNMANIPS.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),

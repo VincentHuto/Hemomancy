@@ -122,6 +122,12 @@ public class CardinalRiteEvents {
 
 			// Check if rite is complete
 			if (rite.isComplete()) {
+				// === Final structure integrity check ===
+				if (!verifyRiteStructure(sLevel, rite)) {
+					failRite(sLevel, caster, rite);
+					toRemove.add(playerUUID);
+					continue;
+				}
 				completeRite(sLevel, caster, rite);
 				toRemove.add(playerUUID);
 			}
@@ -240,6 +246,57 @@ public class CardinalRiteEvents {
 		}
 	}
 
+	/**
+	 * Re-validates that the multiblock structure for a cardinal rite is still intact.
+	 * Returns true if the pattern still matches at the rite's center position.
+	 */
+	private static boolean verifyRiteStructure(ServerLevel sLevel, ActiveCardinalRite rite) {
+		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
+		if (recipe == null) return false;
+
+		BlockPos center = rite.getCenterPos();
+		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
+		BlockPattern.BlockPatternMatch match = blockPattern.find(sLevel, center);
+		return match != null;
+	}
+
+	/**
+	 * Fails a cardinal rite because the structure was tampered with.
+	 * Deals damage to the caster, blasts them back, plays a loud noise, and sends a message.
+	 */
+	private static void failRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
+		BlockPos center = rite.getCenterPos();
+
+		// Deal damage to the caster
+		caster.hurt(caster.damageSources().magic(), 10.0f);
+
+		// Blast the caster back from the rite center
+		double dx = caster.getX() - (center.getX() + 0.5);
+		double dz = caster.getZ() - (center.getZ() + 0.5);
+		double dist = Math.sqrt(dx * dx + dz * dz);
+		if (dist < 0.1) {
+			// If standing right on center, pick a random direction
+			dx = caster.getRandom().nextDouble() - 0.5;
+			dz = caster.getRandom().nextDouble() - 0.5;
+			dist = Math.sqrt(dx * dx + dz * dz);
+		}
+		double knockbackStrength = 2.5;
+		caster.setDeltaMovement(
+				(dx / dist) * knockbackStrength,
+				0.5,
+				(dz / dist) * knockbackStrength);
+		caster.hurtMarked = true;
+
+		// Play loud, ominous failure sounds
+		sLevel.playSound(null, center, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 2.0f, 0.5f);
+		sLevel.playSound(null, center, SoundEvents.ENDER_DRAGON_GROWL, SoundSource.BLOCKS, 1.5f, 0.7f);
+
+		// Notify the caster
+		caster.displayClientMessage(
+				Component.literal("The rite structure has been broken! The ritual backlashes!")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 

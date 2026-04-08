@@ -68,6 +68,22 @@ public class UnstainedProgressEvents {
             newProgress.setPurity(oldProgress.getPurity());
             newProgress.setClarityUnlocked(oldProgress.hasClarityUnlocked());
             newProgress.setClarity(oldProgress.getClarity());
+            newProgress.setLastManipulationTick(oldProgress.getLastManipulationTick());
+            // Milestones
+            for (int i = 0; i < oldProgress.getHemoMobKills(); i++) newProgress.addHemoMobKill();
+            for (int i = 0; i < oldProgress.getUndeadKills(); i++) newProgress.addUndeadKill();
+            for (int i = 0; i < oldProgress.getHostileKills(); i++) newProgress.addHostileKill();
+            for (int i = 0; i < oldProgress.getFlawlessKills(); i++) newProgress.addFlawlessKill();
+            for (int i = 0; i < oldProgress.getAnimalsBreed(); i++) newProgress.addAnimalBreed();
+            for (int i = 0; i < oldProgress.getCropsPlanted(); i++) newProgress.addCropPlanted();
+            for (int i = 0; i < oldProgress.getAdvancementsEarned(); i++) newProgress.addAdvancementEarned();
+            for (int i = 0; i < oldProgress.getNightsSlept(); i++) newProgress.addNightSlept();
+            for (int i = 0; i < oldProgress.getPetsHealed(); i++) newProgress.addPetHealed();
+            newProgress.setSleptWithHemolysis(oldProgress.hasSleptWithHemolysis());
+            newProgress.setKilledFirstHemoMob(oldProgress.hasKilledFirstHemoMob());
+            newProgress.setReachedAbstinence(oldProgress.hasReachedAbstinence());
+            newProgress.setEmptiedBlood(oldProgress.hasEmptiedBlood());
+            newProgress.setEarnedAdvancement(oldProgress.hasEarnedAdvancement());
             original.invalidateCaps();
         }
     }

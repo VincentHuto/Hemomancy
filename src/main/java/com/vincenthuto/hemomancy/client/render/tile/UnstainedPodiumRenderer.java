@@ -26,29 +26,29 @@ public class UnstainedPodiumRenderer implements BlockEntityRenderer<UnstainedPod
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		ResourceLocation GLASSTEXTURE = new ResourceLocation(Hemomancy.MOD_ID, "textures/block/sanguine_tran_pane.png");
 
-		matrixStackIn.pushPose();
-		Level world = te.getLevel();
-		VertexConsumer builder = bufferIn.getBuffer(RenderType.entityTranslucent(GLASSTEXTURE));
-
-		float yScale = 1f;
-		float xScale = 1f;
-		float zScale = 1f;
-
-		int r=1,g=1,b=1;
-		builder.vertex(matrixStackIn.last().pose(), 0, yScale, 0).color(r, g, b, 255).uv(1, 1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
-				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
-		builder.vertex(matrixStackIn.last().pose(), xScale, yScale, 0).color(r, g, b, 255).uv(1, 0)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
-				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
-		builder.vertex(matrixStackIn.last().pose(), xScale, yScale, -zScale).color(r, g, b, 255).uv(0, 0)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
-				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
-		builder.vertex(matrixStackIn.last().pose(), 0, yScale, -zScale).color(r, g, b, 255).uv(0, 1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
-				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
-
-		matrixStackIn.popPose();
+//		matrixStackIn.pushPose();
+//		Level world = te.getLevel();
+//		VertexConsumer builder = bufferIn.getBuffer(RenderType.entityTranslucent(GLASSTEXTURE));
+//
+//		float yScale = 1f;
+//		float xScale = 1f;
+//		float zScale = 1f;
+//
+//		int r=1,g=1,b=1;
+//		builder.vertex(matrixStackIn.last().pose(), 0, yScale, 0).color(r, g, b, 255).uv(1, 1)
+//				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
+//				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
+//		builder.vertex(matrixStackIn.last().pose(), xScale, yScale, 0).color(r, g, b, 255).uv(1, 0)
+//				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
+//				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
+//		builder.vertex(matrixStackIn.last().pose(), xScale, yScale, -zScale).color(r, g, b, 255).uv(0, 0)
+//				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
+//				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
+//		builder.vertex(matrixStackIn.last().pose(), 0, yScale, -zScale).color(r, g, b, 255).uv(0, 1)
+//				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(combinedLightIn)
+//				.normal(matrixStackIn.last().normal(), 0, 1, 0).endVertex();
+//
+//		matrixStackIn.popPose();
 
 	}
 

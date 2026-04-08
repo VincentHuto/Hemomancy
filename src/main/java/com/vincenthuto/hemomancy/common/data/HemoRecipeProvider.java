@@ -131,6 +131,37 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.define('C', BlockInit.hematic_iron_block.get()).pattern("C").pattern("C")
 				.unlockedBy("has_hematic_iron_block", has(BlockInit.hematic_iron_block.get())).save(consumer);
 
+		// Sanguine Glass & Pane
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockInit.sanguine_glass.get(), 4)
+				.define('B', ItemInit.blood_crystal_shard.get())
+				.define('G', Items.GLASS)
+				.define('A', ItemInit.befouling_ash.get())
+				.pattern(" B ")
+				.pattern("AGA")
+				.pattern(" B ")
+				.unlockedBy("has_blood_crystal_shard", has(ItemInit.blood_crystal_shard.get())).save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockInit.sanguine_pane.get(), 16)
+				.define('G', BlockInit.sanguine_glass.get())
+				.pattern("GGG")
+				.pattern("GGG")
+				.unlockedBy("has_sanguine_glass", has(BlockInit.sanguine_glass.get())).save(consumer);
+
+		// Vivianite Glass & Pane
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockInit.vivianite_glass.get(), 4)
+				.define('V', ItemInit.vivianite_cluster.get())
+				.define('G', Items.GLASS)
+				.pattern(" V ")
+				.pattern("VGV")
+				.pattern(" V ")
+				.unlockedBy("has_vivianite_cluster", has(ItemInit.vivianite_cluster.get())).save(consumer);
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockInit.vivianite_pane.get(), 16)
+				.define('G', BlockInit.vivianite_glass.get())
+				.pattern("GGG")
+				.pattern("GGG")
+				.unlockedBy("has_vivianite_glass", has(BlockInit.vivianite_glass.get())).save(consumer);
+
 	}
 
 	

@@ -529,5 +529,19 @@
 	"hemomancy.clarity.vigilant": "Vigilant",
 	"hemomancy.clarity.resolute": "Resolute",
 	"hemomancy.clarity.enlightened": "Enlightened",
-	"item.hemomancy.structure_spawner": "Structure Spawner"
+	"item.hemomancy.structure_spawner": "Structure Spawner",
+
+	"screen.hemomancy.unstained_progress": "Unstained Progress",
+
+	"unstained.hemomancy.purity.corrupted.desc": "Blood still courses with hemomantic taint.",
+	"unstained.hemomancy.purity.tainted.desc": "The first impurities begin to recede.",
+	"unstained.hemomancy.purity.cleansing.desc": "A steady purification burns away corruption.",
+	"unstained.hemomancy.purity.absolved.desc": "Most traces of hemomancy have been cleansed.",
+	"unstained.hemomancy.purity.purified.desc": "The blood runs silver — fully purified.",
+
+	"unstained.hemomancy.clarity.awakened.desc": "The mind stirs, free from blood-haze.",
+	"unstained.hemomancy.clarity.discerning.desc": "Sharper perception pierces deception.",
+	"unstained.hemomancy.clarity.vigilant.desc": "Awareness extends beyond mortal senses.",
+	"unstained.hemomancy.clarity.resolute.desc": "An unbreakable will shields against corruption.",
+	"unstained.hemomancy.clarity.enlightened.desc": "True enlightenment — the Unstained path fulfilled."
 }
