@@ -125,7 +125,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class BrazierBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING))).setValue(RITUAL_PHASE, 0);
 	}
 
 	@Override

@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h3>Ritual Flow</h3>
  * <ol>
- *   <li>Brazier must be lit (LIT=true).</li>
+ *   <li>Brazier must be lit ({@link BrazierBlock#RITUAL_PHASE RITUAL_PHASE=1}).</li>
  *   <li>Player throws in reagent items (blood crystal shards, vivianite clusters).
  *       Each accepted reagent increments {@link #reagentsAccepted}.</li>
  *   <li>Once enough reagents are consumed ({@link #REQUIRED_REAGENTS}), the
