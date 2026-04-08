@@ -32,16 +32,26 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Sanguine Excavation — a T2 (MEDIOCRITAS) quick manipulation that mines
- * a 3×3 area of matching blocks centred on the block the player is looking at.
+ * a cluster of matching blocks centred on the block the player is looking at.
  * <p>
  * Uses a simple flood-fill limited to the same block type to excavate
- * a compact cluster, then drops items naturally. Range scales with
- * Sanguine Reach skill. Maximum 27 blocks broken per use.
+ * a compact cluster, then drops items naturally. Both the raycast range
+ * and the excavation radius/block count scale with the Sanguine Reach skill.
+ * <p>
+ * Base: 9 blocks in a ~2-block radius.  At max Sanguine Reach: 27 blocks
+ * in a ~4-block radius.
  */
 public class SanguineExcavationManip extends BloodManipulation {
 
 	private static final double BASE_RANGE = 24.0;
-	private static final int MAX_BLOCKS = 27;
+	/** Minimum blocks to excavate (no skill investment). */
+	private static final int BASE_MAX_BLOCKS = 9;
+	/** Maximum blocks to excavate (at max skill). */
+	private static final int CAP_MAX_BLOCKS = 27;
+	/** Base squared-distance limit for flood-fill from centre. */
+	private static final double BASE_RADIUS_SQ = 4.0;  // ~2 blocks
+	/** Maximum squared-distance limit at max skill. */
+	private static final double CAP_RADIUS_SQ = 16.0;  // ~4 blocks
 
 	public SanguineExcavationManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -79,23 +89,30 @@ public class SanguineExcavationManip extends BloodManipulation {
 			return;
 		}
 
-		// Flood-fill to find connected blocks of the same type (max MAX_BLOCKS)
+		// Scale excavation AoE with Sanguine Reach skill
+		double reachMult = SkillPointHelper.getSanguineReachMultiplier();
+		int maxBlocks = (int) Math.min(CAP_MAX_BLOCKS,
+				BASE_MAX_BLOCKS * reachMult);
+		double radiusSq = Math.min(CAP_RADIUS_SQ,
+				BASE_RADIUS_SQ * reachMult * reachMult);
+
+		// Flood-fill to find connected blocks of the same type (max maxBlocks)
 		List<BlockPos> toBreak = new ArrayList<>();
 		Queue<BlockPos> queue = new LinkedList<>();
 		queue.add(center);
 		toBreak.add(center);
 
-		while (!queue.isEmpty() && toBreak.size() < MAX_BLOCKS) {
+		while (!queue.isEmpty() && toBreak.size() < maxBlocks) {
 			BlockPos current = queue.poll();
 			for (BlockPos neighbor : BlockPos.betweenClosed(
 					current.offset(-1, -1, -1), current.offset(1, 1, 1))) {
 				BlockPos immutable = neighbor.immutable();
 				if (!toBreak.contains(immutable)
 						&& world.getBlockState(immutable).getBlock() == targetBlock
-						&& immutable.distSqr(center) <= 9) { // Stay within ~3 blocks
+						&& immutable.distSqr(center) <= radiusSq) {
 					toBreak.add(immutable);
 					queue.add(immutable);
-					if (toBreak.size() >= MAX_BLOCKS) break;
+					if (toBreak.size() >= maxBlocks) break;
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.manipulation.quick;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -24,15 +25,21 @@ import java.util.Optional;
 
 /**
  * Pyretic Forge — a T2 (MEDIOCRITAS) quick manipulation that smelts
- * the player's held item stack in-hand using blood-borne heat.
+ * items in the player's hand using blood-borne heat.
+ * <p>
+ * The number of items smelted per use scales with the Crimson Mastery
+ * skill: base 8 items, increasing by ~15% per level up to the full
+ * stack size at max mastery.
  * <p>
  * Looks up the smelting recipe for the held item and replaces the
- * entire stack with the smelted result (same quantity). Requires
- * the held item to have a valid furnace smelting recipe.
+ * smelted portion with the result. Un-smelted items remain in hand.
  * <p>
  * Perfect mid-game utility for instant field smelting of ores and food.
  */
 public class PyreticForgeManip extends BloodManipulation {
+
+	/** Base items smelted per cast with no skill investment. */
+	private static final int BASE_SMELT_COUNT = 8;
 
 	public PyreticForgeManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -59,12 +66,25 @@ public class PyreticForgeManip extends BloodManipulation {
 			return;
 		}
 
-		int count = heldItemMainhand.getCount();
-		ItemStack smeltedStack = result.copy();
-		smeltedStack.setCount(count);
+		int held = heldItemMainhand.getCount();
+		// Scale smelt count with Crimson Mastery skill
+		int smeltCount = (int) Math.min(held,
+				Math.ceil(BASE_SMELT_COUNT * SkillPointHelper.getCrimsonMasteryMultiplier()));
 
-		// Replace held item with smelted version (always main hand since heldItemMainhand is main hand)
-		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, smeltedStack);
+		ItemStack smeltedStack = result.copy();
+		smeltedStack.setCount(smeltCount);
+
+		// Shrink the original stack and give the smelted result
+		heldItemMainhand.shrink(smeltCount);
+		if (heldItemMainhand.isEmpty()) {
+			// Stack fully consumed — replace in hand
+			player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, smeltedStack);
+		} else {
+			// Partial smelt — give result; remaining raw items stay in hand
+			if (!player.getInventory().add(smeltedStack)) {
+				player.drop(smeltedStack, false);
+			}
+		}
 
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.8f, 1.0f);
 		world.playSound(null, player.blockPosition(), SoundEvents.FIRE_AMBIENT, SoundSource.PLAYERS, 0.6f, 1.2f);

@@ -29,6 +29,8 @@ import net.minecraft.world.phys.Vec3;
  * the player to the block they are looking at via shadow displacement.
  * <p>
  * <b>Base range:</b> 24 blocks, scales with Sanguine Reach skill.
+ * The destination must be in darkness (light level &le; 7) — you can
+ * only step through shadows to reach shadowy places.
  * The player is teleported to the air space above the targeted block.
  * Fall damage is negated for the teleport landing.
  * <p>
@@ -37,6 +39,8 @@ import net.minecraft.world.phys.Vec3;
 public class UmbralStepManip extends BloodManipulation {
 
 	private static final double BASE_RANGE = 24.0;
+	/** Maximum combined light level allowed at the destination. */
+	private static final int MAX_LIGHT_LEVEL = 7;
 
 	public UmbralStepManip(String name, double cost, double alignLevel, double xpCost,
 			EnumManipulationType type, EnumManipulationRank rank, EnumBloodTendency tendency,
@@ -65,6 +69,15 @@ public class UmbralStepManip extends BloodManipulation {
 
 		// Find a safe landing position on top of the targeted block
 		BlockPos landingPos = targetBlock.above();
+
+		// Umbral Step requires darkness at the destination
+		int lightAtDest = world.getMaxLocalRawBrightness(landingPos);
+		if (lightAtDest > MAX_LIGHT_LEVEL) {
+			player.displayClientMessage(
+					Component.literal("§5The shadows there are too thin... (light level " + lightAtDest + ")"),
+					true);
+			return;
+		}
 		BlockState landingState = world.getBlockState(landingPos);
 		BlockState headState = world.getBlockState(landingPos.above());
 
