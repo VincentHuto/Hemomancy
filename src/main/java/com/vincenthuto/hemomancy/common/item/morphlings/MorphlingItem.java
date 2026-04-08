@@ -131,6 +131,7 @@ public class MorphlingItem extends Item implements IMorphling {
 
 	private static String formatTendencyName(EnumBloodTendency tendency) {
 		String name = tendency.name();
+		if (name.isEmpty()) return "Unknown";
 		return name.charAt(0) + name.substring(1).toLowerCase();
 	}
 
