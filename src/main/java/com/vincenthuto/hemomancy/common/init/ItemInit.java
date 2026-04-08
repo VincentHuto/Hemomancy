@@ -301,6 +301,27 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
 			"memory_crimson_flame_conjuration",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+	public static final RegistryObject<Item> memory_sanguine_mending = BASEITEMS.register("memory_sanguine_mending",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_mending));
+	public static final RegistryObject<Item> memory_hemosynthesis = BASEITEMS.register("memory_hemosynthesis",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemosynthesis));
+	public static final RegistryObject<Item> memory_blood_lamp = BASEITEMS.register("memory_blood_lamp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_lamp));
+	public static final RegistryObject<Item> memory_crimson_harvest = BASEITEMS.register("memory_crimson_harvest",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_harvest));
+	public static final RegistryObject<Item> memory_glacial_grasp = BASEITEMS.register("memory_glacial_grasp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_grasp));
+	public static final RegistryObject<Item> memory_sanguine_excavation = BASEITEMS.register(
+			"memory_sanguine_excavation",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_excavation));
+	public static final RegistryObject<Item> memory_pyretic_forge = BASEITEMS.register("memory_pyretic_forge",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.pyretic_forge));
+	public static final RegistryObject<Item> memory_umbral_step = BASEITEMS.register("memory_umbral_step",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.umbral_step));
+	public static final RegistryObject<Item> memory_crimson_sight = BASEITEMS.register("memory_crimson_sight",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
+	public static final RegistryObject<Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));
