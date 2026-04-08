@@ -1,24 +1,38 @@
 package com.vincenthuto.hemomancy.common.init;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
+import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
 public class SkillPointInit {
 
 	public static List<List<SkillPoint>> SKILL_TREE = new ArrayList<>();
 	public static List<SkillPoint> BASE = new ArrayList<>();
-	/** Available skill-point currency earned from using blood manipulations. */
+	/** Available skill-point currency earned from gameplay milestones and blood manipulations. */
 	public static int skillPoints = 0;
 	public static SkillPoint base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach;
+
+	// ── Milestone tracking ──
+	/** Set of milestones that have already been completed and rewarded. */
+	public static Set<HemoMilestone> completedMilestones = EnumSet.noneOf(HemoMilestone.class);
+
+	/** Cumulative counters for tiered milestones. */
+	public static int totalManipulationUses = 0;
+	public static int totalKillsWithBlood = 0;
+	public static int totalRitesCompleted = 0;
+	public static int totalHemoAdvancements = 0;
 
 	public static void init() {
 		initBaseBranch();
@@ -109,10 +123,24 @@ public class SkillPointInit {
 		for (SkillPoint sp : getAllSkills()) {
 			list.add(sp.serialize());
 		}
-		// Append a meta entry for the skill-point currency
+		// Append a meta entry for the skill-point currency, milestones, and counters
 		CompoundTag meta = new CompoundTag();
 		meta.putString("name", "__meta__");
 		meta.putInt("skillPoints", skillPoints);
+
+		// Milestone counters
+		meta.putInt("totalManipulationUses", totalManipulationUses);
+		meta.putInt("totalKillsWithBlood", totalKillsWithBlood);
+		meta.putInt("totalRitesCompleted", totalRitesCompleted);
+		meta.putInt("totalHemoAdvancements", totalHemoAdvancements);
+
+		// Completed milestones
+		ListTag milestoneList = new ListTag();
+		for (HemoMilestone m : completedMilestones) {
+			milestoneList.add(StringTag.valueOf(m.getId()));
+		}
+		meta.put("completedMilestones", milestoneList);
+
 		list.add(meta);
 		return list;
 	}
@@ -126,6 +154,21 @@ public class SkillPointInit {
 					if (entry.contains("skillPoints")) {
 						skillPoints = entry.getInt("skillPoints");
 					}
+					// Restore counters
+					totalManipulationUses = entry.getInt("totalManipulationUses");
+					totalKillsWithBlood = entry.getInt("totalKillsWithBlood");
+					totalRitesCompleted = entry.getInt("totalRitesCompleted");
+					totalHemoAdvancements = entry.getInt("totalHemoAdvancements");
+
+					// Restore completed milestones
+					completedMilestones = EnumSet.noneOf(HemoMilestone.class);
+					if (entry.contains("completedMilestones")) {
+						ListTag milestoneList = entry.getList("completedMilestones", Tag.TAG_STRING);
+						for (Tag mTag : milestoneList) {
+							HemoMilestone m = HemoMilestone.byId(mTag.getAsString());
+							if (m != null) completedMilestones.add(m);
+						}
+					}
 					continue;
 				}
 				for (SkillPoint sp : getAllSkills()) {
@@ -136,6 +179,26 @@ public class SkillPointInit {
 				}
 			}
 		}
+	}
+
+	// ── Milestone helpers ──
+
+	/**
+	 * Attempts to award a milestone. If the milestone has not been completed yet,
+	 * marks it complete and adds its skill-point reward.
+	 *
+	 * @return true if the milestone was newly completed
+	 */
+	public static boolean tryAwardMilestone(HemoMilestone milestone) {
+		if (completedMilestones.contains(milestone)) return false;
+		completedMilestones.add(milestone);
+		skillPoints += milestone.getSkillPointReward();
+		return true;
+	}
+
+	/** Returns true if the given milestone has already been completed. */
+	public static boolean isMilestoneCompleted(HemoMilestone milestone) {
+		return completedMilestones.contains(milestone);
 	}
 
 }

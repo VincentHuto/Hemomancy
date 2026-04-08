@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -354,6 +355,9 @@ public class CardinalRiteEvents {
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
 
+		// Award rite completion milestone (first rite + tiered)
+		SkillPointGainEvents.onRiteCompleted(caster);
+
 		// Check if this rite grants an initiatory degree
 		String ritePath = rite.getRecipeId().getPath();
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
@@ -363,6 +367,9 @@ public class CardinalRiteEvents {
 				if (currentDegree < targetDegree) {
 					degree.setDegreeNumber(targetDegree);
 					InitiatoryDegreeEvents.syncDegree(caster, degree);
+
+					// Award degree milestone skill points
+					SkillPointGainEvents.onDegreeReached(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
