@@ -14,7 +14,6 @@ public class ChiselActionButton extends Button {
 	// ── Theme colors ──
 	private static final int BG_NORMAL = 0xFF1A0808;
 	private static final int BG_HOVERED = 0xFF2A0C0C;
-	private static final int BG_PRESSED = 0xFF120505;
 
 	private static final int BORDER_NORMAL = 0xFF440E0E;
 	private static final int BORDER_HOVERED = 0xFF882020;
@@ -35,8 +34,6 @@ public class ChiselActionButton extends Button {
 	@Override
 	public void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
 		boolean hovered = this.isHoveredOrFocused();
-		boolean pressed = hovered && isMouseOver(mouseX, mouseY)
-				&& net.minecraft.client.Minecraft.getInstance().mouseHandler.isLeftPressed();
 
 		int x = this.getX();
 		int y = this.getY();
@@ -44,7 +41,7 @@ public class ChiselActionButton extends Button {
 		int h = this.getHeight();
 
 		// Background
-		int bg = pressed ? BG_PRESSED : (hovered ? BG_HOVERED : BG_NORMAL);
+		int bg = hovered ? BG_HOVERED : BG_NORMAL;
 		gfx.fill(x, y, x + w, y + h, bg);
 
 		// Outer border
@@ -71,7 +68,6 @@ public class ChiselActionButton extends Button {
 
 		// Icon
 		int iconColor = hovered ? 0xFFDD4444 : 0xFFAA3333;
-		if (pressed) iconColor = 0xFF882222;
 		int cx = x + w / 2;
 		int cy = y + h / 2;
 

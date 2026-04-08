@@ -64,6 +64,8 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 
 	/** Seeded vein parameters for animated background. */
 	private float[][] veinParams;
+	/** Pre-generated speckle positions and colors for the vein background. */
+	private int[][] speckleData;
 
 	// --- Click-and-drag rune painting state ---
 	/** Whether the player is currently dragging across the rune grid. */
@@ -192,9 +194,10 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int x, int y) {
-		// Title with blood-red color, drawn once with drop shadow
-		graphics.drawString(font, "Chisel Station",
-				(this.imageWidth - font.width("Chisel Station")) / 2, 4, 0xFFAA2222, true);
+		// Title with blood-red color, centered with drop shadow
+		String titleText = "Chisel Station";
+		graphics.drawString(font, titleText,
+				(this.imageWidth - font.width(titleText)) / 2, 4, 0xFFAA2222, true);
 
 		// Inventory label
 		graphics.drawString(font, this.playerInv.getDisplayName(), 8, this.imageHeight - 92,
@@ -207,10 +210,10 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 			String resultName = I18n.get(currentRecipe.getResultItem().getDescriptionId());
 			int maxNameWidth = 50;
 			if (font.width(resultName) > maxNameWidth) {
-				while (font.width(resultName + "..") > maxNameWidth && !resultName.isEmpty()) {
+				while (font.width(resultName + "...") > maxNameWidth && !resultName.isEmpty()) {
 					resultName = resultName.substring(0, resultName.length() - 1);
 				}
-				resultName = resultName + "..";
+				resultName = resultName + "...";
 			}
 			graphics.drawString(font, resultName, 120, 65, 0xFFCCAAAA, true);
 
@@ -392,15 +395,16 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 			}
 		}
 
-		// Layer 4: noise speckles
-		Random speckRand = new Random(54321L);
-		for (int s = 0; s < 50; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(20);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+		// Layer 4: pre-generated noise speckles
+		if (speckleData != null) {
+			for (int[] speck : speckleData) {
+				int sx = gx + speck[0] % gw;
+				int sy = gy + speck[1] % gh;
+				int sr = speck[2];
+				int sg = sr / 4;
+				int sa = speck[3];
+				graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+			}
 		}
 
 		RenderSystem.disableBlend();
@@ -736,6 +740,16 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 			veinParams[i][6] = 50 + rand.nextInt(100);
 			veinParams[i][7] = 1 + rand.nextInt(2);
 			veinParams[i][8] = rand.nextFloat();
+		}
+
+		// Pre-generate speckle positions and colors for the vein background
+		Random speckRand = new Random(54321L);
+		speckleData = new int[50][4]; // [index][x_offset, y_offset, red, alpha]
+		for (int s = 0; s < 50; s++) {
+			speckleData[s][0] = speckRand.nextInt(176); // max gui width
+			speckleData[s][1] = speckRand.nextInt(CRAFT_AREA_HEIGHT);
+			speckleData[s][2] = 10 + speckRand.nextInt(20); // red component
+			speckleData[s][3] = 15 + speckRand.nextInt(20); // alpha
 		}
 
 		// Rune grid buttons (8x8)
