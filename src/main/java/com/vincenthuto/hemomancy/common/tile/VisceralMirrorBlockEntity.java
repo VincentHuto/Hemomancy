@@ -420,6 +420,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		tag.putInt("RitualTicks", ritualTicks);
 		tag.putInt("TotalRitualTicks", totalRitualTicks);
 		tag.putInt("SelectedOrganIndex", selectedOrganIndex);
+		tag.putLong("LastInteractionTick", lastInteractionTick);
 		if (targetOrgan != null) {
 			tag.putString("TargetOrgan", targetOrgan.name());
 		}
@@ -434,6 +435,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		ritualTicks = tag.getInt("RitualTicks");
 		totalRitualTicks = tag.getInt("TotalRitualTicks");
 		selectedOrganIndex = tag.getInt("SelectedOrganIndex");
+		lastInteractionTick = tag.getLong("LastInteractionTick");
 		if (tag.contains("TargetOrgan")) {
 			targetOrgan = EnumOrgan.valueOf(tag.getString("TargetOrgan"));
 		}
