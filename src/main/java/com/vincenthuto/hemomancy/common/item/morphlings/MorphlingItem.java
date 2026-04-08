@@ -98,14 +98,12 @@ public class MorphlingItem extends Item implements IMorphling {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
 		// Show preferred enzyme info
-		if (this instanceof IMorphling morphling) {
-			EnumBloodTendency preferred = morphling.getPreferredTendency();
-			EnumBloodTendency secondary = morphling.getSecondaryTendency();
-			tooltip.add(Component.literal("Preferred: " + formatTendencyName(preferred))
-					.withStyle(ChatFormatting.AQUA));
-			tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
-					.withStyle(ChatFormatting.DARK_AQUA));
-		}
+		EnumBloodTendency preferred = this.getPreferredTendency();
+		EnumBloodTendency secondary = this.getSecondaryTendency();
+		tooltip.add(Component.literal("Preferred: " + formatTendencyName(preferred))
+				.withStyle(ChatFormatting.AQUA));
+		tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
+				.withStyle(ChatFormatting.DARK_AQUA));
 
 		if (stack.hasTag()) {
 			float power = stack.getTag().getFloat("EnzymePower");
@@ -127,14 +125,12 @@ public class MorphlingItem extends Item implements IMorphling {
 				}
 
 				// Show maturity bonuses
-				if (this instanceof IMorphling morphling) {
-					List<Component> bonuses = morphling.getMaturityBonusDescriptions(maturity);
-					if (!bonuses.isEmpty()) {
-						tooltip.add(Component.empty());
-						tooltip.add(Component.literal("Maturity Bonuses:")
-								.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
-						tooltip.addAll(bonuses);
-					}
+				List<Component> bonuses = this.getMaturityBonusDescriptions(maturity);
+				if (!bonuses.isEmpty()) {
+					tooltip.add(Component.empty());
+					tooltip.add(Component.literal("Maturity Bonuses:")
+							.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
+					tooltip.addAll(bonuses);
 				}
 			}
 		}

@@ -35,11 +35,6 @@ public class VisceralOrgansProvider implements ICapabilitySerializable<Tag> {
 		return writeNBT(instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional cannot be empty!")));
 	}
 
-	@Override
-	public void invalidateCaps() {
-		instance.invalidate();
-	}
-
 	private CompoundTag writeNBT(IVisceralOrgans organs) {
 		CompoundTag tag = new CompoundTag();
 		for (EnumOrgan organ : EnumOrgan.values()) {

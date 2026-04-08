@@ -669,26 +669,21 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 	 */
 	private void renderMiniPattern(GuiGraphics graphics, byte[][] patternData, int x, int y, float partialTicks) {
 		int gridSize = 8 * MINI_CELL;
-		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x60000000);
+		//graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x60000000);
 
-		float gameTime = (Minecraft.getInstance().level != null
-				? Minecraft.getInstance().level.getGameTime() : 0) + partialTicks;
-		float pulse = 0.7f + 0.3f * ((float) Math.sin(gameTime * 0.3f) * 0.5f + 0.5f);
+	//	int activeColor = 0xFFDAA520; // solid gold — matches binder panel theme
 
-		int activeAlpha = Mth.clamp((int) (200 * pulse), 80, 255);
-		int activeColor = (activeAlpha << 24) | (0xDC << 16) | (0x19 << 8) | 0x14;
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				int cx = x + j * MINI_CELL;
-				int cy = y + i * MINI_CELL;
-				if (patternData[i][j] != 0) {
-					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, activeColor);
-				} else {
-					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, 0x30333333);
-				}
-			}
-		}
+//		for (int i = 0; i < 8; i++) {
+//			for (int j = 0; j < 8; j++) {
+//				int cx = x + j * MINI_CELL;
+//				int cy = y + i * MINI_CELL;
+//				if (patternData[i][j] != 0) {
+//					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, activeColor);
+//				} else {
+//					graphics.fill(cx, cy, cx + MINI_CELL, cy + MINI_CELL, 0x30333333);
+//				}
+//			}
+//		}
 	}
 
 	/**

@@ -732,11 +732,12 @@ public class SkillTreeScreen extends Screen {
 				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
 
 		if (activeTab == Tab.SKILLS) {
-			// Display current skill points in top-left area of the GUI
+			// Display current skill points to the right of the home button
 			String spText = "Skill Points: " + SkillPointInit.skillPoints;
 			gfx.drawString(font, Component.literal(spText)
 					.withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
-					guiLeft + 5, guiTop + 18, 0);
+					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
+					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
 		}
 
 		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
@@ -2297,10 +2298,11 @@ public class SkillTreeScreen extends Screen {
 			// Category header
 			if (m.getCategory() != lastCategory) {
 				lastCategory = m.getCategory();
+				final HemoMilestone.Category cat = lastCategory;
 				y += 3;
 				gfx.drawString(font,
-						Component.literal("\u25B8 " + lastCategory.getLabel())
-								.withStyle(s -> s.withColor(lastCategory.getColor()).withBold(true)),
+						Component.literal("\u25B8 " + cat.getLabel())
+								.withStyle(s -> s.withColor(cat.getColor()).withBold(true)),
 						x, y, 0, false);
 				y += 11;
 			}

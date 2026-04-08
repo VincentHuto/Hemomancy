@@ -59,8 +59,8 @@ public class ScreenRuneBinderViewer extends Screen {
 	private static final int GUI_HEIGHT = 228;
 
 	/** Layout constants for the entry list inside the GUI. */
-	private static final int LIST_LEFT_PADDING = 10;
-	private static final int LIST_TOP_PADDING = 24;
+	private static final int LIST_LEFT_PADDING = 16;
+	private static final int LIST_TOP_PADDING = 29;
 	private static final int ENTRY_HEIGHT = 28;
 	private static final int ENTRY_SPACING = 2;
 	private static final int VISIBLE_ENTRIES = 7;
@@ -148,7 +148,7 @@ public class ScreenRuneBinderViewer extends Screen {
 				if (recipe == null) continue;
 
 				ItemStack resultIcon = recipe.getResultItem();
-				String name = I18n.get(resultIcon.getDescriptionId());
+				String name = resultIcon.getHoverName().getString();
 				byte[][] pattern = recipe.getPattern();
 
 				entries.add(new PatternEntry(i, pat, resultIcon, name, pattern, pat.getRune(), recipe));

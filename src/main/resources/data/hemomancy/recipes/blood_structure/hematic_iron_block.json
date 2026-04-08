@@ -4,9 +4,9 @@
   "heldItem": "minecraft:ink_sac",
   "hitBlock": "minecraft:iron_block",
   "pattern": [
-  	 ["   ", "BBB"],
-     [" B ", "BIB"],
- 	 ["   ", "BBB"]
+  	 ["BBB"],
+     ["BIB"],
+ 	 [ "BBB"]
   ],
   "key": {
     "I": {
