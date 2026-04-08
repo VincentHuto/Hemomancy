@@ -124,26 +124,50 @@ public class SkillTreeScreen extends Screen {
 
 	// ── Cardinal Rites data ──
 	private final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
-	private int selectedRiteIndex = 0;
+	/** Rites grouped by CardinalRiteType for tier-based display. */
+	private final Map<CardinalRiteType, List<CardinalRiteRecipe>> ritesByTier = new java.util.LinkedHashMap<>();
+	private CardinalRiteType selectedRiteTier = null;      // null = no tier selected yet
+	private int selectedRiteIndexInTier = 0;               // index within the tier list
 	private float riteRotationAngle = 0f;
 	private boolean riteDragging = false;
 	private double riteDragLastX = 0;
 	private int riteVisibleLayer = -1;  // -1 = show all layers
 	private int riteMaxLayer = 0;
+	private int riteSidebarScroll = 0;
 
 	// ── Blood Crafting data ──
 	private final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
-	private int selectedCraftingIndex = 0;
+	/** Crafting recipes grouped by cost tier for tier-based display. */
+	private final Map<String, List<BloodStructureRecipe>> craftingByTier = new java.util.LinkedHashMap<>();
+	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
+	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
+	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
+	private String selectedCraftingTier = null;             // null = no tier selected yet
+	private int selectedCraftingIndexInTier = 0;            // index within the tier list
 	private float craftingRotationAngle = 0f;
 	private boolean craftingDragging = false;
 	private double craftingDragLastX = 0;
 	private int craftingVisibleLayer = -1;  // -1 = show all layers
 	private int craftingMaxLayer = 0;
+	private int craftingSidebarScroll = 0;
 
 	// Shared nav button dimensions
 	private static final int RITE_NAV_BTN_W = 24;
 	private static final int RITE_NAV_BTN_H = 18;
 	private static final int LAYER_BTN_SIZE = 16;
+
+	/** Minimum player degree required to view recipes in each rite tier. */
+	private static int riteMinDegree(CardinalRiteType type) {
+		return switch (type) {
+			case MINOR   -> 0;
+			case LESSER  -> 1;
+			case GREATER -> 3;
+			case GRAND   -> 5;
+		};
+	}
+
+	/** Width of the tier sidebar on Crafting/Rites tabs (screen px). */
+	private static final int TIER_SIDEBAR_W = 130;
 
 	// ── Player initiatory degree (cached for rendering) ──
 	private int playerDegree = 0;
@@ -373,21 +397,57 @@ public class SkillTreeScreen extends Screen {
 
 	private void cacheRiteRecipes() {
 		riteRecipes.clear();
+		ritesByTier.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
 			riteRecipes.addAll(CardinalRiteRecipe.getAllRecipes(minecraft.level));
 		}
-		if (selectedRiteIndex >= riteRecipes.size()) {
-			selectedRiteIndex = 0;
+		// Group by rite type (tier)
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			ritesByTier.put(type, new ArrayList<>());
+		}
+		for (CardinalRiteRecipe recipe : riteRecipes) {
+			ritesByTier.computeIfAbsent(recipe.getRiteType(), k -> new ArrayList<>()).add(recipe);
+		}
+		// Default selection: first accessible tier with recipes
+		selectedRiteTier = null;
+		selectedRiteIndexInTier = 0;
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			if (!ritesByTier.getOrDefault(type, List.of()).isEmpty()
+					&& playerDegree >= riteMinDegree(type)) {
+				selectedRiteTier = type;
+				break;
+			}
 		}
 	}
 
 	private void cacheCraftingRecipes() {
 		craftingRecipes.clear();
+		craftingByTier.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
 			craftingRecipes.addAll(BloodStructureRecipe.getAllRecipes(minecraft.level));
 		}
-		if (selectedCraftingIndex >= craftingRecipes.size()) {
-			selectedCraftingIndex = 0;
+		// Initialise empty tier lists
+		for (String tierName : CRAFTING_TIER_NAMES) {
+			craftingByTier.put(tierName, new ArrayList<>());
+		}
+		// Sort recipes into blood-cost tiers
+		for (BloodStructureRecipe recipe : craftingRecipes) {
+			for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
+				if (recipe.getBloodCost() <= CRAFTING_TIER_THRESHOLDS[i]) {
+					craftingByTier.get(CRAFTING_TIER_NAMES[i]).add(recipe);
+					break;
+				}
+			}
+		}
+		// Default selection: first accessible tier with recipes
+		selectedCraftingTier = null;
+		selectedCraftingIndexInTier = 0;
+		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
+			if (!craftingByTier.getOrDefault(CRAFTING_TIER_NAMES[i], List.of()).isEmpty()
+					&& playerDegree >= CRAFTING_TIER_DEGREE_REQ[i]) {
+				selectedCraftingTier = CRAFTING_TIER_NAMES[i];
+				break;
+			}
 		}
 	}
 
@@ -442,14 +502,22 @@ public class SkillTreeScreen extends Screen {
 
 			if (insideGui(mx, my)) {
 				if (activeTab == Tab.CRAFTING) {
-					// Check crafting nav buttons
-					if (isOverCraftingPrevButton(mx, my) && !craftingRecipes.isEmpty()) {
-						selectedCraftingIndex = (selectedCraftingIndex - 1 + craftingRecipes.size()) % craftingRecipes.size();
-						craftingVisibleLayer = -1;
+					// Check tier sidebar click
+					String clickedTier = craftingTierUnder(mx, my);
+					if (clickedTier != null) {
+						// Only allow selecting unlocked tiers
+						int tierIdx = java.util.Arrays.asList(CRAFTING_TIER_NAMES).indexOf(clickedTier);
+						if (tierIdx >= 0 && playerDegree >= CRAFTING_TIER_DEGREE_REQ[tierIdx]) {
+							selectedCraftingTier = clickedTier;
+							selectedCraftingIndexInTier = 0;
+							craftingVisibleLayer = -1;
+						}
 						return true;
 					}
-					if (isOverCraftingNextButton(mx, my) && !craftingRecipes.isEmpty()) {
-						selectedCraftingIndex = (selectedCraftingIndex + 1) % craftingRecipes.size();
+					// Check recipe list click
+					int clickedRecipeIdx = craftingRecipeUnder(mx, my);
+					if (clickedRecipeIdx >= 0) {
+						selectedCraftingIndexInTier = clickedRecipeIdx;
 						craftingVisibleLayer = -1;
 						return true;
 					}
@@ -466,20 +534,29 @@ public class SkillTreeScreen extends Screen {
 						else craftingVisibleLayer = -1; // wrap to "all"
 						return true;
 					}
-					// Start rotation drag
-					craftingDragging = true;
-					craftingDragLastX = mx;
+					// Start rotation drag (only in the model area)
+					if (mx >= guiLeft + TIER_SIDEBAR_W + 4) {
+						craftingDragging = true;
+						craftingDragLastX = mx;
+					}
 					return true;
 				}
 				if (activeTab == Tab.RITES) {
-					// Check rite nav buttons
-					if (isOverRitePrevButton(mx, my) && !riteRecipes.isEmpty()) {
-						selectedRiteIndex = (selectedRiteIndex - 1 + riteRecipes.size()) % riteRecipes.size();
-						riteVisibleLayer = -1;
+					// Check tier sidebar click
+					CardinalRiteType clickedRiteTier = riteTierUnder(mx, my);
+					if (clickedRiteTier != null) {
+						if (playerDegree >= riteMinDegree(clickedRiteTier)
+								&& !ritesByTier.getOrDefault(clickedRiteTier, List.of()).isEmpty()) {
+							selectedRiteTier = clickedRiteTier;
+							selectedRiteIndexInTier = 0;
+							riteVisibleLayer = -1;
+						}
 						return true;
 					}
-					if (isOverRiteNextButton(mx, my) && !riteRecipes.isEmpty()) {
-						selectedRiteIndex = (selectedRiteIndex + 1) % riteRecipes.size();
+					// Check recipe list click
+					int clickedRiteIdx = riteRecipeUnder(mx, my);
+					if (clickedRiteIdx >= 0) {
+						selectedRiteIndexInTier = clickedRiteIdx;
 						riteVisibleLayer = -1;
 						return true;
 					}
@@ -496,9 +573,11 @@ public class SkillTreeScreen extends Screen {
 						else riteVisibleLayer = -1; // wrap to "all"
 						return true;
 					}
-					// Start rotation drag
-					riteDragging = true;
-					riteDragLastX = mx;
+					// Start rotation drag (only in the model area)
+					if (mx >= guiLeft + TIER_SIDEBAR_W + 4) {
+						riteDragging = true;
+						riteDragLastX = mx;
+					}
 					return true;
 				}
 				if (activeTab == Tab.SKILLS) {
@@ -556,28 +635,18 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 
-		// Rites tab: scroll to cycle through rites
+		// Rites tab: scroll within the tier sidebar
 		if (activeTab == Tab.RITES) {
-			if (!riteRecipes.isEmpty()) {
-				if (delta > 0) {
-					selectedRiteIndex = (selectedRiteIndex - 1 + riteRecipes.size()) % riteRecipes.size();
-				} else {
-					selectedRiteIndex = (selectedRiteIndex + 1) % riteRecipes.size();
-				}
-				riteVisibleLayer = -1;
+			if (mx < guiLeft + TIER_SIDEBAR_W + 4) {
+				riteSidebarScroll = Math.max(0, riteSidebarScroll - (int)(delta * 12));
 			}
 			return true;
 		}
 
-		// Crafting tab: scroll to cycle through crafting recipes
+		// Crafting tab: scroll within the tier sidebar
 		if (activeTab == Tab.CRAFTING) {
-			if (!craftingRecipes.isEmpty()) {
-				if (delta > 0) {
-					selectedCraftingIndex = (selectedCraftingIndex - 1 + craftingRecipes.size()) % craftingRecipes.size();
-				} else {
-					selectedCraftingIndex = (selectedCraftingIndex + 1) % craftingRecipes.size();
-				}
-				craftingVisibleLayer = -1;
+			if (mx < guiLeft + TIER_SIDEBAR_W + 4) {
+				craftingSidebarScroll = Math.max(0, craftingSidebarScroll - (int)(delta * 12));
 			}
 			return true;
 		}
@@ -1304,7 +1373,7 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Blood Crafting tab
+	//  Blood Crafting tab — tier-based layout
 	// ────────────────────────────────────────────────────────────
 
 	private void drawCraftingContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
@@ -1314,32 +1383,180 @@ public class SkillTreeScreen extends Screen {
 			return;
 		}
 
-		BloodStructureRecipe recipe = craftingRecipes.get(selectedCraftingIndex);
+		// ── Tier sidebar (left) ──
+		drawCraftingTierSidebar(gfx, mouseX, mouseY);
 
-		// Layout: left half = 3D model, right half = info panel
-		int midX = guiLeft + guiWidth / 2;
+		// ── Recipe content (right of sidebar) ──
+		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
+		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
 
-		// ── 3D multiblock preview (left half) ──
-		drawCraftingModel(gfx, recipe, guiLeft + 10, guiTop + 30,
-				midX - guiLeft - 20, guiHeight - 60);
+		if (selectedCraftingTier == null) {
+			gfx.drawCenteredString(font, "Select a tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			return;
+		}
 
-		// ── Layer buttons (left side of model area) ──
+		List<BloodStructureRecipe> tierRecipes = craftingByTier.getOrDefault(selectedCraftingTier, List.of());
+		if (tierRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No recipes in this tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			return;
+		}
+		if (selectedCraftingIndexInTier >= tierRecipes.size()) selectedCraftingIndexInTier = 0;
+		BloodStructureRecipe recipe = tierRecipes.get(selectedCraftingIndexInTier);
+
+		// Layout: left half of content = 3D model, right half = info panel
+		int modelAreaW = contentW / 2;
+		int modelX = contentX;
+		int infoX = contentX + modelAreaW + 10;
+		int infoW = contentW - modelAreaW - 20;
+
+		// ── 3D multiblock preview ──
+		drawCraftingModel(gfx, recipe, modelX + 10, guiTop + 30,
+				modelAreaW - 20, guiHeight - 60);
+
+		// ── Layer buttons ──
 		drawLayerButtons(gfx, mouseX, mouseY, Tab.CRAFTING, craftingVisibleLayer, craftingMaxLayer);
 
-		// ── Info panel (right half) ──
-		drawCraftingInfoPanel(gfx, recipe, midX + 10, guiTop + 30, guiWidth / 2 - 20);
-
-		// ── Navigation buttons (bottom center) ──
-		drawCraftingNavButtons(gfx, mouseX, mouseY);
-
-		// ── Page indicator ──
-		String pageStr = (selectedCraftingIndex + 1) + " / " + craftingRecipes.size();
-		gfx.drawCenteredString(font, pageStr,
-				guiLeft + guiWidth / 2, guiTop + guiHeight - 18, 0xFF888888);
+		// ── Info panel ──
+		drawCraftingInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
 
 		// ── Drag hint ──
 		gfx.drawCenteredString(font, "Drag to rotate",
-				guiLeft + (midX - guiLeft) / 2 + 5, guiTop + guiHeight - 18, 0x44888888);
+				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
+	}
+
+	/**
+	 * Draws the tier sidebar for Blood Crafting, showing all tiers as rows.
+	 * Locked tiers are greyed/obfuscated. Recipes within selected tier are listed below.
+	 */
+	private void drawCraftingTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		// Title
+		gfx.drawString(font, Component.literal("Tiers")
+				.withStyle(s -> s.withColor(Tab.CRAFTING.color).withBold(true)), sx + 2, sy, 0);
+		sy += 14;
+
+		// Separator
+		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF442222);
+		sy += 4;
+
+		// Tier rows
+		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
+			String tierName = CRAFTING_TIER_NAMES[i];
+			boolean locked = playerDegree < CRAFTING_TIER_DEGREE_REQ[i];
+			boolean selected = tierName.equals(selectedCraftingTier);
+			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
+
+			boolean hovered = mouseX >= sx && mouseX <= sx + sw
+					&& mouseY >= sy && mouseY <= sy + rowH;
+
+			// Background
+			int bg = selected ? 0xDD1A0808 : (hovered && !locked ? 0xBB180505 : 0x99120303);
+			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
+
+			// Border
+			int bc = locked ? 0xFF333333 : (selected ? Tab.CRAFTING.color : 0xFF555555);
+			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
+			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
+			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
+			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
+
+			if (locked) {
+				// Dark overlay + lock indicator
+				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
+				gfx.drawString(font, "[X] " + tierName + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
+			} else {
+				String label = tierName + " (" + recipes.size() + ")";
+				int textCol = selected ? 0xFFEEAAAA : 0xFF999999;
+				gfx.drawString(font, label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
+			}
+
+			// If this tier is selected, draw recipe list below
+			if (selected && !locked) {
+				sy += rowH + 2;
+				for (int j = 0; j < recipes.size(); j++) {
+					BloodStructureRecipe r = recipes.get(j);
+					boolean recSel = (j == selectedCraftingIndexInTier);
+					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
+							&& mouseY >= sy && mouseY <= sy + 16;
+
+					int recBg = recSel ? 0xCC221010 : (recHov ? 0xAA1A0808 : 0x00000000);
+					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
+
+					if (recSel) {
+						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.CRAFTING.color);
+					}
+
+					String recName = HLTextUtils.toProperCase(r.getId().getPath().replace("_", " "));
+					int recCol = recSel ? 0xFFDDAAAA : 0xFF888888;
+					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
+					sy += 18;
+				}
+			}
+			sy += rowH + 2;
+		}
+	}
+
+	/** Returns the tier name clicked in the crafting sidebar, or null. */
+	private String craftingTierUnder(double mx, double my) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
+			String tierName = CRAFTING_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedCraftingTier);
+			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
+
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+				return tierName;
+			}
+
+			if (selected) {
+				sy += rowH + 2 + recipes.size() * 18;
+			}
+			sy += rowH + 2;
+		}
+		return null;
+	}
+
+	/** Returns the recipe index clicked within the selected crafting tier, or -1. */
+	private int craftingRecipeUnder(double mx, double my) {
+		if (selectedCraftingTier == null) return -1;
+		List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(selectedCraftingTier, List.of());
+		if (recipes.isEmpty()) return -1;
+
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
+			String tierName = CRAFTING_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedCraftingTier);
+			List<BloodStructureRecipe> tierRecipes = craftingByTier.getOrDefault(tierName, List.of());
+
+			sy += rowH + 2; // skip tier row
+
+			if (selected) {
+				for (int j = 0; j < tierRecipes.size(); j++) {
+					if (mx >= sx + 4 && mx <= sx + sw - 4
+							&& my >= sy && my <= sy + 16) {
+						return j;
+					}
+					sy += 18;
+				}
+				return -1;
+			}
+			// If not the selected tier, just advance past it
+		}
+		return -1;
 	}
 
 	/**
@@ -1525,41 +1742,10 @@ public class SkillTreeScreen extends Screen {
 		}
 	}
 
-	// ── Crafting nav buttons ──
-
-	private void drawCraftingNavButtons(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (craftingRecipes.size() <= 1) return;
-
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-
-		int prevX = centerX - RITE_NAV_BTN_W - 30;
-		boolean prevHov = isOverCraftingPrevButton(mouseX, mouseY);
-		drawNavButton(gfx, prevX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25C0", prevHov, Tab.CRAFTING.color);
-
-		int nextX = centerX + 30;
-		boolean nextHov = isOverCraftingNextButton(mouseX, mouseY);
-		drawNavButton(gfx, nextX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25B6", nextHov, Tab.CRAFTING.color);
-	}
-
-	private boolean isOverCraftingPrevButton(double mx, double my) {
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-		int prevX = centerX - RITE_NAV_BTN_W - 30;
-		return mx >= prevX && mx <= prevX + RITE_NAV_BTN_W
-			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
-	}
-
-	private boolean isOverCraftingNextButton(double mx, double my) {
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-		int nextX = centerX + 30;
-		return mx >= nextX && mx <= nextX + RITE_NAV_BTN_W
-			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
-	}
+	// (Old nav buttons removed — now using tier sidebar)
 
 	// ────────────────────────────────────────────────────────────
-	//  Cardinal Rites tab
+	//  Cardinal Rites tab — tier-based layout
 	// ────────────────────────────────────────────────────────────
 
 	private void drawRiteContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
@@ -1569,32 +1755,187 @@ public class SkillTreeScreen extends Screen {
 			return;
 		}
 
-		CardinalRiteRecipe rite = riteRecipes.get(selectedRiteIndex);
+		// ── Tier sidebar (left) ──
+		drawRiteTierSidebar(gfx, mouseX, mouseY);
 
-		// Layout: left half = 3D model, right half = info panel
-		int midX = guiLeft + guiWidth / 2;
+		// ── Recipe content (right of sidebar) ──
+		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
+		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
 
-		// ── 3D multiblock preview (left half) ──
-		drawRiteModel(gfx, rite, guiLeft + 10, guiTop + 30,
-				midX - guiLeft - 20, guiHeight - 60, partial);
+		if (selectedRiteTier == null) {
+			gfx.drawCenteredString(font, "Select a tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			return;
+		}
 
-		// ── Layer buttons (left side of model area) ──
+		List<CardinalRiteRecipe> tierRites = ritesByTier.getOrDefault(selectedRiteTier, List.of());
+		if (tierRites.isEmpty()) {
+			gfx.drawCenteredString(font, "No rites in this tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			return;
+		}
+		if (selectedRiteIndexInTier >= tierRites.size()) selectedRiteIndexInTier = 0;
+		CardinalRiteRecipe rite = tierRites.get(selectedRiteIndexInTier);
+
+		// Layout: left half of content = 3D model, right half = info panel
+		int modelAreaW = contentW / 2;
+		int modelX = contentX;
+		int infoX = contentX + modelAreaW + 10;
+		int infoW = contentW - modelAreaW - 20;
+
+		// ── 3D multiblock preview ──
+		drawRiteModel(gfx, rite, modelX + 10, guiTop + 30,
+				modelAreaW - 20, guiHeight - 60, partial);
+
+		// ── Layer buttons ──
 		drawLayerButtons(gfx, mouseX, mouseY, Tab.RITES, riteVisibleLayer, riteMaxLayer);
 
-		// ── Info panel (right half) ──
-		drawRiteInfoPanel(gfx, rite, midX + 10, guiTop + 30, guiWidth / 2 - 20, mouseX, mouseY);
-
-		// ── Navigation buttons (bottom center) ──
-		drawRiteNavButtons(gfx, mouseX, mouseY);
-
-		// ── Page indicator ──
-		String pageStr = (selectedRiteIndex + 1) + " / " + riteRecipes.size();
-		gfx.drawCenteredString(font, pageStr,
-				guiLeft + guiWidth / 2, guiTop + guiHeight - 18, 0xFF888888);
+		// ── Info panel ──
+		drawRiteInfoPanel(gfx, rite, infoX, guiTop + 30, infoW, mouseX, mouseY);
 
 		// ── Drag hint ──
 		gfx.drawCenteredString(font, "Drag to rotate",
-				guiLeft + (midX - guiLeft) / 2 + 5, guiTop + guiHeight - 18, 0x44888888);
+				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
+	}
+
+	/**
+	 * Draws the tier sidebar for Cardinal Rites, grouped by rite type.
+	 * Locked tiers are greyed/obfuscated based on player degree.
+	 */
+	private void drawRiteTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		// Title
+		gfx.drawString(font, Component.literal("Rite Tiers")
+				.withStyle(s -> s.withColor(Tab.RITES.color).withBold(true)), sx + 2, sy, 0);
+		sy += 14;
+
+		// Separator
+		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF332244);
+		sy += 4;
+
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			boolean locked = playerDegree < riteMinDegree(type);
+			boolean selected = (type == selectedRiteTier);
+			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
+
+			boolean hovered = mouseX >= sx && mouseX <= sx + sw
+					&& mouseY >= sy && mouseY <= sy + rowH;
+
+			// Background
+			int bg = selected ? 0xDD120818 : (hovered && !locked ? 0xBB100616 : 0x990C0410);
+			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
+
+			// Border
+			int bc = locked ? 0xFF333333 : (selected ? Tab.RITES.color : 0xFF555555);
+			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
+			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
+			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
+			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
+
+			// Tier size indicator
+			String sizeLabel = type.getSize() + "x" + type.getSize();
+			String tierLabel = HLTextUtils.toProperCase(type.getSerializedName());
+
+			if (locked) {
+				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
+				gfx.drawString(font, "[X] " + tierLabel + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
+			} else {
+				int textCol = selected ? 0xFFDDBBEE : 0xFF999999;
+				gfx.drawString(font, tierLabel + " " + sizeLabel + " (" + recipes.size() + ")", sx + 4, sy + (rowH - 8) / 2, textCol, false);
+			}
+
+			// If this tier is selected, draw recipe list below
+			if (selected && !locked) {
+				sy += rowH + 2;
+				for (int j = 0; j < recipes.size(); j++) {
+					CardinalRiteRecipe r = recipes.get(j);
+					boolean recSel = (j == selectedRiteIndexInTier);
+					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
+							&& mouseY >= sy && mouseY <= sy + 16;
+
+					int recBg = recSel ? 0xCC180818 : (recHov ? 0xAA140614 : 0x00000000);
+					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
+
+					if (recSel) {
+						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.RITES.color);
+					}
+
+					String recName = r.getRiteName();
+					if (recName == null || recName.isEmpty()) {
+						recName = HLTextUtils.toProperCase(r.getId().getPath().replace("_", " "));
+					}
+					// Truncate long names
+					if (font.width(recName) > sw - 16) {
+						while (font.width(recName + "...") > sw - 16 && recName.length() > 3) {
+							recName = recName.substring(0, recName.length() - 1);
+						}
+						recName += "...";
+					}
+					int recCol = recSel ? 0xFFDDBBEE : 0xFF888888;
+					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
+					sy += 18;
+				}
+			}
+			sy += rowH + 2;
+		}
+	}
+
+	/** Returns the rite tier clicked in the sidebar, or null. */
+	private CardinalRiteType riteTierUnder(double mx, double my) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			boolean selected = (type == selectedRiteTier);
+			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
+
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+				return type;
+			}
+
+			if (selected) {
+				sy += rowH + 2 + recipes.size() * 18;
+			}
+			sy += rowH + 2;
+		}
+		return null;
+	}
+
+	/** Returns the recipe index clicked within the selected rite tier, or -1. */
+	private int riteRecipeUnder(double mx, double my) {
+		if (selectedRiteTier == null) return -1;
+		List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(selectedRiteTier, List.of());
+		if (recipes.isEmpty()) return -1;
+
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			boolean selected = (type == selectedRiteTier);
+			List<CardinalRiteRecipe> tierRecipes = ritesByTier.getOrDefault(type, List.of());
+
+			sy += rowH + 2; // skip tier row
+
+			if (selected) {
+				for (int j = 0; j < tierRecipes.size(); j++) {
+					if (mx >= sx + 4 && mx <= sx + sw - 4
+							&& my >= sy && my <= sy + 16) {
+						return j;
+					}
+					sy += 18;
+				}
+				return -1;
+			}
+		}
+		return -1;
 	}
 
 	/**
@@ -1803,24 +2144,7 @@ public class SkillTreeScreen extends Screen {
 		return lines;
 	}
 
-	// ── Rite nav buttons ──
-
-	private void drawRiteNavButtons(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (riteRecipes.size() <= 1) return;
-
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-
-		// ◀ Prev button
-		int prevX = centerX - RITE_NAV_BTN_W - 30;
-		boolean prevHov = isOverRitePrevButton(mouseX, mouseY);
-		drawNavButton(gfx, prevX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25C0", prevHov, Tab.RITES.color);
-
-		// ▶ Next button
-		int nextX = centerX + 30;
-		boolean nextHov = isOverRiteNextButton(mouseX, mouseY);
-		drawNavButton(gfx, nextX, btnY, RITE_NAV_BTN_W, RITE_NAV_BTN_H, "\u25B6", nextHov, Tab.RITES.color);
-	}
+	// (Old rite nav buttons removed — now using tier sidebar)
 
 	private void drawNavButton(GuiGraphics gfx, int x, int y, int w, int h, String symbol, boolean hovered, int hoverColor) {
 		int bg = hovered ? 0xDD1A0505 : 0x99120303;
@@ -1836,28 +2160,12 @@ public class SkillTreeScreen extends Screen {
 		gfx.drawCenteredString(font, symbol, x + w / 2, y + (h - 8) / 2, textCol);
 	}
 
-	private boolean isOverRitePrevButton(double mx, double my) {
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-		int prevX = centerX - RITE_NAV_BTN_W - 30;
-		return mx >= prevX && mx <= prevX + RITE_NAV_BTN_W
-			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
-	}
-
-	private boolean isOverRiteNextButton(double mx, double my) {
-		int centerX = guiLeft + guiWidth / 2;
-		int btnY = guiTop + guiHeight - 38;
-		int nextX = centerX + 30;
-		return mx >= nextX && mx <= nextX + RITE_NAV_BTN_W
-			&& my >= btnY && my <= btnY + RITE_NAV_BTN_H;
-	}
-
 	// ────────────────────────────────────────────────────────────
 	//  Layer buttons (shared between Crafting & Rites)
 	// ────────────────────────────────────────────────────────────
 
-	/** Returns the X position for layer buttons (left edge of model area). */
-	private int layerBtnX() { return guiLeft + 14; }
+	/** Returns the X position for layer buttons (left edge of model area, right of sidebar). */
+	private int layerBtnX() { return guiLeft + TIER_SIDEBAR_W + 10; }
 
 	/** Returns the Y center for layer buttons (vertically centred in model area). */
 	private int layerBtnCenterY() { return guiTop + guiHeight / 2; }
