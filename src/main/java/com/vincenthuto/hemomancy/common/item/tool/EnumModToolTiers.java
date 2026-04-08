@@ -17,6 +17,8 @@ public enum EnumModToolTiers implements Tier {
 		return Ingredient.of(ItemInit.chitinous_husk.get());
 	}), LIVING(5, 1024, 10.0F, 5.0F, 25, () -> {
 		return Ingredient.of(Items.ROTTEN_FLESH);
+	}), UNSTAINED(4, 1024, 6.0F, 8.0F, 15, () -> {
+		return Ingredient.of(ItemInit.cleansed_blood_crystal_shard.get());
 	});
 
 	private final int harvestLevel;

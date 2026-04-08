@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.item.armor.ChitiniteShieldItem;
 import com.vincenthuto.hemomancy.common.item.armor.EnumModArmorTiers;
 import com.vincenthuto.hemomancy.common.item.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.UnstainedArmorItem;
+import com.vincenthuto.hemomancy.common.item.armor.UnstainedShieldItem;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.memories.BloodStainedStoneItem;
@@ -51,6 +52,7 @@ import com.vincenthuto.hemomancy.common.item.tool.living.LivingSpearItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.SanguisLanceaItem;
+import com.vincenthuto.hemomancy.common.item.tool.unstained.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.util.HemoItemProperties;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
@@ -442,6 +444,11 @@ public class ItemInit {
 			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.LEGGINGS));
 	public static final RegistryObject<Item> unstained_boots = BASEITEMS.register("unstained_boots",
 			() -> new UnstainedArmorItem(EnumModArmorTiers.UNSTAINED, ArmorItem.Type.BOOTS));
+	public static final RegistryObject<Item> unstained_warhammer = HANDHELDITEMS.register("unstained_warhammer",
+			() -> new UnstainedWarhammerItem(8f, -3.0f, EnumModToolTiers.UNSTAINED,
+					new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> unstained_shield = SPECIALITEMS.register("unstained_shield",
+			() -> new UnstainedShieldItem(new Item.Properties()));
 
 	// Runes
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
