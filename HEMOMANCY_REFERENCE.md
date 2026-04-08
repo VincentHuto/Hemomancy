@@ -978,6 +978,18 @@ Full integration as a faction + spell system:
 **MnA Block/Tile/Entity:**
 - Custom blocks, tiles, and entities in `compat/mna/block`, `compat/mna/tile`, `compat/mna/entity`
 
+**Planned / Brainstormed Features** (see `MNA_COMPATIBILITY_BRAINSTORM.md` for full details):
+- Additional spell components: Blood Loss, Blood Rush, Hemolysis, Blood-to-Mana, Summon Sanguilith
+- New spell shapes: Sanguine Pulse (AoE burst), Hemomantic Tether (beam/channel)
+- New rituals: Sanguine Ascension (degree advancement), Erythromycelic Bloom (fungal spread), Iron Covenant (crafting)
+- Blood Affinity ↔ Tendency synergy system
+- Blood Cost as spell modifier ("Blood Tithe")
+- Harbinger faction tasks, sanctum structure, manaweaving recipes
+- Blood-themed Construct parts and enhanced Sanguilith variant
+- Cross-mod advancements, JEI integration, config options
+- Harbinger Mana HUD texture fix (current TODO)
+- Hemomantic enchantments via runeforging
+
 ### 25.2 Curios
 
 Curios integration for the Charm of Vascularium and other equippable items (handled in `compat/curios`).
@@ -1108,6 +1120,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
 - **Some skill descriptions** exist in lang but the full implementation of effects like `skill_sanguine_surge`, `skill_crimson_mastery`, `skill_vital_link`, `skill_iron_will`, `skill_blood_flow` need verification for complete gameplay wiring
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
+- **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Includes new spell components, shapes, rituals, items, faction enhancements, cross-system synergy mechanics, and QoL improvements. See the brainstorm document for prioritized feature list and implementation notes.
 
 ---
 
