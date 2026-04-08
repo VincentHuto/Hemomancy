@@ -23,18 +23,18 @@ import com.vincenthuto.hemomancy.common.item.memories.LethianDewItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.BatMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.CentipedeMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ChitiniteMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.morphlings.CoralMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.FungalMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
-import com.vincenthuto.hemomancy.common.item.morphlings.LampreyMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.LeechesMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.MoleMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MothMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.PestsMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.morphlings.WormMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.TickMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.morphlings.UrchinMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
@@ -338,16 +338,16 @@ public class ItemInit {
 			() -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_moth = BASEITEMS.register("morphling_moth",
 			() -> new MothMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_lamprey = BASEITEMS.register("morphling_lamprey",
-			() -> new LampreyMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_lamprey = BASEITEMS.register("morphling_tick",
+			() -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
 			() -> new CentipedeMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_bat = BASEITEMS.register("morphling_bat",
 			() -> new BatMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_coral = BASEITEMS.register("morphling_coral",
-			() -> new CoralMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_worm = BASEITEMS.register("morphling_worm",
-			() -> new WormMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_coral = BASEITEMS.register("morphling_urchin",
+			() -> new UrchinMorphlingItem(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> morphling_worm = BASEITEMS.register("morphling_mole",
+			() -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
 	public static final RegistryObject<Item> dried_gourd = BASEITEMS.register("dried_gourd",
