@@ -85,4 +85,8 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<FillerBlockEntity>> filler_block = TILES
 			.register("filler_block", () -> BlockEntityType.Builder
 					.of(FillerBlockEntity::new, BlockInit.filler_block.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<VisceralMirrorBlockEntity>> visceral_mirror = TILES
+			.register("visceral_mirror", () -> BlockEntityType.Builder
+					.of(VisceralMirrorBlockEntity::new, BlockInit.visceral_mirror.get()).build(null));
 }

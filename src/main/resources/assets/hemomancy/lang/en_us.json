@@ -571,6 +571,24 @@
 	"unstained.hemomancy.clarity.resolute.desc": "An unbreakable will shields against corruption.",
 	"unstained.hemomancy.clarity.enlightened.desc": "True enlightenment — the Unstained path fulfilled.",
 
+	"block.hemomancy.visceral_mirror": "Visceral Mirror",
+
+	"item.hemomancy.echo_of_spleen": "Echo of Spleen",
+	"item.hemomancy.echo_of_liver": "Echo of Liver",
+	"item.hemomancy.echo_of_lungs": "Echo of Lungs",
+	"item.hemomancy.echo_of_kidneys": "Echo of Kidneys",
+	"item.hemomancy.echo_of_heart": "Echo of Heart",
+
+	"hemomancy.organ.spleen": "Spleen",
+	"hemomancy.organ.liver": "Liver",
+	"hemomancy.organ.lungs": "Lungs",
+	"hemomancy.organ.kidneys": "Kidneys",
+	"hemomancy.organ.heart": "Heart",
+
+	"hemomancy.brazier.reagent_accepted": "The brazier consumes the offering...",
+	"hemomancy.brazier.sanguine_ready": "The brazier erupts with sanguine flames — offer an Echo to the fire.",
+	"hemomancy.brazier.echo_consumed": "The echo dissolves into the sanguine flames.",
+	"hemomancy.brazier.echo_max": "This organ echo has already reached its maximum refinement."
 	"hemomancy.milestone.strange_seeds": "Strange Seeds",
 	"hemomancy.milestone.strange_seeds.desc": "Find Gourd Seeds",
 	"hemomancy.milestone.ashen_beginnings": "Ashen Beginnings",

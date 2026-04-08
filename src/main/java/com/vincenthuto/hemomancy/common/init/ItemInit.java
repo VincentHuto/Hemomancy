@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.*;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedShieldItem;
@@ -301,6 +302,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
 			"memory_crimson_flame_conjuration",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+	// Organ Echoes (Visceral Mirror system)
+	public static final RegistryObject<Item> echo_of_spleen = SPECIALITEMS.register("echo_of_spleen",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.SPLEEN));
+	public static final RegistryObject<Item> echo_of_liver = SPECIALITEMS.register("echo_of_liver",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.LIVER));
+	public static final RegistryObject<Item> echo_of_lungs = SPECIALITEMS.register("echo_of_lungs",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.LUNGS));
+	public static final RegistryObject<Item> echo_of_kidneys = SPECIALITEMS.register("echo_of_kidneys",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.KIDNEYS));
+	public static final RegistryObject<Item> echo_of_heart = SPECIALITEMS.register("echo_of_heart",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.HEART));
 	public static final RegistryObject<Item> memory_sanguine_mending = BASEITEMS.register("memory_sanguine_mending",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_mending));
 	public static final RegistryObject<Item> memory_hemosynthesis = BASEITEMS.register("memory_hemosynthesis",
