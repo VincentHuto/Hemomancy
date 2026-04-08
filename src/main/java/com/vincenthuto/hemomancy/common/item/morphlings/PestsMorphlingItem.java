@@ -7,12 +7,14 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -21,12 +23,20 @@ import net.minecraft.world.phys.AABB;
  * radius and damage dealt. Prefers FLAMMEUS (fervent heat drives the swarm)
  * with TENEBRIS as secondary (darkness harbors vermin).
  *
- * Maturity bonuses:
- * - Developing (2): Luck (vermin scavenging instinct)
- * - Mature (3): Strength (swarm frenzy empowers attacks)
- * - Apex (4): Nearby hostiles get Weakness + Poison (pestilent cloud)
+ * Maturity bonuses (unique reactive abilities):
+ * - Developing (2): Swarm Retaliation — when damaged, spawn tracking pest
+ *   projectiles that hunt the attacker
+ * - Mature (3): Carrion Harvest — kills grant bonus XP from the swarm
+ *   scavenging nutrients
+ * - Apex (4): Plague Burst — when health drops below 25%, emit a massive
+ *   AoE burst that withers all nearby hostiles
  */
 public class PestsMorphlingItem extends MorphlingItem {
+
+	/** Cooldown in ticks between Swarm Retaliation triggers (1 second). */
+	private static final int SWARM_RETALIATION_COOLDOWN = 20;
+	/** Cooldown in ticks between Plague Burst triggers (30 seconds). */
+	private static final int PLAGUE_BURST_COOLDOWN = 600;
 
 	public PestsMorphlingItem(Properties prop) {
 		super(prop);
@@ -52,47 +62,68 @@ public class PestsMorphlingItem extends MorphlingItem {
 					100, maturity, false, true, true));
 		}
 
-		// Developing (2+): Luck — vermin scavenging instinct
-		if (maturity >= 2) {
-			if (!player.hasEffect(MobEffects.LUCK)) {
-				player.addEffect(new MobEffectInstance(MobEffects.LUCK,
-						100, 0, true, false, true));
-			}
-		}
-
-		// Mature (3+): Strength — swarm frenzy empowers attacks
-		if (maturity >= 3) {
-			if (!player.hasEffect(MobEffects.DAMAGE_BOOST)) {
-				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST,
-						100, 0, true, true, true));
-			}
-		}
-
-		// Apex (4): Pestilent cloud — nearby hostiles get Weakness + Poison
+		// Apex (4): Plague Burst — emergency AoE Wither when health is critically low
 		if (maturity >= 4 && !player.level().isClientSide) {
-			Level level = player.level();
-			double radius = 6.0;
-			AABB area = player.getBoundingBox().inflate(radius);
-			List<Monster> hostiles = level.getEntitiesOfClass(Monster.class, area);
-			for (Monster mob : hostiles) {
-				if (!mob.hasEffect(MobEffects.WEAKNESS)) {
-					mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-							100, 0, true, true, true));
-				}
-				if (!mob.hasEffect(MobEffects.POISON)) {
-					mob.addEffect(new MobEffectInstance(MobEffects.POISON,
-							60, 0, true, true, true));
+			if (player.getHealth() <= player.getMaxHealth() * 0.25f) {
+				long lastBurst = getLastAbilityTick(stack, "PlagueBurst");
+				long now = player.level().getGameTime();
+				if (now - lastBurst >= PLAGUE_BURST_COOLDOWN) {
+					setLastAbilityTick(stack, "PlagueBurst", now);
+
+					double radius = 8.0;
+					AABB area = player.getBoundingBox().inflate(radius);
+					List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+					for (Monster mob : hostiles) {
+						mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
+								100, 1, true, true, true));
+						mob.hurt(player.damageSources().magic(), 6.0F);
+					}
 				}
 			}
 		}
 	}
 
 	@Override
+	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+		int maturity = MorphlingItem.getMaturityLevel(stack);
+
+		// Developing (2+): Swarm Retaliation — spawn tracking pests at attacker
+		if (maturity >= 2 && source.getEntity() instanceof LivingEntity attacker) {
+			long lastSwarm = getLastAbilityTick(stack, "SwarmRetaliation");
+			long now = player.level().getGameTime();
+			if (now - lastSwarm >= SWARM_RETALIATION_COOLDOWN) {
+				setLastAbilityTick(stack, "SwarmRetaliation", now);
+
+				int pestCount = 1 + (maturity - 2); // 1 at Developing, 2 at Mature, 3 at Apex
+				for (int i = 0; i < pestCount; i++) {
+					var pest = new com.vincenthuto.hemomancy.common.entity.projectile.TrackingPestsEntity(
+							player, false);
+					pest.setTarget(attacker);
+					player.level().addFreshEntity(pest);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
+		int maturity = MorphlingItem.getMaturityLevel(stack);
+
+		// Mature (3+): Carrion Harvest — kills grant bonus XP
+		if (maturity >= 3 && player.level() instanceof ServerLevel serverLevel) {
+			int bonusXp = 3 + (maturity - 3) * 3; // 3 at Mature, 6 at Apex
+			// Award bonus XP orbs at the victim's position (on top of normal drops)
+			net.minecraft.world.entity.ExperienceOrb.award(serverLevel,
+					victim.position(), bonusXp);
+		}
+	}
+
+	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Luck (Vermin Scavenging)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Strength (Swarm Frenzy)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Pestilent Cloud (Weakness + Poison Aura)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Swarm Retaliation (Pests hunt your attacker)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Carrion Harvest (Bonus XP from kills)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Wither at low health)", 4, currentMaturity));
 		return list;
 	}
 

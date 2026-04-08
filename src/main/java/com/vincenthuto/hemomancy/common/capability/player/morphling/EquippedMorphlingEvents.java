@@ -12,9 +12,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
@@ -79,6 +83,65 @@ public class EquippedMorphlingEvents {
 			// Delegate morphling-specific passive effects to the item itself
 			if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
 				morphling.onEquippedTick(player, morphCap.getEquippedMorphling());
+			}
+		});
+	}
+
+	/**
+	 * When the player takes damage while a morphling is equipped, delegate to the
+	 * morphling's onEquippedHurt for reactive abilities (swarm retaliation, thorns,
+	 * web cocoons, spore clouds, etc.).
+	 */
+	@SubscribeEvent
+	public static void onPlayerHurt(LivingDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (player.level().isClientSide) return;
+
+		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+			if (!morphCap.hasMorphling()) return;
+			ItemStack morphStack = morphCap.getEquippedMorphling();
+			if (morphStack.getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedHurt(player, morphStack, event.getSource(), event.getAmount());
+			}
+		});
+	}
+
+	/**
+	 * When the player deals damage to a living entity while a morphling is equipped,
+	 * delegate to the morphling's onEquippedAttack for on-hit abilities (life steal,
+	 * venom strike, predator's mark, etc.).
+	 */
+	@SubscribeEvent
+	public static void onPlayerAttack(LivingDamageEvent event) {
+		LivingEntity target = event.getEntity();
+		if (target.level().isClientSide) return;
+		if (!(event.getSource().getEntity() instanceof Player player)) return;
+
+		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+			if (!morphCap.hasMorphling()) return;
+			ItemStack morphStack = morphCap.getEquippedMorphling();
+			if (morphStack.getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedAttack(player, morphStack, target, event.getAmount());
+			}
+		});
+	}
+
+	/**
+	 * When the player kills a living entity while a morphling is equipped,
+	 * delegate to the morphling's onEquippedKill for on-kill abilities
+	 * (bonus XP, carrion harvest, decomposer drops, etc.).
+	 */
+	@SubscribeEvent
+	public static void onPlayerKill(LivingDeathEvent event) {
+		LivingEntity victim = event.getEntity();
+		if (victim.level().isClientSide) return;
+		if (!(event.getSource().getEntity() instanceof Player player)) return;
+
+		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(morphCap -> {
+			if (!morphCap.hasMorphling()) return;
+			ItemStack morphStack = morphCap.getEquippedMorphling();
+			if (morphStack.getItem() instanceof IMorphling morphling) {
+				morphling.onEquippedKill(player, morphStack, victim);
 			}
 		});
 	}

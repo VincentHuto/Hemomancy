@@ -7,8 +7,10 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -19,12 +21,19 @@ import net.minecraft.world.item.ItemStack;
  * Prefers DUCTILIS (flexibility/neurotic energy fuels reflexes) with
  * FLAMMEUS as secondary (fervent heat drives quickness).
  *
- * Maturity bonuses:
- * - Developing (2): Night Vision (thermal pit sensing)
- * - Mature (3): Slow Falling (serpentine grace)
- * - Apex (4): Invisibility (apex camouflage)
+ * Maturity bonuses (unique reactive abilities):
+ * - Developing (2): Venom Strike — melee attacks apply scaling Poison to
+ *   targets (serpent injects venom through the player's strikes)
+ * - Mature (3): Shed Skin — periodically purge all negative status effects
+ *   (serpent helps the player shed like a snake shedding its skin)
+ * - Apex (4): Predator's Mark — melee attacks apply Glowing to the target
+ *   and reduce their armor with Weakness, making them take more damage
+ *   from all sources (marked prey of the apex predator)
  */
 public class SerpentMorphlingItem extends MorphlingItem {
+
+	/** Interval in ticks between Shed Skin activations (20 seconds). */
+	private static final int SHED_SKIN_INTERVAL = 400;
 
 	public SerpentMorphlingItem(Properties prop) {
 		super(prop);
@@ -51,38 +60,57 @@ public class SerpentMorphlingItem extends MorphlingItem {
 					100, amplifier, false, true, true));
 		}
 
-		// Developing (2+): Night Vision — thermal pit sensing
-		// Use 300 tick duration to prevent the vanilla flickering at low duration
+		// Mature (3+): Shed Skin — periodically purge all negative effects
+		if (maturity >= 3 && !player.level().isClientSide) {
+			long now = player.level().getGameTime();
+			long lastShed = getLastAbilityTick(stack, "ShedSkin");
+			if (now - lastShed >= SHED_SKIN_INTERVAL) {
+				boolean hadNegative = player.getActiveEffects().stream()
+						.anyMatch(e -> !e.getEffect().isBeneficial());
+				if (hadNegative) {
+					// Collect harmful effects and remove them
+					List<MobEffect> toRemove = new ArrayList<>();
+					for (MobEffectInstance effectInstance : player.getActiveEffects()) {
+						if (!effectInstance.getEffect().isBeneficial()) {
+							toRemove.add(effectInstance.getEffect());
+						}
+					}
+					for (MobEffect effect : toRemove) {
+						player.removeEffect(effect);
+					}
+					setLastAbilityTick(stack, "ShedSkin", now);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onEquippedAttack(Player player, ItemStack stack, LivingEntity target, float amount) {
+		int maturity = MorphlingItem.getMaturityLevel(stack);
+
+		// Developing (2+): Venom Strike — apply Poison on melee hit
 		if (maturity >= 2) {
-			if (!player.hasEffect(MobEffects.NIGHT_VISION)) {
-				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,
-						300, 0, true, false, true));
-			}
+			int venomDuration = 60 + (maturity - 2) * 40; // 3s at Developing, 5s Mature, 7s Apex
+			int venomAmplifier = (maturity >= 4) ? 1 : 0; // Poison II at Apex
+			target.addEffect(new MobEffectInstance(MobEffects.POISON,
+					venomDuration, venomAmplifier, true, true, true));
 		}
 
-		// Mature (3+): Slow Falling — serpentine grace
-		if (maturity >= 3) {
-			if (!player.hasEffect(MobEffects.SLOW_FALLING)) {
-				player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING,
-						100, 0, true, false, true));
-			}
-		}
-
-		// Apex (4): Invisibility — apex camouflage
+		// Apex (4): Predator's Mark — mark target with Glowing + Weakness
 		if (maturity >= 4) {
-			if (!player.hasEffect(MobEffects.INVISIBILITY)) {
-				player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY,
-						100, 0, true, false, true));
-			}
+			target.addEffect(new MobEffectInstance(MobEffects.GLOWING,
+					200, 0, true, false, true));
+			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
+					200, 1, true, true, true));
 		}
 	}
 
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Night Vision (Thermal Sensing)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Slow Falling (Serpentine Grace)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Invisibility (Apex Camouflage)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Venom Strike (Poison on melee hit)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Shed Skin (Purge negative effects periodically)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Predator's Mark (Weaken & expose targets)", 4, currentMaturity));
 		return list;
 	}
 

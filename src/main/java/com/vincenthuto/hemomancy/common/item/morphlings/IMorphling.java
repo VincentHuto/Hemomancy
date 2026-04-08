@@ -6,6 +6,8 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -47,6 +49,41 @@ public interface IMorphling {
 	 * @param stack  the morphling ItemStack (contains maturity NBT)
 	 */
 	default void onEquippedTick(Player player, ItemStack stack) {
+	}
+
+	/**
+	 * Called when the player takes damage while this morphling is equipped.
+	 * Use for reactive abilities like thorns, swarm retaliation, web cocoons, etc.
+	 *
+	 * @param player the player who was damaged
+	 * @param stack  the morphling ItemStack (contains maturity NBT)
+	 * @param source the source of the damage
+	 * @param amount the amount of damage taken
+	 */
+	default void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
+	}
+
+	/**
+	 * Called when the player attacks a living entity while this morphling is equipped.
+	 * Use for on-hit abilities like life steal, venom strike, predator's mark, etc.
+	 *
+	 * @param player the player who attacked
+	 * @param stack  the morphling ItemStack (contains maturity NBT)
+	 * @param target the entity that was attacked
+	 * @param amount the amount of damage dealt
+	 */
+	default void onEquippedAttack(Player player, ItemStack stack, LivingEntity target, float amount) {
+	}
+
+	/**
+	 * Called when the player kills a living entity while this morphling is equipped.
+	 * Use for on-kill abilities like bonus XP, extra drops, etc.
+	 *
+	 * @param player the player who got the kill
+	 * @param stack  the morphling ItemStack (contains maturity NBT)
+	 * @param victim the entity that was killed
+	 */
+	default void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
 	}
 
 	/**

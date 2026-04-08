@@ -161,4 +161,27 @@ public class MorphlingItem extends Item implements IMorphling {
 		}
 	}
 
+	/**
+	 * Returns the game time (tick) at which an ability was last triggered.
+	 * Stored in the morphling's NBT under "Cooldowns" compound. Returns 0 if
+	 * the ability has never been triggered.
+	 */
+	public static long getLastAbilityTick(ItemStack stack, String abilityKey) {
+		if (!stack.hasTag()) return 0;
+		var tag = stack.getTag();
+		if (!tag.contains("Cooldowns")) return 0;
+		return tag.getCompound("Cooldowns").getLong(abilityKey);
+	}
+
+	/**
+	 * Stores the game time (tick) at which an ability was last triggered.
+	 */
+	public static void setLastAbilityTick(ItemStack stack, String abilityKey, long tick) {
+		var tag = stack.getOrCreateTag();
+		if (!tag.contains("Cooldowns")) {
+			tag.put("Cooldowns", new net.minecraft.nbt.CompoundTag());
+		}
+		tag.getCompound("Cooldowns").putLong(abilityKey, tick);
+	}
+
 }
