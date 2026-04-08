@@ -133,7 +133,6 @@ public class SkillTreeScreen extends Screen {
 	private double riteDragLastX = 0;
 	private int riteVisibleLayer = -1;  // -1 = show all layers
 	private int riteMaxLayer = 0;
-	private int riteSidebarScroll = 0;
 
 	// ── Blood Crafting data ──
 	private final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
@@ -149,7 +148,6 @@ public class SkillTreeScreen extends Screen {
 	private double craftingDragLastX = 0;
 	private int craftingVisibleLayer = -1;  // -1 = show all layers
 	private int craftingMaxLayer = 0;
-	private int craftingSidebarScroll = 0;
 
 	// Shared nav button dimensions
 	private static final int RITE_NAV_BTN_W = 24;
@@ -406,7 +404,7 @@ public class SkillTreeScreen extends Screen {
 			ritesByTier.put(type, new ArrayList<>());
 		}
 		for (CardinalRiteRecipe recipe : riteRecipes) {
-			ritesByTier.computeIfAbsent(recipe.getRiteType(), k -> new ArrayList<>()).add(recipe);
+			ritesByTier.get(recipe.getRiteType()).add(recipe);
 		}
 		// Default selection: first accessible tier with recipes
 		selectedRiteTier = null;
@@ -635,19 +633,8 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 
-		// Rites tab: scroll within the tier sidebar
-		if (activeTab == Tab.RITES) {
-			if (mx < guiLeft + TIER_SIDEBAR_W + 4) {
-				riteSidebarScroll = Math.max(0, riteSidebarScroll - (int)(delta * 12));
-			}
-			return true;
-		}
-
-		// Crafting tab: scroll within the tier sidebar
-		if (activeTab == Tab.CRAFTING) {
-			if (mx < guiLeft + TIER_SIDEBAR_W + 4) {
-				craftingSidebarScroll = Math.max(0, craftingSidebarScroll - (int)(delta * 12));
-			}
+		// Rites & Crafting tabs consume scroll (no-op for now)
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) {
 			return true;
 		}
 
@@ -1869,12 +1856,7 @@ public class SkillTreeScreen extends Screen {
 						recName = HLTextUtils.toProperCase(r.getId().getPath().replace("_", " "));
 					}
 					// Truncate long names
-					if (font.width(recName) > sw - 16) {
-						while (font.width(recName + "...") > sw - 16 && recName.length() > 3) {
-							recName = recName.substring(0, recName.length() - 1);
-						}
-						recName += "...";
-					}
+					recName = truncateText(recName, sw - 16);
 					int recCol = recSel ? 0xFFDDBBEE : 0xFF888888;
 					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
 					sy += 18;
@@ -2142,6 +2124,17 @@ public class SkillTreeScreen extends Screen {
 		}
 		if (current.length() > 0) lines.add(current.toString());
 		return lines;
+	}
+
+	/** Truncates text to fit within maxWidth, appending "..." if necessary. */
+	private String truncateText(String text, int maxWidth) {
+		if (font.width(text) <= maxWidth) return text;
+		int ellipsisW = font.width("...");
+		int targetW = maxWidth - ellipsisW;
+		while (text.length() > 1 && font.width(text) > targetW) {
+			text = text.substring(0, text.length() - 1);
+		}
+		return text + "...";
 	}
 
 	// (Old rite nav buttons removed — now using tier sidebar)
