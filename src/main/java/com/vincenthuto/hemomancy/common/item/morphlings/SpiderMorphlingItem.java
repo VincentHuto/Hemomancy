@@ -75,9 +75,12 @@ public class SpiderMorphlingItem extends MorphlingItem {
 				player.addTag(WALL_CLIMB_TAG);
 			}
 			// Simulate wall climbing: if the player is against a wall and not on ground,
-			// arrest their downward velocity and let them climb
+			// arrest downward velocity (like a spider clinging to a wall) and reset fall
 			if (player.horizontalCollision && !player.onGround()) {
-				player.setDeltaMovement(player.getDeltaMovement().x, 0.2, player.getDeltaMovement().z);
+				double yVel = player.getDeltaMovement().y;
+				// Cling to wall: prevent falling, allow slow upward drift
+				player.setDeltaMovement(player.getDeltaMovement().x,
+						Math.max(yVel, -0.05), player.getDeltaMovement().z);
 				player.fallDistance = 0;
 			}
 		} else {
