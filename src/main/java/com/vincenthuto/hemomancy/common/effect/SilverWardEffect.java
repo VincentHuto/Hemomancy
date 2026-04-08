@@ -9,8 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 /**
  * Silver Ward — a passive beneficial effect for followers of the Unstained
  * path. Provides resistance to blood magic (via attribute modifiers defined
- * in EffectInit) and a subtle armour bonus that scales with amplifier level.
- * The armour bonus is applied via attribute modifier in EffectInit registration.
+ * in EffectInit) and a subtle armor bonus that scales with amplifier level.
+ * The armor bonus is applied via attribute modifier in EffectInit registration.
  */
 public class SilverWardEffect extends MobEffect {
 
