@@ -21,6 +21,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class VialCentrifugeMenu extends AbstractContainerMenu {
+
+	// Slot indices
+	public static final int INPUT_SLOT = 0;
+	public static final int BLOOD_SLOT = 1;
+	public static final int VIAL_START = 2;
+	public static final int VIAL_END = 9;
+	public static final int OUTPUT_START = 10;
+	public static final int OUTPUT_END = 17;
+	public static final int AUX_OUTPUT_SLOT = 18;
+	public static final int SLOT_COUNT = 19;
+	public static final int DATA_COUNT = 3;
+
+	private static final int INV_START = SLOT_COUNT;
+	private static final int INV_END = INV_START + 27;
+	private static final int HOTBAR_END = INV_END + 9;
+
 	private static VialCentrifugeBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
 		Objects.requireNonNull(playerInv, "playerInventory cannot be null");
 		Objects.requireNonNull(data, "data cannot be null");
@@ -30,9 +46,8 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		}
 		throw new IllegalStateException("Tile entity is not correct! " + tileAtPos);
 	}
-	private final int numRows;
-	private final VialCentrifugeBlockEntity te;
 
+	private final VialCentrifugeBlockEntity te;
 	private final ContainerData data;
 
 	public VialCentrifugeMenu(final int windowId, final Inventory playerInventory, final FriendlyByteBuf data) {
@@ -40,47 +55,46 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	}
 
 	public VialCentrifugeMenu(int windowIdIn, Inventory playerInventoryIn,
-			VialCentrifugeBlockEntity blockEntityJuicinator) {
-		this(windowIdIn, playerInventoryIn, blockEntityJuicinator, new SimpleContainerData(2));
+			VialCentrifugeBlockEntity blockEntity) {
+		this(windowIdIn, playerInventoryIn, blockEntity, new SimpleContainerData(DATA_COUNT));
 	}
 
 	public VialCentrifugeMenu(final int windowId, final Inventory playerInv, final VialCentrifugeBlockEntity te,
 			final ContainerData containerData) {
 		super(ContainerInit.vial_centrifuge.get(), windowId);
 		this.te = te;
-		this.numRows = 4;
 		this.data = containerData;
 
-		// SLOTS
-		// Input side
-		addSlot(new Slot(te, 0, 8, 8));
-		// Blood
-		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, 1, 16, 8, 81));
-		// vials
-		// Clockwise
-		addSlot(new CentrifugeSlot(te, 2, 62, 8));
-		addSlot(new CentrifugeSlot(te, 3, 80, 26));
-		addSlot(new CentrifugeSlot(te, 4, 98, 44));
-		addSlot(new CentrifugeSlot(te, 5, 80, 62));
+		// SLOTS — positioned for programmatic UI layout
+		// Input slot (left side)
+		addSlot(new Slot(te, INPUT_SLOT, 8, 34));
+		// Blood flask slot (bottom-left)
+		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, BLOOD_SLOT, 16, 8, 74));
 
-		addSlot(new CentrifugeSlot(te, 6, 62, 80));
-		addSlot(new CentrifugeSlot(te, 7, 44, 62));
-		addSlot(new CentrifugeSlot(te, 8, 26, 44));
-		addSlot(new CentrifugeSlot(te, 9, 44, 26));
+		// Vial slots — ring arrangement centered around (77, 44)
+		// Clockwise from top; opposite pairs must be balanced:
+		// 2↔6, 3↔7, 4↔8, 9↔5
+		addSlot(new CentrifugeSlot(te, 2, 69, 12));   // top
+		addSlot(new CentrifugeSlot(te, 3, 86, 19));   // top-right
+		addSlot(new CentrifugeSlot(te, 4, 93, 36));   // right
+		addSlot(new CentrifugeSlot(te, 5, 86, 53));   // bottom-right
+		addSlot(new CentrifugeSlot(te, 6, 69, 60));   // bottom
+		addSlot(new CentrifugeSlot(te, 7, 52, 53));   // bottom-left
+		addSlot(new CentrifugeSlot(te, 8, 45, 36));   // left
+		addSlot(new CentrifugeSlot(te, 9, 52, 19));   // top-left
 
-		//Main Outputs
-		addSlot(new OutputSlot(te, 10, 134, 8));
-		addSlot(new OutputSlot(te, 11, 152, 8));
-		addSlot(new OutputSlot(te, 12, 134, 26));
-		addSlot(new OutputSlot(te, 13, 154, 26));
-		addSlot(new OutputSlot(te, 14, 134, 44));
-		addSlot(new OutputSlot(te, 15, 154,44));
-		addSlot(new OutputSlot(te, 16, 134, 62));
-		addSlot(new OutputSlot(te, 17, 154,62));
+		// Output slots (2x4 grid on the right)
+		addSlot(new OutputSlot(te, 10, 128, 10));
+		addSlot(new OutputSlot(te, 11, 146, 10));
+		addSlot(new OutputSlot(te, 12, 128, 28));
+		addSlot(new OutputSlot(te, 13, 146, 28));
+		addSlot(new OutputSlot(te, 14, 128, 46));
+		addSlot(new OutputSlot(te, 15, 146, 46));
+		addSlot(new OutputSlot(te, 16, 128, 64));
+		addSlot(new OutputSlot(te, 17, 146, 64));
 
-		//Aux Output
-		addSlot(new OutputSlot(te, 18, 144, 80));
-
+		// Aux output (below output grid)
+		addSlot(new OutputSlot(te, AUX_OUTPUT_SLOT, 137, 78));
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
@@ -93,28 +107,32 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 162));
 		}
 
+		this.addDataSlots(containerData);
 	}
 
 	@Override
 	public void broadcastChanges() {
 		te.sendUpdates();
 		super.broadcastChanges();
-
 	}
 
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
 		super.clicked(slotId, dragType, clickTypeIn, player);
 		te.sendUpdates();
-
 	}
 
+	/** Progress scaled 0–24 for rendering (0 = idle, 24 = complete) */
 	public int getSpinProgress() {
-		int i = getTe().dataAccess.get(0);
-		int j = 200;
-		int output = j != 0 && i != 0 ? i * 24 / j : 0;
-		output =24-output;
-		return output;
+		int remaining = this.data.get(0);
+		int total = VialCentrifugeBlockEntity.SPIN_TOTAL_TIME;
+		if (remaining <= 0) return 0;
+		return (total - remaining) * 24 / total;
+	}
+
+	/** Whether the centrifuge is currently spinning */
+	public boolean isSpinning() {
+		return this.data.get(0) > 0;
 	}
 
 	public VialCentrifugeBlockEntity getTe() {
@@ -128,22 +146,27 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		Slot slot = this.slots.get(index);
 
 		if (slot != null && slot.hasItem()) {
-
 			ItemStack itemStack = slot.getItem();
 			stack = itemStack.copy();
-			if (index < this.numRows * 9) {
-				if (!this.moveItemStackTo(itemStack, this.numRows * 9, this.slots.size(), true)) {
+
+			// From container slots → player inventory
+			if (index < SLOT_COUNT) {
+				if (!this.moveItemStackTo(itemStack, INV_START, HOTBAR_END, true)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (!this.moveItemStackTo(itemStack, 0, this.numRows * 9, false)) {
-				return ItemStack.EMPTY;
 			}
+			// From player inventory → container slots
+			else {
+				if (!this.moveItemStackTo(itemStack, 0, SLOT_COUNT, false)) {
+					return ItemStack.EMPTY;
+				}
+			}
+
 			if (itemStack.isEmpty()) {
 				slot.set(ItemStack.EMPTY);
 			} else {
 				slot.setChanged();
 			}
-
 		}
 		return stack;
 	}
