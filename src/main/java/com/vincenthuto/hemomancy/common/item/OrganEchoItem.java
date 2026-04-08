@@ -86,7 +86,7 @@ public class OrganEchoItem extends Item {
 
 		// If there are duplicates, dissolve all but the first
 		if (count > 1 && slotId != firstSlot) {
-			stack.setCount(0);
+			player.getInventory().setItem(slotId, ItemStack.EMPTY);
 		}
 	}
 
