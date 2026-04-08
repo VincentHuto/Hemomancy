@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.item.morphlings;
 
 import java.util.List;
 
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +20,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class MorphlingItem extends Item implements IMorphling {
 
 	public int bloodCost;
+
+	// Maturity thresholds based on effective EnzymePower
+	public static final float[] MATURITY_THRESHOLDS = { 0f, 10f, 30f, 60f, 100f };
+	public static final String[] MATURITY_NAMES = { "Unfed", "Fledgling", "Developing", "Mature", "Apex" };
+	public static final ChatFormatting[] MATURITY_COLORS = {
+			ChatFormatting.GRAY, ChatFormatting.GREEN, ChatFormatting.DARK_GREEN,
+			ChatFormatting.GOLD, ChatFormatting.LIGHT_PURPLE
+	};
 
 	public MorphlingItem(Properties prop) {
 		super(prop);
@@ -46,20 +56,82 @@ public class MorphlingItem extends Item implements IMorphling {
 	public void use(Player playerIn, InteractionHand handIn, ItemStack itemStack, Level worldIn) {
 	}
 
+	/**
+	 * Returns the maturity level (0-4) based on the morphling's accumulated
+	 * EnzymePower. Higher maturity enhances the morphling's granted effect.
+	 */
+	public static int getMaturityLevel(ItemStack stack) {
+		if (!stack.hasTag()) return 0;
+		float power = stack.getTag().getFloat("EnzymePower");
+		for (int i = MATURITY_THRESHOLDS.length - 1; i > 0; i--) {
+			if (power >= MATURITY_THRESHOLDS[i]) return i;
+		}
+		return 0;
+	}
+
+	/**
+	 * Returns the maturity level name for display purposes.
+	 */
+	public static String getMaturityName(int level) {
+		if (level < 0 || level >= MATURITY_NAMES.length) return MATURITY_NAMES[0];
+		return MATURITY_NAMES[level];
+	}
+
+	/**
+	 * Calculates the effective power contribution of an enzyme based on tendency
+	 * match. Preferred = 100%, Secondary = 75%, Other = 50%.
+	 */
+	public static float calculateEffectivePower(float rawPower, EnumBloodTendency enzymeTendency,
+			EnumBloodTendency preferred, EnumBloodTendency secondary) {
+		if (enzymeTendency == preferred) {
+			return rawPower;
+		} else if (enzymeTendency == secondary) {
+			return rawPower * 0.75f;
+		} else {
+			return rawPower * 0.5f;
+		}
+	}
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+
+		// Show preferred enzyme info
+		if (this instanceof IMorphling morphling) {
+			EnumBloodTendency preferred = morphling.getPreferredTendency();
+			EnumBloodTendency secondary = morphling.getSecondaryTendency();
+			tooltip.add(Component.literal("Preferred: " + formatTendencyName(preferred))
+					.withStyle(ChatFormatting.AQUA));
+			tooltip.add(Component.literal("Secondary: " + formatTendencyName(secondary))
+					.withStyle(ChatFormatting.DARK_AQUA));
+		}
+
 		if (stack.hasTag()) {
 			float power = stack.getTag().getFloat("EnzymePower");
 			int feedings = stack.getTag().getInt("EnzymeFeedings");
 			if (feedings > 0) {
+				int maturity = getMaturityLevel(stack);
+				tooltip.add(Component.literal("Maturity: " + getMaturityName(maturity))
+						.withStyle(MATURITY_COLORS[maturity]));
 				tooltip.add(Component.literal("Enzyme Power: " + String.format("%.1f", power))
 						.withStyle(ChatFormatting.DARK_GREEN));
 				tooltip.add(Component.literal("Feedings: " + feedings)
 						.withStyle(ChatFormatting.GOLD));
+
+				// Show progress to next level
+				if (maturity < MATURITY_THRESHOLDS.length - 1) {
+					float nextThreshold = MATURITY_THRESHOLDS[maturity + 1];
+					tooltip.add(Component.literal("Next level at: " + String.format("%.0f", nextThreshold) + " power")
+							.withStyle(ChatFormatting.DARK_GRAY));
+				}
 			}
 		}
+	}
+
+	private static String formatTendencyName(EnumBloodTendency tendency) {
+		String name = tendency.name();
+		return name.charAt(0) + name.substring(1).toLowerCase();
 	}
 
 }

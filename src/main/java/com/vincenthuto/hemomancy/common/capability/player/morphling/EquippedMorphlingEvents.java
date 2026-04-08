@@ -78,7 +78,7 @@ public class EquippedMorphlingEvents {
 
 			// Delegate morphling-specific passive effects to the item itself
 			if (morphCap.getEquippedMorphling().getItem() instanceof IMorphling morphling) {
-				morphling.onEquippedTick(player);
+				morphling.onEquippedTick(player, morphCap.getEquippedMorphling());
 			}
 		});
 	}
