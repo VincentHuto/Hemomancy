@@ -110,11 +110,11 @@ public class VisceralOrgansEvents {
 			// Heart — Cardiac Autonomy
 			// The player has removed their heart and sustains circulation through
 			// sheer force of will, rhythmically commanding their muscles to
-			// contract. This grants resistance but at the cost of occasional
+			// contract. This grants damage resistance but at the cost of occasional
 			// blood drain from the effort.
 			if (organs.isHeartless()) {
 				int level = organs.getOrganLevel(EnumOrgan.HEART);
-				// Grants absorption (the body's compensatory mechanism)
+				// Grants damage resistance (the body's compensatory mechanism)
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,
 						60, Math.min(level - 1, 1), true, false));
 
