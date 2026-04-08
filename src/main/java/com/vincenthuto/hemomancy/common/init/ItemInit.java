@@ -338,15 +338,15 @@ public class ItemInit {
 			() -> new SpiderMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_moth = BASEITEMS.register("morphling_moth",
 			() -> new MothMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_lamprey = BASEITEMS.register("morphling_tick",
+	public static final RegistryObject<Item> morphling_tick = BASEITEMS.register("morphling_tick",
 			() -> new TickMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_centipede = BASEITEMS.register("morphling_centipede",
 			() -> new CentipedeMorphlingItem(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> morphling_bat = BASEITEMS.register("morphling_bat",
 			() -> new BatMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_coral = BASEITEMS.register("morphling_urchin",
+	public static final RegistryObject<Item> morphling_urchin = BASEITEMS.register("morphling_urchin",
 			() -> new UrchinMorphlingItem(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> morphling_worm = BASEITEMS.register("morphling_mole",
+	public static final RegistryObject<Item> morphling_mole = BASEITEMS.register("morphling_mole",
 			() -> new MoleMorphlingItem(new Item.Properties().stacksTo(1)));
 
 	/// Blood Gourds
@@ -707,15 +707,15 @@ public class ItemInit {
 								return 6;
 							} else if (selectedStack.getItem() == ItemInit.morphling_moth.get()) {
 								return 7;
-							} else if (selectedStack.getItem() == ItemInit.morphling_lamprey.get()) {
+							} else if (selectedStack.getItem() == ItemInit.morphling_tick.get()) {
 								return 8;
 							} else if (selectedStack.getItem() == ItemInit.morphling_centipede.get()) {
 								return 9;
 							} else if (selectedStack.getItem() == ItemInit.morphling_bat.get()) {
 								return 10;
-							} else if (selectedStack.getItem() == ItemInit.morphling_coral.get()) {
+							} else if (selectedStack.getItem() == ItemInit.morphling_urchin.get()) {
 								return 11;
-							} else if (selectedStack.getItem() == ItemInit.morphling_worm.get()) {
+							} else if (selectedStack.getItem() == ItemInit.morphling_mole.get()) {
 								return 12;
 							} else {
 								return 0;

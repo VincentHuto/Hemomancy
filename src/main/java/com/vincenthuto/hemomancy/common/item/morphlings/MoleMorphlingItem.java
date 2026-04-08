@@ -27,7 +27,7 @@ import net.minecraft.world.phys.AABB;
  *   ores and entities glow briefly (echolocation through vibration)
  * - Mature (3): Earthen Bulwark — when taking damage underground, gain brief
  *   Resistance (the mole retreats into compacted earth)
- * - Apex (4): Seismic Slam — on sneak + jump while on the ground, emit a
+ * - Apex (4): Seismic Slam — while sneaking and jumping underground, emit a
  *   shockwave that damages and launches nearby hostiles (mole stomps)
  */
 public class MoleMorphlingItem extends MorphlingItem {

@@ -27,7 +27,7 @@ import net.minecraft.world.phys.AABB;
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Engorge — on kill, gain temporary armor bonus as the
  *   tick feeds and swells (stacking, short duration)
- * - Mature (3): Blood Fever — gain attack speed when there are bleeding/
+ * - Mature (3): Blood Fever — gain movement speed when there are bleeding/
  *   damaged hostiles nearby (the tick grows frenzied near wounded prey)
  * - Apex (4): Pandemic Burst — when taking heavy damage (>6), release a
  *   disease cloud that applies Wither + Weakness to all nearby hostiles
