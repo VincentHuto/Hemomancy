@@ -76,8 +76,8 @@ public class CentipedeMorphlingItem extends MorphlingItem {
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Mature (3+): Segmented Defense — convert excess damage to slow bleed
-		// (Applied as Wither on self to spread damage over time instead of instant)
+		// Mature (3+): Segmented Defense — compensate excess damage with regeneration
+		// (Grants Regeneration to partially offset heavy hits, spreading recovery over time)
 		if (maturity >= 3 && amount > 4.0f) {
 			// The excess is already taken, but we grant Regeneration to partially compensate
 			float excess = amount - 4.0f;

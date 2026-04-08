@@ -14,6 +14,9 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public class SubterraneanVitalityEffect extends MobEffect {
 
+	/** Y-level below which the underground regen bonus applies. */
+	private static final double UNDERGROUND_THRESHOLD = 50.0;
+
 	public SubterraneanVitalityEffect(MobEffectCategory typeIn, int liquidColorIn) {
 		super(typeIn, liquidColorIn);
 	}
@@ -23,7 +26,7 @@ public class SubterraneanVitalityEffect extends MobEffect {
 		if (entity == null || entity.level().isClientSide) return;
 
 		// Bonus healing when underground (below Y=50)
-		if (entity.getY() < 50.0 && entity.getHealth() < entity.getMaxHealth()) {
+		if (entity.getY() < UNDERGROUND_THRESHOLD && entity.getHealth() < entity.getMaxHealth()) {
 			float healAmount = 0.5f + amplifier * 0.25f;
 			entity.heal(healAmount);
 		}
