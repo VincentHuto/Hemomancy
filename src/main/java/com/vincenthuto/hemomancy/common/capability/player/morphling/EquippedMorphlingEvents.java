@@ -203,15 +203,15 @@ public class EquippedMorphlingEvents {
 		while (it.hasNext()) {
 			Map.Entry<String, Long> entry = it.next();
 			if (now >= entry.getValue()) {
-				// Parse the key: "dimension:x:y:z"
-				String[] parts = entry.getKey().split(":");
-				// Key format: "modid:dim_path:x:y:z" so dimension is parts[0]:parts[1]
-				String entryDim = parts[0] + ":" + parts[1];
-				if (!entryDim.equals(dimKey)) continue;
+				// Parse the key: "dimension@x,y,z"
+				String[] dimAndPos = entry.getKey().split("@");
+				if (dimAndPos.length != 2) { it.remove(); continue; }
+				if (!dimAndPos[0].equals(dimKey)) continue;
 
-				int x = Integer.parseInt(parts[2]);
-				int y = Integer.parseInt(parts[3]);
-				int z = Integer.parseInt(parts[4]);
+				String[] coords = dimAndPos[1].split(",");
+				int x = Integer.parseInt(coords[0]);
+				int y = Integer.parseInt(coords[1]);
+				int z = Integer.parseInt(coords[2]);
 				BlockPos pos = new BlockPos(x, y, z);
 
 				// Only remove if it's still a cobweb (don't break blocks placed by the player)
@@ -237,8 +237,8 @@ public class EquippedMorphlingEvents {
 
 		level.setBlock(pos, Blocks.COBWEB.defaultBlockState(), 3);
 		long expiryTick = level.getGameTime() + TEMP_WEB_DURATION;
-		String key = level.dimension().location().toString() + ":"
-				+ pos.getX() + ":" + pos.getY() + ":" + pos.getZ();
+		String key = level.dimension().location().toString() + "@"
+				+ pos.getX() + "," + pos.getY() + "," + pos.getZ();
 		TEMPORARY_WEBS.put(key, expiryTick);
 	}
 
