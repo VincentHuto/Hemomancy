@@ -23,7 +23,7 @@ public class StartCentrifugeButtonPacket {
 			AbstractContainerMenu container = ctx.get().getSender().containerMenu;
 			if (container instanceof VialCentrifugeMenu) {
 				VialCentrifugeBlockEntity station = ((VialCentrifugeMenu) container).getTe();
-				System.out.println(station.attemptStartup());
+				station.attemptStartup();
 			}
 		});
 		ctx.get().setPacketHandled(true);
