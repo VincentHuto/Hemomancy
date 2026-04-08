@@ -304,6 +304,7 @@ public class CardinalRiteEvents {
 	}
 
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
+	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
@@ -352,6 +353,17 @@ public class CardinalRiteEvents {
 			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
 			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
 				presignBloodlineLedger(sLevel, caster, resultStack);
+			}
+
+			// Bloodline recall rite: re-issue a ledger from the caster's existing bloodline
+			if (BLOODLINE_RECALL_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
+				if (!recallBloodlineLedger(sLevel, caster, resultStack)) {
+					// Caster has no bloodline — the rite still completes but the ledger stays unsigned
+					caster.displayClientMessage(
+							Component.literal("The blood remembers nothing... You have no bloodline to recall.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+				}
 			}
 
 			sLevel.addFreshEntity(new ItemEntity(sLevel,
@@ -441,5 +453,34 @@ public class CardinalRiteEvents {
 				Component.literal("You have founded: " + playerLine.getName())
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+	}
+
+	/**
+	 * Recalls a lost bloodline ledger by looking up the caster's existing bloodline
+	 * from world data and writing it onto the result item. This is a penitent rite —
+	 * the covenant does not forget, but it demands a price for carelessness.
+	 * Returns false if the caster has no bloodline to recall.
+	 */
+	private static boolean recallBloodlineLedger(ServerLevel sLevel, ServerPlayer caster, ItemStack ledgerStack) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		Bloodline existingLine = savedData.getBloodlineForPlayer(caster.getUUID());
+
+		if (existingLine == null || !existingLine.isValid()) {
+			return false;
+		}
+
+		// Write the existing bloodline data onto the new ledger as a signed copy
+		CompoundTag compound = ledgerStack.getOrCreateTag();
+		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
+		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, existingLine.serialize());
+		ledgerStack.setTag(compound);
+
+		caster.displayClientMessage(
+				Component.literal("The covenant remembers. Your ledger for " + existingLine.getName()
+						+ " has been restored.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+		return true;
 	}
 }
