@@ -6,13 +6,19 @@ import com.vincenthuto.hemomancy.common.effect.BloodBindingEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodLossEffect;
 import com.vincenthuto.hemomancy.common.effect.BloodRushEffect;
 import com.vincenthuto.hemomancy.common.effect.ChitinousBulwarkEffect;
+import com.vincenthuto.hemomancy.common.effect.EchoicPerceptionEffect;
 import com.vincenthuto.hemomancy.common.effect.ElytraEffect;
 import com.vincenthuto.hemomancy.common.effect.HemolysisEffect;
+import com.vincenthuto.hemomancy.common.effect.LuminousDissipationEffect;
 import com.vincenthuto.hemomancy.common.effect.MycorrhizalMendingEffect;
+import com.vincenthuto.hemomancy.common.effect.BurrowersInstinctEffect;
+import com.vincenthuto.hemomancy.common.effect.HemorrhagicVenomEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineFertilityEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineSiphonEffect;
 import com.vincenthuto.hemomancy.common.effect.SerpentineGuileEffect;
 import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
+import com.vincenthuto.hemomancy.common.effect.SpinedBarricadeEffect;
+import com.vincenthuto.hemomancy.common.effect.VenomousResilienceEffect;
 import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
 
 import net.minecraft.world.effect.MobEffect;
@@ -117,6 +123,57 @@ public class EffectInit {
 			"potion_of_verminous_aura",
 			() -> new Potion("potion_of_verminous_aura",
 					new MobEffectInstance(verminous_aura.get(), 1200, 0)));
+
+	// New Morphling Effects
+	public static final RegistryObject<MobEffect> luminous_dissipation = EFFECTS.register("luminous_dissipation",
+			() -> new LuminousDissipationEffect(MobEffectCategory.BENEFICIAL, 0xFFFFAA)
+					.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "F1A2B3C4-D5E6-7F89-0A1B-2C3D4E5F6A7B",
+							0.1D, AttributeModifier.Operation.ADDITION));
+	public static final RegistryObject<Potion> potion_of_luminous_dissipation = POTION_TYPES.register(
+			"potion_of_luminous_dissipation",
+			() -> new Potion("potion_of_luminous_dissipation",
+					new MobEffectInstance(luminous_dissipation.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> hemorrhagic_venom = EFFECTS.register("hemorrhagic_venom",
+			() -> new HemorrhagicVenomEffect(MobEffectCategory.BENEFICIAL, 0x660033));
+	public static final RegistryObject<Potion> potion_of_hemorrhagic_venom = POTION_TYPES.register(
+			"potion_of_hemorrhagic_venom",
+			() -> new Potion("potion_of_hemorrhagic_venom",
+					new MobEffectInstance(hemorrhagic_venom.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> venomous_resilience = EFFECTS.register("venomous_resilience",
+			() -> new VenomousResilienceEffect(MobEffectCategory.BENEFICIAL, 0x336B87)
+					.addAttributeModifier(Attributes.MOVEMENT_SPEED, "A7B8C9D0-E1F2-3A4B-5C6D-7E8F9A0B1C2D",
+							0.05F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+	public static final RegistryObject<Potion> potion_of_venomous_resilience = POTION_TYPES.register(
+			"potion_of_venomous_resilience",
+			() -> new Potion("potion_of_venomous_resilience",
+					new MobEffectInstance(venomous_resilience.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> echoic_perception = EFFECTS.register("echoic_perception",
+			() -> new EchoicPerceptionEffect(MobEffectCategory.BENEFICIAL, 0x2A0A3C));
+	public static final RegistryObject<Potion> potion_of_echoic_perception = POTION_TYPES.register(
+			"potion_of_echoic_perception",
+			() -> new Potion("potion_of_echoic_perception",
+					new MobEffectInstance(echoic_perception.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> spined_barricade = EFFECTS.register("spined_barricade",
+			() -> new SpinedBarricadeEffect(MobEffectCategory.BENEFICIAL, 0x1A8A9F)
+					.addAttributeModifier(Attributes.ARMOR, "C8D9E0F1-A2B3-4C5D-6E7F-8A9B0C1D2E3F",
+							2.0D, AttributeModifier.Operation.ADDITION));
+	public static final RegistryObject<Potion> potion_of_spined_barricade = POTION_TYPES.register(
+			"potion_of_spined_barricade",
+			() -> new Potion("potion_of_spined_barricade",
+					new MobEffectInstance(spined_barricade.get(), 1200, 0)));
+
+	public static final RegistryObject<MobEffect> burrowers_instinct = EFFECTS.register("burrowers_instinct",
+			() -> new BurrowersInstinctEffect(MobEffectCategory.BENEFICIAL, 0x8B6914)
+					.addAttributeModifier(Attributes.ATTACK_SPEED, "B8C9D0E1-F2A3-4B5C-6D7E-8F9A0B1C2D3E",
+							0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+	public static final RegistryObject<Potion> potion_of_burrowers_instinct = POTION_TYPES.register(
+			"potion_of_burrowers_instinct",
+			() -> new Potion("potion_of_burrowers_instinct",
+					new MobEffectInstance(burrowers_instinct.get(), 1200, 0)));
 
 	// Unstained Path Effects
 	public static final RegistryObject<MobEffect> silver_ward = EFFECTS.register("silver_ward",
