@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.common.block;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.VisceralMirrorBlockEntity;
 
@@ -37,10 +36,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * their own reflection, "reach" through the mirror, and extract organs for
  * sanguine modification. Requires initiatory degree 3+.
  *
- * <p>Interaction flow:</p>
+ * <h3>Interaction Flow</h3>
  * <ul>
- *   <li><b>Empty hand + standing:</b> opens organ selection cycle / starts ritual</li>
- *   <li><b>Empty hand + crouching:</b> cancels active ritual</li>
+ *   <li><b>Right-click (standing, empty hand):</b> cycles through organs in
+ *       the mirror, displaying a status preview (name, tier, current level,
+ *       blood cost, eligibility).</li>
+ *   <li><b>Right-click (crouching, empty hand):</b> when an organ is selected
+ *       (mirror active), confirms the selection and begins the extraction
+ *       ritual. When a ritual is already in progress, cancels it instead.</li>
  * </ul>
  */
 public class VisceralMirrorBlock extends Block implements EntityBlock {
@@ -118,8 +121,12 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 	/**
 	 * Player interaction with the Visceral Mirror.
 	 *
-	 * <p><b>Crouching + empty hand:</b> cancel active ritual.</p>
-	 * <p><b>Standing + empty hand:</b> cycle through organs and start extraction.</p>
+	 * <p><b>Standing + empty hand:</b> cycle through organs in the mirror,
+	 * showing a status preview for each one.</p>
+	 *
+	 * <p><b>Crouching + empty hand:</b> if an organ is selected and no ritual
+	 * is active, confirm selection and begin extraction. If a ritual is already
+	 * running, cancel it.</p>
 	 */
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
@@ -129,43 +136,34 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 		BlockEntity tile = worldIn.getBlockEntity(pos);
 		if (!(tile instanceof VisceralMirrorBlockEntity te)) return InteractionResult.PASS;
 
-		// ---- Crouching = cancel ----
-		if (player.isCrouching()) {
-			if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE) {
-				te.cancelRitual(player);
-				return InteractionResult.SUCCESS;
-			}
-			return InteractionResult.PASS;
-		}
-
-		// ---- Standing + empty hand = cycle organs and start ----
+		// Only react to empty-hand interactions
 		if (!player.getItemInHand(handIn).isEmpty()) {
 			return InteractionResult.PASS;
 		}
 
+		if (player.isCrouching()) {
+			// ---- Crouching + empty hand ----
+			if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE) {
+				// Cancel an active ritual
+				te.cancelRitual(player);
+				return InteractionResult.SUCCESS;
+			}
+			// Confirm selected organ and begin extraction
+			if (te.confirmSelection(player)) {
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.SUCCESS; // feedback was already shown by confirmSelection
+		}
+
+		// ---- Standing + empty hand = cycle organs ----
 		if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE) {
-			// Ritual already in progress
 			player.displayClientMessage(
 					Component.literal("The mirror ripples... the ritual is in progress.")
 							.withStyle(ChatFormatting.DARK_PURPLE), true);
 			return InteractionResult.SUCCESS;
 		}
 
-		// Cycle through organs: use the player's tick count to pick an organ
-		// In practice, each click advances to the next organ
-		EnumOrgan[] organs = EnumOrgan.values();
-		int index = (int) ((player.tickCount / 5) % organs.length);
-		EnumOrgan selectedOrgan = organs[index];
-
-		if (te.startRitual(player, selectedOrgan)) {
-			return InteractionResult.SUCCESS;
-		}
-
-		// Show which organ would be selected
-		player.displayClientMessage(
-				Component.literal("The mirror reveals your " + selectedOrgan.getName().toLowerCase()
-						+ "... [Click again to extract]").withStyle(ChatFormatting.DARK_PURPLE),
-				true);
+		te.cycleOrgan(player);
 		return InteractionResult.SUCCESS;
 	}
 }

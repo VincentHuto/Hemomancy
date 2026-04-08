@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -28,9 +29,16 @@ import net.minecraft.world.level.block.state.BlockState;
  * an initiated hemomancer to reach into their own reflection and extract organs
  * for modification.
  *
- * <p>The extraction ritual proceeds in phases:</p>
+ * <h3>Organ Selection</h3>
+ * <p>The mirror tracks which organ is currently "revealed" in its surface.
+ * The player cycles through organs with right-clicks (standing, empty hand),
+ * receiving a status preview for each. Once the desired organ is visible,
+ * the player crouches and right-clicks to commit and begin the extraction
+ * ritual.</p>
+ *
+ * <h3>Extraction Phases</h3>
  * <ol>
- *   <li><b>Idle</b> — player right-clicks to begin, selecting an organ.</li>
+ *   <li><b>Idle</b> — the player browses organs in the mirror.</li>
  *   <li><b>Channeling</b> — the player must stay near the mirror as blood is
  *       drained to sustain the extraction.</li>
  *   <li><b>Extracting</b> — the organ is pulled through the mirror; the player
@@ -55,6 +63,9 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	/** Max distance squared the player can be from the mirror during ritual. */
 	private static final double MAX_RITUAL_DISTANCE_SQ = 25.0;
 
+	/** Ticks after which the mirror "forgets" its selection if nobody interacts. */
+	private static final int SELECTION_TIMEOUT_TICKS = 200;
+
 	// ========================== STATE ==========================
 
 	public enum RitualPhase { IDLE, CHANNELING, EXTRACTING, COMPLETE }
@@ -64,6 +75,16 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	private int ritualTicks = 0;
 	private int totalRitualTicks = 0;
 
+	/**
+	 * Index into {@link EnumOrgan#values()} that indicates which organ is
+	 * currently "revealed" in the mirror surface. -1 means no organ is
+	 * selected (mirror dormant).
+	 */
+	private int selectedOrganIndex = -1;
+
+	/** Tick timestamp of the last time the player interacted with the mirror. */
+	private long lastInteractionTick = 0;
+
 	public VisceralMirrorBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.visceral_mirror.get(), pos, state);
 	}
@@ -71,6 +92,14 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	// ========================== TICK ==========================
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, VisceralMirrorBlockEntity te) {
+		// Time out idle selections if nobody interacts
+		if (te.phase == RitualPhase.IDLE && te.selectedOrganIndex >= 0) {
+			if (level.getGameTime() - te.lastInteractionTick > SELECTION_TIMEOUT_TICKS) {
+				te.selectedOrganIndex = -1;
+				te.markDirtyAndSync();
+			}
+		}
+
 		if (te.phase == RitualPhase.IDLE || te.phase == RitualPhase.COMPLETE) return;
 
 		Player player = te.findNearestInitiatedPlayer();
@@ -93,6 +122,93 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 
 	public static void clientTick(Level level, BlockPos pos, BlockState state, VisceralMirrorBlockEntity te) {
 		// Client-side particle effects could go here in the future
+	}
+
+	// ========================== ORGAN SELECTION ==========================
+
+	/**
+	 * Advances the mirror to reveal the next organ and shows the player a
+	 * status preview including the organ's name, current modification level,
+	 * and whether it is eligible for extraction.
+	 */
+	public void cycleOrgan(Player player) {
+		if (level == null || level.isClientSide) return;
+		if (phase != RitualPhase.IDLE) return;
+
+		EnumOrgan[] organs = EnumOrgan.values();
+		selectedOrganIndex = (selectedOrganIndex + 1) % organs.length;
+		lastInteractionTick = level.getGameTime();
+
+		EnumOrgan organ = organs[selectedOrganIndex];
+		showOrganPreview(player, organ);
+		markDirtyAndSync();
+	}
+
+	/**
+	 * Attempts to confirm the currently selected organ and begin extraction.
+	 * @return true if the ritual was successfully started
+	 */
+	public boolean confirmSelection(Player player) {
+		if (level == null || level.isClientSide) return false;
+		if (phase != RitualPhase.IDLE) return false;
+
+		if (selectedOrganIndex < 0) {
+			msg(player, "The mirror is dormant. Gaze into it first to reveal an organ.",
+					ChatFormatting.GRAY);
+			return false;
+		}
+
+		EnumOrgan organ = EnumOrgan.values()[selectedOrganIndex];
+		return startRitual(player, organ);
+	}
+
+	/**
+	 * Returns the organ currently revealed in the mirror, or {@code null}
+	 * if the mirror is dormant (no selection).
+	 */
+	public EnumOrgan getSelectedOrgan() {
+		if (selectedOrganIndex < 0 || selectedOrganIndex >= EnumOrgan.values().length) return null;
+		return EnumOrgan.values()[selectedOrganIndex];
+	}
+
+	/**
+	 * Shows the player a detailed preview of the given organ's status.
+	 */
+	private void showOrganPreview(Player player, EnumOrgan organ) {
+		int degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+				.map(d -> d.getDegreeNumber()).orElse(0);
+		IVisceralOrgans organs = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA)
+				.orElse(null);
+
+		int currentLevel = organs != null ? organs.getOrganLevel(organ) : 0;
+		double bloodCost = organ.getTier() * BLOOD_COST_PER_TIER;
+		double currentBlood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.map(IBloodVolume::getBloodVolume).orElse(0.0);
+
+		// Build status line: "◆ Heart (Tier 4) — Lv.0/3 — 2000 blood"
+		MutableComponent line = Component.literal("\u25C6 ")
+				.withStyle(ChatFormatting.DARK_PURPLE)
+				.append(Component.literal(organ.getName())
+						.withStyle(ChatFormatting.LIGHT_PURPLE))
+				.append(Component.literal(" (Tier " + organ.getTier() + ")")
+						.withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(" \u2014 Lv." + currentLevel + "/3")
+						.withStyle(currentLevel >= 3 ? ChatFormatting.GOLD : ChatFormatting.WHITE))
+				.append(Component.literal(" \u2014 " + (int) bloodCost + " blood")
+						.withStyle(currentBlood >= bloodCost ? ChatFormatting.GREEN : ChatFormatting.RED));
+
+		// Eligibility check
+		if (currentLevel >= 3) {
+			line = line.append(Component.literal(" [MAX]").withStyle(ChatFormatting.GOLD));
+		} else if (organ.getTier() > degree) {
+			line = line.append(Component.literal(" [Degree too low]").withStyle(ChatFormatting.RED));
+		} else if (currentBlood < bloodCost) {
+			line = line.append(Component.literal(" [Not enough blood]").withStyle(ChatFormatting.RED));
+		} else {
+			line = line.append(Component.literal(" [Sneak-click to extract]").withStyle(ChatFormatting.GREEN));
+		}
+
+		player.displayClientMessage(line, true);
 	}
 
 	// ========================== RITUAL LOGIC ==========================
@@ -144,6 +260,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		this.totalRitualTicks = organ.getTier() * CHANNEL_TICKS_PER_TIER;
 		this.ritualTicks = 0;
 		this.phase = RitualPhase.CHANNELING;
+		this.selectedOrganIndex = -1; // Clear selection once committed
 		msg(player, "You gaze into the visceral mirror... your reflection parts its flesh.",
 				ChatFormatting.DARK_RED);
 		markDirtyAndSync();
@@ -157,6 +274,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			targetOrgan = null;
 			ritualTicks = 0;
 			totalRitualTicks = 0;
+			selectedOrganIndex = -1;
 			if (player != null) {
 				msg(player, "The mirror's surface clouds over. The ritual collapses.",
 						ChatFormatting.RED);
@@ -227,7 +345,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			String levelDesc = newLevel == 1 ? "extracted" : "modified to level " + newLevel;
 			if (targetOrgan == EnumOrgan.HEART) {
 				msg(player, "Through sheer force of will, you command your muscles to contract "
-						+ "rhythmically. Your blood flows still — without a heart.",
+						+ "rhythmically. Your blood flows still \u2014 without a heart.",
 						ChatFormatting.DARK_RED);
 			} else {
 				msg(player, "The " + targetOrgan.getName().toLowerCase() + " has been "
@@ -238,7 +356,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		phase = RitualPhase.COMPLETE;
 		markDirtyAndSync();
 
-		// Reset after a short delay
+		// Reset to idle
 		targetOrgan = null;
 		ritualTicks = 0;
 		totalRitualTicks = 0;
@@ -287,6 +405,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	public EnumOrgan getTargetOrgan() { return targetOrgan; }
 	public int getRitualTicks() { return ritualTicks; }
 	public int getTotalRitualTicks() { return totalRitualTicks; }
+	public int getSelectedOrganIndex() { return selectedOrganIndex; }
 	public float getRitualProgress() {
 		if (totalRitualTicks <= 0) return 0;
 		return (float) ritualTicks / totalRitualTicks;
@@ -300,6 +419,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		tag.putInt("Phase", phase.ordinal());
 		tag.putInt("RitualTicks", ritualTicks);
 		tag.putInt("TotalRitualTicks", totalRitualTicks);
+		tag.putInt("SelectedOrganIndex", selectedOrganIndex);
 		if (targetOrgan != null) {
 			tag.putString("TargetOrgan", targetOrgan.name());
 		}
@@ -313,6 +433,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 				? RitualPhase.values()[phaseOrd] : RitualPhase.IDLE;
 		ritualTicks = tag.getInt("RitualTicks");
 		totalRitualTicks = tag.getInt("TotalRitualTicks");
+		selectedOrganIndex = tag.getInt("SelectedOrganIndex");
 		if (tag.contains("TargetOrgan")) {
 			targetOrgan = EnumOrgan.valueOf(tag.getString("TargetOrgan"));
 		}
