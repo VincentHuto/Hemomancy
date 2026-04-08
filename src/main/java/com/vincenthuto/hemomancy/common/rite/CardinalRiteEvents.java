@@ -17,6 +17,9 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
@@ -25,6 +28,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +36,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -298,6 +303,8 @@ public class CardinalRiteEvents {
 				false);
 	}
 
+	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
+
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
 	static {
@@ -338,10 +345,18 @@ public class CardinalRiteEvents {
 		}
 
 		// Spawn result item
+		String ritePath = rite.getRecipeId().getPath();
 		if (!recipe.getResult().isEmpty()) {
+			ItemStack resultStack = recipe.getResult().copy();
+
+			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
+			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
+				presignBloodlineLedger(sLevel, caster, resultStack);
+			}
+
 			sLevel.addFreshEntity(new ItemEntity(sLevel,
 					center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-					recipe.getResult().copy()));
+					resultStack));
 		}
 
 		// Play completion sound
@@ -355,7 +370,6 @@ public class CardinalRiteEvents {
 				false);
 
 		// Check if this rite grants an initiatory degree
-		String ritePath = rite.getRecipeId().getPath();
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
 		if (targetDegree != null) {
 			caster.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
@@ -393,5 +407,39 @@ public class CardinalRiteEvents {
 				}
 			});
 		}
+	}
+
+	/**
+	 * Pre-signs a bloodline ledger with the caster's newly founded bloodline.
+	 * Creates the bloodline, registers it in world data, sets the caster's capability,
+	 * and writes the signed state onto the ledger item so it can be redistributed.
+	 */
+	private static void presignBloodlineLedger(ServerLevel sLevel, ServerPlayer caster, ItemStack ledgerStack) {
+		String bloodLineName = caster.getName().getString() + "'s Blood Line";
+		UUID bloodLineUUID = new UUID(caster.getUUID().getMostSignificantBits(), sLevel.getGameTime());
+		ArrayList<UUID> uuids = new ArrayList<>();
+		Bloodline playerLine = new Bloodline(bloodLineName, caster.getUUID(), bloodLineUUID, uuids);
+
+		// Register bloodline in world-level saved data
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+		savedData.registerBloodline(playerLine);
+
+		// Set the caster's bloodline capability
+		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			volume.setBloodLine(playerLine);
+			BloodVolumeEvents.syncVolume(caster, volume);
+		});
+
+		// Write signed state and bloodline data onto the ledger
+		CompoundTag compound = ledgerStack.getOrCreateTag();
+		compound.putBoolean(UnsignedLedgerItem.TAG_STATE, true);
+		compound.put(UnsignedLedgerItem.TAG_BLOODLINE, playerLine.serialize());
+		ledgerStack.setTag(compound);
+
+		caster.displayClientMessage(
+				Component.literal("You have founded: " + playerLine.getName())
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
 	}
 }
