@@ -2,11 +2,11 @@ package com.vincenthuto.hemomancy.client.screen.rune;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
@@ -14,11 +14,9 @@ import com.vincenthuto.hemomancy.common.itemhandler.RuneBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketLoadChiselPattern;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
-import com.vincenthuto.hutoslib.client.screen.HLButtonTextured;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.ChatFormatting;
@@ -30,14 +28,26 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 
 public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMenu> {
+	/** Texture still used for rune grid button sprites. */
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
+
+	// ── Hemomancy theme colors (matching JuiceinatorScreen) ──
+	private static final int SLOT_BG = 0xFF1A0808;
+	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
+	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
+	private static final int BORDER_OUTER = 0xFF330808;
+	private static final int BORDER_INNER = 0xFF220606;
+
+	private static final int CRAFT_AREA_HEIGHT = 100;
+	private static final int VEIN_COUNT = 14;
 
 	private final Inventory playerInv;
 	private final ChiselStationBlockEntity te;
@@ -45,15 +55,15 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 	int guiWidth = 176;
 	int guiHeight = 186;
 	public ChiselButton[][] runeButtonArray = new ChiselButton[8][8];
-	int CLEARBUTTONID = 70;
-	HLButtonTextured clearButton;
-	int CHISELBUTTONID = 71;
-	HLButtonTextured chiselButton;
-	int LOADPATTERNBUTTONID = 72;
-	HLButtonTextured loadPatternButton;
+	ChiselActionButton clearButton;
+	ChiselActionButton chiselButton;
+	ChiselActionButton loadPatternButton;
 	public byte[][] pattern = ChiselRecipe.blank();
 	public byte[][] preview = ChiselRecipe.blank();
 	private ItemStack lastPatternSlotItem = ItemStack.EMPTY;
+
+	/** Seeded vein parameters for animated background. */
+	private float[][] veinParams;
 
 	// --- Click-and-drag rune painting state ---
 	/** Whether the player is currently dragging across the rune grid. */
@@ -182,43 +192,271 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int x, int y) {
-		graphics.drawString(font, "Chisel Station", 8, 4, 0);
-		graphics.drawString(font, "Chisel Station", 8, 4, 65444444);
+		// Title with blood-red color, drawn once with drop shadow
+		graphics.drawString(font, "Chisel Station",
+				(this.imageWidth - font.width("Chisel Station")) / 2, 4, 0xFFAA2222, true);
 
-		PoseStack matrixStack = graphics.pose();
-		matrixStack.pushPose();
+		// Inventory label
 		graphics.drawString(font, this.playerInv.getDisplayName(), 8, this.imageHeight - 92,
-				000000);
+				0xFF444444, false);
 
 		if (te.hasValidRecipe()) {
 			ChiselRecipe currentRecipe = te.getCurrentRecipe();
-			graphics.drawString(font, currentRecipe.getResultItem().getDescriptionId(), 120, 65, 0);
-			graphics.renderItem(currentRecipe.getResultItem(), 145, 44);
-			if (te.areRunesMatching()) {
-				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
 
-				graphics.blit(GUI_Chisel, 162 - 42, 45 + 32, 176, 96, 16, 16);
-			} else {
-				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
-
-				graphics.blit(GUI_Chisel, 162 - 42, 45 + 32, 176, 80, 16, 16);
+			// Result item name (truncated, themed color)
+			String resultName = I18n.get(currentRecipe.getResultItem().getDescriptionId());
+			int maxNameWidth = 50;
+			if (font.width(resultName) > maxNameWidth) {
+				while (font.width(resultName + "..") > maxNameWidth && !resultName.isEmpty()) {
+					resultName = resultName.substring(0, resultName.length() - 1);
+				}
+				resultName = resultName + "..";
 			}
-			if (te.getItem(3).getItem() instanceof ItemKnapper) {
-				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
-				graphics.blit(GUI_Chisel, 162 - 42 + 16, 45 + 32, 176 + 16, 96, 16, 16);
+			graphics.drawString(font, resultName, 120, 65, 0xFFCCAAAA, true);
+
+			// Render result item preview
+			graphics.renderItem(currentRecipe.getResultItem(), 145, 44);
+
+			// ── Programmatic status indicators ──
+			int statusX = 120;
+			int statusY = 77;
+
+			// Rune pattern match indicator
+			if (te.areRunesMatching()) {
+				renderCheckIcon(graphics, statusX, statusY, 0xFF44CC44);
 			} else {
-				RenderSystem.setShaderTexture(0, GUI_Chisel); // Cap
-				graphics.blit(GUI_Chisel, 162 - 42 + 16, 45 + 32, 176 + 16, 96 - 16, 16, 16);
+				renderXIcon(graphics, statusX, statusY, 0xFFCC4444);
+			}
+
+			// Knapper/tool indicator
+			if (te.getItem(3).getItem() instanceof ItemKnapper) {
+				renderCheckIcon(graphics, statusX + 16, statusY, 0xFF44CC44);
+			} else {
+				renderXIcon(graphics, statusX + 16, statusY, 0xFFCC4444);
 			}
 		}
-		matrixStack.popPose();
+	}
 
+	/** Renders a small check mark icon at the given position. */
+	private void renderCheckIcon(GuiGraphics gfx, int x, int y, int color) {
+		// Background circle/box
+		gfx.fill(x, y, x + 14, y + 14, 0x40000000);
+		gfx.fill(x, y, x + 14, y + 1, 0x60000000);
+		gfx.fill(x, y + 13, x + 14, y + 14, 0x60000000);
+		gfx.fill(x, y, x + 1, y + 14, 0x60000000);
+		gfx.fill(x + 13, y, x + 14, y + 14, 0x60000000);
+		// Checkmark shape
+		gfx.fill(x + 3, y + 7, x + 4, y + 10, color);
+		gfx.fill(x + 4, y + 8, x + 5, y + 11, color);
+		gfx.fill(x + 5, y + 9, x + 6, y + 11, color);
+		gfx.fill(x + 6, y + 8, x + 7, y + 10, color);
+		gfx.fill(x + 7, y + 7, x + 8, y + 9, color);
+		gfx.fill(x + 8, y + 6, x + 9, y + 8, color);
+		gfx.fill(x + 9, y + 5, x + 10, y + 7, color);
+		gfx.fill(x + 10, y + 4, x + 11, y + 6, color);
+	}
+
+	/** Renders a small X icon at the given position. */
+	private void renderXIcon(GuiGraphics gfx, int x, int y, int color) {
+		// Background
+		gfx.fill(x, y, x + 14, y + 14, 0x40000000);
+		gfx.fill(x, y, x + 14, y + 1, 0x60000000);
+		gfx.fill(x, y + 13, x + 14, y + 14, 0x60000000);
+		gfx.fill(x, y, x + 1, y + 14, 0x60000000);
+		gfx.fill(x + 13, y, x + 14, y + 14, 0x60000000);
+		// X shape
+		for (int i = 0; i < 8; i++) {
+			gfx.fill(x + 3 + i, y + 3 + i, x + 4 + i, y + 4 + i, color);
+			gfx.fill(x + 10 - i, y + 3 + i, x + 11 - i, y + 4 + i, color);
+		}
 	}
 
 	@Override
 	protected void renderBg(GuiGraphics graphics, float partialTicks, int x, int y) {
 		this.renderBackground(graphics);
-		graphics.blit(GUI_Chisel, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+
+		int gx = this.leftPos;
+		int gy = this.topPos;
+		int gw = this.imageWidth;
+		int gh = this.imageHeight;
+
+		// ── Upper crafting area: animated vein background ──
+		renderVeinBackground(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		drawBorder(graphics, gx, gy, gw, CRAFT_AREA_HEIGHT);
+
+		// ── Lower inventory area: red gradient background ──
+		int invTop = gy + CRAFT_AREA_HEIGHT;
+		int invH = gh - CRAFT_AREA_HEIGHT;
+		renderRedGradientBackground(graphics, gx, invTop, gw, invH);
+
+		// Separator border between crafting and inventory areas
+		graphics.fill(gx, invTop, gx + gw, invTop + 1, BORDER_OUTER);
+		graphics.fill(gx, invTop + 1, gx + gw, invTop + 2, BORDER_INNER);
+
+		// ── Rune grid recessed area ──
+		int gridX = gx + 49;
+		int gridY = gy + 25;
+		int gridW = 66;
+		int gridH = 66;
+		// Recessed border around the rune grid area
+		graphics.fill(gridX - 2, gridY - 2, gridX + gridW + 2, gridY + gridH + 2, BORDER_OUTER);
+		graphics.fill(gridX - 1, gridY - 1, gridX + gridW + 1, gridY + gridH + 1, BORDER_INNER);
+		graphics.fill(gridX, gridY, gridX + gridW, gridY + gridH, 0xFF080204);
+
+		// ── Draw slot backgrounds ──
+		for (Slot slot : this.menu.slots) {
+			int sx = gx + slot.x;
+			int sy = gy + slot.y;
+			drawSlotBackground(graphics, sx, sy, slot);
+		}
+	}
+
+	// ───── Slot background rendering ─────
+
+	private void drawSlotBackground(GuiGraphics gfx, int sx, int sy, Slot slot) {
+		// Outer border
+		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
+		// Inner fill
+		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
+		// Bottom/right highlight
+		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+
+		// Themed tints per slot type
+		if (slot instanceof com.vincenthuto.hemomancy.common.menu.slot.ChiselSlot) {
+			// Chisel tool slot: crimson tint
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x18FF3333);
+		} else if (slot instanceof com.vincenthuto.hemomancy.common.menu.slot.RunePatternSlot) {
+			// Pattern slot: purple tint
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x18AA44DD);
+		} else if (slot instanceof com.vincenthuto.hemomancy.common.menu.slot.OutputSlot) {
+			// Output slot: bright red tint
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FF4444);
+		}
+	}
+
+	// ───── Programmatic border ─────
+
+	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
+		gfx.fill(x, y, x + w, y + 1, BORDER_OUTER);
+		gfx.fill(x, y + h - 1, x + w, y + h, BORDER_OUTER);
+		gfx.fill(x, y, x + 1, y + h, BORDER_OUTER);
+		gfx.fill(x + w - 1, y, x + w, y + h, BORDER_OUTER);
+
+		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, BORDER_INNER);
+		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, BORDER_INNER);
+		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, BORDER_INNER);
+		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
+	}
+
+	// ───── Red gradient inventory background ─────
+
+	private void renderRedGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+		for (int row = 0; row < h; row++) {
+			float t = (float) row / h;
+			int r = (int) (60 + 100 * t);
+			int g = (int) (10 + 40 * t);
+			int b = (int) (10 + 30 * t);
+			int color = (0xFF << 24) | (r << 16) | (g << 8) | b;
+			gfx.fill(x, y + row, x + w, y + row + 1, color);
+		}
+	}
+
+	// ───── Procedural animated vein background ─────
+
+	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
+		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+
+		// Layer 1: solid near-black base
+		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
+
+		// Layer 2: subtle dark-red radial glow in the center
+		int cx = gx + gw / 2;
+		int cy = gy + gh / 2;
+		int glowRadius = Math.max(gw, gh) / 2;
+		for (int ring = glowRadius; ring > 0; ring -= 4) {
+			float t = (float) ring / glowRadius;
+			int alpha = (int) (30 * (1f - t));
+			int red = (int) (35 * (1f - t));
+			int color = (alpha << 24) | (red << 16);
+			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
+		}
+
+		// Layer 3: animated vein tendrils
+		float time = System.nanoTime() / 1_000_000_000f;
+		if (veinParams != null) {
+			for (int i = 0; i < VEIN_COUNT; i++) {
+				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
+			}
+		}
+
+		// Layer 4: noise speckles
+		Random speckRand = new Random(54321L);
+		for (int s = 0; s < 50; s++) {
+			int sx = gx + speckRand.nextInt(gw);
+			int sy = gy + speckRand.nextInt(gh);
+			int sr = 10 + speckRand.nextInt(20);
+			int sg = speckRand.nextInt(6);
+			int sa = 15 + speckRand.nextInt(20);
+			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+		}
+
+		RenderSystem.disableBlend();
+		graphics.disableScissor();
+	}
+
+	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
+			int gx, int gy, int gw, int gh) {
+		float[] p = veinParams[index];
+		float startX = gx + p[0] * gw;
+		float startY = gy + p[1] * gh;
+		float baseAngle = p[2];
+		float speed = p[3];
+		float amplitude = p[4];
+		float frequency = p[5];
+		int length = (int) p[6];
+		int thickness = (int) p[7];
+		float brightness = p[8];
+
+		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
+		float cosA = Mth.cos(angleDrift);
+		float sinA = Mth.sin(angleDrift);
+
+		float timeOffset = time * speed * 2.0f;
+
+		int baseRed = (int) (40 + 50 * brightness);
+		int baseGreen = (int) (2 + 8 * brightness);
+		int baseBlue = (int) (5 + 5 * brightness);
+
+		for (int step = 0; step < length; step++) {
+			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
+			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
+			float displacement = squiggle + microSquiggle;
+
+			float px = startX + step * cosA * 1.5f - displacement * sinA;
+			float py = startY + step * sinA * 1.5f + displacement * cosA;
+
+			int ix = (int) px;
+			int iy = (int) py;
+
+			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) continue;
+
+			float tipFade = 1f;
+			if (step < 10) tipFade = step / 10f;
+			else if (step > length - 10) tipFade = (length - step) / 10f;
+
+			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
+
+			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
+			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
+			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
+			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
+
+			graphics.fill(ix, iy, ix + thickness, iy + thickness,
+					(a << 24) | (r << 16) | (g << 8) | b);
+		}
 	}
 
 	/**
@@ -484,6 +722,23 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 		left = width / 2 - guiWidth / 2;
 		top = height / 2 - guiHeight / 2;
 		renderables.clear();
+
+		// Seed vein parameters for the animated background
+		Random rand = new Random(42L);
+		veinParams = new float[VEIN_COUNT][9];
+		for (int i = 0; i < VEIN_COUNT; i++) {
+			veinParams[i][0] = rand.nextFloat();
+			veinParams[i][1] = rand.nextFloat();
+			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
+			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
+			veinParams[i][4] = 8f + rand.nextFloat() * 14f;
+			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
+			veinParams[i][6] = 50 + rand.nextInt(100);
+			veinParams[i][7] = 1 + rand.nextInt(2);
+			veinParams[i][8] = rand.nextFloat();
+		}
+
+		// Rune grid buttons (8x8)
 		int inc = 0;
 		for (int i = 0; i < runeButtonArray.length; i++) {
 			for (int j = 0; j < runeButtonArray.length; j++) {
@@ -495,15 +750,19 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 				inc++;
 			}
 		}
-		this.addRenderableWidget(clearButton = new HLButtonTextured(GUI_Chisel, CLEARBUTTONID,
-				left + guiWidth - (guiWidth - 120), top + guiHeight - (170), 16, 16, 176, 16, (press) -> {
+
+		// Themed action buttons
+		this.addRenderableWidget(clearButton = new ChiselActionButton(
+				left + 120, top + 16, 16, 16,
+				ChiselActionButton.IconType.CLEAR, (press) -> {
 					pattern = ChiselRecipe.blank();
 					preview = ChiselRecipe.blank();
 					refreshButtonsFromPattern();
 					PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
 				}));
-		this.addRenderableWidget(chiselButton = new HLButtonTextured(GUI_Chisel, CHISELBUTTONID,
-				left + guiWidth - (guiWidth - 120), top + guiHeight - (150), 16, 16, 176, 48, (press) -> {
+		this.addRenderableWidget(chiselButton = new ChiselActionButton(
+				left + 120, top + 36, 16, 16,
+				ChiselActionButton.IconType.CHISEL, (press) -> {
 					if (te.contents.get(3).getItem() != Items.AIR) {
 						PacketHandler.CHANNELRUNES.sendToServer(new PacketChiselCraftingEvent());
 						pattern = ChiselRecipe.blank();
@@ -512,8 +771,9 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 						PacketHandler.CHANNELRUNES.sendToServer(new PacketUpdateChiselRunes(pattern));
 					}
 				}));
-		this.addRenderableWidget(loadPatternButton = new HLButtonTextured(GUI_Chisel, LOADPATTERNBUTTONID,
-				left + 28, top + 80, 16, 16, 176, 32, (press) -> {
+		this.addRenderableWidget(loadPatternButton = new ChiselActionButton(
+				left + 28, top + 80, 16, 16,
+				ChiselActionButton.IconType.LOAD, (press) -> {
 					ItemStack patternStack = te.getItem(4);
 					if (patternStack.getItem() instanceof ItemRunePattern runePattern) {
 						ChiselRecipe patternRecipe = runePattern.getRecipe();
