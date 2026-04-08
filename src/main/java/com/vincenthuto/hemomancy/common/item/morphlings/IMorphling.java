@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.item.morphlings;
 
+import java.util.List;
+
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,6 +47,19 @@ public interface IMorphling {
 	 * @param stack  the morphling ItemStack (contains maturity NBT)
 	 */
 	default void onEquippedTick(Player player, ItemStack stack) {
+	}
+
+	/**
+	 * Returns tooltip descriptions of the maturity bonuses this morphling grants.
+	 * Each entry describes a bonus unlocked at a specific maturity level.
+	 * Already-unlocked bonuses (level &lt;= currentMaturity) should be highlighted
+	 * differently from locked ones.
+	 *
+	 * @param currentMaturity the morphling's current maturity level (0-4)
+	 * @return list of Components describing bonuses
+	 */
+	default List<Component> getMaturityBonusDescriptions(int currentMaturity) {
+		return List.of();
 	}
 
 }

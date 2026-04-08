@@ -125,6 +125,17 @@ public class MorphlingItem extends Item implements IMorphling {
 					tooltip.add(Component.literal("Next level at: " + String.format("%.0f", nextThreshold) + " power")
 							.withStyle(ChatFormatting.DARK_GRAY));
 				}
+
+				// Show maturity bonuses
+				if (this instanceof IMorphling morphling) {
+					List<Component> bonuses = morphling.getMaturityBonusDescriptions(maturity);
+					if (!bonuses.isEmpty()) {
+						tooltip.add(Component.empty());
+						tooltip.add(Component.literal("Maturity Bonuses:")
+								.withStyle(ChatFormatting.YELLOW, ChatFormatting.UNDERLINE));
+						tooltip.addAll(bonuses);
+					}
+				}
 			}
 		}
 	}
@@ -133,6 +144,21 @@ public class MorphlingItem extends Item implements IMorphling {
 		String name = tendency.name();
 		if (name.isEmpty()) return "Unknown";
 		return name.charAt(0) + name.substring(1).toLowerCase();
+	}
+
+	/**
+	 * Helper to create a maturity bonus tooltip line. Unlocked bonuses are shown
+	 * in green, locked ones in dark gray with strikethrough.
+	 */
+	public static Component maturityBonusLine(String description, int requiredLevel, int currentLevel) {
+		String prefix = " " + MATURITY_NAMES[requiredLevel] + ": ";
+		if (currentLevel >= requiredLevel) {
+			return Component.literal(prefix + description)
+					.withStyle(ChatFormatting.GREEN);
+		} else {
+			return Component.literal(prefix + description)
+					.withStyle(ChatFormatting.DARK_GRAY);
+		}
 	}
 
 }
