@@ -583,14 +583,18 @@ public class UnstainedProgressScreen extends Screen {
 
 		EnumPurityStage[] stages = EnumPurityStage.values();
 
-		// Connections first
+		// Connections first — lines stop at diamond edges to avoid cutting through nodes
+		int hn = halfNode();
 		for (int i = 1; i < stages.length; i++) {
 			int cy1 = startCY + (stages.length - 1 - (i - 1)) * NODE_GAP_Y;
 			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
 			boolean reached = currentPurityStage.getLevel() >= stages[i].getLevel();
 			int lineCol = reached ? COL_LINE_REACHED : COL_LINE_LOCKED;
 			int lw = Math.max(1, (int)(zoom * 1.5f));
-			gfx.fill(sx(ccx) - lw, sy(cy2) + halfNode(), sx(ccx) + lw, sy(cy1) + halfNode(), lineCol);
+			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
+			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
+			int lowerTop    = sy(cy1);           // top tip of lower diamond
+			gfx.fill(sx(ccx) - lw, upperBottom, sx(ccx) + lw, lowerTop, lineCol);
 		}
 
 		// Nodes
@@ -627,14 +631,18 @@ public class UnstainedProgressScreen extends Screen {
 
 		EnumClarityStage[] stages = EnumClarityStage.values();
 
-		// Connections
+		// Connections — lines stop at diamond edges to avoid cutting through nodes
+		int hn = halfNode();
 		for (int i = 1; i < stages.length; i++) {
 			int cy1 = startCY + (stages.length - 1 - (i - 1)) * NODE_GAP_Y;
 			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
 			boolean reached = currentClarityStage.getLevel() >= stages[i].getLevel();
 			int lineCol = reached ? 0xFF50A898 : COL_LINE_LOCKED;
 			int lw = Math.max(1, (int)(zoom * 1.5f));
-			gfx.fill(sx(ccx) - lw, sy(cy2) + halfNode(), sx(ccx) + lw, sy(cy1) + halfNode(), lineCol);
+			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
+			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
+			int lowerTop    = sy(cy1);           // top tip of lower diamond
+			gfx.fill(sx(ccx) - lw, upperBottom, sx(ccx) + lw, lowerTop, lineCol);
 		}
 
 		// Nodes
