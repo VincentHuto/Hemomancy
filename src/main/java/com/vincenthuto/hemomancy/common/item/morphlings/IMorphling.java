@@ -87,6 +87,20 @@ public interface IMorphling {
 	}
 
 	/**
+	 * Called when the player is about to take fall damage while this morphling is
+	 * equipped. Return true to cancel the fall damage entirely.
+	 * Use for abilities like silk tethers, parachutes, etc.
+	 *
+	 * @param player   the player who is falling
+	 * @param stack    the morphling ItemStack (contains maturity NBT)
+	 * @param distance the fall distance
+	 * @return true to cancel the fall damage, false to let it proceed normally
+	 */
+	default boolean onEquippedFall(Player player, ItemStack stack, float distance) {
+		return false;
+	}
+
+	/**
 	 * Returns tooltip descriptions of the maturity bonuses this morphling grants.
 	 * Each entry describes a bonus unlocked at a specific maturity level.
 	 * Already-unlocked bonuses (level &lt;= currentMaturity) should be highlighted

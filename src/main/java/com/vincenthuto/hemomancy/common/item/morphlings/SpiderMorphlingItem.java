@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -23,8 +25,8 @@ import net.minecraft.world.item.ItemStack;
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Wall Climbing — grant the player spider-like wall climbing
  *   ability (onClimbable override)
- * - Mature (3): Silk Tether — negate fall damage entirely (the silk breaks
- *   the fall)
+ * - Mature (3): Silk Tether — when the player would take fall damage, spawn a
+ *   temporary cobweb block at their feet to break the fall
  * - Apex (4): Web Cocoon — when damaged, briefly immobilize and Poison the
  *   attacker with sticky venom-laced webbing
  */
@@ -38,12 +40,6 @@ public class SpiderMorphlingItem extends MorphlingItem {
 	 * Checked by a mixin or event to enable wall climbing.
 	 */
 	public static final String WALL_CLIMB_TAG = "hemomancy:spider_climb";
-
-	/**
-	 * Tag applied to players with an equipped spider morphling at maturity 3+.
-	 * Checked in fall damage event to negate it.
-	 */
-	public static final String SILK_TETHER_TAG = "hemomancy:silk_tether";
 
 	public SpiderMorphlingItem(Properties prop) {
 		super(prop);
@@ -86,17 +82,19 @@ public class SpiderMorphlingItem extends MorphlingItem {
 		} else {
 			player.removeTag(WALL_CLIMB_TAG);
 		}
+	}
 
-		// Mature (3+): Silk Tether — mark player for fall damage negation
+	@Override
+	public boolean onEquippedFall(Player player, ItemStack stack, float distance) {
+		int maturity = MorphlingItem.getMaturityLevel(stack);
+
+		// Mature (3+): Silk Tether — spawn a temporary cobweb at feet to break the fall
 		if (maturity >= 3) {
-			if (!player.getTags().contains(SILK_TETHER_TAG)) {
-				player.addTag(SILK_TETHER_TAG);
-			}
-			// Reset fall distance continuously to negate fall damage
-			player.fallDistance = 0;
-		} else {
-			player.removeTag(SILK_TETHER_TAG);
+			BlockPos feetPos = player.blockPosition();
+			EquippedMorphlingEvents.placeTemporaryWeb(player.level(), feetPos);
+			return true; // Cancel fall damage
 		}
+		return false;
 	}
 
 	@Override
@@ -123,7 +121,7 @@ public class SpiderMorphlingItem extends MorphlingItem {
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Wall Climbing (Spider-climb up walls)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Silk Tether (Negate fall damage)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Silk Tether (Spawn web to break falls)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Web Cocoon (Root & Poison attacker)", 4, currentMaturity));
 		return list;
 	}
