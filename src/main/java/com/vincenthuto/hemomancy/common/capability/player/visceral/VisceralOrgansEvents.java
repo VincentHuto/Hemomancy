@@ -1,24 +1,30 @@
 package com.vincenthuto.hemomancy.common.capability.player.visceral;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
  * Handles capability attachment, persistence across death, and per-tick
- * effects of extracted organs for the Visceral Mirror system.
+ * effects of organ echoes for the Visceral Mirror system.
+ *
+ * <p>Also enforces the rule that organ echo items dissolve when placed
+ * into any non-player container (chest, barrel, hopper output, etc.).</p>
  */
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class VisceralOrgansEvents {
@@ -46,6 +52,32 @@ public class VisceralOrgansEvents {
 			original.invalidateCaps();
 		}
 	}
+
+	// ========================== ECHO DISSOLVE ==========================
+
+	/**
+	 * When a player closes a container, scan every non-player slot for
+	 * organ echo items and dissolve them. This prevents echoes from
+	 * persisting in chests, barrels, or similar storage.
+	 */
+	@SubscribeEvent
+	public static void onContainerClose(PlayerContainerEvent.Close event) {
+		Player player = event.getEntity();
+		if (player.level().isClientSide) return;
+
+		AbstractContainerMenu menu = event.getContainer();
+		for (Slot slot : menu.slots) {
+			// Skip slots that belong to the player's own inventory
+			if (slot.container == player.getInventory()) continue;
+
+			ItemStack stack = slot.getItem();
+			if (!stack.isEmpty() && stack.getItem() instanceof OrganEchoItem) {
+				slot.set(ItemStack.EMPTY);
+			}
+		}
+	}
+
+	// ========================== ORGAN TICK EFFECTS ==========================
 
 	/**
 	 * Applies passive organ modification effects each tick.

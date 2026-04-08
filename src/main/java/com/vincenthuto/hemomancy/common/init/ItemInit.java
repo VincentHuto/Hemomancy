@@ -283,17 +283,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
 			"memory_crimson_flame_conjuration",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
-	// Extracted Organs (Visceral Mirror system)
-	public static final RegistryObject<Item> extracted_spleen = SPECIALITEMS.register("extracted_spleen",
-			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.SPLEEN));
-	public static final RegistryObject<Item> extracted_liver = SPECIALITEMS.register("extracted_liver",
-			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.LIVER));
-	public static final RegistryObject<Item> extracted_lungs = SPECIALITEMS.register("extracted_lungs",
-			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.LUNGS));
-	public static final RegistryObject<Item> extracted_kidneys = SPECIALITEMS.register("extracted_kidneys",
-			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.KIDNEYS));
-	public static final RegistryObject<Item> extracted_heart = SPECIALITEMS.register("extracted_heart",
-			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.HEART));
+	// Organ Echoes (Visceral Mirror system)
+	public static final RegistryObject<Item> echo_of_spleen = SPECIALITEMS.register("echo_of_spleen",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.SPLEEN));
+	public static final RegistryObject<Item> echo_of_liver = SPECIALITEMS.register("echo_of_liver",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.LIVER));
+	public static final RegistryObject<Item> echo_of_lungs = SPECIALITEMS.register("echo_of_lungs",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.LUNGS));
+	public static final RegistryObject<Item> echo_of_kidneys = SPECIALITEMS.register("echo_of_kidneys",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.KIDNEYS));
+	public static final RegistryObject<Item> echo_of_heart = SPECIALITEMS.register("echo_of_heart",
+			() -> new OrganEchoItem(new Item.Properties(), EnumOrgan.HEART));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));

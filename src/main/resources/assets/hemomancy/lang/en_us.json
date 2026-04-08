@@ -547,11 +547,11 @@
 
 	"block.hemomancy.visceral_mirror": "Visceral Mirror",
 
-	"item.hemomancy.extracted_spleen": "Extracted Spleen",
-	"item.hemomancy.extracted_liver": "Extracted Liver",
-	"item.hemomancy.extracted_lungs": "Extracted Lungs",
-	"item.hemomancy.extracted_kidneys": "Extracted Kidneys",
-	"item.hemomancy.extracted_heart": "Extracted Heart",
+	"item.hemomancy.echo_of_spleen": "Echo of Spleen",
+	"item.hemomancy.echo_of_liver": "Echo of Liver",
+	"item.hemomancy.echo_of_lungs": "Echo of Lungs",
+	"item.hemomancy.echo_of_kidneys": "Echo of Kidneys",
+	"item.hemomancy.echo_of_heart": "Echo of Heart",
 
 	"hemomancy.organ.spleen": "Spleen",
 	"hemomancy.organ.liver": "Liver",

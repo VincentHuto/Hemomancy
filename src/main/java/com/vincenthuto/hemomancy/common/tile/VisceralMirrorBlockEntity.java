@@ -26,24 +26,23 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Block entity for the Visceral Mirror — a ritualistic apparatus that allows
- * an initiated hemomancer to reach into their own reflection and extract organs
- * for modification.
+ * an initiated hemomancer to gaze into their own reflection and coalesce
+ * spectral echoes of their organs for modification.
  *
  * <h3>Organ Selection</h3>
  * <p>The mirror tracks which organ is currently "revealed" in its surface.
  * The player cycles through organs with right-clicks (standing, empty hand),
  * receiving a status preview for each. Once the desired organ is visible,
- * the player crouches and right-clicks to commit and begin the extraction
- * ritual.</p>
+ * the player crouches and right-clicks to commit and begin the ritual.</p>
  *
  * <h3>Extraction Phases</h3>
  * <ol>
  *   <li><b>Idle</b> — the player browses organs in the mirror.</li>
  *   <li><b>Channeling</b> — the player must stay near the mirror as blood is
- *       drained to sustain the extraction.</li>
- *   <li><b>Extracting</b> — the organ is pulled through the mirror; the player
+ *       drained to sustain the ritual.</li>
+ *   <li><b>Extracting</b> — the echo is pulled through the mirror; the player
  *       takes damage proportional to the organ's tier.</li>
- *   <li><b>Complete</b> — the extracted organ item drops and the player's
+ *   <li><b>Complete</b> — an "Echo of" organ item drops and the player's
  *       capability is updated.</li>
  * </ol>
  */
@@ -185,6 +184,18 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		double currentBlood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 				.map(IBloodVolume::getBloodVolume).orElse(0.0);
 
+		// Check if player already holds an echo of this organ
+		boolean hasEcho = false;
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack invStack = player.getInventory().getItem(i);
+			if (!invStack.isEmpty()
+					&& invStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.OrganEchoItem echoItem
+					&& echoItem.getOrgan() == organ) {
+				hasEcho = true;
+				break;
+			}
+		}
+
 		// Build status line: "◆ Heart (Tier 4) — Lv.0/3 — 2000 blood"
 		MutableComponent line = Component.literal("\u25C6 ")
 				.withStyle(ChatFormatting.DARK_PURPLE)
@@ -200,6 +211,8 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		// Eligibility check
 		if (currentLevel >= 3) {
 			line = line.append(Component.literal(" [MAX]").withStyle(ChatFormatting.GOLD));
+		} else if (hasEcho) {
+			line = line.append(Component.literal(" [Echo already held]").withStyle(ChatFormatting.GOLD));
 		} else if (organ.getTier() > degree) {
 			line = line.append(Component.literal(" [Degree too low]").withStyle(ChatFormatting.RED));
 		} else if (currentBlood < bloodCost) {
@@ -246,6 +259,18 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return false;
 		}
 
+		// Check if player already holds an echo of this organ
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack invStack = player.getInventory().getItem(i);
+			if (!invStack.isEmpty()
+					&& invStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.OrganEchoItem echoItem
+					&& echoItem.getOrgan() == organ) {
+				msg(player, "An echo of this organ already lingers on your person.",
+						ChatFormatting.GOLD);
+				return false;
+			}
+		}
+
 		// Check blood cost
 		double cost = organ.getTier() * BLOOD_COST_PER_TIER;
 		IBloodVolume vol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
@@ -261,7 +286,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		this.ritualTicks = 0;
 		this.phase = RitualPhase.CHANNELING;
 		this.selectedOrganIndex = -1; // Clear selection once committed
-		msg(player, "You gaze into the visceral mirror... your reflection parts its flesh.",
+		msg(player, "You gaze into the visceral mirror... an echo stirs within your reflection.",
 				ChatFormatting.DARK_RED);
 		markDirtyAndSync();
 		return true;
@@ -300,8 +325,8 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (ritualTicks >= totalRitualTicks) {
 			phase = RitualPhase.EXTRACTING;
 			ritualTicks = 0;
-			msg(player, "Your hand reaches through the mirror. You grasp the "
-					+ targetOrgan.getName().toLowerCase() + "...", ChatFormatting.DARK_PURPLE);
+			msg(player, "Your hand reaches through the mirror. The echo of your "
+					+ targetOrgan.getName().toLowerCase() + " takes shape...", ChatFormatting.DARK_PURPLE);
 			markDirtyAndSync();
 		}
 	}
@@ -326,13 +351,35 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 			return;
 		}
 
+		// Check the player doesn't already hold an echo of this organ
+		boolean alreadyHasEcho = false;
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack invStack = player.getInventory().getItem(i);
+			if (!invStack.isEmpty() && invStack.getItem() instanceof com.vincenthuto.hemomancy.common.item.OrganEchoItem echoItem
+					&& echoItem.getOrgan() == targetOrgan) {
+				alreadyHasEcho = true;
+				break;
+			}
+		}
+
+		if (alreadyHasEcho) {
+			msg(player, "An echo of this organ already lingers on your person.",
+					ChatFormatting.GOLD);
+			phase = RitualPhase.IDLE;
+			targetOrgan = null;
+			ritualTicks = 0;
+			totalRitualTicks = 0;
+			markDirtyAndSync();
+			return;
+		}
+
 		// Update the player's organ capability
 		player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).ifPresent(organs -> {
 			int currentLevel = organs.getOrganLevel(targetOrgan);
 			int newLevel = Math.min(currentLevel + 1, 3);
 			organs.setOrganLevel(targetOrgan, newLevel);
 
-			// Drop the corresponding organ item
+			// Drop the corresponding echo item
 			ItemStack organItem = getOrganItem(targetOrgan);
 			if (!organItem.isEmpty()) {
 				ItemEntity entity = new ItemEntity(level,
@@ -342,14 +389,15 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 				level.addFreshEntity(entity);
 			}
 
-			String levelDesc = newLevel == 1 ? "extracted" : "modified to level " + newLevel;
+			String levelDesc = newLevel == 1 ? "imprinted" : "refined to level " + newLevel;
 			if (targetOrgan == EnumOrgan.HEART) {
 				msg(player, "Through sheer force of will, you command your muscles to contract "
 						+ "rhythmically. Your blood flows still \u2014 without a heart.",
 						ChatFormatting.DARK_RED);
 			} else {
-				msg(player, "The " + targetOrgan.getName().toLowerCase() + " has been "
-						+ levelDesc + ".", ChatFormatting.GOLD);
+				msg(player, "An echo of your " + targetOrgan.getName().toLowerCase()
+						+ " coalesces from the mirror \u2014 " + levelDesc + ".",
+						ChatFormatting.GOLD);
 			}
 		});
 
@@ -365,11 +413,11 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 
 	private ItemStack getOrganItem(EnumOrgan organ) {
 		return switch (organ) {
-			case SPLEEN -> new ItemStack(ItemInit.extracted_spleen.get());
-			case LIVER -> new ItemStack(ItemInit.extracted_liver.get());
-			case LUNGS -> new ItemStack(ItemInit.extracted_lungs.get());
-			case KIDNEYS -> new ItemStack(ItemInit.extracted_kidneys.get());
-			case HEART -> new ItemStack(ItemInit.extracted_heart.get());
+			case SPLEEN -> new ItemStack(ItemInit.echo_of_spleen.get());
+			case LIVER -> new ItemStack(ItemInit.echo_of_liver.get());
+			case LUNGS -> new ItemStack(ItemInit.echo_of_lungs.get());
+			case KIDNEYS -> new ItemStack(ItemInit.echo_of_kidneys.get());
+			case HEART -> new ItemStack(ItemInit.echo_of_heart.get());
 		};
 	}
 
