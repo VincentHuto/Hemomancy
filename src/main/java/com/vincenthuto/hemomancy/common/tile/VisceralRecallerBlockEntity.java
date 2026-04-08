@@ -32,6 +32,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
@@ -450,6 +451,12 @@ public class VisceralRecallerBlockEntity extends BlockEntity implements IBloodTi
 					sl, worldPosition, ParticleTypes.REVERSE_PORTAL);
 			com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils.spawnPoof(
 					sl, worldPosition, ParticleTypes.ENCHANT);
+		}
+
+		// Award Recaller craft milestone
+		if (player instanceof ServerPlayer serverPlayer) {
+			com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents
+					.onRecallerCraftCompleted(serverPlayer);
 		}
 
 		resetCraftingState();

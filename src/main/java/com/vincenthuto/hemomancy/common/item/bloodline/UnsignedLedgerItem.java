@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -94,6 +95,9 @@ public class UnsignedLedgerItem extends Item {
 							Component.literal("You have founded: " + playerLine.getName())
 									.withStyle(ChatFormatting.DARK_RED),
 							true);
+
+					// Award bloodline milestone
+					SkillPointGainEvents.onBloodlineJoined((ServerPlayer) playerIn);
 				}
 			} else {
 				// Second use: another player signs to join the bloodline
@@ -130,6 +134,9 @@ public class UnsignedLedgerItem extends Item {
 									Component.literal("You have joined: " + globalLine.getName())
 											.withStyle(ChatFormatting.DARK_RED),
 									true);
+
+							// Award bloodline milestone
+							SkillPointGainEvents.onBloodlineJoined((ServerPlayer) playerIn);
 
 							// Notify online bloodline members
 							for (Player member : globalLine.getPlayers(worldIn)) {
