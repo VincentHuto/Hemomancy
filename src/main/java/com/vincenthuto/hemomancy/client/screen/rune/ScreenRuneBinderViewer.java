@@ -2,11 +2,9 @@ package com.vincenthuto.hemomancy.client.screen.rune;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
@@ -77,9 +75,6 @@ public class ScreenRuneBinderViewer extends Screen {
 	private static final float PULSE_SPEED = 3.0f;
 	private static final float PULSE_MIN = 0.55f;
 
-	/** Number of animated vein tendrils swimming across the background. */
-	private static final int VEIN_COUNT = 20;
-
 	// ── Instance state ──────────────────────────────────────────────────
 	private int left, top;
 	private final ItemStack binderIcon = new ItemStack(ItemInit.rune_binder.get());
@@ -96,9 +91,6 @@ public class ScreenRuneBinderViewer extends Screen {
 
 	/** Whether the user is currently dragging the scrollbar thumb. */
 	private boolean draggingScrollbar = false;
-
-	/** Per-vein parameters for the animated background. */
-	private float[][] veinParams;
 
 	// ── Inner data class ────────────────────────────────────────────────
 	/**
@@ -128,21 +120,6 @@ public class ScreenRuneBinderViewer extends Screen {
 		scrollOffset = 0;
 		hoveredEntry = -1;
 		rebuildEntryList();
-
-		// Seed vein parameters for the animated background
-		Random rand = new Random(77L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();                          // startX ratio
-			veinParams[i][1] = rand.nextFloat();                          // startY ratio
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2); // base angle
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;           // speed mult
-			veinParams[i][4] = 6f + rand.nextFloat() * 14f;              // amplitude
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;         // frequency
-			veinParams[i][6] = 50 + rand.nextInt(100);                    // length (steps)
-			veinParams[i][7] = 1 + rand.nextInt(2);                       // thickness
-			veinParams[i][8] = rand.nextFloat();                           // red tint brightness
-		}
 	}
 
 	/**
@@ -184,17 +161,17 @@ public class ScreenRuneBinderViewer extends Screen {
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(graphics);
 
-		// ── Procedural vein background ──────────────────────────────────
-		renderVeinBackground(graphics, left, top, GUI_WIDTH, GUI_HEIGHT);
-
-		// ── Gradient border ─────────────────────────────────────────────
-		drawBorder(graphics, left, top, GUI_WIDTH, GUI_HEIGHT);
+		// ── Book-like parchment background ──────────────────────────────
+		renderBookBackground(graphics, left, top, GUI_WIDTH, GUI_HEIGHT);
 
 		// ── Title bar ───────────────────────────────────────────────────
 		int patternCount = entries.size();
-		String titleText = ChatFormatting.GOLD + "Rune Binder" + ChatFormatting.DARK_GRAY
+		String titleText = ChatFormatting.DARK_RED + "Rune Binder" + ChatFormatting.DARK_GRAY
 				+ " (" + patternCount + " pattern" + (patternCount != 1 ? "s" : "") + ")";
-		graphics.drawString(font, titleText, left + 26, top + 8, 0xFFFFFF, true);
+		graphics.drawString(font, titleText, left + 26, top + 8, 0x442200, false);
+
+		// Thin separator line below title
+		graphics.fill(left + 6, top + 20, left + GUI_WIDTH - 6, top + 21, 0x40442200);
 
 		// Binder icon in top-left
 		Lighting.setupFor3DItems();
@@ -256,7 +233,7 @@ public class ScreenRuneBinderViewer extends Screen {
 			graphics.drawString(font, emptyMsg,
 					left + (GUI_WIDTH - textWidth) / 2,
 					top + GUI_HEIGHT / 2 - 4,
-					0x888888, false);
+					0x998877, false);
 		}
 	}
 
@@ -265,12 +242,12 @@ public class ScreenRuneBinderViewer extends Screen {
 	 */
 	private void renderEntry(GuiGraphics graphics, PatternEntry entry,
 							 int x, int y, int entryWidth, boolean hovered, float partialTicks) {
-		// Background fill
-		int bgColor = hovered ? 0x60C8A050 : 0x30FFFFFF;
+		// Background fill — warm parchment tones
+		int bgColor = hovered ? 0x40885530 : 0x18442200;
 		graphics.fill(x, y, x + entryWidth, y + ENTRY_HEIGHT, bgColor);
 
-		// Border
-		int borderColor = hovered ? 0xAAC8A050 : 0x40FFFFFF;
+		// Border — subtle ink lines
+		int borderColor = hovered ? 0x60885530 : 0x25442200;
 		graphics.fill(x, y, x + entryWidth, y + 1, borderColor);                         // top
 		graphics.fill(x, y + ENTRY_HEIGHT - 1, x + entryWidth, y + ENTRY_HEIGHT, borderColor); // bottom
 		graphics.fill(x, y, x + 1, y + ENTRY_HEIGHT, borderColor);                       // left
@@ -290,12 +267,12 @@ public class ScreenRuneBinderViewer extends Screen {
 			}
 			name = name + "...";
 		}
-		int textColor = hovered ? 0xFFFFDD : 0xDDDDDD;
-		graphics.drawString(font, name, x + 24, y + 4, textColor, true);
+		int textColor = hovered ? 0x331100 : 0x553322;
+		graphics.drawString(font, name, x + 24, y + 4, textColor, false);
 
 		// Slot index label
-		String slotLabel = ChatFormatting.DARK_GRAY + "#" + (entry.slotIndex() + 1);
-		graphics.drawString(font, slotLabel, x + 24, y + 16, 0x999999, false);
+		String slotLabel = "#" + (entry.slotIndex() + 1);
+		graphics.drawString(font, slotLabel, x + 24, y + 16, 0x998877, false);
 
 		// Mini 8x8 pattern preview on the right side of the entry
 		if (entry.pattern() != null) {
@@ -311,7 +288,7 @@ public class ScreenRuneBinderViewer extends Screen {
 	private void renderMiniPattern(GuiGraphics graphics, byte[][] pattern, int x, int y, float partialTicks) {
 		// Background for the mini grid
 		int gridSize = 8 * MINI_CELL_SIZE;
-		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x80000000);
+		graphics.fill(x - 1, y - 1, x + gridSize + 1, y + gridSize + 1, 0x40442200);
 
 		// Pulsing color for active cells
 		float gameTime = (Minecraft.getInstance().level != null
@@ -329,7 +306,7 @@ public class ScreenRuneBinderViewer extends Screen {
 				if (pattern[i][j] != 0) {
 					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, activeColor);
 				} else {
-					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, 0x40333333);
+					graphics.fill(cellX, cellY, cellX + MINI_CELL_SIZE, cellY + MINI_CELL_SIZE, 0x20886644);
 				}
 			}
 		}
@@ -340,7 +317,7 @@ public class ScreenRuneBinderViewer extends Screen {
 	 */
 	private void renderScrollbar(GuiGraphics graphics, int x, int y, int width, int height, int maxScroll) {
 		// Track background
-		graphics.fill(x, y, x + width, y + height, 0x40000000);
+		graphics.fill(x, y, x + width, y + height, 0x20442200);
 
 		// Thumb
 		float thumbRatio = (float) VISIBLE_ENTRIES / entries.size();
@@ -348,145 +325,57 @@ public class ScreenRuneBinderViewer extends Screen {
 		int scrollRange = height - thumbHeight;
 		int thumbY = y + (maxScroll > 0 ? (int) ((float) scrollOffset / maxScroll * scrollRange) : 0);
 
-		int thumbColor = draggingScrollbar ? 0xCCC8A050 : 0x99AAAAAA;
+		int thumbColor = draggingScrollbar ? 0xBB885530 : 0x77664422;
 		graphics.fill(x + 1, thumbY, x + width - 1, thumbY + thumbHeight, thumbColor);
 	}
 
-	// ── Procedural Background ──────────────────────────────────────────
+	// ── Book-like Background ───────────────────────────────────────────
 
 	/**
-	 * Renders a dark red/black background covered in animated vein tendrils,
-	 * matching the style of other Hemomancy GUI screens.
+	 * Renders a warm parchment/book-style background with a leather-bound
+	 * border, page crease, and subtle aged-edge shading.
 	 */
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
+	private void renderBookBackground(GuiGraphics gfx, int x, int y, int w, int h) {
+		// Outer shadow (drop shadow around the book)
+		gfx.fill(x + 3, y + 3, x + w + 3, y + h + 3, 0x44000000);
 
-		// Layer 1: solid near-black base
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
+		// Leather cover — dark brown outer frame
+		gfx.fill(x, y, x + w, y + h, 0xFF3B2312);
 
-		// Layer 2: subtle dark-red radial glow
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
-		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (30 * (1f - t));
-			int red = (int) (35 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
+		// Inner cover bevel — slightly lighter brown
+		gfx.fill(x + 2, y + 2, x + w - 2, y + h - 2, 0xFF4A3020);
+
+		// Parchment page area
+		int px = x + 5;
+		int py = y + 5;
+		int pw = w - 10;
+		int ph = h - 10;
+		gfx.fill(px, py, px + pw, py + ph, 0xFFD8C8A0);
+
+		// Slightly darker parchment edges (aged look)
+		// Top edge
+		gfx.fill(px, py, px + pw, py + 2, 0x18442200);
+		// Bottom edge
+		gfx.fill(px, py + ph - 2, px + pw, py + ph, 0x18442200);
+		// Left edge
+		gfx.fill(px, py, px + 2, py + ph, 0x18442200);
+		// Right edge
+		gfx.fill(px + pw - 2, py, px + pw, py + ph, 0x18442200);
+
+		// Spine crease — vertical shadow line near left edge
+		gfx.fill(px + 8, py + 4, px + 9, py + ph - 4, 0x20442200);
+		gfx.fill(px + 9, py + 4, px + 10, py + ph - 4, 0x10442200);
+
+		// Subtle horizontal ruled lines across the page (like faint notebook lines)
+		for (int ly = py + 22; ly < py + ph - 4; ly += 30) {
+			gfx.fill(px + 12, ly, px + pw - 6, ly + 1, 0x10886644);
 		}
 
-		// Layer 3: animated vein tendrils
-		float time = (System.nanoTime() / 1_000_000_000f);
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
-			}
-		}
-
-		// Layer 4: subtle noise-like speckles for organic texture
-		Random speckRand = new Random(12345L);
-		for (int s = 0; s < 80; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(25);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
-		}
-
-		RenderSystem.disableBlend();
-		graphics.disableScissor();
-	}
-
-	/**
-	 * Draws a single animated vein tendril as a squiggling curve.
-	 */
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-								 int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + step * cosA * 1.5f - displacement * sinA;
-			float py = startY + step * sinA * 1.5f + displacement * cosA;
-
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) {
-				continue;
-			}
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-
-			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			graphics.fill(ix, iy, ix + thickness, iy + thickness,
-					(a << 24) | (r << 16) | (g << 8) | b);
-		}
-	}
-
-	// ── Gradient Border ────────────────────────────────────────────────
-
-	/**
-	 * Draws a dark-red gradient border frame around the GUI panel.
-	 */
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		int[] colors = {
-			0xFF6B1010,  // outermost — bright crimson
-			0xFF4A0C0C,  // mid-outer
-			0xFF300808,  // mid-inner
-			0xFF1A0404,  // innermost — near-black maroon
-		};
-		for (int i = 0; i < colors.length; i++) {
-			int c = colors[i];
-			int xi = x + i;
-			int yi = y + i;
-			int wi = w - i * 2;
-			int hi = h - i * 2;
-			gfx.fill(xi, yi, xi + wi, yi + 1, c);
-			gfx.fill(xi, yi + hi - 1, xi + wi, yi + hi, c);
-			gfx.fill(xi, yi, xi + 1, yi + hi, c);
-			gfx.fill(xi + wi - 1, yi, xi + wi, yi + hi, c);
-		}
-		// Corner highlights
-		int hl = 0xFF8A1818;
-		gfx.fill(x, y, x + 2, y + 2, hl);
-		gfx.fill(x + w - 2, y, x + w, y + 2, hl);
-		gfx.fill(x, y + h - 2, x + 2, y + h, hl);
-		gfx.fill(x + w - 2, y + h - 2, x + w, y + h, hl);
+		// Leather border detail — thin highlight on top-left, shadow on bottom-right
+		gfx.fill(x, y, x + w, y + 1, 0xFF5A4030);      // top highlight
+		gfx.fill(x, y, x + 1, y + h, 0xFF5A4030);      // left highlight
+		gfx.fill(x, y + h - 1, x + w, y + h, 0xFF2A1808); // bottom shadow
+		gfx.fill(x + w - 1, y, x + w, y + h, 0xFF2A1808); // right shadow
 	}
 
 	// ── Input handling ──────────────────────────────────────────────────
