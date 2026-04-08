@@ -978,6 +978,21 @@ Full integration as a faction + spell system:
 **MnA Block/Tile/Entity:**
 - Custom blocks, tiles, and entities in `compat/mna/block`, `compat/mna/tile`, `compat/mna/entity`
 
+**Planned / Brainstormed Features** (see `MNA_COMPATIBILITY_BRAINSTORM.md` for full details — each feature includes an "MnA Justification" explaining why it specifically requires Mana and Artifice):
+- Additional spell components: Blood Loss, Blood Rush, Hemolysis, Blood-to-Mana, Summon Sanguilith — all leverage MnA's composable spell system (shapes + modifiers)
+- New spell shapes: Sanguine Pulse (dual mana+blood cost AoE), Hemomantic Tether (channeled tether draining blood per tick)
+- New MnA rituals: Sanguine Convergence (permanently links mana regen to blood volume), Arcane Crucible (transmutes MnA materials with blood sacrifice), Mana Wound (zone that adds Hemomancy effects to MnA spells)
+- Blood Tithe spell modifier: MnA modifier that replaces mana cost % with blood cost (Harbinger faction perk)
+- Tendency ↔ Affinity mapping: Hemomancy tendencies boost corresponding MnA spell affinities
+- Spell ↔ Manipulation combo system: alternating between both systems grants cost reduction buffs
+- Harbinger faction: Occulus tasks, sanctum structure, manaweaving recipes, raid mobs — all use MnA faction infrastructure
+- Blood Construct: MnA Construct variant fueled by blood instead of mana, built at MnA's workbench
+- Blood-Infused Construct Capabilities: runeforged modules for MnA Constructs
+- Hemomantic Wand Core, Arcane Living Staff, Mote of Mana — crafted via MnA systems (manaweaving, runeforging)
+- Hemomantic enchantments via MnA runeforging
+- Cross-mod advancements, JEI integration for MnA crafting recipes, config options
+- Harbinger Mana HUD texture fix (current TODO)
+
 ### 25.2 Curios
 
 Curios integration for the Charm of Vascularium and other equippable items (handled in `compat/curios`).
@@ -1108,6 +1123,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
 - **Some skill descriptions** exist in lang but the full implementation of effects like `skill_sanguine_surge`, `skill_crimson_mastery`, `skill_vital_link`, `skill_iron_will`, `skill_blood_flow` need verification for complete gameplay wiring
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
+- **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Includes new spell components, shapes, rituals, items, faction enhancements, cross-system synergy mechanics, and QoL improvements. See the brainstorm document for prioritized feature list and implementation notes.
 
 ---
 
