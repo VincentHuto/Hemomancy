@@ -19,8 +19,13 @@ import com.vincenthuto.hemomancy.common.manipulation.quick.BloodRushManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodShotManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonFlameConjurationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonHarvestManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.DeadlyGazeManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.FerricTransmutationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.GlacialGraspManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.HemosynthesisManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.BloodLampManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineMendingManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 
@@ -123,6 +128,33 @@ public class ManipulationInit {
 			() -> new CrimsonFlameConjurationManip("crimson_flame_conjuration", 150, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.RIGHTARM)
 					.setCooldownTicks(15));
+
+	// ── Utilitarian Manipulations ──
+
+	public static final RegistryObject<BloodManipulation> sanguine_mending = MANIPS.register("sanguine_mending",
+			() -> new SanguineMendingManip("sanguine_mending", 150, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)
+					.setCooldownTicks(30));
+
+	public static final RegistryObject<BloodManipulation> hemosynthesis = MANIPS.register("hemosynthesis",
+			() -> new HemosynthesisManip("hemosynthesis", 200, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.BODY)
+					.setCooldownTicks(40));
+
+	public static final RegistryObject<BloodManipulation> blood_lamp = MANIPS.register("blood_lamp",
+			() -> new BloodLampManip("blood_lamp", 75, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.LUX, EnumVeinSections.LEFTARM)
+					.setCooldownTicks(10));
+
+	public static final RegistryObject<BloodManipulation> crimson_harvest = MANIPS.register("crimson_harvest",
+			() -> new CrimsonHarvestManip("crimson_harvest", 200, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.DUCTILIS, EnumVeinSections.LEFTLEG)
+					.setCooldownTicks(60));
+
+	public static final RegistryObject<BloodManipulation> glacial_grasp = MANIPS.register("glacial_grasp",
+			() -> new GlacialGraspManip("glacial_grasp", 125, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.LEFTARM)
+					.setCooldownTicks(20));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();

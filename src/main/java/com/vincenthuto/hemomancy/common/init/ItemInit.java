@@ -282,6 +282,16 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
 			"memory_crimson_flame_conjuration",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+	public static final RegistryObject<Item> memory_sanguine_mending = BASEITEMS.register("memory_sanguine_mending",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_mending));
+	public static final RegistryObject<Item> memory_hemosynthesis = BASEITEMS.register("memory_hemosynthesis",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemosynthesis));
+	public static final RegistryObject<Item> memory_blood_lamp = BASEITEMS.register("memory_blood_lamp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_lamp));
+	public static final RegistryObject<Item> memory_crimson_harvest = BASEITEMS.register("memory_crimson_harvest",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_harvest));
+	public static final RegistryObject<Item> memory_glacial_grasp = BASEITEMS.register("memory_glacial_grasp",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_grasp));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));
