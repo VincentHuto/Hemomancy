@@ -8,6 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
+import com.vincenthuto.hemomancy.common.crafting.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.rite.ActiveCardinalRite;
@@ -22,13 +24,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -86,26 +85,41 @@ public class BloodCraftingKeyPressPacket {
 												BlockPattern.BlockPatternMatch patternHelper = targetPattern
 														.getPattern().getBlockPattern().find(sLevel, hitPos);
 												if (patternHelper != null) {
-													for (int i = 0; i < targetPattern.getPattern().getBlockPattern()
-															.getWidth(); ++i) {
-														for (int j = 0; j < targetPattern.getPattern().getBlockPattern()
-																.getHeight(); ++j) {
-															for (int k = 0; k < targetPattern.getPattern()
-																	.getBlockPattern().getDepth(); ++k) {
-																BlockInWorld cachedBlockInfo = patternHelper.getBlock(i,
-																		j, k);
-																sLevel.setBlock(cachedBlockInfo.getPos(),
-																		Blocks.AIR.defaultBlockState(), 2);
-																sLevel.levelEvent(2001, cachedBlockInfo.getPos(),
-																		Block.getId(cachedBlockInfo.getState()));
+													// ── Compute structure bounding box ──
+													int patW = targetPattern.getPattern().getBlockPattern().getWidth();
+													int patH = targetPattern.getPattern().getBlockPattern().getHeight();
+													int patD = targetPattern.getPattern().getBlockPattern().getDepth();
+													int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+													int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+													int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+													for (int i = 0; i < patW; ++i) {
+														for (int j = 0; j < patH; ++j) {
+															for (int k = 0; k < patD; ++k) {
+																BlockPos bp = patternHelper.getBlock(i, j, k).getPos();
+																if (bp.getX() < minX) minX = bp.getX();
+																if (bp.getX() > maxX) maxX = bp.getX();
+																if (bp.getY() < minY) minY = bp.getY();
+																if (bp.getY() > maxY) maxY = bp.getY();
+																if (bp.getZ() < minZ) minZ = bp.getZ();
+																if (bp.getZ() > maxZ) maxZ = bp.getZ();
 															}
 														}
 													}
-													sLevel.playLocalSound(hitPos.getX(), hitPos.getY(), hitPos.getZ(),
-															SoundEvents.ENDERMAN_SCREAM, SoundSource.BLOCKS, 1, 1,
-															true);
-													sLevel.addFreshEntity(new ItemEntity(sLevel, hitPos.getX(),
-															hitPos.getY(), hitPos.getZ(), targetPattern.getResult()));
+
+													// ── Send blood craft ring animation immediately ──
+													BlockPos ringCenter = new BlockPos(
+															(minX + maxX) / 2, minY, (minZ + maxZ) / 2);
+													float centerY = (minY + maxY) / 2.0f + 0.5f;
+													float halfW = (maxX - minX) / 2.0f + 0.5f;
+													float halfD = (maxZ - minZ) / 2.0f + 0.5f;
+													float startRadius = Math.max(halfW, halfD) + 2.0f;
+													int animDuration = 30; // ticks (~1.5 seconds)
+													PacketHandler.CHANNELBLOODVOLUME.send(
+															PacketDistributor.ALL.noArg(),
+															new PacketBloodCraftRing(ringCenter, startRadius,
+																	centerY, animDuration));
+
+													// ── Drain blood and consume held item now ──
 													ItemStack oldStack = player.getMainHandItem().copy();
 													player.setItemInHand(InteractionHand.MAIN_HAND,
 															new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
@@ -113,6 +127,15 @@ public class BloodCraftingKeyPressPacket {
 													PacketHandler.CHANNELBLOODVOLUME.send(
 															PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 															new BloodVolumeServerPacket(bloodVolume));
+
+													// ── Schedule block breaking + result drop after ring collapses ──
+													PendingBloodCraftManager.schedule(
+															new PendingBloodCraftManager.PendingCraft(
+																	sLevel, patternHelper,
+																	patW, patH, patD,
+																	hitPos, targetPattern.getResult(),
+																	animDuration));
+
 													handled = true;
 												}
 											}

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
+import com.vincenthuto.hemomancy.common.crafting.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
@@ -61,6 +62,9 @@ public class CardinalRiteEvents {
 	public static void onLevelTick(TickEvent.LevelTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
 		if (!(event.level instanceof ServerLevel sLevel)) return;
+
+		// Tick pending blood structure crafts (delayed block breaking)
+		PendingBloodCraftManager.tick();
 
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();

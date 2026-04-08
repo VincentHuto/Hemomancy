@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.client.render.entity.blood.*;
 import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer;
+import com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer;
+import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -142,6 +144,7 @@ public class ClientEvents {
 
 		if (event.phase == TickEvent.Phase.END) {
 			ManipCooldownOverlay.tick();
+			ActiveBloodCraftClientData.tick();
 		}
 
 		if (bloodFormation.consumeClick()) {
@@ -232,6 +235,7 @@ public class ClientEvents {
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), event.getPartialTick());
+			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
 		}
 	}
 
@@ -397,6 +401,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
 			MenuScreens.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
 			MenuScreens.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
+			MenuScreens.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
 
 		}
 

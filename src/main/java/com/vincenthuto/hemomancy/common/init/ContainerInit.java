@@ -53,4 +53,7 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<MorphlingIncubatorMenu>> morphling_incubator = CONTAINERS
 			.register("morphling_incubator", () -> IForgeMenuType.create(MorphlingIncubatorMenu::new));
 
+	public static final RegistryObject<MenuType<StructureSpawnerMenu>> structure_spawner = CONTAINERS
+			.register("structure_spawner", () -> IForgeMenuType.create(StructureSpawnerMenu::new));
+
 }

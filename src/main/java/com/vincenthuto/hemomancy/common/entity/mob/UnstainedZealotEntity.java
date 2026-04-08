@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
-import net.minecraft.network.chat.ChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

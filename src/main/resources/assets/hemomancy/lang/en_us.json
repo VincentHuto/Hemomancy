@@ -502,7 +502,7 @@
 	"hemomancy.zealot.already_on_path": "You walk the path of purification. Continue your work at the podium, and the stain shall lift.",
 	"hemomancy.zealot.too_early": "You do not yet know the weight of what you carry. Return when the Covenant has shown you its true face.",
 	"hemomancy.zealot.no_blood": "You bear no mark of the crimson arts. Walk in peace, untouched one.",
-	"hemomancy.zealot.uninitiated": "The silver bells toll only for those who have tasted the crimson. You are unburdened."
+	"hemomancy.zealot.uninitiated": "The silver bells toll only for those who have tasted the crimson. You are unburdened.",
 	"hemomancy.unstained.purification_begun": "The hemolytic solution sears through your veins... the cleansing has begun.",
 	"hemomancy.unstained.purity_progress": "Purity: %.0f/100 \u2014 The stain fades further...",
 	"hemomancy.unstained.purity_complete": "Your blood is cleansed. You are pure. Seek the Rite of Clarity.",
@@ -523,5 +523,6 @@
 	"hemomancy.clarity.discerning": "Discerning",
 	"hemomancy.clarity.vigilant": "Vigilant",
 	"hemomancy.clarity.resolute": "Resolute",
-	"hemomancy.clarity.enlightened": "Enlightened"
+	"hemomancy.clarity.enlightened": "Enlightened",
+	"item.hemomancy.structure_spawner": "Structure Spawner"
 }

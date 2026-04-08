@@ -25,10 +25,6 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
 
     private LazyOptional<IUnstainedProgress> instance = LazyOptional.of(UnstainedProgress::new);
 
-    @Override
-    public void invalidateCaps() {
-        instance.invalidate();
-    }
 
     @Override
     public void deserializeNBT(Tag nbt) {

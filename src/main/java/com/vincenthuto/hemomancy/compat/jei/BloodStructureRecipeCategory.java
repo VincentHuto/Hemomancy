@@ -1,7 +1,7 @@
-
 package com.vincenthuto.hemomancy.compat.jei;
 
 import java.nio.FloatBuffer;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -9,12 +9,12 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLClientUtils;
+import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 import com.vincenthuto.hutoslib.math.Quaternion;
 
 import mezz.jei.api.constants.VanillaTypes;
@@ -32,57 +32,67 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 
+/**
+ * JEI recipe category for Blood Structure crafting — fully programmatic rendering.
+ * Shows a rotating 3D preview of the multiblock, input slots for the held item,
+ * hit block, and required structure blocks, plus the output and blood cost.
+ */
 public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStructureRecipe> {
+
+	// ── Layout constants ──
+	private static final int BG_W = 150;
+	private static final int BG_H = 110;
+
+	// Preview area (3D multiblock render)
+	private static final int PREVIEW_X = 27;
+	private static final int PREVIEW_Y = 14;
+	private static final int PREVIEW_W = 70;
+	private static final int PREVIEW_H = 70;
+
+	// Slot positions
+	private static final int INPUT_SLOT_X = 5;
+	private static final int HELD_ITEM_SLOT_Y = 21;
+	private static final int HIT_BLOCK_SLOT_Y = 41;
+	private static final int PATTERN_SLOT_START_Y = 61;
+	private static final int PATTERN_SLOT_SPACING = 20;
+	private static final int MAX_PATTERN_SLOTS = 2;
+	private static final int OUTPUT_SLOT_X = 115;
+	private static final int OUTPUT_SLOT_Y = 41;
+
+	// Colors
+	private static final int BG_COLOR = 0xFF0A0204;
+	private static final int PREVIEW_BG = 0xFF1A0808;
+	private static final int BORDER_OUTER = 0xFF330808;
+	private static final int BORDER_INNER = 0xFF220606;
+	private static final int SLOT_BG = 0xFF1A0808;
+	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
+	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
+	private static final int COST_COLOR = 0xFFAA0000;
+	private static final int LABEL_COLOR = 0xFF888888;
+
 	private final IDrawable background;
-	private final String localizedName;
-	private final IDrawable overlay;
 	private final IDrawable icon;
-	IGuiHelper guiHelper;
 
 	public BloodStructureRecipeCategory(IGuiHelper guiHelper) {
-		background = guiHelper.createBlankDrawable(150, 110);
-		localizedName = I18n.get("hemomancy.jei.blood_crafting");
-		overlay = guiHelper.createDrawable(new ResourceLocation("hemomancy", "textures/gui/bloodcraftingoverlay.png"),
-				0, 0, 150, 110);
-		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
+		this.background = guiHelper.createBlankDrawable(BG_W, BG_H);
+		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK,
 				new ItemStack(ItemInit.sanguine_formation.get()));
-		this.guiHelper = guiHelper;
 	}
 
-	@Override
-	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX,
-			double mouseY) {
-		overlay.draw(graphics);
-		// Show blood cost, not result.toString()
-		MutableComponent costString = Component.literal("Blood Cost: " + (int) recipe.getBloodCost());
-		Minecraft minecraft = Minecraft.getInstance();
-		Font fontRenderer = minecraft.font;
-		int stringWidth = fontRenderer.width(costString);
-		graphics.drawString(fontRenderer, costString, background.getWidth() - stringWidth, 0, 0xFFAA0000);
-		Window mainWindow = Minecraft.getInstance().getWindow();
-		double guiScaleFactor = mainWindow.getGuiScale();
-		// Offset the 3D render into the right half of the background
-		graphics.pose().translate(8, 16, 0);
-		int scissorX = 27;
-		int scissorY = 0;
-		int scissorW = 70;
-		int scissorH = 70;
-		ScreenArea scissorBounds = new ScreenArea(scissorX, scissorY, scissorW, scissorH);
-		AABB dims = new AABB(0, 0, 0, 0, 0, 0);
-		Lighting.setupForFlatItems();
-		renderRecipe(recipe, graphics, dims, guiScaleFactor, scissorBounds);
-	}
+	// ═══════════════════════════════════════════════════════════════
+	//  IRecipeCategory overrides
+	// ═══════════════════════════════════════════════════════════════
 
+	@SuppressWarnings("removal")
 	@Nonnull
 	@Override
 	public IDrawable getBackground() {
@@ -102,97 +112,90 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 	@Nonnull
 	@Override
 	public Component getTitle() {
-		return Component.literal(localizedName);
+		return Component.translatable("hemomancy.jei.blood_crafting");
 	}
 
-	private void renderRecipe(BloodStructureRecipe recipe, GuiGraphics graphics, AABB dims, double guiScaleFactor,
-			ScreenArea scissorBounds) {
-		try {
-			graphics.fill(scissorBounds.x, scissorBounds.y, scissorBounds.x + scissorBounds.width, scissorBounds.y + scissorBounds.height,
-					0xFF404040);
-			MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-			final double scale = Minecraft.getInstance().getWindow().getGuiScale();
-			final Matrix4f matrix = graphics.pose().last().pose();
-			final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-			matrix.get(buf);
-			Lighting.setupLevel(matrix);
+	// ═══════════════════════════════════════════════════════════════
+	//  Drawing
+	// ═══════════════════════════════════════════════════════════════
 
-			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
-			// Use separate scaled values instead of mutating scissorBounds
-			final int scaledX = (int) (scissorBounds.x * scale);
-			final int scaledY = (int) (scissorBounds.y * scale);
-			final int scaledW = (int) (scissorBounds.width * scale);
-			final int scaledH = (int) (scissorBounds.height * scale);
-			final int scissorXFinal = Math.round(Math.round(translation.x + scaledX));
-			final int scissorYFinal = Math.round(Math.round(Minecraft.getInstance().getWindow().getHeight() - scaledY
-					- scaledH - translation.y));
-			final int scissorWFinal = Math.round(scaledW);
-			final int scissorHFinal = Math.round(scaledH);
-			RenderSystem.enableScissor(scissorXFinal, scissorYFinal, scissorWFinal, scissorHFinal);
-			graphics.pose().pushPose();
-			graphics.pose().translate(scissorBounds.x + (scissorBounds.width / 2), scissorBounds.y + (scissorBounds.height / 2), 100);
-			Vec3 dimsVec = new Vec3(dims.getXsize(), dims.getYsize(), dims.getZsize());
-			float recipeAvgDim = (float) dimsVec.length();
-			double explodeMulti = 1.5;
+	@Override
+	public void draw(BloodStructureRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
+			double mouseX, double mouseY) {
 
-			float previewScale = (float) ((2 + Math.exp(2 - (recipeAvgDim / 5))) / explodeMulti);
-			graphics.pose().scale(previewScale, -previewScale, previewScale);
-			drawActualRecipe(recipe, graphics, dims, buffers);
-			graphics.pose().popPose();
-			buffers.endBatch();
-			RenderSystem.disableScissor();
-		} catch (Exception ex) {
-			Hemomancy.LOGGER.warn(ex);
-		}
-	}
+		float time = System.nanoTime() / 1_000_000_000f;
 
-	private void drawActualRecipe(BloodStructureRecipe recipe, GuiGraphics graphics, AABB dims,
-			MultiBufferSource.BufferSource buffers) {
-		double test = Math.toDegrees(HLClientUtils.getWorld().getGameTime()) / 15;
-		graphics.pose().mulPose(new Quaternion(35f, (float) test, 0, true).toMoj());
-		graphics.pose().mulPose(new Quaternion(0, 35f, 0, true).toMoj());
-		int layerCount = recipe.getPattern().getBlockPattern().getHeight();
+		// ── Dark background with subtle glow ──
+		gfx.fill(0, 0, BG_W, BG_H, BG_COLOR);
+		drawSubtleGlow(gfx, BG_W / 2, BG_H / 2, time);
 
-		double explodeMulti = 1.5;
-		recipe.getPattern().getBlockPosBlockList().forEach((box) -> {
-			if (box.getPos().getY() < layerCount) {
-				graphics.pose().pushPose();
+		// ── Outer border ──
+		drawBorder(gfx, 0, 0, BG_W, BG_H, BORDER_OUTER, BORDER_INNER);
 
-				graphics.pose().translate(
-						explodeMulti * (box.getPos().getX() - (recipe.getPattern().getBlockPattern().getWidth() / 2))
-								- 0.5,
-						explodeMulti * (box.getPos().getY() - (recipe.getPattern().getBlockPattern().getHeight() / 2))
-								- 0.5,
-						explodeMulti * (box.getPos().getZ() - (recipe.getPattern().getBlockPattern().getDepth() / 2))
-								- 0.5);
+		// ── Preview area border ──
+		drawBorder(gfx, PREVIEW_X - 1, PREVIEW_Y - 1, PREVIEW_W + 2, PREVIEW_H + 2,
+				BORDER_INNER, BORDER_OUTER);
 
-				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(box.getBlock().defaultBlockState(),
-						graphics.pose(), buffers, 15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY,
-						RenderType.cutoutMipped());
-				graphics.pose().popPose();
+		// ── Slot frames ──
+		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HELD_ITEM_SLOT_Y - 1);
+		drawSlotFrame(gfx, INPUT_SLOT_X - 1, HIT_BLOCK_SLOT_Y - 1);
+		drawSlotFrame(gfx, OUTPUT_SLOT_X - 1, OUTPUT_SLOT_Y - 1);
+
+		// Pattern block slot frames
+		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
+			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
+			int slotCount = 0;
+			for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+				Block block = entry.getKey();
+				if (block != null && block != Blocks.AIR && slotCount < MAX_PATTERN_SLOTS) {
+					ItemStack blockStack = new ItemStack(block.asItem());
+					if (!blockStack.isEmpty()) {
+						drawSlotFrame(gfx, INPUT_SLOT_X - 1,
+								PATTERN_SLOT_START_Y + (slotCount * PATTERN_SLOT_SPACING) - 1);
+						slotCount++;
+					}
+				}
 			}
-		});
+		}
+
+		// ── Arrow indicator ──
+		drawArrow(gfx, 100, OUTPUT_SLOT_Y + 4, time);
+
+		// ── Labels ──
+		Font font = Minecraft.getInstance().font;
+
+		MutableComponent costText = Component.literal("Blood: " + (int) recipe.getBloodCost());
+		int costWidth = font.width(costText);
+		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
+
+		gfx.drawString(font, Component.literal("In"), INPUT_SLOT_X, HELD_ITEM_SLOT_Y - 10, LABEL_COLOR, false);
+		gfx.drawString(font, Component.literal("Out"), OUTPUT_SLOT_X, OUTPUT_SLOT_Y - 10, LABEL_COLOR, false);
+
+		// ── 3D multiblock preview ──
+		render3DPreview(recipe, gfx);
 	}
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, BloodStructureRecipe recipe, IFocusGroup focuses) {
-
-		// Input slots: held item and hit block
-		builder.addSlot(RecipeIngredientRole.INPUT, 5, 21)
+		// Held item
+		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HELD_ITEM_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getHeldItem());
 
-		builder.addSlot(RecipeIngredientRole.INPUT, 5, 41)
+		// Hit block
+		builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, HIT_BLOCK_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.getHitBlock().asItem()));
 
-		// Show the pattern blocks as additional required ingredients
+		// Pattern block inputs (deduplicated with counts)
 		if (recipe.getPattern() != null && recipe.getPattern().getSymbolList() != null) {
+			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
 			int slotIndex = 0;
-			for (java.util.Map.Entry<String, Block> entry : recipe.getPattern().getSymbolList().entrySet()) {
-				Block block = entry.getValue();
-				if (block != null && block != net.minecraft.world.level.block.Blocks.AIR) {
-					ItemStack blockStack = new ItemStack(block.asItem());
+			for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+				Block block = entry.getKey();
+				if (block != null && block != Blocks.AIR && slotIndex < MAX_PATTERN_SLOTS) {
+					ItemStack blockStack = new ItemStack(block.asItem(), entry.getValue());
 					if (!blockStack.isEmpty()) {
-						builder.addSlot(RecipeIngredientRole.INPUT, 5, 61 + (slotIndex * 20))
+						int slotY = PATTERN_SLOT_START_Y + (slotIndex * PATTERN_SLOT_SPACING);
+						builder.addSlot(RecipeIngredientRole.INPUT, INPUT_SLOT_X, slotY)
 								.addIngredient(VanillaTypes.ITEM_STACK, blockStack);
 						slotIndex++;
 					}
@@ -200,9 +203,135 @@ public class BloodStructureRecipeCategory implements IRecipeCategory<BloodStruct
 			}
 		}
 
-		// Output slot
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 41)
+		// Result
+		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_SLOT_X, OUTPUT_SLOT_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResult());
 	}
 
+	// ═══════════════════════════════════════════════════════════════
+	//  3D multiblock preview
+	// ═══════════════════════════════════════════════════════════════
+
+	private void render3DPreview(BloodStructureRecipe recipe, GuiGraphics gfx) {
+		if (recipe.getPattern() == null) return;
+
+		try {
+			gfx.fill(PREVIEW_X, PREVIEW_Y, PREVIEW_X + PREVIEW_W, PREVIEW_Y + PREVIEW_H, PREVIEW_BG);
+
+			MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
+			double scale = Minecraft.getInstance().getWindow().getGuiScale();
+			Matrix4f matrix = gfx.pose().last().pose();
+			FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+			matrix.get(buf);
+			Lighting.setupLevel(matrix);
+
+			Vec3 translation = new Vec3(buf.get(12) * scale, buf.get(13) * scale, buf.get(14) * scale);
+
+			// Scissor rect in screen-space pixels
+			int scaledX = (int) (PREVIEW_X * scale);
+			int scaledY = (int) (PREVIEW_Y * scale);
+			int scaledW = (int) (PREVIEW_W * scale);
+			int scaledH = (int) (PREVIEW_H * scale);
+			int scissorX = Math.round(Math.round(translation.x + scaledX));
+			int scissorY = Math.round(Math.round(
+					Minecraft.getInstance().getWindow().getHeight() - scaledY - scaledH - translation.y));
+
+			RenderSystem.enableScissor(scissorX, scissorY, Math.round(scaledW), Math.round(scaledH));
+
+			gfx.pose().pushPose();
+			gfx.pose().translate(
+					PREVIEW_X + PREVIEW_W / 2.0,
+					PREVIEW_Y + PREVIEW_H / 2.0,
+					100);
+
+			// Scale based on structure dimensions
+			int patW = recipe.getPattern().getBlockPattern().getWidth();
+			int patH = recipe.getPattern().getBlockPattern().getHeight();
+			int patD = recipe.getPattern().getBlockPattern().getDepth();
+			float avgDim = (float) Math.sqrt(patW * patW + patH * patH + patD * patD);
+			float previewScale = (float) ((2 + Math.exp(2 - (avgDim / 5))) / 1.5);
+			gfx.pose().scale(previewScale, -previewScale, previewScale);
+
+			drawRotatingMultiblock(recipe, gfx, buffers);
+
+			gfx.pose().popPose();
+			buffers.endBatch();
+			RenderSystem.disableScissor();
+		} catch (Exception ex) {
+			Hemomancy.LOGGER.warn("Error rendering blood structure preview", ex);
+		}
+	}
+
+	private void drawRotatingMultiblock(BloodStructureRecipe recipe, GuiGraphics gfx,
+			MultiBufferSource.BufferSource buffers) {
+
+		double rotation = Math.toDegrees(HLClientUtils.getWorld().getGameTime()) / 15.0;
+		gfx.pose().mulPose(new Quaternion(35f, (float) rotation, 0, true).toMoj());
+		gfx.pose().mulPose(new Quaternion(0, 35f, 0, true).toMoj());
+
+		int patW = recipe.getPattern().getBlockPattern().getWidth();
+		int patH = recipe.getPattern().getBlockPattern().getHeight();
+		int patD = recipe.getPattern().getBlockPattern().getDepth();
+		double explodeSpacing = 1.5;
+
+		for (BlockPosBlockPair pair : recipe.getPattern().getBlockPosBlockList()) {
+			if (pair.getPos().getY() >= patH) continue;
+			if (pair.getBlock() == null || pair.getBlock() == Blocks.AIR) continue;
+
+			gfx.pose().pushPose();
+			gfx.pose().translate(
+					explodeSpacing * (pair.getPos().getX() - patW / 2) - 0.5,
+					explodeSpacing * (pair.getPos().getY() - patH / 2) - 0.5,
+					explodeSpacing * (pair.getPos().getZ() - patD / 2) - 0.5);
+
+			Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
+					pair.getBlock().defaultBlockState(), gfx.pose(), buffers,
+					15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY,
+					RenderType.cutoutMipped());
+			gfx.pose().popPose();
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	//  Drawing helpers
+	// ═══════════════════════════════════════════════════════════════
+
+	/** Draws a subtle pulsing red glow in the background. */
+	private void drawSubtleGlow(GuiGraphics gfx, int cx, int cy, float time) {
+		float pulse = 0.5f + 0.5f * Mth.sin(time * 1.8f);
+		for (int ring = 35; ring > 0; ring -= 5) {
+			int alpha = (int) (6 * pulse * ((float) ring / 35));
+			if (alpha <= 0) continue;
+			int color = (alpha << 24) | (0x60 << 16) | (0x08 << 8) | 0x04;
+			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
+		}
+	}
+
+	/** Draws a beveled border rectangle. */
+	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h, int light, int dark) {
+		gfx.fill(x, y, x + w, y + 1, light);
+		gfx.fill(x, y + h - 1, x + w, y + h, dark);
+		gfx.fill(x, y, x + 1, y + h, light);
+		gfx.fill(x + w - 1, y, x + w, y + h, dark);
+	}
+
+	/** Draws an 18x18 item slot frame. */
+	private void drawSlotFrame(GuiGraphics gfx, int x, int y) {
+		gfx.fill(x, y, x + 18, y + 18, SLOT_BG);
+		gfx.fill(x, y, x + 18, y + 1, SLOT_BORDER_DARK);
+		gfx.fill(x, y, x + 1, y + 18, SLOT_BORDER_DARK);
+		gfx.fill(x, y + 17, x + 18, y + 18, SLOT_BORDER_LIGHT);
+		gfx.fill(x + 17, y, x + 18, y + 18, SLOT_BORDER_LIGHT);
+	}
+
+	/** Draws a pulsing arrow between preview and output. */
+	private void drawArrow(GuiGraphics gfx, int x, int y, float time) {
+		float pulse = 0.4f + 0.6f * Mth.sin(time * 3f);
+		int alpha = (int) (180 * pulse);
+		int color = (alpha << 24) | (0xAA << 16) | (0x10 << 8) | 0x08;
+		gfx.fill(x, y + 3, x + 8, y + 4, color);
+		gfx.fill(x + 6, y + 1, x + 7, y + 6, color);
+		gfx.fill(x + 7, y + 2, x + 8, y + 5, color);
+		gfx.fill(x + 8, y + 3, x + 9, y + 4, color);
+	}
 }

@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
@@ -214,6 +215,11 @@ public class PacketHandler {
 				.decoder(PacketSyncActiveRites::decode).encoder(PacketSyncActiveRites::encode)
 				.consumerNetworkThread(PacketSyncActiveRites::handle).add();
 
+		// Blood craft ring animation packet
+		CHANNELBLOODVOLUME.messageBuilder(PacketBloodCraftRing.class, networkID++)
+				.decoder(PacketBloodCraftRing::decode).encoder(PacketBloodCraftRing::encode)
+				.consumerNetworkThread(PacketBloodCraftRing::handle).add();
+
 		// Initiatory degree sync packet
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncDegree.class, networkID++)
 				.decoder(PacketSyncDegree::decode).encoder(PacketSyncDegree::encode)
@@ -257,6 +263,11 @@ public class PacketHandler {
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, SyncEquippedMorphlingPacket.class,
 				SyncEquippedMorphlingPacket::encode, SyncEquippedMorphlingPacket::decode,
 				SyncEquippedMorphlingPacket::handle);
+
+		// Structure spawner debug packet
+		CHANNELBLOODVOLUME.messageBuilder(PlaceStructurePacket.class, networkID++)
+				.decoder(PlaceStructurePacket::decode).encoder(PlaceStructurePacket::encode)
+				.consumerNetworkThread(PlaceStructurePacket::handle).add();
 
 	}
 
