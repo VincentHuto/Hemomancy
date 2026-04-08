@@ -70,10 +70,12 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.BowlFoodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -197,6 +199,17 @@ public class ItemInit {
 			() -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
 			() -> new ItemNameBlockItem(BlockInit.gourd_stem.get(), new Item.Properties()));
+
+	// Gourd Foods
+	public static final RegistryObject<Item> gourd_slice = BASEITEMS.register("gourd_slice",
+			() -> new Item(new Item.Properties()
+					.food(new FoodProperties.Builder().nutrition(2).saturationMod(0.3F).fast().build())));
+	public static final RegistryObject<Item> roasted_gourd_seeds = BASEITEMS.register("roasted_gourd_seeds",
+			() -> new Item(new Item.Properties()
+					.food(new FoodProperties.Builder().nutrition(1).saturationMod(0.2F).fast().build())));
+	public static final RegistryObject<Item> gourd_stew = BASEITEMS.register("gourd_stew",
+			() -> new BowlFoodItem(new Item.Properties().stacksTo(1)
+					.food(new FoodProperties.Builder().nutrition(7).saturationMod(0.6F).build())));
 
 	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
