@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.item.*;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.BarbedShieldItem;
@@ -282,6 +283,17 @@ public class ItemInit {
 	public static final RegistryObject<Item> memory_crimson_flame_conjuration = BASEITEMS.register(
 			"memory_crimson_flame_conjuration",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_flame_conjuration));
+	// Extracted Organs (Visceral Mirror system)
+	public static final RegistryObject<Item> extracted_spleen = SPECIALITEMS.register("extracted_spleen",
+			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.SPLEEN));
+	public static final RegistryObject<Item> extracted_liver = SPECIALITEMS.register("extracted_liver",
+			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.LIVER));
+	public static final RegistryObject<Item> extracted_lungs = SPECIALITEMS.register("extracted_lungs",
+			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.LUNGS));
+	public static final RegistryObject<Item> extracted_kidneys = SPECIALITEMS.register("extracted_kidneys",
+			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.KIDNEYS));
+	public static final RegistryObject<Item> extracted_heart = SPECIALITEMS.register("extracted_heart",
+			() -> new ExtractedOrganItem(new Item.Properties(), EnumOrgan.HEART));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));

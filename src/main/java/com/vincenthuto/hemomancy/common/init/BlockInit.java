@@ -332,6 +332,10 @@ public class BlockInit {
 	public static final RegistryObject<Block> bog_body = MODELEDBLOCKS.register("bog_body",
 			() -> new BogBodyBlock(BlockBehaviour.Properties.of().noOcclusion().strength(1.5F, 6.0F).sound(SoundType.WART_BLOCK)));
 
+	public static final RegistryObject<Block> visceral_mirror = MODELEDBLOCKS.register("visceral_mirror",
+			() -> new VisceralMirrorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
+
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
 		BASEBLOCKS.getEntries().stream().map(RegistryObject::get).forEach(b -> blocks.add(b));

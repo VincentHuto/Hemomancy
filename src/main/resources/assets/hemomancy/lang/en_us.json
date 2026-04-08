@@ -543,5 +543,19 @@
 	"unstained.hemomancy.clarity.discerning.desc": "Sharper perception pierces deception.",
 	"unstained.hemomancy.clarity.vigilant.desc": "Awareness extends beyond mortal senses.",
 	"unstained.hemomancy.clarity.resolute.desc": "An unbreakable will shields against corruption.",
-	"unstained.hemomancy.clarity.enlightened.desc": "True enlightenment — the Unstained path fulfilled."
+	"unstained.hemomancy.clarity.enlightened.desc": "True enlightenment — the Unstained path fulfilled.",
+
+	"block.hemomancy.visceral_mirror": "Visceral Mirror",
+
+	"item.hemomancy.extracted_spleen": "Extracted Spleen",
+	"item.hemomancy.extracted_liver": "Extracted Liver",
+	"item.hemomancy.extracted_lungs": "Extracted Lungs",
+	"item.hemomancy.extracted_kidneys": "Extracted Kidneys",
+	"item.hemomancy.extracted_heart": "Extracted Heart",
+
+	"hemomancy.organ.spleen": "Spleen",
+	"hemomancy.organ.liver": "Liver",
+	"hemomancy.organ.lungs": "Lungs",
+	"hemomancy.organ.kidneys": "Kidneys",
+	"hemomancy.organ.heart": "Heart"
 }
