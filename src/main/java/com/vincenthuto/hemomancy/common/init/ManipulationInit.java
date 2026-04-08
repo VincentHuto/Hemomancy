@@ -20,14 +20,19 @@ import com.vincenthuto.hemomancy.common.manipulation.quick.BloodShotManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonFlameConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonHarvestManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonSightManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.DeadlyGazeManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.FerricTransmutationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.GlacialGraspManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.HemosynthesisManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodLampManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.PyreticForgeManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineExcavationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineMendingManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.UmbralStepManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.VitalReservoirManip;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -155,6 +160,33 @@ public class ManipulationInit {
 			() -> new GlacialGraspManip("glacial_grasp", 125, 0, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.LEFTARM)
 					.setCooldownTicks(20));
+
+	// ── Mid-Game Utilitarian Manipulations (MEDIOCRITAS) ──
+
+	public static final RegistryObject<BloodManipulation> sanguine_excavation = MANIPS.register("sanguine_excavation",
+			() -> new SanguineExcavationManip("sanguine_excavation", 400, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FERRIC, EnumVeinSections.RIGHTARM)
+					.setCooldownTicks(40));
+
+	public static final RegistryObject<BloodManipulation> pyretic_forge = MANIPS.register("pyretic_forge",
+			() -> new PyreticForgeManip("pyretic_forge", 350, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
+					.setCooldownTicks(30));
+
+	public static final RegistryObject<BloodManipulation> umbral_step = MANIPS.register("umbral_step",
+			() -> new UmbralStepManip("umbral_step", 300, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.LEFTLEG)
+					.setCooldownTicks(40));
+
+	public static final RegistryObject<BloodManipulation> crimson_sight = MANIPS.register("crimson_sight",
+			() -> new CrimsonSightManip("crimson_sight", 250, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
+					.setCooldownTicks(60));
+
+	public static final RegistryObject<BloodManipulation> vital_reservoir = MANIPS.register("vital_reservoir",
+			() -> new VitalReservoirManip("vital_reservoir", 50, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
+					.setCooldownTicks(60));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();
