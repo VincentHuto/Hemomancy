@@ -2515,7 +2515,8 @@ public class SkillTreeScreen extends Screen {
 
 	/**
 	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
-	 * within the node bounds. Assumes the texture is a full 256x256 atlas or standalone image.
+	 * within the node bounds. The entire texture is sampled (UV 0→1) and rendered at the
+	 * node's inner size, so it works for textures of any pixel dimensions.
 	 */
 	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
 		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
