@@ -769,12 +769,15 @@ public class UnstainedProgressScreen extends Screen {
 		}
 	}
 
+	/** Padding pixels around the item icon inside a node. */
+	private static final int ITEM_PADDING = 4;
+
 	/**
 	 * Renders an ItemStack centred inside a node, scaled to fit within the node bounds.
-	 * Items render at 16x16 by default; this scales them to fit (2*hn - 4) pixels.
+	 * Items render at 16x16 by default; this scales them to fit (2*hn - ITEM_PADDING) pixels.
 	 */
 	private void renderScaledItem(GuiGraphics gfx, ItemStack stack, int centerX, int centerY, int halfNodeSize) {
-		float nodeInner = Math.max(4, halfNodeSize * 2 - 4);
+		float nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
 		float itemScale = nodeInner / 16.0f;
 		PoseStack pose = gfx.pose();
 		pose.pushPose();
