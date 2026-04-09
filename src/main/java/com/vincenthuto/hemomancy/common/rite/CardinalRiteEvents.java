@@ -596,7 +596,7 @@ public class CardinalRiteEvents {
 
 	/**
 	 * Rite of Sanguine Attunement (Degree 2, Minor):
-	 * Resets all 8 blood tendency alignment axes to zero.
+	 * Resets all blood tendency alignment axes to zero.
 	 */
 	private static void completeSanguineAttunement(ServerPlayer caster) {
 		caster.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
@@ -629,7 +629,7 @@ public class CardinalRiteEvents {
 
 	/**
 	 * Rite of Vascular Mending (Degree 3, Lesser):
-	 * Fully restores all 7 vein sections to maximum health (100).
+	 * Fully restores all vein sections to maximum health (100).
 	 */
 	private static void completeVascularMending(ServerPlayer caster) {
 		caster.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
@@ -937,7 +937,7 @@ public class CardinalRiteEvents {
 	 * followers of Our Lady of Lethe.
 	 */
 	private static void completeLethesShadow(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
-		int halfSize = 4; // Grand rite = 9x9, half = 4
+		int halfSize = (9 - 1) / 2; // Grand rite 9x9 structure
 		AABB bounds = new AABB(center).inflate(halfSize + 1);
 
 		// Find the nearest non-caster player in the rite bounds
