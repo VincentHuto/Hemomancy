@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.menu.StructureSpawnerMenu;
@@ -8,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.PlaceStructurePacket;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,6 +29,10 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	private static final int LIST_HEIGHT = 170;
 	private static final int ENTRY_HEIGHT = 20;
 	private static final int VISIBLE_ENTRIES = LIST_HEIGHT / ENTRY_HEIGHT;
+
+	// Blood structure tier thresholds (must match BloodCraftingKeyPressPacket)
+	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
+	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
 
 	private final List<StructureEntry> entries = new ArrayList<>();
 	private int scrollOffset = 0;
@@ -50,7 +56,8 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				entries.add(new StructureEntry(
 						recipe.getId(),
 						"§b[Structure] §r" + formatName(recipe.getId().getPath()),
-						PlaceStructurePacket.StructureType.BLOOD_STRUCTURE
+						PlaceStructurePacket.StructureType.BLOOD_STRUCTURE,
+						getRequiredDegreeForStructure(recipe)
 				));
 			}
 
@@ -63,10 +70,13 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				entries.add(new StructureEntry(
 						recipe.getId(),
 						"§d[Rite] §r" + name,
-						PlaceStructurePacket.StructureType.CARDINAL_RITE
+						PlaceStructurePacket.StructureType.CARDINAL_RITE,
+						getRequiredDegreeForRite(recipe.getRiteType())
 				));
 			}
 		}
+
+		entries.sort(Comparator.comparingInt(StructureEntry::sortOrder).thenComparing(StructureEntry::displayName));
 
 		scrollOffset = 0;
 		rebuildButtons();
@@ -168,5 +178,24 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		return sb.toString();
 	}
 
-	private record StructureEntry(ResourceLocation recipeId, String displayName, PlaceStructurePacket.StructureType type) {}
+	private static int getRequiredDegreeForStructure(BloodStructureRecipe recipe) {
+		float cost = recipe.getBloodCost();
+		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
+			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
+				return CRAFTING_TIER_DEGREE_REQ[i];
+			}
+		}
+		return CRAFTING_TIER_DEGREE_REQ[CRAFTING_TIER_DEGREE_REQ.length - 1];
+	}
+
+	private static int getRequiredDegreeForRite(CardinalRiteType type) {
+		return switch (type) {
+			case MINOR   -> 0;
+			case LESSER  -> 1;
+			case GREATER -> 3;
+			case GRAND   -> 5;
+		};
+	}
+
+	private record StructureEntry(ResourceLocation recipeId, String displayName, PlaceStructurePacket.StructureType type, int sortOrder) {}
 }
