@@ -39,6 +39,14 @@ public class DialogueScreen extends Screen {
 	private static final int TEXT_LEFT_PAD = 10;
 	private static final int VEIN_COUNT = 14;
 
+	// ── Portrait texture coordinates ──
+	private static final int TEXTURE_HEAD_U = 8;
+	private static final int TEXTURE_HEAD_V = 8;
+	private static final int TEXTURE_HEAD_SIZE = 8;
+	private static final int TEXTURE_WIDTH = 64;
+	private static final int TEXTURE_HEIGHT = 64;
+	private static final long VEIN_SEED = 9991L;
+
 	// ── Colors ──
 	private static final int BG_COLOR = 0xE00A0204;
 	private static final int BORDER_OUTER = 0xFF330808;
@@ -72,7 +80,7 @@ public class DialogueScreen extends Screen {
 		super.init();
 		rebuildOptions();
 		// seed vein params for organic background
-		Random rand = new Random(9991L);
+		Random rand = new Random(VEIN_SEED);
 		veinParams = new float[VEIN_COUNT][9];
 		for (int i = 0; i < VEIN_COUNT; i++) {
 			veinParams[i][0] = rand.nextFloat();
@@ -218,9 +226,10 @@ public class DialogueScreen extends Screen {
 
 		// Render the entity texture as the portrait (head region)
 		RenderSystem.setShaderTexture(0, icon);
-		// Draw the head portion of a standard entity texture (8x8 area at 8,8 in a 64x64 sheet)
 		gfx.blit(icon, x, y, PORTRAIT_SIZE, PORTRAIT_SIZE,
-				8.0f, 8.0f, 8, 8, 64, 64);
+				(float) TEXTURE_HEAD_U, (float) TEXTURE_HEAD_V,
+				TEXTURE_HEAD_SIZE, TEXTURE_HEAD_SIZE,
+				TEXTURE_WIDTH, TEXTURE_HEIGHT);
 		RenderSystem.disableBlend();
 	}
 

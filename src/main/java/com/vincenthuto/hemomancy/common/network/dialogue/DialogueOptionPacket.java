@@ -37,8 +37,12 @@ public class DialogueOptionPacket {
 		ctx.get().enqueueWork(() -> {
 			ServerPlayer sender = ctx.get().getSender();
 			if (sender != null && msg.eventId != null && !msg.eventId.isEmpty()) {
-				MinecraftForge.EVENT_BUS.post(
-						new DialogueEvent(sender, msg.eventId, msg.entityId));
+				// Validate entity exists and is within interaction range
+				net.minecraft.world.entity.Entity entity = sender.level().getEntity(msg.entityId);
+				if (entity != null && sender.distanceTo(entity) <= 8.0) {
+					MinecraftForge.EVENT_BUS.post(
+							new DialogueEvent(sender, msg.eventId, msg.entityId));
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);
