@@ -451,8 +451,8 @@ public class DebugShowcaseItem extends Item {
 	private void buildFencedPen(ServerLevel level, BlockPos origin, int size) {
 		// Floor
 		for (int x = 0; x < size; x++) {
-			for (int zz = 0; zz < size; zz++) {
-				level.setBlock(origin.offset(x, 0, zz), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+			for (int penZ = 0; penZ < size; penZ++) {
+				level.setBlock(origin.offset(x, 0, penZ), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
 			}
 		}
 
@@ -463,9 +463,9 @@ public class DebugShowcaseItem extends Item {
 				level.setBlock(origin.offset(x, y, 0), fence, Block.UPDATE_CLIENTS);
 				level.setBlock(origin.offset(x, y, size - 1), fence, Block.UPDATE_CLIENTS);
 			}
-			for (int zz = 1; zz < size - 1; zz++) {
-				level.setBlock(origin.offset(0, y, zz), fence, Block.UPDATE_CLIENTS);
-				level.setBlock(origin.offset(size - 1, y, zz), fence, Block.UPDATE_CLIENTS);
+			for (int sideZ = 1; sideZ < size - 1; sideZ++) {
+				level.setBlock(origin.offset(0, y, sideZ), fence, Block.UPDATE_CLIENTS);
+				level.setBlock(origin.offset(size - 1, y, sideZ), fence, Block.UPDATE_CLIENTS);
 			}
 		}
 	}
