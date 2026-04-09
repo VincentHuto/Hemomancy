@@ -700,7 +700,7 @@ public class SkillTreeScreen extends Screen {
 		for (var e : nodePositions.entrySet()) {
 			int[] p = e.getValue();
 			int nx = sx(p[0]), ny = sy(p[1]);
-			if (mx >= nx - h && mx <= nx + h && my >= ny - h && my <= ny + h)
+			if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h))
 				return e.getKey();
 		}
 		return null;
@@ -972,6 +972,7 @@ public class SkillTreeScreen extends Screen {
 			int ny = sy(pos[1]);
 
 			boolean degreeLocked = sp.isDegreeLocked(playerDegree);
+			EnumNodeShape shape = sp.getNodeShape();
 
 			// ── determine border colour ──
 			int border;
@@ -984,7 +985,7 @@ public class SkillTreeScreen extends Screen {
 						// pulsing glow
 						float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
 						int ga = (int)(40 * p);
-						gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
+						NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
 								(ga << 24) | 0x00AA0000);
 					}
 					case LOCKED -> {
@@ -998,17 +999,14 @@ public class SkillTreeScreen extends Screen {
 			}
 
 			// ── node fill ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny + hn, COL_NODE_BG);
+			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
 
-			// ── border (1-px lines) ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny - hn + 1, border);
-			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, border);
-			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, border);
-			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, border);
+			// ── border ──
+			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
 
 			// ── degree-locked overlay: dark fill + black "?" ──
 			if (degreeLocked) {
-				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
 				if (zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
@@ -1055,8 +1053,7 @@ public class SkillTreeScreen extends Screen {
 			int[] pos = e.getValue();
 			int nx = sx(pos[0]), ny = sy(pos[1]);
 
-			if (mouseX < nx - hn || mouseX > nx + hn
-					|| mouseY < ny - hn || mouseY > ny + hn) continue;
+			if (!NodeShapeRenderer.isInside(sp.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
 
 			List<Component> tip = new ArrayList<>();
 
@@ -1187,6 +1184,7 @@ public class SkillTreeScreen extends Screen {
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());
 			boolean rankLocked = isManipRankLocked(manip);
+			EnumNodeShape shape = entry.getNodeShape();
 
 			// ── Tendency colour ──
 			int tendR = 128, tendG = 128, tendB = 128;
@@ -1210,7 +1208,7 @@ public class SkillTreeScreen extends Screen {
 				int gr = (int)(tendR * 0.6f);
 				int gg = (int)(tendG * 0.6f);
 				int gb = (int)(tendB * 0.6f);
-				gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
 						(ga << 24) | (gr << 16) | (gg << 8) | gb);
 			} else {
 				// Dimmed border for unknown
@@ -1222,17 +1220,14 @@ public class SkillTreeScreen extends Screen {
 
 			// ── Fill ──
 			int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny + hn, fill);
+			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fill);
 
 			// ── Border ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny - hn + 1, borderColor);
-			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, borderColor);
-			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, borderColor);
-			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, borderColor);
+			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, borderColor);
 
 			// ── Rank-locked overlay: dark fill + "?" (mirrors skill degree-lock) ──
 			if (rankLocked) {
-				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
 				if (zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
@@ -1281,8 +1276,7 @@ public class SkillTreeScreen extends Screen {
 			int[] pos = e.getValue();
 			int nx = sx(pos[0]), ny = sy(pos[1]);
 
-			if (mouseX < nx - hn || mouseX > nx + hn
-					|| mouseY < ny - hn || mouseY > ny + hn) continue;
+			if (!NodeShapeRenderer.isInside(entry.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
 
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());

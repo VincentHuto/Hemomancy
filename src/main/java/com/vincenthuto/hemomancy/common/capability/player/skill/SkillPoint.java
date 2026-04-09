@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.EnumNodeShape;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +21,7 @@ public class SkillPoint {
 	SkillPoint parent;
 	@Nullable Supplier<ItemStack> iconItem;
 	@Nullable ResourceLocation iconTexture;
+	EnumNodeShape nodeShape = EnumNodeShape.SQUARE;
 
 	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
 			@Nullable SkillPoint parent) {
@@ -87,6 +90,12 @@ public class SkillPoint {
 		return this;
 	}
 
+	/** Builder-style setter for the node shape on the skill tree. */
+	public SkillPoint setNodeShape(EnumNodeShape shape) {
+		this.nodeShape = shape;
+		return this;
+	}
+
 	/**
 	 * Returns the icon item to render inside this skill's node, or null if none is set.
 	 */
@@ -101,6 +110,11 @@ public class SkillPoint {
 	@Nullable
 	public ResourceLocation getIconTexture() {
 		return iconTexture;
+	}
+
+	/** Returns the node shape for this skill. Defaults to SQUARE. */
+	public EnumNodeShape getNodeShape() {
+		return nodeShape;
 	}
 
 	/** Returns true if the player's degree is too low to interact with this skill. */

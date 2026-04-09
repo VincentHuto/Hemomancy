@@ -16,6 +16,7 @@ public class ManipulationTreeEntry {
 	private final String manipName;
 	private final int x, y;
 	private final List<String> parentNames;
+	private EnumNodeShape nodeShape = EnumNodeShape.SQUARE;
 
 	/**
 	 * @param manipName   Registry name of the {@link BloodManipulation}
@@ -48,6 +49,17 @@ public class ManipulationTreeEntry {
 
 	public List<String> getParentNames() {
 		return parentNames;
+	}
+
+	/** Builder-style setter for the node shape on the skill tree. */
+	public ManipulationTreeEntry setNodeShape(EnumNodeShape shape) {
+		this.nodeShape = shape;
+		return this;
+	}
+
+	/** Returns the node shape for this manipulation entry. Defaults to SQUARE. */
+	public EnumNodeShape getNodeShape() {
+		return nodeShape;
 	}
 
 	/**

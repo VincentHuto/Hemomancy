@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.EnumNodeShape;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,6 +25,7 @@ public enum EnumPurityStage {
     private Supplier<ItemStack> iconItem;
     @Nullable
     private ResourceLocation iconTexture;
+    private EnumNodeShape nodeShape = EnumNodeShape.DIAMOND;
 
     EnumPurityStage(int level, String title, float minPurity, float bloodMagicPenalty,
                     @Nullable Supplier<ItemStack> iconItem) {
@@ -69,6 +72,16 @@ public enum EnumPurityStage {
     @Nullable
     public ResourceLocation getIconTexture() {
         return iconTexture;
+    }
+
+    /** Sets the node shape for this stage. */
+    public void setNodeShape(EnumNodeShape shape) {
+        this.nodeShape = shape;
+    }
+
+    /** Returns the node shape for this stage. Defaults to DIAMOND. */
+    public EnumNodeShape getNodeShape() {
+        return nodeShape;
     }
 
     /** Returns the purity stage corresponding to the given purity value. */
