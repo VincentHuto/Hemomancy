@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.block;
 
+import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hutoslib.client.particle.factory.BloodCellParticleFactory;
+
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.core.BlockPos;
