@@ -46,6 +46,12 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> LETHEAN_POPPIES = createKey("lethean_poppies");
 
+	public static final ResourceKey<PlacedFeature> GHOST_PIPES = createKey("ghost_pipes");
+
+	public static final ResourceKey<PlacedFeature> SNOW_PLANTS = createKey("snow_plants");
+
+	public static final ResourceKey<PlacedFeature> RAFFLESIA = createKey("rafflesia");
+
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
@@ -81,6 +87,27 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.LETHEAN_POPPIES, LETHEAN_POPPIES, RarityFilter.onAverageOnceEvery(8),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, CountPlacement.of(3), BiomeFilter.biome());
+
+		// Myco-heterotrophic plants — spawn under trees / in the dark
+		final Holder<ConfiguredFeature<?, ?>> GHOST_PIPES = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.GHOST_PIPES);
+
+		register(context, PlacedFeatureInit.GHOST_PIPES, GHOST_PIPES, RarityFilter.onAverageOnceEvery(10),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
+		final Holder<ConfiguredFeature<?, ?>> SNOW_PLANTS = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.SNOW_PLANTS);
+
+		register(context, PlacedFeatureInit.SNOW_PLANTS, SNOW_PLANTS, RarityFilter.onAverageOnceEvery(12),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
+
+		final Holder<ConfiguredFeature<?, ?>> RAFFLESIA = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.RAFFLESIA);
+
+		register(context, PlacedFeatureInit.RAFFLESIA, RAFFLESIA, RarityFilter.onAverageOnceEvery(50),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 		// Bog body — underwater on the ocean floor, rare
 		final Holder<ConfiguredFeature<?, ?>> BOG_BODY = configuredFeatureGetter

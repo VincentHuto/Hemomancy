@@ -724,5 +724,11 @@
 	"hemomancy:components/mana_to_blood": "Sanguine Transmutation",
 	"hemomancy:components/mana_to_blood.description": "Converts the caster's mana into blood volume for the target. Useful for refilling blood pools using arcane energy.",
 	"hemomancy:components/sanguine_fertility": "Sanguine Fertility",
-	"hemomancy:components/sanguine_fertility.description": "Enhances breeding and growth of nearby animals with blood magic. Useful on farms and animal pens."
+	"hemomancy:components/sanguine_fertility.description": "Enhances breeding and growth of nearby animals with blood magic. Useful on farms and animal pens.",
+	"block.hemomancy.infested_wood": "Infested Wood",
+	"block.hemomancy.ghost_pipe": "Ghost Pipe",
+	"block.hemomancy.snow_plant": "Snow Plant",
+	"block.hemomancy.rafflesia": "Rafflesia",
+	"block.hemomancy.potted_ghost_pipe": "Potted Ghost Pipe",
+	"block.hemomancy.potted_snow_plant": "Potted Snow Plant"
 }
