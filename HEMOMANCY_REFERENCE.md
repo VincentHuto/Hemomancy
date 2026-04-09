@@ -882,13 +882,13 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 
 | Entity | Texture | Category | Notes |
 |--------|---------|----------|-------|
-| **Fargone** | ![](src/main/resources/assets/hemomancy/textures/entity/fargone/model_fargone.png) | Monster | Standard blood monster |
+| **Fargone** | ![](src/main/resources/assets/hemomancy/textures/entity/fargone/model_fargone.png) | Monster | Standard mosquito esk blood monster |
 | **Thirster** | ![](src/main/resources/assets/hemomancy/textures/entity/thirster/model_thirster.png) | Monster | Blood-thirsting mob |
 | **Abhorent Thought** | | Monster | Large (1.5×3.25), eldritch thought entity |
 | **Erythromycelium Eruptus** | ![](src/main/resources/assets/hemomancy/textures/entity/erythromycelium_eruptus/model_erythromycelium_eruptus.png) | Monster | Large fungal eruption mob (1.5×3.0) |
 | **Blood Drunk Puppeteer** | ![](src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Human-sized, controls dolls |
 | **Enthralled Doll** | ![](src/main/resources/assets/hemomancy/textures/entity/enthralled_doll/model_enthralled_doll.png) | Monster | Small (0.5×0.5), controlled by puppeteer |
-| **Chthonian** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian/model_chthonian.png) | Monster | Underground worm creature |
+| **Chthonian** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian/model_chthonian.png) | Monster | Underground termite/ant creature |
 | **Chthonian Queen** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian_queen/model_chthonian_queen.png) | Monster | Boss variant of Chthonian |
 | **Lump of Thought** | ![](src/main/resources/assets/hemomancy/textures/entity/lump_of_thought/model_lump_of_thought.png) | Monster | Sentient thought blob |
 | **Morphling Polyp** (mob) | ![](src/main/resources/assets/hemomancy/textures/entity/morphling_polyp/model_morphling_polyp.png) | Monster | Wild morphling mob |
@@ -899,9 +899,9 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 |--------|---------|----------|-------|
 | **Leech** | ![](src/main/resources/assets/hemomancy/textures/entity/leech/model_leech_brown.png) | Creature | Small (0.4×0.1) blood-sucking leech |
 | **Fungling** | ![](src/main/resources/assets/hemomancy/textures/entity/fungling/model_fungling.png) | Creature | Friendly fungal creature |
-| **Chitinite** | ![](src/main/resources/assets/hemomancy/textures/entity/chitinite/model_chitinite.png) | Creature | Iron-shelled insect (1.0×0.3) |
+| **Chitinite** | ![](src/main/resources/assets/hemomancy/textures/entity/chitinite/model_chitinite.png) | Creature | Iron-shelled Isopod insect (1.0×0.3) |
 | **Fervent Chitinite** | ![](src/main/resources/assets/hemomancy/textures/entity/fervent_chitinite/model_fervent_chitinite.png) | Creature | Fire variant of Chitinite |
-| **Hemolymphopoda** | ![](src/main/resources/assets/hemomancy/textures/entity/hemolymphopoda/model_hemolymphopoda.png) | Ambient | Small (0.9×0.3), drops Cleansing Hemolymph |
+| **Hemolymphopoda** | ![](src/main/resources/assets/hemomancy/textures/entity/hemolymphopoda/model_hemolymphopoda.png) | Ambient | Small (0.9×0.3), Horseshoe crab drops Cleansing Hemolymph |
 | **Barbed Urchin** | ![](src/main/resources/assets/hemomancy/textures/entity/barbed_urchin/model_barbed_urchin.png) | Water Ambient | Underwater iron-barbed urchin |
 
 ### 19.3 Summons / Player-controlled
