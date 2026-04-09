@@ -13,17 +13,27 @@ import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
+import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
+import com.vincenthuto.hemomancy.common.dialogue.AncestralCommunionDialogueTrees;
+import com.vincenthuto.hemomancy.common.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -37,9 +47,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
@@ -371,6 +383,30 @@ public class CardinalRiteEvents {
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
 	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
 
+	// ── New utility rite paths ──
+	private static final String SANGUINE_ATTUNEMENT_RITE = "cardinal_rite/sanguine_attunement";
+	private static final String CRIMSON_BEACON_RITE = "cardinal_rite/crimson_beacon";
+	private static final String VASCULAR_MENDING_RITE = "cardinal_rite/vascular_mending";
+	private static final String HUNGERING_EARTH_RITE = "cardinal_rite/hungering_earth";
+	private static final String SCARLET_SUMMONS_RITE = "cardinal_rite/scarlet_summons";
+	private static final String SANGUINE_DOMINION_RITE = "cardinal_rite/sanguine_dominion";
+	private static final String ETERNAL_COVENANT_RITE = "cardinal_rite/eternal_covenant";
+	private static final String ANCESTRAL_COMMUNION_RITE = "cardinal_rite/ancestral_communion";
+	private static final String EXSANGUINATION_RITE = "cardinal_rite/exsanguination";
+	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
+	private static final String LETHES_SHADOW_RITE = "cardinal_rite/lethes_shadow";
+
+	/** Eternal Covenant max blood volume bonus, applied once per player. */
+	private static final double ETERNAL_COVENANT_BONUS = 500.0;
+	/** NBT key stored on player persistent data to track covenant usage. */
+	private static final String ETERNAL_COVENANT_TAG = "hemomancy:eternal_covenant_used";
+	/** Radius (in blocks) for Hungering Earth terrain corruption. */
+	private static final int HUNGERING_EARTH_RADIUS = 16;
+	/** Chunk radius for Sanguine Dominion blood domain. */
+	private static final int DOMINION_CHUNK_RADIUS = 3;
+	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
+	private static final float SUMMONS_COST_PER_MEMBER = 200f;
+
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
 	static {
@@ -431,9 +467,71 @@ public class CardinalRiteEvents {
 				}
 			}
 
+			// Exsanguination rite: verify a named sacrifice was killed during the rite
+			if (EXSANGUINATION_RITE.equals(ritePath)) {
+				// The sacrifice processing in the tick loop already damages entities.
+				// The quintessence result item is always produced — the rite IS the sacrifice.
+				caster.displayClientMessage(
+						Component.literal("The lifeblood crystallizes... Sanguine Quintessence is born.")
+								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+						false);
+			}
+
 			sLevel.addFreshEntity(new ItemEntity(sLevel,
 					center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
 					resultStack));
+		}
+
+		// === Utility rite effects (no result item needed) ===
+
+		// Rite of Sanguine Attunement: reset all blood tendency scores to zero
+		if (SANGUINE_ATTUNEMENT_RITE.equals(ritePath)) {
+			completeSanguineAttunement(caster);
+		}
+
+		// Rite of the Crimson Beacon: register a death waypoint at the rite center
+		if (CRIMSON_BEACON_RITE.equals(ritePath)) {
+			completeCrimsonBeacon(sLevel, caster, center);
+		}
+
+		// Rite of Vascular Mending: fully heal all 7 vein sections
+		if (VASCULAR_MENDING_RITE.equals(ritePath)) {
+			completeVascularMending(caster);
+		}
+
+		// Rite of the Hungering Earth: corrupt terrain in a radius
+		if (HUNGERING_EARTH_RITE.equals(ritePath)) {
+			completeHungeringEarth(sLevel, caster, center);
+		}
+
+		// Rite of the Scarlet Summons: teleport all bloodline members
+		if (SCARLET_SUMMONS_RITE.equals(ritePath)) {
+			completeScarletSummons(sLevel, caster, center);
+		}
+
+		// Rite of Sanguine Dominion: establish a blood domain
+		if (SANGUINE_DOMINION_RITE.equals(ritePath)) {
+			completeSanguineDominion(sLevel, caster, center);
+		}
+
+		// Rite of the Eternal Covenant: permanently increase max blood volume
+		if (ETERNAL_COVENANT_RITE.equals(ritePath)) {
+			completeEternalCovenant(caster);
+		}
+
+		// Rite of Ancestral Communion: open a lore dialogue
+		if (ANCESTRAL_COMMUNION_RITE.equals(ritePath)) {
+			completeAncestralCommunion(sLevel, caster);
+		}
+
+		// Rite of Hematic Unbinding: dissolve the caster's bloodline
+		if (HEMATIC_UNBINDING_RITE.equals(ritePath)) {
+			completeHematicUnbinding(sLevel, caster);
+		}
+
+		// Rite of the Lethe's Shadow: strip Unstained progress from a nearby player
+		if (LETHES_SHADOW_RITE.equals(ritePath)) {
+			completeLethesShadow(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -490,6 +588,417 @@ public class CardinalRiteEvents {
 				}
 			});
 		}
+	}
+
+	// ══════════════════════════════════════════════════════════════════════
+	// Utility Rite Completion Handlers
+	// ══════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Rite of Sanguine Attunement (Degree 2, Minor):
+	 * Resets all 8 blood tendency alignment axes to zero.
+	 */
+	private static void completeSanguineAttunement(ServerPlayer caster) {
+		caster.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
+			for (EnumBloodTendency bt : EnumBloodTendency.values()) {
+				tendency.setTendencyAlignment(bt, 0f);
+			}
+			BloodTendencyEvents.syncTendency(caster, tendency);
+		});
+		caster.displayClientMessage(
+				Component.literal("Your blood tendencies have been purged. You are a blank slate once more.")
+						.withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of the Crimson Beacon (Degree 3, Lesser):
+	 * Registers a death waypoint at the rite center. On fatal damage, the
+	 * player's body will be teleported here before death (one-time use).
+	 */
+	private static void completeCrimsonBeacon(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		CrimsonBeaconSavedData data = CrimsonBeaconSavedData.get(sLevel.getServer().overworld());
+		String dimension = sLevel.dimension().location().toString();
+		data.setBeacon(caster.getUUID(), center, dimension);
+
+		caster.displayClientMessage(
+				Component.literal("A Crimson Beacon is anchored here. Should you fall, your body will return.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of Vascular Mending (Degree 3, Lesser):
+	 * Fully restores all 7 vein sections to maximum health (100).
+	 */
+	private static void completeVascularMending(ServerPlayer caster) {
+		caster.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+			for (EnumVeinSections section : EnumVeinSections.values()) {
+				java.util.Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+				sys.put(section, 100f);
+				vascular.setVascularSystem(sys);
+			}
+			VascularSystemEvents.syncVascular(caster, vascular);
+		});
+		caster.displayClientMessage(
+				Component.literal("Purified blood surges through your veins. All vascular damage has been mended.")
+						.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of the Hungering Earth (Degree 3, Lesser):
+	 * Corrupts natural terrain in a radius around the rite center, converting:
+	 * <ul>
+	 *   <li>Stone → Venous Stone</li>
+	 *   <li>Cobblestone → Venous Stone</li>
+	 *   <li>Deepslate → Infested Venous Stone</li>
+	 *   <li>Dirt/Grass → Befouling Ash Trail (block below becomes venous stone)</li>
+	 *   <li>Sand/Gravel → Polished Venous Stone</li>
+	 * </ul>
+	 */
+	private static void completeHungeringEarth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		int radius = HUNGERING_EARTH_RADIUS;
+		int converted = 0;
+
+		for (int x = -radius; x <= radius; x++) {
+			for (int z = -radius; z <= radius; z++) {
+				// Circular check
+				if (x * x + z * z > radius * radius) continue;
+
+				for (int y = -radius / 2; y <= radius / 2; y++) {
+					BlockPos pos = center.offset(x, y, z);
+					BlockState state = sLevel.getBlockState(pos);
+					Block block = state.getBlock();
+
+					BlockState replacement = getHungeringEarthReplacement(block);
+					if (replacement != null) {
+						sLevel.setBlock(pos, replacement, 2);
+						converted++;
+
+						// Spawn occasional particles for visual feedback
+						if (converted % 10 == 0) {
+							sLevel.levelEvent(2001, pos, Block.getId(state));
+						}
+					}
+				}
+			}
+		}
+
+		caster.displayClientMessage(
+				Component.literal("The earth hungers... " + converted + " blocks have been corrupted.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Returns the blood-corrupted replacement for a natural block, or null if
+	 * the block should not be converted.
+	 */
+	private static BlockState getHungeringEarthReplacement(Block block) {
+		if (block == Blocks.STONE || block == Blocks.COBBLESTONE || block == Blocks.ANDESITE
+				|| block == Blocks.DIORITE || block == Blocks.GRANITE) {
+			return BlockInit.venous_stone.get().defaultBlockState();
+		}
+		if (block == Blocks.DEEPSLATE || block == Blocks.COBBLED_DEEPSLATE) {
+			return BlockInit.infested_venous_stone.get().defaultBlockState();
+		}
+		if (block == Blocks.DIRT || block == Blocks.GRASS_BLOCK || block == Blocks.PODZOL
+				|| block == Blocks.MYCELIUM || block == Blocks.COARSE_DIRT || block == Blocks.ROOTED_DIRT) {
+			return BlockInit.befouling_ash_trail.get().defaultBlockState();
+		}
+		if (block == Blocks.SAND || block == Blocks.RED_SAND || block == Blocks.GRAVEL) {
+			return BlockInit.polished_venous_stone.get().defaultBlockState();
+		}
+		return null;
+	}
+
+	/**
+	 * Rite of the Scarlet Summons (Degree 5, Greater):
+	 * Teleports all online bloodline members to the rite center. Draws blood
+	 * from the shared bloodline pool proportional to the number of members.
+	 */
+	private static void completeScarletSummons(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData bloodlineData = BloodlineSavedData.get(overworld);
+		Bloodline bloodline = bloodlineData.getBloodlineForPlayer(caster.getUUID());
+
+		if (bloodline == null || !bloodline.isValid()) {
+			caster.displayClientMessage(
+					Component.literal("You have no bloodline to summon.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Only the bloodline leader may perform the summons
+		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
+			caster.displayClientMessage(
+					Component.literal("Only the bloodline leader may perform the Scarlet Summons.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		List<ServerPlayer> onlineMembers = new ArrayList<>();
+		for (UUID memberUUID : bloodline.getPlayerUUIDS()) {
+			if (memberUUID.equals(caster.getUUID())) continue; // Skip the caster
+			ServerPlayer member = sLevel.getServer().getPlayerList().getPlayer(memberUUID);
+			if (member != null) {
+				onlineMembers.add(member);
+			}
+		}
+
+		if (onlineMembers.isEmpty()) {
+			caster.displayClientMessage(
+					Component.literal("No bloodline members are online to summon.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Draw blood from the shared pool
+		float totalCost = onlineMembers.size() * SUMMONS_COST_PER_MEMBER;
+		float drawn = bloodlineData.drawBlood(bloodline.getBloodlineUUID(), totalCost);
+		if (drawn < totalCost * 0.5f) {
+			caster.displayClientMessage(
+					Component.literal("The bloodline pool lacks sufficient blood for the summons.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Teleport all online members
+		int teleported = 0;
+		for (ServerPlayer member : onlineMembers) {
+			// Handle cross-dimension teleport
+			if (!member.level().equals(sLevel)) {
+				member.teleportTo(sLevel, center.getX() + 0.5, center.getY() + 1.5,
+						center.getZ() + 0.5, member.getYRot(), member.getXRot());
+			} else {
+				member.teleportTo(center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5);
+			}
+			member.displayClientMessage(
+					Component.literal("The blood calls! You have been summoned by " + caster.getName().getString() + ".")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					false);
+			sLevel.playSound(null, member.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+					SoundSource.PLAYERS, 1.0f, 0.7f);
+			teleported++;
+		}
+
+		caster.displayClientMessage(
+				Component.literal("The Scarlet Summons draws " + teleported + " blood-kin to your side.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of Sanguine Dominion (Degree 6, Greater):
+	 * Establishes a persistent Blood Domain centered on the rite location.
+	 * Within the domain: enemies take slow bleed damage, and the caster's
+	 * manipulations cost less blood.
+	 */
+	private static void completeSanguineDominion(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		SanguineDominionSavedData data = SanguineDominionSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+
+		SanguineDominionSavedData.DominionEntry entry = new SanguineDominionSavedData.DominionEntry(
+				caster.getUUID(), center, dimension, DOMINION_CHUNK_RADIUS, sLevel.getGameTime());
+		data.addDominion(entry);
+
+		int blockRadius = DOMINION_CHUNK_RADIUS * 16;
+		caster.displayClientMessage(
+				Component.literal("A Blood Domain has been established! " + blockRadius
+						+ " blocks in every direction now bow to your crimson will.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Rite of the Eternal Covenant (Degree 6, Greater):
+	 * Permanently increases the caster's maximum blood volume. Can only be
+	 * performed once per player.
+	 */
+	private static void completeEternalCovenant(ServerPlayer caster) {
+		CompoundTag persistentData = caster.getPersistentData();
+		if (persistentData.getBoolean(ETERNAL_COVENANT_TAG)) {
+			caster.displayClientMessage(
+					Component.literal("The covenant has already been sealed. Its boon cannot be granted twice.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		caster.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			volume.addMaxBloodVolume(ETERNAL_COVENANT_BONUS);
+			BloodVolumeEvents.syncVolume(caster, volume);
+		});
+		persistentData.putBoolean(ETERNAL_COVENANT_TAG, true);
+
+		caster.displayClientMessage(
+				Component.literal("The Eternal Covenant is sealed! Your maximum blood volume has been permanently increased by "
+						+ (int) ETERNAL_COVENANT_BONUS + ".")
+						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Rite of Ancestral Communion (Degree 7, Grand):
+	 * Opens a dialogue with the fungal consciousness, granting unique lore.
+	 * Each invocation uses a different dialogue variant from a pool.
+	 */
+	private static void completeAncestralCommunion(ServerLevel sLevel, ServerPlayer caster) {
+		// Determine variant based on game time for variety
+		int variant = (int) ((sLevel.getGameTime() / 100) % AncestralCommunionDialogueTrees.VARIANT_COUNT);
+		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant);
+
+		PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> caster),
+				new OpenDialoguePacket(tree));
+
+		caster.displayClientMessage(
+				Component.literal("The ancient blood stirs... a voice rises from the depths.")
+						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of Hematic Unbinding (Cross-tier, Lesser):
+	 * Destroys the caster's bloodline, freeing all members. Any shared blood
+	 * in the pool is returned proportionally to the remaining members.
+	 */
+	private static void completeHematicUnbinding(ServerLevel sLevel, ServerPlayer caster) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodlineSavedData bloodlineData = BloodlineSavedData.get(overworld);
+		Bloodline bloodline = bloodlineData.getBloodlineForPlayer(caster.getUUID());
+
+		if (bloodline == null || !bloodline.isValid()) {
+			caster.displayClientMessage(
+					Component.literal("You have no bloodline to unbind.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Only the leader can dissolve the bloodline
+		if (!bloodline.getLeaderUUID().equals(caster.getUUID())) {
+			caster.displayClientMessage(
+					Component.literal("Only the bloodline leader may perform the Hematic Unbinding.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		String bloodlineName = bloodline.getName();
+		float poolBlood = bloodline.getBloodVolume();
+		int memberCount = bloodline.getPlayerUUIDS().size();
+		float bloodPerMember = memberCount > 0 ? poolBlood / memberCount : 0;
+
+		// Return blood to all online members and clear their bloodline reference
+		for (UUID memberUUID : new ArrayList<>(bloodline.getPlayerUUIDS())) {
+			ServerPlayer member = sLevel.getServer().getPlayerList().getPlayer(memberUUID);
+			if (member != null) {
+				// Return their share of the pool blood
+				if (bloodPerMember > 0) {
+					member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+						volume.fill(bloodPerMember);
+						volume.setBloodLine(Bloodline.NOBLOODLINE);
+						BloodVolumeEvents.syncVolume(member, volume);
+					});
+				} else {
+					member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+						volume.setBloodLine(Bloodline.NOBLOODLINE);
+						BloodVolumeEvents.syncVolume(member, volume);
+					});
+				}
+
+				member.displayClientMessage(
+						Component.literal("The bloodline " + bloodlineName + " has been dissolved. You are unbound.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+			}
+		}
+
+		// Remove the bloodline from world data
+		bloodlineData.getAllBloodlines().remove(bloodline.getBloodlineUUID());
+
+		caster.displayClientMessage(
+				Component.literal("The " + bloodlineName + " is dissolved. What was bound by blood is unbound.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Rite of the Lethe's Shadow (Cross-tier, Grand):
+	 * Targets the nearest non-caster player within the rite circle and strips
+	 * their Unstained purification progress. A direct hematic assault against
+	 * followers of Our Lady of Lethe.
+	 */
+	private static void completeLethesShadow(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		int halfSize = 4; // Grand rite = 9x9, half = 4
+		AABB bounds = new AABB(center).inflate(halfSize + 1);
+
+		// Find the nearest non-caster player in the rite bounds
+		List<Player> nearbyPlayers = sLevel.getEntitiesOfClass(Player.class, bounds,
+				p -> p.isAlive() && !p.getUUID().equals(caster.getUUID()));
+
+		if (nearbyPlayers.isEmpty()) {
+			caster.displayClientMessage(
+					Component.literal("No target stands within the circle. The shadow dissipates.")
+							.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Target the closest player
+		Player target = nearbyPlayers.get(0);
+		double closestDist = target.distanceToSqr(center.getX(), center.getY(), center.getZ());
+		for (Player p : nearbyPlayers) {
+			double dist = p.distanceToSqr(center.getX(), center.getY(), center.getZ());
+			if (dist < closestDist) {
+				target = p;
+				closestDist = dist;
+			}
+		}
+
+		final Player victim = target;
+		victim.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			boolean hadProgress = unstained.hasBegunPurification() || unstained.getPurity() > 0;
+
+			unstained.setBegunPurification(false);
+			unstained.setPurity(0);
+			unstained.setClarityUnlocked(false);
+			unstained.setClarity(0);
+
+			if (victim instanceof ServerPlayer serverVictim) {
+				UnstainedProgressEvents.syncProgress(serverVictim, unstained);
+			}
+
+			if (hadProgress) {
+				if (victim instanceof ServerPlayer sp) {
+					sp.displayClientMessage(
+							Component.literal("A shadow of crimson corruption washes over you... Your purification has been destroyed!")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+							false);
+				}
+				caster.displayClientMessage(
+						Component.literal("The Lethe's Shadow consumes " + victim.getName().getString()
+								+ "'s purity. Their purification is undone.")
+								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+						false);
+			} else {
+				caster.displayClientMessage(
+						Component.literal(victim.getName().getString()
+								+ " had no purification to destroy. The shadow finds nothing.")
+								.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+						false);
+			}
+		});
+
+		// Visual/sound feedback
+		sLevel.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.5f);
 	}
 
 	/**
