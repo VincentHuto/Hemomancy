@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -630,10 +631,11 @@ public class UnstainedProgressScreen extends Screen {
 		for (int i = 0; i < stages.length; i++) {
 			EnumPurityStage stage = stages[i];
 			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
+			drawShapedNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentPurityStage.getLevel() >= stage.getLevel(),
 					currentPurityStage == stage,
-					PURITY_COLOR, PURITY_GLOW, stage.getIconItem());
+					PURITY_COLOR, PURITY_GLOW, stage.getNodeShape(),
+					stage.getIconTexture(), stage.getIconItem());
 		}
 	}
 
@@ -678,19 +680,22 @@ public class UnstainedProgressScreen extends Screen {
 		for (int i = 0; i < stages.length; i++) {
 			EnumClarityStage stage = stages[i];
 			int nodeCY = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
-			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
+			drawShapedNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentClarityStage.getLevel() >= stage.getLevel(),
 					currentClarityStage == stage,
-					CLARITY_COLOR, CLARITY_GLOW, stage.getIconItem());
+					CLARITY_COLOR, CLARITY_GLOW, stage.getNodeShape(),
+					stage.getIconTexture(), stage.getIconItem());
 		}
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Diamond-shaped stage node
+	//  Shape-aware stage node
 	// ────────────────────────────────────────────────────────────
 
-	private void drawDiamondNode(GuiGraphics gfx, int scrX, int scrY, String title,
+	private void drawShapedNode(GuiGraphics gfx, int scrX, int scrY, String title,
 								 boolean reached, boolean isCurrent, int accentColor, int glowColor,
+								 EnumNodeShape shape,
+								 @javax.annotation.Nullable ResourceLocation iconTexture,
 								 @javax.annotation.Nullable ItemStack iconStack) {
 		float time = System.nanoTime() / 1_000_000_000f;
 		int hn = halfNode();
@@ -699,28 +704,31 @@ public class UnstainedProgressScreen extends Screen {
 		int border;
 		if (isCurrent) {
 			border = COL_NODE_CURRENT;
-			// Pulsing glow diamond behind the node
+			// Pulsing glow behind the node
 			float p = 0.5f + 0.5f * Mth.sin(time * 2.5f);
 			int ga = (int)(40 * p);
 			int gr = (glowColor >> 16) & 0xFF;
 			int gg = (glowColor >> 8) & 0xFF;
 			int gb = glowColor & 0xFF;
-			drawDiamond(gfx, scrX, scrY, hn + 4, (ga << 24) | (gr << 16) | (gg << 8) | gb);
+			NodeShapeRenderer.drawFill(gfx, shape, scrX, scrY, hn + 4,
+					(ga << 24) | (gr << 16) | (gg << 8) | gb);
 		} else if (reached) {
 			border = COL_NODE_REACHED;
 		} else {
 			border = COL_NODE_LOCKED;
 		}
 
-		// Node fill diamond
-		drawDiamond(gfx, scrX, scrY, hn, COL_NODE_BG);
+		// Node fill
+		NodeShapeRenderer.drawFill(gfx, shape, scrX, scrY, hn, COL_NODE_BG);
 
-		// Border diamond outline
-		drawDiamondOutline(gfx, scrX, scrY, hn, border);
+		// Border outline
+		NodeShapeRenderer.drawOutline(gfx, shape, scrX, scrY, hn, border);
 
-		// Icon item or text inside node (only when zoomed in enough)
+		// Icon texture, icon item, or text inside node (only when zoomed in enough)
 		if (zoom >= 0.5f) {
-			if (iconStack != null && !iconStack.isEmpty()) {
+			if (iconTexture != null) {
+				renderScaledTexture(gfx, iconTexture, scrX, scrY, hn);
+			} else if (iconStack != null && !iconStack.isEmpty()) {
 				renderScaledItem(gfx, iconStack, scrX, scrY, hn);
 			} else {
 				String initial = !title.isEmpty() ? title.substring(0, 1).toUpperCase() : "?";
@@ -785,6 +793,21 @@ public class UnstainedProgressScreen extends Screen {
 		pose.scale(itemScale, itemScale, 1);
 		gfx.renderItem(stack, 0, 0);
 		pose.popPose();
+	}
+
+	/**
+	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
+	 * within the node bounds. The entire texture is sampled (UV 0→1) and rendered at the
+	 * node's inner size, so it works for textures of any pixel dimensions.
+	 */
+	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
+		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
+		int x = centerX - nodeInner / 2;
+		int y = centerY - nodeInner / 2;
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
+		RenderSystem.disableBlend();
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -1275,7 +1298,7 @@ public class UnstainedProgressScreen extends Screen {
 			int nodeScrX = sx(ccx);
 			int nodeScrY = sy(nodeCY) + hn;
 
-			if (isInsideDiamond(mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
+			if (NodeShapeRenderer.isInside(stage.getNodeShape(), mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
 				List<Component> tip = new ArrayList<>();
 				boolean reached = currentPurityStage.getLevel() >= stage.getLevel();
 				boolean isCurrent = currentPurityStage == stage;
@@ -1325,7 +1348,7 @@ public class UnstainedProgressScreen extends Screen {
 			int nodeScrX = sx(ccx);
 			int nodeScrY = sy(nodeCY) + hn;
 
-			if (isInsideDiamond(mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
+			if (NodeShapeRenderer.isInside(stage.getNodeShape(), mouseX, mouseY, nodeScrX, nodeScrY, hn)) {
 				List<Component> tip = new ArrayList<>();
 				boolean reached = currentClarityStage.getLevel() >= stage.getLevel();
 				boolean isCurrent = currentClarityStage == stage;
@@ -1355,13 +1378,6 @@ public class UnstainedProgressScreen extends Screen {
 				return;
 			}
 		}
-	}
-
-	/** Diamond-shaped hit test: |dx| + |dy| <= halfSize */
-	private boolean isInsideDiamond(double mx, double my, int cx, int cy, int halfSize) {
-		double dx = Math.abs(mx - cx);
-		double dy = Math.abs(my - cy);
-		return (dx + dy) <= halfSize;
 	}
 
 	// ────────────────────────────────────────────────────────────

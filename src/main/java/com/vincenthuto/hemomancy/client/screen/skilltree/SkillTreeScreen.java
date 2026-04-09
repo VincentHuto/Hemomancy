@@ -39,6 +39,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -699,7 +700,7 @@ public class SkillTreeScreen extends Screen {
 		for (var e : nodePositions.entrySet()) {
 			int[] p = e.getValue();
 			int nx = sx(p[0]), ny = sy(p[1]);
-			if (mx >= nx - h && mx <= nx + h && my >= ny - h && my <= ny + h)
+			if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h))
 				return e.getKey();
 		}
 		return null;
@@ -971,6 +972,7 @@ public class SkillTreeScreen extends Screen {
 			int ny = sy(pos[1]);
 
 			boolean degreeLocked = sp.isDegreeLocked(playerDegree);
+			EnumNodeShape shape = sp.getNodeShape();
 
 			// ── determine border colour ──
 			int border;
@@ -983,7 +985,7 @@ public class SkillTreeScreen extends Screen {
 						// pulsing glow
 						float p = 0.7f + 0.3f * Mth.sin(time * 2f + sp.getId());
 						int ga = (int)(40 * p);
-						gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
+						NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
 								(ga << 24) | 0x00AA0000);
 					}
 					case LOCKED -> {
@@ -997,33 +999,35 @@ public class SkillTreeScreen extends Screen {
 			}
 
 			// ── node fill ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny + hn, COL_NODE_BG);
+			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
 
-			// ── border (1-px lines) ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny - hn + 1, border);
-			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, border);
-			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, border);
-			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, border);
+			// ── border ──
+			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
 
 			// ── degree-locked overlay: dark fill + black "?" ──
 			if (degreeLocked) {
-				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
 				if (zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
 				continue; // skip normal text rendering for degree-locked nodes
 			}
 
-			// ── icon item or text (only when zoomed in enough) ──
+			// ── icon texture, icon item, or text (only when zoomed in enough) ──
 			if (zoom >= 0.5f) {
-				ItemStack iconStack = sp.getIconItem();
-				if (iconStack != null && !iconStack.isEmpty()) {
-					renderScaledItem(gfx, iconStack, nx, ny, hn);
+				ResourceLocation iconTex = sp.getIconTexture();
+				if (iconTex != null) {
+					renderScaledTexture(gfx, iconTex, nx, ny, hn);
 				} else {
-					String ini = getSkillInitial(sp);
-					int textCol = sp.getState() == EnumSkillStates.UNLOCKED
-							? 0xFFFFAAAA : 0xFF888888;
-					gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+					ItemStack iconStack = sp.getIconItem();
+					if (iconStack != null && !iconStack.isEmpty()) {
+						renderScaledItem(gfx, iconStack, nx, ny, hn);
+					} else {
+						String ini = getSkillInitial(sp);
+						int textCol = sp.getState() == EnumSkillStates.UNLOCKED
+								? 0xFFFFAAAA : 0xFF888888;
+						gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+					}
 				}
 
 				// Show level progress below node
@@ -1049,8 +1053,7 @@ public class SkillTreeScreen extends Screen {
 			int[] pos = e.getValue();
 			int nx = sx(pos[0]), ny = sy(pos[1]);
 
-			if (mouseX < nx - hn || mouseX > nx + hn
-					|| mouseY < ny - hn || mouseY > ny + hn) continue;
+			if (!NodeShapeRenderer.isInside(sp.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
 
 			List<Component> tip = new ArrayList<>();
 
@@ -1181,6 +1184,7 @@ public class SkillTreeScreen extends Screen {
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());
 			boolean rankLocked = isManipRankLocked(manip);
+			EnumNodeShape shape = entry.getNodeShape();
 
 			// ── Tendency colour ──
 			int tendR = 128, tendG = 128, tendB = 128;
@@ -1204,7 +1208,7 @@ public class SkillTreeScreen extends Screen {
 				int gr = (int)(tendR * 0.6f);
 				int gg = (int)(tendG * 0.6f);
 				int gb = (int)(tendB * 0.6f);
-				gfx.fill(nx - hn - 3, ny - hn - 3, nx + hn + 3, ny + hn + 3,
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 3,
 						(ga << 24) | (gr << 16) | (gg << 8) | gb);
 			} else {
 				// Dimmed border for unknown
@@ -1216,17 +1220,14 @@ public class SkillTreeScreen extends Screen {
 
 			// ── Fill ──
 			int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny + hn, fill);
+			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fill);
 
 			// ── Border ──
-			gfx.fill(nx - hn, ny - hn, nx + hn, ny - hn + 1, borderColor);
-			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, borderColor);
-			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, borderColor);
-			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, borderColor);
+			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, borderColor);
 
 			// ── Rank-locked overlay: dark fill + "?" (mirrors skill degree-lock) ──
 			if (rankLocked) {
-				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
 				if (zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
@@ -1275,8 +1276,7 @@ public class SkillTreeScreen extends Screen {
 			int[] pos = e.getValue();
 			int nx = sx(pos[0]), ny = sy(pos[1]);
 
-			if (mouseX < nx - hn || mouseX > nx + hn
-					|| mouseY < ny - hn || mouseY > ny + hn) continue;
+			if (!NodeShapeRenderer.isInside(entry.getNodeShape(), mouseX, mouseY, nx, ny, hn)) continue;
 
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());
@@ -2505,6 +2505,21 @@ public class SkillTreeScreen extends Screen {
 		pose.scale(itemScale, itemScale, 1);
 		gfx.renderItem(stack, 0, 0);
 		pose.popPose();
+	}
+
+	/**
+	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
+	 * within the node bounds. The entire texture is sampled (UV 0→1) and rendered at the
+	 * node's inner size, so it works for textures of any pixel dimensions.
+	 */
+	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
+		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
+		int x = centerX - nodeInner / 2;
+		int y = centerY - nodeInner / 2;
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
+		RenderSystem.disableBlend();
 	}
 
 	private static String getSkillInitial(SkillPoint sp) {
