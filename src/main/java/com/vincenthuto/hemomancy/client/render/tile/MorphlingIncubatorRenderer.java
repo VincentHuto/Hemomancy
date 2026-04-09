@@ -213,7 +213,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(-view.x, -view.y, -view.z);
 
-		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.RECALLER_BEAM_CORE);
+		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LOOM_BEAM_CORE);
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(to.x, to.y, to.z);
 
@@ -246,7 +246,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(-view.x, -view.y, -view.z);
 
-		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.RECALLER_BEAM_GLOW);
+		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LOOM_BEAM_GLOW);
 		matrixStackIn.pushPose();
 		matrixStackIn.translate(to.x, to.y, to.z);
 

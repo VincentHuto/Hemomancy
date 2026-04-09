@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:blood_structure_page",
+  "ordinality": 5,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Somatic Loom",
+  "subtitle": "Memory weaving",
+  "text": "Build the Somatic Loom to reconstruct Hematic Memories. Feed it blood, a blank memory, an appropriate enzyme set, and a catalyst to weave what your blood always knew back into memory.",
+  "icon": "hemomancy:somatic_loom",
+  "structureloc": "hemomancy:blood_structure/visceral_recaller"
+}

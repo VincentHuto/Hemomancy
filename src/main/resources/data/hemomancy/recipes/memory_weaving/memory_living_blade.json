@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:hematic_iron_powder"
+  },
+  "animus": 2.0,
+  "mortem": 0,
+  "ductilis": 1.5,
+  "ferric": 4.0,
+  "lux": 0,
+  "tenebris": 0,
+  "flammeus": 0,
+  "congeatio": 0,
+  "result": "hemomancy:memory_living_blade",
+  "count": 1
+}

@@ -119,8 +119,8 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
-	// Visceral Recaller beam render types — always render on top of world geometry
-	public static final RenderType RECALLER_BEAM_CORE = create("RecallerBeamCore",
+	// Somatic Loom beam render types — always render on top of world geometry
+	public static final RenderType LOOM_BEAM_CORE = create("LoomBeamCore",
 			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
 					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
@@ -128,7 +128,7 @@ public class RenderTypeInit extends RenderType {
 					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
 					.createCompositeState(false));
 
-	public static final RenderType RECALLER_BEAM_GLOW = create("RecallerBeamGlow",
+	public static final RenderType LOOM_BEAM_GLOW = create("LoomBeamGlow",
 			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeamGlow, false, false))
 					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)

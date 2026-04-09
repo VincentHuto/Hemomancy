@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:nether_star"
+  },
+  "animus": 5.0,
+  "mortem": 2.0,
+  "ductilis": 2.0,
+  "ferric": 2.0,
+  "lux": 5.0,
+  "tenebris": 2.0,
+  "flammeus": 2.0,
+  "congeatio": 2.0,
+  "result": "hemomancy:memory_summon_avatar",
+  "count": 1
+}

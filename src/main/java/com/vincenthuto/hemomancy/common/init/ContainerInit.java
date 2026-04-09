@@ -56,7 +56,7 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<StructureSpawnerMenu>> structure_spawner = CONTAINERS
 			.register("structure_spawner", () -> IForgeMenuType.create(StructureSpawnerMenu::new));
 
-	public static final RegistryObject<MenuType<ManipulationLoadoutMenu>> manipulation_loadout = CONTAINERS
-			.register("manipulation_loadout", () -> IForgeMenuType.create(ManipulationLoadoutMenu::new));
+	public static final RegistryObject<MenuType<MnemonicReliquaryMenu>> mnemonic_reliquary = CONTAINERS
+			.register("mnemonic_reliquary", () -> IForgeMenuType.create(MnemonicReliquaryMenu::new));
 
 }

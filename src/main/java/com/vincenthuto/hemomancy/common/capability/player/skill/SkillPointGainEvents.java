@@ -34,10 +34,10 @@ import net.minecraftforge.network.PacketDistributor;
  *
  * <h3>Programmatic Milestones</h3>
  * Degree advancement, rite completion, manipulation use, morphling equipping,
- * Recaller crafting, and bloodline joining are awarded by calling
+ * Memory weaving, and bloodline joining are awarded by calling
  * {@link #onDegreeReached}, {@link #onRiteCompleted},
  * {@link #onManipulationUsed}, {@link #onMorphlingEquipped},
- * {@link #onRecallerCraftCompleted}, and {@link #onBloodlineJoined}
+ * {@link #onMemoryWeavingCompleted}, and {@link #onBloodlineJoined}
  * from the relevant systems.
  */
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -252,11 +252,11 @@ public class SkillPointGainEvents {
     }
 
     /**
-     * Called when a player completes a Visceral Recaller recipe.
-     * Awards the first-recaller-craft milestone.
+     * Called when a player completes a Somatic Loom recipe.
+     * Awards the first-memory-weaving milestone.
      */
-    public static void onRecallerCraftCompleted(ServerPlayer player) {
-        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_RECALLER_CRAFT)) {
+    public static void onMemoryWeavingCompleted(ServerPlayer player) {
+        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_MEMORY_WEAVING)) {
             syncSkills(player);
         }
     }

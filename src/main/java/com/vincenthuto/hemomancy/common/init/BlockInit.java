@@ -170,8 +170,8 @@ public class BlockInit {
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
             CrimsonFlameBlock::new);
 
-	public static final RegistryObject<Block> manipulation_loadout = SPECIALBLOCKS.register("manipulation_loadout",
-			ManipulationLoadoutBlock::new);
+	public static final RegistryObject<Block> mnemonic_reliquary = SPECIALBLOCKS.register("mnemonic_reliquary",
+			MnemonicReliquaryBlock::new);
 
 	// Plants
 
@@ -304,8 +304,8 @@ public class BlockInit {
 			() -> new MortalDisplayBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
-	public static final RegistryObject<Block> visceral_artificial_recaller = MODELEDBLOCKS
-			.register("visceral_artificial_recaller", () -> new VisceralRecallerBlock(BlockBehaviour.Properties.of()
+	public static final RegistryObject<Block> somatic_loom = MODELEDBLOCKS
+			.register("somatic_loom", () -> new SomaticLoomBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
 	public static final RegistryObject<Block> earthen_vein = MODELEDBLOCKS.register("earthen_vein",
 			() -> new EarthenVeinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)

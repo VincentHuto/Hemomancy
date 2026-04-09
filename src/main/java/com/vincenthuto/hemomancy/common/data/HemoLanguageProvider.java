@@ -28,7 +28,7 @@ public class HemoLanguageProvider extends LanguageProvider {
       //  HemoProgressionScreen.setupEntries();
 
 		// Jei
-		add("hemomancy.jei.recaller", "Visceral Recaller");
+		add("hemomancy.jei.memory_weaving", "Memory Weaving");
 		add("hemomancy.jei.chisel_station", "Chisel Station");
 
 		// Banner
