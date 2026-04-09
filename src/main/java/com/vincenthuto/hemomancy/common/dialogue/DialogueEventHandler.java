@@ -51,6 +51,15 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.DARK_RED),
 						false);
 			}
+			case "whisper_dismiss" -> {
+				// Player dismissed the whisper — no gameplay effect, just acknowledged
+			}
+			case "whisper_truth_acknowledged" -> {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.whisper_truth_acknowledged")
+								.withStyle(ChatFormatting.DARK_GREEN),
+						false);
+			}
 			default -> {
 				// Unknown event — log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());

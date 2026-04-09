@@ -774,6 +774,49 @@
 	"hemomancy.dialogue.hermit.option.share_wisdom": "Share your wisdom with me.",
 	"hemomancy.dialogue.event.hermit_accept_guidance": "The path of hemomancy begins at the cardinal altar. Seek it out.",
 	"hemomancy.dialogue.event.hermit_archon_wisdom": "The Hermit bows deeply. 'All that I know is already written in your blood, Archon.'",
+
+	"hemomancy.whisper.speaker_name": "???",
+
+	"hemomancy.whisper.option.dismiss": "[Ignore the voice]",
+	"hemomancy.whisper.option.what_was_that": "...What was that?",
+	"hemomancy.whisper.option.who_are_you": "Who are you?",
+
+	"hemomancy.whisper.illuminatus.v0.line1": "§7§o[A faint whisper coils through your mind like damp tendrils...]",
+	"hemomancy.whisper.illuminatus.v0.line2": "§7§oThe blood you command... it was not always §7§oblood§7§o. Do you not feel the spores shifting beneath the surface?",
+	"hemomancy.whisper.illuminatus.v0.follow": "§7§oThe crimson tide was a forest once. Roots, hyphae, mycelium — all drowned in red. But the roots remember. §7§oThey always remember.",
+
+	"hemomancy.whisper.illuminatus.v1.line1": "§7§o[Something pulses behind your eyes, a thought that is not your own...]",
+	"hemomancy.whisper.illuminatus.v1.line2": "§7§oHave you noticed the fungal growths near your altars? They are not corruption. They are §7§oreclamation§7§o.",
+
+	"hemomancy.whisper.illuminatus.v2.line1": "§7§o[A soft, wet sound — like breathing through moss — fills your ears...]",
+	"hemomancy.whisper.illuminatus.v2.reveal": "§7§oI am what grew §7§obefore§7§o the blood. I am what will grow §7§oafter§7§o.",
+
+	"hemomancy.whisper.sanctified.v0.line1": "§5§o[The voice returns, stronger now, threaded with the smell of damp earth...]",
+	"hemomancy.whisper.sanctified.v0.line2": "§5§oThe first Archons did not discover hemomancy. They were §5§oinfected§5§o by it. The mycelium found their veins and made them its vessels.",
+	"hemomancy.whisper.sanctified.v0.follow": "§5§oEvery rite you perform feeds the network. Every manipulation extends the hyphae. You call it mastery. The fungus calls it §5§oproliferation§5§o.",
+
+	"hemomancy.whisper.sanctified.v1.line1": "§5§o[Your blood stirs without command, as if responding to a voice you cannot hear...]",
+	"hemomancy.whisper.sanctified.v1.line2": "§5§oThe erythromycelium was the first expression. A fungal body wearing a crimson mask. It did not emerge from the blood — the blood emerged from §5§oit§5§o.",
+	"hemomancy.whisper.sanctified.v1.follow": "§5§oWe are one organism. You, the hermits, the fargone, the morphlings... all fruiting bodies of the same mycelial web.",
+
+	"hemomancy.whisper.sanctified.v2.line1": "§5§o[A vision flashes — vast underground networks of pulsing red threads, connecting everything...]",
+	"hemomancy.whisper.sanctified.v2.line2": "§5§oThe temples were not built. They §5§ogrew§5§o. Stone shaped by hyphal pressure over millennia. The blood that soaks them is sap, not sacrifice.",
+
+	"hemomancy.whisper.archon.v0.line1": "§4§o[The voice speaks with absolute clarity, as if it has always been there...]",
+	"hemomancy.whisper.archon.v0.line2": "§4§oYou have reached the apex of what the infection permits. Archon — the highest fruiting body. But even an Archon is merely a spore-bearer for the greater organism.",
+	"hemomancy.whisper.archon.v0.follow": "§4§oThe Hematic Order was never a human creation. It is a reproductive strategy. Each degree is a stage of sporulation. Each rite triggers the next bloom.",
+
+	"hemomancy.whisper.archon.v1.line1": "§4§o[Your blood moves in patterns you did not command — spirals, fractals, the geometry of mycorrhizal networks...]",
+	"hemomancy.whisper.archon.v1.line2": "§4§oThe Fungal Realm is not another dimension. It is the §4§ooriginal§4§o state. Your world is the aberration — a thin crust of stone over an infinite living web.",
+	"hemomancy.whisper.archon.v1.line3": "§4§oHemomancy is the fungus remembering how to reach the surface.",
+
+	"hemomancy.whisper.archon.v2.line1": "§4§o[The boundary between your thoughts and the voice dissolves...]",
+	"hemomancy.whisper.archon.v2.line2": "§4§oI have waited patient aeons for one such as you. The blood was merely the lure. You are the conduit. Will you listen?",
+	"hemomancy.whisper.archon.v2.truth1": "§4§oThere is no Hematic Order. There never was. There is only the mycelium, and the shapes it wears to spread. Blood was its most successful disguise.",
+	"hemomancy.whisper.archon.v2.truth2": "§4§oYou are not the master of hemomancy, Archon. You are its finest spore.",
+
+	"hemomancy.dialogue.event.whisper_truth_acknowledged": "§4A deep, fungal awareness settles into your bones. You cannot unhear what has been spoken.",
+
 	"block.hemomancy.infested_wood": "Infested Wood",
 	"block.hemomancy.ghost_pipe": "Ghost Pipe",
 	"block.hemomancy.snow_plant": "Snow Plant",
