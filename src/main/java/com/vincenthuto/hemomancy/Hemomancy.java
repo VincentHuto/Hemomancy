@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.common.util.EngramTextureCache;
 import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
@@ -234,7 +233,6 @@ public class Hemomancy {
         HemoEntityPredicates.init();
         SkillPointInit.init();
         ManipulationTreeInit.init();
-        PolypRecipes.initRecipes();
         PacketHandler.registerChannels();
 
     }

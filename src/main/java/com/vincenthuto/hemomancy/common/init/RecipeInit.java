@@ -7,11 +7,13 @@ import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
+import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.JuiceinatorSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.RecallerRecipeSerializer;
 
@@ -47,6 +49,9 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeType<CardinalRiteRecipe>> cardinal_rite_recipe_type = RECIPE_TYPES
 			.register("cardinal_rite_recipe", () -> RecipeType.simple(Hemomancy.rloc("cardinal_rite_recipe")));
 
+	public static final RegistryObject<RecipeType<IncubatorRecipe>> incubator_recipe_type = RECIPE_TYPES
+			.register("incubator", () -> RecipeType.simple(Hemomancy.rloc("incubator")));
+
 	// Serialize
 	public static final RegistryObject<RecipeSerializer<?>> juiceinator_serializer = SERIALIZERS.register("juiceinator",
 			JuiceinatorSerializer::new);
@@ -71,5 +76,8 @@ public class RecipeInit {
 
 	public static final RegistryObject<RecipeSerializer<?>> cardinal_rite_recipe_serializer = SERIALIZERS
 			.register("cardinal_rite_recipe", CardinalRiteRecipeSerializer::new);
+
+	public static final RegistryObject<RecipeSerializer<?>> incubator_serializer = SERIALIZERS
+			.register("incubator", IncubatorRecipeSerializer::new);
 
 }

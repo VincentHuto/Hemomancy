@@ -8,10 +8,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
 import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
-import com.vincenthuto.hemomancy.common.recipe.RecipePolyp;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -36,8 +35,8 @@ public class JEIPlugin implements IModPlugin {
 			.create(Hemomancy.MOD_ID, "blood_structure", BloodStructureRecipe.class);
 	public static final RecipeType<ChiselRecipe> chisel_station_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
 			"chisel_station", ChiselRecipe.class);
-	public static final RecipeType<RecipePolyp> incubator_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
-			"morphling_incubator", RecipePolyp.class);
+	public static final RecipeType<IncubatorRecipe> incubator_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
+			"morphling_incubator", IncubatorRecipe.class);
 
 	@Nonnull
 	@Override
@@ -71,7 +70,7 @@ public class JEIPlugin implements IModPlugin {
 		registry.addRecipes(recaller_recipe_type, RecallerRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(chisel_station_recipe_type, ChiselRecipe.getAllRecipes(world));
-		registry.addRecipes(incubator_recipe_type, PolypRecipes.POLYPRECIPES);
+		registry.addRecipes(incubator_recipe_type, IncubatorRecipe.getAllRecipes(world));
 
 	}
 

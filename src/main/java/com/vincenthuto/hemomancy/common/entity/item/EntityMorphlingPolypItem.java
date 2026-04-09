@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
-import com.vincenthuto.hemomancy.common.recipe.RecipePolyp;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
@@ -63,12 +63,20 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 		List<Item> itemList = new ArrayList<>();
 		List<ItemEntity> itemEntList = new ArrayList<>();
 
+		// Skip recipe lookup on client or if no recipe manager available
+		if (level().isClientSide || level().getRecipeManager() == null) {
+			super.tick();
+			return;
+		}
+
+		List<IncubatorRecipe> recipes = level().getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get());
+
 		// Machina Spark
 		for (int i = 0; i < entList.size(); i++) {
 			if (entList.get(i) instanceof ItemEntity) {
 				ItemEntity itemEnt = (ItemEntity) entList.get(i);
-				for (RecipePolyp rec : PolypRecipes.POLYPRECIPES) {
-					if (rec.getIngr().contains(itemEnt.getItem().getItem())) {
+				for (IncubatorRecipe rec : recipes) {
+					if (rec.isValidCatalyst(itemEnt.getItem())) {
 						if (!itemList.contains(itemEnt.getItem().getItem())) {
 							itemList.add(itemEnt.getItem().getItem());
 						}
@@ -76,13 +84,13 @@ public class EntityMorphlingPolypItem extends ItemEntity {
 							itemEntList.add(itemEnt);
 						}
 
-						if (itemList.containsAll(rec.getIngr())) {
+						if (rec.matchesCatalysts(itemList)) {
 							if (!level().isClientSide) {
 								for (ItemEntity it : itemEntList) {
 									it.getItem().shrink(1);
 								}
 								level().addFreshEntity(new ItemEntity(level(), this.getX(), this.getY(), this.getZ(),
-										new ItemStack(rec.getOutput())));
+										rec.getResultItemStack().copy()));
 								this.getItem().shrink(1);
 							} else {
 								level().addParticle(ParticleTypes.POOF, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D,

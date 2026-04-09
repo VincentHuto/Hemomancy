@@ -1,12 +1,10 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
-import com.vincenthuto.hemomancy.common.recipe.RecipePolyp;
+import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -22,7 +20,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -31,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
  * cardinal pattern around it, and the morphling output.
  * Fully programmatic rendering (no texture atlas required).
  */
-public class IncubatorRecipeCategory implements IRecipeCategory<RecipePolyp> {
+public class IncubatorRecipeCategory implements IRecipeCategory<IncubatorRecipe> {
 
 	// Layout constants
 	private static final int BG_W = 170;
@@ -79,7 +76,7 @@ public class IncubatorRecipeCategory implements IRecipeCategory<RecipePolyp> {
 	// ── Drawing ──────────────────────────────────────────────────────
 
 	@Override
-	public void draw(RecipePolyp recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
+	public void draw(IncubatorRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx,
 			double mouseX, double mouseY) {
 
 		float time = System.nanoTime() / 1_000_000_000f;
@@ -111,7 +108,7 @@ public class IncubatorRecipeCategory implements IRecipeCategory<RecipePolyp> {
 		drawSlot(gfx, CENTER_X, CENTER_Y);
 
 		// Catalyst slots (only draw slots that are used by this recipe + up to 4)
-		int catalystCount = recipe.getIngr().size();
+		int catalystCount = recipe.getCatalysts().size();
 		for (int i = 0; i < 4; i++) {
 			int sx = CENTER_X + CATALYST_OFFSETS[i][0];
 			int sy = CENTER_Y + CATALYST_OFFSETS[i][1];
@@ -237,7 +234,7 @@ public class IncubatorRecipeCategory implements IRecipeCategory<RecipePolyp> {
 	}
 
 	@Override
-	public RecipeType<RecipePolyp> getRecipeType() {
+	public RecipeType<IncubatorRecipe> getRecipeType() {
 		return JEIPlugin.incubator_recipe_type;
 	}
 
@@ -248,22 +245,22 @@ public class IncubatorRecipeCategory implements IRecipeCategory<RecipePolyp> {
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, RecipePolyp recipe, IFocusGroup focuses) {
+	public void setRecipe(IRecipeLayoutBuilder builder, IncubatorRecipe recipe, IFocusGroup focuses) {
 		// Center input — morphling polyp (always required)
 		builder.addSlot(RecipeIngredientRole.INPUT, CENTER_X, CENTER_Y)
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ItemInit.morphling_polyp.get()));
 
 		// Catalyst inputs — positioned around the center
-		List<Item> catalysts = recipe.getIngr();
+		var catalysts = recipe.getCatalysts();
 		for (int i = 0; i < catalysts.size() && i < 4; i++) {
 			int sx = CENTER_X + CATALYST_OFFSETS[i][0];
 			int sy = CENTER_Y + CATALYST_OFFSETS[i][1];
 			builder.addSlot(RecipeIngredientRole.INPUT, sx, sy)
-					.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(catalysts.get(i)));
+					.addIngredients(catalysts.get(i));
 		}
 
 		// Output slot
 		builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X, OUTPUT_Y)
-				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(recipe.getOutput()));
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItemStack().copy());
 	}
 }

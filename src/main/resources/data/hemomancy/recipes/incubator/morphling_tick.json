@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "minecraft:fermented_spider_eye" },
+    { "item": "minecraft:poisonous_potato" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "item": "hemomancy:morphling_tick"
+  }
+}

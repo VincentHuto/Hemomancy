@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.item.EnzymeItem;
 import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
@@ -17,8 +18,7 @@ import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
-import com.vincenthuto.hemomancy.common.recipe.PolypRecipes;
-import com.vincenthuto.hemomancy.common.recipe.RecipePolyp;
+import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 
 import net.minecraft.core.BlockPos;
@@ -195,7 +195,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	// ---- Polyp crafting ----
 
 	private boolean tryStartPolypCraft() {
-		RecipePolyp recipe = findMatchingRecipe();
+		IncubatorRecipe recipe = findMatchingRecipe();
 		if (recipe != null && inventory.get(SLOT_OUTPUT).isEmpty()) {
 			craftingProgress = CRAFT_TIME;
 			craftingTotalTime = CRAFT_TIME;
@@ -206,7 +206,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	@Nullable
-	public RecipePolyp findMatchingRecipe() {
+	public IncubatorRecipe findMatchingRecipe() {
 		ItemStack center = inventory.get(SLOT_CENTER);
 		if (center.isEmpty() || center.getItem() != ItemInit.morphling_polyp.get()) {
 			return null;
@@ -215,8 +215,9 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		if (catalysts.isEmpty()) {
 			return null;
 		}
-		for (RecipePolyp recipe : PolypRecipes.POLYPRECIPES) {
-			if (catalysts.size() == recipe.getIngr().size() && catalysts.containsAll(recipe.getIngr())) {
+		if (level == null) return null;
+		for (IncubatorRecipe recipe : level.getRecipeManager().getAllRecipesFor(RecipeInit.incubator_recipe_type.get())) {
+			if (recipe.matchesCatalysts(catalysts)) {
 				return recipe;
 			}
 		}
@@ -274,7 +275,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	}
 
 	private void finishPolypCraft() {
-		RecipePolyp recipe = findMatchingRecipe();
+		IncubatorRecipe recipe = findMatchingRecipe();
 		if (recipe == null) {
 			return;
 		}
@@ -288,7 +289,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		}
 
 		// Place result in output
-		inventory.set(SLOT_OUTPUT, new ItemStack(recipe.getOutput()));
+		inventory.set(SLOT_OUTPUT, recipe.getResultItemStack().copy());
 	}
 
 	private void finishEnzymeFeed() {

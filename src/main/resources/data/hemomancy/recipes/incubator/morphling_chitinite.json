@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "minecraft:spider_eye" },
+    { "item": "hemomancy:chitinous_husk" },
+    { "item": "minecraft:rotten_flesh" }
+  ],
+  "result": {
+    "item": "hemomancy:morphling_chitinite"
+  }
+}
