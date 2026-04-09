@@ -1073,7 +1073,7 @@ public class UnstainedProgressScreen extends Screen {
 				tip.add(Component.literal(""));
 				tip.add(Component.literal("Scales with Purity (purity \u00F7 100).")
 						.withStyle(s -> s.withColor(0x607090).withItalic(true)));
-				tip.add(Component.literal(String.format("Current: %.0f%%", silverWardEnabled ? silverWardStrength * 100 : 0))
+				tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
 						.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
 				tip.add(Component.literal(""));
 				String state = silverWardEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
@@ -1092,7 +1092,7 @@ public class UnstainedProgressScreen extends Screen {
 			tip.add(Component.literal(""));
 			tip.add(Component.literal("Scales with Clarity (clarity \u00F7 100).")
 					.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-			tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAuraEnabled ? verdigrisAura * 100 : 0))
+			tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
 					.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
 			tip.add(Component.literal(""));
 			String state = verdigrisAuraEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
