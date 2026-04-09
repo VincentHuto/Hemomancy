@@ -134,26 +134,28 @@ public class BloodCraftingKeyPressPacket {
 										if (rayTrace.getType() == HitResult.Type.BLOCK) {
 											BlockHitResult blockResult = (BlockHitResult) rayTrace;
 											BlockPos hitPos = blockResult.getBlockPos();
-											BlockPattern.BlockPatternMatch patternHelper = targetPattern
-													.getPattern().getBlockPattern().find(sLevel, hitPos);
+											BlockPattern blockPat = targetPattern.getPattern().getBlockPattern();
+											int maxDim = Math.max(Math.max(blockPat.getWidth(), blockPat.getHeight()), blockPat.getDepth());
+											BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
+											BlockPattern.BlockPatternMatch patternHelper = blockPat.find(sLevel, searchStart);
 											if (patternHelper != null) {
 												// ── Compute structure bounding box ──
-												int patW = targetPattern.getPattern().getBlockPattern().getWidth();
-												int patH = targetPattern.getPattern().getBlockPattern().getHeight();
-												int patD = targetPattern.getPattern().getBlockPattern().getDepth();
+												int patW = blockPat.getWidth();
+												int patH = blockPat.getHeight();
+												int patD = blockPat.getDepth();
 												int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
 												int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 												int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
 												for (int i = 0; i < patW; ++i) {
 													for (int j = 0; j < patH; ++j) {
 														for (int k = 0; k < patD; ++k) {
-															BlockPos bp = patternHelper.getBlock(i, j, k).getPos();
-															if (bp.getX() < minX) minX = bp.getX();
-															if (bp.getX() > maxX) maxX = bp.getX();
-															if (bp.getY() < minY) minY = bp.getY();
-															if (bp.getY() > maxY) maxY = bp.getY();
-															if (bp.getZ() < minZ) minZ = bp.getZ();
-															if (bp.getZ() > maxZ) maxZ = bp.getZ();
+															BlockPos matchPos = patternHelper.getBlock(i, j, k).getPos();
+															if (matchPos.getX() < minX) minX = matchPos.getX();
+															if (matchPos.getX() > maxX) maxX = matchPos.getX();
+															if (matchPos.getY() < minY) minY = matchPos.getY();
+															if (matchPos.getY() > maxY) maxY = matchPos.getY();
+															if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
+															if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
 														}
 													}
 												}
@@ -279,7 +281,10 @@ public class BloodCraftingKeyPressPacket {
 		BlockPos hitPos = blockResult.getBlockPos();
 
 		for (CardinalRiteRecipe recipe : CardinalRiteRecipe.getAllRecipes(player.level())) {
-			BlockPattern.BlockPatternMatch match = recipe.getPattern().getBlockPattern().find(sLevel, hitPos);
+			BlockPattern bp = recipe.getPattern().getBlockPattern();
+			int maxDim = Math.max(Math.max(bp.getWidth(), bp.getHeight()), bp.getDepth());
+			BlockPos searchStart = hitPos.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
+			BlockPattern.BlockPatternMatch match = bp.find(sLevel, searchStart);
 			if (match != null) {
 				// ── Tier degree check ──
 				int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);

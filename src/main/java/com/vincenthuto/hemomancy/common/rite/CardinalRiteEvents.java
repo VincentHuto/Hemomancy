@@ -253,16 +253,80 @@ public class CardinalRiteEvents {
 	}
 
 	/**
+	 * Searches for a block pattern match near a center position.
+	 * <p>
+	 * Vanilla {@link BlockPattern#find} only scans from {@code pos} to
+	 * {@code pos + (maxDim - 1)} in the <b>positive</b> direction. When
+	 * the stored center is in the middle of the structure, the pattern
+	 * origin can lie in the negative direction and be missed entirely.
+	 * <p>
+	 * This helper offsets the search start back by {@code (maxDim - 1)}
+	 * so that the full structure volume is within the scan range.
+	 */
+	private static BlockPattern.BlockPatternMatch findPatternNearCenter(
+			BlockPattern blockPattern, ServerLevel sLevel, BlockPos center) {
+		int maxDim = Math.max(Math.max(
+				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
+		BlockPos searchStart = center.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
+		return blockPattern.find(sLevel, searchStart);
+	}
+
+	/**
 	 * Re-validates that the multiblock structure for a cardinal rite is still intact.
 	 * Returns true if the pattern still matches at the rite's center position.
 	 */
 	private static boolean verifyRiteStructure(ServerLevel sLevel, ActiveCardinalRite rite) {
 		CardinalRiteRecipe recipe = CardinalRiteRecipe.getRiteByLocation(sLevel, rite.getRecipeId());
-		if (recipe == null) return false;
+		if (recipe == null) {
+			Hemomancy.LOGGER.warn("Rite verification failed: recipe {} not found", rite.getRecipeId());
+			return false;
+		}
 
 		BlockPos center = rite.getCenterPos();
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-		BlockPattern.BlockPatternMatch match = blockPattern.find(sLevel, center);
+		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
+		if (match == null) {
+			Hemomancy.LOGGER.warn("Rite verification failed for {} at center {}. Dumping expected vs actual:",
+					rite.getRecipeId(), center);
+			var blockPairs = recipe.getPattern().getBlockPosBlockList();
+			int width = blockPattern.getWidth();
+			int height = blockPattern.getHeight();
+			int depth = blockPattern.getDepth();
+			Hemomancy.LOGGER.warn("  Pattern size: {}w x {}h x {}d, blockPairs: {}",
+					width, height, depth, blockPairs.size());
+
+			// Compute the origin of the structure relative to the stored center.
+			// getBlockPosBlockList uses (charIndex, invertedRow, aisleIndex) as (X,Y,Z).
+			// The center was derived from pattern index (width/2, height/2, depth/2).
+			int halfW = width / 2;
+			int halfH = height / 2;
+			int halfD = depth / 2;
+
+			int mismatches = 0;
+			for (var pair : blockPairs) {
+				Block expected = pair.getBlock();
+				if (expected == null) expected = Blocks.AIR;
+				BlockPos relPos = pair.getPos();
+				BlockPos worldPos = center.offset(
+						relPos.getX() - halfW,
+						relPos.getY() - halfH,
+						relPos.getZ() - halfD
+				);
+				Block actualBlock = sLevel.getBlockState(worldPos).getBlock();
+				boolean mismatch = actualBlock != expected;
+				if (mismatch) mismatches++;
+				// Always log mismatches; only log OK lines for non-air to reduce spam
+				if (mismatch || expected != Blocks.AIR) {
+					Hemomancy.LOGGER.warn("  {} Expected [{}] at rel {} -> world {} | Found [{}]{}",
+							mismatch ? "XX" : "OK",
+							expected,
+							relPos, worldPos,
+							actualBlock,
+							mismatch ? " << MISMATCH" : "");
+				}
+			}
+			Hemomancy.LOGGER.warn("  Total mismatches: {} / {} positions", mismatches, blockPairs.size());
+		}
 		return match != null;
 	}
 
@@ -332,7 +396,7 @@ public class CardinalRiteEvents {
 		// Destroy the multiblock pattern
 		BlockPos center = rite.getCenterPos();
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
-		BlockPattern.BlockPatternMatch match = blockPattern.find(sLevel, center);
+		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
 		if (match != null) {
 			for (int i = 0; i < blockPattern.getWidth(); i++) {
 				for (int j = 0; j < blockPattern.getHeight(); j++) {

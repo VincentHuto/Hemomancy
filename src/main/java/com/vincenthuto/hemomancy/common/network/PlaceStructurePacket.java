@@ -99,9 +99,34 @@ public class PlaceStructurePacket {
 			BlockPos playerPos = player.blockPosition();
 			int placed = 0;
 
+			// Sort by Y ascending so support blocks are placed before blocks that
+			// depend on them (e.g. befouling ash trails need a solid block below).
+			blockPairs.sort(java.util.Comparator.comparingInt(p -> p.getPos().getY()));
+
+			// Pre-pass: clear the entire structure volume to air so that positions
+			// marked as spaces in the pattern are guaranteed to be air (required
+			// by the block pattern matcher).
+			for (BlockPosBlockPair pair : blockPairs) {
+				BlockPos relativePos = pair.getPos();
+				BlockPos worldPos = playerPos.offset(
+						relativePos.getX() - centerX,
+						relativePos.getY(),
+						relativePos.getZ() - centerZ
+				);
+				if (pair.getBlock() == null || pair.getBlock() == net.minecraft.world.level.block.Blocks.AIR) {
+					level.setBlock(worldPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),
+							Block.UPDATE_CLIENTS);
+				}
+			}
+
+			// Main pass: place all non-air blocks with UPDATE_CLIENTS only
+			// (flag 2) to avoid neighbor-update cascades that can break
+			// canSurvive-dependent blocks like befouling ash trails.
+			List<BlockPos> placedPositions = new java.util.ArrayList<>();
+
 			for (BlockPosBlockPair pair : blockPairs) {
 				Block block = pair.getBlock();
-				if (block == null) continue; // Skip air symbols
+				if (block == null || block == net.minecraft.world.level.block.Blocks.AIR) continue;
 
 				BlockPos relativePos = pair.getPos();
 				BlockPos worldPos = playerPos.offset(
@@ -110,8 +135,16 @@ public class PlaceStructurePacket {
 						relativePos.getZ() - centerZ
 				);
 
-				level.setBlockAndUpdate(worldPos, block.defaultBlockState());
+				level.setBlock(worldPos, block.defaultBlockState(), Block.UPDATE_CLIENTS);
+				placedPositions.add(worldPos);
 				placed++;
+			}
+
+			// Post-pass: notify neighbors so blocks update their shapes
+			// (e.g. ash trail connections) now that all blocks are present.
+			for (BlockPos pos : placedPositions) {
+				level.blockUpdated(pos, level.getBlockState(pos).getBlock());
+				level.updateNeighborsAt(pos, level.getBlockState(pos).getBlock());
 			}
 
 			player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));

@@ -83,17 +83,12 @@ public class CardinalRiteBoundaryRenderer {
 		double cy = center.getY() + 0.065;
 		double cz = center.getZ() + 0.5;
 
+		// Derive the rite tier from the size: MINOR=3→1, LESSER=5→2, GREATER=7→3, GRAND=9→4
+		int riteTier = (rite.getRiteSize() - 1) / 2;
+		int ringCount = Math.max(1, riteTier);
+
 		// Global breathing pulse (0..1)
 		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
-		float coreAlpha = (float) (0.65 + 0.35 * pulse);
-		float glowAlpha = (float) (0.15 + 0.15 * pulse);
-
-		float coreR = (float) (0.85 + 0.15 * pulse);
-		float coreG = 0.05f;
-		float coreB = 0.04f;
-		float glowR = (float) (0.55 + 0.2 * pulse);
-		float glowG = 0.02f;
-		float glowB = 0.02f;
 
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
@@ -102,58 +97,79 @@ public class CardinalRiteBoundaryRenderer {
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
-		// ── Draw the undulating ring ──
-		for (int i = 0; i < SEGMENTS; i++) {
-			double a1 = Math.toRadians((360.0 / SEGMENTS) * i);
-			double a2 = Math.toRadians((360.0 / SEGMENTS) * (i + 1));
+		for (int ring = 0; ring < ringCount; ring++) {
+			float ringRadius = baseRadius + ring * 2.0f;
+			// Alternate rotation direction: even rings go forward, odd rings reverse
+			float directionSign = (ring % 2 == 0) ? 1.0f : -1.0f;
+			// Outer rings become progressively more transparent
+			float ringFade = 1.0f - ring * 0.15f;
+			// Outer rings shift from dark blood-red toward a lighter, brighter red
+			// lighten goes 0.0 (innermost, darkest) → ~0.6 (outermost, lightest)
+			float lighten = (ringCount > 1) ? (float) ring / (ringCount - 1) * 0.6f : 0f;
 
-			float r1 = baseRadius + undulation(a1, currentTime);
-			float r2 = baseRadius + undulation(a2, currentTime);
+			float coreAlpha = (float) (0.65 + 0.35 * pulse) * ringFade;
+			float glowAlpha = (float) (0.15 + 0.15 * pulse) * ringFade;
 
-			// Subtle Y wave so it's not perfectly flat
-			float y1 = (float) (Math.sin(a1 * 5.0 + currentTime * 0.06) * 0.012);
-			float y2 = (float) (Math.sin(a2 * 5.0 + currentTime * 0.06) * 0.012);
+			float coreR = Math.min(1.0f, (float) (0.85 + 0.15 * pulse) + lighten * 0.15f);
+			float coreG = 0.05f + lighten * 0.20f;
+			float coreB = 0.04f + lighten * 0.15f;
+			float glowR = Math.min(1.0f, (float) (0.55 + 0.2 * pulse) + lighten * 0.25f);
+			float glowG = 0.02f + lighten * 0.12f;
+			float glowB = 0.02f + lighten * 0.10f;
 
-			float cos1 = (float) Math.cos(a1);
-			float sin1 = (float) Math.sin(a1);
-			float cos2 = (float) Math.cos(a2);
-			float sin2 = (float) Math.sin(a2);
+			// ── Draw the undulating ring ──
+			for (int i = 0; i < SEGMENTS; i++) {
+				double a1 = Math.toRadians((360.0 / SEGMENTS) * i);
+				double a2 = Math.toRadians((360.0 / SEGMENTS) * (i + 1));
 
-			float iGlow1 = r1 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
-			float iCore1 = r1 - CORE_WIDTH * 0.5f;
-			float oCore1 = r1 + CORE_WIDTH * 0.5f;
-			float oGlow1 = r1 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
+				float r1 = ringRadius + undulation(a1, currentTime, directionSign);
+				float r2 = ringRadius + undulation(a2, currentTime, directionSign);
 
-			float iGlow2 = r2 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
-			float iCore2 = r2 - CORE_WIDTH * 0.5f;
-			float oCore2 = r2 + CORE_WIDTH * 0.5f;
-			float oGlow2 = r2 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
+				// Subtle Y wave so it's not perfectly flat
+				float y1 = (float) (Math.sin(a1 * 5.0 + currentTime * 0.06 * directionSign) * 0.012);
+				float y2 = (float) (Math.sin(a2 * 5.0 + currentTime * 0.06 * directionSign) * 0.012);
 
-			// Inner glow
-			emitQuad(glowVC, mat,
-					cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
-					cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
-					cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
-					cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
+				float cos1 = (float) Math.cos(a1);
+				float sin1 = (float) Math.sin(a1);
+				float cos2 = (float) Math.cos(a2);
+				float sin2 = (float) Math.sin(a2);
 
-			// Core
-			emitQuad(coreVC, mat,
-					cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
-					cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
-					cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
-					cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
+				float iGlow1 = r1 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
+				float iCore1 = r1 - CORE_WIDTH * 0.5f;
+				float oCore1 = r1 + CORE_WIDTH * 0.5f;
+				float oGlow1 = r1 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
 
-			// Outer glow
-			emitQuad(glowVC, mat,
-					cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
-					cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
-					cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
-					cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
+				float iGlow2 = r2 - GLOW_WIDTH - CORE_WIDTH * 0.5f;
+				float iCore2 = r2 - CORE_WIDTH * 0.5f;
+				float oCore2 = r2 + CORE_WIDTH * 0.5f;
+				float oGlow2 = r2 + GLOW_WIDTH + CORE_WIDTH * 0.5f;
+
+				// Inner glow
+				emitQuad(glowVC, mat,
+						cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
+						cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
+						cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
+						cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
+
+				// Core
+				emitQuad(coreVC, mat,
+						cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
+						cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
+						cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
+						cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
+
+				// Outer glow
+				emitQuad(glowVC, mat,
+						cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
+						cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
+						cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
+						cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
+			}
+
+			// ── Draw vein branches sprouting inward from each ring ──
+			drawVeins(glowVC, coreVC, mat, ringRadius, currentTime, directionSign,
+					coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB);
 		}
-
-		// ── Draw vein branches sprouting inward ──
-		drawVeins(glowVC, coreVC, mat, baseRadius, currentTime,
-				coreR, coreG, coreB, coreAlpha, glowR, glowG, glowB);
 
 		stack.popPose();
 	}
@@ -162,12 +178,13 @@ public class CardinalRiteBoundaryRenderer {
 	//  Undulation — layered sine waves that make the ring breathe
 	// ════════════════════════════════════════════════════════════════════════
 
-	/** Returns radial offset for a given angle at the current time. */
-	private static float undulation(double angleRad, float time) {
+	/** Returns radial offset for a given angle at the current time.
+	 *  @param directionSign +1 for forward crawl, -1 for reverse crawl */
+	private static float undulation(double angleRad, float time, float directionSign) {
 		// Primary slow, large wave
-		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED) * UNDULATE_AMP;
+		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED * directionSign) * UNDULATE_AMP;
 		// Secondary faster, smaller wave for complexity
-		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2) * UNDULATE_AMP2;
+		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2 * directionSign) * UNDULATE_AMP2;
 		// Tertiary ultra-slow global throb (all segments expand/contract together)
 		double throb = Math.sin(time * 0.04) * 0.035;
 		return (float) (w1 + w2 + throb);
@@ -178,12 +195,12 @@ public class CardinalRiteBoundaryRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static void drawVeins(VertexConsumer glowVC, VertexConsumer coreVC, Matrix4f mat,
-			float baseRadius, float time,
+			float baseRadius, float time, float directionSign,
 			float cR, float cG, float cB, float cA,
 			float gR, float gG, float gB) {
 
 		// Veins are evenly spaced but their angular position crawls slowly over time
-		double crawlOffset = time * VEIN_CRAWL_SPEED;
+		double crawlOffset = time * VEIN_CRAWL_SPEED * directionSign;
 
 		for (int v = 0; v < VEIN_COUNT; v++) {
 			double baseAngle = crawlOffset + (Math.PI * 2.0 / VEIN_COUNT) * v;
@@ -205,8 +222,8 @@ public class CardinalRiteBoundaryRenderer {
 				float t1 = (float) (s + 1) / VEIN_SEGS;
 
 				// Radius decreases inward from the ring
-				float rad0 = baseRadius - t0 * length + undulation(baseAngle, time);
-				float rad1 = baseRadius - t1 * length + undulation(baseAngle, time);
+				float rad0 = baseRadius - t0 * length + undulation(baseAngle, time, directionSign);
+				float rad1 = baseRadius - t1 * length + undulation(baseAngle, time, directionSign);
 
 				// Angular position curves slightly
 				double ang0 = baseAngle + curvature * t0 * t0;
