@@ -34,6 +34,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.LumpOfThoughtRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.MorphlingPolypRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.UnstainedZealotRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.HarbingerHermitRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
@@ -360,6 +361,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.flying_charm.get(), ThrownItemRenderer::new);
 			event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
 			event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
+			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 
 		}
 

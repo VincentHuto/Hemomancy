@@ -1,11 +1,10 @@
 package com.vincenthuto.hemomancy.common.entity.mob;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.dialogue.ZealotDialogueTrees;
+import com.vincenthuto.hemomancy.common.dialogue.HarbingerHermitDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -22,16 +21,23 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 
-public class UnstainedZealotEntity extends PathfinderMob {
+/**
+ * A reclusive hermit of the Harbinger order, found dwelling within blood temple
+ * structures throughout the world. Provides lore, guidance, and hints about
+ * hemomancy progression based on the player's current Initiation Tier.
+ * <p>
+ * Unlike the Unstained Zealot who guides players away from blood magic,
+ * the Harbinger Hermit encourages deeper exploration of hemomancy.
+ */
+public class HarbingerHermitEntity extends PathfinderMob {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
-    public UnstainedZealotEntity(EntityType<? extends UnstainedZealotEntity> type, Level worldIn) {
+    public HarbingerHermitEntity(EntityType<? extends HarbingerHermitEntity> type, Level worldIn) {
         super(type, worldIn);
         this.setInvulnerable(true);
     }
@@ -39,15 +45,15 @@ public class UnstainedZealotEntity extends PathfinderMob {
     public static AttributeSupplier.Builder setAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.2D);
+                .add(Attributes.MOVEMENT_SPEED, 0.15D);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 0.6D));
+        // No wandering — hermits stay near their temple
     }
 
     @Override
@@ -76,42 +82,9 @@ public class UnstainedZealotEntity extends PathfinderMob {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
             IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+            boolean hasActiveBlood = volume != null && volume.isActive();
 
-            // Gracefully check for the UnstainedProgress capability which may not be
-            // present if its PR has not been merged yet.
-            boolean hasBegunPurification = false;
-            try {
-                Class<?> providerClass = Class.forName(
-                        "com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider");
-                Object capa = providerClass.getField("UNSTAINED_CAPA").get(null);
-                @SuppressWarnings("unchecked")
-                net.minecraftforge.common.capabilities.Capability<Object> unstainedCapa =
-                        (net.minecraftforge.common.capabilities.Capability<Object>) capa;
-                hasBegunPurification = player.getCapability(unstainedCapa)
-                        .map(obj -> {
-                            try {
-                                return (Boolean) obj.getClass().getMethod("hasBegunPurification").invoke(obj);
-                            } catch (NoSuchMethodException | IllegalAccessException
-                                    | java.lang.reflect.InvocationTargetException ex) {
-                                return false;
-                            }
-                        }).orElse(false);
-            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                // Capability not yet registered — skip this check branch
-            }
-
-            DialogueTree tree;
-            if (hasBegunPurification) {
-                tree = ZealotDialogueTrees.alreadyOnPath(this.getId());
-            } else if (volume == null || !volume.isActive()) {
-                tree = ZealotDialogueTrees.noBlood(this.getId());
-            } else if (degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
-                tree = ZealotDialogueTrees.pleaDialogue(this.getId());
-            } else if (degree >= 1) {
-                tree = ZealotDialogueTrees.tooEarly(this.getId());
-            } else {
-                tree = ZealotDialogueTrees.uninitiated(this.getId());
-            }
+            DialogueTree tree = HarbingerHermitDialogueTrees.forDegree(degree, hasActiveBlood, this.getId());
 
             PacketHandler.CHANNELBLOODVOLUME.send(
                     PacketDistributor.PLAYER.with(() -> serverPlayer),
