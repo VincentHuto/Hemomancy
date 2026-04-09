@@ -1,8 +1,11 @@
 package com.vincenthuto.hemomancy.common.capability.player.skill;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 public class SkillPoint {
 	int id, maxLevels;
@@ -13,6 +16,7 @@ public class SkillPoint {
 	int requiredDegree;    // Minimum initiatory degree required (0 = none)
 	EnumSkillStates state;
 	SkillPoint parent;
+	@Nullable Supplier<ItemStack> iconItem;
 
 	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
 			@Nullable SkillPoint parent) {
@@ -67,6 +71,20 @@ public class SkillPoint {
 	public SkillPoint setRequiredDegree(int degree) {
 		this.requiredDegree = degree;
 		return this;
+	}
+
+	/** Builder-style setter for the icon item rendered inside this node on the skill tree. */
+	public SkillPoint setIconItem(Supplier<ItemStack> icon) {
+		this.iconItem = icon;
+		return this;
+	}
+
+	/**
+	 * Returns the icon item to render inside this skill's node, or null if none is set.
+	 */
+	@Nullable
+	public ItemStack getIconItem() {
+		return iconItem != null ? iconItem.get() : null;
 	}
 
 	/** Returns true if the player's degree is too low to interact with this skill. */

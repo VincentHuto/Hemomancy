@@ -121,6 +121,8 @@ public class SkillTreeScreen extends Screen {
 	// ── Manipulation tree data ──
 	private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
 	private final Set<String> knownManipNames = new HashSet<>();
+	/** Lookup from manipulation name → its BloodMemoryItem's ItemStack. */
+	private final Map<String, ItemStack> manipMemoryItems = new HashMap<>();
 	private int manipContentW, manipContentH;
 
 	// ── Cardinal Rites data ──
@@ -411,6 +413,23 @@ public class SkillTreeScreen extends Screen {
 					}
 				}
 			});
+		}
+		buildManipMemoryItemLookup();
+	}
+
+	/**
+	 * Builds a lookup from manipulation name → its BloodMemoryItem's ItemStack.
+	 * Scans all registered items for BloodMemoryItem instances.
+	 */
+	private void buildManipMemoryItemLookup() {
+		manipMemoryItems.clear();
+		for (Item item : net.minecraftforge.registries.ForgeRegistries.ITEMS) {
+			if (item instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem memItem) {
+				BloodManipulation manip = memItem.getManip();
+				if (manip != null && manip.getName() != null) {
+					manipMemoryItems.put(manip.getName(), new ItemStack(item));
+				}
+			}
 		}
 	}
 
@@ -993,12 +1012,17 @@ public class SkillTreeScreen extends Screen {
 				continue; // skip normal text rendering for degree-locked nodes
 			}
 
-			// ── text (only when zoomed in enough) ──
+			// ── icon item or text (only when zoomed in enough) ──
 			if (zoom >= 0.5f) {
-				String ini = getSkillInitial(sp);
-				int textCol = sp.getState() == EnumSkillStates.UNLOCKED
-						? 0xFFFFAAAA : 0xFF888888;
-				gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+				ItemStack iconStack = sp.getIconItem();
+				if (iconStack != null && !iconStack.isEmpty()) {
+					renderScaledItem(gfx, iconStack, nx, ny, hn);
+				} else {
+					String ini = getSkillInitial(sp);
+					int textCol = sp.getState() == EnumSkillStates.UNLOCKED
+							? 0xFFFFAAAA : 0xFF888888;
+					gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+				}
 
 				// Show level progress below node
 				if (sp.getMaxLevels() > 0) {
@@ -1207,19 +1231,24 @@ public class SkillTreeScreen extends Screen {
 				continue; // skip normal text rendering for rank-locked nodes
 			}
 
-			// ── Type symbol + name ──
+			// ── Memory item icon or type symbol + name ──
 			if (zoom >= 0.5f) {
-				String sym = "?";
-				if (manip != null) {
-					sym = switch (manip.getType()) {
-						case QUICK      -> "\u26A1"; // ⚡
-						case CONTINUOUS -> "\u221E"; // ∞
-						case PASSIVE    -> "\u25C6"; // ◆
-						case CHARGED    -> "\u25B2"; // ▲
-					};
+				ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
+				if (memoryStack != null && !memoryStack.isEmpty()) {
+					renderScaledItem(gfx, memoryStack, nx, ny, hn);
+				} else {
+					String sym = "?";
+					if (manip != null) {
+						sym = switch (manip.getType()) {
+							case QUICK      -> "\u26A1"; // ⚡
+							case CONTINUOUS -> "\u221E"; // ∞
+							case PASSIVE    -> "\u25C6"; // ◆
+							case CHARGED    -> "\u25B2"; // ▲
+						};
+					}
+					int textCol = known ? 0xFFFFFFFF : 0xFF555555;
+					gfx.drawCenteredString(font, sym, nx, ny - 4, textCol);
 				}
-				int textCol = known ? 0xFFFFFFFF : 0xFF555555;
-				gfx.drawCenteredString(font, sym, nx, ny - 4, textCol);
 
 				// Name below node
 				if (manip != null && zoom >= 0.7f) {
@@ -2457,6 +2486,21 @@ public class SkillTreeScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 	//  Helpers
 	// ────────────────────────────────────────────────────────────
+
+	/**
+	 * Renders an ItemStack centred inside a node, scaled to fit within the node bounds.
+	 * Items render at 16x16 by default; this scales them to fit (2*hn - 4) pixels.
+	 */
+	private void renderScaledItem(GuiGraphics gfx, ItemStack stack, int centerX, int centerY, int halfNodeSize) {
+		float nodeInner = Math.max(4, halfNodeSize * 2 - 4);
+		float itemScale = nodeInner / 16.0f;
+		PoseStack pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(centerX - nodeInner / 2.0f, centerY - nodeInner / 2.0f, 0);
+		pose.scale(itemScale, itemScale, 1);
+		gfx.renderItem(stack, 0, 0);
+		pose.popPose();
+	}
 
 	private static String getSkillInitial(SkillPoint sp) {
 		return switch (sp.getName()) {

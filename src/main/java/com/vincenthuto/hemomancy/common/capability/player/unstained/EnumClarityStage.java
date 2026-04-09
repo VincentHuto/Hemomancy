@@ -1,20 +1,30 @@
 package com.vincenthuto.hemomancy.common.capability.player.unstained;
 
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.world.item.ItemStack;
+
 public enum EnumClarityStage {
-    AWAKENED(0, "Awakened", 0f),
-    DISCERNING(1, "Discerning", 25f),
-    VIGILANT(2, "Vigilant", 50f),
-    RESOLUTE(3, "Resolute", 75f),
-    ENLIGHTENED(4, "Enlightened", 100f);
+    AWAKENED(0, "Awakened", 0f, null),
+    DISCERNING(1, "Discerning", 25f, null),
+    VIGILANT(2, "Vigilant", 50f, null),
+    RESOLUTE(3, "Resolute", 75f, null),
+    ENLIGHTENED(4, "Enlightened", 100f, null);
 
     private final int level;
     private final String title;
     private final float minClarity;
+    @Nullable
+    private Supplier<ItemStack> iconItem;
 
-    EnumClarityStage(int level, String title, float minClarity) {
+    EnumClarityStage(int level, String title, float minClarity,
+                     @Nullable Supplier<ItemStack> iconItem) {
         this.level = level;
         this.title = title;
         this.minClarity = minClarity;
+        this.iconItem = iconItem;
     }
 
     public int getLevel() {
@@ -27,6 +37,17 @@ public enum EnumClarityStage {
 
     public float getMinClarity() {
         return minClarity;
+    }
+
+    /** Sets the icon item supplier (called after item registration). */
+    public void setIconItem(Supplier<ItemStack> icon) {
+        this.iconItem = icon;
+    }
+
+    /** Returns the icon item to render inside this stage's node, or null if none. */
+    @Nullable
+    public ItemStack getIconItem() {
+        return iconItem != null ? iconItem.get() : null;
     }
 
     /** Returns the clarity stage corresponding to the given clarity value. */

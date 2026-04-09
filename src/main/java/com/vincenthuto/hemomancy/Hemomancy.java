@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy;
 
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
@@ -233,8 +235,24 @@ public class Hemomancy {
         HemoEntityPredicates.init();
         SkillPointInit.init();
         ManipulationTreeInit.init();
+        initUnstainedStageIcons();
         PacketHandler.registerChannels();
 
+    }
+
+    /** Assigns icon items to each purity and clarity stage for rendering on the progress tree. */
+    private void initUnstainedStageIcons() {
+        EnumPurityStage.CORRUPTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.blood_stained_stone.get()));
+        EnumPurityStage.TAINTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_poppy_wreath.get()));
+        EnumPurityStage.CLEANSING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_extract.get()));
+        EnumPurityStage.ABSOLVED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tears_of_lethe.get()));
+        EnumPurityStage.PURIFIED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethe_icon.get()));
+
+        EnumClarityStage.AWAKENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.cleansed_blood_crystal_shard.get()));
+        EnumClarityStage.DISCERNING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.silver_chalice.get()));
+        EnumClarityStage.VIGILANT.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pale_silver_ingot.get()));
+        EnumClarityStage.RESOLUTE.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tome_of_the_unstained.get()));
+        EnumClarityStage.ENLIGHTENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethe_icon.get()));
     }
 
 }

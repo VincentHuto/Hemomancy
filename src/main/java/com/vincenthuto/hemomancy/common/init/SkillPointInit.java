@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
 
 public class SkillPointInit {
 
@@ -42,50 +43,65 @@ public class SkillPointInit {
 
 	public static void initBaseBranch() {
 		// SkillPoint(id, name, bloodCostPerLevel, maxLevels, state, parent)
-		base_skill = registerSkill(BASE, new SkillPoint(0, "base", 0, 1, EnumSkillStates.UNLOCKED, null));
+		base_skill = registerSkill(BASE, new SkillPoint(0, "base", 0, 1, EnumSkillStates.UNLOCKED, null)
+				.setIconItem(() -> new ItemStack(ItemInit.sanguine_formation.get())));
 
 		skill_capacity = registerSkill(BASE,
-				new SkillPoint(1, "skill_capacity", 100, 5, EnumSkillStates.LOCKED, base_skill));
+				new SkillPoint(1, "skill_capacity", 100, 5, EnumSkillStates.LOCKED, base_skill)
+						.setIconItem(() -> new ItemStack(ItemInit.vitality_chalice.get())));
 		skill_efficiency = registerSkill(BASE,
-				new SkillPoint(2, "skill_efficiency", 100, 5, EnumSkillStates.LOCKED, base_skill));
+				new SkillPoint(2, "skill_efficiency", 100, 5, EnumSkillStates.LOCKED, base_skill)
+						.setIconItem(() -> new ItemStack(ItemInit.recycled_enzyme.get())));
 		skill_last_wind = registerSkill(BASE,
 				new SkillPoint(3, "skill_last_wind", 300, 3, EnumSkillStates.LOCKED, skill_capacity)
-						.setSkillPointCost(2).setRequiredDegree(2));
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.sanguine_salve.get())));
 		skill_dynamic_use = registerSkill(BASE,
 				new SkillPoint(4, "skill_dynamic_use", 300, 3, EnumSkillStates.LOCKED, skill_efficiency)
-						.setSkillPointCost(2).setRequiredDegree(2));
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.blood_tendency_gauge.get())));
 		skill_feeding_frenzy = registerSkill(BASE,
 				new SkillPoint(5, "skill_feeding_frenzy", 500, 3, EnumSkillStates.LOCKED, skill_last_wind)
-						.setSkillPointCost(3).setRequiredDegree(3));
+						.setSkillPointCost(3).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.swollen_leech.get())));
 
 		// ── New skills ──
 		skill_hemostasis = registerSkill(BASE,
 				new SkillPoint(6, "skill_hemostasis", 200, 3, EnumSkillStates.LOCKED, skill_efficiency)
-						.setSkillPointCost(2).setRequiredDegree(2));
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.sanguine_conduit.get())));
 		skill_sanguine_surge = registerSkill(BASE,
 				new SkillPoint(7, "skill_sanguine_surge", 200, 3, EnumSkillStates.LOCKED, skill_capacity)
-						.setSkillPointCost(2).setRequiredDegree(2));
+						.setSkillPointCost(2).setRequiredDegree(2)
+						.setIconItem(() -> new ItemStack(ItemInit.blood_crystal_shard.get())));
 		skill_crimson_mastery = registerSkill(BASE,
 				new SkillPoint(8, "skill_crimson_mastery", 400, 3, EnumSkillStates.LOCKED, skill_dynamic_use)
-						.setSkillPointCost(3).setRequiredDegree(4));
+						.setSkillPointCost(3).setRequiredDegree(4)
+						.setIconItem(() -> new ItemStack(ItemInit.hematic_memory.get())));
 		skill_vital_link = registerSkill(BASE,
 				new SkillPoint(9, "skill_vital_link", 600, 3, EnumSkillStates.LOCKED, skill_feeding_frenzy)
-						.setSkillPointCost(4).setRequiredDegree(5));
+						.setSkillPointCost(4).setRequiredDegree(5)
+						.setIconItem(() -> new ItemStack(ItemInit.bleeding_bulb.get())));
 		skill_iron_will = registerSkill(BASE,
 				new SkillPoint(10, "skill_iron_will", 400, 3, EnumSkillStates.LOCKED, skill_last_wind)
-						.setSkillPointCost(3).setRequiredDegree(3));
+						.setSkillPointCost(3).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.hematic_iron_scrap.get())));
 		skill_blood_flow = registerSkill(BASE,
 				new SkillPoint(11, "skill_blood_flow", 300, 5, EnumSkillStates.LOCKED, skill_hemostasis)
-						.setSkillPointCost(2).setRequiredDegree(3));
+						.setSkillPointCost(2).setRequiredDegree(3)
+						.setIconItem(() -> new ItemStack(ItemInit.dicentra_sap.get())));
 		skill_coagulation = registerSkill(BASE,
 				new SkillPoint(12, "skill_coagulation", 500, 3, EnumSkillStates.LOCKED, skill_hemostasis)
-						.setSkillPointCost(3).setRequiredDegree(4));
+						.setSkillPointCost(3).setRequiredDegree(4)
+						.setIconItem(() -> new ItemStack(ItemInit.foul_paste.get())));
 		skill_sanguine_reach = registerSkill(BASE,
 				new SkillPoint(13, "skill_sanguine_reach", 400, 3, EnumSkillStates.LOCKED, skill_crimson_mastery)
-						.setSkillPointCost(3).setRequiredDegree(5));
+						.setSkillPointCost(3).setRequiredDegree(5)
+						.setIconItem(() -> new ItemStack(ItemInit.puppeteering_thread.get())));
 		skill_manip_slots = registerSkill(BASE,
 				new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, base_skill)
-						.setSkillPointCost(2).setRequiredDegree(1));
+						.setSkillPointCost(2).setRequiredDegree(1)
+						.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
 
 		registerSkillBranch(BASE);
 	}
