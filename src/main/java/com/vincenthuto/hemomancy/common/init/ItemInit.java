@@ -190,6 +190,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> blood_crystal_shard = BASEITEMS.register("blood_crystal_shard",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> sanguine_quintessence = BASEITEMS.register("sanguine_quintessence",
+			() -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC)));
 	public static final RegistryObject<Item> cleansed_blood_crystal_shard = BASEITEMS.register("cleansed_blood_crystal_shard",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> cleansing_hemolymph = SPECIALITEMS.register("cleansing_hemolymph",

@@ -1,0 +1,39 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 3500,
+  "riteType": "greater",
+  "riteName": "Rite of Sanguine Dominion",
+  "riteDescription": "An imperial rite that claims the surrounding land as a Blood Domain. Within its bounds, the caster's manipulations cost less blood, enemies suffer a slow bleeding curse, and blood-touched blocks are empowered.",
+  "pattern": [
+    ["HGVGVGH", "G     G", "V     V", "G  V  G", "V     V", "G     G", "HGVGVGH"],
+    ["       ", " HHHHH ", " H   H ", " H E H ", " H   H ", " HHHHH ", "       "],
+    ["       ", " H   H ", "   GCG ", "   C G ", "   GCG ", "       ", " H   H "],
+    ["       ", " H E H ", "   C G ", "   GPG ", "  GCGCG", "   GCG ", " H E H "],
+    ["       ", " H   H ", "   GCG ", "   C G ", "   GCG ", "       ", " H   H "],
+    ["       ", " HHHHH ", " H   H ", " H E H ", " H   H ", " HHHHH ", "       "],
+    ["HGVGVGH", "G     G", "V     V", "G  V  G", "V     V", "G     G", "HGVGVGH"]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "V": {
+      "block": "hemomancy:polished_venous_stone_bricks"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_hematic_iron_block"
+    },
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:stabilized_sanguine_formation"
+  }
+}
