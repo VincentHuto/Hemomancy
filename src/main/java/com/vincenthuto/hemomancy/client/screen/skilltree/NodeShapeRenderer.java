@@ -149,7 +149,9 @@ public final class NodeShapeRenderer {
 			int y = cy - hs + row;
 			float progress = (float) row / h;
 			int halfW = (int) (hs * progress);
-			if (halfW <= 0) { halfW = 1; }
+			if (halfW <= 0) {
+				halfW = 1;
+			}
 			gfx.fill(cx - halfW, y, cx + halfW, y + 1, color);
 		}
 	}
@@ -225,7 +227,9 @@ public final class NodeShapeRenderer {
 	}
 
 	/**
-	 * Flat-topped hexagon: full width at equator, linearly narrows in top/bottom third.
+	 * Flat-topped hexagon half-width at a given row offset from centre.
+	 * Full width ({@code hs}) at equator (|row| &lt;= hs/2), then linearly
+	 * tapers to approximately {@code hs/2} at the top/bottom tips.
 	 */
 	private static int hexHalfWidth(int row, int hs) {
 		int absRow = Math.abs(row);
