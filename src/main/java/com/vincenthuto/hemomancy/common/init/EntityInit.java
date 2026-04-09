@@ -57,6 +57,12 @@ public class EntityInit {
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("spectral_companion").toString()));
 
+    public static final RegistryObject<EntityType<HarbingerHermitEntity>> harbinger_hermit = ENTITY_TYPES.register(
+            "harbinger_hermit",
+            () -> EntityType.Builder.of(HarbingerHermitEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("harbinger_hermit").toString()));
+
     public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
                     .build(Hemomancy.rloc("leech").toString()));
@@ -283,6 +289,7 @@ public class EntityInit {
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
+        event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
 
     }
 

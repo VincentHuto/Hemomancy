@@ -39,6 +39,18 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.AQUA),
 						false);
 			}
+			case "hermit_accept_guidance" -> {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.hermit_accept_guidance")
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+			}
+			case "hermit_archon_wisdom" -> {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.hermit_archon_wisdom")
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+			}
 			default -> {
 				// Unknown event — log for development
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
