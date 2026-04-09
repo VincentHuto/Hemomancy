@@ -512,7 +512,7 @@
 	"skill.hemomancy.skill_blood_flow.desc": "Reduces manipulation cooldowns by 5% per level.",
 	"skill.hemomancy.skill_coagulation.desc": "+15% chance to block incoming bleed effects. Per level.",
 	"skill.hemomancy.skill_sanguine_reach.desc": "+15% range for ranged blood manipulations. Per level.",
-	"skill.hemomancy.skill_manip_slots.desc": "+1 equipped manipulation slot per level.",
+	"skill.hemomancy.skill_manip_slots.desc": "+1 equipped manipulation slot per level. (Max 9 total; excess refunded as skill points.)",
 	"item.hemomancy.sanguine_salve": "Sanguine Salve",
 	"item.hemomancy.bloodline_pool_monitor": "Bloodline Pool Monitor",
 

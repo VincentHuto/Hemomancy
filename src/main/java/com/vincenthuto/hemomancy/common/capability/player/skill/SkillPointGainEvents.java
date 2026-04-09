@@ -211,6 +211,8 @@ public class SkillPointGainEvents {
     /**
      * Called from {@code CardinalRiteEvents.completeRite} when a degree rite
      * grants a new initiatory degree. Awards the corresponding degree milestone.
+     * Also converts any excess skill_manip_slots levels into skill points
+     * when the hard cap of 9 slots is reached.
      */
     public static void onDegreeReached(ServerPlayer player, int degree) {
         boolean changed = switch (degree) {
@@ -223,6 +225,16 @@ public class SkillPointGainEvents {
             case 7 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ARCHON_ASCENSION);
             default -> false;
         };
+
+        // Convert excess skill_manip_slots levels into skill points
+        int excess = com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper
+                .getExcessSkillLevels(player);
+        if (excess > 0 && SkillPointInit.skill_manip_slots != null) {
+            int currentLevel = SkillPointInit.skill_manip_slots.getCurrentLevel();
+            SkillPointInit.skill_manip_slots.setCurrentLevel(currentLevel - excess);
+            SkillPointInit.skillPoints += excess;
+            changed = true;
+        }
 
         if (changed) {
             syncSkills(player);
