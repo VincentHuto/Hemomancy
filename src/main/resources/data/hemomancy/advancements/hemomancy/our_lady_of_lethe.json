@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:lethe_icon"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.our_lady_of_lethe.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.our_lady_of_lethe.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/lady_of_forgotten_waters",
+  "criteria": {
+    "has_icon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:lethe_icon"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_icon"
+    ]
+  ]
+}

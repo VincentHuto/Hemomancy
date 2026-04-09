@@ -86,6 +86,7 @@ public class UnstainedProgressEvents {
             newProgress.setEarnedAdvancement(oldProgress.hasEarnedAdvancement());
             newProgress.setSilverWardEnabled(oldProgress.isSilverWardEnabled());
             newProgress.setVerdigrisAuraEnabled(oldProgress.isVerdigrisAuraEnabled());
+            newProgress.setUsedAltarOfCleansing(oldProgress.hasUsedAltarOfCleansing());
             original.invalidateCaps();
         }
     }

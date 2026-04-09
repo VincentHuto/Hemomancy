@@ -25,6 +25,7 @@ public class PacketSyncUnstainedProgress {
     private final boolean sleptWithHemolysis, killedFirstHemoMob, reachedAbstinence, emptiedBlood, earnedAdvancement;
     // Bonus toggle state
     private final boolean silverWardEnabled, verdigrisAuraEnabled;
+    private final boolean usedAltarOfCleansing;
 
     public PacketSyncUnstainedProgress(IUnstainedProgress p) {
         this.begunPurification = p.hasBegunPurification();
@@ -47,6 +48,7 @@ public class PacketSyncUnstainedProgress {
         this.earnedAdvancement = p.hasEarnedAdvancement();
         this.silverWardEnabled = p.isSilverWardEnabled();
         this.verdigrisAuraEnabled = p.isVerdigrisAuraEnabled();
+        this.usedAltarOfCleansing = p.hasUsedAltarOfCleansing();
     }
 
     private PacketSyncUnstainedProgress(FriendlyByteBuf buf) {
@@ -70,6 +72,7 @@ public class PacketSyncUnstainedProgress {
         this.earnedAdvancement = buf.readBoolean();
         this.silverWardEnabled = buf.readBoolean();
         this.verdigrisAuraEnabled = buf.readBoolean();
+        this.usedAltarOfCleansing = buf.readBoolean();
     }
 
     public static void encode(PacketSyncUnstainedProgress msg, FriendlyByteBuf buf) {
@@ -93,6 +96,7 @@ public class PacketSyncUnstainedProgress {
         buf.writeBoolean(msg.earnedAdvancement);
         buf.writeBoolean(msg.silverWardEnabled);
         buf.writeBoolean(msg.verdigrisAuraEnabled);
+        buf.writeBoolean(msg.usedAltarOfCleansing);
     }
 
     public static PacketSyncUnstainedProgress decode(FriendlyByteBuf buf) {
@@ -125,6 +129,7 @@ public class PacketSyncUnstainedProgress {
                             progress.setEarnedAdvancement(msg.earnedAdvancement);
                             progress.setSilverWardEnabled(msg.silverWardEnabled);
                             progress.setVerdigrisAuraEnabled(msg.verdigrisAuraEnabled);
+                            progress.setUsedAltarOfCleansing(msg.usedAltarOfCleansing);
                         });
             }
         });

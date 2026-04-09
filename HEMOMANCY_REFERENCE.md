@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-07
+> **Last Updated:** 2026-04-08
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -79,6 +79,7 @@ All player-attached Forge capabilities, registered in `CapabilityInit`:
 | Initiatory Degree | `IInitiatoryDegree` | Harbinger rank (0–7) |
 | Unstained Progress | `IUnstainedProgress` | Purification path state (purity, clarity, flags) |
 | Earthen Vein Location | `IEarthenVeinLoc` | Block capability for earthen vein blocks |
+| Visceral Organs | `IVisceralOrgans` | Tracks extracted/modified organs (Spleen, Liver, Lungs, Kidneys, Heart) for the Visceral Mirror ritual system |
 
 ---
 
@@ -132,14 +133,32 @@ Managed by `CardinalRiteEvents`:
 
 ## 4. The Unstained Path (Anti-Hemomancy)
 
-The divergent/opposing path. The player abandons blood magic in pursuit of purification and enlightenment, guided by **Unstained Zealot** NPCs.
+The divergent/opposing path. The player abandons blood magic in pursuit of purification and enlightenment, guided by **Unstained Zealot** NPCs and the silent patronage of **Our Lady of Lethe**.
 
-### 4.1 Entry Requirements
+### 4.1 Our Lady of Lethe — Patron of the Unstained
+
+The Unstained revere a mysterious figure known only as **Our Lady of Lethe** (sometimes whispered as *"The Lady of the Forgotten Waters"* or *"She Who Absolves"*). She is described in Unstained scripture as:
+
+- A **tall woman** with **white hair** that cascades like flowing water
+- Clad in **white robes** that shimmer faintly with silver thread
+- Eyes of **liquid silver** that see through all deception and corruption
+- Skin of **pale blue**, as though touched by the waters of the River Lethe itself
+
+Her origins are unknown — some Unstained texts suggest she is a being from before the fungal infection that birthed hemomancy, a guardian spirit of purity who was driven into hiding when blood magic first took root. Others believe she is a manifestation of the world's immune response to the alien fungus, a living antibody in humanoid form.
+
+**Connection to the Lethean Poppies:**
+The **Lethean Poppies** that grow across the world are said to bloom wherever Our Lady once walked. The dew they produce — **Lethian Dew** — carries her essence: the power of forgetting. Just as the mythological River Lethe washed away memories, the lethean poppies help players *forget* their blood manipulations, severing the ties that bind them to hemomancy. The Unstained believe that harvesting and refining these poppies is a sacred act of devotion to their patron.
+
+**Tears of Lethe** are distilled from Lethian Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification — a one-time gift from the Lady herself.
+
+**The Lethe Icon** is an exceedingly rare relic depicting Our Lady, said to have been carved by the first Unstained from pale silver found at the bottom of a forgotten river. Those who possess it are considered to be under her direct protection.
+
+### 4.2 Entry Requirements
 
 - Player must have reached at least **Degree 2 (Votary)** before an Unstained Zealot will offer the choice
 - The Zealot directs the player to bring **Hemolytic Solution** ![Hemolytic Solution](src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) to an **Unstained Podium** block
 
-### 4.2 Phase 1: Purity (0–100)
+### 4.3 Phase 1: Purity (0–100)
 
 Initiated by using Hemolytic Solution at the Unstained Podium:
 - Sets `begunPurification = true`, grants 5.0 starting purity
@@ -173,6 +192,8 @@ As purity rises, blood magic becomes increasingly penalized:
 | Source | Purity Gained | Condition |
 |--------|---------------|-----------|
 | **Hemolytic Solution on Podium** | +10.0 | Each use (first use grants +5.0 and begins path) |
+| **Tears of Lethe on Altar of Cleansing** | +25.0 | One-time blessing from Our Lady of Lethe |
+| **Lethean Poppy Wreath on Altar** | +5.0 | Repeatable offering at the Altar of Cleansing |
 | **Completing an Advancement** | +1.5 | Any advancement (boss kills, exploration, progression) |
 | **Picking up XP orbs** | +0.1 | Requires active **Hemolysis** effect |
 | **Sleeping through the night** | +3.0 | Requires active **Hemolysis** effect; natural wake only |
@@ -196,7 +217,7 @@ As purity rises, blood magic becomes increasingly penalized:
 
 *Kill rewards are not gated by Hemolysis — any player on the Unstained path earns purity from kills. XP and sleep rewards require the Hemolysis effect. Abstinence timer resets whenever a blood manipulation is used.*
 
-### 4.3 Phase 2: Clarity (0–100)
+### 4.4 Phase 2: Clarity (0–100)
 
 Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper** at the Unstained Podium:
 - Sets `clarityUnlocked = true`
@@ -213,7 +234,7 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
 
-### 4.4 HUD
+### 4.5 HUD
 
 Unstained players see a dedicated gauge overlay (top-right corner) with:
 - Silver **Purity** bar
@@ -269,6 +290,16 @@ Each manipulation has:
 | `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t |
 | `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t |
 | `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t |
+| `blood_lamp` | 75 | Quick | Humilis | Lux | Head | 10t |
+| `crimson_sight` | 200 | Quick | Mediocritas | Lux | Head | 40t |
+| `crimson_harvest` | 100 | Quick | Humilis | Animus | Body | 20t |
+| `hemosynthesis` | 150 | Quick | Humilis | Animus | Body | 30t |
+| `pyretic_forge` | 300 | Quick | Mediocritas | Flammeus | Right Arm | 20t |
+| `glacial_grasp` | 100 | Quick | Humilis | Congeatio | Body | 15t |
+| `sanguine_mending` | 200 | Quick | Humilis | Ferric | Right Arm | 20t |
+| `vital_reservoir` | 500 | Quick | Mediocritas | Animus | Heart | 60t |
+| `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 30t |
+| `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Body | 40t |
 
 ### 6.3 Manipulation Tree
 
@@ -363,14 +394,20 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 
 ### 11.1 Types
 
-| Morphling | Item Class | Effect |
-|-----------|-----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Base fungal morphling |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Summons leeches to fight and drain blood |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Chitin shield / defense |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Paralyzing serpent projectile |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Swarm of pest projectiles |
-| Spider | `SpiderMorphlingItem` | Arachnid-themed attacks |
+| Morphling | Item Class | Preferred Tendency | Effect / Notes |
+|-----------|-----------|-------------------|----------------|
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Animus | Base fungal morphling |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Animus | Summons leeches to fight and drain blood |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Ferric | Chitin shield / defense |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Mortem | Paralyzing serpent projectile |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Mortem | Swarm of pest projectiles |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris | Arachnid-themed attacks |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris | Echoic Perception (nearby entities glow). Maturity: Sonar Shriek → Membrane Glide → Nightwing Frenzy |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_moth.png) Moth | `MothMorphlingItem` | Lux | Luminous Dissipation (knockback resistance). Maturity: Dustwing Trail → Phototaxis Pulse → Cocoon Rebirth |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem | Hemorrhagic Venom (AoE damage aura). Maturity: Engorge → Blood Fever → Pandemic Burst |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric | Spined Barricade (thorns + armor). Maturity: Spine Lash → Tidal Anchor → Calcareous Shell |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio | Venomous Resilience (poison immunity + speed). Maturity: Burrowing Strike → Segmented Defense → Myriapod Swarm |
+| Mole | `MoleMorphlingItem` | Ferric | Burrower's Instinct (mining speed + underground regen). Maturity: Burrow Sense → Earthen Bulwark → Seismic Slam |
 
 ### 11.2 Cultivation
 
@@ -378,6 +415,19 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 - Incubate in a **Morphling Incubator** block with enzymes to grow into specific morphling types
 - Store morphlings in a **Morphling Jar** ![Morphling Jar](src/main/resources/assets/hemomancy/textures/item/morphling_jar.png) (6 slots, Uncommon rarity) — they bounce around inside
 - The **Living Staff** cycles through equipped morphlings and changes its topper model accordingly
+
+### 11.3 Maturity System
+
+Each morphling has a **maturity level** (1–4) that determines its power and which reactive abilities it has:
+
+| Maturity | Name | Description |
+|----------|------|-------------|
+| 1 | Nascent | Base form — passive effect only (the morphling's signature status effect) |
+| 2 | Developing | First reactive ability unlocked (typically a triggered defensive response) |
+| 3 | Mature | Second reactive ability unlocked (more powerful utility/combat mechanic) |
+| 4 | Apex | Third reactive ability unlocked (powerful signature ability with longer cooldown) |
+
+Each morphling type has a **preferred tendency** and **secondary tendency** — feeding the corresponding enzymes during incubation accelerates maturity. The passive effect's amplifier scales with maturity level.
 
 ---
 
@@ -492,7 +542,12 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_shot.png) Blood Shot | ![](src/main/resources/assets/hemomancy/textures/item/memory_deadly_gaze.png) Deadly Gaze | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_needle.png) Blood Needle | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_rush.png) Blood Rush |
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_cloud.png) Blood Cloud | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_aneurysm.png) Blood Aneurysm | ![](src/main/resources/assets/hemomancy/textures/item/memory_activation_potential.png) Activation Potential | ![](src/main/resources/assets/hemomancy/textures/item/memory_sanguine_ward.png) Sanguine Ward |
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_venous_travel.png) Venous Travel | ![](src/main/resources/assets/hemomancy/textures/item/memory_ferric_transmutation.png) Ferric Transmutation | ![](src/main/resources/assets/hemomancy/textures/item/memory_living_blade.png) Living Blade | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_absorption.png) Blood Absorption |
-| ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_projection.png) Blood Projection | ![](src/main/resources/assets/hemomancy/textures/item/memory_summon_avatar.png) Summon Avatar | | |
+| ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_projection.png) Blood Projection | ![](src/main/resources/assets/hemomancy/textures/item/memory_summon_avatar.png) Summon Avatar | Crimson Flame Conjuration | Blood Lamp |
+| Crimson Sight | Crimson Harvest | Hemosynthesis | Pyretic Forge |
+| Glacial Grasp | Sanguine Mending | Vital Reservoir | Sanguine Excavation |
+| Umbral Step | Summon Thrall | | |
+
+> **Memory Overlay System:** All memory items now use a layered model system — each memory has a unique overlay texture (`textures/item/memories/memory_*_overlay.png`) composited on top of the base Hematic Memory texture. This provides visual distinction for each manipulation's memory item without requiring fully separate textures.
 
 ### 13.4 Diagnostic Items
 
@@ -518,7 +573,40 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
 | ![](src/main/resources/assets/hemomancy/textures/item/recycled_enzyme.png) Recycled Enzyme | Generic enzyme fallback |
 
-### 13.6 Banner Patterns
+### 13.6 Unstained Materials (Our Lady of Lethe)
+
+| Item | Purpose |
+|------|---------|
+| Tears of Lethe | Distilled from Lethian Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
+| Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
+| Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
+| Tome of the Unstained | A book of Unstained scripture describing Our Lady of Lethe and the path of purification |
+| Icon of Our Lady | A rare relic depicting Our Lady of Lethe — carved from pale silver, grants her protection |
+| Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
+| Lethean Extract | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
+
+### 13.7 Banner Patterns
+### 13.6 Food Items
+
+| Item | Purpose |
+|------|---------|
+| ![](src/main/resources/assets/hemomancy/textures/item/gourd_slice.png) Gourd Slice | Edible gourd food item |
+| ![](src/main/resources/assets/hemomancy/textures/item/gourd_stew.png) Gourd Stew | Stew crafted from gourd and other ingredients |
+| Roasted Gourd Seeds | Smelted/smoked/campfire-cooked gourd seeds (3 cooking methods) |
+
+### 13.7 Organ Echo Items
+
+Produced by the **Visceral Mirror** ritual. Spectral imprints of the player's organs — bound to the player (dissolve if placed in non-player inventory), only one per organ type can exist at a time:
+
+| Item | Organ | Notes |
+|------|-------|-------|
+| Echo of Spleen | `SPLEEN` (Tier 3) | Governs blood volume and filtration |
+| Echo of Liver | `LIVER` (Tier 3) | Metabolizes toxins and purifies the blood |
+| Echo of Lungs | `LUNGS` (Tier 3) | Oxygenates blood and sustains vital rhythm |
+| Echo of Kidneys | `KIDNEYS` (Tier 3) | Filters impurities and maintains humoral balance |
+| Echo of Heart | `HEART` (Tier 4) | The seat of circulation and will — highest risk |
+
+### 13.8 Banner Patterns
 
 - ![](src/main/resources/assets/hemomancy/textures/item/heart_pattern.png) **Heart Pattern** — Vascularium Crest
 - ![](src/main/resources/assets/hemomancy/textures/item/veins_pattern.png) **Veins Pattern** — Vein Border
@@ -639,6 +727,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
 | **Dendritic Distributor** | `DendriticDistributorBlockEntity` | Opens the Skill Tree / Manipulation Tree screen |
 | **Unstained Podium** | `UnstainedPodiumBlockEntity` | Where Hemolytic Solution / Consecrated Copper are used for the Unstained path |
+| **Altar of Cleansing** | `AltarOfCleansingBlockEntity` | Sacred altar of Our Lady of Lethe — grants one-time purity boost with Tears of Lethe; accepts Lethean Poppy Wreaths and Silver Chalices for repeatable offerings |
 | **Semi-Sentient Construct** | `SemiSentientConstructBlockEntity` | Blood construct-related block |
 | **Earthen Vein** | `EarthenVeinBlockEntity` | Vein location marker for teleportation (Venous Travel) ![](src/main/resources/assets/hemomancy/textures/entity/earthen_vein/model_earthen_vein.png) |
 | **Iron Brazier** | `IronBrazierBlockEntity` | Decorative/functional brazier |
@@ -649,6 +738,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Engram Block** | — | Translucent engram |
 | **Filler Block** | `FillerBlockEntity` | Indestructible filler for multiblocks |
 | **Bog Body** | — | Decorative translucent body block |
+| **Visceral Mirror** | `VisceralMirrorBlockEntity` | Ritualistic mirror for organ extraction — gaze into your reflection to extract and modify organs (Spleen, Liver, Lungs, Kidneys, Heart). Requires degree 3+. Cycle organs (right-click) → confirm extraction (sneak right-click). Produces Organ Echo items. |
 
 ---
 
@@ -682,9 +772,11 @@ A full block family with variants:
 - Hematic Iron Pillar (rotatable)
 - Chiseled Hematic Iron Block
 
-### 17.3 Anti-Blood
+### 17.3 Anti-Blood / Unstained
 
 - ![](src/main/resources/assets/hemomancy/textures/block/hemolytic_plating_block.png) Hemolytic Plating Block
+- Cleansed Stone — pale, smooth stone found in Unstained temples
+- Lethe Lantern — softly glowing lantern sacred to Our Lady of Lethe
 
 ### 17.4 Glass & Panes
 
@@ -765,6 +857,22 @@ All applicable flowers have **potted** variants.
 ### 18.1 Blood Structure Crafting
 
 An in-world system: build a specific block structure, then hit a particular block with a catalyst item while spending blood. The structure transforms into the desired output.
+
+### 18.2 Cardinal Rite Recipes
+
+Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites:
+- **Bloodline Founding** — ritual to create a new bloodline
+- **Bloodline Recall** — ritual to recall/teleport bloodline members
+
+### 18.3 Food Recipes
+
+| Recipe | Type | Notes |
+|--------|------|-------|
+| Gourd Slice | Crafting | Sliced from gourd block |
+| Gourd Stew | Crafting | Stew from gourd + ingredients |
+| Roasted Gourd Seeds | Smelting | Gourd seeds in furnace |
+| Roasted Gourd Seeds | Smoking | Gourd seeds in smoker |
+| Roasted Gourd Seeds | Campfire Cooking | Gourd seeds on campfire |
 
 ---
 
@@ -874,6 +982,14 @@ Each effect has a corresponding potion, splash potion, lingering potion, and tip
 | **Chitinous Bulwark** | Beneficial | 0x556B2F | +4 armor toughness |
 | **Serpentine Guile** | Beneficial | 0x2E8B57 | +15% move speed, +10% attack speed |
 | **Verminous Aura** | Beneficial | 0x4A3728 | Pest-based area effect |
+| **Echoic Perception** | Beneficial | — | Bat morphling effect — nearby entities glow (radius scales with amplifier) |
+| **Luminous Dissipation** | Beneficial | — | Moth morphling effect — knockback resistance |
+| **Hemorrhagic Venom** | Beneficial | — | Tick morphling effect — AoE damage aura to nearby hostiles |
+| **Spined Barricade** | Beneficial | — | Urchin morphling effect — passive thorns + armor bonus |
+| **Venomous Resilience** | Beneficial | — | Centipede morphling effect — poison immunity + speed |
+| **Burrower's Instinct** | Beneficial | — | Mole morphling effect — mining speed + underground regen/night vision |
+| **Arcane Resonance** | Beneficial | 0x8800AA | MnA combo marker — next blood manipulation costs less blood (granted by blood-affinity MnA spells) |
+| **Sanguine Clarity** | Beneficial | 0xAA0022 | MnA combo marker — next MnA spell costs less mana (granted by using blood manipulations) |
 
 ---
 
@@ -954,6 +1070,23 @@ Full integration as a faction + spell system:
 - ![](src/main/resources/assets/hemomancy/textures/mna/blood_binding.png) `ComponentBloodBinding` — applies Blood Binding effect via spells
 - ![](src/main/resources/assets/hemomancy/textures/mna/mana_to_blood.png) `ComponentManaToBlood` — converts MnA mana into Hemomancy blood volume (configurable magnitude, 50–200 mana per cast)
 - ![](src/main/resources/assets/hemomancy/textures/mna/sanguine_fertility.png) `ComponentSanguineFertility` — applies Sanguine Fertility via spells
+- `ComponentBloodToMana` — "Sanguine Offering" — drains target's blood and converts to mana for caster (inverse of ManaToBlood). Magnitude 50–500, Blood affinity. Composable with any MnA shape.
+- ![](src/main/resources/assets/hemomancy/textures/mna/blood_loss.png) `ComponentBloodLoss` — applies Blood Loss effect (movement speed debuff) via spells. Duration 60–300t, Magnitude 1–3, HARMFUL
+- ![](src/main/resources/assets/hemomancy/textures/mna/blood_rush.png) `ComponentBloodRush` — applies Blood Rush effect (+move/attack speed) via spells. Duration 100–600t, Magnitude 1–3, FRIENDLY
+- ![](src/main/resources/assets/hemomancy/textures/mna/hemolysis.png) `ComponentHemolysis` — applies Hemolysis effect (blood destruction DoT) via spells. Duration 40–200t, Magnitude 1–4, HARMFUL
+- ![](src/main/resources/assets/hemomancy/textures/mna/summon_sanguilith.png) `ComponentSummonSanguilith` — "Conjure Sanguilith" — summons a Sanguilith at target location. Duration 200–600t (summon lifetime), Magnitude scales damage. Requires Harbinger faction. HARMFUL
+
+**Cross-System Mechanics (Implemented):**
+- **Blood Tithe** (`BloodTitheHandler`): Harbinger faction members casting blood-affinity spells have a configurable percentage of mana cost converted to blood cost instead (default 25%). Blood drained at 5 blood per 1 mana replaced. Hooks into `CalculatingManaCostEvent`.
+- **Spell → Manipulation Combos** (`ManipComboHelper` + `BloodTitheHandler`): Casting blood-affinity MnA spells grants **Arcane Resonance** (reduces next manipulation's blood cost). Using Hemomancy manipulations grants **Sanguine Clarity** (reduces next spell's mana cost). Creates an alternating gameplay loop between both mod systems.
+
+**Cross-Mod Config** (`HemoMnAConfig`):
+- Blood ↔ Mana conversion ratios
+- Blood Tithe enable/disable, mana reduction %, blood-per-mana ratio
+- Living Thread armor set bonus values
+- Trapezohedron effect radius
+- Spell ↔ Manipulation combo enable/disable, durations, reduction percentages
+- Sanguilith summon health scaling and max summon count
 
 **Manipulations:**
 - `SanguineTransfusionManip` — MnA-specific manipulation
@@ -979,18 +1112,15 @@ Full integration as a faction + spell system:
 - Custom blocks, tiles, and entities in `compat/mna/block`, `compat/mna/tile`, `compat/mna/entity`
 
 **Planned / Brainstormed Features** (see `MNA_COMPATIBILITY_BRAINSTORM.md` for full details — each feature includes an "MnA Justification" explaining why it specifically requires Mana and Artifice):
-- Additional spell components: Blood Loss, Blood Rush, Hemolysis, Blood-to-Mana, Summon Sanguilith — all leverage MnA's composable spell system (shapes + modifiers)
 - New spell shapes: Sanguine Pulse (dual mana+blood cost AoE), Hemomantic Tether (channeled tether draining blood per tick)
 - New MnA rituals: Sanguine Convergence (permanently links mana regen to blood volume), Arcane Crucible (transmutes MnA materials with blood sacrifice), Mana Wound (zone that adds Hemomancy effects to MnA spells)
-- Blood Tithe spell modifier: MnA modifier that replaces mana cost % with blood cost (Harbinger faction perk)
 - Tendency ↔ Affinity mapping: Hemomancy tendencies boost corresponding MnA spell affinities
-- Spell ↔ Manipulation combo system: alternating between both systems grants cost reduction buffs
 - Harbinger faction: Occulus tasks, sanctum structure, manaweaving recipes, raid mobs — all use MnA faction infrastructure
 - Blood Construct: MnA Construct variant fueled by blood instead of mana, built at MnA's workbench
 - Blood-Infused Construct Capabilities: runeforged modules for MnA Constructs
 - Hemomantic Wand Core, Arcane Living Staff, Mote of Mana — crafted via MnA systems (manaweaving, runeforging)
 - Hemomantic enchantments via MnA runeforging
-- Cross-mod advancements, JEI integration for MnA crafting recipes, config options
+- Cross-mod advancements, JEI integration for MnA crafting recipes
 - Harbinger Mana HUD texture fix (current TODO)
 
 ### 25.2 Curios
@@ -1066,6 +1196,9 @@ JEI recipe category support for:
 | **The Blood Remembers** | Obtain a Living Blade |
 | **Old Habits** | Obtain any enzyme |
 | **Unstained** | Obtain Hemolytic Solution |
+| **Lady of the Forgotten Waters** | Obtain Tears of Lethe |
+| **Path of Purity** | Obtain the Tome of the Unstained |
+| **Our Lady of Lethe** | Obtain the Icon of Our Lady (challenge) |
 | **Bleeding a Stone** | Craft a Juiceinator |
 
 ---
@@ -1123,7 +1256,35 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
 - **Some skill descriptions** exist in lang but the full implementation of effects like `skill_sanguine_surge`, `skill_crimson_mastery`, `skill_vital_link`, `skill_iron_will`, `skill_blood_flow` need verification for complete gameplay wiring
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
-- **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Includes new spell components, shapes, rituals, items, faction enhancements, cross-system synergy mechanics, and QoL improvements. See the brainstorm document for prioritized feature list and implementation notes.
+- **Visceral Organs System** — Core capability and Visceral Mirror block added; organ extraction ritual flow implemented. Organ modification tiers and gameplay effects for each organ still being fleshed out
+- **Cardinal Rite Recipes** — Bloodline Founding and Bloodline Recall rite recipes added; additional rite recipes may follow
+- **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated
+- **Memory Overlay Textures** — All manipulations now have overlay textures (`textures/item/memories/`) for the new memory item model system
+- **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Recently implemented: 5 new spell components (Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith, Blood-to-Mana), Blood Tithe handler, Spell ↔ Manipulation combo system, full cross-mod config. Still planned: spell shapes, rituals, faction enhancements, construct system, wand core, manaweaving recipes, runeforging enchantments.
+
+### 30.1 Unstained Expansion — Planned Features
+
+The Unstained faction is being expanded with deeper lore around **Our Lady of Lethe** as their patron. Planned and in-progress features:
+
+- **Altar of Cleansing** — functional block that grants a one-time +25 purity boost when Tears of Lethe are offered. Also accepts Lethean Poppy Wreaths (repeatable +5 purity) and Silver Chalices (+5 clarity). Will eventually be placed in every Unstained temple structure.
+- **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Lethe Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
+- **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
+- **Unstained Dialogue Expansion** — Zealot dialogues should reference Our Lady of Lethe more directly, with lore about the River Lethe, the meaning of forgetting, and the significance of the poppies.
+- **Lethean Crafting Recipes** — planned recipes:
+  - Tears of Lethe = Lethean Extract + Silver Chalice (crafting or altar recipe)
+  - Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
+  - Lethean Extract = Lethian Dew + Consecrated Copper Ingot (juiceinator or crafting)
+  - Pale Silver Ingot = Iron Ingot + Lethean Extract (smelting or structure recipe)
+  - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting)
+  - Cleansed Stone = Stone + Hemolytic Solution (crafting)
+- **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
+  - Begin the Unstained path
+  - Receive the Altar's blessing
+  - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
+  - Unlock clarity
+  - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
+  - Collect all Unstained materials
+- **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
 
 ---
 
