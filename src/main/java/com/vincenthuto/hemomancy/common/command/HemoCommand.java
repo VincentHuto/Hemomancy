@@ -10,6 +10,9 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegr
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
+import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
+import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
@@ -204,6 +207,21 @@ public class HemoCommand {
 								.executes(ctx -> resetOrgans(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> resetOrgans(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+
+				// ── Manipulation Slots ──
+				.then(Commands.literal("slots")
+						.then(Commands.literal("get")
+								.executes(ctx -> getSlots(ctx.getSource(), ctx.getSource().getPlayerOrException()))
+								.then(Commands.argument("player", EntityArgument.player())
+										.executes(ctx -> getSlots(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
+						.then(Commands.literal("equip")
+								.then(Commands.argument("manip", StringArgumentType.word())
+										.executes(ctx -> equipManip(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "manip")))))
+						.then(Commands.literal("unequip")
+								.then(Commands.argument("manip", StringArgumentType.word())
+										.executes(ctx -> unequipManip(ctx.getSource(), ctx.getSource().getPlayerOrException(),
+												StringArgumentType.getString(ctx, "manip"))))))
 		);
 	}
 
@@ -558,6 +576,56 @@ public class HemoCommand {
 				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
 				.append(Component.literal(" all organs to level 0").withStyle(ChatFormatting.GREEN)),
 				true);
+		return 1;
+	}
+
+	// ═══════════════════ Manipulation Slots ═══════════════════
+
+	private static int getSlots(CommandSourceStack source, ServerPlayer player) {
+		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		int maxSlots = ManipSlotHelper.getMaxSlots(player);
+		java.util.List<String> equipped = known.getEquippedManipNames();
+		MutableComponent msg = Component.literal("")
+				.append(Component.literal(player.getName().getString()).withStyle(ChatFormatting.GOLD))
+				.append(Component.literal(" Slots: ").withStyle(ChatFormatting.GRAY))
+				.append(Component.literal(equipped.size() + "/" + maxSlots).withStyle(ChatFormatting.DARK_RED));
+		source.sendSuccess(() -> msg, false);
+		for (int i = 0; i < equipped.size(); i++) {
+			final int idx = i;
+			source.sendSuccess(() -> Component.literal("  [" + idx + "] " + equipped.get(idx))
+					.withStyle(ChatFormatting.AQUA), false);
+		}
+		return 1;
+	}
+
+	private static int equipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
+		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		int maxSlots = ManipSlotHelper.getMaxSlots(player);
+		if (known.equipManip(manipName, maxSlots)) {
+			source.sendSuccess(() -> Component.literal("Equipped ")
+					.append(Component.literal(manipName).withStyle(ChatFormatting.GREEN))
+					.append(Component.literal(" (" + known.getEquippedManipNames().size() + "/" + maxSlots + ")")
+							.withStyle(ChatFormatting.GRAY)),
+					true);
+		} else {
+			source.sendFailure(Component.literal("Cannot equip: no free slot or already equipped (" +
+					known.getEquippedManipNames().size() + "/" + maxSlots + ")"));
+		}
+		return 1;
+	}
+
+	private static int unequipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
+		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				.orElseThrow(IllegalStateException::new);
+		if (known.unequipManip(manipName)) {
+			source.sendSuccess(() -> Component.literal("Unequipped ")
+					.append(Component.literal(manipName).withStyle(ChatFormatting.YELLOW)),
+					true);
+		} else {
+			source.sendFailure(Component.literal("Manipulation '" + manipName + "' was not equipped."));
+		}
 		return 1;
 	}
 }

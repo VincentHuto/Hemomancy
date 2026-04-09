@@ -29,6 +29,8 @@ public class KnownManipulationServerPacket {
 
 	private boolean avatarActive;
 
+	private List<String> equippedManipNames = new ArrayList<>();
+
 	public KnownManipulationServerPacket(IKnownManipulations known) {
 		this.known = known.getKnownManips();
 		this.selected = known.getSelectedManip();
@@ -36,10 +38,12 @@ public class KnownManipulationServerPacket {
 		this.selectedVein = known.getSelectedVein();
 		this.avatarActive = known.isAvatarActive();
 		this.lastVeinMineStart = known.getLastVeinMineStart();
+		this.equippedManipNames = new ArrayList<>(known.getEquippedManipNames());
 	}
 
 	public KnownManipulationServerPacket(LinkedHashMap<BloodManipulation, ManipLevel> list, BloodManipulation selected,
-			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive,BlockPos lastVeinMineStart) {
+			List<VeinLocation> veinList, VeinLocation selectedVein, boolean avatarActive, BlockPos lastVeinMineStart,
+			List<String> equippedManipNames) {
 
 		this.known = list;
 		this.selected = selected;
@@ -47,8 +51,7 @@ public class KnownManipulationServerPacket {
 		this.selectedVein = selectedVein;
 		this.avatarActive = avatarActive;
 		this.lastVeinMineStart = lastVeinMineStart;
-
-
+		this.equippedManipNames = equippedManipNames != null ? equippedManipNames : new ArrayList<>();
 	}
 	
 	
@@ -68,7 +71,12 @@ public class KnownManipulationServerPacket {
 		}
 		boolean avatarActive = buf.readBoolean();
 		BlockPos lastveinstart = buf.readBlockPos();
-		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart);
+		int equippedCount = buf.readInt();
+		List<String> equippedManipNames = new ArrayList<>();
+		for (int i = 0; i < equippedCount; ++i) {
+			equippedManipNames.add(buf.readUtf());
+		}
+		return new KnownManipulationServerPacket(manips, sel, veinList, selvein, avatarActive, lastveinstart, equippedManipNames);
 	}
 	public static void encode(final KnownManipulationServerPacket msg, final FriendlyByteBuf buf) {
 		if (msg.selected != null) {
@@ -93,6 +101,10 @@ public class KnownManipulationServerPacket {
 		}
 		buf.writeBoolean(msg.avatarActive);
 		buf.writeBlockPos(msg.lastVeinMineStart);
+		buf.writeInt(msg.equippedManipNames.size());
+		for (String name : msg.equippedManipNames) {
+			buf.writeUtf(name);
+		}
 
 	}
 	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -106,6 +118,7 @@ public class KnownManipulationServerPacket {
 			known.setSelectedVein(msg.selectedVein);
 			known.setAvatarActive(msg.avatarActive);
 			known.setLastVeinMineStart(msg.lastVeinMineStart);
+			known.setEquippedManipNames(msg.equippedManipNames);
 
 	
 		});

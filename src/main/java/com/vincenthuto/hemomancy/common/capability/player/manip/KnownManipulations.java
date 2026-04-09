@@ -19,6 +19,7 @@ public class KnownManipulations implements IKnownManipulations {
 	List<VeinLocation> veinList = new ArrayList<>();
 	VeinLocation selectedVein = VeinLocation.BLANK;
 	boolean avatarActive = false;
+	List<String> equippedManipNames = new ArrayList<>();
 
 	@Override
 	public BlockPos getLastVeinMineStart() {
@@ -165,5 +166,38 @@ public class KnownManipulations implements IKnownManipulations {
 		this.selectedManip = old.getSelectedManip();
 		this.veinList = old.getVeinList();
 		this.avatarActive = old.isAvatarActive();
+		this.equippedManipNames = new ArrayList<>(old.getEquippedManipNames());
+	}
+
+	// ── Equipped manipulation slots ──
+
+	@Override
+	public List<String> getEquippedManipNames() {
+		return equippedManipNames;
+	}
+
+	@Override
+	public void setEquippedManipNames(List<String> names) {
+		this.equippedManipNames = names != null ? names : new ArrayList<>();
+	}
+
+	@Override
+	public boolean isManipEquipped(BloodManipulation manip) {
+		if (manip == null || manip == BloodManipulation.BLANK) return false;
+		return equippedManipNames.contains(manip.getName());
+	}
+
+	@Override
+	public boolean equipManip(String manipName, int maxSlots) {
+		if (manipName == null || manipName.isEmpty()) return false;
+		if (equippedManipNames.contains(manipName)) return false;
+		if (equippedManipNames.size() >= maxSlots) return false;
+		equippedManipNames.add(manipName);
+		return true;
+	}
+
+	@Override
+	public boolean unequipManip(String manipName) {
+		return equippedManipNames.remove(manipName);
 	}
 }

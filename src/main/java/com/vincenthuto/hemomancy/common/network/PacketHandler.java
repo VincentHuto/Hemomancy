@@ -158,6 +158,9 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, StartCentrifugeButtonPacket.class,
 				StartCentrifugeButtonPacket::encode, StartCentrifugeButtonPacket::decode,
 				StartCentrifugeButtonPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, EquipManipulationPacket.class,
+				EquipManipulationPacket::encode, EquipManipulationPacket::decode,
+				EquipManipulationPacket::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemClientPacket.class,
 				VascularSystemClientPacket::encode, VascularSystemClientPacket::decode,
 				VascularSystemClientPacket::handle);
