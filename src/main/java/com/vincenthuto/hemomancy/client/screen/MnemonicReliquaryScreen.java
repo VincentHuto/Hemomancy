@@ -26,8 +26,8 @@ import java.util.*;
 
 public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicReliquaryMenu> {
 
-	private static final int GUI_WIDTH = 280;
-	private static final int GUI_HEIGHT = 220;
+	private static final int GUI_WIDTH = 360;
+	private static final int GUI_HEIGHT = 280;
 	private static final int BRAIN_RADIUS = 60;
 	private static final int VEIN_COUNT = 28;
 	private static final int ICON_SIZE = 16;
