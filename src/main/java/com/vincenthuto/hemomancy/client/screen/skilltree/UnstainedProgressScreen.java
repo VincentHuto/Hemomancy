@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Unstained Progress screen — displays the player's purification and clarity
@@ -631,7 +633,7 @@ public class UnstainedProgressScreen extends Screen {
 			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentPurityStage.getLevel() >= stage.getLevel(),
 					currentPurityStage == stage,
-					PURITY_COLOR, PURITY_GLOW);
+					PURITY_COLOR, PURITY_GLOW, stage.getIconItem());
 		}
 	}
 
@@ -679,7 +681,7 @@ public class UnstainedProgressScreen extends Screen {
 			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentClarityStage.getLevel() >= stage.getLevel(),
 					currentClarityStage == stage,
-					CLARITY_COLOR, CLARITY_GLOW);
+					CLARITY_COLOR, CLARITY_GLOW, stage.getIconItem());
 		}
 	}
 
@@ -688,7 +690,8 @@ public class UnstainedProgressScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 
 	private void drawDiamondNode(GuiGraphics gfx, int scrX, int scrY, String title,
-								 boolean reached, boolean isCurrent, int accentColor, int glowColor) {
+								 boolean reached, boolean isCurrent, int accentColor, int glowColor,
+								 @javax.annotation.Nullable ItemStack iconStack) {
 		float time = System.nanoTime() / 1_000_000_000f;
 		int hn = halfNode();
 
@@ -715,11 +718,15 @@ public class UnstainedProgressScreen extends Screen {
 		// Border diamond outline
 		drawDiamondOutline(gfx, scrX, scrY, hn, border);
 
-		// Text inside node (only when zoomed in enough)
+		// Icon item or text inside node (only when zoomed in enough)
 		if (zoom >= 0.5f) {
-			String initial = !title.isEmpty() ? title.substring(0, 1).toUpperCase() : "?";
-			int textCol = isCurrent ? 0xFFFFFFFF : (reached ? 0xFFA0B8D8 : 0xFF404858);
-			gfx.drawCenteredString(font, initial, scrX, scrY - 4, textCol);
+			if (iconStack != null && !iconStack.isEmpty()) {
+				renderScaledItem(gfx, iconStack, scrX, scrY, hn);
+			} else {
+				String initial = !title.isEmpty() ? title.substring(0, 1).toUpperCase() : "?";
+				int textCol = isCurrent ? 0xFFFFFFFF : (reached ? 0xFFA0B8D8 : 0xFF404858);
+				gfx.drawCenteredString(font, initial, scrX, scrY - 4, textCol);
+			}
 		}
 
 		// Stage name below node
@@ -760,6 +767,24 @@ public class UnstainedProgressScreen extends Screen {
 			if (w <= 0) continue;
 			gfx.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
 		}
+	}
+
+	/** Padding pixels around the item icon inside a node. */
+	private static final int ITEM_PADDING = 4;
+
+	/**
+	 * Renders an ItemStack centred inside a node, scaled to fit within the node bounds.
+	 * Items render at 16x16 by default; this scales them to fit (2*hn - ITEM_PADDING) pixels.
+	 */
+	private void renderScaledItem(GuiGraphics gfx, ItemStack stack, int centerX, int centerY, int halfNodeSize) {
+		float nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
+		float itemScale = nodeInner / 16.0f;
+		PoseStack pose = gfx.pose();
+		pose.pushPose();
+		pose.translate(centerX - nodeInner / 2.0f, centerY - nodeInner / 2.0f, 0);
+		pose.scale(itemScale, itemScale, 1);
+		gfx.renderItem(stack, 0, 0);
+		pose.popPose();
 	}
 
 	// ────────────────────────────────────────────────────────────
