@@ -37,6 +37,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 
 	private float[][] tendrilParams;
 	private float[][] sporeParams;
+	private int[][] speckleParams;
 
 	public SporeImplantScreen(SporeImplantMenu container, Inventory inventory, Component name) {
 		super(container, inventory, name);
@@ -73,6 +74,18 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 			sporeParams[i][2] = 0.3f + rand.nextFloat() * 0.7f; // speed
 			sporeParams[i][3] = rand.nextFloat() * 100f;     // phase
 			sporeParams[i][4] = rand.nextFloat();             // brightness
+		}
+
+		// Seed speckle positions (static pattern, computed once)
+		int speckleCount = 60;
+		speckleParams = new int[speckleCount][5];
+		Random speckRand = new Random(0x5E0DE);
+		for (int s = 0; s < speckleCount; s++) {
+			speckleParams[s][0] = speckRand.nextInt(this.imageWidth);  // x offset
+			speckleParams[s][1] = speckRand.nextInt(FUNGAL_AREA_HEIGHT); // y offset
+			speckleParams[s][2] = 30 + speckRand.nextInt(40);        // red
+			speckleParams[s][3] = 10 + speckRand.nextInt(20);        // green
+			speckleParams[s][4] = 15 + speckRand.nextInt(30);        // alpha
 		}
 	}
 
@@ -163,16 +176,16 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 			drawFloatingSpores(gfx, time, gx, gy, gw, gh);
 		}
 
-		// Layer 5: subtle warm speckles
-		Random speckRand = new Random(0x5E0DE);
-		for (int s = 0; s < 60; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sr = 30 + speckRand.nextInt(40);
-			int sg = 10 + speckRand.nextInt(20);
-			int sb = speckRand.nextInt(8);
-			int sa = 15 + speckRand.nextInt(30);
-			gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8) | sb);
+		// Layer 5: static warm speckles (pre-computed in init)
+		if (speckleParams != null) {
+			for (int[] sp : speckleParams) {
+				int sx = gx + sp[0];
+				int sy = gy + sp[1];
+				int sr = sp[2];
+				int sg = sp[3];
+				int sa = sp[4];
+				gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+			}
 		}
 
 		RenderSystem.disableBlend();
@@ -247,7 +260,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 			float yOffset = ((time * speed * 8f + phase) % (gh + 10)) - 5;
 			float xWobble = 3f * Mth.sin(time * speed * 2f + phase);
 
-			int sx = gx + (int) (baseX + xWobble) % gw;
+			int sx = gx + Math.floorMod((int) (baseX + xWobble), gw);
 			int sy = gy + gh - (int) yOffset;
 
 			if (sy < gy || sy >= gy + gh || sx < gx || sx >= gx + gw) continue;
