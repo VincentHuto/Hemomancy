@@ -47,9 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MortalDisplayBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(5, 2, 5, 11, 7, 11), Block.box(4.5, 2, 4.5, 11.5, 6, 11.5), Block.box(4, 0, 4, 12, 2, 12))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 	public MortalDisplayBlock(Properties properties) {
 		super(properties);

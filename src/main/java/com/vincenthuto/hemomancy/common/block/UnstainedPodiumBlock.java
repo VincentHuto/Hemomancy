@@ -50,10 +50,8 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class UnstainedPodiumBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream.of(Block.box(3, 0, 3, 13, 2, 13), Block.box(3, 12, 3, 13, 14, 13),
-			Block.box(3, 9, 3, 13, 12, 13), Block.box(2, 11, 2, 14, 13, 14), Block.box(4, 1, 4, 12, 3, 12),
-			Block.box(4, 8, 4, 12, 10, 12), Block.box(5, 2, 5, 11, 9, 11))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+
 
 	public UnstainedPodiumBlock(Properties properties) {
 		super(properties);

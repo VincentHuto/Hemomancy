@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/memory_sanguine_ward"
+    "layer0": "hemomancy:item/memories/memory_blank",
+    "layer1": "hemomancy:item/memories/memory_sanguine_ward_overlay"
   }
 }

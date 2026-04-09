@@ -39,16 +39,7 @@ import net.minecraftforge.network.NetworkHooks;
 @SuppressWarnings("deprecation")
 public class MorphlingIncubatorBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream.of(Block.box(7, 0, 7, 9, 3, 9), Block.box(6, 2, 6, 10, 4, 10),
-			Block.box(10.75, 3, 5, 11.75, 4, 11), Block.box(4.25, 3, 5, 5.25, 4, 11),
-			Block.box(5, 3, 10.75, 11, 4, 11.75), Block.box(5, 3, 4.25, 11, 4, 5.25), Block.box(4, 4, 4, 12, 5, 12),
-			Block.box(5, 5, 5, 11, 6, 11), Block.box(11, 5, 11, 12, 13, 12), Block.box(11, 5, 4, 12, 13, 5),
-			Block.box(4, 5, 4, 5, 13, 5), Block.box(4, 5, 11, 5, 13, 12), Block.box(4.5, 5, 4.5, 5, 12.5, 11.5),
-			Block.box(6, 6, 6, 10, 10, 10), Block.box(11, 5, 4.5, 11.5, 12.5, 11.5),
-			Block.box(4.5, 5, 4.75, 11.5, 12.5, 5), Block.box(4.5, 5, 11, 11.5, 12.5, 11.5),
-			Block.box(5, 11, 5, 11, 12, 11), Block.box(6, 0, 6, 10, 0.5, 10)).reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 	public MorphlingIncubatorBlock(Properties properties) {
 		super(properties);

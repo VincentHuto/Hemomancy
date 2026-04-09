@@ -36,13 +36,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DendriticDistributorBlock extends BaseEntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(5, 0, 5, 11, 2, 11), Block.box(7, 2, 7, 9, 16, 9), Block.box(4.5, 0, 4.5, 11.5, 1, 11.5),
-					Block.box(6, 12.7, 6, 10, 16.7, 10), Block.box(6.5, 2.7, 6.5, 9.5, 11.8, 9.5),
-					Block.box(5, 13.25, 6.5, 6, 16.25, 9.5), Block.box(10, 13.25, 6.5, 11, 16.25, 9.5),
-					Block.box(6.5, 16.75, 6.5, 9.5, 17.75, 9.5), Block.box(6.5, 13.25, 5, 9.5, 16.25, 6),
-					Block.box(6.5, 13.25, 10, 9.5, 16.25, 11))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
 
 	public DendriticDistributorBlock(Properties properties) {
 		super(properties);

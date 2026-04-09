@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/memory_deadly_gaze"
+    "layer0": "hemomancy:item/memories/memory_blank",
+    "layer1": "hemomancy:item/memories/memory_deadly_gaze_overlay"
   }
 }

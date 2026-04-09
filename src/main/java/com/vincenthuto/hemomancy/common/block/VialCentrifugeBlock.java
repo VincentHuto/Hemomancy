@@ -42,11 +42,8 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BooleanProperty.create("lit");
 
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(4, 0, 4, 12, 2, 12), Block.box(5, 2, 5, 11, 3, 11), Block.box(7.5, 10, 7.5, 8.5, 15, 8.5),
-					Block.box(7, 3, 7, 9, 11, 9), Block.box(6, 10, 6, 10, 12, 10), Block.box(9, 7, 6, 10, 10, 7),
-					Block.box(9, 7, 9, 10, 10, 10), Block.box(6, 7, 9, 7, 10, 10), Block.box(6, 7, 6, 7, 10, 7))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Block.box(2, 0, 2, 14, 14, 14);
+
 
 	@Nullable
 	@SuppressWarnings("unchecked")

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.data;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
 
 import net.minecraft.data.PackOutput;
@@ -57,6 +58,12 @@ public class HemoItemModelProvider extends ItemModelProvider {
 						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
 						.texture("layer0", modLoc("item/rune_pattern"))
 						.texture("layer1", modLoc("item/" + runePath));
+			} else if (item.get() instanceof BloodMemoryItem) {
+				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
+				getBuilder(itemPath)
+						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+						.texture("layer0", modLoc("item/memories/memory_blank"))
+						.texture("layer1", modLoc("item/memories/" + itemPath + "_overlay"));
 			} else {
 				basicItem(item.get());
 			}
