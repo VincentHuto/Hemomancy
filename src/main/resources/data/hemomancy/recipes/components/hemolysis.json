@@ -1,0 +1,16 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/hemolysis",
+	"tier": 2,
+	"items":
+	[
+		"hemomancy:sanguine_formation",
+		"minecraft:wither_rose",
+		"hemomancy:blood_jar"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/knot3",
+		"mna:manaweave_patterns/slash"
+	]
+}

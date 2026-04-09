@@ -31,8 +31,6 @@ public class MnAPluginSpellInit {
 					new ComponentBloodRush(borderedIcon(Hemomancy.rloc("textures/mna/blood_rush.png"))));
 			helper.register(Hemomancy.rloc("components/hemolysis"),
 					new ComponentHemolysis(borderedIcon(Hemomancy.rloc("textures/mna/hemolysis.png"))));
-			helper.register(Hemomancy.rloc("components/blood_to_mana"),
-					new ComponentBloodToMana(borderedIcon(Hemomancy.rloc("textures/mna/blood_to_mana.png"))));
 			helper.register(Hemomancy.rloc("components/summon_sanguilith"),
 					new ComponentSummonSanguilith(borderedIcon(Hemomancy.rloc("textures/mna/summon_sanguilith.png"))));
 		});

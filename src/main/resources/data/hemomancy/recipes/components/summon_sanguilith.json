@@ -1,0 +1,18 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/summon_sanguilith",
+	"tier": 3,
+	"items":
+	[
+		"hemomancy:sanguine_formation",
+		"hemomancy:blood_jar",
+		"minecraft:wither_skeleton_skull",
+		"minecraft:nether_star"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/knot3",
+		"mna:manaweave_patterns/circle",
+		"mna:manaweave_patterns/slash"
+	]
+}

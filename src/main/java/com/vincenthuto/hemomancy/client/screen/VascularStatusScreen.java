@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumBloodFlow;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
@@ -9,9 +10,20 @@ import com.vincenthuto.hutoslib.client.HLTextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +31,9 @@ import java.util.Random;
 
 /**
  * A standalone screen that displays the player's Vascular System status.
- * Each body section is rendered as a semi-transparent rectangle overlaid
- * on a player model, colored from green (100%) → yellow → red → black (0%/dead).
+ * Renders a full 3D player model that can be rotated by click-dragging.
+ * Each body section is overlaid with a colored tint based on vein health:
+ * green (100%) → yellow (50%) → red (15%) → black (0%/dead).
  */
 public class VascularStatusScreen extends Screen {
 
@@ -38,6 +51,16 @@ public class VascularStatusScreen extends Screen {
 	 * [i][7] = thickness (1-3), [i][8] = red tint (0-1 extra brightness)
 	 */
 	private float[][] veinParams;
+
+	/** Current Y-axis rotation of the player model (in degrees), controlled by mouse drag. */
+	private float rotationY = 200.0f;
+	/** Current X-axis rotation (pitch tilt), controlled by mouse drag. */
+	private float rotationX = -10.0f;
+	/** Whether the mouse is currently being dragged to rotate the model. */
+	private boolean isDragging = false;
+
+	/** Scale of the rendered player model in GUI units. */
+	private static final int MODEL_SCALE = 55;
 
 	public VascularStatusScreen() {
 		super(Component.literal("Vascular Status"));
@@ -71,6 +94,46 @@ public class VascularStatusScreen extends Screen {
 		return false;
 	}
 
+	// ───── Mouse Interaction for 3D Rotation ─────
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			int centerX = this.width / 2;
+			int centerY = this.height / 2;
+			int guiLeft = centerX - GUI_WIDTH / 2;
+			int guiTop = centerY - GUI_HEIGHT / 2;
+			// Only start dragging if inside the GUI panel
+			if (mouseX >= guiLeft && mouseX <= guiLeft + GUI_WIDTH &&
+				mouseY >= guiTop && mouseY <= guiTop + GUI_HEIGHT) {
+				isDragging = true;
+				return true;
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			isDragging = false;
+		}
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+		if (isDragging && button == 0) {
+			rotationY += (float) dragX * 0.75f;
+			rotationX += (float) dragY * 0.75f;
+			rotationX = Mth.clamp(rotationX, -45.0f, 45.0f);
+			return true;
+		}
+		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+
+	// ───── Render ─────
+
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		// Default dim overlay for the area outside the GUI
@@ -90,20 +153,247 @@ public class VascularStatusScreen extends Screen {
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
-		graphics.drawCenteredString(this.font, "Hover sections for details", centerX, guiTop + 18, 0xFF553333);
+		graphics.drawCenteredString(this.font, "Drag to rotate • Hover for details", centerX, guiTop + 18, 0xFF553333);
 
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 
-		// Render vascular body diagram; tooltips appear on hover over body sections
+		// Render 3D player model with vascular overlays
 		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
-			renderBodyPartOverlays(graphics, vascular, centerX, centerY, mouseX, mouseY);
+			// Scissor clip to keep the model inside the GUI panel
+			graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + GUI_WIDTH - 4, guiTop + GUI_HEIGHT - 18);
+			render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + 20, mouseX, mouseY);
+			graphics.disableScissor();
 		});
 
 		// Footer
 		graphics.drawCenteredString(this.font, "§4§l— §c§oVenous Network §4§l—",
 				centerX, guiTop + GUI_HEIGHT - 14, 0xFF882222);
 	}
+
+	// ───── 3D Player Rendering with Vascular Overlays ─────
+
+	/**
+	 * Renders the player entity as a 3D model that can be rotated via mouse drag,
+	 * with colored overlays on each body section representing vein health.
+	 */
+	private void render3DPlayerWithOverlays(GuiGraphics graphics, IVascularSystem vascular,
+											LocalPlayer player, int posX, int posY,
+											int mouseX, int mouseY) {
+		// ── Step 1: Render the player model's body parts tinted with vascular health colors ──
+		renderVascularModel(vascular, player, posX, posY, MODEL_SCALE);
+
+		// ── Step 2: Render hover tooltips based on projected 2D positions of body parts ──
+		renderHoverTooltips(graphics, vascular, posX, posY, mouseX, mouseY);
+	}
+
+	/**
+	 * Renders the player model's body parts directly, each tinted with the vascular health color.
+	 * No actual player entity is rendered — just the PlayerModel geometry with colored tinting.
+	 */
+	private void renderVascularModel(IVascularSystem vascular, LocalPlayer player,
+									 int posX, int posY, int scale) {
+		PoseStack modelViewStack = RenderSystem.getModelViewStack();
+		modelViewStack.pushPose();
+		modelViewStack.translate(posX, posY, 1050.0);
+		modelViewStack.scale(1.0F, 1.0F, -1.0F);
+		RenderSystem.applyModelViewMatrix();
+
+		PoseStack poseStack = new PoseStack();
+		poseStack.translate(0.0, 0.0, 1000.0);
+		poseStack.scale(scale, scale, scale);
+
+		// Apply pitch rotation (no Z flip — we're rendering ModelParts directly, not via entity renderer)
+		poseStack.mulPose(new Quaternionf().rotationX(rotationX * ((float) Math.PI / 180.0f)));
+
+		// Get the player renderer and its model
+		EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+		PlayerRenderer playerRenderer = (PlayerRenderer) dispatcher.getRenderer(player);
+		PlayerModel<AbstractClientPlayer> model = playerRenderer.getModel();
+
+		// Set model to a neutral idle pose with the desired rotation
+		model.young = false;
+		model.riding = false;
+		model.setupAnim(player, 0, 0, 0, 0, 0);
+
+		// Apply yaw to the whole model by translating into model space and rotating
+		poseStack.pushPose();
+		poseStack.mulPose(new Quaternionf().rotationY(rotationY * ((float) Math.PI / 180.0f)));
+
+		// Shift the model up in model-space so it's vertically centered at posY.
+		// PlayerModel spans from y≈-8 (head top) to y≈24 (feet) in model units;
+		// midpoint is about y=8, i.e. 8/16 = 0.5 blocks. Translate up by that.
+		poseStack.translate(0.0, -0.5, 0.0);
+
+		Lighting.setupForEntityInInventory();
+
+		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+
+		// Render each body part with its vascular health color
+		renderTintedPart(poseStack, bufferSource, model.head, vascular, EnumVeinSections.HEAD);
+		renderTintedPart(poseStack, bufferSource, model.hat, vascular, EnumVeinSections.HEAD);
+		// The torso model part covers both HEART and BODY sections — use their average health
+		renderTintedPartBlended(poseStack, bufferSource, model.body, vascular,
+				EnumVeinSections.HEART, EnumVeinSections.BODY);
+		renderTintedPart(poseStack, bufferSource, model.rightArm, vascular, EnumVeinSections.RIGHTARM);
+		renderTintedPart(poseStack, bufferSource, model.leftArm, vascular, EnumVeinSections.LEFTARM);
+		renderTintedPart(poseStack, bufferSource, model.rightLeg, vascular, EnumVeinSections.RIGHTLEG);
+		renderTintedPart(poseStack, bufferSource, model.leftLeg, vascular, EnumVeinSections.LEFTLEG);
+
+		bufferSource.endBatch();
+		RenderSystem.disableBlend();
+
+		poseStack.popPose();
+
+		modelViewStack.popPose();
+		RenderSystem.applyModelViewMatrix();
+		Lighting.setupFor3DItems();
+	}
+
+	/**
+	 * Renders a single ModelPart using the player model's actual geometry,
+	 * tinted with the health-based color for the given vein section.
+	 */
+	private void renderTintedPart(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource,
+								  ModelPart part, IVascularSystem vascular,
+								  EnumVeinSections section) {
+		float health = Mth.clamp(vascular.getHealthBySection(section), 0f, 100f);
+		int color = getColorForHealth(health);
+
+		float a = ((color >> 24) & 0xFF) / 255.0f;
+		float r = ((color >> 16) & 0xFF) / 255.0f;
+		float g = ((color >> 8) & 0xFF) / 255.0f;
+		float b = (color & 0xFF) / 255.0f;
+
+		// Pulsing glow effect
+		float time = (System.nanoTime() / 1_000_000_000f);
+		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section.ordinal() * 1.3f);
+		r *= pulse;
+		g *= pulse;
+		b *= pulse;
+
+		// Use entityTranslucentCull with a white texture so the color tint is the only visual
+		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(
+				new net.minecraft.resources.ResourceLocation("minecraft", "textures/misc/white.png")));
+
+		// Render the actual model part geometry with the tint color
+		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+				r, g, b, a);
+	}
+
+	/**
+	 * Renders a ModelPart tinted with the average health color of two vein sections.
+	 * Used for the torso which covers both HEART and BODY.
+	 */
+	private void renderTintedPartBlended(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource,
+										 ModelPart part, IVascularSystem vascular,
+										 EnumVeinSections section1, EnumVeinSections section2) {
+		float health1 = Mth.clamp(vascular.getHealthBySection(section1), 0f, 100f);
+		float health2 = Mth.clamp(vascular.getHealthBySection(section2), 0f, 100f);
+		float avgHealth = (health1 + health2) / 2f;
+		int color = getColorForHealth(avgHealth);
+
+		float a = ((color >> 24) & 0xFF) / 255.0f;
+		float r = ((color >> 16) & 0xFF) / 255.0f;
+		float g = ((color >> 8) & 0xFF) / 255.0f;
+		float b = (color & 0xFF) / 255.0f;
+
+		float time = (System.nanoTime() / 1_000_000_000f);
+		float pulse = 0.85f + 0.15f * Mth.sin(time * 2.0f + section1.ordinal() * 1.3f);
+		r *= pulse;
+		g *= pulse;
+		b *= pulse;
+
+		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentCull(
+				new net.minecraft.resources.ResourceLocation("minecraft", "textures/misc/white.png")));
+
+		part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+				r, g, b, a);
+	}
+
+	// ───── Hover Tooltips with 2D Projection ─────
+
+	/**
+	 * Computes approximate 2D bounding boxes for each body section based on the current rotation,
+	 * and renders a tooltip if the mouse hovers over one.
+	 */
+	private void renderHoverTooltips(GuiGraphics graphics, IVascularSystem vascular,
+									 int posX, int posY, int mouseX, int mouseY) {
+		// We project approximate center positions of each body part to 2D screen coords.
+		// The player model is ~1.8 blocks tall, centered at posX/posY (feet at posY).
+		// In model space (after scale): head top is at about -1.5, feet at +0.3 from center.
+
+		float scale = MODEL_SCALE;
+		float yawRad = rotationY * ((float) Math.PI / 180.0f);
+		float pitchRad = rotationX * ((float) Math.PI / 180.0f);
+		float cosPitch = Mth.cos(pitchRad);
+		float sinPitch = Mth.sin(pitchRad);
+		float cosYaw = Mth.cos(yawRad);
+		float sinYaw = Mth.sin(yawRad);
+
+		// Define approximate model-space centers for each section (in blocks, relative to model center).
+		// Y positive = down on screen (no Z-flip). The -0.5 translate centers the model,
+		// so head center ≈ -0.5, body ≈ 0, legs ≈ +0.5 in blocks from origin.
+		BodySectionDef[] defs = {
+			new BodySectionDef(EnumVeinSections.HEAD,     0.0f, -0.55f, 0.0f, 22, 22),
+			new BodySectionDef(EnumVeinSections.HEART,    0.0f, -0.15f, 0.0f, 24, 16),
+			new BodySectionDef(EnumVeinSections.BODY,     0.0f,  0.15f, 0.0f, 24, 20),
+			new BodySectionDef(EnumVeinSections.RIGHTARM, -0.40f, 0.0f, 0.0f, 14, 38),
+			new BodySectionDef(EnumVeinSections.LEFTARM,   0.40f, 0.0f, 0.0f, 14, 38),
+			new BodySectionDef(EnumVeinSections.RIGHTLEG, -0.12f, 0.65f, 0.0f, 14, 36),
+			new BodySectionDef(EnumVeinSections.LEFTLEG,   0.12f, 0.65f, 0.0f, 14, 36),
+		};
+
+		EnumVeinSections hoveredSection = null;
+
+		for (BodySectionDef def : defs) {
+			// Apply yaw rotation (around Y axis) to the 3D position
+			float rx = def.modelX * cosYaw - def.modelZ * sinYaw;
+			float ry = def.modelY;
+			float rz = def.modelX * sinYaw + def.modelZ * cosYaw;
+
+			// Apply pitch rotation (around X axis)
+			float ry2 = ry * cosPitch - rz * sinPitch;
+
+			// Project to screen (simple orthographic — the entity render uses orthographic projection)
+			int screenX = posX + (int) (rx * scale);
+			int screenY = posY + (int) (ry2 * scale);
+
+			int halfW = def.hitW / 2;
+			int halfH = def.hitH / 2;
+
+			if (mouseX >= screenX - halfW && mouseX <= screenX + halfW &&
+				mouseY >= screenY - halfH && mouseY <= screenY + halfH) {
+				hoveredSection = def.section;
+				break;
+			}
+		}
+
+		if (hoveredSection != null) {
+			float health = Mth.clamp(vascular.getHealthBySection(hoveredSection), 0f, 100f);
+			EnumBloodFlow flow = vascular.getBloodFlowBySection(hoveredSection);
+			String name = HLTextUtils.toProperCase(hoveredSection.toString());
+			String flowName = HLTextUtils.toProperCase(flow.toString());
+			int nameColor = getTextColorForHealth(health);
+			int flowColor = getFlowColor(flow);
+
+			List<Component> tooltip = new ArrayList<>();
+			tooltip.add(Component.literal("§l" + name).withStyle(s -> s.withColor(nameColor)));
+			tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
+					.withStyle(s -> s.withColor(0xAAAAAA)));
+			tooltip.add(Component.literal("Flow: " + flowName)
+					.withStyle(s -> s.withColor(flowColor)));
+			graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
+		}
+	}
+
+	/**
+	 * Helper record for defining body section hit-test areas in 3D model space.
+	 */
+	private record BodySectionDef(EnumVeinSections section, float modelX, float modelY, float modelZ,
+								  int hitW, int hitH) {}
 
 	// ───── Gradient Dark-Red Border ─────
 
@@ -244,119 +534,7 @@ public class VascularStatusScreen extends Screen {
 		}
 	}
 
-	/**
-	 * Renders a human body silhouette made of semi-transparent colored rectangles.
-	 * Each rectangle represents a vein section, colored green → yellow → red → black
-	 * based on that section's health. Sized to be clearly readable without a 3D model.
-	 *
-	 * Layout (approximate pixel positions, centered on cx/cy):
-	 * <pre>
-	 *         [  HEAD  ]
-	 *    [RA] [HRT/BODY] [LA]
-	 *         [  BODY  ]
-	 *      [R LEG][L LEG]
-	 * </pre>
-	 */
-	private void renderBodyPartOverlays(GuiGraphics graphics, IVascularSystem vascular, int cx, int cy,
-									   int mouseX, int mouseY) {
-		// The body diagram is centered vertically a bit above screen center
-		int bodyTop = cy - 65;
-
-		// Define all section rectangles: section, x, y, w, h
-		int[][] rects = {
-				{0, cx - 10, bodyTop,      20, 20},  // HEAD
-				{1, cx - 12, bodyTop + 20, 24, 14},  // HEART
-				{2, cx - 12, bodyTop + 34, 24, 22},  // BODY
-				{3, cx - 22, bodyTop + 20, 10, 36},  // RIGHTARM
-				{4, cx + 12, bodyTop + 20, 10, 36},  // LEFTARM
-				{5, cx - 12, bodyTop + 56, 11, 34},  // RIGHTLEG
-				{6, cx + 1,  bodyTop + 56, 11, 34},  // LEFTLEG
-		};
-		EnumVeinSections[] sections = {
-				EnumVeinSections.HEAD, EnumVeinSections.HEART, EnumVeinSections.BODY,
-				EnumVeinSections.RIGHTARM, EnumVeinSections.LEFTARM,
-				EnumVeinSections.RIGHTLEG, EnumVeinSections.LEFTLEG
-		};
-
-		// Draw all section rectangles
-		for (int[] r : rects) {
-			drawSectionRect(graphics, vascular, sections[r[0]], r[1], r[2], r[3], r[4]);
-		}
-
-		// Draw 1px dark outline around the whole silhouette for definition
-		drawBodyOutline(graphics, cx, bodyTop);
-
-		// Check hover and render tooltip for the hovered section (rendered last so it's on top)
-		for (int[] r : rects) {
-			int rx = r[1], ry = r[2], rw = r[3], rh = r[4];
-			if (mouseX >= rx && mouseX < rx + rw && mouseY >= ry && mouseY < ry + rh) {
-				EnumVeinSections section = sections[r[0]];
-				float health = Math.max(0f, Math.min(100f, vascular.getHealthBySection(section)));
-				EnumBloodFlow flow = vascular.getBloodFlowBySection(section);
-				String name = HLTextUtils.toProperCase(section.toString());
-				String flowName = HLTextUtils.toProperCase(flow.toString());
-				int nameColor = getTextColorForHealth(health);
-				int flowColor = getFlowColor(flow);
-
-				List<Component> tooltip = new ArrayList<>();
-				tooltip.add(Component.literal("§l" + name).withStyle(s -> s.withColor(nameColor)));
-				tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
-						.withStyle(s -> s.withColor(0xAAAAAA)));
-				tooltip.add(Component.literal("Flow: " + flowName)
-						.withStyle(s -> s.withColor(flowColor)));
-				graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
-				break; // Only show one tooltip at a time
-			}
-		}
-	}
-
-	/**
-	 * Draws a thin dark outline around the body silhouette to give it shape definition.
-	 */
-	private void drawBodyOutline(GuiGraphics graphics, int cx, int bodyTop) {
-		int outline = 0xAA221111;
-
-		// Head outline
-		drawRectOutline(graphics, cx - 10, bodyTop, 20, 20, outline);
-		// Heart/upper torso
-		drawRectOutline(graphics, cx - 12, bodyTop + 20, 24, 14, outline);
-		// Lower body
-		drawRectOutline(graphics, cx - 12, bodyTop + 34, 24, 22, outline);
-		// Arms
-		drawRectOutline(graphics, cx - 22, bodyTop + 20, 10, 36, outline);
-		drawRectOutline(graphics, cx + 12, bodyTop + 20, 10, 36, outline);
-		// Legs
-		drawRectOutline(graphics, cx - 12, bodyTop + 56, 11, 34, outline);
-		drawRectOutline(graphics, cx + 1, bodyTop + 56, 11, 34, outline);
-	}
-
-	/**
-	 * Draws a 1px outline around a rectangle.
-	 */
-	private void drawRectOutline(GuiGraphics graphics, int x, int y, int w, int h, int color) {
-		graphics.fill(x, y, x + w, y + 1, color);         // top
-		graphics.fill(x, y + h - 1, x + w, y + h, color); // bottom
-		graphics.fill(x, y, x + 1, y + h, color);         // left
-		graphics.fill(x + w - 1, y, x + w, y + h, color); // right
-	}
-
-	/**
-	 * Draws a single semi-transparent rectangle for a vein section.
-	 * Color transitions: 100% = bright green → 50% = yellow → 15% = red → 0% = black
-	 */
-	private void drawSectionRect(GuiGraphics graphics, IVascularSystem vascular,
-								 EnumVeinSections section, int x, int y, int w, int h) {
-		float health = vascular.getHealthBySection(section);
-		health = Math.max(0f, Math.min(100f, health));
-
-		int color = getColorForHealth(health);
-
-		// Draw filled rectangle with alpha blending
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		graphics.fill(x, y, x + w, y + h, color);
-		RenderSystem.disableBlend();
-	}
+	// ───── Color Utilities ─────
 
 	/**
 	 * Maps health (0-100) to an ARGB color.

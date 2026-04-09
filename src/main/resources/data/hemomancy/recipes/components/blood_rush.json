@@ -1,0 +1,15 @@
+{
+	"type": "mna:component",
+	"output": "hemomancy:components/blood_rush",
+	"tier": 1,
+	"items":
+	[
+		"hemomancy:sanguine_formation",
+		"minecraft:sugar",
+		"minecraft:feather"
+	],
+	"patterns":
+	[
+		"mna:manaweave_patterns/circle"
+	]
+}
