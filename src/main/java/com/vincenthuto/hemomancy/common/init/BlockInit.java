@@ -238,6 +238,32 @@ public class BlockInit {
 	public static final RegistryObject<Block> fruiting_infected_cap = BASEBLOCKS.register("fruiting_infected_cap",
 			() -> new InfectedCapBlock(BlockBehaviour.Properties.of().strength(0.5f, 15f).sound(SoundType.GRASS)));
 
+	public static final RegistryObject<Block> infested_wood = BASEBLOCKS.register("infested_wood",
+			() -> new InfestedWoodBlock(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.WOOD)
+					.randomTicks()));
+
+	// Myco-heterotrophic Plants
+
+	public static final RegistryObject<Block> ghost_pipe = CROSSBLOCKS.register("ghost_pipe",
+			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION, 10,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
+
+	public static final RegistryObject<Block> snow_plant = CROSSBLOCKS.register("snow_plant",
+			() -> new SnowPlantBlock(MobEffects.REGENERATION, 8,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+
+	public static final RegistryObject<Block> rafflesia = CROSSBLOCKS.register("rafflesia",
+			() -> new RafflesiaBlock(MobEffects.CONFUSION, 12,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
+
+	public static final RegistryObject<Block> potted_ghost_pipe = POTTEDBLOCKS.register("potted_ghost_pipe",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.ghost_pipe,
+					BlockBehaviour.Properties.of().noCollission()));
+
+	public static final RegistryObject<Block> potted_snow_plant = POTTEDBLOCKS.register("potted_snow_plant",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.snow_plant,
+					BlockBehaviour.Properties.of().noCollission()));
+
 	// Gourd
 	public static final RegistryObject<Block> gourd = MODELEDBLOCKS.register("gourd",
 			() -> new GourdBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
@@ -453,6 +479,10 @@ public class BlockInit {
 					BlockInit.potted_stinkhorn_fungus);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.puffball_fungus.getId(),
 					BlockInit.potted_puffball_fungus);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.ghost_pipe.getId(),
+					BlockInit.potted_ghost_pipe);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.snow_plant.getId(),
+					BlockInit.potted_snow_plant);
 		});
 	}
 

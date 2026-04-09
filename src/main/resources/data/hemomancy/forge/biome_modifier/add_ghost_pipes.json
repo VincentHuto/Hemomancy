@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#hemomancy:ghost_pipe_spawnlist",
+  "features": "hemomancy:ghost_pipes",
+  "step": "vegetal_decoration"
+}

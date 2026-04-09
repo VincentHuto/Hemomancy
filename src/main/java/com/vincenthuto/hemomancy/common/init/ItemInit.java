@@ -149,7 +149,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> foul_paste = BASEITEMS.register("foul_paste",
-			() -> new Item(new Item.Properties()));
+			() -> new FoulPasteItem(new Item.Properties()));
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
 			() -> new ItemNameBlockItem(BlockInit.smouldering_ash_trail.get(), (new Item.Properties())));
 	public static final RegistryObject<Item> befouling_ash = SPECIALITEMS.register("befouling_ash",
