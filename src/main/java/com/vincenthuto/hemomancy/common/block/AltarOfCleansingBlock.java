@@ -174,6 +174,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 					Component.translatable("hemomancy.altar.clarity_not_unlocked"), false);
 			return;
 		}
+		stack.shrink(1);
 		unstained.addClarity(5.0f);
 
 		player.displayClientMessage(

@@ -1178,7 +1178,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of Le
   - Pale Silver Ingot = Iron Ingot + Lethean Extract (smelting or structure recipe)
   - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting)
   - Cleansed Stone = Stone + Hemolytic Solution (crafting)
-- **Unstained Advament/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
+- **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
   - Begin the Unstained path
   - Receive the Altar's blessing
   - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
