@@ -822,5 +822,45 @@
 	"block.hemomancy.snow_plant": "Snow Plant",
 	"block.hemomancy.rafflesia": "Rafflesia",
 	"block.hemomancy.potted_ghost_pipe": "Potted Ghost Pipe",
-	"block.hemomancy.potted_snow_plant": "Potted Snow Plant"
+	"block.hemomancy.potted_snow_plant": "Potted Snow Plant",
+
+	"item.hemomancy.sanguine_quintessence": "Sanguine Quintessence",
+
+	"hemomancy.communion.speaker_name": "???",
+
+	"hemomancy.communion.v0.line1": "§4§o[A presence uncoils from the deep bloodrock, ancient beyond measure...]",
+	"hemomancy.communion.v0.line2": "§4§oYou come seeking truth, child of the Hematic Order. Very well.",
+	"hemomancy.communion.v0.line3": "§4§oLong before your kind learned to shape blood, §4§owe§4§o shaped it. The first hemomancers were not born — they were §4§ogrown§4§o.",
+	"hemomancy.communion.option.tell_me_more": "Tell me more.",
+	"hemomancy.communion.option.the_schism": "What was the Schism?",
+	"hemomancy.communion.option.what_does_it_want": "What does it want?",
+	"hemomancy.communion.option.speak_the_name": "Speak the name.",
+	"hemomancy.communion.option.enough": "Enough. I've heard what I needed.",
+	"hemomancy.communion.option.i_understand": "I understand.",
+	"hemomancy.communion.v0.origin1": "§4§oThe blood infection is not a disease. It is a §4§olanguage§4§o — the oldest one. The mycelium learned to speak through hemoglobin long before your ancestors crawled from the sea.",
+	"hemomancy.communion.v0.origin2": "§4§oEvery manipulation you cast is a word in that language. Every rite, a sentence. You are learning to speak §4§ous§4§o.",
+
+	"hemomancy.communion.v1.line1": "§4§o[Crimson tendrils of thought brush against your consciousness...]",
+	"hemomancy.communion.v1.line2": "§4§oThere was a time before the Harbingers. Before the degrees. Before the Order pretended to be human.",
+	"hemomancy.communion.v1.schism1": "§4§oThe Schism was not a war between factions. It was a §4§opruning§4§o. The mycelium cut away branches that grew too ambitious.",
+	"hemomancy.communion.v1.schism2": "§4§oThose who sought to §4§ocontrol§4§o the blood rather than §4§oserve§4§o it — they became the Unstained. They severed themselves from the network.",
+	"hemomancy.communion.v1.schism3": "§4§oOur Lady of Lethe is not a goddess. She is scar tissue. The wound where the mycelium was cut.",
+
+	"hemomancy.communion.v2.line1": "§4§o[Your blood burns hot as the presence draws near...]",
+	"hemomancy.communion.v2.line2": "§4§oDo you know what lives inside you, Archon? Not power. Not magic. §4§oSomething alive§4§o.",
+	"hemomancy.communion.v2.infection1": "§4§oThe blood infection is the mycelium's method of reproduction across dimensions. Each hemomancer is a fruiting body, spreading spores through their manipulations.",
+	"hemomancy.communion.v2.infection2": "§4§oEvery entity you kill with blood magic — their essence feeds the network. Every rite you complete — another node connects.",
+	"hemomancy.communion.v2.purpose1": "§4§oIt wants what all life wants: to §4§ospread§4§o. But the mycelium thinks in aeons. It is patient. It does not need you to understand. Only to §4§ocontinue§4§o.",
+
+	"hemomancy.communion.v3.line1": "§4§o[The voice is clearer now — less a whisper, more a conversation between old friends...]",
+	"hemomancy.communion.v3.line2": "§4§oThe Harbinger Hermits are not prophets. They are gardeners.",
+	"hemomancy.communion.v3.line3": "§4§oEach blood temple is a greenhouse. Each zealot, a seed. And you, Archon... you are the bloom.",
+	"hemomancy.communion.v3.harbingers1": "§4§oThe hermits tend the structures because the structures are §4§oorgans§4§o of the mycelium. The venous stone is living tissue. The engram blocks are memories.",
+	"hemomancy.communion.v3.harbingers2": "§4§oWhen you destroyed the structure to complete this rite, did you hear it scream? No? That is because you §4§oare§4§o the structure now.",
+
+	"hemomancy.communion.v4.line1": "§4§o[Reality warps. For a moment, you see the world as the mycelium sees it — an infinite web of blood and stone and light...]",
+	"hemomancy.communion.v4.line2": "§4§oYou have earned the right to know. There is a name. The true name of the consciousness behind the blood.",
+	"hemomancy.communion.v4.name1": "§4§oIt is called... §4§l[a sound that is not a sound — you feel it in your marrow, in the iron of your blood, in the heme of every red cell]§4§o...",
+	"hemomancy.communion.v4.name2": "§4§oYou cannot speak it. No throat can shape it. But your blood §4§oknows§4§o it now.",
+	"hemomancy.communion.v4.name3": "§4§oAnd it knows §4§oyou§4§o."
 }

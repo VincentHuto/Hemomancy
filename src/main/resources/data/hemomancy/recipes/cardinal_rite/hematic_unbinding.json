@@ -1,0 +1,37 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 1000,
+  "riteType": "lesser",
+  "riteName": "Rite of Hematic Unbinding",
+  "riteDescription": "A severance rite that dissolves the caster's bloodline, freeing all members and returning any shared blood deposits. The covenant is broken — what was bound by blood is unbound.",
+  "pattern": [
+    ["E   E", " G G ", "  V  ", " G G ", "E   E"],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["  V  ", " VCV ", "VCPVC", " VCV ", "  V  "],
+    ["     ", " E E ", " EBE ", " E E ", "     "],
+    ["E   E", " G G ", "  V  ", " G G ", "E   E"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    }
+  },
+  "result": {
+    "item": "hemomancy:sanguine_formation"
+  }
+}
