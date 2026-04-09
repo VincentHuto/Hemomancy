@@ -39,6 +39,8 @@ import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnAvatarParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
@@ -268,6 +270,14 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PlaceStructurePacket.class, networkID++)
 				.decoder(PlaceStructurePacket::decode).encoder(PlaceStructurePacket::encode)
 				.consumerNetworkThread(PlaceStructurePacket::handle).add();
+
+		// Dialogue system packets
+		CHANNELBLOODVOLUME.messageBuilder(OpenDialoguePacket.class, networkID++)
+				.decoder(OpenDialoguePacket::decode).encoder(OpenDialoguePacket::encode)
+				.consumerNetworkThread(OpenDialoguePacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(DialogueOptionPacket.class, networkID++)
+				.decoder(DialogueOptionPacket::decode).encoder(DialogueOptionPacket::encode)
+				.consumerNetworkThread(DialogueOptionPacket::handle).add();
 
 	}
 

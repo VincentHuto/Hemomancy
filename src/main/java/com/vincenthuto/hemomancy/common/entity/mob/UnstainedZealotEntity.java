@@ -4,9 +4,12 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryD
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.dialogue.ZealotDialogueTrees;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,6 +25,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.PacketDistributor;
 
 public class UnstainedZealotEntity extends PathfinderMob {
 
@@ -69,7 +73,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND) {
+        if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
             IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
 
@@ -96,38 +100,23 @@ public class UnstainedZealotEntity extends PathfinderMob {
                 // Capability not yet registered — skip this check branch
             }
 
+            DialogueTree tree;
             if (hasBegunPurification) {
-                sendDialogue(player, "hemomancy.zealot.already_on_path");
+                tree = ZealotDialogueTrees.alreadyOnPath(this.getId());
             } else if (volume == null || !volume.isActive()) {
-                // No blood magic active — dismissive/generic
-                sendDialogue(player, "hemomancy.zealot.no_blood");
+                tree = ZealotDialogueTrees.noBlood(this.getId());
             } else if (degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
-                // VOTARY or higher with active blood — deliver the Plea of the Unstained
-                sendPleaDialogue(player);
+                tree = ZealotDialogueTrees.pleaDialogue(this.getId());
             } else if (degree >= 1) {
-                // Initiated but not yet VOTARY — too early
-                sendDialogue(player, "hemomancy.zealot.too_early");
+                tree = ZealotDialogueTrees.tooEarly(this.getId());
             } else {
-                // Uninitiated (degree 0) with active blood
-                sendDialogue(player, "hemomancy.zealot.uninitiated");
+                tree = ZealotDialogueTrees.uninitiated(this.getId());
             }
+
+            PacketHandler.CHANNELBLOODVOLUME.send(
+                    PacketDistributor.PLAYER.with(() -> serverPlayer),
+                    new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
-    }
-
-    private void sendPleaDialogue(Player player) {
-        player.displayClientMessage(Component.translatable("hemomancy.zealot.plea.line1")
-                .withStyle(ChatFormatting.GRAY), false);
-        player.displayClientMessage(Component.translatable("hemomancy.zealot.plea.line2")
-                .withStyle(ChatFormatting.WHITE), false);
-        player.displayClientMessage(Component.translatable("hemomancy.zealot.plea.line3")
-                .withStyle(ChatFormatting.AQUA), false);
-        player.displayClientMessage(Component.translatable("hemomancy.zealot.plea.line4")
-                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC), false);
-    }
-
-    private void sendDialogue(Player player, String key) {
-        player.displayClientMessage(Component.translatable(key)
-                .withStyle(ChatFormatting.GRAY), false);
     }
 }

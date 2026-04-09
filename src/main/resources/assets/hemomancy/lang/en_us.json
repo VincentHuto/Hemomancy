@@ -692,5 +692,15 @@
 	"hemomancy:components/mana_to_blood": "Sanguine Transmutation",
 	"hemomancy:components/mana_to_blood.description": "Converts the caster's mana into blood volume for the target. Useful for refilling blood pools using arcane energy.",
 	"hemomancy:components/sanguine_fertility": "Sanguine Fertility",
-	"hemomancy:components/sanguine_fertility.description": "Enhances breeding and growth of nearby animals with blood magic. Useful on farms and animal pens."
+	"hemomancy:components/sanguine_fertility.description": "Enhances breeding and growth of nearby animals with blood magic. Useful on farms and animal pens.",
+
+	"hemomancy.dialogue.zealot.option.tell_me_more": "Tell me more about the Unstained path.",
+	"hemomancy.dialogue.zealot.option.not_interested": "I have no interest in your cause.",
+	"hemomancy.dialogue.zealot.option.accept_purification": "I will begin the purification.",
+	"hemomancy.dialogue.zealot.option.accept_church": "I wish to join your church.",
+	"hemomancy.dialogue.zealot.option.leave": "[Leave]",
+	"hemomancy.dialogue.zealot.reject_response": "Then walk your crimson road, Votary. But know that the stain deepens with every rite you perform.",
+	"hemomancy.dialogue.event.accept_church": "The Zealot nods solemnly. 'Seek the silver bells. They will guide you.'",
+	"hemomancy.dialogue.event.reject_help": "The Zealot watches you turn away, silver eyes dimming.",
+	"hemomancy.dialogue.event.accept_purification": "The Zealot's eyes brighten. 'The podium awaits. Bring hemolytic solution and begin.'"
 }
