@@ -23,6 +23,7 @@ public class PacketSyncUnstainedProgress {
     private final int animalsBreed, cropsPlanted, advancementsEarned, nightsSlept, petsHealed;
     // One-time flags
     private final boolean sleptWithHemolysis, killedFirstHemoMob, reachedAbstinence, emptiedBlood, earnedAdvancement;
+    private final boolean usedAltarOfCleansing;
 
     public PacketSyncUnstainedProgress(IUnstainedProgress p) {
         this.begunPurification = p.hasBegunPurification();
@@ -43,6 +44,7 @@ public class PacketSyncUnstainedProgress {
         this.reachedAbstinence = p.hasReachedAbstinence();
         this.emptiedBlood = p.hasEmptiedBlood();
         this.earnedAdvancement = p.hasEarnedAdvancement();
+        this.usedAltarOfCleansing = p.hasUsedAltarOfCleansing();
     }
 
     private PacketSyncUnstainedProgress(FriendlyByteBuf buf) {
@@ -64,6 +66,7 @@ public class PacketSyncUnstainedProgress {
         this.reachedAbstinence = buf.readBoolean();
         this.emptiedBlood = buf.readBoolean();
         this.earnedAdvancement = buf.readBoolean();
+        this.usedAltarOfCleansing = buf.readBoolean();
     }
 
     public static void encode(PacketSyncUnstainedProgress msg, FriendlyByteBuf buf) {
@@ -85,6 +88,7 @@ public class PacketSyncUnstainedProgress {
         buf.writeBoolean(msg.reachedAbstinence);
         buf.writeBoolean(msg.emptiedBlood);
         buf.writeBoolean(msg.earnedAdvancement);
+        buf.writeBoolean(msg.usedAltarOfCleansing);
     }
 
     public static PacketSyncUnstainedProgress decode(FriendlyByteBuf buf) {
@@ -115,6 +119,7 @@ public class PacketSyncUnstainedProgress {
                             progress.setReachedAbstinence(msg.reachedAbstinence);
                             progress.setEmptiedBlood(msg.emptiedBlood);
                             progress.setEarnedAdvancement(msg.earnedAdvancement);
+                            progress.setUsedAltarOfCleansing(msg.usedAltarOfCleansing);
                         });
             }
         });

@@ -226,6 +226,22 @@ public class ItemInit {
 	public static final RegistryObject<Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
 			() -> new Item(new Item.Properties()));
 
+	// Unstained — Our Lady of Lethe materials
+	public static final RegistryObject<Item> tears_of_lethe = BASEITEMS.register("tears_of_lethe",
+			() -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
+			() -> new Item(new Item.Properties().stacksTo(16)));
+	public static final RegistryObject<Item> silver_chalice = BASEITEMS.register("silver_chalice",
+			() -> new Item(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
+			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> lethe_icon = BASEITEMS.register("lethe_icon",
+			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+	public static final RegistryObject<Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> lethean_extract = BASEITEMS.register("lethean_extract",
+			() -> new Item(new Item.Properties().stacksTo(16)));
+
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
 			() -> new EnzymeItem(EnumBloodTendency.ANIMUS, 10));

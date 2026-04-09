@@ -132,14 +132,32 @@ Managed by `CardinalRiteEvents`:
 
 ## 4. The Unstained Path (Anti-Hemomancy)
 
-The divergent/opposing path. The player abandons blood magic in pursuit of purification and enlightenment, guided by **Unstained Zealot** NPCs.
+The divergent/opposing path. The player abandons blood magic in pursuit of purification and enlightenment, guided by **Unstained Zealot** NPCs and the silent patronage of **Our Lady of Lethe**.
 
-### 4.1 Entry Requirements
+### 4.1 Our Lady of Lethe — Patron of the Unstained
+
+The Unstained revere a mysterious figure known only as **Our Lady of Lethe** (sometimes whispered as *"The Lady of the Forgotten Waters"* or *"She Who Absolves"*). She is described in Unstained scripture as:
+
+- A **tall woman** with **white hair** that cascades like flowing water
+- Clad in **white robes** that shimmer faintly with silver thread
+- Eyes of **liquid silver** that see through all deception and corruption
+- Skin of **pale blue**, as though touched by the waters of the River Lethe itself
+
+Her origins are unknown — some Unstained texts suggest she is a being from before the fungal infection that birthed hemomancy, a guardian spirit of purity who was driven into hiding when blood magic first took root. Others believe she is a manifestation of the world's immune response to the alien fungus, a living antibody in humanoid form.
+
+**Connection to the Lethean Poppies:**
+The **Lethean Poppies** that grow across the world are said to bloom wherever Our Lady once walked. The dew they produce — **Lethian Dew** — carries her essence: the power of forgetting. Just as the mythological River Lethe washed away memories, the lethean poppies help players *forget* their blood manipulations, severing the ties that bind them to hemomancy. The Unstained believe that harvesting and refining these poppies is a sacred act of devotion to their patron.
+
+**Tears of Lethe** are distilled from Lethian Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification — a one-time gift from the Lady herself.
+
+**The Lethe Icon** is an exceedingly rare relic depicting Our Lady, said to have been carved by the first Unstained from pale silver found at the bottom of a forgotten river. Those who possess it are considered to be under her direct protection.
+
+### 4.2 Entry Requirements
 
 - Player must have reached at least **Degree 2 (Votary)** before an Unstained Zealot will offer the choice
 - The Zealot directs the player to bring **Hemolytic Solution** ![Hemolytic Solution](src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) to an **Unstained Podium** block
 
-### 4.2 Phase 1: Purity (0–100)
+### 4.3 Phase 1: Purity (0–100)
 
 Initiated by using Hemolytic Solution at the Unstained Podium:
 - Sets `begunPurification = true`, grants 5.0 starting purity
@@ -173,6 +191,8 @@ As purity rises, blood magic becomes increasingly penalized:
 | Source | Purity Gained | Condition |
 |--------|---------------|-----------|
 | **Hemolytic Solution on Podium** | +10.0 | Each use (first use grants +5.0 and begins path) |
+| **Tears of Lethe on Altar of Cleansing** | +25.0 | One-time blessing from Our Lady of Lethe |
+| **Lethean Poppy Wreath on Altar** | +5.0 | Repeatable offering at the Altar of Cleansing |
 | **Completing an Advancement** | +1.5 | Any advancement (boss kills, exploration, progression) |
 | **Picking up XP orbs** | +0.1 | Requires active **Hemolysis** effect |
 | **Sleeping through the night** | +3.0 | Requires active **Hemolysis** effect; natural wake only |
@@ -196,7 +216,7 @@ As purity rises, blood magic becomes increasingly penalized:
 
 *Kill rewards are not gated by Hemolysis — any player on the Unstained path earns purity from kills. XP and sleep rewards require the Hemolysis effect. Abstinence timer resets whenever a blood manipulation is used.*
 
-### 4.3 Phase 2: Clarity (0–100)
+### 4.4 Phase 2: Clarity (0–100)
 
 Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper** at the Unstained Podium:
 - Sets `clarityUnlocked = true`
@@ -213,7 +233,7 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
 
-### 4.4 HUD
+### 4.5 HUD
 
 Unstained players see a dedicated gauge overlay (top-right corner) with:
 - Silver **Purity** bar
@@ -518,7 +538,19 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
 | ![](src/main/resources/assets/hemomancy/textures/item/recycled_enzyme.png) Recycled Enzyme | Generic enzyme fallback |
 
-### 13.6 Banner Patterns
+### 13.6 Unstained Materials (Our Lady of Lethe)
+
+| Item | Purpose |
+|------|---------|
+| Tears of Lethe | Distilled from Lethian Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
+| Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
+| Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
+| Tome of the Unstained | A book of Unstained scripture describing Our Lady of Lethe and the path of purification |
+| Icon of Our Lady | A rare relic depicting Our Lady of Lethe — carved from pale silver, grants her protection |
+| Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
+| Lethean Extract | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
+
+### 13.7 Banner Patterns
 
 - ![](src/main/resources/assets/hemomancy/textures/item/heart_pattern.png) **Heart Pattern** — Vascularium Crest
 - ![](src/main/resources/assets/hemomancy/textures/item/veins_pattern.png) **Veins Pattern** — Vein Border
@@ -639,6 +671,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
 | **Dendritic Distributor** | `DendriticDistributorBlockEntity` | Opens the Skill Tree / Manipulation Tree screen |
 | **Unstained Podium** | `UnstainedPodiumBlockEntity` | Where Hemolytic Solution / Consecrated Copper are used for the Unstained path |
+| **Altar of Cleansing** | `AltarOfCleansingBlockEntity` | Sacred altar of Our Lady of Lethe — grants one-time purity boost with Tears of Lethe; accepts Lethean Poppy Wreaths and Silver Chalices for repeatable offerings |
 | **Semi-Sentient Construct** | `SemiSentientConstructBlockEntity` | Blood construct-related block |
 | **Earthen Vein** | `EarthenVeinBlockEntity` | Vein location marker for teleportation (Venous Travel) ![](src/main/resources/assets/hemomancy/textures/entity/earthen_vein/model_earthen_vein.png) |
 | **Iron Brazier** | `IronBrazierBlockEntity` | Decorative/functional brazier |
@@ -682,9 +715,11 @@ A full block family with variants:
 - Hematic Iron Pillar (rotatable)
 - Chiseled Hematic Iron Block
 
-### 17.3 Anti-Blood
+### 17.3 Anti-Blood / Unstained
 
 - ![](src/main/resources/assets/hemomancy/textures/block/hemolytic_plating_block.png) Hemolytic Plating Block
+- Cleansed Stone — pale, smooth stone found in Unstained temples
+- Lethe Lantern — softly glowing lantern sacred to Our Lady of Lethe
 
 ### 17.4 Glass & Panes
 
@@ -1066,6 +1101,9 @@ JEI recipe category support for:
 | **The Blood Remembers** | Obtain a Living Blade |
 | **Old Habits** | Obtain any enzyme |
 | **Unstained** | Obtain Hemolytic Solution |
+| **Lady of the Forgotten Waters** | Obtain Tears of Lethe |
+| **Path of Purity** | Obtain the Tome of the Unstained |
+| **Our Lady of Lethe** | Obtain the Icon of Our Lady (challenge) |
 | **Bleeding a Stone** | Craft a Juiceinator |
 
 ---
@@ -1124,6 +1162,30 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Some skill descriptions** exist in lang but the full implementation of effects like `skill_sanguine_surge`, `skill_crimson_mastery`, `skill_vital_link`, `skill_iron_will`, `skill_blood_flow` need verification for complete gameplay wiring
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Includes new spell components, shapes, rituals, items, faction enhancements, cross-system synergy mechanics, and QoL improvements. See the brainstorm document for prioritized feature list and implementation notes.
+
+### 30.1 Unstained Expansion — Planned Features
+
+The Unstained faction is being expanded with deeper lore around **Our Lady of Lethe** as their patron. Planned and in-progress features:
+
+- **Altar of Cleansing** — functional block that grants a one-time +25 purity boost when Tears of Lethe are offered. Also accepts Lethean Poppy Wreaths (repeatable +5 purity) and Silver Chalices (+5 clarity). Will eventually be placed in every Unstained temple structure.
+- **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Lethe Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
+- **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
+- **Unstained Dialogue Expansion** — Zealot dialogues should reference Our Lady of Lethe more directly, with lore about the River Lethe, the meaning of forgetting, and the significance of the poppies.
+- **Lethean Crafting Recipes** — planned recipes:
+  - Tears of Lethe = Lethean Extract + Silver Chalice (crafting or altar recipe)
+  - Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
+  - Lethean Extract = Lethian Dew + Consecrated Copper Ingot (juiceinator or crafting)
+  - Pale Silver Ingot = Iron Ingot + Lethean Extract (smelting or structure recipe)
+  - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting)
+  - Cleansed Stone = Stone + Hemolytic Solution (crafting)
+- **Unstained Advament/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
+  - Begin the Unstained path
+  - Receive the Altar's blessing
+  - Reach each purity stage (Tainted → Cleansing → Absolved → Purified)
+  - Unlock clarity
+  - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
+  - Collect all Unstained materials
+- **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
 
 ---
 

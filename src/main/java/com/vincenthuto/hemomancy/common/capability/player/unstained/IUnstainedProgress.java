@@ -103,4 +103,8 @@ public interface IUnstainedProgress {
 
     boolean hasEarnedAdvancement();
     void setEarnedAdvancement(boolean value);
+
+    /** Has the player used the Altar of Cleansing (one-time blessing)? */
+    boolean hasUsedAltarOfCleansing();
+    void setUsedAltarOfCleansing(boolean value);
 }

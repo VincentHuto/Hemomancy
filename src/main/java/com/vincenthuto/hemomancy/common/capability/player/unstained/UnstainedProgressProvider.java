@@ -65,6 +65,7 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
         tag.putBoolean("reachedAbstinence", inst.hasReachedAbstinence());
         tag.putBoolean("emptiedBlood", inst.hasEmptiedBlood());
         tag.putBoolean("earnedAdvancement", inst.hasEarnedAdvancement());
+        tag.putBoolean("usedAltarOfCleansing", inst.hasUsedAltarOfCleansing());
         return tag;
     }
 
@@ -91,6 +92,7 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
             inst.setReachedAbstinence(tag.getBoolean("reachedAbstinence"));
             inst.setEmptiedBlood(tag.getBoolean("emptiedBlood"));
             inst.setEarnedAdvancement(tag.getBoolean("earnedAdvancement"));
+            inst.setUsedAltarOfCleansing(tag.getBoolean("usedAltarOfCleansing"));
         }
     }
 }

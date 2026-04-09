@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:tome_of_the_unstained"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.path_of_purity.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.path_of_purity.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/unstained",
+  "criteria": {
+    "has_tome": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:tome_of_the_unstained"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_tome"
+    ]
+  ]
+}

@@ -84,6 +84,7 @@ public class UnstainedProgressEvents {
             newProgress.setReachedAbstinence(oldProgress.hasReachedAbstinence());
             newProgress.setEmptiedBlood(oldProgress.hasEmptiedBlood());
             newProgress.setEarnedAdvancement(oldProgress.hasEarnedAdvancement());
+            newProgress.setUsedAltarOfCleansing(oldProgress.hasUsedAltarOfCleansing());
             original.invalidateCaps();
         }
     }
