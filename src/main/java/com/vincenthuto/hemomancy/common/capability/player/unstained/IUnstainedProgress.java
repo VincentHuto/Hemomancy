@@ -51,6 +51,18 @@ public interface IUnstainedProgress {
     /** Copper-based anti-blood field radius (scales with clarity: clarity / 100). */
     float getVerdigrisAura();
 
+    // --- Bonus Toggle State ---
+
+    /** Is the Silver Ward passive bonus enabled by the player? */
+    boolean isSilverWardEnabled();
+
+    void setSilverWardEnabled(boolean enabled);
+
+    /** Is the Verdigris Aura passive bonus enabled by the player? */
+    boolean isVerdigrisAuraEnabled();
+
+    void setVerdigrisAuraEnabled(boolean enabled);
+
     // --- Abstinence Tracking (for blood magic restraint purity) ---
 
     /** Game tick when the player last used a blood manipulation. 0 = never. */

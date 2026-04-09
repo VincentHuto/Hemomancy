@@ -9,6 +9,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -79,6 +81,11 @@ public class UnstainedProgressScreen extends Screen {
 	private static final int SIDEBAR_TAB_H = 50;  // collapsed tab height
 	private boolean sidebarVisible = true;
 
+	// ── Bonus toggle panel (right side) ──
+	private static final int BONUS_BTN_SIZE = 24;
+	private static final int BONUS_BTN_GAP  = 6;
+	private static final int BONUS_PANEL_PAD = 6;
+
 	// ── GUI viewport (screen-space pixels, set in init()) ──
 	private int guiLeft, guiTop, guiWidth, guiHeight;
 
@@ -94,6 +101,10 @@ public class UnstainedProgressScreen extends Screen {
 	private float verdigrisAura;
 	private EnumPurityStage currentPurityStage;
 	private EnumClarityStage currentClarityStage;
+
+	// ── Cached bonus toggle state ──
+	private boolean silverWardEnabled;
+	private boolean verdigrisAuraEnabled;
 
 	// ── Cached milestone data ──
 	private int mHemoKills, mUndeadKills, mHostileKills, mFlawlessKills;
@@ -150,6 +161,8 @@ public class UnstainedProgressScreen extends Screen {
 				clarity              = cap.getClarity();
 				silverWardStrength   = cap.getSilverWardStrength();
 				verdigrisAura        = cap.getVerdigrisAura();
+				silverWardEnabled    = cap.isSilverWardEnabled();
+				verdigrisAuraEnabled = cap.isVerdigrisAuraEnabled();
 				currentPurityStage   = EnumPurityStage.byPurity(purity);
 				currentClarityStage  = EnumClarityStage.byClarity(clarity);
 				// Milestones
@@ -260,6 +273,14 @@ public class UnstainedProgressScreen extends Screen {
 				sidebarVisible = !sidebarVisible;
 				return true;
 			}
+			// Bonus toggle buttons
+			if (begunPurification) {
+				int clickedBonus = getBonusButtonAt(mx, my);
+				if (clickedBonus >= 0) {
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketToggleUnstainedBonus(clickedBonus));
+					return true;
+				}
+			}
 			if (insideGui(mx, my)) {
 				isDragging = true;
 				return true;
@@ -341,6 +362,11 @@ public class UnstainedProgressScreen extends Screen {
 			drawMilestones(gfx, mouseX, mouseY);
 		}
 
+		// 4b. Bonus toggle buttons (fixed on far right, outside content scissor)
+		if (begunPurification) {
+			drawBonusToggleButtons(gfx, mouseX, mouseY);
+		}
+
 		// 5. Home button (outside scissor)
 		drawHomeButton(gfx, mouseX, mouseY);
 
@@ -363,6 +389,7 @@ public class UnstainedProgressScreen extends Screen {
 				drawClarityTooltip(gfx, mouseX, mouseY);
 			}
 			drawStatTooltips(gfx, mouseX, mouseY);
+			drawBonusToggleTooltips(gfx, mouseX, mouseY);
 			// Sidebar toggle tooltip
 			if (isOverSidebarToggle(mouseX, mouseY)) {
 				String tipText = sidebarVisible ? "Hide Milestones" : "Show Milestones";
@@ -890,6 +917,191 @@ public class UnstainedProgressScreen extends Screen {
 			float penalty = currentPurityStage.getBloodMagicPenalty() * 100;
 			tip.add(Component.literal(String.format("Current: -%.0f%%", penalty))
 					.withStyle(s -> s.withColor(penalty > 0 ? 0xCC6644 : 0x607060).withItalic(true)));
+			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
+		}
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Bonus Toggle Buttons (fixed on the right side of the GUI)
+	// ────────────────────────────────────────────────────────────
+
+	/** Returns the screen-space X for the top-left corner of the bonus panel. */
+	private int bonusPanelX() {
+		return guiLeft + guiWidth - BONUS_PANEL_PAD - BONUS_BTN_SIZE;
+	}
+
+	/** Returns the screen-space Y for the top-left of the first bonus button. */
+	private int bonusPanelStartY() {
+		return guiTop + 24;
+	}
+
+	/** Returns the total number of visible bonus buttons (based on progress). */
+	private int bonusButtonCount() {
+		int count = 1; // Silver Ward is always shown once purification has begun
+		if (clarityUnlocked) count++; // Verdigris Aura
+		return count;
+	}
+
+	/**
+	 * Hit-test: returns the bonus button index (0-based) at the given mouse position,
+	 * or -1 if no button is under the cursor.
+	 * 0 = Silver Ward, 1 = Verdigris Aura.
+	 * Only returns indices for unlocked bonuses.
+	 */
+	private int getBonusButtonAt(double mx, double my) {
+		int px = bonusPanelX();
+		int py = bonusPanelStartY();
+		int count = bonusButtonCount();
+		for (int i = 0; i < count; i++) {
+			int bx = px;
+			int by = py + i * (BONUS_BTN_SIZE + BONUS_BTN_GAP);
+			if (mx >= bx && mx <= bx + BONUS_BTN_SIZE && my >= by && my <= by + BONUS_BTN_SIZE) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/** Draws the bonus toggle buttons on the right side of the GUI. */
+	private void drawBonusToggleButtons(GuiGraphics gfx, int mouseX, int mouseY) {
+		int px = bonusPanelX();
+		int py = bonusPanelStartY();
+
+		// Silver Ward button (always visible once purification begun)
+		drawBonusButton(gfx, px, py, "W", silverWardEnabled,
+				purity > 0, PURITY_COLOR, PURITY_GLOW,
+				getBonusButtonAt(mouseX, mouseY) == 0);
+
+		// Verdigris Aura button (only if clarity unlocked)
+		if (clarityUnlocked) {
+			int y2 = py + BONUS_BTN_SIZE + BONUS_BTN_GAP;
+			drawBonusButton(gfx, px, y2, "A", verdigrisAuraEnabled,
+					true, CLARITY_COLOR, CLARITY_GLOW,
+					getBonusButtonAt(mouseX, mouseY) == 1);
+		}
+	}
+
+	/**
+	 * Draws a single bonus toggle button as a diamond-themed icon.
+	 * @param icon      single-character label inside the button
+	 * @param enabled   whether the bonus is currently toggled ON
+	 * @param unlocked  whether the player has progressed enough to use this bonus
+	 * @param accent    accent colour when active
+	 * @param glow      glow colour for pulse when active
+	 * @param hovered   whether the mouse is over this button
+	 */
+	private void drawBonusButton(GuiGraphics gfx, int bx, int by, String icon,
+								  boolean enabled, boolean unlocked, int accent, int glow, boolean hovered) {
+		int bs = BONUS_BTN_SIZE;
+		int cx = bx + bs / 2;
+		int cy = by + bs / 2;
+		int halfDia = bs / 2 - 2;
+
+		// Background fill diamond
+		int bgCol;
+		if (!unlocked) {
+			bgCol = 0xCC0C1020;
+		} else if (enabled) {
+			bgCol = hovered ? 0xDD101830 : 0xCC0C1020;
+		} else {
+			bgCol = hovered ? 0xDD0C0C16 : 0xCC080A14;
+		}
+		drawDiamond(gfx, cx, cy, halfDia, bgCol);
+
+		// Border
+		int borderCol;
+		if (!unlocked) {
+			borderCol = COL_NODE_LOCKED;
+		} else if (enabled) {
+			borderCol = hovered ? accent : COL_NODE_REACHED;
+		} else {
+			borderCol = hovered ? 0xFF505868 : 0xFF383E4C;
+		}
+		drawDiamondOutline(gfx, cx, cy, halfDia, borderCol);
+
+		// Pulsing glow when enabled and unlocked
+		if (enabled && unlocked) {
+			float time = System.nanoTime() / 1_000_000_000f;
+			float p = 0.3f + 0.3f * Mth.sin(time * 2.0f);
+			int ga = (int)(30 * p);
+			int gr = (glow >> 16) & 0xFF;
+			int gg = (glow >> 8) & 0xFF;
+			int gb = glow & 0xFF;
+			drawDiamond(gfx, cx, cy, halfDia + 2, (ga << 24) | (gr << 16) | (gg << 8) | gb);
+		}
+
+		// Icon letter
+		int iconCol;
+		if (!unlocked) {
+			iconCol = 0xFF303840;
+		} else if (enabled) {
+			iconCol = hovered ? 0xFFFFFFFF : accent;
+		} else {
+			iconCol = hovered ? 0xFF707880 : 0xFF505868;
+		}
+		gfx.drawCenteredString(font, icon, cx, cy - 4, iconCol);
+
+		// Small toggle indicator dot below icon
+		if (unlocked) {
+			int dotCol = enabled ? 0xFF60CC60 : 0xFF804040;
+			gfx.fill(cx - 1, cy + 4, cx + 2, cy + 6, dotCol);
+		}
+	}
+
+	/** Draws hover tooltips for the bonus toggle buttons. */
+	private void drawBonusToggleTooltips(GuiGraphics gfx, int mouseX, int mouseY) {
+		int hovered = getBonusButtonAt(mouseX, mouseY);
+		if (hovered < 0) return;
+
+		List<Component> tip = new ArrayList<>();
+
+		if (hovered == 0) {
+			// Silver Ward tooltip
+			boolean unlocked = purity > 0;
+			tip.add(Component.literal("Silver Ward")
+					.withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
+			if (!unlocked) {
+				tip.add(Component.literal("Locked — increase Purity to unlock.")
+						.withStyle(s -> s.withColor(0x606870).withItalic(true)));
+			} else {
+				tip.add(Component.literal("Passive resistance to blood magic effects.")
+						.withStyle(s -> s.withColor(0x8898B0)));
+				tip.add(Component.literal("Grants +4 Armor and +0.2 Knockback Resistance")
+						.withStyle(s -> s.withColor(0x8898B0)));
+				tip.add(Component.literal("while the Silver Ward effect is active.")
+						.withStyle(s -> s.withColor(0x8898B0)));
+				tip.add(Component.literal(""));
+				tip.add(Component.literal("Scales with Purity (purity \u00F7 100).")
+						.withStyle(s -> s.withColor(0x607090).withItalic(true)));
+				tip.add(Component.literal(String.format("Current: %.0f%%", silverWardEnabled ? silverWardStrength * 100 : 0))
+						.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+				tip.add(Component.literal(""));
+				String state = silverWardEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
+				int stateCol = silverWardEnabled ? 0x60CC60 : 0xCC6060;
+				tip.add(Component.literal(state + " — click to toggle")
+						.withStyle(s -> s.withColor(stateCol)));
+			}
+		} else if (hovered == 1) {
+			// Verdigris Aura tooltip
+			tip.add(Component.literal("Verdigris Aura")
+					.withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
+			tip.add(Component.literal("A copper-based anti-blood field that")
+					.withStyle(s -> s.withColor(0x70A898)));
+			tip.add(Component.literal("weakens nearby blood magic entities and effects.")
+					.withStyle(s -> s.withColor(0x70A898)));
+			tip.add(Component.literal(""));
+			tip.add(Component.literal("Scales with Clarity (clarity \u00F7 100).")
+					.withStyle(s -> s.withColor(0x508878).withItalic(true)));
+			tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAuraEnabled ? verdigrisAura * 100 : 0))
+					.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+			tip.add(Component.literal(""));
+			String state = verdigrisAuraEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
+			int stateCol = verdigrisAuraEnabled ? 0x60CC60 : 0xCC6060;
+			tip.add(Component.literal(state + " — click to toggle")
+					.withStyle(s -> s.withColor(stateCol)));
+		}
+
+		if (!tip.isEmpty()) {
 			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
 		}
 	}
