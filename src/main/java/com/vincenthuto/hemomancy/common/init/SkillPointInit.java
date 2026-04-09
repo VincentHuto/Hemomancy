@@ -22,7 +22,8 @@ public class SkillPointInit {
 	public static int skillPoints = 0;
 	public static SkillPoint base_skill, skill_capacity, skill_efficiency, skill_last_wind, skill_dynamic_use,
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
-			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach;
+			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
+			skill_manip_slots;
 
 	// ── Milestone tracking ──
 	/** Set of milestones that have already been completed and rewarded. */
@@ -82,6 +83,9 @@ public class SkillPointInit {
 		skill_sanguine_reach = registerSkill(BASE,
 				new SkillPoint(13, "skill_sanguine_reach", 400, 3, EnumSkillStates.LOCKED, skill_crimson_mastery)
 						.setSkillPointCost(3).setRequiredDegree(5));
+		skill_manip_slots = registerSkill(BASE,
+				new SkillPoint(14, "skill_manip_slots", 200, 5, EnumSkillStates.LOCKED, base_skill)
+						.setSkillPointCost(2).setRequiredDegree(1));
 
 		registerSkillBranch(BASE);
 	}

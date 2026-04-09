@@ -34,10 +34,10 @@ import net.minecraftforge.network.PacketDistributor;
  *
  * <h3>Programmatic Milestones</h3>
  * Degree advancement, rite completion, manipulation use, morphling equipping,
- * Recaller crafting, and bloodline joining are awarded by calling
+ * Memory weaving, and bloodline joining are awarded by calling
  * {@link #onDegreeReached}, {@link #onRiteCompleted},
  * {@link #onManipulationUsed}, {@link #onMorphlingEquipped},
- * {@link #onRecallerCraftCompleted}, and {@link #onBloodlineJoined}
+ * {@link #onMemoryWeavingCompleted}, and {@link #onBloodlineJoined}
  * from the relevant systems.
  */
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -211,6 +211,8 @@ public class SkillPointGainEvents {
     /**
      * Called from {@code CardinalRiteEvents.completeRite} when a degree rite
      * grants a new initiatory degree. Awards the corresponding degree milestone.
+     * Also converts any excess skill_manip_slots levels into skill points
+     * when the hard cap of 9 slots is reached.
      */
     public static void onDegreeReached(ServerPlayer player, int degree) {
         boolean changed = switch (degree) {
@@ -223,6 +225,16 @@ public class SkillPointGainEvents {
             case 7 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ARCHON_ASCENSION);
             default -> false;
         };
+
+        // Convert excess skill_manip_slots levels into skill points
+        int excess = com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper
+                .getExcessSkillLevels(player);
+        if (excess > 0 && SkillPointInit.skill_manip_slots != null) {
+            int currentLevel = SkillPointInit.skill_manip_slots.getCurrentLevel();
+            SkillPointInit.skill_manip_slots.setCurrentLevel(currentLevel - excess);
+            SkillPointInit.skillPoints += excess;
+            changed = true;
+        }
 
         if (changed) {
             syncSkills(player);
@@ -240,11 +252,11 @@ public class SkillPointGainEvents {
     }
 
     /**
-     * Called when a player completes a Visceral Recaller recipe.
-     * Awards the first-recaller-craft milestone.
+     * Called when a player completes a Somatic Loom recipe.
+     * Awards the first-memory-weaving milestone.
      */
-    public static void onRecallerCraftCompleted(ServerPlayer player) {
-        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_RECALLER_CRAFT)) {
+    public static void onMemoryWeavingCompleted(ServerPlayer player) {
+        if (SkillPointInit.tryAwardMilestone(HemoMilestone.FIRST_MEMORY_WEAVING)) {
             syncSkills(player);
         }
     }

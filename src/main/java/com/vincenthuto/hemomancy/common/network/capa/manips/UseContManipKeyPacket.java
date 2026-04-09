@@ -44,6 +44,13 @@ public class UseContManipKeyPacket {
 						BloodManipulation selectedManip = known.getSelectedManip();
 
 						if (selectedManip != null) {
+							// Check manipulation is equipped
+							if (!known.isManipEquipped(selectedManip)) {
+								player.displayClientMessage(
+										Component.literal("That manipulation is not equipped!")
+												.withStyle(ChatFormatting.RED), true);
+								return;
+							}
 							// Continuous and Charged
 							if (selectedManip.getType() == EnumManipulationType.CONTINUOUS
 									|| selectedManip.getType() == EnumManipulationType.CHARGED) {

@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:scrying_dish"
+  },
+  "animus": 0,
+  "mortem": 0,
+  "ductilis": 0,
+  "ferric": 0,
+  "lux": 2.5,
+  "tenebris": 0,
+  "flammeus": 0,
+  "congeatio": 0,
+  "result": "hemomancy:memory_deadly_gaze",
+  "count": 1
+}

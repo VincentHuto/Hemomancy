@@ -66,9 +66,9 @@ public class BlockEntityInit {
 			.register("mortal_display", () -> BlockEntityType.Builder
 					.of(MortalDisplayBlockEntity::new, BlockInit.mortal_display.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<VisceralRecallerBlockEntity>> visceral_artificial_recaller = TILES
-			.register("visceral_artificial_recaller", () -> BlockEntityType.Builder
-					.of(VisceralRecallerBlockEntity::new, BlockInit.visceral_artificial_recaller.get()).build(null));
+	public static final RegistryObject<BlockEntityType<SomaticLoomBlockEntity>> somatic_loom = TILES
+			.register("somatic_loom", () -> BlockEntityType.Builder
+					.of(SomaticLoomBlockEntity::new, BlockInit.somatic_loom.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<JuicinatorBlockEntity>> juiceinator = TILES.register(
 			"juiceinator",

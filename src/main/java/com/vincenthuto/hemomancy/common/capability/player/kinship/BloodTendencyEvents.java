@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
-import com.vincenthuto.hemomancy.common.tile.VisceralRecallerBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.server.level.ServerPlayer;
@@ -37,7 +37,7 @@ public class BloodTendencyEvents {
 
 	@SubscribeEvent
 	public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-		if (event.getObject() instanceof VisceralRecallerBlockEntity) {
+		if (event.getObject() instanceof SomaticLoomBlockEntity) {
 			event.addCapability(Hemomancy.rloc("bloodtendency"), new BloodTendencyProvider());
 		}
 	}

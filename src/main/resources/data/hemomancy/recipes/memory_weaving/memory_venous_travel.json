@@ -1,0 +1,16 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:ender_pearl"
+  },
+  "animus": 2.0,
+  "mortem": 0,
+  "ductilis": 1.0,
+  "ferric": 0,
+  "lux": 0,
+  "tenebris": 0,
+  "flammeus": 0,
+  "congeatio": 0,
+  "result": "hemomancy:memory_venous_travel",
+  "count": 1
+}

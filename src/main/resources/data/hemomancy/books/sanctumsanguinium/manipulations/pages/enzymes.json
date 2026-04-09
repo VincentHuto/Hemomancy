@@ -3,7 +3,7 @@
   "ordinality": 4,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Enzymes",
-  "subtitle": "Forcing recall",
-  "text": "Enzymes are catalysts keyed to a Blood Tendency. They’re used to stabilize and recall Hematic Memories in the Visceral Recaller. Different enzyme types push the memory toward different Tendencies, changing what you can unlock and how efficiently you can do it.",
+  "subtitle": "Fueling the weave",
+  "text": "Enzymes are catalysts keyed to a Blood Tendency. They’re used to stabilize and weave Hematic Memories in the Somatic Loom. Different enzyme types push the memory toward different Tendencies, changing what you can unlock and how efficiently you can do it.",
   "icon": "hemomancy:vivacious_enzyme"
 }

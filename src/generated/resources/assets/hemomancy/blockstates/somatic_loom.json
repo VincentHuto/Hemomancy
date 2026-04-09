@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "hemomancy:block/somatic_loom"
+		},
+		"facing=south": {
+			"model": "hemomancy:block/somatic_loom",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "hemomancy:block/somatic_loom",
+			"y": 270
+		},
+		"facing=east": {
+			"model": "hemomancy:block/somatic_loom",
+			"y": 90
+		}
+	}
+}

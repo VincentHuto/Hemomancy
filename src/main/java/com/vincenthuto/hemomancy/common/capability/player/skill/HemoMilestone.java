@@ -103,8 +103,8 @@ public enum HemoMilestone {
     /** Equip a morphling companion for the first time. */
     FIRST_MORPHLING_BOND("first_morphling_bond", 2, Category.ACTION, 1, "Equip a morphling"),
 
-    /** Complete a Visceral Recaller recipe. */
-    FIRST_RECALLER_CRAFT("first_recaller_craft", 3, Category.ACTION, 2, "Complete a Visceral Recaller recipe"),
+    /** Complete a Somatic Loom recipe. */
+    FIRST_MEMORY_WEAVING("first_memory_weaving", 3, Category.ACTION, 2, "Complete a Somatic Loom recipe"),
 
     /** Join or create a bloodline. */
     FIRST_BLOODLINE("first_bloodline", 3, Category.ACTION, 2, "Join or create a bloodline"),

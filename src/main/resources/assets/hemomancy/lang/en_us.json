@@ -34,6 +34,7 @@
 	"block.hemomancy.iron_brazier": "Iron Brazier",
 	"block.hemomancy.juiceinator": "Juiceinator",
 	"block.hemomancy.lethean_poppy": "Lethean Poppy",
+	"block.hemomancy.mnemonic_reliquary": "Mnemonic Reliquary",
 	"block.hemomancy.morphling_incubator": "Morphling Incubator",
 	"block.hemomancy.mortal_display": "Mortal Display",
 	"block.hemomancy.polished_venous_stone": "Polished Venous Stone",
@@ -67,7 +68,7 @@
 	"block.hemomancy.suspended_vivianite": "Suspended Vivianite",
 	"block.hemomancy.suspended_blood_crystal": "Suspended Blood Crystal",
 	"block.hemomancy.bog_body": "Bog Body",
-	"block.hemomancy.visceral_artificial_recaller": "Visceral Artificial Recaller",
+	"block.hemomancy.somatic_loom": "Somatic Loom",
 	"block.minecraft.banner.hemomancy_heart.black": "Black Vascularium",
 	"block.minecraft.banner.hemomancy_heart.blue": "Blue Vascularium",
 	"block.minecraft.banner.hemomancy_heart.brown": "Brown Vascularium",
@@ -156,7 +157,7 @@
 	"entity.minecraft.villager.hemomancy.hemopothecary": "Hemopothecary",
 	"fluid.hemomancy.blood": "Blood",
 	"hemomancy.jei.chisel_station": "Chisel Station",
-	"hemomancy.jei.recaller": "Visceral Recaller",
+	"hemomancy.jei.memory_weaving": "Memory Weaving",
 	"hemomancy.jei.blood_crafting": "Blood Structure Crafting",
 	"hemomancy.jei.morphling_incubator": "Morphling Incubator",
 	"item.hemomancy.active_befouling_ash": "Active Befouling Ash",
@@ -502,6 +503,7 @@
 	"advancements.hemomancy.bleeding_a_stone.description": "Craft a Juiceinator — if you can squeeze blood from this, you can squeeze blood from anything",
 
 	"container.hemomancy.juiceinator": "Juiceinator",
+	"container.hemomancy.mnemonic_reliquary": "Mnemonic Reliquary",
 	"gui.hemomancy.juiceinator.requires_fire": "Requires fire below",
 
 	"item.hemomancy.vivianite_cluster": "Vivianite Cluster",
@@ -528,6 +530,7 @@
 	"skill.hemomancy.skill_blood_flow.desc": "Reduces manipulation cooldowns by 5% per level.",
 	"skill.hemomancy.skill_coagulation.desc": "+15% chance to block incoming bleed effects. Per level.",
 	"skill.hemomancy.skill_sanguine_reach.desc": "+15% range for ranged blood manipulations. Per level.",
+	"skill.hemomancy.skill_manip_slots.desc": "+1 equipped manipulation slot per level. (Max 9 total; excess refunded as skill points.)",
 	"item.hemomancy.sanguine_salve": "Sanguine Salve",
 	"item.hemomancy.bloodline_pool_monitor": "Bloodline Pool Monitor",
 
@@ -679,8 +682,8 @@
 	"hemomancy.milestone.first_rite.desc": "Complete a cardinal rite for the first time",
 	"hemomancy.milestone.first_morphling_bond": "Morphling Bond",
 	"hemomancy.milestone.first_morphling_bond.desc": "Equip a morphling companion for the first time",
-	"hemomancy.milestone.first_recaller_craft": "Visceral Architect",
-	"hemomancy.milestone.first_recaller_craft.desc": "Complete a Visceral Recaller recipe",
+	"hemomancy.milestone.first_memory_weaving": "Memory Weaver",
+	"hemomancy.milestone.first_memory_weaving.desc": "Complete a Memory Weaving recipe",
 	"hemomancy.milestone.first_bloodline": "Blood Covenant",
 	"hemomancy.milestone.first_bloodline.desc": "Join or create a bloodline",
 

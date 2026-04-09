@@ -55,4 +55,25 @@ public interface IKnownManipulations {
 
 	public void setVeinList(List<VeinLocation> dimPos);
 
+	// ── Equipped manipulation slots ──
+
+	/** Returns the list of manipulation names currently equipped in the player's limited slots. */
+	public List<String> getEquippedManipNames();
+
+	/** Overwrites the equipped manipulation name list. */
+	public void setEquippedManipNames(List<String> names);
+
+	/** Returns {@code true} if the given manipulation is currently equipped. */
+	public boolean isManipEquipped(BloodManipulation manip);
+
+	/**
+	 * Attempts to equip a manipulation by name into a free slot.
+	 *
+	 * @return {@code true} if the manipulation was equipped, {@code false} if no free slot
+	 */
+	public boolean equipManip(String manipName, int maxSlots);
+
+	/** Removes a manipulation from the equipped slots. */
+	public boolean unequipManip(String manipName);
+
 }

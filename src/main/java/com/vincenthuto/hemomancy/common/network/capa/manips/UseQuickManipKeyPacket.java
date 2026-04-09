@@ -49,6 +49,13 @@ public class UseQuickManipKeyPacket {
 						BloodManipulation selectedManip = ManipulationInit
 								.getByName(known.getSelectedManip().getName());
 						if (selectedManip != null) {
+							// Check manipulation is equipped
+							if (!known.isManipEquipped(selectedManip)) {
+								player.displayClientMessage(
+										Component.literal("That manipulation is not equipped!")
+												.withStyle(ChatFormatting.RED), true);
+								return;
+							}
 							if (selectedManip.getType() == EnumManipulationType.QUICK
 									|| selectedManip.getType() == EnumManipulationType.PASSIVE) {
 								if (selectedManip instanceof ConjurationManip conjure) {
