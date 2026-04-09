@@ -1,15 +1,12 @@
 package com.vincenthuto.hemomancy.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
-import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.menu.ManipulationLoadoutMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.EquipManipulationPacket;
@@ -39,7 +36,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 	private int guiLeft;
 	private int guiTop;
 
-	private final Map<BloodManipulation, ItemStack> manipItemCache = new HashMap<>();
+	private final Map<String, ItemStack> manipItemCache = new HashMap<>();
 	private final Map<EnumBloodTendency, List<BloodManipulation>> tendencyGroups = new LinkedHashMap<>();
 	private List<BloodManipulation> equippedManips = new ArrayList<>();
 	private Set<String> equippedNames = new HashSet<>();
@@ -88,7 +85,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 			if (item instanceof BloodMemoryItem memItem) {
 				BloodManipulation manip = memItem.getManip();
 				if (manip != null) {
-					manipItemCache.put(manip, new ItemStack(item));
+					manipItemCache.put(manip.getName(), new ItemStack(item));
 				}
 			}
 		}
@@ -213,7 +210,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 		drawCounter(graphics);
 
 		if (draggingManip != null) {
-			ItemStack stack = manipItemCache.get(draggingManip);
+			ItemStack stack = manipItemCache.get(draggingManip.getName());
 			if (stack != null) {
 				graphics.renderItem(stack, mouseX - 8, mouseY - 8);
 			}
@@ -367,7 +364,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 
 	private void drawKnownManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : knownIcons) {
-			ItemStack stack = manipItemCache.get(icon.manip);
+			ItemStack stack = manipItemCache.get(icon.manip.getName());
 			if (stack == null) continue;
 
 			boolean equipped = equippedNames.contains(icon.manip.getName());
@@ -384,7 +381,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 
 	private void drawEquippedManips(GuiGraphics graphics, int mouseX, int mouseY) {
 		for (ManipIcon icon : equippedIcons) {
-			ItemStack stack = manipItemCache.get(icon.manip);
+			ItemStack stack = manipItemCache.get(icon.manip.getName());
 			if (stack == null) continue;
 			graphics.renderItem(stack, icon.x, icon.y);
 		}
