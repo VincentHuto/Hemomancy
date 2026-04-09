@@ -8,6 +8,10 @@ public class UnstainedProgress implements IUnstainedProgress {
     private float clarity = 0.0f;
     private long lastManipulationTick = 0L;
 
+    // Bonus toggle state
+    private boolean silverWardEnabled = true;
+    private boolean verdigrisAuraEnabled = true;
+
     // Milestone counters
     private int hemoMobKills = 0;
     private int undeadKills = 0;
@@ -89,12 +93,32 @@ public class UnstainedProgress implements IUnstainedProgress {
 
     @Override
     public float getSilverWardStrength() {
-        return purity / 100.0f;
+        return silverWardEnabled ? purity / 100.0f : 0.0f;
     }
 
     @Override
     public float getVerdigrisAura() {
-        return clarity / 100.0f;
+        return verdigrisAuraEnabled ? clarity / 100.0f : 0.0f;
+    }
+
+    @Override
+    public boolean isSilverWardEnabled() {
+        return silverWardEnabled;
+    }
+
+    @Override
+    public void setSilverWardEnabled(boolean enabled) {
+        this.silverWardEnabled = enabled;
+    }
+
+    @Override
+    public boolean isVerdigrisAuraEnabled() {
+        return verdigrisAuraEnabled;
+    }
+
+    @Override
+    public void setVerdigrisAuraEnabled(boolean enabled) {
+        this.verdigrisAuraEnabled = enabled;
     }
 
     @Override

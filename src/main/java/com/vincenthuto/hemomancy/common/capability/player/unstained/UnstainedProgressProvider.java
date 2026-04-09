@@ -65,6 +65,9 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
         tag.putBoolean("reachedAbstinence", inst.hasReachedAbstinence());
         tag.putBoolean("emptiedBlood", inst.hasEmptiedBlood());
         tag.putBoolean("earnedAdvancement", inst.hasEarnedAdvancement());
+        // Bonus toggle state
+        tag.putBoolean("silverWardEnabled", inst.isSilverWardEnabled());
+        tag.putBoolean("verdigrisAuraEnabled", inst.isVerdigrisAuraEnabled());
         tag.putBoolean("usedAltarOfCleansing", inst.hasUsedAltarOfCleansing());
         return tag;
     }
@@ -92,6 +95,9 @@ public class UnstainedProgressProvider implements ICapabilitySerializable<Tag> {
             inst.setReachedAbstinence(tag.getBoolean("reachedAbstinence"));
             inst.setEmptiedBlood(tag.getBoolean("emptiedBlood"));
             inst.setEarnedAdvancement(tag.getBoolean("earnedAdvancement"));
+            // Bonus toggle state — default to true for backward compat
+            inst.setSilverWardEnabled(!tag.contains("silverWardEnabled") || tag.getBoolean("silverWardEnabled"));
+            inst.setVerdigrisAuraEnabled(!tag.contains("verdigrisAuraEnabled") || tag.getBoolean("verdigrisAuraEnabled"));
             inst.setUsedAltarOfCleansing(tag.getBoolean("usedAltarOfCleansing"));
         }
     }
