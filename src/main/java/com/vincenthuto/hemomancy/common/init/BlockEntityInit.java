@@ -27,6 +27,10 @@ public class BlockEntityInit {
 			.register("unstained_podium", () -> BlockEntityType.Builder
 					.of(UnstainedPodiumBlockEntity::new, BlockInit.unstained_podium.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<AltarOfCleansingBlockEntity>> altar_of_cleansing = TILES
+			.register("altar_of_cleansing", () -> BlockEntityType.Builder
+					.of(AltarOfCleansingBlockEntity::new, BlockInit.altar_of_cleansing.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<ScryingPodiumBlockEntity>> scrying_podium = TILES
 			.register("scrying_podium", () -> BlockEntityType.Builder
 					.of(ScryingPodiumBlockEntity::new, BlockInit.scrying_podium.get()).build(null));

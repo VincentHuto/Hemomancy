@@ -25,6 +25,7 @@ public class UnstainedProgress implements IUnstainedProgress {
     private boolean reachedAbstinence = false;
     private boolean emptiedBlood = false;
     private boolean earnedAdvancement = false;
+    private boolean usedAltarOfCleansing = false;
 
     @Override
     public boolean hasBegunPurification() {
@@ -151,4 +152,7 @@ public class UnstainedProgress implements IUnstainedProgress {
 
     @Override public boolean hasEarnedAdvancement() { return earnedAdvancement; }
     @Override public void setEarnedAdvancement(boolean value) { earnedAdvancement = value; }
+
+    @Override public boolean hasUsedAltarOfCleansing() { return usedAltarOfCleansing; }
+    @Override public void setUsedAltarOfCleansing(boolean value) { usedAltarOfCleansing = value; }
 }

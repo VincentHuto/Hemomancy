@@ -307,6 +307,18 @@ public class BlockInit {
 			() -> new UnstainedPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final RegistryObject<Block> altar_of_cleansing = MODELEDBLOCKS.register("altar_of_cleansing",
+			() -> new AltarOfCleansingBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 7)));
+
+	public static final RegistryObject<Block> cleansed_stone = BASEBLOCKS.register("cleansed_stone",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+
+	public static final RegistryObject<Block> lethe_lantern = BASEBLOCKS.register("lethe_lantern",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(1.0F, 3.0F).sound(SoundType.LANTERN).lightLevel(s -> 12)));
+
 	public static final RegistryObject<Block> scrying_podium = MODELEDBLOCKS.register("scrying_podium",
 			() -> new ScryingPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
