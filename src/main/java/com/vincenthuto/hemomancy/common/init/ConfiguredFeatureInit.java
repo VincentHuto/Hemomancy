@@ -64,6 +64,12 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> LETHEAN_POPPIES = createKey("lethean_poppies");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> GHOST_PIPES = createKey("ghost_pipes");
+
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SNOW_PLANTS = createKey("snow_plants");
+
+	public static final ResourceKey<ConfiguredFeature<?, ?>> RAFFLESIA = createKey("rafflesia");
+
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BOG_BODY = createKey("bog_body");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
@@ -179,6 +185,19 @@ public class ConfiguredFeatureInit {
 
 		register(context, LETHEAN_POPPIES, Feature.FLOWER,
 				grassPatch(BlockStateProvider.simple(BlockInit.lethean_poppy.get()), 6));
+
+		register(context, GHOST_PIPES, Feature.SIMPLE_RANDOM_SELECTOR,
+				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+								BlockStateProvider.simple(BlockInit.ghost_pipe.get())))))));
+
+		register(context, SNOW_PLANTS, Feature.SIMPLE_RANDOM_SELECTOR,
+				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+								BlockStateProvider.simple(BlockInit.snow_plant.get())))))));
+
+		register(context, RAFFLESIA, Feature.FLOWER,
+				grassPatch(BlockStateProvider.simple(BlockInit.rafflesia.get()), 1));
 
 		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
 

@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:tears_of_lethe"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.lady_of_forgotten_waters.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.lady_of_forgotten_waters.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/unstained",
+  "criteria": {
+    "has_tears": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:tears_of_lethe"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_tears"
+    ]
+  ]
+}

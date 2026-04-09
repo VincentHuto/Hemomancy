@@ -131,9 +131,39 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 		final int hotbarEnd     = 47;  // inclusive
 		final int offhandSlot   = 48;
 
-		if (index < containerEnd) {
-			// ── Moving FROM a container slot → player inventory ──
-			if (!this.moveItemStackTo(stackInSlot, playerInvStart, offhandSlot + 1, true)) {
+		if (index == jarSlotUI || index == charmSlotUI || index == gourdSlotUI) {
+			// ── Moving FROM a rune slot → player inventory (explicit, avoids offhand) ──
+			// Handle rune SlotItemHandler slots explicitly to prevent items landing in offhand.
+			boolean placed = false;
+			// Try hotbar first (prefer hotbar for quick access)
+			for (int i = hotbarStart; i <= hotbarEnd; i++) {
+				Slot target = this.slots.get(i);
+				if (!target.hasItem() && target.mayPlace(stackInSlot)) {
+					target.set(stackInSlot.copy());
+					slot.set(ItemStack.EMPTY);
+					placed = true;
+					break;
+				}
+			}
+			// Then try main inventory
+			if (!placed) {
+				for (int i = playerInvStart; i < hotbarStart; i++) {
+					Slot target = this.slots.get(i);
+					if (!target.hasItem() && target.mayPlace(stackInSlot)) {
+						target.set(stackInSlot.copy());
+						slot.set(ItemStack.EMPTY);
+						placed = true;
+						break;
+					}
+				}
+			}
+			if (!placed) {
+				return ItemStack.EMPTY;
+			}
+			return originalStack;
+		} else if (index < containerEnd) {
+			// ── Moving FROM a non-rune container slot → player inventory (exclude offhand) ──
+			if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarEnd + 1, true)) {
 				return ItemStack.EMPTY;
 			}
 		} else {

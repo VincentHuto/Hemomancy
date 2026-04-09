@@ -27,6 +27,10 @@ public class BlockEntityInit {
 			.register("unstained_podium", () -> BlockEntityType.Builder
 					.of(UnstainedPodiumBlockEntity::new, BlockInit.unstained_podium.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<AltarOfCleansingBlockEntity>> altar_of_cleansing = TILES
+			.register("altar_of_cleansing", () -> BlockEntityType.Builder
+					.of(AltarOfCleansingBlockEntity::new, BlockInit.altar_of_cleansing.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<ScryingPodiumBlockEntity>> scrying_podium = TILES
 			.register("scrying_podium", () -> BlockEntityType.Builder
 					.of(ScryingPodiumBlockEntity::new, BlockInit.scrying_podium.get()).build(null));
@@ -62,9 +66,9 @@ public class BlockEntityInit {
 			.register("mortal_display", () -> BlockEntityType.Builder
 					.of(MortalDisplayBlockEntity::new, BlockInit.mortal_display.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<VisceralRecallerBlockEntity>> visceral_artificial_recaller = TILES
-			.register("visceral_artificial_recaller", () -> BlockEntityType.Builder
-					.of(VisceralRecallerBlockEntity::new, BlockInit.visceral_artificial_recaller.get()).build(null));
+	public static final RegistryObject<BlockEntityType<SomaticLoomBlockEntity>> somatic_loom = TILES
+			.register("somatic_loom", () -> BlockEntityType.Builder
+					.of(SomaticLoomBlockEntity::new, BlockInit.somatic_loom.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<JuicinatorBlockEntity>> juiceinator = TILES.register(
 			"juiceinator",

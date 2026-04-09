@@ -9,13 +9,13 @@ import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.RecallerRecipe;
+import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.JuiceinatorSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.RecallerRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -40,8 +40,8 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeType<JuiceinatorRecipe>> juiceinator_recipe_type = RECIPE_TYPES
 			.register("juiceinator_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("juiceinator")));
 
-	public static final RegistryObject<RecipeType<RecallerRecipe>> recaller_recipe_type = RECIPE_TYPES
-			.register("recaller_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("recaller_recipe")));
+	public static final RegistryObject<RecipeType<MemoryWeavingRecipe>> memory_weaving_type = RECIPE_TYPES
+			.register("memory_weaving_type", () -> RecipeType.simple(Hemomancy.rloc("memory_weaving")));
 
 	public static final RegistryObject<RecipeType<BloodStructureRecipe>> blood_structure_recipe_type = RECIPE_TYPES
 			.register("blood_structure_recipe", () -> RecipeType.simple(Hemomancy.rloc("blood_structure_recipe")));
@@ -65,8 +65,8 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeSerializer<?>> blood_gourd_fill_serializer = SERIALIZERS
 			.register("blood_gourd_fill", FillBloodGourdRecipe.Serializer::new);
 
-	public static final RegistryObject<RecipeSerializer<?>> recaller_recipe_serializer = SERIALIZERS
-			.register("recaller_recipe", RecallerRecipeSerializer::new);
+	public static final RegistryObject<RecipeSerializer<?>> memory_weaving_serializer = SERIALIZERS
+			.register("memory_weaving", MemoryWeavingRecipeSerializer::new);
 
 	public static final RegistryObject<RecipeSerializer<?>> blood_structure_recipe_serializer = SERIALIZERS
 			.register("blood_structure_recipe", BloodStructureRecipeSerializer::new);

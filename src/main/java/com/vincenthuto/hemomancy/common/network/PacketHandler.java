@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
+import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
@@ -160,6 +161,9 @@ public class PacketHandler {
 		CHANNELKNOWNMANIPS.registerMessage(networkID++, StartCentrifugeButtonPacket.class,
 				StartCentrifugeButtonPacket::encode, StartCentrifugeButtonPacket::decode,
 				StartCentrifugeButtonPacket::handle);
+		CHANNELKNOWNMANIPS.registerMessage(networkID++, EquipManipulationPacket.class,
+				EquipManipulationPacket::encode, EquipManipulationPacket::decode,
+				EquipManipulationPacket::handle);
 		CHANNELVASCULARSYSTEM.registerMessage(networkID++, VascularSystemClientPacket.class,
 				VascularSystemClientPacket::encode, VascularSystemClientPacket::decode,
 				VascularSystemClientPacket::handle);
@@ -231,6 +235,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncUnstainedProgress.class, networkID++)
 				.decoder(PacketSyncUnstainedProgress::decode).encoder(PacketSyncUnstainedProgress::encode)
 				.consumerNetworkThread(PacketSyncUnstainedProgress::handle).add();
+
+		// Unstained bonus toggle packet (client → server)
+		CHANNELBLOODVOLUME.messageBuilder(PacketToggleUnstainedBonus.class, networkID++)
+				.decoder(PacketToggleUnstainedBonus::decode).encoder(PacketToggleUnstainedBonus::encode)
+				.consumerNetworkThread(PacketToggleUnstainedBonus::handle).add();
 
 		CHANNELPARTICLES.messageBuilder(SpawnFlaskParticlesPacket.class, networkID++)
 				.decoder(SpawnFlaskParticlesPacket::decode).encoder(SpawnFlaskParticlesPacket::encode)

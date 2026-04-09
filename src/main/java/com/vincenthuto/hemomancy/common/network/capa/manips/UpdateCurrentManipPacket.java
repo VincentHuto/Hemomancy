@@ -27,10 +27,18 @@ public class UpdateCurrentManipPacket {
 							.orElseThrow(NullPointerException::new);
 					List<BloodManipulation> manips = known.getManipList();
 					System.out.println(msg.selected);
-					if (manips.get(msg.selected) != null) {
-						known.setSelectedManip(manips.get(msg.selected));
+					if (msg.selected >= 0 && msg.selected < manips.size() && manips.get(msg.selected) != null) {
+						BloodManipulation target = manips.get(msg.selected);
+						// Only allow selecting equipped manipulations
+						if (!known.isManipEquipped(target)) {
+							player.displayClientMessage(
+									Component.literal("That manipulation is not equipped!")
+											.withStyle(net.minecraft.ChatFormatting.RED), true);
+							return;
+						}
+						known.setSelectedManip(target);
 						player.displayClientMessage(
-								Component.literal("Selected:" + known.getManipList().get(msg.selected).getProperName()),
+								Component.literal("Selected:" + target.getProperName()),
 								true);
 						PacketHandler.CHANNELKNOWNMANIPS.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),

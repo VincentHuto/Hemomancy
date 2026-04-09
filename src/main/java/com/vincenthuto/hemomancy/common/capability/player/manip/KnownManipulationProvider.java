@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -102,6 +103,15 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 								NbtUtils.readBlockPos(parsedNbt.getCompound("lastVeinMineStart")));
 					}
 
+					if (parsedNbt.contains("equippedManips")) {
+						ListTag equippedTag = parsedNbt.getList("equippedManips", Tag.TAG_STRING);
+						List<String> equipped = new ArrayList<>();
+						for (int j = 0; j < equippedTag.size(); j++) {
+							equipped.add(equippedTag.getString(j));
+						}
+						instance.setEquippedManipNames(equipped);
+					}
+
 				}
 
 			}
@@ -157,6 +167,14 @@ public class KnownManipulationProvider implements ICapabilitySerializable<Tag> {
 		CompoundTag lastVeinMineStart = new CompoundTag();
 		avatarActive.put("lastVeinMineStart", NbtUtils.writeBlockPos(instance.getLastVeinMineStart()));
 		list.add(lastVeinMineStart);
+
+		CompoundTag equippedEntry = new CompoundTag();
+		ListTag equippedTag = new ListTag();
+		for (String name : instance.getEquippedManipNames()) {
+			equippedTag.add(StringTag.valueOf(name));
+		}
+		equippedEntry.put("equippedManips", equippedTag);
+		list.add(equippedEntry);
 
 		return list;
 	}

@@ -69,6 +69,13 @@ public class UseManipKeyPacket {
 						BloodManipulation selectedManip = ManipulationInit
 								.getByName(known.getSelectedManip().getName());
 						if (selectedManip != null) {
+							// Check manipulation is equipped
+							if (!known.isManipEquipped(selectedManip)) {
+								player.displayClientMessage(
+										Component.literal("That manipulation is not equipped!")
+												.withStyle(ChatFormatting.RED), true);
+								return;
+							}
 							// Handle conjuration dispel logic
 							if (selectedManip instanceof ConjurationManip conjure) {
 								if (!mainStack.isEmpty()) {
