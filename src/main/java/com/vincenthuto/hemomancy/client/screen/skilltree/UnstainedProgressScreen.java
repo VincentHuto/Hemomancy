@@ -824,23 +824,15 @@ public class UnstainedProgressScreen extends Screen {
 		gfx.fill(centerScrX - divW / 2, scrY - 4, centerScrX + divW / 2, scrY - 3, 0x33405878);
 
 		if (zoom >= 0.4f) {
-			String wardStr = String.format("Silver Ward Strength: %.0f%%", silverWardStrength * 100);
-			gfx.drawCenteredString(font, Component.literal(wardStr), centerScrX, scrY, 0xFFB0C0E0);
-
-			if (clarityUnlocked) {
-				String auraStr = String.format("Verdigris Aura: %.0f%%", verdigrisAura * 100);
-				gfx.drawCenteredString(font, Component.literal(auraStr), centerScrX, scrY + 14, 0xFF80D0C0);
-			}
-
 			String penaltyStr = String.format("Blood Magic Penalty: -%.0f%%",
 					currentPurityStage.getBloodMagicPenalty() * 100);
 			int penaltyCol = currentPurityStage.getBloodMagicPenalty() > 0 ? 0xFFCC8060 : 0xFF405060;
-			gfx.drawCenteredString(font, Component.literal(penaltyStr), centerScrX, scrY + 28, penaltyCol);
+			gfx.drawCenteredString(font, Component.literal(penaltyStr), centerScrX, scrY, penaltyCol);
 		}
 	}
 
 	/**
-	 * Draws hover tooltips for the stat readout lines (Silver Ward, Verdigris Aura, Blood Magic Penalty).
+	 * Draws hover tooltips for the stat readout lines (Blood Magic Penalty).
 	 * Recomputes the same screen positions used by drawStatReadouts.
 	 */
 	private void drawStatTooltips(GuiGraphics gfx, int mouseX, int mouseY) {
@@ -852,52 +844,9 @@ public class UnstainedProgressScreen extends Screen {
 		int scrY = sy(statCY);
 		int halfTextW = (int)(100 * zoom);  // approximate half-width of text hit area
 
-		// Silver Ward Strength
+		// Blood Magic Penalty
 		if (mouseX >= centerScrX - halfTextW && mouseX <= centerScrX + halfTextW
 				&& mouseY >= scrY - 1 && mouseY <= scrY + 9) {
-			List<Component> tip = new ArrayList<>();
-			tip.add(Component.literal("Silver Ward Strength")
-					.withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
-			tip.add(Component.literal("Passive resistance to blood magic effects.")
-					.withStyle(s -> s.withColor(0x8898B0)));
-			tip.add(Component.literal("Grants +4 Armor and +0.2 Knockback Resistance")
-					.withStyle(s -> s.withColor(0x8898B0)));
-			tip.add(Component.literal("while the Silver Ward effect is active.")
-					.withStyle(s -> s.withColor(0x8898B0)));
-			tip.add(Component.literal("")); // spacer
-			tip.add(Component.literal("Scales with Purity (purity \u00F7 100).")
-					.withStyle(s -> s.withColor(0x607090).withItalic(true)));
-			tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
-					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
-			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
-			return;
-		}
-
-		// Verdigris Aura
-		if (clarityUnlocked) {
-			if (mouseX >= centerScrX - halfTextW && mouseX <= centerScrX + halfTextW
-					&& mouseY >= scrY + 13 && mouseY <= scrY + 23) {
-				List<Component> tip = new ArrayList<>();
-				tip.add(Component.literal("Verdigris Aura")
-						.withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
-				tip.add(Component.literal("A copper-based anti-blood field that")
-						.withStyle(s -> s.withColor(0x70A898)));
-				tip.add(Component.literal("weakens nearby blood magic entities and effects.")
-						.withStyle(s -> s.withColor(0x70A898)));
-				tip.add(Component.literal("")); // spacer
-				tip.add(Component.literal("Scales with Clarity (clarity \u00F7 100).")
-						.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-				tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
-						.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
-				gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
-				return;
-			}
-		}
-
-		// Blood Magic Penalty
-		int penaltyY = scrY + 28;
-		if (mouseX >= centerScrX - halfTextW && mouseX <= centerScrX + halfTextW
-				&& mouseY >= penaltyY - 1 && mouseY <= penaltyY + 9) {
 			List<Component> tip = new ArrayList<>();
 			tip.add(Component.literal("Blood Magic Penalty")
 					.withStyle(s -> s.withColor(0xCC8060).withBold(true)));
