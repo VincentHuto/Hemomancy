@@ -6,5 +6,5 @@
   "subtitle": "Memory weaving",
   "text": "Build the Somatic Loom to reconstruct Hematic Memories. Feed it blood, a blank memory, an appropriate enzyme set, and a catalyst to weave what your blood always knew back into memory.",
   "icon": "hemomancy:somatic_loom",
-  "structureloc": "hemomancy:blood_structure/visceral_recaller"
+  "structureloc": "hemomancy:blood_structure/somatic_loom"
 }
