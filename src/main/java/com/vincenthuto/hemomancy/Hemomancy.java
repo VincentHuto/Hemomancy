@@ -16,8 +16,10 @@ import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
+import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
 import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
+import com.vincenthuto.hemomancy.config.HemoMnAConfig;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -38,8 +40,10 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -125,6 +129,8 @@ public class Hemomancy {
         ModList modList = ModList.get();
         if (modList.isLoaded("mna")) {
             LOGGER.info("MNA WAS LOADED");
+            // Register MnA-specific config
+            ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HemoMnAConfig.register(), "hemomancy-mna-server.toml");
             forgeBus.addListener(MnAPlugin::onRegisterGuidebooks);
             MnAPluginItemInit.MNAITEMS.register(modEventBus);
             MnAPluginBlockInit.MNABLOCKS.register(modEventBus);
@@ -139,6 +145,9 @@ public class Hemomancy {
             modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
             MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
             modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
+            // Blood Tithe & Spell↔Manipulation combo event handlers
+            forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
+            forgeBus.addListener(BloodTitheHandler::onSpellCast);
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
                 return () -> {
                     modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);

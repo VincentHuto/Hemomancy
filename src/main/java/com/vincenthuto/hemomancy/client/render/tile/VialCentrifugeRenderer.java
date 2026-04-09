@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.block.CentrifugeArmsModel;
+import com.vincenthuto.hemomancy.client.model.block.CentrifugeStandModel;
 import com.vincenthuto.hemomancy.common.tile.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Quaternion;
@@ -22,22 +23,16 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_centrifuge_arms.png");
-	public static double mapOneRangeToAnother(double sourceNumber, double fromA, double fromB, double toA, double toB,
-			int decimalPrecision) {
-		double deltaA = fromB - fromA;
-		double deltaB = toB - toA;
-		double scale = deltaB / deltaA;
-		double negA = -1 * fromA;
-		double offset = (negA * scale) + toA;
-		double finalNumber = (sourceNumber * scale) + offset;
-		int calcScale = (int) Math.pow(10, decimalPrecision);
-		return finalNumber;
-	}
+
+	public static ResourceLocation stand_texture = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/model_centrifuge_stand.png");
 
 	private final CentrifugeArmsModel arms;
+	private final CentrifugeStandModel stand;
 
 	public VialCentrifugeRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		arms = new CentrifugeArmsModel(p_173636_.bakeLayer(CentrifugeArmsModel.LAYER_LOCATION));
+		stand = new CentrifugeStandModel(p_173636_.bakeLayer(CentrifugeStandModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -85,5 +80,29 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		irendertypebuffer$impl.endBatch();
 		matrixStackIn.popPose();
 
+
+		matrixStackIn.pushPose();
+		matrixStackIn.translate(0.5D, 1.5D, 0.5D);
+		matrixStackIn.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+		MultiBufferSource.BufferSource standirendertypebuffer$impl = MultiBufferSource
+				.immediate(Tesselator.getInstance().getBuilder());
+		VertexConsumer standivertexbuilder = standirendertypebuffer$impl.getBuffer(arms.renderType(texture));
+		stand.renderToBuffer(matrixStackIn, standivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+				1.0F);
+		standirendertypebuffer$impl.endBatch();
+		matrixStackIn.popPose();
+
+	}
+
+	public static double mapOneRangeToAnother(double sourceNumber, double fromA, double fromB, double toA, double toB,
+											  int decimalPrecision) {
+		double deltaA = fromB - fromA;
+		double deltaB = toB - toA;
+		double scale = deltaB / deltaA;
+		double negA = -1 * fromA;
+		double offset = (negA * scale) + toA;
+		double finalNumber = (sourceNumber * scale) + offset;
+		int calcScale = (int) Math.pow(10, decimalPrecision);
+		return finalNumber;
 	}
 }

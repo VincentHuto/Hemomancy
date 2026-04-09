@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPoint;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
+import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
@@ -162,6 +163,26 @@ public class SkillTreeScreen extends Screen {
 			case GREATER -> 3;
 			case GRAND   -> 5;
 		};
+	}
+
+	/** Minimum player degree required to see a manipulation of the given rank. */
+	private static int manipMinDegree(EnumManipulationRank rank) {
+		return switch (rank) {
+			case HUMILIS      -> 0;
+			case MEDIOCRITAS  -> 1;
+			case SUMMA        -> 3;
+			case MAGISTER     -> 5;
+			case PERFECTUS    -> 6;
+		};
+	}
+
+	/**
+	 * Returns true if the given manipulation is above the player's current
+	 * initiatory degree (i.e. its rank requires a higher degree).
+	 */
+	private boolean isManipRankLocked(BloodManipulation manip) {
+		if (manip == null) return false;
+		return playerDegree < manipMinDegree(manip.getRank());
 	}
 
 	/** Width of the tier sidebar on Crafting/Rites tabs (screen px). */
@@ -1074,6 +1095,7 @@ public class SkillTreeScreen extends Screen {
 			int[] childPos = manipPositions.get(entry);
 			if (childPos == null) continue;
 			boolean childKnown = knownManipNames.contains(entry.getManipName());
+			boolean childLocked = isManipRankLocked(entry.resolve());
 
 			for (String parentName : entry.getParentNames()) {
 				ManipulationTreeEntry parentEntry = ManipulationTreeInit.getEntry(parentName);
@@ -1082,10 +1104,14 @@ public class SkillTreeScreen extends Screen {
 				if (parentPos == null) continue;
 
 				boolean parentKnown = knownManipNames.contains(parentName);
-				int col = (parentKnown && childKnown) ? 0xFFAA6600 : COL_LINE_LOCKED;
+				boolean parentLocked = isManipRankLocked(parentEntry.resolve());
 
-				// Get tendency color for the connection if both are known
-				if (parentKnown && childKnown) {
+				// If either end is rank-locked, use a very faint line
+				int col;
+				if (childLocked || parentLocked) {
+					col = 0x44222222;
+				} else if (parentKnown && childKnown) {
+					// Get tendency color for the connection
 					BloodManipulation manip = entry.resolve();
 					if (manip != null) {
 						ParticleColor pc = manip.getTend().getColor();
@@ -1093,7 +1119,11 @@ public class SkillTreeScreen extends Screen {
 						int g = (int) Math.min(pc.getGreen() * 0.7f, 255);
 						int b = (int) Math.min(pc.getBlue() * 0.7f, 255);
 						col = 0xCC000000 | (r << 16) | (g << 8) | b;
+					} else {
+						col = 0xFFAA6600;
 					}
+				} else {
+					col = COL_LINE_LOCKED;
 				}
 
 				int x1 = sx(parentPos[0]), y1 = sy(parentPos[1]);
@@ -1124,6 +1154,7 @@ public class SkillTreeScreen extends Screen {
 
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());
+			boolean rankLocked = isManipRankLocked(manip);
 
 			// ── Tendency colour ──
 			int tendR = 128, tendG = 128, tendB = 128;
@@ -1134,8 +1165,11 @@ public class SkillTreeScreen extends Screen {
 				tendB = (int) pc.getBlue();
 			}
 
+			// ── Border colour ──
 			int borderColor;
-			if (known) {
+			if (rankLocked) {
+				borderColor = COL_NODE_BORDER_LOCK;
+			} else if (known) {
 				borderColor = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
 
 				// Pulsing glow in tendency colour
@@ -1155,7 +1189,7 @@ public class SkillTreeScreen extends Screen {
 			}
 
 			// ── Fill ──
-			int fill = known ? COL_NODE_BG : 0xCC0D0303;
+			int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
 			gfx.fill(nx - hn, ny - hn, nx + hn, ny + hn, fill);
 
 			// ── Border ──
@@ -1163,6 +1197,15 @@ public class SkillTreeScreen extends Screen {
 			gfx.fill(nx - hn, ny + hn - 1, nx + hn, ny + hn, borderColor);
 			gfx.fill(nx - hn, ny - hn, nx - hn + 1, ny + hn, borderColor);
 			gfx.fill(nx + hn - 1, ny - hn, nx + hn, ny + hn, borderColor);
+
+			// ── Rank-locked overlay: dark fill + "?" (mirrors skill degree-lock) ──
+			if (rankLocked) {
+				gfx.fill(nx - hn + 1, ny - hn + 1, nx + hn - 1, ny + hn - 1, 0xBB000000);
+				if (zoom >= 0.5f) {
+					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
+				}
+				continue; // skip normal text rendering for rank-locked nodes
+			}
 
 			// ── Type symbol + name ──
 			if (zoom >= 0.5f) {
@@ -1206,54 +1249,68 @@ public class SkillTreeScreen extends Screen {
 
 			BloodManipulation manip = entry.resolve();
 			boolean known = knownManipNames.contains(entry.getManipName());
+			boolean rankLocked = isManipRankLocked(manip);
 
 			List<Component> tip = new ArrayList<>();
 
-			// Name
-			String pretty = manip != null
-					? HLTextUtils.toProperCase(manip.getName().replace("_", " "))
-					: HLTextUtils.toProperCase(entry.getManipName().replace("_", " "));
-
-			int nameCol = known ? 0xFFAA44 : 0x888888;
-			tip.add(Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true)));
-
-			// Known/Unknown status
-			tip.add(Component.literal(known ? "Known" : "Unknown")
-					.withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
-
-			if (manip != null) {
-				// Type
-				tip.add(Component.literal("Type: " + HLTextUtils.toProperCase(manip.getType().name()))
-						.withStyle(s -> s.withColor(0x888888)));
-
-				// Rank
-				tip.add(Component.literal("Rank: " + HLTextUtils.toProperCase(manip.getRank().name()))
-						.withStyle(s -> s.withColor(0x888888)));
-
-				// Tendency
-				ParticleColor pc = manip.getTend().getColor();
-				int tendCol = (int)pc.getRed() << 16 | (int)pc.getGreen() << 8 | (int)pc.getBlue();
-				tip.add(Component.literal("Tendency: " + HLTextUtils.toProperCase(manip.getTend().name()))
-						.withStyle(s -> s.withColor(tendCol)));
-
-				// Blood cost
-				tip.add(Component.literal("Blood Cost: " + (int)manip.getCost() + " mL")
-						.withStyle(s -> s.withColor(0xAA4444)));
-
-				// Section
-				tip.add(Component.literal("Vein Section: " + HLTextUtils.toProperCase(manip.getSection().name()))
-						.withStyle(s -> s.withColor(0x666666)));
-			}
-
-			// Parents
-			if (!entry.getParentNames().isEmpty()) {
-				StringBuilder sb = new StringBuilder("Relates to: ");
-				for (int i = 0; i < entry.getParentNames().size(); i++) {
-					if (i > 0) sb.append(", ");
-					sb.append(HLTextUtils.toProperCase(entry.getParentNames().get(i).replace("_", " ")));
+			if (rankLocked) {
+				// Rank-locked: obscure the name and show the requirement
+				tip.add(Component.literal("???")
+						.withStyle(s -> s.withColor(0x555555).withBold(true)));
+				if (manip != null) {
+					int reqDeg = manipMinDegree(manip.getRank());
+					EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
+					String degreeName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
+					tip.add(Component.literal("Requires: " + degreeName)
+							.withStyle(s -> s.withColor(0xAA4444)));
 				}
-				tip.add(Component.literal(sb.toString())
-						.withStyle(s -> s.withColor(0x666666).withItalic(true)));
+			} else {
+				// Name
+				String pretty = manip != null
+						? HLTextUtils.toProperCase(manip.getName().replace("_", " "))
+						: HLTextUtils.toProperCase(entry.getManipName().replace("_", " "));
+
+				int nameCol = known ? 0xFFAA44 : 0x888888;
+				tip.add(Component.literal(pretty).withStyle(s -> s.withColor(nameCol).withBold(true)));
+
+				// Known/Unknown status
+				tip.add(Component.literal(known ? "Known" : "Unknown")
+						.withStyle(s -> s.withColor(known ? 0x44AA44 : 0xAA4444).withItalic(!known)));
+
+				if (manip != null) {
+					// Type
+					tip.add(Component.literal("Type: " + HLTextUtils.toProperCase(manip.getType().name()))
+							.withStyle(s -> s.withColor(0x888888)));
+
+					// Rank
+					tip.add(Component.literal("Rank: " + HLTextUtils.toProperCase(manip.getRank().name()))
+							.withStyle(s -> s.withColor(0x888888)));
+
+					// Tendency
+					ParticleColor pc = manip.getTend().getColor();
+					int tendCol = (int)pc.getRed() << 16 | (int)pc.getGreen() << 8 | (int)pc.getBlue();
+					tip.add(Component.literal("Tendency: " + HLTextUtils.toProperCase(manip.getTend().name()))
+							.withStyle(s -> s.withColor(tendCol)));
+
+					// Blood cost
+					tip.add(Component.literal("Blood Cost: " + (int)manip.getCost() + " mL")
+							.withStyle(s -> s.withColor(0xAA4444)));
+
+					// Section
+					tip.add(Component.literal("Vein Section: " + HLTextUtils.toProperCase(manip.getSection().name()))
+							.withStyle(s -> s.withColor(0x666666)));
+				}
+
+				// Parents
+				if (!entry.getParentNames().isEmpty()) {
+					StringBuilder sb = new StringBuilder("Relates to: ");
+					for (int i = 0; i < entry.getParentNames().size(); i++) {
+						if (i > 0) sb.append(", ");
+						sb.append(HLTextUtils.toProperCase(entry.getParentNames().get(i).replace("_", " ")));
+					}
+					tip.add(Component.literal(sb.toString())
+							.withStyle(s -> s.withColor(0x666666).withItalic(true)));
+				}
 			}
 
 			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
@@ -1480,7 +1537,9 @@ public class SkillTreeScreen extends Screen {
 						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.CRAFTING.color);
 					}
 
-					String recName = HLTextUtils.toProperCase(r.getId().getPath().replace("_", " "));
+					String recPath = r.getId().getPath();
+					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
+					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
 					int recCol = recSel ? 0xFFDDAAAA : 0xFF888888;
 					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
 					sy += 18;
@@ -1646,7 +1705,9 @@ public class SkillTreeScreen extends Screen {
 		int lineH = 12;
 
 		// ── Recipe name (derived from ID) ──
-		String name = HLTextUtils.toProperCase(recipe.getId().getPath().replace("_", " "));
+		String namePath = recipe.getId().getPath();
+		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
+		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
 		gfx.drawString(font, Component.literal(name)
 				.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
 		y += lineH + 4;
@@ -1854,7 +1915,9 @@ public class SkillTreeScreen extends Screen {
 
 					String recName = r.getRiteName();
 					if (recName == null || recName.isEmpty()) {
-						recName = HLTextUtils.toProperCase(r.getId().getPath().replace("_", " "));
+						String ritePath = r.getId().getPath();
+						if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
+						recName = HLTextUtils.toProperCase(ritePath.replace("_", " "));
 					}
 					// Truncate long names
 					recName = truncateText(recName, sw - 16);
@@ -2023,7 +2086,9 @@ public class SkillTreeScreen extends Screen {
 		// ── Rite name ──
 		String name = rite.getRiteName();
 		if (name == null || name.isEmpty()) {
-			name = HLTextUtils.toProperCase(rite.getId().getPath().replace("_", " "));
+			String ritePath = rite.getId().getPath();
+			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
+			name = HLTextUtils.toProperCase(ritePath.replace("_", " "));
 		}
 		gfx.drawString(font, Component.literal(name)
 				.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
@@ -2418,3 +2483,4 @@ public class SkillTreeScreen extends Screen {
 		return false;
 	}
 }
+

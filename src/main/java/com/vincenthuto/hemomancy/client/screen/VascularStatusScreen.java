@@ -95,10 +95,9 @@ public class VascularStatusScreen extends Screen {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 
-		// Render vascular body diagram and labels
+		// Render vascular body diagram; tooltips appear on hover over body sections
 		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
-			renderBodyPartOverlays(graphics, vascular, centerX, centerY);
-			renderSectionLabels(graphics, vascular, centerX, centerY, mouseX, mouseY);
+			renderBodyPartOverlays(graphics, vascular, centerX, centerY, mouseX, mouseY);
 		});
 
 		// Footer
@@ -258,40 +257,57 @@ public class VascularStatusScreen extends Screen {
 	 *      [R LEG][L LEG]
 	 * </pre>
 	 */
-	private void renderBodyPartOverlays(GuiGraphics graphics, IVascularSystem vascular, int cx, int cy) {
+	private void renderBodyPartOverlays(GuiGraphics graphics, IVascularSystem vascular, int cx, int cy,
+									   int mouseX, int mouseY) {
 		// The body diagram is centered vertically a bit above screen center
 		int bodyTop = cy - 65;
 
-		// HEAD — 20 wide, 20 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.HEAD,
-				cx - 10, bodyTop, 20, 20);
+		// Define all section rectangles: section, x, y, w, h
+		int[][] rects = {
+				{0, cx - 10, bodyTop,      20, 20},  // HEAD
+				{1, cx - 12, bodyTop + 20, 24, 14},  // HEART
+				{2, cx - 12, bodyTop + 34, 24, 22},  // BODY
+				{3, cx - 22, bodyTop + 20, 10, 36},  // RIGHTARM
+				{4, cx + 12, bodyTop + 20, 10, 36},  // LEFTARM
+				{5, cx - 12, bodyTop + 56, 11, 34},  // RIGHTLEG
+				{6, cx + 1,  bodyTop + 56, 11, 34},  // LEFTLEG
+		};
+		EnumVeinSections[] sections = {
+				EnumVeinSections.HEAD, EnumVeinSections.HEART, EnumVeinSections.BODY,
+				EnumVeinSections.RIGHTARM, EnumVeinSections.LEFTARM,
+				EnumVeinSections.RIGHTLEG, EnumVeinSections.LEFTLEG
+		};
 
-		// HEART — upper chest area, 24 wide, 14 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.HEART,
-				cx - 12, bodyTop + 20, 24, 14);
-
-		// BODY — lower torso, 24 wide, 22 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.BODY,
-				cx - 12, bodyTop + 34, 24, 22);
-
-		// RIGHT ARM (player's right = screen left) — 10 wide, 36 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.RIGHTARM,
-				cx - 22, bodyTop + 20, 10, 36);
-
-		// LEFT ARM (player's left = screen right) — 10 wide, 36 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.LEFTARM,
-				cx + 12, bodyTop + 20, 10, 36);
-
-		// RIGHT LEG (player's right = screen left) — 11 wide, 34 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.RIGHTLEG,
-				cx - 12, bodyTop + 56, 11, 34);
-
-		// LEFT LEG (player's left = screen right) — 11 wide, 34 tall
-		drawSectionRect(graphics, vascular, EnumVeinSections.LEFTLEG,
-				cx + 1, bodyTop + 56, 11, 34);
+		// Draw all section rectangles
+		for (int[] r : rects) {
+			drawSectionRect(graphics, vascular, sections[r[0]], r[1], r[2], r[3], r[4]);
+		}
 
 		// Draw 1px dark outline around the whole silhouette for definition
 		drawBodyOutline(graphics, cx, bodyTop);
+
+		// Check hover and render tooltip for the hovered section (rendered last so it's on top)
+		for (int[] r : rects) {
+			int rx = r[1], ry = r[2], rw = r[3], rh = r[4];
+			if (mouseX >= rx && mouseX < rx + rw && mouseY >= ry && mouseY < ry + rh) {
+				EnumVeinSections section = sections[r[0]];
+				float health = Math.max(0f, Math.min(100f, vascular.getHealthBySection(section)));
+				EnumBloodFlow flow = vascular.getBloodFlowBySection(section);
+				String name = HLTextUtils.toProperCase(section.toString());
+				String flowName = HLTextUtils.toProperCase(flow.toString());
+				int nameColor = getTextColorForHealth(health);
+				int flowColor = getFlowColor(flow);
+
+				List<Component> tooltip = new ArrayList<>();
+				tooltip.add(Component.literal("§l" + name).withStyle(s -> s.withColor(nameColor)));
+				tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
+						.withStyle(s -> s.withColor(0xAAAAAA)));
+				tooltip.add(Component.literal("Flow: " + flowName)
+						.withStyle(s -> s.withColor(flowColor)));
+				graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
+				break; // Only show one tooltip at a time
+			}
+		}
 	}
 
 	/**
@@ -381,71 +397,6 @@ public class VascularStatusScreen extends Screen {
 		return (alpha << 24) | (r << 16) | (g << 8) | b;
 	}
 
-	/**
-	 * Renders labels on either side of the body diagram showing section name, health %, and flow state.
-	 * Labels are positioned to the left/right of their corresponding body parts.
-	 */
-	private void renderSectionLabels(GuiGraphics graphics, IVascularSystem vascular,
-									 int cx, int cy, int mouseX, int mouseY) {
-		int bodyTop = cy - 65;
-		int leftLabelX = cx - 80;   // labels for right-side body parts (screen left)
-		int rightLabelX = cx + 28;  // labels for left-side body parts (screen right)
-
-		// Head — centered above
-		drawLabel(graphics, vascular, EnumVeinSections.HEAD, cx - 20, bodyTop - 16, mouseX, mouseY);
-
-		// Heart — to the right
-		drawLabel(graphics, vascular, EnumVeinSections.HEART, rightLabelX, bodyTop + 22, mouseX, mouseY);
-
-		// Body — to the left
-		drawLabel(graphics, vascular, EnumVeinSections.BODY, leftLabelX, bodyTop + 38, mouseX, mouseY);
-
-		// Right arm — to the left
-		drawLabel(graphics, vascular, EnumVeinSections.RIGHTARM, leftLabelX, bodyTop + 22, mouseX, mouseY);
-
-		// Left arm — to the right
-		drawLabel(graphics, vascular, EnumVeinSections.LEFTARM, rightLabelX, bodyTop + 38, mouseX, mouseY);
-
-		// Right leg — to the left
-		drawLabel(graphics, vascular, EnumVeinSections.RIGHTLEG, leftLabelX, bodyTop + 66, mouseX, mouseY);
-
-		// Left leg — to the right
-		drawLabel(graphics, vascular, EnumVeinSections.LEFTLEG, rightLabelX, bodyTop + 66, mouseX, mouseY);
-	}
-
-	private void drawLabel(GuiGraphics graphics, IVascularSystem vascular,
-						   EnumVeinSections section, int x, int y, int mouseX, int mouseY) {
-		float health = Math.max(0f, Math.min(100f, vascular.getHealthBySection(section)));
-		EnumBloodFlow flow = vascular.getBloodFlowBySection(section);
-		String name = HLTextUtils.toProperCase(section.toString());
-		String percent = String.format("%.0f%%", health);
-		String flowName = HLTextUtils.toProperCase(flow.toString());
-
-		int nameColor = getTextColorForHealth(health);
-		int flowColor = getFlowColor(flow);
-
-		// Section name
-		graphics.drawString(this.font, name, x, y, nameColor, true);
-		// Percentage
-		graphics.drawString(this.font, percent, x, y + 10, nameColor, true);
-		// Flow state (smaller, dimmer)
-		graphics.drawString(this.font, flowName, x, y + 20, flowColor, true);
-		// Colored dot indicator beside the flow name
-		int dotX = x + this.font.width(flowName) + 2;
-		graphics.fill(dotX, y + 22, dotX + 3, y + 25, (0xCC << 24) | (flowColor & 0x00FFFFFF));
-
-		// Tooltip on hover over label area
-		int labelWidth = Math.max(this.font.width(name), Math.max(this.font.width(percent), this.font.width(flowName)));
-		if (mouseX >= x && mouseX <= x + labelWidth && mouseY >= y && mouseY <= y + 28) {
-			List<Component> tooltip = new ArrayList<>();
-			tooltip.add(Component.literal(name).withStyle(s -> s.withColor(nameColor)));
-			tooltip.add(Component.literal("Health: " + String.format("%.1f", health) + " / 100.0")
-					.withStyle(s -> s.withColor(0xAAAAAA)));
-			tooltip.add(Component.literal("Flow: " + flowName)
-					.withStyle(s -> s.withColor(flowColor)));
-			graphics.renderTooltip(this.font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
-		}
-	}
 
 	/**
 	 * Returns a solid text color based on health percentage.

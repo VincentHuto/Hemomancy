@@ -134,10 +134,6 @@ public class EngramBlock extends WaterloggableBlock {
 
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
-		if (!worldIn.isClientSide && fromPos.equals(pos.below())
-				&& !worldIn.getBlockState(fromPos).isSolidRender(worldIn, fromPos)) {
-			worldIn.destroyBlock(pos, true);
-		}
 
 	}
 

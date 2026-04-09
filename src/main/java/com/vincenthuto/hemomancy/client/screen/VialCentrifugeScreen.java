@@ -30,12 +30,12 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
 
-	private static final int CRAFT_AREA_HEIGHT = 96;
+	private static final int CRAFT_AREA_HEIGHT = 114;
 	private static final int VEIN_COUNT = 20;
 
 	// Ring center for the vial slot arrangement (in GUI-relative coords)
 	private static final int RING_CX = 77;
-	private static final int RING_CY = 44;
+	private static final int RING_CY = 50;
 
 	final VialCentrifugeBlockEntity te;
 	private float[][] veinParams;
@@ -50,7 +50,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		super(menu, inv, title);
 		this.te = menu.getTe();
 		this.imageWidth = 176;
-		this.imageHeight = 186;
+		this.imageHeight = 204;
 		this.inventoryLabelY = CRAFT_AREA_HEIGHT + 2;
 	}
 
@@ -217,8 +217,8 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 	private void renderProgressRing(GuiGraphics gfx, int gx, int gy) {
 		int cx = gx + RING_CX;
 		int cy = gy + RING_CY;
-		int outerRadius = 38;
-		int innerRadius = 33;
+		int outerRadius = 42;
+		int innerRadius = 37;
 		int segments = 64;
 
 		double progress = 0;
@@ -314,9 +314,9 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 
 	private void renderBloodBar(GuiGraphics gfx, int gx, int gy) {
 		int barW = 8;
-		int barH = 48;
+		int barH = 52;
 		int barX = gx + 8 + (16 - barW) / 2;
-		int barY = gy + 74 - barH - 4;
+		int barY = gy + 90 - barH - 4;
 
 		// Store bounds for hover tooltip
 		bloodBarX1 = barX - 2;

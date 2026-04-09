@@ -987,7 +987,7 @@ public class UnstainedProgressScreen extends Screen {
 	 * When expanded: tab is on the right edge of the panel, arrow points left (collapse).
 	 * When collapsed: tab is on the left edge of the GUI, arrow points right (expand).
 	 */
-	private void drawSidebarToggleTab(GuiGraphics gfx, int tabX, int tabY, boolean expanded, boolean hovered) {
+	public  void drawSidebarToggleTab(GuiGraphics gfx, int tabX, int tabY, boolean expanded, boolean hovered) {
 		int tw = SIDEBAR_TAB_W;
 		int th = SIDEBAR_TAB_H;
 

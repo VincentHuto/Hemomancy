@@ -111,6 +111,8 @@
 	"effect.hemomancy.echoic_perception": "Echoic Perception",
 	"effect.hemomancy.spined_barricade": "Spined Barricade",
 	"effect.hemomancy.burrowers_instinct": "Burrower's Instinct",
+	"effect.hemomancy.arcane_resonance": "Arcane Resonance",
+	"effect.hemomancy.sanguine_clarity": "Sanguine Clarity",
 	"entity.hemomancy.abhorent_thought": "Abhorent Thought",
 	"entity.hemomancy.barbed_urchin": "Barbed Urchin",
 	"entity.hemomancy.hemolymphopoda": "Hemolymphopoda",
@@ -666,5 +668,23 @@
 	"hemomancy.milestone.hemo_scholar_i": "Hemo Scholar I",
 	"hemomancy.milestone.hemo_scholar_i.desc": "Earn 5 Hemomancy advancements",
 	"hemomancy.milestone.hemo_scholar_ii": "Hemo Scholar II",
-	"hemomancy.milestone.hemo_scholar_ii.desc": "Earn 10 Hemomancy advancements"
+	"hemomancy.milestone.hemo_scholar_ii.desc": "Earn 10 Hemomancy advancements",
+
+	"_comment_mna_spell_components": "=== MnA Spell Components ===",
+	"hemomancy:components/blood_loss": "Hemorrhage",
+	"hemomancy:components/blood_loss.description": "Applies the Blood Loss effect, slowing the target's movement. Composable with any MnA shape and modifier.",
+	"hemomancy:components/blood_rush": "Crimson Surge",
+	"hemomancy:components/blood_rush.description": "Applies the Blood Rush effect, increasing movement speed, attack speed, and minor healing. Composable with any MnA shape.",
+	"hemomancy:components/hemolysis": "Blood Destruction",
+	"hemomancy:components/hemolysis.description": "Applies Hemolysis, a damaging effect that destroys the target's blood over time. Composable with AoE shapes for area denial.",
+	"hemomancy:components/blood_to_mana": "Sanguine Offering",
+	"hemomancy:components/blood_to_mana.description": "Drains the target's blood volume and converts it into mana for the caster. The inverse of Sanguine Transmutation.",
+	"hemomancy:components/summon_sanguilith": "Conjure Sanguilith",
+	"hemomancy:components/summon_sanguilith.description": "Summons a Sanguilith at the target location. Requires Harbinger faction membership. Duration and damage scale with spell attributes.",
+	"hemomancy:components/blood_binding": "Blood Binding",
+	"hemomancy:components/blood_binding.description": "Roots the target in place, preventing movement. Duration and magnitude scale with spell attributes.",
+	"hemomancy:components/mana_to_blood": "Sanguine Transmutation",
+	"hemomancy:components/mana_to_blood.description": "Converts the caster's mana into blood volume for the target. Useful for refilling blood pools using arcane energy.",
+	"hemomancy:components/sanguine_fertility": "Sanguine Fertility",
+	"hemomancy:components/sanguine_fertility.description": "Enhances breeding and growth of nearby animals with blood magic. Useful on farms and animal pens."
 }

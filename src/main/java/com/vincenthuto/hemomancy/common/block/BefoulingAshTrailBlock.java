@@ -303,13 +303,7 @@ public class BefoulingAshTrailBlock extends Block {
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
 		if (!worldIn.isClientSide) {
-			if (state.canSurvive(worldIn, pos)) {
-				this.updatePower(worldIn, pos, state);
-			} else {
-				dropResources(state, worldIn, pos);
-				worldIn.removeBlock(pos, false);
-			}
-
+			this.updatePower(worldIn, pos, state);
 		}
 	}
 

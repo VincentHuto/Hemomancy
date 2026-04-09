@@ -66,45 +66,45 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 		this.data = containerData;
 
 		// SLOTS — positioned for programmatic UI layout
-		// Input slot (left side)
-		addSlot(new Slot(te, INPUT_SLOT, 8, 34));
-		// Blood flask slot (bottom-left)
-		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, BLOOD_SLOT, 16, 8, 74));
+		// Input slot (above blood bar, left side)
+		addSlot(new Slot(te, INPUT_SLOT, 8, 14));
+		// Blood flask slot (bottom-left, below blood bar)
+		addSlot(new SlotSelectiveType(te, BloodyFlaskItem.class, BLOOD_SLOT, 16, 8, 90));
 
-		// Vial slots — ring arrangement centered around (77, 44)
-		// Clockwise from top; opposite pairs must be balanced:
-		// 2↔6, 3↔7, 4↔8, 9↔5
-		addSlot(new CentrifugeSlot(te, 2, 69, 12));   // top
-		addSlot(new CentrifugeSlot(te, 3, 86, 19));   // top-right
-		addSlot(new CentrifugeSlot(te, 4, 93, 36));   // right
-		addSlot(new CentrifugeSlot(te, 5, 86, 53));   // bottom-right
-		addSlot(new CentrifugeSlot(te, 6, 69, 60));   // bottom
-		addSlot(new CentrifugeSlot(te, 7, 52, 53));   // bottom-left
-		addSlot(new CentrifugeSlot(te, 8, 45, 36));   // left
-		addSlot(new CentrifugeSlot(te, 9, 52, 19));   // top-left
+		// Vial slots — ring arrangement centered around (77, 50)
+		// Radius 28, 8 slots at 45° increments (clockwise from top)
+		// Slot coords are center minus 8 to get top-left corner
+		addSlot(new CentrifugeSlot(te, 2, 69, 14));   // top
+		addSlot(new CentrifugeSlot(te, 3, 89, 22));   // top-right
+		addSlot(new CentrifugeSlot(te, 4, 97, 42));   // right
+		addSlot(new CentrifugeSlot(te, 5, 89, 62));   // bottom-right
+		addSlot(new CentrifugeSlot(te, 6, 69, 70));   // bottom
+		addSlot(new CentrifugeSlot(te, 7, 49, 62));   // bottom-left
+		addSlot(new CentrifugeSlot(te, 8, 41, 42));   // left
+		addSlot(new CentrifugeSlot(te, 9, 49, 22));   // top-left
 
-		// Output slots (2x4 grid on the right)
-		addSlot(new OutputSlot(te, 10, 128, 10));
-		addSlot(new OutputSlot(te, 11, 146, 10));
-		addSlot(new OutputSlot(te, 12, 128, 28));
-		addSlot(new OutputSlot(te, 13, 146, 28));
-		addSlot(new OutputSlot(te, 14, 128, 46));
-		addSlot(new OutputSlot(te, 15, 146, 46));
-		addSlot(new OutputSlot(te, 16, 128, 64));
-		addSlot(new OutputSlot(te, 17, 146, 64));
+		// Output slots (2x4 grid on the right, 18px spacing)
+		addSlot(new OutputSlot(te, 10, 128, 14));
+		addSlot(new OutputSlot(te, 11, 146, 14));
+		addSlot(new OutputSlot(te, 12, 128, 32));
+		addSlot(new OutputSlot(te, 13, 146, 32));
+		addSlot(new OutputSlot(te, 14, 128, 50));
+		addSlot(new OutputSlot(te, 15, 146, 50));
+		addSlot(new OutputSlot(te, 16, 128, 68));
+		addSlot(new OutputSlot(te, 17, 146, 68));
 
-		// Aux output (below output grid)
-		addSlot(new OutputSlot(te, AUX_OUTPUT_SLOT, 137, 78));
+		// Aux output (below output grid, within craft area)
+		addSlot(new OutputSlot(te, AUX_OUTPUT_SLOT, 137, 88));
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 104 + y * 18));
+				this.addSlot(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 122 + y * 18));
 			}
 		}
 		// HOTBAR
 		for (int x = 0; x < 9; x++) {
-			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 162));
+			this.addSlot(new Slot(playerInv, x, 8 + x * 18, 180));
 		}
 
 		this.addDataSlots(containerData);

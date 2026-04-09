@@ -27,6 +27,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.PacketDistributor;
 
 public class BloodManipulation  {
@@ -225,6 +226,16 @@ public class BloodManipulation  {
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
+
+				// MnA Combo System: Arcane Resonance reduces blood cost
+				if (ModList.get().isLoaded("mna")
+						&& player.hasEffect(com.vincenthuto.hemomancy.common.init.EffectInit.arcane_resonance.get())) {
+					try {
+						double reduction = com.vincenthuto.hemomancy.config.HemoMnAConfig.ARCANE_RESONANCE_BLOOD_REDUCTION.get();
+						effectiveCost *= (1.0 - reduction);
+					} catch (Exception ignored) {}
+				}
+
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
@@ -236,6 +247,18 @@ public class BloodManipulation  {
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
 						KnownManipulationEvents.onManipulationUsed((ServerPlayer) player, this);
 						PurityGainEvents.onBloodManipulationUsed((ServerPlayer) player);
+
+						// MnA Combo System: Grant Sanguine Clarity (reduces next spell mana cost)
+						// and consume Arcane Resonance if present (it already reduced this manipulation's cost)
+						if (ModList.get().isLoaded("mna")) {
+							try {
+								com.vincenthuto.hemomancy.compat.mna.spell.ManipComboHelper
+										.onManipulationUsed(player);
+							} catch (Exception e) {
+								// MnA classes not available — silently skip
+							}
+						}
+
 						startCooldown(player);
 						PacketHandler.CHANNELKNOWNMANIPS.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),

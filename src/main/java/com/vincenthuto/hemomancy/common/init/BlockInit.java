@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.item.block.FungalImplantationPylonBlockI
 import com.vincenthuto.hemomancy.common.item.block.MortalDisplayBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedVivianiteBlockItem;
+import com.vincenthuto.hemomancy.common.item.block.VialCentrifugeBlockItem;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -366,6 +367,10 @@ public class BlockInit {
 		if (b == BlockInit.fungal_implantation_pylon.get()) {
 			return Pair.of(block.getSecond(),
 					new FungalImplantationPylonBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.vial_centrifuge.get()) {
+			return Pair.of(block.getSecond(),
+					new VialCentrifugeBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.earthen_vein.get()) {
 			return Pair.of(block.getSecond(),

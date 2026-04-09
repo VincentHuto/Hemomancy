@@ -20,6 +20,8 @@ import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.effect.SpinedBarricadeEffect;
 import com.vincenthuto.hemomancy.common.effect.VenomousResilienceEffect;
 import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
+import com.vincenthuto.hemomancy.common.effect.ArcaneResonanceEffect;
+import com.vincenthuto.hemomancy.common.effect.SanguineClarityEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -182,5 +184,12 @@ public class EffectInit {
 							4.0D, AttributeModifier.Operation.ADDITION)
 					.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "E5F7A9B1-3C2D-5E4F-0A6B-7D9C1F3E5B8A",
 							0.2D, AttributeModifier.Operation.ADDITION));
+
+	// MnA Cross-Mod Combo Effects
+	public static final RegistryObject<MobEffect> arcane_resonance = EFFECTS.register("arcane_resonance",
+			() -> new ArcaneResonanceEffect(MobEffectCategory.BENEFICIAL, 0x8B0020));
+
+	public static final RegistryObject<MobEffect> sanguine_clarity = EFFECTS.register("sanguine_clarity",
+			() -> new SanguineClarityEffect(MobEffectCategory.BENEFICIAL, 0x4020A0));
 
 }

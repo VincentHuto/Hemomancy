@@ -1,3 +1,3 @@
 {
-  "parent": "hemomancy:block/vial_centrifuge"
+  "parent": "builtin/entity"
 }

@@ -560,5 +560,415 @@
 		"related_recipes": [
 		]
 	},
+	"Blood Loss": {
+		"index": 12,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Blood Loss"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Blood Loss",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a harmful spell component that applies the "
+					},
+					{
+						"text": "Blood Loss",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " effect to the target, drastically reducing their movement speed as their lifeblood drains away. Dripping crimson particles fall from afflicted targets, leaving a gruesome trail wherever they stagger.\n\nThis component is composable with any MnA shape—attach it to a "
+					},
+					{
+						"text": "Rune",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " shape for a persistent trap, use a "
+					},
+					{
+						"text": "Chain",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " modifier to spread to multiple targets, or pair with a projectile for ranged application.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 60 ticks base (20–300)\n• Magnitude: 1 base (1–3 levels)\n• Affinity: Blood\n• Complexity: 15\n• Rote XP: 100\n• Tag: Harmful"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/blood_loss"
+			}
+		]
+	},
+	"Blood Rush": {
+		"index": 13,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Blood Rush"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Blood Rush",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a friendly spell component that applies the "
+					},
+					{
+						"text": "Blood Rush",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " effect to the target, surging their blood with Hemomantic vigor to increase both movement speed and attack speed. Upward-rushing crimson particles swirl around empowered targets as their vitality reaches a fever pitch.\n\nCast it on allies at range with a projectile shape, create a sigil or "
+					},
+					{
+						"text": "Rune",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " that buffs anyone who steps on it, or combine it with a zone shape to create a blood rally point.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 100 ticks base (40–600)\n• Magnitude: 1 base (1–3 levels)\n• Affinity: Blood\n• Complexity: 15\n• Rote XP: 100\n• Tag: Friendly"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/blood_rush"
+			}
+		]
+	},
+	"Hemolysis": {
+		"index": 14,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Hemolysis"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Hemolysis",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a devastating harmful spell component that applies the "
+					},
+					{
+						"text": "Hemolysis",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " effect to the target—a Hemomantic curse that ruptures blood cells from within, dealing sustained damage over time. Chaotic, sharp particles erupt from victims as their very blood destroys itself.\n\nWhen combined with MnA's spell modifier system, the damage-over-time can be extended and amplified far beyond what Hemomancy's potion system allows. Pair with AoE or zone shapes for devastating area denial.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 40 ticks base (20–200)\n• Magnitude: 1 base (1–4 levels)\n• Affinity: Blood\n• Complexity: 30\n• Rote XP: 200\n• Tag: Harmful"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/hemolysis"
+			}
+		]
+	},
+	"Sanguine Offering": {
+		"index": 15,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Sanguine Offering"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Sanguine Offering",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a spell component that drains the target's "
+					},
+					{
+						"text": "Blood Volume",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " and converts it into "
+					},
+					{
+						"text": "Mana",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " for the caster. It is the inverse of "
+					},
+					{
+						"text": "Sanguine Transmutation",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": "—where Transmutation trades mana for blood, the Offering sacrifices blood for arcane power.\n\nWhen self-cast or used on allies, it drains the target's blood and restores the caster's mana. When paired with harmful shapes like a projectile aimed at an enemy, it siphons their blood instead. Converging particles are drawn inward as the blood is consumed.\n\nThe spell will fail if the target lacks sufficient blood or if the caster's mana is already full.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Magnitude: 50 blood base (50–500)\n• Conversion: 0.2 mana per 1 blood\n• Affinity: Blood\n• Complexity: 25\n• Rote XP: 175\n• Tag: Friendly"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/blood_to_mana"
+			}
+		]
+	},
+	"Summon Sanguilith": {
+		"index": 16,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Summon Sanguilith"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Summon Sanguilith",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is an advanced spell component that calls forth a "
+					},
+					{
+						"text": "Sanguilith",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": "—a monstrous entity of coagulated blood and Hemomantic malice—at the target location. The Sanguilith fights alongside its summoner, slashing at nearby enemies with brutal, visceral strikes.\n\nThis component integrates fully with MnA's summon ecosystem. Players can customize it with spell modifiers to extend its duration or increase its power. Higher magnitude levels grant the Sanguilith bonus health, making it a formidable combatant.\n\n"
+					},
+					{
+						"text": "Requires: ",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "Harbinger faction membership.\n\n"
+					},
+					{
+						"text": "Attributes:\n",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "• Duration: 200 ticks base (100–600)\n• Magnitude: 1 base (1–3 levels)\n• Affinity: Blood\n• Complexity: 40\n• Rote XP: 300\n• Tag: Friendly"
+					}
+				]
+			}
+		],
+		"related_recipes": [
+			{
+				"type": "component",
+				"location": "hemomancy:components/summon_sanguilith"
+			}
+		]
+	},
+	"Blood Tithe": {
+		"index": 17,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Blood Tithe"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "Blood Tithe",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a passive mechanic exclusive to members of the "
+					},
+					{
+						"text": "Harbinger",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " faction. When casting spells that contain "
+					},
+					{
+						"text": "Blood",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " affinity components, a portion of the mana cost is automatically converted into a blood cost instead. By default, 25% of the mana cost is replaced—the corresponding blood is drained at a ratio of 5 blood per 1 mana saved.\n\nThis allows Harbingers to stretch their mana reserves further by drawing upon their Hemomantic vitality, but careless casting can leave a Hemomancer dangerously drained of blood. If the caster lacks sufficient blood to pay the tithe, the full mana cost is charged as normal.\n\n"
+					},
+					{
+						"text": "Note: ",
+						"bold": true,
+						"color": "gold"
+					},
+					{
+						"text": "Blood Tithe values are configurable in the server config."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Arcane Resonance & Sanguine Clarity": {
+		"index": 18,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Arcane Resonance & Sanguine Clarity"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Spell ↔ Manipulation Combo System",
+						"bold": true,
+						"color": "dark_purple"
+					},
+					{
+						"text": " rewards Hemomancers who weave MnA spells and blood manipulations together in quick succession.\n\n"
+					},
+					{
+						"text": "Arcane Resonance:\n",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": "Granted after casting a blood-affinity MnA spell. While active, the blood cost of your next Hemomancy manipulation is reduced. The effect is consumed upon using a manipulation.\n\n"
+					},
+					{
+						"text": "Sanguine Clarity:\n",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": "Granted after using a Hemomancy manipulation. While active, the mana cost of your next MnA spell is reduced. The effect is consumed upon casting a spell.\n\nMastering this rhythm—spell, manipulation, spell, manipulation—allows a skilled Hemomancer to drastically reduce the resource cost of both systems, creating a devastating cycle of blood and sorcery."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
+	"Blood Shot Occulus": {
+		"index": 19,
+		"category": "hemomancy",
+		"sections": [
+			{
+				"type": "title",
+				"value": "Blood Shot Occulus"
+			},
+			{
+				"type": "text",
+				"value": "",
+				"json": [
+					{
+						"text": "The "
+					},
+					{
+						"text": "Blood Shot Occulus",
+						"bold": true,
+						"color": "dark_red"
+					},
+					{
+						"text": " is a portable Hemomantic instrument—a bloodstained lens that allows a mage to quickly view their "
+					},
+					{
+						"text": "Occulus",
+						"bold": true,
+						"color": "blue"
+					},
+					{
+						"text": " interface without needing to seek out a stationary one. Simply right-click with the item in hand to open the Occulus screen, provided you have already unlocked your magical potential.\n\nAn invaluable tool for any Hemomancer on the move, it frees practitioners from being tethered to a fixed location when managing their arcane progression."
+					}
+				]
+			}
+		],
+		"related_recipes": [
+		]
+	},
 	"version": "1.0.0a"
 }

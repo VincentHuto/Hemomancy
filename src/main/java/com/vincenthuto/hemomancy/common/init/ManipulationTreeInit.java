@@ -39,54 +39,91 @@ public class ManipulationTreeInit {
 		ENTRIES.clear();
 		BY_NAME.clear();
 
+		// Row spacing constants
+		int ROW_GAP = 70;   // Y gap between tiers
+		int COL_GAP = 80;   // X gap between sibling nodes
+
 		// ═══════════════════════════════════════════
 		//  ANIMUS tendency cluster  (red / aggressive)
-		//  X range: TREE_OFFSET_X + 0..160
 		// ═══════════════════════════════════════════
 		int ax = TREE_OFFSET_X;
 
-		// Row 0  — HUMILIS (basic)
-		register("blood_shot",     ax,        TREE_TOP_Y);
-		register("blood_needle",   ax + 80,   TREE_TOP_Y);
-		register("blood_rush",     ax + 160,  TREE_TOP_Y);
-		register("crimson_flame_conjuration", ax + 240, TREE_TOP_Y);
+		// Row 0 (top) — SUMMA
+		register("blood_aneurysm", ax + 40,          TREE_TOP_Y,             "deadly_gaze", "blood_cloud");
+		register("summon_avatar",  ax + 120,         TREE_TOP_Y,             "blood_cloud", "blood_rush");
 
-		// Row 1  — MEDIOCRITAS (mid-tier, descend from basics)
-		register("deadly_gaze",    ax,        TREE_TOP_Y + 70,  "blood_shot");
-		register("blood_cloud",    ax + 80,   TREE_TOP_Y + 70,  "blood_needle", "blood_shot");
+		// Row 1 (middle) — MEDIOCRITAS
+		register("deadly_gaze",    ax,               TREE_TOP_Y + ROW_GAP,   "blood_shot");
+		register("blood_cloud",    ax + COL_GAP,     TREE_TOP_Y + ROW_GAP,   "blood_needle", "blood_shot");
+		register("summon_thrall",  ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP,   "blood_rush", "crimson_flame_conjuration");
 
-		// Row 2  — SUMMA (high-tier)
-		register("blood_aneurysm", ax + 40,   TREE_TOP_Y + 140, "deadly_gaze", "blood_cloud");
-		register("summon_avatar",  ax + 120,  TREE_TOP_Y + 140, "blood_cloud", "blood_rush");
+		// Row 2 (bottom) — HUMILIS
+		register("blood_shot",     ax,               TREE_TOP_Y + ROW_GAP * 2);
+		register("blood_needle",   ax + COL_GAP,     TREE_TOP_Y + ROW_GAP * 2);
+		register("blood_rush",     ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
+		register("crimson_flame_conjuration", ax + COL_GAP * 3, TREE_TOP_Y + ROW_GAP * 2);
 
 		// ═══════════════════════════════════════════
 		//  FERRIC tendency cluster  (grey / metallic)
-		//  X range: TREE_OFFSET_X + 220..380
 		// ═══════════════════════════════════════════
-		int fx = TREE_OFFSET_X + 240;
+		int fx = ax + COL_GAP * 3 + 160;  // gap after ANIMUS
 
-		// Row 0
-		register("venous_travel",       fx,        TREE_TOP_Y);
-		register("conjure_blade",       fx + 80,   TREE_TOP_Y);
+		// Row 0 (top) — SUMMA
+		register("ferric_transmutation", fx + 40,    TREE_TOP_Y,             "blood_absorption", "blood_projection");
 
-		// Row 1
-		register("blood_absorption",    fx,        TREE_TOP_Y + 70,  "venous_travel");
-		register("blood_projection",    fx + 80,   TREE_TOP_Y + 70,  "conjure_blade");
+		// Row 1 (middle) — MEDIOCRITAS
+		register("blood_absorption",     fx,         TREE_TOP_Y + ROW_GAP,   "venous_travel");
+		register("blood_projection",     fx + COL_GAP, TREE_TOP_Y + ROW_GAP, "conjure_blade");
+		register("sanguine_excavation",  fx + COL_GAP * 2, TREE_TOP_Y + ROW_GAP, "sanguine_mending");
 
-		// Row 2
-		register("ferric_transmutation", fx + 40,  TREE_TOP_Y + 140, "blood_absorption", "blood_projection");
+		// Row 2 (bottom) — HUMILIS / MEDIOCRITAS roots
+		register("venous_travel",        fx,         TREE_TOP_Y + ROW_GAP * 2);
+		register("conjure_blade",        fx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2);
+		register("sanguine_mending",     fx + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
 
 		// ═══════════════════════════════════════════
 		//  DUCTILIS tendency cluster  (yellow / nervous)
-		//  X range: TREE_OFFSET_X + 460..540
 		// ═══════════════════════════════════════════
-		int dx = TREE_OFFSET_X + 480;
+		int dx = fx + COL_GAP * 2 + 160;  // gap after FERRIC
 
-		// Row 0
-		register("activation_potential", dx,       TREE_TOP_Y);
+		// Row 0 (top) — MEDIOCRITAS
+		register("sanguine_ward",        dx,         TREE_TOP_Y,             "activation_potential");
 
-		// Row 1
-		register("sanguine_ward",        dx,       TREE_TOP_Y + 70,  "activation_potential");
+		// Row 1 (middle) — MEDIOCRITAS root
+		register("activation_potential", dx,         TREE_TOP_Y + ROW_GAP,   "crimson_harvest");
+
+		// Row 2 (bottom) — HUMILIS
+		register("crimson_harvest",      dx,         TREE_TOP_Y + ROW_GAP * 2);
+
+		// ═══════════════════════════════════════════
+		//  LUX tendency cluster  (white / light)
+		// ═══════════════════════════════════════════
+		int lx = dx + 160;  // gap after DUCTILIS
+
+		// Row 0 (top) — MEDIOCRITAS
+		register("crimson_sight",        lx + 40,    TREE_TOP_Y,             "hemosynthesis", "blood_lamp");
+
+		// Row 1 (bottom) — HUMILIS
+		register("hemosynthesis",        lx,         TREE_TOP_Y + ROW_GAP);
+		register("blood_lamp",           lx + COL_GAP, TREE_TOP_Y + ROW_GAP);
+
+		// ═══════════════════════════════════════════
+		//  Elemental / Esoteric clusters
+		//  (smaller tendency groups, one or two nodes each)
+		// ═══════════════════════════════════════════
+		int ex = lx + COL_GAP + 160;  // gap after LUX
+
+		// CONGEATIO (blue / cold) — HUMILIS
+		register("glacial_grasp",        ex,         TREE_TOP_Y + ROW_GAP);
+
+		// FLAMMEUS (orange / fire) — MEDIOCRITAS
+		register("pyretic_forge",        ex + COL_GAP, TREE_TOP_Y);
+
+		// TENEBRIS (dark purple / shadow) — MEDIOCRITAS
+		register("umbral_step",          ex + COL_GAP * 2, TREE_TOP_Y);
+
+		// MORTEM (dark green / death) — MEDIOCRITAS
+		register("vital_reservoir",      ex + COL_GAP * 3, TREE_TOP_Y);
 	}
 
 	// ────────────────────────────────────────────────────────────
