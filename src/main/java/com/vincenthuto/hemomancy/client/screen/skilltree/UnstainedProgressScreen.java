@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -633,7 +634,7 @@ public class UnstainedProgressScreen extends Screen {
 			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentPurityStage.getLevel() >= stage.getLevel(),
 					currentPurityStage == stage,
-					PURITY_COLOR, PURITY_GLOW, stage.getIconItem());
+					PURITY_COLOR, PURITY_GLOW, stage.getIconTexture(), stage.getIconItem());
 		}
 	}
 
@@ -681,7 +682,7 @@ public class UnstainedProgressScreen extends Screen {
 			drawDiamondNode(gfx, sx(ccx), sy(nodeCY) + halfNode(), stage.getTitle(),
 					currentClarityStage.getLevel() >= stage.getLevel(),
 					currentClarityStage == stage,
-					CLARITY_COLOR, CLARITY_GLOW, stage.getIconItem());
+					CLARITY_COLOR, CLARITY_GLOW, stage.getIconTexture(), stage.getIconItem());
 		}
 	}
 
@@ -691,6 +692,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	private void drawDiamondNode(GuiGraphics gfx, int scrX, int scrY, String title,
 								 boolean reached, boolean isCurrent, int accentColor, int glowColor,
+								 @javax.annotation.Nullable ResourceLocation iconTexture,
 								 @javax.annotation.Nullable ItemStack iconStack) {
 		float time = System.nanoTime() / 1_000_000_000f;
 		int hn = halfNode();
@@ -718,9 +720,11 @@ public class UnstainedProgressScreen extends Screen {
 		// Border diamond outline
 		drawDiamondOutline(gfx, scrX, scrY, hn, border);
 
-		// Icon item or text inside node (only when zoomed in enough)
+		// Icon texture, icon item, or text inside node (only when zoomed in enough)
 		if (zoom >= 0.5f) {
-			if (iconStack != null && !iconStack.isEmpty()) {
+			if (iconTexture != null) {
+				renderScaledTexture(gfx, iconTexture, scrX, scrY, hn);
+			} else if (iconStack != null && !iconStack.isEmpty()) {
 				renderScaledItem(gfx, iconStack, scrX, scrY, hn);
 			} else {
 				String initial = !title.isEmpty() ? title.substring(0, 1).toUpperCase() : "?";
@@ -785,6 +789,20 @@ public class UnstainedProgressScreen extends Screen {
 		pose.scale(itemScale, itemScale, 1);
 		gfx.renderItem(stack, 0, 0);
 		pose.popPose();
+	}
+
+	/**
+	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
+	 * within the node bounds. Assumes the texture is a full 256x256 atlas or standalone image.
+	 */
+	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
+		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
+		int x = centerX - nodeInner / 2;
+		int y = centerY - nodeInner / 2;
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
+		RenderSystem.disableBlend();
 	}
 
 	// ────────────────────────────────────────────────────────────

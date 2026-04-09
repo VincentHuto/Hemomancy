@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 public class SkillPoint {
@@ -17,6 +18,7 @@ public class SkillPoint {
 	EnumSkillStates state;
 	SkillPoint parent;
 	@Nullable Supplier<ItemStack> iconItem;
+	@Nullable ResourceLocation iconTexture;
 
 	public SkillPoint(int id, String name, double cost, int maxLevel, EnumSkillStates state,
 			@Nullable SkillPoint parent) {
@@ -79,12 +81,26 @@ public class SkillPoint {
 		return this;
 	}
 
+	/** Builder-style setter for a texture icon rendered inside this node on the skill tree. */
+	public SkillPoint setIconTexture(ResourceLocation texture) {
+		this.iconTexture = texture;
+		return this;
+	}
+
 	/**
 	 * Returns the icon item to render inside this skill's node, or null if none is set.
 	 */
 	@Nullable
 	public ItemStack getIconItem() {
 		return iconItem != null ? iconItem.get() : null;
+	}
+
+	/**
+	 * Returns the texture icon to render inside this skill's node, or null if none is set.
+	 */
+	@Nullable
+	public ResourceLocation getIconTexture() {
+		return iconTexture;
 	}
 
 	/** Returns true if the player's degree is too low to interact with this skill. */

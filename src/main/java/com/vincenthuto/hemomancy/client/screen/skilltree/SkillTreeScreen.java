@@ -39,6 +39,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -1014,16 +1015,21 @@ public class SkillTreeScreen extends Screen {
 				continue; // skip normal text rendering for degree-locked nodes
 			}
 
-			// ── icon item or text (only when zoomed in enough) ──
+			// ── icon texture, icon item, or text (only when zoomed in enough) ──
 			if (zoom >= 0.5f) {
-				ItemStack iconStack = sp.getIconItem();
-				if (iconStack != null && !iconStack.isEmpty()) {
-					renderScaledItem(gfx, iconStack, nx, ny, hn);
+				ResourceLocation iconTex = sp.getIconTexture();
+				if (iconTex != null) {
+					renderScaledTexture(gfx, iconTex, nx, ny, hn);
 				} else {
-					String ini = getSkillInitial(sp);
-					int textCol = sp.getState() == EnumSkillStates.UNLOCKED
-							? 0xFFFFAAAA : 0xFF888888;
-					gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+					ItemStack iconStack = sp.getIconItem();
+					if (iconStack != null && !iconStack.isEmpty()) {
+						renderScaledItem(gfx, iconStack, nx, ny, hn);
+					} else {
+						String ini = getSkillInitial(sp);
+						int textCol = sp.getState() == EnumSkillStates.UNLOCKED
+								? 0xFFFFAAAA : 0xFF888888;
+						gfx.drawCenteredString(font, ini, nx, ny - 4, textCol);
+					}
 				}
 
 				// Show level progress below node
@@ -2505,6 +2511,20 @@ public class SkillTreeScreen extends Screen {
 		pose.scale(itemScale, itemScale, 1);
 		gfx.renderItem(stack, 0, 0);
 		pose.popPose();
+	}
+
+	/**
+	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
+	 * within the node bounds. Assumes the texture is a full 256x256 atlas or standalone image.
+	 */
+	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
+		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
+		int x = centerX - nodeInner / 2;
+		int y = centerY - nodeInner / 2;
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
+		RenderSystem.disableBlend();
 	}
 
 	private static String getSkillInitial(SkillPoint sp) {
