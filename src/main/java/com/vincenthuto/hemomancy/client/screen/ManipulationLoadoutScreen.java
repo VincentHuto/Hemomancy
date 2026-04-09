@@ -431,7 +431,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 			tooltip.add(Component.literal(String.format("Cooldown: %.1fs", hovered.getCooldownTicks() / 20.0)));
 		}
 		if (equippedNames.contains(hovered.getName())) {
-			tooltip.add(Component.literal("\u00A7aEquipped"));
+			tooltip.add(Component.literal("Equipped").withStyle(s -> s.withColor(0x55FF55)));
 		}
 
 		graphics.renderTooltip(font, tooltip, Optional.empty(), mouseX, mouseY);
@@ -499,7 +499,8 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 			int mx = (int) mouseX;
 			int my = (int) mouseY;
 
-			if (isInsideBrain(mx, my) && equippedManips.size() < maxSlots) {
+			if (isInsideBrain(mx, my) && equippedManips.size() < maxSlots
+					&& !equippedNames.contains(draggingManip.getName())) {
 				PacketHandler.CHANNELKNOWNMANIPS.sendToServer(
 						new EquipManipulationPacket(draggingManip.getName(), true));
 				equippedNames.add(draggingManip.getName());
