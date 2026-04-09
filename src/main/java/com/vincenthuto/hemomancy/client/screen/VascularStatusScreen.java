@@ -37,8 +37,14 @@ import java.util.Random;
  */
 public class VascularStatusScreen extends Screen {
 
-	private static final int GUI_WIDTH = 190;
-	private static final int GUI_HEIGHT = 254;
+	private static final int PREFERRED_GUI_WIDTH = 190;
+	private static final int PREFERRED_GUI_HEIGHT = 254;
+
+	/** Actual GUI dimensions, shrunk to fit the current window size. */
+	private int guiWidth = PREFERRED_GUI_WIDTH;
+	private int guiHeight = PREFERRED_GUI_HEIGHT;
+	/** Scale factor (0-1) of actual size vs preferred size, used to shrink content proportionally. */
+	private float guiScale = 1.0f;
 
 	/** Number of animated vein tendrils swimming across the background. */
 	private static final int VEIN_COUNT = 28;
@@ -59,8 +65,11 @@ public class VascularStatusScreen extends Screen {
 	/** Whether the mouse is currently being dragged to rotate the model. */
 	private boolean isDragging = false;
 
-	/** Scale of the rendered player model in GUI units. */
-	private static final int MODEL_SCALE = 55;
+	/** Scale of the rendered player model in GUI units (at full size). */
+	private static final int BASE_MODEL_SCALE = 55;
+
+	/** Continuously increasing tick counter for driving the idle walk animation. */
+	private float animationTicks = 0f;
 
 	public VascularStatusScreen() {
 		super(Component.literal("Vascular Status"));
@@ -73,6 +82,13 @@ public class VascularStatusScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
+
+		// Compute GUI dimensions that fit within the screen with some padding
+		int padding = 10;
+		guiWidth = Math.min(PREFERRED_GUI_WIDTH, this.width - padding * 2);
+		guiHeight = Math.min(PREFERRED_GUI_HEIGHT, this.height - padding * 2);
+		guiScale = Math.min((float) guiWidth / PREFERRED_GUI_WIDTH, (float) guiHeight / PREFERRED_GUI_HEIGHT);
+
 		// Seed vein parameters deterministically so they stay stable while the screen is open
 		Random rand = new Random(42L);
 		veinParams = new float[VEIN_COUNT][9];
@@ -101,11 +117,11 @@ public class VascularStatusScreen extends Screen {
 		if (button == 0) {
 			int centerX = this.width / 2;
 			int centerY = this.height / 2;
-			int guiLeft = centerX - GUI_WIDTH / 2;
-			int guiTop = centerY - GUI_HEIGHT / 2;
+			int guiLeft = centerX - guiWidth / 2;
+			int guiTop = centerY - guiHeight / 2;
 			// Only start dragging if inside the GUI panel
-			if (mouseX >= guiLeft && mouseX <= guiLeft + GUI_WIDTH &&
-				mouseY >= guiTop && mouseY <= guiTop + GUI_HEIGHT) {
+			if (mouseX >= guiLeft && mouseX <= guiLeft + guiWidth &&
+				mouseY >= guiTop && mouseY <= guiTop + guiHeight) {
 				isDragging = true;
 				return true;
 			}
@@ -142,14 +158,14 @@ public class VascularStatusScreen extends Screen {
 		int centerX = this.width / 2;
 		int centerY = this.height / 2;
 
-		int guiLeft = centerX - GUI_WIDTH / 2;
-		int guiTop = centerY - GUI_HEIGHT / 2;
+		int guiLeft = centerX - guiWidth / 2;
+		int guiTop = centerY - guiHeight / 2;
 
 		// Animated vein background clipped to the GUI bounds
-		renderVeinBackground(graphics, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT);
+		renderVeinBackground(graphics, guiLeft, guiTop, guiWidth, guiHeight);
 
 		// Programmatic dark-red border frame on top of the vein background
-		drawBorder(graphics, guiLeft, guiTop, GUI_WIDTH, GUI_HEIGHT);
+		drawBorder(graphics, guiLeft, guiTop, guiWidth, guiHeight);
 
 		// Title
 		graphics.drawCenteredString(this.font, this.title, centerX, guiTop + 6, 0xFFCC3344);
@@ -158,17 +174,19 @@ public class VascularStatusScreen extends Screen {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 
+		int scaledModelSize = (int) (BASE_MODEL_SCALE * guiScale);
+
 		// Render 3D player model with vascular overlays
 		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
 			// Scissor clip to keep the model inside the GUI panel
-			graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + GUI_WIDTH - 4, guiTop + GUI_HEIGHT - 18);
-			render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + 20, mouseX, mouseY);
+			graphics.enableScissor(guiLeft + 4, guiTop + 28, guiLeft + guiWidth - 4, guiTop + guiHeight - 18);
+			render3DPlayerWithOverlays(graphics, vascular, player, centerX, centerY + (int)(20 * guiScale), mouseX, mouseY, scaledModelSize);
 			graphics.disableScissor();
 		});
 
 		// Footer
 		graphics.drawCenteredString(this.font, "§4§l— §c§oVenous Network §4§l—",
-				centerX, guiTop + GUI_HEIGHT - 14, 0xFF882222);
+				centerX, guiTop + guiHeight - 14, 0xFF882222);
 	}
 
 	// ───── 3D Player Rendering with Vascular Overlays ─────
@@ -179,12 +197,12 @@ public class VascularStatusScreen extends Screen {
 	 */
 	private void render3DPlayerWithOverlays(GuiGraphics graphics, IVascularSystem vascular,
 											LocalPlayer player, int posX, int posY,
-											int mouseX, int mouseY) {
+											int mouseX, int mouseY, int modelScale) {
 		// ── Step 1: Render the player model's body parts tinted with vascular health colors ──
-		renderVascularModel(vascular, player, posX, posY, MODEL_SCALE);
+		renderVascularModel(vascular, player, posX, posY, modelScale);
 
 		// ── Step 2: Render hover tooltips based on projected 2D positions of body parts ──
-		renderHoverTooltips(graphics, vascular, posX, posY, mouseX, mouseY);
+		renderHoverTooltips(graphics, vascular, posX, posY, mouseX, mouseY, modelScale);
 	}
 
 	/**
@@ -211,10 +229,14 @@ public class VascularStatusScreen extends Screen {
 		PlayerRenderer playerRenderer = (PlayerRenderer) dispatcher.getRenderer(player);
 		PlayerModel<AbstractClientPlayer> model = playerRenderer.getModel();
 
-		// Set model to a neutral idle pose with the desired rotation
+		// Drive a looping walk animation independent of the player's actual state.
+		// limbSwing = walk cycle position (continuously increasing), limbSwingAmount = walk intensity (0-1).
+		animationTicks += 0.5f; // Advance at a gentle pace each frame
+		float limbSwing = animationTicks * 0.6f;     // Walk cycle speed
+		float limbSwingAmount = 0.6f;                 // Moderate arm/leg swing
 		model.young = false;
 		model.riding = false;
-		model.setupAnim(player, 0, 0, 0, 0, 0);
+		model.setupAnim(player, limbSwing, limbSwingAmount, animationTicks, 0, 0);
 
 		// Apply yaw to the whole model by translating into model space and rotating
 		poseStack.pushPose();
@@ -262,7 +284,7 @@ public class VascularStatusScreen extends Screen {
 		float health = Mth.clamp(vascular.getHealthBySection(section), 0f, 100f);
 		int color = getColorForHealth(health);
 
-		float a = ((color >> 24) & 0xFF) / 255.0f;
+		float a = ((color >> 24) & 0xFF) / 255.0f * 0.4f;
 		float r = ((color >> 16) & 0xFF) / 255.0f;
 		float g = ((color >> 8) & 0xFF) / 255.0f;
 		float b = (color & 0xFF) / 255.0f;
@@ -295,7 +317,7 @@ public class VascularStatusScreen extends Screen {
 		float avgHealth = (health1 + health2) / 2f;
 		int color = getColorForHealth(avgHealth);
 
-		float a = ((color >> 24) & 0xFF) / 255.0f;
+		float a = ((color >> 24) & 0xFF) / 255.0f * 0.4f;
 		float r = ((color >> 16) & 0xFF) / 255.0f;
 		float g = ((color >> 8) & 0xFF) / 255.0f;
 		float b = (color & 0xFF) / 255.0f;
@@ -320,12 +342,12 @@ public class VascularStatusScreen extends Screen {
 	 * and renders a tooltip if the mouse hovers over one.
 	 */
 	private void renderHoverTooltips(GuiGraphics graphics, IVascularSystem vascular,
-									 int posX, int posY, int mouseX, int mouseY) {
+									 int posX, int posY, int mouseX, int mouseY, int modelScale) {
 		// We project approximate center positions of each body part to 2D screen coords.
 		// The player model is ~1.8 blocks tall, centered at posX/posY (feet at posY).
 		// In model space (after scale): head top is at about -1.5, feet at +0.3 from center.
 
-		float scale = MODEL_SCALE;
+		float scale = modelScale;
 		float yawRad = rotationY * ((float) Math.PI / 180.0f);
 		float pitchRad = rotationX * ((float) Math.PI / 180.0f);
 		float cosPitch = Mth.cos(pitchRad);
@@ -361,8 +383,8 @@ public class VascularStatusScreen extends Screen {
 			int screenX = posX + (int) (rx * scale);
 			int screenY = posY + (int) (ry2 * scale);
 
-			int halfW = def.hitW / 2;
-			int halfH = def.hitH / 2;
+			int halfW = (int)(def.hitW * guiScale) / 2;
+			int halfH = (int)(def.hitH * guiScale) / 2;
 
 			if (mouseX >= screenX - halfW && mouseX <= screenX + halfW &&
 				mouseY >= screenY - halfH && mouseY <= screenY + halfH) {

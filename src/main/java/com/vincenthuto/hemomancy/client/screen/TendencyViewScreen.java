@@ -35,10 +35,15 @@ import java.util.stream.Collectors;
 
 public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyViewMenu> {
 
+    private static final int PREFERRED_GUI_WIDTH = 190;
+    private static final int PREFERRED_GUI_HEIGHT = 254;
+
     public double dragLeftRight = 0.0;
     public double dragUpDown = 0.0;
-    public int guiHeight = 254;
-    public int guiWidth = 190;
+    public int guiHeight = PREFERRED_GUI_HEIGHT;
+    public int guiWidth = PREFERRED_GUI_WIDTH;
+    /** Scale factor (0-1) of actual size vs preferred size, used to shrink content proportionally. */
+    private float guiScale = 1.0f;
     protected int left;
     protected int top;
     protected Minecraft mc = Minecraft.getInstance();
@@ -65,6 +70,12 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
 
     @Override
     protected void init() {
+        // Compute GUI dimensions that fit within the screen with some padding
+        int padding = 10;
+        this.guiWidth = Math.min(PREFERRED_GUI_WIDTH, this.width - padding * 2);
+        this.guiHeight = Math.min(PREFERRED_GUI_HEIGHT, this.height - padding * 2);
+        this.guiScale = Math.min((float) guiWidth / PREFERRED_GUI_WIDTH, (float) guiHeight / PREFERRED_GUI_HEIGHT);
+
         this.left = this.width / 2 - this.guiWidth / 2;
         this.top = this.height / 2 - this.guiHeight / 2;
         this.clearWidgets();
@@ -235,8 +246,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
     @Override
     public void renderBackground(GuiGraphics graphics) {
         super.renderBackground(graphics);
-        this.left = this.width / 2 - this.guiWidth / 2;
-        this.top = this.height / 2 - this.guiHeight / 2;
+        this.left = this.width / 2 - guiWidth / 2;
+        this.top = this.height / 2 - guiHeight / 2;
     }
 
     private void drawCenter(GuiGraphics graphics, int centerX, int centerY) {
@@ -244,8 +255,8 @@ public class TendencyViewScreen extends EffectRenderingInventoryScreen<TendencyV
         player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
             Map<EnumBloodTendency, Float> affs = tendency.getTendency();
             float rotAngle = -90f;
-            int iconDiameter = 95;
-            int diameter = 15;
+            int iconDiameter = (int) (95 * guiScale);
+            int diameter = (int) (15 * guiScale);
             float spikeBaseWidth = 23.5f;
             int itemSize = 16;
             int halfItem = itemSize / 2;
