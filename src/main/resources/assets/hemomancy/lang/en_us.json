@@ -34,6 +34,7 @@
 	"block.hemomancy.iron_brazier": "Iron Brazier",
 	"block.hemomancy.juiceinator": "Juiceinator",
 	"block.hemomancy.lethean_poppy": "Lethean Poppy",
+	"block.hemomancy.manipulation_loadout": "Manipulation Loadout",
 	"block.hemomancy.morphling_incubator": "Morphling Incubator",
 	"block.hemomancy.mortal_display": "Mortal Display",
 	"block.hemomancy.polished_venous_stone": "Polished Venous Stone",
@@ -486,6 +487,7 @@
 	"advancements.hemomancy.bleeding_a_stone.description": "Craft a Juiceinator — if you can squeeze blood from this, you can squeeze blood from anything",
 
 	"container.hemomancy.juiceinator": "Juiceinator",
+	"container.hemomancy.manipulation_loadout": "Manipulation Loadout",
 	"gui.hemomancy.juiceinator.requires_fire": "Requires fire below",
 
 	"item.hemomancy.vivianite_cluster": "Vivianite Cluster",

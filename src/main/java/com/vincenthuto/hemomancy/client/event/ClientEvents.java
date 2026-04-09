@@ -402,6 +402,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
 			MenuScreens.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
 			MenuScreens.register(ContainerInit.structure_spawner.get(), StructureSpawnerScreen::new);
+			MenuScreens.register(ContainerInit.manipulation_loadout.get(), ManipulationLoadoutScreen::new);
 
 		}
 

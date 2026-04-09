@@ -170,6 +170,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> crimson_flames = SPECIALBLOCKS.register("crimson_flames",
             CrimsonFlameBlock::new);
 
+	public static final RegistryObject<Block> manipulation_loadout = SPECIALBLOCKS.register("manipulation_loadout",
+			ManipulationLoadoutBlock::new);
+
 	// Plants
 
 	public static final RegistryObject<Block> blood_wood_log = COLUMNBLOCKS.register("blood_wood_log",

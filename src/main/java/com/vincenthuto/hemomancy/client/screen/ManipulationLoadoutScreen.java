@@ -49,6 +49,7 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 
 	private final List<ManipIcon> knownIcons = new ArrayList<>();
 	private final List<ManipIcon> equippedIcons = new ArrayList<>();
+	private int refreshTicker;
 
 	public ManipulationLoadoutScreen(ManipulationLoadoutMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
@@ -186,9 +187,19 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 	}
 
 	@Override
+	protected void containerTick() {
+		super.containerTick();
+		refreshTicker++;
+		if (refreshTicker >= 10) {
+			refreshTicker = 0;
+			refreshCapabilityData();
+			buildLayout();
+		}
+	}
+
+	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		this.renderBg(graphics, partialTicks, mouseX, mouseY);
-		this.renderTooltip(graphics, mouseX, mouseY);
 
 		int gx = guiLeft;
 		int gy = guiTop;
@@ -196,10 +207,10 @@ public class ManipulationLoadoutScreen extends AbstractContainerScreen<Manipulat
 		renderVeinBackground(graphics, gx, gy, GUI_WIDTH, GUI_HEIGHT);
 		drawBorder(graphics, gx, gy, GUI_WIDTH, GUI_HEIGHT);
 		drawBrainArea(graphics, partialTicks);
+		drawTendencyLabels(graphics);
 		drawKnownManips(graphics, mouseX, mouseY);
 		drawEquippedManips(graphics, mouseX, mouseY);
 		drawCounter(graphics);
-		drawTendencyLabels(graphics);
 
 		if (draggingManip != null) {
 			ItemStack stack = manipItemCache.get(draggingManip);
