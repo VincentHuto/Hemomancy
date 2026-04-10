@@ -366,11 +366,12 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			drawFlatLine(vc, mat, x1, y1, z1, x2, y2, z2,
 					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth);
 		} else {
-			float offset = 0.25f;
+			// Center bias for random displacement (shifts distribution away from midpoint)
+			float centerBias = 0.25f;
 			// Displace midpoint in XZ only (keep Y stable to stay flat)
-			float mx = (x1 + x2) * 0.5f + (FRAC_RAND.nextFloat() - offset) * (float) displace * offset;
+			float mx = (x1 + x2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
 			float my = (y1 + y2) * 0.5f;
-			float mz = (z1 + z2) * 0.5f + (FRAC_RAND.nextFloat() - offset) * (float) displace * offset;
+			float mz = (z1 + z2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
 			fracLine(vc, mat, x1, y1, z1, mx, my, mz,
 					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth, displace / 2, detail);
 			fracLine(vc, mat, mx, my, mz, x2, y2, z2,
