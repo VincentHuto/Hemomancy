@@ -64,7 +64,8 @@ public class SkillTreeScreen extends Screen {
 		SKILLS("Skills", 0xFFCC3333),
 		MANIPULATIONS("Manipulations", 0xFFCC8833),
 		CRAFTING("Crafting", 0xFFAA2222),
-		RITES("Rites", 0xFF8844CC);
+		RITES("Rites", 0xFF8844CC),
+		MATERIALS("Materials", 0xFFCC6644);
 
 		final String label;
 		final int color;
@@ -159,6 +160,13 @@ public class SkillTreeScreen extends Screen {
 	private static final int RITE_NAV_BTN_H = 18;
 	private static final int LAYER_BTN_SIZE = 16;
 
+	// ── Materials & Processes data ──
+	private final Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
+	private int materialContentW, materialContentH;
+	private double materialPanX, materialPanY;
+	private float materialZoom = 1.0f;
+	private MaterialEntry selectedMaterial = null;
+
 	/** Minimum player degree required to view recipes in each rite tier. */
 	private static int riteMinDegree(CardinalRiteType type) {
 		return switch (type) {
@@ -233,6 +241,7 @@ public class SkillTreeScreen extends Screen {
 		clearWidgets();
 		buildLayout();
 		buildManipLayout();
+		buildMaterialLayout();
 		seedVeinParams();
 		cacheKnownManipulations();
 		cacheRiteRecipes();
@@ -251,6 +260,8 @@ public class SkillTreeScreen extends Screen {
 		skillPanY = (guiHeight - skillContentH * skillZoom) / 2.0;
 		manipPanX = (guiWidth  - manipContentW * manipZoom) / 2.0;
 		manipPanY = (guiHeight - manipContentH * manipZoom) / 2.0;
+		materialPanX = (guiWidth  - materialContentW * materialZoom) / 2.0;
+		materialPanY = (guiHeight - materialContentH * materialZoom) / 2.0;
 
 		restorePan();
 	}
@@ -261,6 +272,8 @@ public class SkillTreeScreen extends Screen {
 		clampPan();
 		if (activeTab == Tab.SKILLS) {
 			skillPanX = panX; skillPanY = panY; skillZoom = zoom;
+		} else if (activeTab == Tab.MATERIALS) {
+			materialPanX = panX; materialPanY = panY; materialZoom = zoom;
 		} else {
 			manipPanX = panX; manipPanY = panY; manipZoom = zoom;
 		}
@@ -271,6 +284,8 @@ public class SkillTreeScreen extends Screen {
 		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return; // Browse tabs don't use pan/zoom
 		if (activeTab == Tab.SKILLS) {
 			panX = skillPanX; panY = skillPanY; zoom = skillZoom;
+		} else if (activeTab == Tab.MATERIALS) {
+			panX = materialPanX; panY = materialPanY; zoom = materialZoom;
 		} else {
 			panX = manipPanX; panY = manipPanY; zoom = manipZoom;
 		}
@@ -282,8 +297,15 @@ public class SkillTreeScreen extends Screen {
 	 * so there's a comfortable "rubber band" feel without getting lost.
 	 */
 	private void clampPan() {
-		int contentW = (activeTab == Tab.SKILLS) ? skillContentW : manipContentW;
-		int contentH = (activeTab == Tab.SKILLS) ? skillContentH : manipContentH;
+		int contentW;
+		int contentH;
+		if (activeTab == Tab.SKILLS) {
+			contentW = skillContentW; contentH = skillContentH;
+		} else if (activeTab == Tab.MATERIALS) {
+			contentW = materialContentW; contentH = materialContentH;
+		} else {
+			contentW = manipContentW; contentH = manipContentH;
+		}
 
 		double scaledW = contentW * zoom;
 		double scaledH = contentH * zoom;
@@ -305,6 +327,9 @@ public class SkillTreeScreen extends Screen {
 		if (activeTab == Tab.SKILLS) {
 			panX = (guiWidth  - skillContentW * zoom) / 2.0;
 			panY = (guiHeight - skillContentH * zoom) / 2.0;
+		} else if (activeTab == Tab.MATERIALS) {
+			panX = (guiWidth  - materialContentW * zoom) / 2.0;
+			panY = (guiHeight - materialContentH * zoom) / 2.0;
 		} else {
 			panX = (guiWidth  - manipContentW * zoom) / 2.0;
 			panY = (guiHeight - manipContentH * zoom) / 2.0;
@@ -628,6 +653,13 @@ public class SkillTreeScreen extends Screen {
 						return true;
 					}
 				}
+				if (activeTab == Tab.MATERIALS) {
+					MaterialEntry matHit = materialNodeUnder(mx, my);
+					if (matHit != null) {
+						selectedMaterial = (selectedMaterial == matHit) ? null : matHit;
+						return true;
+					}
+				}
 				isDragging = true;
 				return true;
 			}
@@ -752,6 +784,8 @@ public class SkillTreeScreen extends Screen {
 			drawCraftingContent(gfx, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.RITES) {
 			drawRiteContent(gfx, mouseX, mouseY, partial);
+		} else if (activeTab == Tab.MATERIALS) {
+			drawMaterialNodes(gfx);
 		}
 
 		gfx.disableScissor();
@@ -802,6 +836,8 @@ public class SkillTreeScreen extends Screen {
 			}
 		} else if (activeTab == Tab.MANIPULATIONS) {
 			drawManipTooltip(gfx, mouseX, mouseY);
+		} else if (activeTab == Tab.MATERIALS) {
+			drawMaterialTooltip(gfx, mouseX, mouseY);
 		}
 
 		super.render(gfx, mouseX, mouseY, partial);
@@ -2489,6 +2525,212 @@ public class SkillTreeScreen extends Screen {
 		int drawerH = guiHeight - (drawerY - guiTop) - 4;
 		return mx >= drawerX && mx <= drawerX + drawerW
 			&& my >= drawerY && my <= drawerY + drawerH;
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Materials & Processes tab — node grid
+	// ────────────────────────────────────────────────────────────
+
+	/** Gap between material nodes in the grid (content-space). */
+	private static final int MAT_GAP_X = 70;
+	private static final int MAT_GAP_Y = 60;
+	private static final int MAT_COLS  = 5;
+
+	/**
+	 * Builds a grid layout of material nodes grouped by category.
+	 * Each category starts a new row block; nodes flow left-to-right.
+	 */
+	private void buildMaterialLayout() {
+		materialPositions.clear();
+		materialContentW = 0;
+		materialContentH = 0;
+
+		List<MaterialEntry> entries = MaterialsData.getBloodEntries();
+		if (entries.isEmpty()) return;
+
+		// Group entries by category, preserving insertion order
+		java.util.LinkedHashMap<String, List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
+		for (MaterialEntry e : entries) {
+			byCategory.computeIfAbsent(e.category(), k -> new ArrayList<>()).add(e);
+		}
+
+		int y = 30; // start below top margin
+		for (var catEntry : byCategory.entrySet()) {
+			y += 20; // category header space
+			List<MaterialEntry> catItems = catEntry.getValue();
+			for (int i = 0; i < catItems.size(); i++) {
+				int col = i % MAT_COLS;
+				int row = i / MAT_COLS;
+				int x = 20 + col * MAT_GAP_X;
+				int ny = y + row * MAT_GAP_Y;
+				materialPositions.put(catItems.get(i), new int[]{x, ny});
+				materialContentW = Math.max(materialContentW, x + NODE_SIZE + 20);
+				materialContentH = Math.max(materialContentH, ny + NODE_SIZE + 24);
+			}
+			int rows = (catItems.size() + MAT_COLS - 1) / MAT_COLS;
+			y += rows * MAT_GAP_Y + 10;
+		}
+	}
+
+	/** Draw material category headers and nodes. */
+	private void drawMaterialNodes(GuiGraphics gfx) {
+		float time = System.nanoTime() / 1_000_000_000f;
+		int hn = halfNode();
+
+		// Draw category headers
+		List<MaterialEntry> entries = MaterialsData.getBloodEntries();
+		java.util.LinkedHashMap<String, List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
+		for (MaterialEntry e : entries) {
+			byCategory.computeIfAbsent(e.category(), k -> new ArrayList<>()).add(e);
+		}
+
+		int catY = 30;
+		for (var catEntry : byCategory.entrySet()) {
+			int scrY = sy(catY);
+			int scrX = sx(20);
+			gfx.drawString(font, Component.literal(catEntry.getKey())
+					.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)),
+					scrX, scrY, 0, false);
+			catY += 20;
+			int rows = (catEntry.getValue().size() + MAT_COLS - 1) / MAT_COLS;
+			catY += rows * MAT_GAP_Y + 10;
+		}
+
+		// Draw nodes
+		for (var e : materialPositions.entrySet()) {
+			MaterialEntry mat = e.getKey();
+			int[] pos = e.getValue();
+			int nx = sx(pos[0]);
+			int ny = sy(pos[1]);
+
+			EnumNodeShape shape = EnumNodeShape.SQUARE;
+			boolean isSelected = mat == selectedMaterial;
+
+			// Glow for selected node
+			if (isSelected) {
+				float pulse = 0.5f + 0.5f * Mth.sin(time * 2.5f);
+				int ga = (int)(45 * pulse);
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 4,
+						(ga << 24) | 0x00CC6644);
+			}
+
+			// Fill
+			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
+
+			// Border
+			int border = isSelected ? Tab.MATERIALS.color : 0xFFBB7733;
+			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
+
+			// Icon
+			if (zoom >= 0.5f) {
+				ItemStack stack = mat.iconStack().get();
+				if (stack != null && !stack.isEmpty()) {
+					renderScaledItem(gfx, stack, nx, ny, hn);
+				}
+			}
+		}
+
+		// If a material is selected, draw info panel on the right side
+		if (selectedMaterial != null) {
+			drawMaterialInfoPanel(gfx, selectedMaterial);
+		}
+	}
+
+	/** Draws an info panel for the selected material on the right side of the screen. */
+	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
+		int panelW = 160;
+		int panelH = 120;
+		int panelX = guiLeft + guiWidth - panelW - 8;
+		int panelY = guiTop + 30;
+
+		// Background
+		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD1A0505);
+
+		// Border
+		int bc = Tab.MATERIALS.color;
+		gfx.fill(panelX, panelY, panelX + panelW, panelY + 1, bc);
+		gfx.fill(panelX, panelY + panelH - 1, panelX + panelW, panelY + panelH, bc);
+		gfx.fill(panelX, panelY, panelX + 1, panelY + panelH, bc);
+		gfx.fill(panelX + panelW - 1, panelY, panelX + panelW, panelY + panelH, bc);
+
+		int tx = panelX + 6;
+		int ty = panelY + 6;
+
+		// Item icon + name
+		ItemStack stack = mat.iconStack().get();
+		if (stack != null && !stack.isEmpty()) {
+			gfx.renderItem(stack, tx, ty);
+		}
+		gfx.drawString(font, Component.literal(mat.displayName())
+				.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)),
+				tx + 20, ty + 4, 0, false);
+		ty += 22;
+
+		// Category
+		gfx.drawString(font, Component.literal(mat.category())
+				.withStyle(s -> s.withColor(0xFF888888).withItalic(true)),
+				tx, ty, 0, false);
+		ty += 12;
+
+		// Divider
+		gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
+		ty += 5;
+
+		// Description (word-wrapped)
+		List<String> lines = wrapText(mat.description(), panelW - 16);
+		for (String line : lines) {
+			gfx.drawString(font, line, tx, ty, 0xFF999999, false);
+			ty += 10;
+		}
+
+		// Recipe hint
+		if (mat.hasRecipe()) {
+			ty += 4;
+			gfx.drawString(font, Component.literal("\u2726 Has crafting recipe")
+					.withStyle(s -> s.withColor(0xFFBB8833).withItalic(true)),
+					tx, ty, 0, false);
+		}
+	}
+
+	/** Tooltip for material nodes on hover. */
+	private void drawMaterialTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
+		if (!insideGui(mouseX, mouseY)) return;
+		int hn = halfNode();
+
+		for (var e : materialPositions.entrySet()) {
+			MaterialEntry mat = e.getKey();
+			int[] pos = e.getValue();
+			int nx = sx(pos[0]), ny = sy(pos[1]);
+
+			if (!NodeShapeRenderer.isInside(EnumNodeShape.SQUARE, mouseX, mouseY, nx, ny, hn)) continue;
+
+			List<Component> tip = new ArrayList<>();
+			tip.add(Component.literal(mat.displayName())
+					.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)));
+			tip.add(Component.literal(mat.category())
+					.withStyle(s -> s.withColor(0xFF888888).withItalic(true)));
+			tip.add(Component.literal(mat.description())
+					.withStyle(s -> s.withColor(0xFF999999)));
+			if (mat.hasRecipe()) {
+				tip.add(Component.literal("Click to view details")
+						.withStyle(s -> s.withColor(0xFFBB8833)));
+			}
+
+			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
+			break;
+		}
+	}
+
+	/** Returns the material entry under the mouse, or null. */
+	private MaterialEntry materialNodeUnder(double mx, double my) {
+		int hn = halfNode();
+		for (var e : materialPositions.entrySet()) {
+			int[] p = e.getValue();
+			int nx = sx(p[0]), ny = sy(p[1]);
+			if (NodeShapeRenderer.isInside(EnumNodeShape.SQUARE, mx, my, nx, ny, hn))
+				return e.getKey();
+		}
+		return null;
 	}
 
 	// ────────────────────────────────────────────────────────────
