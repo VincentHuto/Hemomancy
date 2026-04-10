@@ -1,17 +1,15 @@
 {
-
-  "type" : "hemomancy:memory_weaving",
-  "ingredient" : {
-    "item" : "hemomancy:blood_crystal_shard"
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:blood_crystal_shard"
   },
-  "animus" : 3,
-  "mortem" : 0.4,
-  "ductilis" : 0.5,
-  "ferric" : 0.2,
-  "lux" : 0,
-  "tenebris" : 1,
-  "flammeus" : 2,
-  "congeatio" : 1,
-  "result" : "hemomancy:memory_blood_rush",
-  "count" : 1
+  "animus": true,
+  "mortem": true,
+  "ductilis": true,
+  "ferric": true,
+  "tenebris": true,
+  "flammeus": true,
+  "congeatio": true,
+  "result": "hemomancy:memory_blood_rush",
+  "count": 1
 }

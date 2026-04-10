@@ -76,6 +76,9 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	/** Greater-than-or-equal-to symbol shown on minimum tendency/cost labels. */
 	private static final String GTE = "\u2265";
 
+	/** Fixed spoke length for required tendencies in the JEI wheel. */
+	private static final double REQUIRED_SPOKE_LENGTH = 1.0;
+
 	private final IDrawable background;
 	private final IDrawable icon;
 
@@ -138,7 +141,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		Font font = Minecraft.getInstance().font;
 
 		// Blood cost — top right
-		MutableComponent costText = Component.literal(GTE + " Blood: " + (int) recipe.getBloodCost());
+		MutableComponent costText = Component.literal("Blood: " + (int) recipe.getBloodCost());
 		int costWidth = font.width(costText);
 		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
 
@@ -200,7 +203,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		int halfItem = ITEM_SIZE / 2;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float tendencyValue = tendencies.getOrDefault(tend, 0f);
+			boolean required = tendencies.getOrDefault(tend, 0f) > 0f;
 
 			// Base spoke endpoints
 			double baseAngleRad1 = Math.toRadians(angle + SPOKE_BASE_HALF_ANGLE);
@@ -210,9 +213,10 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			int cx2 = absCenterX + (int) (Math.cos(baseAngleRad2) * SPOKE_BASE_RADIUS);
 			int cy2 = absCenterY + (int) (Math.sin(baseAngleRad2) * SPOKE_BASE_RADIUS);
 
-			// Spoke tip — extends outward based on tendency value
+			// Spoke tip — fixed length for required tendencies, base only for non-required
 			double spokeAngleRad = Math.toRadians(angle);
-			double tipDist = (ICON_DIAMETER - SPOKE_BASE_RADIUS) * tendencyValue * 0.2 + SPOKE_BASE_RADIUS;
+			double spokeValue = required ? REQUIRED_SPOKE_LENGTH : 0;
+			double tipDist = (ICON_DIAMETER - SPOKE_BASE_RADIUS) * spokeValue * 0.2 + SPOKE_BASE_RADIUS;
 			int tipX = absCenterX + (int) (Math.cos(spokeAngleRad) * tipDist);
 			int tipY = absCenterY + (int) (Math.sin(spokeAngleRad) * tipDist);
 
@@ -232,10 +236,10 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			int iconY = absCenterY + (int) (Math.sin(spokeAngleRad) * iconDist) - halfItem;
 			HLGuiUtils.renderItemStackInGui(gfx, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), iconX, iconY);
 
-			// Show minimum tendency requirement next to the enzyme icon
-			if (tendencyValue > 0f) {
+			// Show "Required" label next to the enzyme icon for required tendencies
+			if (required) {
 				Font font = Minecraft.getInstance().font;
-				String label = GTE + formatTendency(tendencyValue);
+				String label = GTE + "3";
 				ms.pushPose();
 				ms.scale(0.7f, 0.7f, 1f);
 				int labelX = (int) ((iconX + ITEM_SIZE) / 0.7f);
@@ -253,12 +257,6 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
-
-	/** Formats a tendency value as an integer if whole, otherwise as a decimal. */
-	private static String formatTendency(float value) {
-		if (value == (int) value) return String.valueOf((int) value);
-		return String.valueOf(value);
-	}
 
 	/** Draws a subtle pulsing glow in the background. */
 	private void drawSubtleGlow(GuiGraphics gfx, int cx, int cy, float time) {
