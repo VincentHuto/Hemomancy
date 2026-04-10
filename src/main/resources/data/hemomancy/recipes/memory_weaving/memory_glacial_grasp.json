@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:blue_ice"
+  },
+  "congeatio": true,
+  "result": "hemomancy:memory_glacial_grasp",
+  "count": 1
+}

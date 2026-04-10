@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:gourd_seeds"
+  },
+  "ductilis": true,
+  "result": "hemomancy:memory_crimson_harvest",
+  "count": 1
+}

@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:consecrated_copper_ingot"
+  },
+  "ferric": true,
+  "ductilis": true,
+  "result": "hemomancy:memory_sanguine_excavation",
+  "count": 1
+}

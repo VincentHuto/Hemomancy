@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:puppeteering_thread"
+  },
+  "animus": true,
+  "mortem": true,
+  "result": "hemomancy:memory_summon_thrall",
+  "count": 1
+}

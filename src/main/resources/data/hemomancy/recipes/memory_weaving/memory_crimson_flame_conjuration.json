@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:blaze_powder"
+  },
+  "flammeus": true,
+  "animus": true,
+  "result": "hemomancy:memory_crimson_flame_conjuration",
+  "count": 1
+}

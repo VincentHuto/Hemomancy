@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:sanguine_salve"
+  },
+  "ferric": true,
+  "result": "hemomancy:memory_sanguine_mending",
+  "count": 1
+}

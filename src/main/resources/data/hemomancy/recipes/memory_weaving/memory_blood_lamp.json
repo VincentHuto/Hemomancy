@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:glowstone_dust"
+  },
+  "lux": true,
+  "result": "hemomancy:memory_blood_lamp",
+  "count": 1
+}

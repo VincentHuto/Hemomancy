@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:cleansed_blood_crystal_shard"
+  },
+  "lux": true,
+  "tenebris": true,
+  "result": "hemomancy:memory_crimson_sight",
+  "count": 1
+}

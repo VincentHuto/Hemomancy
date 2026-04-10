@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:fervent_husk"
+  },
+  "flammeus": true,
+  "ferric": true,
+  "result": "hemomancy:memory_pyretic_forge",
+  "count": 1
+}

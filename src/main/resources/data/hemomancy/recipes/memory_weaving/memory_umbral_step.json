@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:ender_eye"
+  },
+  "tenebris": true,
+  "ductilis": true,
+  "result": "hemomancy:memory_umbral_step",
+  "count": 1
+}

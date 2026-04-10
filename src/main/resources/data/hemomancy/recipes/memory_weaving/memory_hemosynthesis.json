@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:dicentra_sap"
+  },
+  "lux": true,
+  "result": "hemomancy:memory_hemosynthesis",
+  "count": 1
+}

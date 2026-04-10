@@ -192,10 +192,10 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 			Vec3 to = new Vec3(x2, ringY + wave2, z2);
 
 			if (i < filledSegments) {
-				drawBeamSegment(stack, bufferIn, from, to, 0.8f, 0.08f, 0.08f, 1.0f, 0.03f);
-				drawBeamSegmentGlow(stack, bufferIn, from, to, 0.9f, 0.15f, 0.1f, 0.5f, 0.06f);
+				//drawBeamSegment(stack, bufferIn, from, to, 0.8f, 0.08f, 0.08f, 1.0f, 0.03f);
+				//drawBeamSegmentGlow(stack, bufferIn, from, to, 0.9f, 0.15f, 0.1f, 0.5f, 0.06f);
 			} else {
-				drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.02f);
+				//drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.02f);
 			}
 		}
 	}

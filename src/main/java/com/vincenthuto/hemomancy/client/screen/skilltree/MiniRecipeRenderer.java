@@ -221,31 +221,30 @@ public final class MiniRecipeRenderer {
 			cx += SLOT_SIZE + 2;
 		}
 
-		// Tendency pips (compact colored squares)
+		// Tendency pips (compact colored squares, 2 rows of 4)
 		Map<EnumBloodTendency, Float> tendencies = recipe.getTendency();
 		int pipX = cx + 2;
 		int pipY = y + 2;
 		int pipSize = 5;
 		int pipGap = 1;
-		int pipCol = 0;
+		int pipsPerRow = 4;
+		int pipIdx = 0;
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			float val = tendencies.getOrDefault(tend, 0f);
 			if (val > 0.01f) {
 				int color = tend.getColor().getColor() | 0xFF000000;
-				int px = pipX + pipCol * (pipSize + pipGap);
-				if (px + pipSize > x + maxW - SLOT_SIZE - 16) {
-					// Wrap to next row
-					pipCol = 0;
-					pipY += pipSize + pipGap;
-					px = pipX;
-				}
-				gfx.fill(px, pipY, px + pipSize, pipY + pipSize, color);
-				pipCol++;
+				int row = pipIdx / pipsPerRow;
+				int col = pipIdx % pipsPerRow;
+				int px = pipX + col * (pipSize + pipGap);
+				int py = pipY + row * (pipSize + pipGap);
+				gfx.fill(px, py, px + pipSize, py + pipSize, color);
+				pipIdx++;
 			}
 		}
 
 		// Arrow
-		int arrowX = Math.max(cx + 20, pipX + pipCol * (pipSize + pipGap) + 4);
+		int pipsOnTopRow = Math.min(pipIdx, pipsPerRow);
+		int arrowX = Math.max(cx + 20, pipX + pipsOnTopRow * (pipSize + pipGap) + 4);
 		int arrowY = y + SLOT_SIZE / 2 - 3;
 		drawArrow(gfx, arrowX, arrowY, theme);
 

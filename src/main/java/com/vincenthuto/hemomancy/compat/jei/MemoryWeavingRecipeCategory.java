@@ -249,7 +249,8 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 				ms.scale(LABEL_SCALE, LABEL_SCALE, 1f);
 				int labelX = (int) ((iconX + ITEM_SIZE) / LABEL_SCALE);
 				int labelY = (int) ((iconY + ITEM_SIZE / 2 + LABEL_Y_OFFSET) / LABEL_SCALE);
-				gfx.drawString(font, label, labelX, labelY, tend.getColor(), false);
+				gfx.drawString(font, label, labelX, labelY, tend.getColor().getColor(), false);
+
 				ms.popPose();
 			}
 
