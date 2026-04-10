@@ -401,7 +401,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		panX += cxBefore * (oldZoom - zoom);
 		panY += cyBefore * (oldZoom - zoom);
-		clampPan();
+		saveTabPan();
 		return true;
 	}
 
@@ -1672,9 +1672,26 @@ public class UnstainedProgressScreen extends Screen {
 
 	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
 		int panelW = 160;
-		int panelH = 120;
 		int panelX = guiLeft + guiWidth - panelW - 8;
 		int panelY = guiTop + 30;
+
+		// Pre-calculate content for dynamic height
+		String desc = mat.description();
+		int maxW = panelW - 16;
+		java.util.List<String> descLines = new java.util.ArrayList<>();
+		StringBuilder line = new StringBuilder();
+		for (String word : desc.split(" ")) {
+			String test = line.isEmpty() ? word : line + " " + word;
+			if (font.width(test) > maxW && !line.isEmpty()) {
+				descLines.add(line.toString());
+				line = new StringBuilder(word);
+			} else {
+				line = new StringBuilder(test);
+			}
+		}
+		if (!line.isEmpty()) descLines.add(line.toString());
+
+		int panelH = 6 + 22 + 12 + 1 + 5 + descLines.size() * 10 + (mat.hasRecipe() ? 18 : 0) + 8;
 
 		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD101828);
 
@@ -1704,22 +1721,9 @@ public class UnstainedProgressScreen extends Screen {
 		gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF203050);
 		ty += 5;
 
-		// Word-wrap description
-		String desc = mat.description();
-		int maxW = panelW - 16;
-		StringBuilder line = new StringBuilder();
-		for (String word : desc.split(" ")) {
-			String test = line.isEmpty() ? word : line + " " + word;
-			if (font.width(test) > maxW && !line.isEmpty()) {
-				gfx.drawString(font, line.toString(), tx, ty, 0xFF999999, false);
-				ty += 10;
-				line = new StringBuilder(word);
-			} else {
-				line = new StringBuilder(test);
-			}
-		}
-		if (!line.isEmpty()) {
-			gfx.drawString(font, line.toString(), tx, ty, 0xFF999999, false);
+		// Description (word-wrapped)
+		for (String dl : descLines) {
+			gfx.drawString(font, dl, tx, ty, 0xFF999999, false);
 			ty += 10;
 		}
 

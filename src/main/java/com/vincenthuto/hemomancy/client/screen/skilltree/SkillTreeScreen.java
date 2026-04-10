@@ -2639,9 +2639,12 @@ public class SkillTreeScreen extends Screen {
 	/** Draws an info panel for the selected material on the right side of the screen. */
 	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
 		int panelW = 160;
-		int panelH = 120;
 		int panelX = guiLeft + guiWidth - panelW - 8;
 		int panelY = guiTop + 30;
+
+		// Pre-calculate panel height based on content
+		List<String> descLines = wrapText(mat.description(), panelW - 16);
+		int panelH = 6 + 22 + 12 + 1 + 5 + descLines.size() * 10 + (mat.hasRecipe() ? 18 : 0) + 8;
 
 		// Background
 		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD1A0505);
@@ -2677,8 +2680,7 @@ public class SkillTreeScreen extends Screen {
 		ty += 5;
 
 		// Description (word-wrapped)
-		List<String> lines = wrapText(mat.description(), panelW - 16);
-		for (String line : lines) {
+		for (String line : descLines) {
 			gfx.drawString(font, line, tx, ty, 0xFF999999, false);
 			ty += 10;
 		}
