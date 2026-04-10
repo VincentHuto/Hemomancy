@@ -235,24 +235,18 @@ public class Hemomancy {
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
 
-            // Plant & Fungi Brewing Recipes
-            // Each plant/fungus brews an existing mod potion from an Awkward base
+            // Blood-Faction Plant Brewing Recipes
+            // Only blood-aligned plants brew into hemomancy potions.
+            // Unstained plants (puffball, lethean poppy, ghost pipe, snow plant)
+            // deliberately do NOT brew blood-positive effects.
             registerPlantBrewingRecipe(BlockInit.bleeding_heart.get().asItem(),
                     EffectInit.potion_of_sanguine_siphon.get());
             registerPlantBrewingRecipe(BlockInit.infected_fungus.get().asItem(),
                     EffectInit.potion_of_mycorrhizal_mending.get());
-            registerPlantBrewingRecipe(BlockInit.puffball_fungus.get().asItem(),
-                    EffectInit.potion_of_sanguine_fertility.get());
             registerPlantBrewingRecipe(BlockInit.stinkhorn_fungus.get().asItem(),
                     EffectInit.potion_of_blood_binding.get());
-            registerPlantBrewingRecipe(BlockInit.ghost_pipe.get().asItem(),
-                    EffectInit.potion_of_echoic_perception.get());
-            registerPlantBrewingRecipe(BlockInit.snow_plant.get().asItem(),
-                    EffectInit.potion_of_blood_rush.get());
             registerPlantBrewingRecipe(BlockInit.rafflesia.get().asItem(),
                     EffectInit.potion_of_hemolysis.get());
-            registerPlantBrewingRecipe(BlockInit.lethean_poppy.get().asItem(),
-                    EffectInit.potion_of_luminous_dissipation.get());
 
         });
 

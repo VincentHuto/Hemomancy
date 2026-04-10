@@ -856,10 +856,10 @@ A full block family with variants:
 - Bleeding Heart (flower, Absorption effect — crafts Dicentra Sap, brews Potion of Sanguine Siphon)
 - Infected Fungus (flower, Confusion effect — juiceinator → Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
 - Stinkhorn Fungus (Confusion effect — juiceinator → Foul Paste, brews Potion of Blood Binding)
-- Puffball Fungus (Saturation effect — juiceinator → Spore Sac, brews Potion of Sanguine Fertility, incubator catalyst for Fungal Morphling)
-- Lethean Poppy (Regeneration effect, random ticks — juiceinator → Lethian Dew, crafts Lethean Poppy Wreath, brews Potion of Luminous Dissipation)
-- Ghost Pipe (myco-heterotrophic, Night Vision effect — juiceinator → Lethean Extract, brews Potion of Echoic Perception)
-- Snow Plant (myco-heterotrophic, Regeneration effect — juiceinator → Dicentra Sap, brews Potion of Blood Rush)
+- Puffball Fungus (Saturation effect, **Unstained** — juiceinator → Spore Sac, incubator catalyst for Fungal Morphling)
+- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethian Dew, crafts Lethean Poppy Wreath)
+- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — juiceinator → Lethean Extract)
+- Snow Plant (myco-heterotrophic, Regeneration effect, **Unstained** — juiceinator → Dicentra Sap)
 - Rafflesia (parasitic, Confusion effect — juiceinator → Spore Sac, brews Potion of Hemolysis)
 
 All applicable flowers have **potted** variants.
@@ -982,16 +982,14 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 
 **Brewing Recipes (Awkward Potion + Plant → Potion):**
 
+Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe, Snow Plant) deliberately do not brew blood-positive effects — their uses are in Juiceinator processing and Unstained crafting chains.
+
 | Plant Ingredient | Result Potion |
 |-----------------|---------------|
 | Bleeding Heart | Potion of Sanguine Siphon |
 | Infected Fungus | Potion of Mycorrhizal Mending |
-| Puffball Fungus | Potion of Sanguine Fertility |
 | Stinkhorn Fungus | Potion of Blood Binding |
-| Ghost Pipe | Potion of Echoic Perception |
-| Snow Plant | Potion of Blood Rush |
 | Rafflesia | Potion of Hemolysis |
-| Lethean Poppy | Potion of Luminous Dissipation |
 
 ### 18.4 Food Recipes
 
