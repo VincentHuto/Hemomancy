@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:lethian_dew" },
+    { "item": "hemomancy:consecrated_copper_ingot" }
+  ],
+  "result": {
+    "item": "hemomancy:lethean_extract",
+    "count": 1
+  }
+}

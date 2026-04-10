@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:lethean_poppy" },
+    { "item": "hemomancy:lethean_poppy" },
+    { "item": "hemomancy:lethean_poppy" },
+    { "item": "hemomancy:lethean_poppy" },
+    { "item": "minecraft:string" }
+  ],
+  "result": {
+    "item": "hemomancy:lethean_poppy_wreath",
+    "count": 1
+  }
+}

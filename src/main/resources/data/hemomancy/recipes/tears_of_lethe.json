@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:lethean_extract" },
+    { "item": "hemomancy:silver_chalice" }
+  ],
+  "result": {
+    "item": "hemomancy:tears_of_lethe",
+    "count": 1
+  }
+}

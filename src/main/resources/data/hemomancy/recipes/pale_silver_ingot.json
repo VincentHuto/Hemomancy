@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:iron_ingot" },
+    { "item": "hemomancy:lethean_extract" }
+  ],
+  "result": {
+    "item": "hemomancy:pale_silver_ingot",
+    "count": 1
+  }
+}

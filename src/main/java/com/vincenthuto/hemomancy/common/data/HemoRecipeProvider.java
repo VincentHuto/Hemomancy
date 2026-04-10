@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.data;
 
 import java.util.function.Consumer;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
@@ -161,6 +162,36 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.pattern("GGG")
 				.pattern("GGG")
 				.unlockedBy("has_vivianite_glass", has(BlockInit.vivianite_glass.get())).save(consumer);
+
+		// Plant & Fungi Crafting Recipes
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.lethean_poppy_wreath.get(), 1)
+				.requires(BlockInit.lethean_poppy.get()).requires(BlockInit.lethean_poppy.get())
+				.requires(BlockInit.lethean_poppy.get()).requires(BlockInit.lethean_poppy.get())
+				.requires(Items.STRING)
+				.unlockedBy("has_lethean_poppy", has(BlockInit.lethean_poppy.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.lethean_extract.get(), 1)
+				.requires(ItemInit.lethian_dew.get()).requires(ItemInit.consecrated_copper_ingot.get())
+				.unlockedBy("has_lethian_dew", has(ItemInit.lethian_dew.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.tears_of_lethe.get(), 1)
+				.requires(ItemInit.lethean_extract.get()).requires(ItemInit.silver_chalice.get())
+				.unlockedBy("has_lethean_extract", has(ItemInit.lethean_extract.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.pale_silver_ingot.get(), 1)
+				.requires(Items.IRON_INGOT).requires(ItemInit.lethean_extract.get())
+				.unlockedBy("has_lethean_extract", has(ItemInit.lethean_extract.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.spore_sac.get(), 2)
+				.requires(BlockInit.puffball_fungus.get()).requires(BlockInit.hyphae.get())
+				.unlockedBy("has_puffball_fungus", has(BlockInit.puffball_fungus.get())).save(consumer);
+
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.foul_paste.get(), 3)
+				.requires(BlockInit.infected_fungus.get()).requires(BlockInit.stinkhorn_fungus.get())
+				.requires(Items.BONE_MEAL)
+				.unlockedBy("has_infected_fungus", has(BlockInit.infected_fungus.get()))
+				.save(consumer, Hemomancy.rloc("foul_paste_from_fungi"));
 
 	}
 
