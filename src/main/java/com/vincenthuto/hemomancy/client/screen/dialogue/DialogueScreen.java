@@ -71,6 +71,11 @@ public class DialogueScreen extends Screen {
 
 	public static void open(DialogueTree tree) {
 		Minecraft.getInstance().setScreen(new DialogueScreen(tree));
+		// Trigger blood vignette flash for disembodied fungal whispers
+		if (tree.entityId() == 0
+				&& com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay.instance != null) {
+			com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay.instance.trigger();
+		}
 	}
 
 	// ──────────────────────────────────────────────

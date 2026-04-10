@@ -48,6 +48,7 @@ import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
+import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
 import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
 import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
@@ -147,6 +148,9 @@ public class ClientEvents {
 		if (event.phase == TickEvent.Phase.END) {
 			ManipCooldownOverlay.tick();
 			ActiveBloodCraftClientData.tick();
+			if (FungalWhisperVignetteOverlay.instance != null) {
+				FungalWhisperVignetteOverlay.instance.tick();
+			}
 		}
 
 		if (bloodFormation.consumeClick()) {
@@ -375,6 +379,7 @@ public class ClientEvents {
 			EquippedMorphlingOverlay.instance = new EquippedMorphlingOverlay();
 			ManipCooldownOverlay.instance = new ManipCooldownOverlay();
 			UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
+			FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
@@ -485,6 +490,10 @@ public class ClientEvents {
 			event.registerAboveAll("unstained_gauge", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				UnstainedGaugeOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			});
+			event.registerAboveAll("fungal_whisper_vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+				gui.setupOverlayRenderState(true, false);
+				FungalWhisperVignetteOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}

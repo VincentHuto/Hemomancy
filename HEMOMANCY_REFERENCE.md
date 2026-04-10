@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-08
+> **Last Updated:** 2026-04-09
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -48,6 +48,10 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 28. [Keybindings](#28-keybindings)
 29. [Commands](#29-commands)
 30. [Known WIP / Incomplete Systems](#30-known-wip--incomplete-systems)
+31. [Configuration](#31-configuration)
+32. [Networking & Packets](#32-networking--packets)
+33. [Sound Events](#33-sound-events)
+34. [Particle Types](#34-particle-types)
 
 ---
 
@@ -272,34 +276,34 @@ Each manipulation has:
 
 ### 6.2 Registered Manipulations
 
-| Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown |
-|------|------|------|------|----------|-------------|----------|
-| `venous_travel` | 1000 | Continuous | Mediocritas | Ferric | Right Arm | 20t |
-| `blood_shot` | 100 | Quick | Humilis | Animus | Head | 10t |
-| `deadly_gaze` | 100 | Quick | Humilis | Animus | Head | 20t |
-| `blood_needle` | 100 | Quick | Humilis | Animus | Head | 10t |
-| `blood_rush` | 100 | Passive | Humilis | Animus | Body | 60t |
-| `blood_cloud` | 300 | Quick | Summa | Animus | Head | 40t |
-| `blood_aneurysm` | 400 | Quick | Summa | Animus | Body | 40t |
-| `activation_potential` | 200 | Quick | Mediocritas | Ductilis | Body | 30t |
-| `sanguine_ward` | 10 | Continuous | Mediocritas | Ductilis | Body | 20t |
-| `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t |
-| `conjure_blade` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t |
-| `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t |
-| `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t |
-| `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t |
-| `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t |
-| `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t |
-| `blood_lamp` | 75 | Quick | Humilis | Lux | Head | 10t |
-| `crimson_sight` | 200 | Quick | Mediocritas | Lux | Head | 40t |
-| `crimson_harvest` | 100 | Quick | Humilis | Animus | Body | 20t |
-| `hemosynthesis` | 150 | Quick | Humilis | Animus | Body | 30t |
-| `pyretic_forge` | 300 | Quick | Mediocritas | Flammeus | Right Arm | 20t |
-| `glacial_grasp` | 100 | Quick | Humilis | Congeatio | Body | 15t |
-| `sanguine_mending` | 200 | Quick | Humilis | Ferric | Right Arm | 20t |
-| `vital_reservoir` | 500 | Quick | Mediocritas | Animus | Heart | 60t |
-| `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 30t |
-| `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Body | 40t |
+| Name | Cost | Type | Rank | Tendency | Vein Section | Cooldown | Description |
+|------|------|------|------|----------|-------------|----------|-------------|
+| `venous_travel` | 1000 | Continuous | Mediocritas | Ferric | Right Arm | 20t | Teleport to saved Earthen Vein locations (vein network fast travel) |
+| `blood_shot` | 100 | Quick | Humilis | Animus | Head | 10t | Fires a single tracking blood shot projectile in the look direction |
+| `deadly_gaze` | 100 | Quick | Humilis | Animus | Head | 20t | Raycasts 100 blocks; launches the targeted entity upward with blood claw FX |
+| `blood_needle` | 100 | Quick | Humilis | Animus | Head | 10t | Fires a spread of 10–20 blood needle projectiles with random scatter |
+| `blood_rush` | 100 | Passive | Humilis | Animus | Body | 60t | Summons a Wretched Will and grants Blood Rush effect (+20% move/attack speed) |
+| `blood_cloud` | 300 | Quick | Summa | Animus | Head | 40t | Launches a Blood Cloud Carrier projectile that deploys an AoE blood cloud |
+| `blood_aneurysm` | 400 | Quick | Summa | Animus | Body | 40t | AoE blood particle burst around the caster (visual/damage) |
+| `activation_potential` | 200 | Quick | Mediocritas | Ductilis | Body | 30t | AoE lightning bolt to all entities within 5 blocks, dealing 5 damage each |
+| `sanguine_ward` | 10 | Continuous | Mediocritas | Ductilis | Body | 20t | Passive damage reduction shield (logic handled in ManipEvents on hurt) |
+| `ferric_transmutation` | 1000 | Quick | Summa | Ferric | Body | 20t | Converts a held Gold Ingot into an Iron Ingot |
+| `conjure_blade` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Living Blade into empty main hand |
+| `blood_absorption` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Absorption tool into empty main hand |
+| `blood_projection` | 1000 | Quick (Conjuration) | Mediocritas | Ferric | Right Arm | 40t | Conjures a Blood Projection launcher into empty main hand |
+| `summon_avatar` | 500 | Quick | Summa | Animus | Body | 100t | Toggles the Blood Avatar form (visual transformation synced to all players) |
+| `summon_thrall` | 500 | Quick | Mediocritas | Animus | Body | 60t | Two-step: (1) raycast to spawn a Blood Thrall at source block, (2) raycast again to set its destination — thrall then works autonomously |
+| `crimson_flame_conjuration` | 150 | Quick | Humilis | Animus | Right Arm | 15t | Places Crimson Flames on the targeted block face (range 16, scales with Sanguine Reach) |
+| `blood_lamp` | 75 | Quick | Humilis | Lux | Head | 10t | Places an invisible light block (level 15) at the targeted surface (range 16, scales with Sanguine Reach) |
+| `crimson_sight` | 200 | Quick | Mediocritas | Lux | Head | 40t | Grants Night Vision (60s) and applies Glowing to all mobs within 32 blocks (30s) |
+| `crimson_harvest` | 100 | Quick | Humilis | Animus | Body | 20t | Bone-meals all growable blocks in a 5×5 area around the caster |
+| `hemosynthesis` | 150 | Quick | Humilis | Animus | Body | 30t | Converts blood into food — restores 4 hunger and 4.0 saturation |
+| `pyretic_forge` | 300 | Quick | Mediocritas | Flammeus | Right Arm | 20t | Smelts held items in-hand using blood heat (base 8 items, scales with Crimson Mastery) |
+| `glacial_grasp` | 100 | Quick | Humilis | Congeatio | Body | 15t | Freezes water in a 7×7 area into Frosted Ice (on-demand Frost Walker) |
+| `sanguine_mending` | 200 | Quick | Humilis | Ferric | Right Arm | 20t | Repairs the held item by 50 durability using blood |
+| `vital_reservoir` | 500 | Quick | Mediocritas | Animus | Heart | 60t | Converts 10 XP levels into 1000 blood volume |
+| `sanguine_excavation` | 400 | Quick | Mediocritas | Ferric | Right Arm | 30t | Flood-fill mines a cluster of matching blocks at look target (base 9 blocks, scales with Sanguine Reach) |
+| `umbral_step` | 300 | Quick | Mediocritas | Tenebris | Body | 40t | Teleports to the targeted block (range 24, scales with Sanguine Reach) — destination must be dark (light ≤ 7) |
 
 ### 6.3 Manipulation Tree
 
@@ -372,6 +376,26 @@ Skills cost **skill points** (earned from using manipulations) and many require 
 
 Skill bonuses are computed in `SkillPointHelper`.
 
+**Skill Wiring Status** (which skills are actually hooked into gameplay events):
+
+| Skill | Wired? | Where Called |
+|-------|--------|-------------|
+| Capacity | ✅ Yes | `BloodVolumeEvents` — adds flat bonus to max blood volume each tick |
+| Efficiency | ✅ Yes | `BloodManipulation.performAction()` — multiplies manipulation blood cost |
+| Last Wind | ✅ Yes | `BloodVolumeEvents` — passive blood regen when below 10% threshold |
+| Dynamic Use | ⚠️ Helper only | `SkillPointHelper.getDynamicUseMultiplier()` exists but no event caller found |
+| Feeding Frenzy | ✅ Yes | `BloodVolumeEvents` — multiplies blood gained from kills |
+| Hemostasis | ⚠️ Helper only | `SkillPointHelper.getHemostasisMultiplier()` exists but no event caller found |
+| Sanguine Surge | ⚠️ Helper only | `SkillPointHelper.getSanguineSurgeRegen()` exists but no event caller found |
+| Crimson Mastery | ✅ Yes | `PyreticForgeManip` — scales items smelted per cast |
+| Vital Link | ⚠️ Helper only | `SkillPointHelper.getVitalLinkChance()` exists but no event caller found |
+| Iron Will | ⚠️ Helper only | `SkillPointHelper.getIronWillReduction()` exists but no event caller found |
+| Blood Flow | ⚠️ Helper only | `SkillPointHelper.getBloodFlowMultiplier()` exists but no event caller found |
+| Coagulation | ⚠️ Helper only | `SkillPointHelper.getCoagulationChance()` exists but no event caller found |
+| Sanguine Reach | ✅ Yes | `BloodLampManip`, `CrimsonFlameConjurationManip`, `UmbralStepManip`, `SanguineExcavationManip` — scales range |
+
+> **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers (damage events, regen ticks, cooldown calculations, etc.) to have actual gameplay effects.
+
 ---
 
 ## 10. Bloodlines
@@ -396,18 +420,20 @@ Symbiotic parasites derived from the fungal infection. They provide the Living S
 
 | Morphling | Item Class | Preferred Tendency | Effect / Notes |
 |-----------|-----------|-------------------|----------------|
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Animus | Base fungal morphling |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Animus | Summons leeches to fight and drain blood |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Ferric | Chitin shield / defense |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Mortem | Paralyzing serpent projectile |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Mortem | Swarm of pest projectiles |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris | Arachnid-themed attacks |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris | Echoic Perception (nearby entities glow). Maturity: Sonar Shriek → Membrane Glide → Nightwing Frenzy |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_fungal.png) Fungal | `FungalMorphlingItem` | Animus | Mycorrhizal Mending (passive fungal regeneration). Base morphling type |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_leeches.png) Leeches | `LeechesMorphlingItem` | Animus | Sanguine Siphon (blood drain on hit). Summons leeches to fight and drain blood |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_chitinite.png) Chitinite | `ChitiniteMorphlingItem` | Ferric | Chitinous Bulwark (+4 armor toughness). Chitin shield / defense |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_serpent.png) Serpent | `SerpentMorphlingItem` | Mortem | Serpentine Guile (+15% move speed, +10% attack speed). Paralyzing serpent projectile |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_pests.png) Pests | `PestsMorphlingItem` | Mortem | Verminous Aura (pest-based AoE effect). Swarm of pest projectiles |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_spider.png) Spider | `SpiderMorphlingItem` | Tenebris | Arachnid Anastomosis (spider-vein healing). Arachnid-themed attacks |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_bat.png) Bat | `BatMorphlingItem` | Tenebris | Echoic Perception (nearby entities glow, radius scales with amplifier). Maturity: Sonar Shriek → Membrane Glide → Nightwing Frenzy |
 | ![](src/main/resources/assets/hemomancy/textures/item/morphling_moth.png) Moth | `MothMorphlingItem` | Lux | Luminous Dissipation (knockback resistance). Maturity: Dustwing Trail → Phototaxis Pulse → Cocoon Rebirth |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem | Hemorrhagic Venom (AoE damage aura). Maturity: Engorge → Blood Fever → Pandemic Burst |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric | Spined Barricade (thorns + armor). Maturity: Spine Lash → Tidal Anchor → Calcareous Shell |
-| ![](src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio | Venomous Resilience (poison immunity + speed). Maturity: Burrowing Strike → Segmented Defense → Myriapod Swarm |
-| Mole | `MoleMorphlingItem` | Ferric | Burrower's Instinct (mining speed + underground regen). Maturity: Burrow Sense → Earthen Bulwark → Seismic Slam |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_tick.png) Tick | `TickMorphlingItem` | Mortem | Hemorrhagic Venom (AoE damage aura to nearby hostiles). Maturity: Engorge → Blood Fever → Pandemic Burst |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_urchin.png) Urchin | `UrchinMorphlingItem` | Ferric | Spined Barricade (passive thorns + armor bonus). Maturity: Spine Lash → Tidal Anchor → Calcareous Shell |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_centipede.png) Centipede | `CentipedeMorphlingItem` | Congeatio | Venomous Resilience (poison immunity + speed boost). Maturity: Burrowing Strike → Segmented Defense → Myriapod Swarm |
+| ![](src/main/resources/assets/hemomancy/textures/item/morphling_mole.png) Mole | `MoleMorphlingItem` | Ferric | Burrower's Instinct (mining speed + underground regen/night vision). Maturity: Burrow Sense → Earthen Bulwark → Seismic Slam |
+
+> **Note:** The older morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) apply their signature status effect as a passive but do **not yet have named maturity-tier reactive abilities** like the newer morphlings (Bat, Moth, Tick, Urchin, Centipede, Mole). Adding maturity ability names and implementations for these 6 original morphlings is a planned task.
 
 ### 11.2 Cultivation
 
@@ -437,29 +463,31 @@ Each morphling type has a **preferred tendency** and **secondary tendency** — 
 
 Runes are equippable items stored in a **Rune Binder** ![Rune Binder](src/main/resources/assets/hemomancy/textures/item/rune_binder.png) (18 slots) or **Upgraded Rune Binder** ![Rune Binder Upgraded](src/main/resources/assets/hemomancy/textures/item/rune_binder_upgraded.png) (27 slots). They are crafted at the **Runic Chisel Station**.
 
-| Rune | Tendency |
-|------|----------|
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_transcendence.png) Rune Transcendence | Lux |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_sol.png) Rune Sol | Flammeus |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_heart.png) Rune Heart | Animus |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_descendence.png) Rune Descendence | Mortem |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_moon.png) Rune Moon | Congeatio |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_eye.png) Rune Eye | Ductilis |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_feral.png) Rune Feral | Ductilis |
-| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis |
+| Rune | Tendency | Effect |
+|------|----------|--------|
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_transcendence.png) Rune Transcendence | Lux | Deepens Lux tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_sol.png) Rune Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_heart.png) Rune Heart | Animus | Deepens Animus tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_descendence.png) Rune Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_moon.png) Rune Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_eye.png) Rune Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/rune_feral.png) Rune Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Deepens Ductilis tendency alignment when equipped |
+
+> **Rune Mechanic:** All standard runes extend `ItemRune` and share the same core mechanic: when equipped in a Rune Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per rune via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard runes.
 
 Each rune has a corresponding **Rune Pattern** item used in crafting.
 
 ### 12.2 Functional Spores (Rune-type items)
 
-Special fungal rune items with active effects:
+Special fungal rune items with active effects (extend `ItemFungalRune`):
 
 | Item | Tendency | Effect |
 |------|----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Functional spore |
-| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Functional spore |
-| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Functional spore |
-| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the Noctifly Agaric (Elytra) effect |
+| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Fungal spore with custom 3D render when equipped (specific effect TBD) |
+| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) effect while equipped in Rune Binder |
+| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Fungal spore with custom 3D render when equipped (specific effect TBD) |
+| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the Noctifly Agaric (Fungal Elytra) flight effect |
 
 ### 12.3 Spores (Passive rune items)
 
@@ -542,10 +570,10 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_shot.png) Blood Shot | ![](src/main/resources/assets/hemomancy/textures/item/memory_deadly_gaze.png) Deadly Gaze | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_needle.png) Blood Needle | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_rush.png) Blood Rush |
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_cloud.png) Blood Cloud | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_aneurysm.png) Blood Aneurysm | ![](src/main/resources/assets/hemomancy/textures/item/memory_activation_potential.png) Activation Potential | ![](src/main/resources/assets/hemomancy/textures/item/memory_sanguine_ward.png) Sanguine Ward |
 | ![](src/main/resources/assets/hemomancy/textures/item/memory_venous_travel.png) Venous Travel | ![](src/main/resources/assets/hemomancy/textures/item/memory_ferric_transmutation.png) Ferric Transmutation | ![](src/main/resources/assets/hemomancy/textures/item/memory_living_blade.png) Living Blade | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_absorption.png) Blood Absorption |
-| ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_projection.png) Blood Projection | ![](src/main/resources/assets/hemomancy/textures/item/memory_summon_avatar.png) Summon Avatar | Crimson Flame Conjuration | Blood Lamp |
-| Crimson Sight | Crimson Harvest | Hemosynthesis | Pyretic Forge |
-| Glacial Grasp | Sanguine Mending | Vital Reservoir | Sanguine Excavation |
-| Umbral Step | Summon Thrall | | |
+| ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_projection.png) Blood Projection | ![](src/main/resources/assets/hemomancy/textures/item/memory_summon_avatar.png) Summon Avatar | ![](src/main/resources/assets/hemomancy/textures/item/memory_crimson_flame_conjuration.png) Crimson Flame Conjuration | ![](src/main/resources/assets/hemomancy/textures/item/memory_blood_lamp.png) Blood Lamp |
+| ![](src/main/resources/assets/hemomancy/textures/item/memory_crimson_sight.png) Crimson Sight | ![](src/main/resources/assets/hemomancy/textures/item/memory_crimson_harvest.png) Crimson Harvest | ![](src/main/resources/assets/hemomancy/textures/item/memory_hemosynthesis.png) Hemosynthesis | ![](src/main/resources/assets/hemomancy/textures/item/memory_pyretic_forge.png) Pyretic Forge |
+| ![](src/main/resources/assets/hemomancy/textures/item/memory_glacial_grasp.png) Glacial Grasp | ![](src/main/resources/assets/hemomancy/textures/item/memory_sanguine_mending.png) Sanguine Mending | ![](src/main/resources/assets/hemomancy/textures/item/memory_vital_reservoir.png) Vital Reservoir | ![](src/main/resources/assets/hemomancy/textures/item/memory_sanguine_excavation.png) Sanguine Excavation |
+| ![](src/main/resources/assets/hemomancy/textures/item/memory_umbral_step.png) Umbral Step | ![](src/main/resources/assets/hemomancy/textures/item/memory_summon_thrall.png) Summon Thrall | | |
 
 > **Memory Overlay System:** All memory items now use a layered model system — each memory has a unique overlay texture (`textures/item/memories/memory_*_overlay.png`) composited on top of the base Hematic Memory texture. This provides visual distinction for each manipulation's memory item without requiring fully separate textures.
 
@@ -572,21 +600,21 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/cleansing_hemolymph.png) Cleansing Hemolymph | Blue vial from Hemolymphopoda mobs |
 | ![](src/main/resources/assets/hemomancy/textures/item/structure_spawner.png) Structure Spawner | Debug/creative item for spawning structures |
 | ![](src/main/resources/assets/hemomancy/textures/item/recycled_enzyme.png) Recycled Enzyme | Generic enzyme fallback |
+| ![](src/main/resources/assets/hemomancy/textures/item/debug_showcase_spawner.png) Debug Showcase | Creative-mode debug item (`DebugShowcaseItem`) — right-click to spawn a complete showcase area containing every Hemomancy feature organized into 4 sections: (1) All items in labeled chests, (2) All blocks placed on platforms, (3) All mob entities in fenced pens, (4) All blood structures and cardinal rites as placed patterns. |
 
 ### 13.6 Unstained Materials (Our Lady of Lethe)
 
 | Item | Purpose |
 |------|---------|
 | Tears of Lethe | Distilled from Lethian Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
-| Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
-| Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
+| ![](src/main/resources/assets/hemomancy/textures/item/lethean_poppy_wreath.png) Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
+| ![](src/main/resources/assets/hemomancy/textures/item/silver_chalice.png) Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
 | Tome of the Unstained | A book of Unstained scripture describing Our Lady of Lethe and the path of purification |
 | Icon of Our Lady | A rare relic depicting Our Lady of Lethe — carved from pale silver, grants her protection |
-| Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
+| ![](src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
 | Lethean Extract | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
 
-### 13.7 Banner Patterns
-### 13.6 Food Items
+### 13.7 Food Items
 
 | Item | Purpose |
 |------|---------|
@@ -594,19 +622,21 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/gourd_stew.png) Gourd Stew | Stew crafted from gourd and other ingredients |
 | Roasted Gourd Seeds | Smelted/smoked/campfire-cooked gourd seeds (3 cooking methods) |
 
-### 13.7 Organ Echo Items
+### 13.8 Organ Echo Items
 
-Produced by the **Visceral Mirror** ritual. Spectral imprints of the player's organs — bound to the player (dissolve if placed in non-player inventory), only one per organ type can exist at a time:
+Produced by the **Visceral Mirror** ritual (requires Degree 3+). Spectral imprints of the player's organs — bound to the player (dissolve if placed in non-player inventory), only one per organ type can exist at a time. Organ "Tier" indicates risk level and degree requirement for extraction:
 
-| Item | Organ | Notes |
-|------|-------|-------|
-| Echo of Spleen | `SPLEEN` (Tier 3) | Governs blood volume and filtration |
-| Echo of Liver | `LIVER` (Tier 3) | Metabolizes toxins and purifies the blood |
-| Echo of Lungs | `LUNGS` (Tier 3) | Oxygenates blood and sustains vital rhythm |
-| Echo of Kidneys | `KIDNEYS` (Tier 3) | Filters impurities and maintains humoral balance |
-| Echo of Heart | `HEART` (Tier 4) | The seat of circulation and will — highest risk |
+| Item | Organ | Tier | Notes |
+|------|-------|------|-------|
+| Echo of Spleen | `SPLEEN` | 3 | Governs blood volume and filtration |
+| Echo of Liver | `LIVER` | 3 | Metabolizes toxins and purifies the blood |
+| Echo of Lungs | `LUNGS` | 3 | Oxygenates blood and sustains vital rhythm |
+| Echo of Kidneys | `KIDNEYS` | 3 | Filters impurities and maintains humoral balance |
+| Echo of Heart | `HEART` | 4 | The seat of circulation and will — highest risk, requires Degree 4+ |
 
-### 13.8 Banner Patterns
+> **⚠️ WIP:** The organ extraction ritual flow is fully implemented (Visceral Mirror → cycle organs → confirm extraction → produce Echo items). However, **organ modification tiers and gameplay effects for each extracted organ are still being designed**. Currently, Organ Echoes are produced and player-bound but do not grant bonuses. Planned effects include: Spleen → blood capacity bonus, Liver → poison/potion resistance, Lungs → underwater breathing/stamina, Kidneys → faster blood regeneration, Heart → manipulation power boost with high risk.
+
+### 13.9 Banner Patterns
 
 - ![](src/main/resources/assets/hemomancy/textures/item/heart_pattern.png) **Heart Pattern** — Vascularium Crest
 - ![](src/main/resources/assets/hemomancy/textures/item/veins_pattern.png) **Veins Pattern** — Vein Border
@@ -668,6 +698,8 @@ All are single-stack, use the `LIVING` tool tier:
 
 Standard blood-infused iron armor set (fire resistant):
 - ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_boots.png) Boots
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
+- **Repair:** Hematic Iron Scrap
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_2.png)
 
@@ -677,6 +709,8 @@ Special armor with mask variants:
 - ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_helm.png) Helm (no mask), ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_tengu.png) Helm (Tengu mask), ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_helm_horned.png) Helm (Horned mask)
 - ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_chest.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_legs.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/blood_lust_boots.png) Boots
 - Mask items: ![](src/main/resources/assets/hemomancy/textures/item/tengu_mask.png) Tengu Mask, ![](src/main/resources/assets/hemomancy/textures/item/horned_mask.png) Horned Mask (crafting ingredients)
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
+- **Repair:** Hematic Iron Scrap
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_2.png)
 
@@ -685,6 +719,8 @@ Special armor with mask variants:
 Defensive barbed armor set:
 - ![](src/main/resources/assets/hemomancy/textures/item/barbed_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/barbed_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/barbed_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/barbed_boots.png) Boots
 - Barbed Shield ![](src/main/resources/assets/hemomancy/textures/entity/barbed_shield/model_barbed_shield.png)
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
+- **Repair:** Chitinous Husk
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_2.png)
 
@@ -694,6 +730,8 @@ Insectoid/chitin-based armor:
 - ![](src/main/resources/assets/hemomancy/textures/item/chitinite_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/chitinite_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/chitinite_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/chitinite_boots.png) Boots
 - Chitinite Shield ![](src/main/resources/assets/hemomancy/textures/entity/chitinite_shield/model_chitinite_shield.png)
 - Chitinite Arm Banner (dyeable, 16 colors)
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
+- **Repair:** Chitinous Husk
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_2.png)
 
@@ -701,14 +739,18 @@ Insectoid/chitin-based armor:
 
 Anti-blood zealot armor (for the Unstained path):
 - ![](src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
+- **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
+- **Repair:** Chitinous Husk (placeholder — should be Pale Silver Ingot or Consecrated Copper)
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
 
 ### 15.6 Crown of Sacred Marrow
 
 Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
+- **Stats:** Same as Hematic Iron (Defense 3/6/8/3, Toughness 3.0, KB Resist 0.1)
+- **Repair:** Hematic Iron Scrap
 
-> Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/marrow_crown_layer_1.png)
+> **Note:** All armor sets currently share identical stat distributions (equivalent to Netherite-tier defense/toughness). Set bonuses beyond the stats are **not yet implemented** — no `onArmorTick` or set-bonus logic exists. This is an area for future differentiation (e.g., Blood Lust → lifesteal on hit, Barbed → thorns damage, Chitinite → knockback resistance, Unstained → blood magic resistance).
 
 ---
 
@@ -719,10 +761,10 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Mortal Display** | `MortalDisplayBlockEntity` | Activates blood magic when clicked in a Blood Temple ![](src/main/resources/assets/hemomancy/textures/entity/model_floating_heart.png) |
 | **Scrying Podium** | `ScryingPodiumBlockEntity` | Opens the Charm/Gourd slot screen for equipping the Charm of Vascularium and Blood Gourds |
 | **Visceral Artificial Recaller** | `VisceralRecallerBlockEntity` | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts |
-| **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
+| **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_stand.png) ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
 | **Juiceinator** | `JuicinatorBlockEntity` | Squeezes items to extract blood (requires fire below) |
 | **Runic Chisel Station** | `ChiselStationBlockEntity` | Crafts runes from patterns and blanks |
-| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes |
+| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. |
 | **Fungal Podium** | `FungalPodiumBlockEntity` | Fungal-related interaction station |
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
 | **Dendritic Distributor** | `DendriticDistributorBlockEntity` | Opens the Skill Tree / Manipulation Tree screen |
@@ -732,7 +774,9 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Earthen Vein** | `EarthenVeinBlockEntity` | Vein location marker for teleportation (Venous Travel) ![](src/main/resources/assets/hemomancy/textures/entity/earthen_vein/model_earthen_vein.png) |
 | **Iron Brazier** | `IronBrazierBlockEntity` | Decorative/functional brazier |
 | **Suspended Blood Crystal** | `SuspendedBloodCrystalBlockEntity` | Floating blood crystal display ![](src/main/resources/assets/hemomancy/textures/entity/model_suspended_blood_crystal.png) |
+| **Suspended Cleansed Blood Crystal** | `SuspendedCleansedBloodCrystalBlockEntity` | Floating cleansed blood crystal display (purified variant with random time offset animation) ![](src/main/resources/assets/hemomancy/textures/entity/model_suspended_cleansed_blood_crystal.png) |
 | **Suspended Vivianite** | `SuspendedVivianiteBlockEntity` | Floating vivianite display ![](src/main/resources/assets/hemomancy/textures/entity/model_suspended_vivianite.png) |
+| **Mnemonic Reliquary** | `MnemonicReliquaryBlockEntity` | Animated decorative/lore reliquary with opening/closing lid. Tracks open count, syncs lid angle (lerped). Has custom 3D block entity renderer and item renderer. Opened via `MnemonicReliquaryMenu`. Currently atmospheric/decorative — no inventory slots or crafting function yet. Planned: may serve as memory storage or manipulation bookmark container. ![](src/main/resources/assets/hemomancy/textures/entity/model_mnemonic_reliquary.png) |
 | **Humane Idol** | `HumaneIdolBlockEntity` | Idol block |
 | **Serpentine Idol** | `SerpentineIdolBlockEntity` | Idol block |
 | **Engram Block** | — | Translucent engram |
@@ -783,6 +827,7 @@ A full block family with variants:
 | | | | |
 |---|---|---|---|
 | ![](src/main/resources/assets/hemomancy/textures/block/sanguine_glass.png) Sanguine Glass | ![](src/main/resources/assets/hemomancy/textures/block/sanguine_pane.png) Sanguine Pane | ![](src/main/resources/assets/hemomancy/textures/block/vivianite_glass.png) Vivianite Glass | ![](src/main/resources/assets/hemomancy/textures/block/vivianite_pane.png) Vivianite Pane |
+| ![](src/main/resources/assets/hemomancy/textures/block/cleansed_sanguine_glass.png) Cleansed Sanguine Glass | ![](src/main/resources/assets/hemomancy/textures/block/cleansed_sanguine_pane.png) Cleansed Sanguine Pane | | |
 
 ### 17.5 Wood & Organic
 
@@ -848,6 +893,7 @@ All applicable flowers have **potted** variants.
 | `chisel_recipe` | `ChiselRecipeSerializer` | Runic Chisel Station | Crafting runes |
 | `juiceinator_recipe_type` | `JuiceinatorSerializer` | Juiceinator | Squeezing items for blood |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
+| `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts. 13 recipes for all morphling types (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin). JEI-integrated via `IncubatorRecipeCategory`. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
@@ -858,11 +904,51 @@ All applicable flowers have **potted** variants.
 
 An in-world system: build a specific block structure, then hit a particular block with a catalyst item while spending blood. The structure transforms into the desired output.
 
+| Recipe | Blood Cost | Held Item | Hit Block | Result |
+|--------|-----------|-----------|-----------|--------|
+| Liber Sanguinum | 100 | Sanguine Formation | Bookshelf | Liber Sanguinum |
+| Hematic Iron Block | *(see JSON)* | *(see JSON)* | Iron Block | Hematic Iron Block |
+| Living Staff | 150 | Sanguine Formation | Iron Bars | Living Staff |
+| Morphling Incubator | 200 | Morphling Polyp | Hematic Iron Block | Morphling Incubator |
+| Semi-Sentient Construct | 250 | Befouling Ash | Conscious Mass | Semi-Sentient Construct |
+| Unstained Podium | 50 | Glowstone Dust | Hematic Iron Block | Unstained Podium |
+
+> Recipes are in `data/hemomancy/recipes/blood_structure/`. Each recipe defines a multiblock `pattern` with `key` mapping characters to blocks, plus `heldItem`, `hitBlock`, `bloodCost`, and `result`.
+
 ### 18.2 Cardinal Rite Recipes
 
-Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites:
-- **Bloodline Founding** — ritual to create a new bloodline
-- **Bloodline Recall** — ritual to recall/teleport bloodline members
+Specific cardinal rite recipes include degree advancement rites (section 3.2) plus utility rites. Rites come in four tiers based on complexity and cost:
+
+**Degree Advancement Rites:**
+
+| Rite | Blood Cost | Tier | Degree → | Description |
+|------|-----------|------|----------|-------------|
+| Sanguine Initiation | 100 | Minor | 0 → 1 | Basic initiation awakening hematic potential |
+| Rite of the Votary | 250 | Minor | 1 → 2 | Binds the practitioner deeper into the Covenant |
+| Rite of the Scarlet Sanctum | 500 | Lesser | 2 → 3 | Grants formal entry into the Scarlet Sanctum |
+| Adept Rite | *(see JSON)* | Lesser | 3 → 4 | Fourth rite of the Hematic Order |
+| Rite of the Crimson Lodge | 2000 | Greater | 4 → 5 | Illuminates the inner secrets of the Crimson Lodge |
+| Rite of the Bloodline Covenant | 3000 | Greater | 5 → 6 | Consecrates the practitioner to the Bloodline Covenant |
+| Rite of the Hematic Order | 5000 | Grand | 6 → 7 | Crowns the practitioner as Archon — the highest rank |
+
+**Utility Rites:**
+
+| Rite | Blood Cost | Tier | Description |
+|------|-----------|------|-------------|
+| **Bloodline Founding** | 500 | Lesser | Binds the caster's essence into a new bloodline, producing a presigned ancestral ledger |
+| **Bloodline Recall** | 750 | Lesser | Reconjures a lost ancestral ledger from the caster's blood memory |
+| **Vascular Mending** | 800 | Lesser | Floods the caster's vascular system with purified blood, fully healing all 7 vein sections |
+| **Hematic Fortification** | 500 | Lesser | Strengthens the caster's connection to the blood arts |
+| **Hematic Unbinding** | 1000 | Lesser | Dissolves the caster's bloodline, freeing all members and returning shared blood |
+| **Crimson Beacon** | 600 | Lesser | Anchors the caster's dying essence to this location — respawn point on fatal blow |
+| **Hungering Earth** | 750 | Lesser | Feeds blood into the earth, converting terrain into blood-touched stone and ash |
+| **Exsanguination** | 500 | Lesser | Drains the lifeblood of a creature within the ritual circle, crystallizing their essence into Sanguine Quintessence |
+| **Sanguine Attunement** | 300 | Minor | Purges and resets the caster's blood tendency alignments to a blank slate |
+| **Scarlet Summons** | 2000 | Greater | Teleports all online bloodline members to the rite location (cost scales with members) |
+| **Sanguine Dominion** | 3500 | Greater | Claims the surrounding land as a Blood Domain — reduced manip cost, bleeding curse on enemies, empowered blood blocks |
+| **Eternal Covenant** | 4000 | Greater | Permanently expands the caster's maximum blood volume (one-time only) |
+| **Lethe's Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player — a blasphemous assault on Our Lady's path |
+| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness, receiving cryptic lore about hemomancy's origins |
 
 ### 18.3 Food Recipes
 
@@ -910,6 +996,7 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 |--------|---------|----------|-------|
 | **Blood Thrall** | ![](src/main/resources/assets/hemomancy/textures/entity/blood_thrall/blood_thrall.png) | Creature | Small (0.6×0.7), summoned blood transport creature |
 | **Unstained Zealot** | ![](src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
+| **Sanguilith** | | Misc (MnA) | Large (1.5×3.25), blood-themed summoned monster (requires MnA). Summoned via `ComponentSummonSanguilith` spell. Ownable, duration-limited, targets nearby hostiles with swinging melee attacks. Max 4 nearby. Registered in `MnAPluginEntityInit`. Has custom `SanguilithModel` and `SanguilithRenderer`. |
 
 ### 19.4 Entity Tags
 
@@ -922,6 +1009,26 @@ Registered in `EntityInit.commonSetup`:
 - Hemolymphopoda → `ON_GROUND`
 - Fargone → `ON_GROUND` (monster rules)
 - Abhorent Thought → `ON_GROUND` (monster rules)
+
+### 19.6 Entity Loot Tables
+
+> **⚠️ CRITICAL WIP:** All entity loot tables in `HemoEntityLootProvider` are **entirely commented out** and the entity loot provider is also commented out in `DataGeneration.java`. This means **no Hemomancy mob currently drops any items** when killed. The intended drops (from the commented code) are:
+>
+> | Entity | Intended Drop |
+> |--------|--------------|
+> | Chitinite | Chitinous Husk |
+> | Chthonian | Chitinous Husk |
+> | Chthonian Queen | Chitinous Husk |
+> | Leech | Swollen Leech |
+> | Fargone | Sanguine Formation |
+> | Thirster | Sanguine Formation |
+> | Abhorent Thought | Sanguine Formation |
+> | Blood Drunk Puppeteer | Puppeteering Thread |
+> | Enthralled Doll | Bleeding Bulb |
+> | Lump of Thought | Spore Sac |
+> | Fungling | Infected Fungus |
+>
+> All drops use `LootingEnchantFunction` and `LootItemKilledByPlayerCondition`. These need to be uncommented and the data generator re-enabled.
 
 ---
 
@@ -1048,6 +1155,19 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 |-----------|-----------|-------|
 | ![](src/main/resources/assets/hemomancy/textures/entity/villager/profession/hemopothecary.png) **Hemopothecary** | Scrying Podium | Blood-themed villager trader |
 
+**Hemopothecary Trade Listings:**
+
+| Level | Sells | Price (Emeralds) |
+|-------|-------|-----------------|
+| 1 | Befouling Ash | 1 |
+| 1 | Fungal Morphling | 1 |
+| 1 | Recycled Enzyme | 1 |
+| 1 | Bloody Flask | 1 |
+| 2 | Fervent Husk | 2 |
+| 3 | Barbed Helm | 3 |
+| 4 | Foul Paste | 4 |
+| 5 | Heart Pattern | 5 |
+
 - Custom `HemopothecaryProcessor` for village structure integration
 - `VillageEvents` for handling village spawning
 
@@ -1133,7 +1253,7 @@ JEI recipe category support for:
 - Chisel Station recipes
 - Visceral Recaller recipes
 - Blood Structure Crafting recipes
-- Morphling Incubator recipes
+- Morphling Incubator recipes (`IncubatorRecipeCategory`)
 
 ---
 
@@ -1169,12 +1289,13 @@ JEI recipe category support for:
 | `VascularStatusScreen` | — | Detailed vascular status |
 | `BloodlinePoolScreen` | Bloodline Pool Monitor | View/manage bloodline shared pool |
 | `JuiceinatorScreen` | Juiceinator block | Juiceinator crafting GUI |
-| `VialCentrifugeScreen` | Vial Centrifuge | Centrifuge crafting GUI |
+| `VialCentrifugeScreen` | Vial Centrifuge | Centrifuge crafting GUI (reworked with new 3D stand model) |
 | `MorphlingIncubatorScreen` | Morphling Incubator | Incubation crafting GUI |
+| `MnemonicReliquaryScreen` | Mnemonic Reliquary block | Reliquary viewing GUI — opens animated lid on interaction |
 | `SporeImplantScreen` | Fungal Implantation Pylon | Spore implantation GUI |
 | `StructureSpawnerScreen` | Structure Spawner item | Debug structure spawning |
 | Various radial menus | Living Staff / keybinds | Morphling/manipulation selection |
-| Guide/Codex screens | Liber Sanguinum | In-game guidebook |
+| Guide/Codex screens | Liber Sanguinum | **⚠️ NON-FUNCTIONAL** — `HemoProgressionScreen.setupEntries()` is entirely commented out, `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. |
 
 ---
 
@@ -1250,17 +1371,28 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 
 ## 30. Known WIP / Incomplete Systems
 
+- **Entity Loot Tables** — All entity loot tables in `HemoEntityLootProvider` are entirely commented out and the data generator is disabled in `DataGeneration.java`. **No mobs drop items.** See §19.6 for intended drop list. This is gameplay-critical.
+- **Progression Codex / Liber Sanguinum** — `HemoProgressionScreen.setupEntries()` is entirely commented out. The `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. Needs entry definitions and page content.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
-- **Progression Codex** (`HemoProgressionScreen`) — Book entry system exists but entries are commented out
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Some skill descriptions** exist in lang but the full implementation of effects like `skill_sanguine_surge`, `skill_crimson_mastery`, `skill_vital_link`, `skill_iron_will`, `skill_blood_flow` need verification for complete gameplay wiring
+- **Skill Effect Wiring** — 7 of 13 skills have helper methods in `SkillPointHelper` but are NOT wired into any event handlers: Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Iron Will, Blood Flow, Coagulation. See §9 skill wiring table. Only Capacity, Efficiency, Last Wind, Feeding Frenzy, Crimson Mastery, and Sanguine Reach are actually functional.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
-- **Visceral Organs System** — Core capability and Visceral Mirror block added; organ extraction ritual flow implemented. Organ modification tiers and gameplay effects for each organ still being fleshed out
-- **Cardinal Rite Recipes** — Bloodline Founding and Bloodline Recall rite recipes added; additional rite recipes may follow
-- **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated
-- **Memory Overlay Textures** — All manipulations now have overlay textures (`textures/item/memories/`) for the new memory item model system
+- **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
+- **Armor Set Bonuses** — All 6 armor sets share identical stats (20 defense, 3.0 toughness). No `onArmorTick` or set bonus logic exists. Each set should have unique gameplay bonuses.
+- **Old Morphling Maturity** — The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.
+- **Rune Gameplay Effects** — Standard runes only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
+- **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
+- **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
+- **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipes/incubator/`.
+- **Mnemonic Reliquary** — New functional block with animated lid (open/close), custom 3D block entity renderer (`MnemonicReliquaryRenderer`), item renderer (`MnemonicReliquaryItemRenderer`), block model (`MnemonicReliquaryModel`), menu (`MnemonicReliquaryMenu`), and screen (`MnemonicReliquaryScreen`). Tracks open count and syncs lid angle via block events.
+- **Suspended Cleansed Blood Crystal** — Purified variant of the Suspended Blood Crystal with custom block, block entity (random time offset for desynchronized animations), block item with custom renderer, 3D model, and blockstate.
+- **Cleansed Sanguine Glass & Pane** — New glass/pane variants added to the block system with blockstates, models, textures, and loot tables.
+- **Debug Showcase Item** — Creative-mode testing tool (`DebugShowcaseItem`) that generates an organized showcase of all mod content in 4 sections: items in chests, blocks on platforms, mobs in fenced pens, and multiblock structures placed as patterns.
+- **Cardinal Rite Boundary Renderer** — Client-side visual renderer (`CardinalRiteBoundaryRenderer`) for cardinal rite boundaries during active rites.
+- **Morphling Item Textures** — All morphling types now have individual item textures and item models (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin).
 - **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Recently implemented: 5 new spell components (Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith, Blood-to-Mana), Blood Tithe handler, Spell ↔ Manipulation combo system, full cross-mod config. Still planned: spell shapes, rituals, faction enhancements, construct system, wand core, manaweaving recipes, runeforging enchantments.
+- **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemRunePattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 
 ### 30.1 Unstained Expansion — Planned Features
 
@@ -1285,6 +1417,185 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of Le
   - Reach each clarity stage (Awakened → Discerning → Vigilant → Resolute → Enlightened)
   - Collect all Unstained materials
 - **Silver Ward / Verdigris Aura Visual Indicators** — particle effects and visual indicators for active Unstained bonuses, potentially with Our Lady's motifs (silver droplets, pale blue mist).
+
+---
+
+## 31. Configuration
+
+Hemomancy has three config files plus a conditional MnA config.
+
+### 31.1 Server Config (`HemoServerConfig`)
+
+**Blood Volume** (`blood_volume`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `bloodRegenEnabled` | Boolean | `true` | — | Whether passive blood regeneration is enabled |
+| `bloodRegenRate` | Double | `1.0` | 0.1–100.0 | Blood restored per regen tick |
+| `bloodRegenInterval` | Int | `20` | 1–1200 | Ticks between each regen tick (20 = 1 second) |
+| `bloodDrainOnDamageEnabled` | Boolean | `true` | — | Whether taking damage drains blood |
+| `bloodDrainPerDamage` | Double | `5.0` | 0.1–500.0 | Blood drained per point of damage |
+| `bloodGainOnKillEnabled` | Boolean | `true` | — | Whether kills grant blood |
+| `bloodGainPerKill` | Double | `25.0` | 1.0–1000.0 | Base blood gained per kill |
+| `bloodGainBossMultiplier` | Double | `5.0` | 1.0–50.0 | Multiplier for boss entity kills |
+
+**Blood Tendency** (`blood_tendency`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `tendencyShiftOnKillEnabled` | Boolean | `true` | — | Whether kills shift tendency alignment |
+| `tendencyShiftAmount` | Double | `1.0` | 0.1–100.0 | Tendency gained per relevant kill |
+| `tendencyShiftOnManipUse` | Double | `0.5` | 0.0–50.0 | Tendency gained when using a manipulation of that tendency |
+
+**Vascular System** (`vascular_system`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `vascularDegradationOnDamageEnabled` | Boolean | `true` | — | Whether damage degrades vascular sections |
+| `vascularDamagePerHit` | Double | `0.5` | 0.01–50.0 | Vascular health lost per damage point |
+| `vascularDegradationOnManipEnabled` | Boolean | `true` | — | Whether manipulations strain vein sections |
+| `vascularManipStrain` | Double | `1.0` | 0.01–50.0 | Vascular health lost per manipulation use |
+| `vascularPassiveHealEnabled` | Boolean | `true` | — | Whether vascular sections heal over time |
+| `vascularHealRate` | Double | `0.1` | 0.01–10.0 | Vascular health restored per heal tick |
+| `vascularHealInterval` | Int | `100` | 1–6000 | Ticks between heal ticks |
+| `vascularDebuffsEnabled` | Boolean | `true` | — | Whether damaged sections apply debuffs |
+
+**Bloodline** (`bloodline`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `bloodlinePoolEnabled` | Boolean | `true` | — | Whether members contribute to shared pool |
+| `bloodlinePoolContributionRate` | Double | *(see code)* | — | Blood per tick donated to pool |
+| `bloodlinePoolContributionInterval` | Int | *(see code)* | — | Ticks between pool contributions |
+| `bloodlinePoolMinBloodThreshold` | Double | *(see code)* | — | Minimum blood before donating stops |
+| `bloodlineAutoDrawMaxRate` | Double | `2.0` | 0.1–100.0 | Max blood/tick auto-drawn from pool |
+| `bloodlineHealEnabled` | Boolean | `true` | — | Whether nearby members heal each other |
+| `bloodlineHealAmount` | Double | `1.0` | 0.1–20.0 | Health restored per heal tick |
+| `bloodlineHealInterval` | Int | `40` | 1–6000 | Ticks between bloodline heal ticks |
+| `bloodlineHealHealthThreshold` | Double | `0.5` | 0.05–1.0 | Health % below which healing activates |
+| `bloodlineHealRange` | Double | `32.0` | 1.0–256.0 | Max distance for bloodline healing |
+
+**Morphling** (`morphling`):
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `morphlingPassiveDrainEnabled` | Boolean | `true` | — | Whether equipped morphlings drain blood |
+| `morphlingDrainRate` | Double | `0.5` | 0.01–100.0 | Blood drained per drain tick |
+| `morphlingDrainInterval` | Int | `60` | 1–6000 | Ticks between drain ticks |
+
+### 31.2 Client Config (`HemoClientConfig`)
+
+| Key | Type | Default | Range | Description |
+|-----|------|---------|-------|-------------|
+| `location` | Int | `0` | 0–3 | Blood Volume HUD position: 0=Top Left, 1=Top Right, 2=Bottom Left, 3=Bottom Right |
+
+### 31.3 MnA Cross-Mod Config (`HemoMnAConfig`)
+
+Only registered when Mana and Artifice is present. See §25.1 for details on what each system does.
+
+**Conversion** (`conversion`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `manaToBloodRatio` | `5.0` | Blood per 1 mana consumed (Sanguine Transmutation) |
+| `bloodToManaRatio` | `0.2` | Mana per 1 blood consumed (Sanguine Offering) |
+
+**Blood Tithe** (`blood_tithe`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `bloodTitheEnabled` | `true` | Enable Blood Tithe for Harbinger faction |
+| `bloodTitheManaReduction` | `0.25` | % of mana cost converted to blood (0.0–1.0) |
+| `bloodTitheBloodPerMana` | `5.0` | Blood drained per 1 mana replaced |
+
+**Living Thread Armor** (`living_thread_armor`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `setBonus3pcMaxMana` | `500.0` | Bonus max mana from 3-piece set |
+| `setBonus3pcManaRegen` | `0.5` | Mana regen multiplier (+50%) from 3-piece set |
+
+**Trapezohedron** (`trapezohedron`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `effectRadius` | `8` | Broken Mana Trapezohedron aura radius (blocks) |
+
+**Spell ↔ Manipulation Combos** (`spell_manip_combos`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `comboSystemEnabled` | `true` | Enable the alternating combo system |
+| `arcaneResonanceDuration` | `100` | Ticks of blood cost reduction after casting MnA blood spell |
+| `arcaneResonanceBloodReduction` | `0.25` | % blood cost reduction during Arcane Resonance |
+| `sanguineClarityDuration` | `100` | Ticks of mana cost reduction after using manipulation |
+| `sanguineClarityManaReduction` | `0.20` | % mana cost reduction during Sanguine Clarity |
+
+**Sanguilith** (`sanguilith`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `healthPerMagnitude` | `10.0` | Bonus HP per magnitude above 1 |
+| `maxSummons` | `2` | Max active Sanguliliths per player |
+
+---
+
+## 32. Networking & Packets
+
+All packets are registered in `PacketHandler.registerChannels()` across 8 `SimpleChannel` instances:
+
+| Channel | ID | Purpose | Packet Count |
+|---------|----|---------|-------------|
+| `CHANNELBLOODTENDENCY` | `bloodtendencychannel` | Blood tendency sync (client ↔ server) + tendency view GUI | 3 |
+| `CHANNELVASCULARSYSTEM` | `vascularsystemchannel` | Vascular system sync (client ↔ server) + vascular view GUI | 3 |
+| `CHANNELBLOODVOLUME` | `bloodvolumechannel` | Blood volume sync, blood draw, skill tree, bloodline pool, cardinal rites, degree sync, unstained progress, structure spawner, dialogue | 16 |
+| `CHANNELKNOWNMANIPS` | `knownmanipulationchannel` | Manipulation sync, use/cast packets, cooldowns, vein teleport, avatar tracking, centrifuge start, equip manipulation | 14 |
+| `CHANNELPARTICLES` | `particlechannel` | Blood flask, avatar hit, blood claw, and living tool break particle spawning | 4 |
+| `CHANNELRUNES` | `runechannel` | Elytra flight, spore/rune/normal inventory open, rune sync, gourd sync, horn animation, gourd toggle, chisel station packets | 11 |
+| `CHANNELMORPHLINGJAR` | `morphlingjarchannel` | Jar toggle pickup, open jar, toggle jar message, living staff open, staff morph update, morph key change, equipped morphling sync | 7 |
+| `CHANNELRUNEBINDER` | `runebinderchannel` | Open rune binder, toggle binder message | 2 |
+
+**Total:** ~60 registered packets across 8 channels.
+
+Notable packets:
+- `PacketUnlockSkill` / `PacketSyncSkills` — Skill tree progression (via `CHANNELBLOODVOLUME`)
+- `PacketSyncActiveRites` — Cardinal rite boundary sync for client-side rendering
+- `PacketSyncDegree` / `PacketSyncUnstainedProgress` — Path progression sync
+- `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
+- `TeleportToVeinPacket` — Venous Travel teleportation
+- `OpenDialoguePacket` / `DialogueOptionPacket` — Unstained Zealot conversation system
+- `PlaceStructurePacket` — Debug structure spawner
+
+---
+
+## 33. Sound Events
+
+Registered in `SoundInit`:
+
+| Sound Event | Registry Key | Notes |
+|-------------|-------------|-------|
+| Abhorent Thought Ambient | `entity.abhorent_thought.ambient` | Idle sound for the Abhorent Thought mob |
+| Abhorent Thought Hurt | `entity.abhorent_thought.hurt` | Damage sound for the Abhorent Thought mob |
+| Abhorent Thought Death | `entity.abhorent_thought.death` | Death sound for the Abhorent Thought mob |
+
+> **Note:** Only 3 custom sounds are currently registered. Most entities and interactions use vanilla Minecraft sounds (e.g., `SoundEvents.BOOK_PAGE_TURN`, `SoundEvents.ANVIL_USE`, `SoundEvents.EXPERIENCE_ORB_PICKUP`, etc.). Custom sounds for other mobs, manipulations, and rituals are a planned expansion.
+
+---
+
+## 34. Particle Types
+
+Registered in `ParticleInit`:
+
+| Particle | Registry Key | Data Class | Factory | Visual Purpose |
+|----------|-------------|------------|---------|---------------|
+| Serpent | `serpent` | `SerpentParticleData` | `SerpentParticleFactory` | Tracking Serpent projectile trail effect |
+| Hit Glow | `hit_glow` | `HitColorParticleData` | `HitGlowParticleFactory` | Colored glow effect on entity hits and manipulation impacts |
+| Blood Avatar Hit | `blood_avatar_hit` | `BloodAvatarHitParticleData` | `BloodAvatarHitParticleFactory` | Blood Avatar melee hit splash effect |
+| Blood Cell | `blood_cell` | `BloodCellData` | `BloodCellParticleFactory` | Blood cell floating effect (used in blood volume visuals, gourds, rituals) |
+| Blood Claw | `blood_claw` | `BloodClawData` | `BloodClawParticleFactory` | Claw-slash blood effect (Deadly Gaze, melee manipulation hits) |
+| Absorbed Blood Cell | `absorbed_blood_cell` | `AbsorbedBloodCellData` | `AbsrobedBloodCellParticleFactory` | Blood being absorbed/drawn into the player (blood draw, gourd filling) |
+
+> The mod also makes heavy use of HutosLib particles (`GlowParticleFactory` with `ParticleColor`) for manipulation-specific effects (crimson glows, ice crystals, flame sparks, etc.). These are not registered in Hemomancy's `ParticleInit` but are spawned via `ServerLevel.sendParticles()` in each manipulation's `getAction()` method.
 
 ---
 
