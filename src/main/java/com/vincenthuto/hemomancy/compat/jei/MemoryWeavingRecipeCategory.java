@@ -73,6 +73,9 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	private static final int COST_COLOR = 0xFFAA0000;
 	private static final int LABEL_COLOR = 0xFF888888;
 
+	/** Greater-than-or-equal-to symbol shown on minimum tendency/cost labels. */
+	private static final String GTE = "\u2265";
+
 	private final IDrawable background;
 	private final IDrawable icon;
 
@@ -135,7 +138,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		Font font = Minecraft.getInstance().font;
 
 		// Blood cost — top right
-		MutableComponent costText = Component.literal("\u2265 Blood: " + (int) recipe.getBloodCost());
+		MutableComponent costText = Component.literal(GTE + " Blood: " + (int) recipe.getBloodCost());
 		int costWidth = font.width(costText);
 		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
 
@@ -232,7 +235,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			// Show minimum tendency requirement next to the enzyme icon
 			if (tendencyValue > 0f) {
 				Font font = Minecraft.getInstance().font;
-				String label = "\u2265" + formatTendency(tendencyValue);
+				String label = GTE + formatTendency(tendencyValue);
 				ms.pushPose();
 				ms.scale(0.7f, 0.7f, 1f);
 				int labelX = (int) ((iconX + ITEM_SIZE) / 0.7f);
@@ -251,7 +254,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
 
-	/** Formats a tendency value, stripping trailing zeros. */
+	/** Formats a tendency value as an integer if whole, otherwise as a decimal. */
 	private static String formatTendency(float value) {
 		if (value == (int) value) return String.valueOf((int) value);
 		return String.valueOf(value);
