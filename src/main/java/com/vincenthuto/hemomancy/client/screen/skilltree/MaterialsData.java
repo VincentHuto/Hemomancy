@@ -226,6 +226,47 @@ public final class MaterialsData {
 				"Organic gourd cultivated to store blood naturally.",
 				"Containers", () -> new ItemStack(ItemInit.blood_gourd_white.get())));
 
+		// ── Runes & Patterns ──
+		list.add(new MaterialEntry("rune_blank", "Blank Rune",
+				"An uncarved rune tablet. Base material for all runic inscriptions. Requires Adept rank.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_blank.get())));
+
+		list.add(new MaterialEntry("rune_binder", "Rune Binder",
+				"Leather-bound case that stores rune patterns and carved runes.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_binder.get())));
+
+		list.add(new MaterialEntry("rune_binder_upgraded", "Rune Binder (Upgraded)",
+				"Expanded rune binder with additional storage capacity.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_binder_upgraded.get())));
+
+		list.add(new MaterialEntry("rune_transcendence", "Rune of Transcendence",
+				"Lux-aligned rune. Opens pathways to luminous perception.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_transcendence.get())));
+
+		list.add(new MaterialEntry("rune_sol", "Rune of Sol",
+				"Flammeus-aligned rune. Kindles the inner fire of conviction.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_sol.get())));
+
+		list.add(new MaterialEntry("rune_heart", "Rune of the Heart",
+				"Animus-aligned rune. Strengthens the vital bond between body and will.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_heart.get())));
+
+		list.add(new MaterialEntry("rune_descendence", "Rune of Descendence",
+				"Mortem-aligned rune. Carves a pathway toward the threshold of endings.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_descendence.get())));
+
+		list.add(new MaterialEntry("rune_moon", "Rune of the Moon",
+				"Congeatio-aligned rune. Chills the blood, clarifying dormant instincts.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_moon.get())));
+
+		list.add(new MaterialEntry("rune_eye", "Rune of the Eye",
+				"Ductilis-aligned rune. Sharpens the inner sight to perceive hidden connections.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_eye.get())));
+
+		list.add(new MaterialEntry("rune_feral", "Rune of the Feral",
+				"Ductilis-aligned rune. Awakens primal nervous pathways long dormant.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_feral.get())));
+
 		return Collections.unmodifiableList(list);
 	}
 
