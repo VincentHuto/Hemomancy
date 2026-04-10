@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "hemomancy:lethean_poppy"
   },
-  "result": "hemomancy:lethian_dew",
+  "result": "hemomancy:lethean_dew",
   "count": 2,
   "experience": 0.5,
   "cookingtime": 150

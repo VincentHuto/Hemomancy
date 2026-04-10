@@ -342,13 +342,13 @@ public final class MaterialsData {
 				"Purified hemolymph used to cleanse blood corruption.",
 				"Anti-Blood", () -> new ItemStack(ItemInit.cleansing_hemolymph.get())));
 
-		list.add(new MaterialEntry("lethian_dew", "Lethian Dew",
+		list.add(new MaterialEntry("lethean_dew", "Lethean Dew",
 				"Dew collected from lethean flowers. Erases blood memories.",
-				"Anti-Blood", () -> new ItemStack(ItemInit.lethian_dew.get())));
+				"Anti-Blood", () -> new ItemStack(ItemInit.lethean_dew.get())));
 
-		list.add(new MaterialEntry("lethian_brew", "Lethian Brew",
+		list.add(new MaterialEntry("lethean_brew", "Lethean Brew",
 				"Potent brew of lethean essence. Powerful memory erasure.",
-				"Anti-Blood", () -> new ItemStack(ItemInit.lethian_brew.get())));
+				"Anti-Blood", () -> new ItemStack(ItemInit.lethean_brew.get())));
 
 		// ── Equipment ──
 		list.add(new MaterialEntry("unstained_helm", "Unstained Armor",

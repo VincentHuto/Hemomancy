@@ -5,9 +5,6 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -45,6 +42,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
 
@@ -131,8 +130,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
 	 */
 	public boolean addItem(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
 
-		// --- Lethian dew: reset all tendencies to zero ---
-		if (stack.getItem() == ItemInit.lethian_dew.get()) {
+		// --- Lethean dew: reset all tendencies to zero ---
+		if (stack.getItem() == ItemInit.lethean_dew.get()) {
 			consumeItem(player, stack, hand);
 			tendency.setTendency(MemoryWeavingRecipe.blank());
 			refreshRecipe();

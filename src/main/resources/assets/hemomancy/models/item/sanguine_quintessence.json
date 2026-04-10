@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/lethian_dew"
+    "layer0": "hemomancy:item/sanguine_quintessence"
   }
 }

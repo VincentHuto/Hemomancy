@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
@@ -82,13 +81,12 @@ public class UnstainedProgressScreen extends Screen {
 	private static final int NODE_GAP_Y   = 72;
 	private static final int COLUMN_SPACING = 260;
 
-	// ── Pan / zoom ──
-	private double panX, panY;
-	private float zoom = 1.0f;
-	private static final float ZOOM_MIN = 0.35f;
-	private static final float ZOOM_MAX = 3.0f;
+	// ── Pan / zoom (encapsulated in PanZoomState) ──
+	private final PanZoomState progressView = new PanZoomState();
+	private final PanZoomState materialView = new PanZoomState();
+	/** Active view — points to whichever tab's PanZoomState is current. */
+	private PanZoomState view = progressView;
 	private boolean isDragging;
-	private static final int PAN_MARGIN = 200;
 
 	// ── Home button ──
 	private static final int HOME_BTN_SIZE = 16;
@@ -137,11 +135,6 @@ public class UnstainedProgressScreen extends Screen {
 	// ── Materials & Processes tab data ──
 	private final java.util.Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
 	private int matContentW, matContentH;
-	private double matPanX, matPanY;
-	private float matZoom = 1.0f;
-	// Per-tab pan/zoom for Progress
-	private double progPanX, progPanY;
-	private float progZoom = 1.0f;
 	private MaterialEntry selectedMaterial = null;
 
 	// ────────────────────────────────────────────────────────────
@@ -164,6 +157,7 @@ public class UnstainedProgressScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
+		RecipeLookup.clearCache();
 
 		int margin = 16;
 		guiLeft   = margin;
@@ -177,14 +171,11 @@ public class UnstainedProgressScreen extends Screen {
 		buildMaterialLayout();
 		seedRhombusParams();
 
-		// Centre progress content
-		progPanX = (guiWidth  - contentW * progZoom) / 2.0;
-		progPanY = (guiHeight - contentH * progZoom) / 2.0;
-		// Centre material content
-		matPanX = (guiWidth  - matContentW * matZoom) / 2.0;
-		matPanY = (guiHeight - matContentH * matZoom) / 2.0;
+		// Centre each tab's content
+		progressView.centreOn(contentW,    contentH,    guiWidth, guiHeight);
+		materialView.centreOn(matContentW, matContentH, guiWidth, guiHeight);
 
-		restoreTabPan();
+		view = (activeTab == UTab.PROGRESS) ? progressView : materialView;
 	}
 
 	private void cachePlayerData() {
@@ -248,21 +239,15 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Coordinate helpers (content ↔ screen)
+	//  Coordinate helpers — delegate to active PanZoomState
 	// ────────────────────────────────────────────────────────────
 
 	/** Content-space → screen-space X */
-	private int sx(int contentX) { return (int)(guiLeft + panX + contentX * zoom); }
+	private int sx(int contentX) { return view.sx(guiLeft, contentX); }
 	/** Content-space → screen-space Y */
-	private int sy(int contentY) { return (int)(guiTop  + panY + contentY * zoom); }
-
-	/** Screen-space → content-space X */
-	private double cx(double screenX) { return (screenX - guiLeft - panX) / zoom; }
-	/** Screen-space → content-space Y */
-	private double cy(double screenY) { return (screenY - guiTop  - panY) / zoom; }
-
+	private int sy(int contentY) { return view.sy(guiTop,  contentY); }
 	/** Half-node size on screen, accounting for zoom */
-	private int halfNode() { return Math.max(4, (int)(NODE_SIZE * zoom / 2)); }
+	private int halfNode() { return view.halfNode(NODE_SIZE); }
 
 	private boolean insideGui(double mx, double my) {
 		return mx >= guiLeft && mx < guiLeft + guiWidth
@@ -273,21 +258,15 @@ public class UnstainedProgressScreen extends Screen {
 	//  Pan / zoom helpers
 	// ────────────────────────────────────────────────────────────
 
+	private int contentW() { return (activeTab == UTab.PROGRESS) ? contentW : matContentW; }
+	private int contentH() { return (activeTab == UTab.PROGRESS) ? contentH : matContentH; }
+
 	private void saveTabPan() {
-		clampPan();
-		if (activeTab == UTab.PROGRESS) {
-			progPanX = panX; progPanY = panY; progZoom = zoom;
-		} else {
-			matPanX = panX; matPanY = panY; matZoom = zoom;
-		}
+		view.clamp(contentW(), contentH(), guiWidth, guiHeight);
 	}
 
 	private void restoreTabPan() {
-		if (activeTab == UTab.PROGRESS) {
-			panX = progPanX; panY = progPanY; zoom = progZoom;
-		} else {
-			panX = matPanX; panY = matPanY; zoom = matZoom;
-		}
+		view = (activeTab == UTab.PROGRESS) ? progressView : materialView;
 	}
 
 	private void switchTab(UTab tab) {
@@ -298,32 +277,11 @@ public class UnstainedProgressScreen extends Screen {
 	}
 
 	private void clampPan() {
-		int cw = (activeTab == UTab.PROGRESS) ? contentW : matContentW;
-		int ch = (activeTab == UTab.PROGRESS) ? contentH : matContentH;
-
-		double scaledW = cw * zoom;
-		double scaledH = ch * zoom;
-
-		double minPanX = -scaledW + (-PAN_MARGIN);
-		double maxPanX = guiWidth + PAN_MARGIN;
-		panX = Mth.clamp(panX, minPanX, maxPanX);
-
-		double minPanY = -scaledH + (-PAN_MARGIN);
-		double maxPanY = guiHeight + PAN_MARGIN;
-		panY = Mth.clamp(panY, minPanY, maxPanY);
+		view.clamp(contentW(), contentH(), guiWidth, guiHeight);
 	}
 
 	private void resetToHome() {
-		zoom = 1.0f;
-		if (activeTab == UTab.PROGRESS) {
-			panX = (guiWidth  - contentW * zoom) / 2.0;
-			panY = (guiHeight - contentH * zoom) / 2.0;
-		} else {
-			panX = (guiWidth  - matContentW * zoom) / 2.0;
-			panY = (guiHeight - matContentH * zoom) / 2.0;
-		}
-		clampPan();
-		saveTabPan();
+		view.centreOn(contentW(), contentH(), guiWidth, guiHeight);
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -383,8 +341,7 @@ public class UnstainedProgressScreen extends Screen {
 	@Override
 	public boolean mouseDragged(double mx, double my, int btn, double dx, double dy) {
 		if (isDragging && btn == 0) {
-			panX += dx;
-			panY += dy;
+			view.applyDrag(dx, dy);
 			saveTabPan();
 			return true;
 		}
@@ -394,15 +351,7 @@ public class UnstainedProgressScreen extends Screen {
 	@Override
 	public boolean mouseScrolled(double mx, double my, double delta) {
 		if (!insideGui(mx, my)) return super.mouseScrolled(mx, my, delta);
-
-		double cxBefore = cx(mx);
-		double cyBefore = cy(my);
-
-		float oldZoom = zoom;
-		zoom = Mth.clamp(zoom + (float) delta * 0.15f, ZOOM_MIN, ZOOM_MAX);
-
-		panX += cxBefore * (oldZoom - zoom);
-		panY += cyBefore * (oldZoom - zoom);
+		view.applyScroll(guiLeft, guiTop, mx, my, delta);
 		saveTabPan();
 		return true;
 	}
@@ -444,6 +393,11 @@ public class UnstainedProgressScreen extends Screen {
 
 		gfx.disableScissor();
 
+		// 3b. Material info panel (outside scissor so it renders on top of nodes)
+		if (activeTab == UTab.MATERIALS && selectedMaterial != null) {
+			drawMaterialInfoPanel(gfx, selectedMaterial);
+		}
+
 		// 4. Milestones sidebar (fixed on far left, outside content scissor; Progress tab only)
 		if (activeTab == UTab.PROGRESS && begunPurification) {
 			drawMilestones(gfx, mouseX, mouseY);
@@ -468,7 +422,7 @@ public class UnstainedProgressScreen extends Screen {
 		// 6. Zoom indicator (hidden when milestones sidebar is open)
 		if (!sidebarVisible || !begunPurification || activeTab == UTab.MATERIALS) {
 			gfx.drawString(font,
-					String.format("%.0f%%", zoom * 100),
+					String.format("%.0f%%", view.zoom * 100),
 					guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
 		}
 
@@ -687,13 +641,13 @@ public class UnstainedProgressScreen extends Screen {
 		int startCY = nodeStartCY();
 
 		// Column header
-		if (zoom >= 0.4f) {
+		if (view.zoom >= 0.4f) {
 			gfx.drawCenteredString(font, Component.literal("— Purity —"),
 					scrCenterX, sy(10), PURITY_COLOR);
 
 			// Progress bar
-			int barW = Math.max(20, (int)(100 * zoom));
-			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * zoom)),
+			int barW = Math.max(20, (int)(100 * view.zoom));
+			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * view.zoom)),
 					purity, 100f, 0x7088C0);
 
 			gfx.drawCenteredString(font, String.format("%.1f%%", purity),
@@ -709,7 +663,7 @@ public class UnstainedProgressScreen extends Screen {
 			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
 			boolean reached = currentPurityStage.getLevel() >= stages[i].getLevel();
 			int lineCol = reached ? COL_LINE_REACHED : COL_LINE_LOCKED;
-			int lw = Math.max(1, (int)(zoom * 1.5f));
+			int lw = Math.max(1, (int)(view.zoom * 1.5f));
 			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
 			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
 			int lowerTop    = sy(cy1);           // top tip of lower diamond
@@ -737,12 +691,12 @@ public class UnstainedProgressScreen extends Screen {
 		int scrCenterX = sx(ccx);
 		int startCY = nodeStartCY();
 
-		if (zoom >= 0.4f) {
+		if (view.zoom >= 0.4f) {
 			gfx.drawCenteredString(font, Component.literal("— Clarity —"),
 					scrCenterX, sy(10), CLARITY_COLOR);
 
-			int barW = Math.max(20, (int)(100 * zoom));
-			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * zoom)),
+			int barW = Math.max(20, (int)(100 * view.zoom));
+			drawProgressBar(gfx, scrCenterX - barW / 2, sy(22), barW, Math.max(4, (int)(8 * view.zoom)),
 					clarity, 100f, 0x50B0A0);
 
 			gfx.drawCenteredString(font, String.format("%.1f%%", clarity),
@@ -758,7 +712,7 @@ public class UnstainedProgressScreen extends Screen {
 			int cy2 = startCY + (stages.length - 1 - i) * NODE_GAP_Y;
 			boolean reached = currentClarityStage.getLevel() >= stages[i].getLevel();
 			int lineCol = reached ? 0xFF50A898 : COL_LINE_LOCKED;
-			int lw = Math.max(1, (int)(zoom * 1.5f));
+			int lw = Math.max(1, (int)(view.zoom * 1.5f));
 			// Diamond centers are at sy(cy)+hn, tips are at sy(cy) and sy(cy)+2*hn
 			int upperBottom = sy(cy2) + 2 * hn; // bottom tip of upper diamond
 			int lowerTop    = sy(cy1);           // top tip of lower diamond
@@ -814,11 +768,11 @@ public class UnstainedProgressScreen extends Screen {
 		NodeShapeRenderer.drawOutline(gfx, shape, scrX, scrY, hn, border);
 
 		// Icon texture, icon item, or text inside node (only when zoomed in enough)
-		if (zoom >= 0.5f) {
+		if (view.zoom >= 0.5f) {
 			if (iconTexture != null) {
-				renderScaledTexture(gfx, iconTexture, scrX, scrY, hn);
+				ScreenDrawUtils.renderScaledTexture(gfx, iconTexture, scrX, scrY, hn);
 			} else if (iconStack != null && !iconStack.isEmpty()) {
-				renderScaledItem(gfx, iconStack, scrX, scrY, hn);
+				ScreenDrawUtils.renderScaledItem(gfx, iconStack, scrX, scrY, hn);
 			} else {
 				String initial = !title.isEmpty() ? title.substring(0, 1).toUpperCase() : "?";
 				int textCol = isCurrent ? 0xFFFFFFFF : (reached ? 0xFFA0B8D8 : 0xFF404858);
@@ -827,123 +781,19 @@ public class UnstainedProgressScreen extends Screen {
 		}
 
 		// Stage name below node
-		if (zoom >= 0.4f) {
+		if (view.zoom >= 0.4f) {
 			int labelCol = isCurrent ? accentColor : (reached ? 0xFF7090B0 : 0xFF384050);
 			gfx.drawCenteredString(font, title, scrX, scrY + hn + 4, labelCol);
 		}
 	}
 
-	/**
-	 * Draws a diamond outline (1px border) by rendering edge pixels only.
-	 */
-	private void drawDiamondOutline(GuiGraphics gfx, int cx, int cy, int halfSize, int color) {
-		for (int row = -halfSize; row <= halfSize; row++) {
-			int w = halfSize - Math.abs(row);
-			if (w <= 0) {
-				// Single pixel at tip
-				gfx.fill(cx, cy + row, cx + 1, cy + row + 1, color);
-				continue;
-			}
-			// Left edge pixel
-			gfx.fill(cx - w, cy + row, cx - w + 1, cy + row + 1, color);
-			// Right edge pixel
-			gfx.fill(cx + w - 1, cy + row, cx + w, cy + row + 1, color);
-			// Top and bottom tip rows are fully filled
-			if (Math.abs(row) >= halfSize - 1) {
-				gfx.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
-			}
-		}
-	}
-
-	/**
-	 * Draws a filled diamond/rhombus shape at the given center point.
-	 */
-	private void drawDiamond(GuiGraphics gfx, int cx, int cy, int halfSize, int color) {
-		for (int row = -halfSize; row <= halfSize; row++) {
-			int w = halfSize - Math.abs(row);
-			if (w <= 0) continue;
-			gfx.fill(cx - w, cy + row, cx + w, cy + row + 1, color);
-		}
-	}
-
-	/** Padding pixels around the item icon inside a node. */
-	private static final int ITEM_PADDING = 4;
-
-	/**
-	 * Renders an ItemStack centred inside a node, scaled to fit within the node bounds.
-	 * Items render at 16x16 by default; this scales them to fit (2*hn - ITEM_PADDING) pixels.
-	 */
-	private void renderScaledItem(GuiGraphics gfx, ItemStack stack, int centerX, int centerY, int halfNodeSize) {
-		float nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
-		float itemScale = nodeInner / 16.0f;
-		PoseStack pose = gfx.pose();
-		pose.pushPose();
-		pose.translate(centerX - nodeInner / 2.0f, centerY - nodeInner / 2.0f, 0);
-		pose.scale(itemScale, itemScale, 1);
-		gfx.renderItem(stack, 0, 0);
-		pose.popPose();
-	}
-
-	/**
-	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
-	 * within the node bounds. The entire texture is sampled (UV 0→1) and rendered at the
-	 * node's inner size, so it works for textures of any pixel dimensions.
-	 */
-	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
-		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
-		int x = centerX - nodeInner / 2;
-		int y = centerY - nodeInner / 2;
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
-		RenderSystem.disableBlend();
-	}
-
 	// ────────────────────────────────────────────────────────────
-	//  Progress bar
+	//  Progress bar — delegate to shared utility — delegate to shared utility
 	// ────────────────────────────────────────────────────────────
 
 	private void drawProgressBar(GuiGraphics gfx, int x, int y, int w, int h,
 								 float value, float max, int fillColorRGB) {
-		float time = System.nanoTime() / 1_000_000_000f;
-		float ratio = Mth.clamp(value / max, 0f, 1f);
-		int fillW = (int)(w * ratio);
-
-		// Background
-		gfx.fill(x, y, x + w, y + h, 0xFF0C1020);
-
-		// Frame
-		int frameCol = 0xFF203040;
-		gfx.fill(x, y, x + w, y + 1, frameCol);
-		gfx.fill(x, y + h - 1, x + w, y + h, frameCol);
-		gfx.fill(x, y, x + 1, y + h, frameCol);
-		gfx.fill(x + w - 1, y, x + w, y + h, frameCol);
-
-		// Fill with pulse
-		if (fillW > 0) {
-			float r = ((fillColorRGB >> 16) & 0xFF) / 255f;
-			float g = ((fillColorRGB >> 8) & 0xFF) / 255f;
-			float b = (fillColorRGB & 0xFF) / 255f;
-
-			for (int col = 0; col < fillW; col++) {
-				float colT = (float) col / Math.max(w, 1);
-				float brightness = 0.6f + 0.4f * colT;
-				float pulse = 0.9f + 0.1f * Mth.sin(time * 2.0f + col * 0.08f);
-				float fb = brightness * pulse;
-
-				int cr = (int) Mth.clamp(r * fb * 255, 0, 255);
-				int cg = (int) Mth.clamp(g * fb * 255, 0, 255);
-				int cb = (int) Mth.clamp(b * fb * 255, 0, 255);
-				int color = 0xFF000000 | (cr << 16) | (cg << 8) | cb;
-				gfx.fill(x + 1 + col, y + 1, x + 1 + col + 1, y + h - 1, color);
-			}
-		}
-
-		// 25% notch marks
-		for (int notch = 1; notch <= 3; notch++) {
-			int nx = x + w * notch / 4;
-			gfx.fill(nx, y, nx + 1, y + h, 0x30FFFFFF);
-		}
+		ScreenDrawUtils.drawProgressBar(gfx, x, y, w, h, value, max, fillColorRGB);
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -957,10 +807,10 @@ public class UnstainedProgressScreen extends Screen {
 		int scrY = sy(statCY);
 
 		// Divider line
-		int divW = Math.max(30, (int)(200 * zoom));
+		int divW = Math.max(30, (int)(200 * view.zoom));
 		gfx.fill(centerScrX - divW / 2, scrY - 4, centerScrX + divW / 2, scrY - 3, 0x33405878);
 
-		if (zoom >= 0.4f) {
+		if (view.zoom >= 0.4f) {
 			String penaltyStr = String.format("Blood Magic Penalty: -%.0f%%",
 					currentPurityStage.getBloodMagicPenalty() * 100);
 			int penaltyCol = currentPurityStage.getBloodMagicPenalty() > 0 ? 0xFFCC8060 : 0xFF405060;
@@ -973,13 +823,13 @@ public class UnstainedProgressScreen extends Screen {
 	 * Recomputes the same screen positions used by drawStatReadouts.
 	 */
 	private void drawStatTooltips(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (!insideGui(mouseX, mouseY) || zoom < 0.4f) return;
+		if (!insideGui(mouseX, mouseY) || view.zoom < 0.4f) return;
 
 		EnumPurityStage[] stages = EnumPurityStage.values();
 		int statCY = nodeStartCY() + stages.length * NODE_GAP_Y + 20;
 		int centerScrX = sx(contentW / 2);
 		int scrY = sy(statCY);
-		int halfTextW = (int)(100 * zoom);  // approximate half-width of text hit area
+		int halfTextW = (int)(100 * view.zoom);  // approximate half-width of text hit area
 
 		// Blood Magic Penalty
 		if (mouseX >= centerScrX - halfTextW && mouseX <= centerScrX + halfTextW
@@ -1091,7 +941,7 @@ public class UnstainedProgressScreen extends Screen {
 		} else {
 			bgCol = hovered ? 0xDD0C0C16 : 0xCC080A14;
 		}
-		drawDiamond(gfx, cx, cy, halfDia, bgCol);
+		NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, halfDia, bgCol);
 
 		// Border
 		int borderCol;
@@ -1102,7 +952,7 @@ public class UnstainedProgressScreen extends Screen {
 		} else {
 			borderCol = hovered ? 0xFF505868 : 0xFF383E4C;
 		}
-		drawDiamondOutline(gfx, cx, cy, halfDia, borderCol);
+		NodeShapeRenderer.drawOutline(gfx, EnumNodeShape.DIAMOND, cx, cy, halfDia, borderCol);
 
 		// Pulsing glow when enabled and unlocked
 		if (enabled && unlocked) {
@@ -1112,7 +962,8 @@ public class UnstainedProgressScreen extends Screen {
 			int gr = (glow >> 16) & 0xFF;
 			int gg = (glow >> 8) & 0xFF;
 			int gb = glow & 0xFF;
-			drawDiamond(gfx, cx, cy, halfDia + 2, (ga << 24) | (gr << 16) | (gg << 8) | gb);
+			NodeShapeRenderer.drawFill(gfx, EnumNodeShape.DIAMOND, cx, cy, halfDia + 2,
+					(ga << 24) | (gr << 16) | (gg << 8) | gb);
 		}
 
 		// Icon letter
@@ -1284,24 +1135,13 @@ public class UnstainedProgressScreen extends Screen {
 	 * When expanded: tab is on the right edge of the panel, arrow points left (collapse).
 	 * When collapsed: tab is on the left edge of the GUI, arrow points right (expand).
 	 */
-	public  void drawSidebarToggleTab(GuiGraphics gfx, int tabX, int tabY, boolean expanded, boolean hovered) {
-		int tw = SIDEBAR_TAB_W;
-		int th = SIDEBAR_TAB_H;
-
-		// Background — brighter when hovered
-		gfx.fill(tabX, tabY, tabX + tw, tabY + th, hovered ? 0xDD101828 : 0xCC0C1020);
-
-		// Border — highlight on hover
-		int bc = hovered ? 0xFF4070A0 : 0xFF203050;
-		gfx.fill(tabX, tabY, tabX + tw, tabY + 1, bc);
-		gfx.fill(tabX, tabY + th - 1, tabX + tw, tabY + th, bc);
-		gfx.fill(tabX, tabY, tabX + 1, tabY + th, bc);
-		gfx.fill(tabX + tw - 1, tabY, tabX + tw, tabY + th, bc);
-
-		// Arrow character: ◀ when expanded (click to collapse), ▶ when collapsed (click to expand)
-		String arrow = expanded ? "◀" : "▶";
-		int arrowCol = hovered ? 0xFFB0C8E8 : 0xFF8098C0;
-		gfx.drawCenteredString(font, arrow, tabX + tw / 2, tabY + th / 2 - 4, arrowCol);
+	public void drawSidebarToggleTab(GuiGraphics gfx, int tabX, int tabY, boolean expanded, boolean hovered) {
+		ScreenDrawUtils.drawSidebarToggleTab(gfx, font,
+				tabX, tabY, SIDEBAR_TAB_W, SIDEBAR_TAB_H,
+				expanded, hovered,
+				0xDD101828, 0xCC0C1020,  // hoverBg, idleBg
+				0xFF4070A0, 0xFF203050,  // hoverBc, idleBc
+				0xFFB0C8E8, 0xFF8098C0); // hoverArrow, idleArrow
 	}
 
 	/** Hit test for the sidebar toggle tab. */
@@ -1475,25 +1315,13 @@ public class UnstainedProgressScreen extends Screen {
 	private void drawHomeButton(GuiGraphics gfx, int mouseX, int mouseY) {
 		int bx = guiLeft + HOME_BTN_PAD;
 		int by = guiTop + HOME_BTN_PAD;
-		int bs = HOME_BTN_SIZE;
 		boolean hovered = isOverHomeButton(mouseX, mouseY);
 
-		// Background
-		int bg = hovered ? 0xDD101828 : 0x990C1020;
-		gfx.fill(bx, by, bx + bs, by + bs, bg);
+		ScreenDrawUtils.drawHomeButton(gfx, font, bx, by, HOME_BTN_SIZE, hovered,
+				0xDD101828, 0x990C1020,   // hoverBg, idleBg
+				0xFF6088C0, 0xFF304060,   // hoverBorder, idleBorder
+				0xFFB0C0E0, 0xFF506888);  // hoverText, idleText
 
-		// Border
-		int bc = hovered ? 0xFF6088C0 : 0xFF304060;
-		gfx.fill(bx, by, bx + bs, by + 1, bc);
-		gfx.fill(bx, by + bs - 1, bx + bs, by + bs, bc);
-		gfx.fill(bx, by, bx + 1, by + bs, bc);
-		gfx.fill(bx + bs - 1, by, bx + bs, by + bs, bc);
-
-		// House icon
-		int textCol = hovered ? 0xFFB0C0E0 : 0xFF506888;
-		gfx.drawCenteredString(font, "⌂", bx + bs / 2, by + (bs - 8) / 2, textCol);
-
-		// Tooltip on hover
 		if (hovered) {
 			gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
 		}
@@ -1511,275 +1339,73 @@ public class UnstainedProgressScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		gfx.fill(x, y, x + w, y + 1, COL_BORDER_OUTER);
-		gfx.fill(x, y + h - 1, x + w, y + h, COL_BORDER_OUTER);
-		gfx.fill(x, y, x + 1, y + h, COL_BORDER_OUTER);
-		gfx.fill(x + w - 1, y, x + w, y + h, COL_BORDER_OUTER);
-
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, COL_BORDER_INNER);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, COL_BORDER_INNER);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, COL_BORDER_INNER);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, COL_BORDER_INNER);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, COL_BORDER_OUTER, COL_BORDER_INNER);
 	}
 
 	// ────────────────────────────────────────────────────────────
 	//  Tab buttons (top-right)
 	// ────────────────────────────────────────────────────────────
 
-	private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
-		int x = guiLeft + guiWidth - TAB_PAD;
-		int y = guiTop + TAB_PAD;
+	// ────────────────────────────────────────────────────────────
+	//  Tab buttons (top-right) — delegate to ScreenDrawUtils
+	// ────────────────────────────────────────────────────────────
 
-		for (int i = UTab.values().length - 1; i >= 0; i--) {
-			UTab tab = UTab.values()[i];
-			int tw = font.width(tab.label) + 10;
-			int tx = x - tw;
-
-			boolean active = (tab == activeTab);
-			boolean hovered = mouseX >= tx && mouseX <= tx + tw
-					&& mouseY >= y && mouseY <= y + TAB_HEIGHT;
-
-			int bg = active ? 0xDD101828 : (hovered ? 0xBB0E1424 : 0x990C1020);
-			gfx.fill(tx, y, tx + tw, y + TAB_HEIGHT, bg);
-
-			int bc = active ? tab.color : 0xFF444444;
-			gfx.fill(tx, y, tx + tw, y + 1, bc);
-			gfx.fill(tx, y + TAB_HEIGHT - 1, tx + tw, y + TAB_HEIGHT, bc);
-			gfx.fill(tx, y, tx + 1, y + TAB_HEIGHT, bc);
-			gfx.fill(tx + tw - 1, y, tx + tw, y + TAB_HEIGHT, bc);
-
-			if (active) {
-				gfx.fill(tx + 1, y + TAB_HEIGHT - 2, tx + tw - 1, y + TAB_HEIGHT - 1, tab.color);
-			}
-
-			int textCol = active ? tab.color : (hovered ? 0xFFAAAAAA : 0xFF777777);
-			gfx.drawCenteredString(font, tab.label, tx + tw / 2, y + (TAB_HEIGHT - 8) / 2, textCol);
-
-			x = tx - TAB_PAD;
+	private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
+		List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
+		for (UTab tab : UTab.values()) {
+			descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
 		}
+		return descs;
+	}
+
+	private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
+		ScreenDrawUtils.drawTabs(gfx, font, buildTabDescs(),
+				guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
 	}
 
 	private UTab tabUnder(double mx, double my) {
-		int x = guiLeft + guiWidth - TAB_PAD;
-		int y = guiTop + TAB_PAD;
-
-		for (int i = UTab.values().length - 1; i >= 0; i--) {
-			UTab tab = UTab.values()[i];
-			int tw = font.width(tab.label) + 10;
-			int tx = x - tw;
-
-			if (mx >= tx && mx <= tx + tw && my >= y && my <= y + TAB_HEIGHT) {
-				return tab;
-			}
-			x = tx - TAB_PAD;
-		}
-		return null;
+		int idx = ScreenDrawUtils.tabIndexUnder(font, buildTabDescs(),
+				guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mx, my);
+		return idx >= 0 ? UTab.values()[idx] : null;
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Materials & Processes tab
+	//  Materials & Processes tab — delegate to MaterialsTabView
 	// ────────────────────────────────────────────────────────────
 
-	private static final int MAT_GAP_X = 70;
-	private static final int MAT_GAP_Y = 60;
-	private static final int MAT_COLS  = 5;
-
 	private void buildMaterialLayout() {
-		materialPositions.clear();
-		matContentW = 0;
-		matContentH = 0;
-
-		java.util.List<MaterialEntry> entries = MaterialsData.getUnstainedEntries();
-		if (entries.isEmpty()) return;
-
-		java.util.LinkedHashMap<String, java.util.List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
-		for (MaterialEntry e : entries) {
-			byCategory.computeIfAbsent(e.category(), k -> new java.util.ArrayList<>()).add(e);
-		}
-
-		int y = 30;
-		for (var catEntry : byCategory.entrySet()) {
-			y += 20;
-			java.util.List<MaterialEntry> catItems = catEntry.getValue();
-			for (int i = 0; i < catItems.size(); i++) {
-				int col = i % MAT_COLS;
-				int row = i / MAT_COLS;
-				int x = 20 + col * MAT_GAP_X;
-				int ny = y + row * MAT_GAP_Y;
-				materialPositions.put(catItems.get(i), new int[]{x, ny});
-				matContentW = Math.max(matContentW, x + NODE_SIZE + 20);
-				matContentH = Math.max(matContentH, ny + NODE_SIZE + 24);
-			}
-			int rows = (catItems.size() + MAT_COLS - 1) / MAT_COLS;
-			y += rows * MAT_GAP_Y + 10;
-		}
+		int[] bounds = new int[2];
+		MaterialsTabView.buildLayout(MaterialsData.getUnstainedEntries(),
+				materialPositions, bounds, NODE_SIZE);
+		matContentW = bounds[0];
+		matContentH = bounds[1];
 	}
 
 	private void drawMaterialNodes(GuiGraphics gfx) {
-		float time = System.nanoTime() / 1_000_000_000f;
-		int hn = halfNode();
-
-		java.util.List<MaterialEntry> entries = MaterialsData.getUnstainedEntries();
-		java.util.LinkedHashMap<String, java.util.List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
-		for (MaterialEntry e : entries) {
-			byCategory.computeIfAbsent(e.category(), k -> new java.util.ArrayList<>()).add(e);
-		}
-
-		int catY = 30;
-		for (var catEntry : byCategory.entrySet()) {
-			int scrY = sy(catY);
-			int scrX = sx(20);
-			gfx.drawString(font, Component.literal(catEntry.getKey())
-					.withStyle(s -> s.withColor(UTab.MATERIALS.color).withBold(true)),
-					scrX, scrY, 0, false);
-			catY += 20;
-			int rows = (catEntry.getValue().size() + MAT_COLS - 1) / MAT_COLS;
-			catY += rows * MAT_GAP_Y + 10;
-		}
-
-		for (var e : materialPositions.entrySet()) {
-			MaterialEntry mat = e.getKey();
-			int[] pos = e.getValue();
-			int nx = sx(pos[0]);
-			int ny = sy(pos[1]);
-
-			EnumNodeShape shape = EnumNodeShape.DIAMOND;
-			boolean isSelected = mat == selectedMaterial;
-
-			if (isSelected) {
-				float pulse = 0.5f + 0.5f * Mth.sin(time * 2.5f);
-				int ga = (int)(45 * pulse);
-				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 4,
-						(ga << 24) | 0x0080B0A0);
-			}
-
-			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
-
-			int border = isSelected ? UTab.MATERIALS.color : 0xFF6088B0;
-			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
-
-			if (zoom >= 0.5f) {
-				net.minecraft.world.item.ItemStack stack = mat.iconStack().get();
-				if (stack != null && !stack.isEmpty()) {
-					renderScaledItem(gfx, stack, nx, ny, hn);
-				}
-			}
-		}
-
-		if (selectedMaterial != null) {
-			drawMaterialInfoPanel(gfx, selectedMaterial);
-		}
+		MaterialsTabView.drawNodes(gfx, font,
+				MaterialsData.getUnstainedEntries(), materialPositions,
+				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.DIAMOND,
+				UTab.MATERIALS.color, selectedMaterial,
+				0x0080B0A0, 0xFF6088B0);
 	}
 
 	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
-		int panelW = 160;
-		int panelX = guiLeft + guiWidth - panelW - 8;
-		int panelY = guiTop + 30;
-
-		// Pre-calculate content for dynamic height
-		int maxW = panelW - 16;
-		java.util.List<String> descLines = wrapText(mat.description(), maxW);
-
-		int panelH = 6 + 22 + 12 + 1 + 5 + descLines.size() * 10 + (mat.hasRecipe() ? 18 : 0) + 8;
-
-		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD101828);
-
-		int bc = UTab.MATERIALS.color;
-		gfx.fill(panelX, panelY, panelX + panelW, panelY + 1, bc);
-		gfx.fill(panelX, panelY + panelH - 1, panelX + panelW, panelY + panelH, bc);
-		gfx.fill(panelX, panelY, panelX + 1, panelY + panelH, bc);
-		gfx.fill(panelX + panelW - 1, panelY, panelX + panelW, panelY + panelH, bc);
-
-		int tx = panelX + 6;
-		int ty = panelY + 6;
-
-		net.minecraft.world.item.ItemStack stack = mat.iconStack().get();
-		if (stack != null && !stack.isEmpty()) {
-			gfx.renderItem(stack, tx, ty);
-		}
-		gfx.drawString(font, Component.literal(mat.displayName())
-				.withStyle(s -> s.withColor(UTab.MATERIALS.color).withBold(true)),
-				tx + 20, ty + 4, 0, false);
-		ty += 22;
-
-		gfx.drawString(font, Component.literal(mat.category())
-				.withStyle(s -> s.withColor(0xFF888888).withItalic(true)),
-				tx, ty, 0, false);
-		ty += 12;
-
-		gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF203050);
-		ty += 5;
-
-		// Description (word-wrapped)
-		for (String dl : descLines) {
-			gfx.drawString(font, dl, tx, ty, 0xFF999999, false);
-			ty += 10;
-		}
-
-		if (mat.hasRecipe()) {
-			ty += 4;
-			gfx.drawString(font, Component.literal("◆ Has crafting recipe")
-					.withStyle(s -> s.withColor(0xFF80B0A0).withItalic(true)),
-					tx, ty, 0, false);
-		}
+		MaterialsTabView.drawInfoPanel(gfx, font, mat,
+				guiLeft, guiTop, guiWidth,
+				UTab.MATERIALS.color, 0xFF203050, 0xDD101828,
+				MiniRecipeRenderer.UNSTAINED);
 	}
 
 	private void drawMaterialTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (!insideGui(mouseX, mouseY)) return;
-		int hn = halfNode();
-
-		for (var e : materialPositions.entrySet()) {
-			MaterialEntry mat = e.getKey();
-			int[] pos = e.getValue();
-			int nx = sx(pos[0]), ny = sy(pos[1]);
-
-			if (!NodeShapeRenderer.isInside(EnumNodeShape.DIAMOND, mouseX, mouseY, nx, ny, hn)) continue;
-
-			java.util.List<Component> tip = new java.util.ArrayList<>();
-			tip.add(Component.literal(mat.displayName())
-					.withStyle(s -> s.withColor(UTab.MATERIALS.color).withBold(true)));
-			tip.add(Component.literal(mat.category())
-					.withStyle(s -> s.withColor(0xFF888888).withItalic(true)));
-			tip.add(Component.literal(mat.description())
-					.withStyle(s -> s.withColor(0xFF999999)));
-			if (mat.hasRecipe()) {
-				tip.add(Component.literal("Click to view details")
-						.withStyle(s -> s.withColor(0xFF80B0A0)));
-			}
-
-			gfx.renderTooltip(font, tip, java.util.Optional.empty(), mouseX, mouseY);
-			break;
-		}
+		MaterialsTabView.drawTooltip(gfx, font, materialPositions,
+				view, guiLeft, guiTop, guiWidth, guiHeight, NODE_SIZE,
+				EnumNodeShape.DIAMOND, UTab.MATERIALS.color, 0xFF80B0A0,
+				mouseX, mouseY);
 	}
 
 	private MaterialEntry materialNodeUnder(double mx, double my) {
-		int hn = halfNode();
-		for (var e : materialPositions.entrySet()) {
-			int[] p = e.getValue();
-			int nx = sx(p[0]), ny = sy(p[1]);
-			if (NodeShapeRenderer.isInside(EnumNodeShape.DIAMOND, mx, my, nx, ny, hn))
-				return e.getKey();
-		}
-		return null;
-	}
-
-
-	/** Simple word-wrap helper. */
-	private java.util.List<String> wrapText(String text, int maxWidth) {
-		java.util.List<String> lines = new java.util.ArrayList<>();
-		String[] words = text.split(" ");
-		StringBuilder current = new StringBuilder();
-		for (String word : words) {
-			if (!current.isEmpty() && font.width(current + " " + word) > maxWidth) {
-				lines.add(current.toString());
-				current = new StringBuilder(word);
-			} else {
-				if (!current.isEmpty()) current.append(" ");
-				current.append(word);
-			}
-		}
-		if (!current.isEmpty()) lines.add(current.toString());
-		return lines;
+		return MaterialsTabView.nodeUnder(materialPositions,
+				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.DIAMOND, mx, my);
 	}
 
 	// ────────────────────────────────────────────────────────────

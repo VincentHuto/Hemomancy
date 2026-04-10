@@ -92,22 +92,15 @@ public class SkillTreeScreen extends Screen {
 	// ── GUI viewport (screen-space pixels, set in init()) ──
 	private int guiLeft, guiTop, guiWidth, guiHeight;
 
-	// ── Per-tab pan / zoom ──
-	private double skillPanX, skillPanY;
-	private float skillZoom = 1.0f;
-	private double manipPanX, manipPanY;
-	private float manipZoom = 1.0f;
-
-	// Active references (point to the current tab's values)
-	private double panX, panY;
-	private float zoom = 1.0f;
-	private static final float ZOOM_MIN = 0.35f;
-	private static final float ZOOM_MAX = 3.0f;
+	// ── Per-tab pan / zoom (encapsulated in PanZoomState) ──
+	private final PanZoomState skillView    = new PanZoomState();
+	private final PanZoomState manipView    = new PanZoomState();
+	private final PanZoomState materialView = new PanZoomState();
+	/** Active view — points to whichever tab's PanZoomState is current. */
+	private PanZoomState view = skillView;
 	private boolean isDragging;
 
-	// ── Pan limits: how far (in screen pixels) the content edge can be
-	//    dragged past the viewport edge before clamping kicks in ──
-	private static final int PAN_MARGIN = 150;
+	// ── Pan limits ── (kept in PanZoomState.PAN_MARGIN)
 
 	// ── Home button (top-left of GUI viewport) ──
 	private static final int HOME_BTN_SIZE = 16;
@@ -127,6 +120,8 @@ public class SkillTreeScreen extends Screen {
 	/** Lookup from manipulation name → its BloodMemoryItem's ItemStack. */
 	private final Map<String, ItemStack> manipMemoryItems = new HashMap<>();
 	private int manipContentW, manipContentH;
+	/** Currently selected manipulation node (null = none selected). */
+	private ManipulationTreeEntry selectedManipEntry = null;
 
 	// ── Cardinal Rites data ──
 	private final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
@@ -163,8 +158,6 @@ public class SkillTreeScreen extends Screen {
 	// ── Materials & Processes data ──
 	private final Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
 	private int materialContentW, materialContentH;
-	private double materialPanX, materialPanY;
-	private float materialZoom = 1.0f;
 	private MaterialEntry selectedMaterial = null;
 
 	/** Minimum player degree required to view recipes in each rite tier. */
@@ -230,6 +223,7 @@ public class SkillTreeScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
+		RecipeLookup.clearCache();
 
 		// Fill most of the window, leaving a small margin
 		int margin = 16;
@@ -256,85 +250,59 @@ public class SkillTreeScreen extends Screen {
 		}
 
 		// Centre each tab's content
-		skillPanX = (guiWidth  - skillContentW * skillZoom) / 2.0;
-		skillPanY = (guiHeight - skillContentH * skillZoom) / 2.0;
-		manipPanX = (guiWidth  - manipContentW * manipZoom) / 2.0;
-		manipPanY = (guiHeight - manipContentH * manipZoom) / 2.0;
-		materialPanX = (guiWidth  - materialContentW * materialZoom) / 2.0;
-		materialPanY = (guiHeight - materialContentH * materialZoom) / 2.0;
+		skillView.centreOn(skillContentW, skillContentH, guiWidth, guiHeight);
+		manipView.centreOn(manipContentW, manipContentH, guiWidth, guiHeight);
+		materialView.centreOn(materialContentW, materialContentH, guiWidth, guiHeight);
 
-		restorePan();
+		view = viewForTab(activeTab);
 	}
 
-	/** Save current pan/zoom into the active tab's slot. */
+	/** Returns the PanZoomState for a given tab (null for browse tabs). */
+	private PanZoomState viewForTab(Tab tab) {
+		return switch (tab) {
+			case SKILLS        -> skillView;
+			case MANIPULATIONS -> manipView;
+			case MATERIALS     -> materialView;
+			default            -> view; // RITES / CRAFTING don't pan
+		};
+	}
+
+	/** Save current view state and switch to a new tab's view. */
 	private void savePan() {
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return; // Browse tabs don't use pan/zoom
-		clampPan();
-		if (activeTab == Tab.SKILLS) {
-			skillPanX = panX; skillPanY = panY; skillZoom = zoom;
-		} else if (activeTab == Tab.MATERIALS) {
-			materialPanX = panX; materialPanY = panY; materialZoom = zoom;
-		} else {
-			manipPanX = panX; manipPanY = panY; manipZoom = zoom;
-		}
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return;
+		view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
 	}
 
-	/** Restore pan/zoom from the active tab's slot. */
+	private int contentWForTab(Tab tab) {
+		return switch (tab) {
+			case SKILLS        -> skillContentW;
+			case MANIPULATIONS -> manipContentW;
+			case MATERIALS     -> materialContentW;
+			default            -> 0;
+		};
+	}
+	private int contentHForTab(Tab tab) {
+		return switch (tab) {
+			case SKILLS        -> skillContentH;
+			case MANIPULATIONS -> manipContentH;
+			case MATERIALS     -> materialContentH;
+			default            -> 0;
+		};
+	}
+
+	/** Restore pan/zoom from the active tab's slot (alias kept for clarity). */
 	private void restorePan() {
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return; // Browse tabs don't use pan/zoom
-		if (activeTab == Tab.SKILLS) {
-			panX = skillPanX; panY = skillPanY; zoom = skillZoom;
-		} else if (activeTab == Tab.MATERIALS) {
-			panX = materialPanX; panY = materialPanY; zoom = materialZoom;
-		} else {
-			panX = manipPanX; panY = manipPanY; zoom = manipZoom;
-		}
+		view = viewForTab(activeTab);
 	}
 
-	/**
-	 * Clamp pan so the tree content can never be dragged entirely off-screen.
-	 * The content edge is allowed PAN_MARGIN pixels past the viewport edge
-	 * so there's a comfortable "rubber band" feel without getting lost.
-	 */
+	/** Clamp pan for the active view. */
 	private void clampPan() {
-		int contentW;
-		int contentH;
-		if (activeTab == Tab.SKILLS) {
-			contentW = skillContentW; contentH = skillContentH;
-		} else if (activeTab == Tab.MATERIALS) {
-			contentW = materialContentW; contentH = materialContentH;
-		} else {
-			contentW = manipContentW; contentH = manipContentH;
-		}
-
-		double scaledW = contentW * zoom;
-		double scaledH = contentH * zoom;
-
-		// panX: content left edge must not go further right than (guiWidth + margin),
-		//       content right edge must not go further left than (-margin).
-		double minPanX = -scaledW + (-PAN_MARGIN);
-		double maxPanX = guiWidth + PAN_MARGIN;
-		panX = Mth.clamp(panX, minPanX, maxPanX);
-
-		double minPanY = -scaledH + (-PAN_MARGIN);
-		double maxPanY = guiHeight + PAN_MARGIN;
-		panY = Mth.clamp(panY, minPanY, maxPanY);
+		view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
 	}
 
 	/** Reset pan/zoom to the centred default view for the active tab. */
 	private void resetToHome() {
-		zoom = 1.0f;
-		if (activeTab == Tab.SKILLS) {
-			panX = (guiWidth  - skillContentW * zoom) / 2.0;
-			panY = (guiHeight - skillContentH * zoom) / 2.0;
-		} else if (activeTab == Tab.MATERIALS) {
-			panX = (guiWidth  - materialContentW * zoom) / 2.0;
-			panY = (guiHeight - materialContentH * zoom) / 2.0;
-		} else {
-			panX = (guiWidth  - manipContentW * zoom) / 2.0;
-			panY = (guiHeight - manipContentH * zoom) / 2.0;
-		}
-		savePan();
+		view.centreOn(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
 	}
 
 	/** Switch to a different tab. */
@@ -342,7 +310,7 @@ public class SkillTreeScreen extends Screen {
 		if (tab == activeTab) return;
 		savePan();
 		activeTab = tab;
-		restorePan();
+		view = viewForTab(activeTab);
 	}
 
 	private void seedVeinParams() {
@@ -518,21 +486,20 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Coordinate helpers  (content ↔ screen)
+	//  Coordinate helpers  (content ↔ screen) — delegate to view
 	// ────────────────────────────────────────────────────────────
 
 	/** Content-space → screen-space X */
-	private int sx(int cx) { return (int)(guiLeft + panX + cx * zoom); }
+	private int sx(int cx) { return view.sx(guiLeft, cx); }
 	/** Content-space → screen-space Y */
-	private int sy(int cy) { return (int)(guiTop  + panY + cy * zoom); }
-
+	private int sy(int cy) { return view.sy(guiTop, cy); }
 	/** Screen-space → content-space X */
-	private double cx(double sx) { return (sx - guiLeft - panX) / zoom; }
+	private double cx(double sx) { return view.cx(guiLeft, sx); }
 	/** Screen-space → content-space Y */
-	private double cy(double sy) { return (sy - guiTop  - panY) / zoom; }
-
+	private double cy(double sy) { return view.cy(guiTop, sy); }
 	/** Node half-size on screen, accounting for zoom */
-	private int halfNode() { return Math.max(3, (int)(NODE_SIZE * zoom / 2)); }
+	private int halfNode() { return view.halfNode(NODE_SIZE); }
+	/** Convenience: current zoom level */
 
 	private boolean insideGui(double mx, double my) {
 		return mx >= guiLeft && mx < guiLeft + guiWidth
@@ -653,6 +620,13 @@ public class SkillTreeScreen extends Screen {
 						return true;
 					}
 				}
+				if (activeTab == Tab.MANIPULATIONS && insideGui(mx, my)) {
+					ManipulationTreeEntry manipHit = manipNodeUnder(mx, my);
+					if (manipHit != null) {
+						selectedManipEntry = (selectedManipEntry == manipHit) ? null : manipHit;
+						return true;
+					}
+				}
 				if (activeTab == Tab.MATERIALS) {
 					MaterialEntry matHit = materialNodeUnder(mx, my);
 					if (matHit != null) {
@@ -690,8 +664,7 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 		if (isDragging && btn == 0) {
-			panX += dx;
-			panY += dy;
+			view.applyDrag(dx, dy);
 			savePan();
 			return true;
 		}
@@ -717,12 +690,9 @@ public class SkillTreeScreen extends Screen {
 		double cxBefore = cx(mx);
 		double cyBefore = cy(my);
 
-		float oldZoom = zoom;
-		zoom = Mth.clamp(zoom + (float) delta * 0.15f, ZOOM_MIN, ZOOM_MAX);
+		view.applyScroll(guiLeft, guiTop, mx, my, delta);
 
-		// Adjust pan so that point stays under the cursor
-		panX += cxBefore * (oldZoom - zoom);
-		panY += cyBefore * (oldZoom - zoom);
+		// (cxBefore/cyBefore used only to anchor the zoom — already handled inside applyScroll)
 		savePan();
 		return true;
 	}
@@ -738,6 +708,16 @@ public class SkillTreeScreen extends Screen {
 		return null;
 	}
 
+	private ManipulationTreeEntry manipNodeUnder(double mx, double my) {
+		int h = halfNode();
+		for (var e : manipPositions.entrySet()) {
+			int[] p = e.getValue();
+			int nx = sx(p[0]), ny = sy(p[1]);
+			if (NodeShapeRenderer.isInside(e.getKey().getNodeShape(), mx, my, nx, ny, h))
+				return e.getKey();
+		}
+		return null;
+	}
 	private void tryUnlock(SkillPoint sp) {
 		// Block interaction if player hasn't reached the required initiation degree
 		if (sp.isDegreeLocked(playerDegree)) {
@@ -790,6 +770,16 @@ public class SkillTreeScreen extends Screen {
 
 		gfx.disableScissor();
 
+		// 3b. Material info panel (outside scissor so it renders on top of nodes)
+		if (activeTab == Tab.MATERIALS && selectedMaterial != null) {
+			drawMaterialInfoPanel(gfx, selectedMaterial);
+		}
+
+		// 3c. Manipulation info panel (outside scissor so it renders on top of nodes)
+		if (activeTab == Tab.MANIPULATIONS && selectedManipEntry != null) {
+			drawManipInfoPanel(gfx, selectedManipEntry);
+		}
+
 		// ── 4. Tab buttons (top-right, outside scissor) ──
 		drawTabs(gfx, mouseX, mouseY);
 
@@ -821,7 +811,7 @@ public class SkillTreeScreen extends Screen {
 			// Hide zoom text when milestone drawer is open to avoid overlap
 			if (!(activeTab == Tab.SKILLS && milestoneDrawerOpen)) {
 				gfx.drawString(font,
-						String.format("%.0f%%", zoom * 100),
+						String.format("%.0f%%", view.zoom * 100),
 						guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
 			}
 		}
@@ -951,17 +941,7 @@ public class SkillTreeScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 
 	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		int outer = 0xFF330808;
-		gfx.fill(x, y, x + w, y + 1, outer);
-		gfx.fill(x, y + h - 1, x + w, y + h, outer);
-		gfx.fill(x, y, x + 1, y + h, outer);
-		gfx.fill(x + w - 1, y, x + w, y + h, outer);
-
-		int inner = 0xFF220606;
-		gfx.fill(x + 1, y + 1, x + w - 1, y + 2, inner);
-		gfx.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, inner);
-		gfx.fill(x + 1, y + 1, x + 2, y + h - 1, inner);
-		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, inner);
+		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, 0xFF330808, 0xFF220606);
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -982,7 +962,7 @@ public class SkillTreeScreen extends Screen {
 
 			boolean parentUnlocked = sp.getParent().getState() == EnumSkillStates.UNLOCKED;
 			int col = parentUnlocked ? COL_LINE_UNLOCKED : COL_LINE_LOCKED;
-			int lw  = Math.max(1, (int)(zoom * 1.5f));
+			int lw  = Math.max(1, (int)(view.zoom * 1.5f));
 
 			// Elbow: parent down → horizontal → child up
 			int midY = (y1 + y2) / 2;
@@ -1043,21 +1023,21 @@ public class SkillTreeScreen extends Screen {
 			// ── degree-locked overlay: dark fill + black "?" ──
 			if (degreeLocked) {
 				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
-				if (zoom >= 0.5f) {
+				if (view.zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
 				continue; // skip normal text rendering for degree-locked nodes
 			}
 
 			// ── icon texture, icon item, or text (only when zoomed in enough) ──
-			if (zoom >= 0.5f) {
+			if (view.zoom >= 0.5f) {
 				ResourceLocation iconTex = sp.getIconTexture();
 				if (iconTex != null) {
-					renderScaledTexture(gfx, iconTex, nx, ny, hn);
+					ScreenDrawUtils.renderScaledTexture(gfx, iconTex, nx, ny, hn);
 				} else {
 					ItemStack iconStack = sp.getIconItem();
 					if (iconStack != null && !iconStack.isEmpty()) {
-						renderScaledItem(gfx, iconStack, nx, ny, hn);
+						ScreenDrawUtils.renderScaledItem(gfx , iconStack, nx, ny, hn);
 					} else {
 						String ini = getSkillInitial(sp);
 						int textCol = sp.getState() == EnumSkillStates.UNLOCKED
@@ -1154,7 +1134,7 @@ public class SkillTreeScreen extends Screen {
 
 	private void drawManipConnections(GuiGraphics gfx) {
 		int hn = halfNode();
-		int lw = Math.max(1, (int)(zoom * 1.5f));
+		int lw = Math.max(1, (int)(view.zoom * 1.5f));
 
 		for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
 			int[] childPos = manipPositions.get(entry);
@@ -1254,6 +1234,15 @@ public class SkillTreeScreen extends Screen {
 				borderColor = 0xFF000000 | (dr << 16) | (dg << 8) | db;
 			}
 
+			// ── Selection highlight (bright pulsing glow when selected) ──
+			boolean isSelected = entry == selectedManipEntry;
+			if (isSelected) {
+				float selPulse = 0.5f + 0.5f * Mth.sin(time * 3.0f);
+				int selAlpha = (int)(55 * selPulse);
+				int selColor = (selAlpha << 24) | (tendR << 16) | (tendG << 8) | tendB;
+				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 5, selColor);
+			}
+
 			// ── Fill ──
 			int fill = known && !rankLocked ? COL_NODE_BG : 0xCC0D0303;
 			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, fill);
@@ -1264,17 +1253,17 @@ public class SkillTreeScreen extends Screen {
 			// ── Rank-locked overlay: dark fill + "?" (mirrors skill degree-lock) ──
 			if (rankLocked) {
 				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn - 1, 0xBB000000);
-				if (zoom >= 0.5f) {
+				if (view.zoom >= 0.5f) {
 					gfx.drawCenteredString(font, "?", nx, ny - 4, 0xFF111111);
 				}
 				continue; // skip normal text rendering for rank-locked nodes
 			}
 
 			// ── Memory item icon or type symbol + name ──
-			if (zoom >= 0.5f) {
+			if (view.zoom >= 0.5f) {
 				ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
 				if (memoryStack != null && !memoryStack.isEmpty()) {
-					renderScaledItem(gfx, memoryStack, nx, ny, hn);
+					ScreenDrawUtils.renderScaledItem(gfx, memoryStack, nx, ny, hn);
 				} else {
 					String sym = "?";
 					if (manip != null) {
@@ -1290,11 +1279,11 @@ public class SkillTreeScreen extends Screen {
 				}
 
 				// Name below node (word-wrap to avoid overlapping neighbours)
-				if (manip != null && zoom >= 0.7f) {
+				if (manip != null && view.zoom >= 0.7f) {
 					String label = HLTextUtils.toProperCase(manip.getName().replace("_", " "));
 					int labelCol = known ? (0xFF000000 | (tendR << 16) | (tendG << 8) | tendB) : 0xFF444444;
-					int maxLabelW = Math.max(20, (int)(NODE_GAP_X * zoom) - 4);
-					List<String> lines = wrapText(label, maxLabelW);
+					int maxLabelW = Math.max(20, (int)(NODE_GAP_X * view.zoom) - 4);
+					List<String> lines =ScreenDrawUtils.wrapText(font, label, maxLabelW);
 					int ly = ny + hn + 3;
 					for (String line : lines) {
 						gfx.drawCenteredString(font, line, nx, ly, labelCol);
@@ -1392,31 +1381,184 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
+	//  Manipulation info panel (right side, shown when a node is selected)
+	// ────────────────────────────────────────────────────────────
+
+	/**
+	 * Draws the detail panel for the selected manipulation node on the right
+	 * side of the screen. Shows the manipulation's stats and, if a corresponding
+	 * BloodMemoryItem exists, its Memory Weaving recipe.
+	 */
+	private void drawManipInfoPanel(GuiGraphics gfx, ManipulationTreeEntry entry) {
+		BloodManipulation manip = entry.resolve();
+		if (manip == null) return;
+
+		boolean known = knownManipNames.contains(entry.getManipName());
+		boolean rankLocked = isManipRankLocked(manip);
+
+		// ── Tendency colour ──
+		ParticleColor pc = manip.getTend().getColor();
+		int tendR = (int) pc.getRed();
+		int tendG = (int) pc.getGreen();
+		int tendB = (int) pc.getBlue();
+		int tendCol = 0xFF000000 | (tendR << 16) | (tendG << 8) | tendB;
+
+		// ── Panel geometry ──
+		int panelW = 170;
+		int panelX = guiLeft + guiWidth - panelW - 8;
+		int panelY = guiTop + 30;
+		int maxW = panelW - 16;
+		int lineH = 11;
+
+		// ── Pre-compute name wrapping ──
+		String name;
+		if (rankLocked) {
+			name = "???";
+		} else {
+			name = HLTextUtils.toProperCase(manip.getName().replace("_", " "));
+		}
+		List<String> nameLines = ScreenDrawUtils.wrapText(font, name, maxW - 20);
+		int nameRowH = Math.max(22, nameLines.size() * 10 + 4);
+
+		// ── Look up the Memory Weaving recipe for this manipulation's memory item ──
+		ItemStack memoryStack = manipMemoryItems.get(entry.getManipName());
+		RecipeLookup.FoundRecipe foundRecipe = (memoryStack != null && !memoryStack.isEmpty())
+				? RecipeLookup.find(memoryStack) : null;
+		int recipeH = MiniRecipeRenderer.estimateHeight(foundRecipe);
+		int recipeSection = recipeH > 0 ? recipeH + 12 : 0;
+
+		// ── Total panel height ──
+		int statsH = 0;
+		if (!rankLocked) {
+			statsH += lineH;       // known/unknown
+			statsH += lineH;       // type
+			statsH += lineH;       // rank
+			statsH += lineH;       // tendency
+			statsH += lineH;       // blood cost
+			statsH += lineH;       // section
+			if (manip.getCooldownTicks() > 0) statsH += lineH; // cooldown
+		} else {
+			statsH += lineH * 2;   // locked message
+		}
+		int panelH = 6 + nameRowH + 1 + 5 + statsH + recipeSection + 8;
+
+		// ── Background ──
+		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD1A0505);
+
+		// ── Border ──
+		ScreenDrawUtils.drawSimpleBorder(gfx, panelX, panelY, panelW, panelH, tendCol);
+
+		int tx = panelX + 6;
+		int ty = panelY + 6;
+
+		// ── Icon + name row ──
+		if (memoryStack != null && !memoryStack.isEmpty()) {
+			gfx.renderItem(memoryStack, tx, ty);
+		}
+		int nameCol = rankLocked ? 0xFF555555 : tendCol;
+		for (int li = 0; li < nameLines.size(); li++) {
+			int nx = li == 0 ? tx + 20 : tx + 4;
+			gfx.drawString(font,
+					Component.literal(nameLines.get(li))
+							.withStyle(s -> s.withColor(nameCol).withBold(true)),
+					nx, ty + 4 + li * 10, 0, false);
+		}
+		ty += nameRowH;
+
+		// ── Divider ──
+		gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
+		ty += 5;
+
+		if (rankLocked) {
+			// Locked message
+			EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(manipMinDegree(manip.getRank()));
+			String degreeName = needed != null ? needed.getTitle() : ("Degree " + manipMinDegree(manip.getRank()));
+			gfx.drawString(font, "Locked", tx, ty, 0xFF555555, false);
+			ty += lineH;
+			gfx.drawString(font, "Requires: " + degreeName, tx, ty, 0xFFAA4444, false);
+			ty += lineH;
+		} else {
+			// Known / Unknown
+			String statusStr = known ? "Known" : "Unknown";
+			int statusCol = known ? 0xFF44AA44 : 0xFFAA4444;
+			gfx.drawString(font, statusStr, tx, ty, statusCol, false);
+			ty += lineH;
+
+			// Type
+			gfx.drawString(font, Component.literal("Type: ")
+							.withStyle(s -> s.withColor(0xFF888888))
+							.append(Component.literal(HLTextUtils.toProperCase(manip.getType().name()))
+									.withStyle(s -> s.withColor(0xFFCCCCCC))),
+					tx, ty, 0, false);
+			ty += lineH;
+
+			// Rank
+			gfx.drawString(font, Component.literal("Rank: ")
+							.withStyle(s -> s.withColor(0xFF888888))
+							.append(Component.literal(HLTextUtils.toProperCase(manip.getRank().name()))
+									.withStyle(s -> s.withColor(0xFFCCCCCC))),
+					tx, ty, 0, false);
+			ty += lineH;
+
+			// Tendency
+			gfx.drawString(font, Component.literal("Tendency: ")
+							.withStyle(s -> s.withColor(0xFF888888))
+							.append(Component.literal(HLTextUtils.toProperCase(manip.getTend().name()))
+									.withStyle(s -> s.withColor(tendCol))),
+					tx, ty, 0, false);
+			ty += lineH;
+
+			// Blood cost
+			gfx.drawString(font, Component.literal("Blood Cost: ")
+							.withStyle(s -> s.withColor(0xFF888888))
+							.append(Component.literal((int) manip.getCost() + " mL")
+									.withStyle(s -> s.withColor(0xFFAA4444))),
+					tx, ty, 0, false);
+			ty += lineH;
+
+			// Vein section
+			gfx.drawString(font, Component.literal("Section: ")
+							.withStyle(s -> s.withColor(0xFF888888))
+							.append(Component.literal(HLTextUtils.toProperCase(manip.getSection().name()))
+									.withStyle(s -> s.withColor(0xFFAAAAAA))),
+					tx, ty, 0, false);
+			ty += lineH;
+
+			// Cooldown (if any)
+			if (manip.getCooldownTicks() > 0) {
+				float seconds = manip.getCooldownTicks() / 20f;
+				gfx.drawString(font, Component.literal("Cooldown: ")
+								.withStyle(s -> s.withColor(0xFF888888))
+								.append(Component.literal(String.format("%.1fs", seconds))
+										.withStyle(s -> s.withColor(0xFFAAAA88))),
+						tx, ty, 0, false);
+				ty += lineH;
+			}
+		}
+
+		// ── Memory Weaving recipe preview ──
+		if (foundRecipe != null) {
+			ty += 3;
+			gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
+			ty += 4;
+			MiniRecipeRenderer.draw(gfx, font, foundRecipe, tx, ty, maxW, tendCol, MiniRecipeRenderer.BLOOD);
+		}
+	}
+
+	// ────────────────────────────────────────────────────────────
 	//  Home button (top-left corner of the GUI)
 	// ────────────────────────────────────────────────────────────
 
 	private void drawHomeButton(GuiGraphics gfx, int mouseX, int mouseY) {
 		int bx = guiLeft + HOME_BTN_PAD;
 		int by = guiTop + HOME_BTN_PAD;
-		int bs = HOME_BTN_SIZE;
 		boolean hovered = isOverHomeButton(mouseX, mouseY);
 
-		// Background
-		int bg = hovered ? 0xDD1A0505 : 0x99120303;
-		gfx.fill(bx, by, bx + bs, by + bs, bg);
+		ScreenDrawUtils.drawHomeButton(gfx, font, bx, by, HOME_BTN_SIZE, hovered,
+				0xDD1A0505, 0x99120303,   // hoverBg, idleBg
+				0xFFCC3333, 0xFF444444,   // hoverBorder, idleBorder
+				0xFFFFAAAA, 0xFF888888);  // hoverText, idleText
 
-		// Border
-		int bc = hovered ? 0xFFCC3333 : 0xFF444444;
-		gfx.fill(bx, by, bx + bs, by + 1, bc);
-		gfx.fill(bx, by + bs - 1, bx + bs, by + bs, bc);
-		gfx.fill(bx, by, bx + 1, by + bs, bc);
-		gfx.fill(bx + bs - 1, by, bx + bs, by + bs, bc);
-
-		// House icon — draw a simple ⌂ symbol centered in the button
-		int textCol = hovered ? 0xFFFFAAAA : 0xFF888888;
-		gfx.drawCenteredString(font, "\u2302", bx + bs / 2, by + (bs - 8) / 2, textCol);
-
-		// Tooltip on hover
 		if (hovered) {
 			gfx.renderTooltip(font, Component.literal("Return to Center"), mouseX, mouseY);
 		}
@@ -1426,60 +1568,25 @@ public class SkillTreeScreen extends Screen {
 	//  Tabs (top-right corner of the GUI)
 	// ────────────────────────────────────────────────────────────
 
-	private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
-		int x = guiLeft + guiWidth - TAB_PAD;
-		int y = guiTop + TAB_PAD;
-
-		// Draw tabs right-to-left so the first tab is rightmost
-		for (int i = Tab.values().length - 1; i >= 0; i--) {
-			Tab tab = Tab.values()[i];
-			int tw = font.width(tab.label) + 10;
-			int tx = x - tw;
-
-			boolean active = (tab == activeTab);
-			boolean hovered = mouseX >= tx && mouseX <= tx + tw
-					&& mouseY >= y && mouseY <= y + TAB_HEIGHT;
-
-			// Background
-			int bg = active ? 0xDD1A0505 : (hovered ? 0xBB180404 : 0x99120303);
-			gfx.fill(tx, y, tx + tw, y + TAB_HEIGHT, bg);
-
-			// Border
-			int bc = active ? tab.color : 0xFF444444;
-			gfx.fill(tx, y, tx + tw, y + 1, bc);               // top
-			gfx.fill(tx, y + TAB_HEIGHT - 1, tx + tw, y + TAB_HEIGHT, bc); // bottom
-			gfx.fill(tx, y, tx + 1, y + TAB_HEIGHT, bc);        // left
-			gfx.fill(tx + tw - 1, y, tx + tw, y + TAB_HEIGHT, bc); // right
-
-			// Active tab: bright underline
-			if (active) {
-				gfx.fill(tx + 1, y + TAB_HEIGHT - 2, tx + tw - 1, y + TAB_HEIGHT - 1, tab.color);
-			}
-
-			// Label
-			int textCol = active ? tab.color : (hovered ? 0xFFAAAAAA : 0xFF777777);
-			gfx.drawCenteredString(font, tab.label, tx + tw / 2, y + (TAB_HEIGHT - 8) / 2, textCol);
-
-			x = tx - TAB_PAD;
+	/** Builds the tab descriptor list for the current state. */
+	private List<ScreenDrawUtils.TabDesc> buildTabDescs() {
+		List<ScreenDrawUtils.TabDesc> descs = new ArrayList<>();
+		for (Tab tab : Tab.values()) {
+			descs.add(new ScreenDrawUtils.TabDesc(tab.label, tab.color, tab == activeTab));
 		}
+		return descs;
+	}
+
+	private void drawTabs(GuiGraphics gfx, int mouseX, int mouseY) {
+		ScreenDrawUtils.drawTabs(gfx, font, buildTabDescs(),
+				guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mouseX, mouseY);
 	}
 
 	/** Returns the tab under the mouse, or null. */
 	private Tab tabUnder(double mx, double my) {
-		int x = guiLeft + guiWidth - TAB_PAD;
-		int y = guiTop + TAB_PAD;
-
-		for (int i = Tab.values().length - 1; i >= 0; i--) {
-			Tab tab = Tab.values()[i];
-			int tw = font.width(tab.label) + 10;
-			int tx = x - tw;
-
-			if (mx >= tx && mx <= tx + tw && my >= y && my <= y + TAB_HEIGHT) {
-				return tab;
-			}
-			x = tx - TAB_PAD;
-		}
-		return null;
+		int idx = ScreenDrawUtils.tabIndexUnder(font, buildTabDescs(),
+				guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mx, my);
+		return idx >= 0 ? Tab.values()[idx] : null;
 	}
 
 	/** Returns true if the mouse is over the home button. */
@@ -1501,23 +1608,29 @@ public class SkillTreeScreen extends Screen {
 			return;
 		}
 
-		// ── Tier sidebar (left) ──
-		drawCraftingTierSidebar(gfx, mouseX, mouseY);
-
 		// ── Recipe content (right of sidebar) ──
 		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
 		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
 
 		if (selectedCraftingTier == null) {
+			// Push z so these text labels are in front of any residual depth writes.
+			gfx.pose().pushPose();
+			gfx.pose().translate(0, 0, 400);
+			drawCraftingTierSidebar(gfx, mouseX, mouseY);
 			gfx.drawCenteredString(font, "Select a tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
 			return;
 		}
 
 		List<BloodStructureRecipe> tierRecipes = craftingByTier.getOrDefault(selectedCraftingTier, List.of());
 		if (tierRecipes.isEmpty()) {
+			gfx.pose().pushPose();
+			gfx.pose().translate(0, 0, 400);
+			drawCraftingTierSidebar(gfx, mouseX, mouseY);
 			gfx.drawCenteredString(font, "No recipes in this tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
 			return;
 		}
 		if (selectedCraftingIndexInTier >= tierRecipes.size()) selectedCraftingIndexInTier = 0;
@@ -1529,9 +1642,16 @@ public class SkillTreeScreen extends Screen {
 		int infoX = contentX + modelAreaW + 10;
 		int infoW = contentW - modelAreaW - 20;
 
-		// ── 3D multiblock preview ──
+		// ── 3D multiblock preview (rendered first, at z=300) ──
 		drawCraftingModel(gfx, recipe, modelX + 10, guiTop + 30,
 				modelAreaW - 20, guiHeight - 60);
+
+		// Push z above the 3D model (z=300) so ALL 2D overlays always draw on top of the blocks.
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 400);
+
+		// ── Tier sidebar (left) ──
+		drawCraftingTierSidebar(gfx, mouseX, mouseY);
 
 		// ── Layer buttons ──
 		drawLayerButtons(gfx, mouseX, mouseY, Tab.CRAFTING, craftingVisibleLayer, craftingMaxLayer);
@@ -1542,6 +1662,8 @@ public class SkillTreeScreen extends Screen {
 		// ── Drag hint ──
 		gfx.drawCenteredString(font, "Drag to rotate",
 				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
+
+		gfx.pose().popPose();
 	}
 
 	/**
@@ -1777,13 +1899,16 @@ public class SkillTreeScreen extends Screen {
 		int y = panelY;
 		int lineH = 12;
 
-		// ── Recipe name (derived from ID) ──
+		// ── Recipe name (derived from ID) — word-wrapped ──
 		String namePath = recipe.getId().getPath();
 		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
 		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
-		gfx.drawString(font, Component.literal(name)
-				.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
-		y += lineH + 4;
+		for (String titleLine : ScreenDrawUtils.wrapText(font,name, panelW)) {
+			gfx.drawString(font, Component.literal(titleLine)
+					.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
+			y += lineH;
+		}
+		y += 4;
 
 		// ── Separator line ──
 		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442222);
@@ -1802,9 +1927,13 @@ public class SkillTreeScreen extends Screen {
 
 			gfx.renderItem(heldItem, panelX, y);
 			gfx.renderItemDecorations(font, heldItem, panelX, y);
-			gfx.drawString(font, heldItem.getHoverName().copy()
-					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
-			y += 20;
+			List<String> heldLines = ScreenDrawUtils.wrapText(font, heldItem.getHoverName().getString(), panelW - 20);
+			for (int li = 0; li < heldLines.size(); li++) {
+				int ix = li == 0 ? panelX + 20 : panelX + 4;
+				gfx.drawString(font, Component.literal(heldLines.get(li))
+						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+			}
+			y += Math.max(20, heldLines.size() * lineH + 4);
 		}
 
 		// ── Hit block ──
@@ -1816,9 +1945,13 @@ public class SkillTreeScreen extends Screen {
 			ItemStack hitStack = new ItemStack(hitBlock);
 			if (!hitStack.isEmpty()) {
 				gfx.renderItem(hitStack, panelX, y);
-				gfx.drawString(font, hitStack.getHoverName().copy()
-						.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
-				y += 20;
+				List<String> hitLines =ScreenDrawUtils.wrapText(font, hitStack.getHoverName().getString(), panelW - 20);
+				for (int li = 0; li < hitLines.size(); li++) {
+					int ix = li == 0 ? panelX + 20 : panelX + 4;
+					gfx.drawString(font, Component.literal(hitLines.get(li))
+							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+				}
+				y += Math.max(20, hitLines.size() * lineH + 4);
 			}
 		}
 
@@ -1832,9 +1965,13 @@ public class SkillTreeScreen extends Screen {
 
 			gfx.renderItem(result, panelX, y);
 			gfx.renderItemDecorations(font, result, panelX, y);
-			gfx.drawString(font, result.getHoverName().copy()
-					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
-			y += 20;
+			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
+			for (int li = 0; li < resultLines.size(); li++) {
+				int ix = li == 0 ? panelX + 20 : panelX + 4;
+				gfx.drawString(font, Component.literal(resultLines.get(li))
+						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+			}
+			y += Math.max(20, resultLines.size() * lineH + 4);
 		}
 
 		y += 6;
@@ -1854,10 +1991,13 @@ public class SkillTreeScreen extends Screen {
 					ItemStack blockStack = new ItemStack(block);
 					if (!blockStack.isEmpty()) {
 						gfx.renderItem(blockStack, panelX + 2, y);
-						gfx.drawString(font, Component.literal(" x" + count + "  ")
-								.append(blockStack.getHoverName().copy())
-								.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4, 0);
-						y += 18;
+						String countPrefix = " x" + count + "  ";
+						List<String> matLines =ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+						for (int li = 0; li < matLines.size(); li++) {
+							gfx.drawString(font, Component.literal(matLines.get(li))
+									.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4 + li * lineH, 0);
+						}
+						y += Math.max(18, matLines.size() * lineH + 4);
 					}
 				}
 			}
@@ -1877,23 +2017,28 @@ public class SkillTreeScreen extends Screen {
 			return;
 		}
 
-		// ── Tier sidebar (left) ──
-		drawRiteTierSidebar(gfx, mouseX, mouseY);
-
 		// ── Recipe content (right of sidebar) ──
 		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
 		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
 
 		if (selectedRiteTier == null) {
+			gfx.pose().pushPose();
+			gfx.pose().translate(0, 0, 400);
+			drawRiteTierSidebar(gfx, mouseX, mouseY);
 			gfx.drawCenteredString(font, "Select a tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
 			return;
 		}
 
 		List<CardinalRiteRecipe> tierRites = ritesByTier.getOrDefault(selectedRiteTier, List.of());
 		if (tierRites.isEmpty()) {
+			gfx.pose().pushPose();
+			gfx.pose().translate(0, 0, 400);
+			drawRiteTierSidebar(gfx, mouseX, mouseY);
 			gfx.drawCenteredString(font, "No rites in this tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
 			return;
 		}
 		if (selectedRiteIndexInTier >= tierRites.size()) selectedRiteIndexInTier = 0;
@@ -1905,9 +2050,16 @@ public class SkillTreeScreen extends Screen {
 		int infoX = contentX + modelAreaW + 10;
 		int infoW = contentW - modelAreaW - 20;
 
-		// ── 3D multiblock preview ──
+		// ── 3D multiblock preview (rendered first, at z=300) ──
 		drawRiteModel(gfx, rite, modelX + 10, guiTop + 30,
 				modelAreaW - 20, guiHeight - 60, partial);
+
+		// Push z above the 3D model (z=300) so ALL 2D overlays always draw on top of the blocks.
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 400);
+
+		// ── Tier sidebar (left) ──
+		drawRiteTierSidebar(gfx, mouseX, mouseY);
 
 		// ── Layer buttons ──
 		drawLayerButtons(gfx, mouseX, mouseY, Tab.RITES, riteVisibleLayer, riteMaxLayer);
@@ -1918,6 +2070,8 @@ public class SkillTreeScreen extends Screen {
 		// ── Drag hint ──
 		gfx.drawCenteredString(font, "Drag to rotate",
 				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
+
+		gfx.pose().popPose();
 	}
 
 	/**
@@ -2163,9 +2317,13 @@ public class SkillTreeScreen extends Screen {
 			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
 			name = HLTextUtils.toProperCase(ritePath.replace("_", " "));
 		}
-		gfx.drawString(font, Component.literal(name)
-				.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
-		y += lineH + 4;
+		// ── Rite name — word-wrapped ──
+		for (String titleLine :ScreenDrawUtils.wrapText(font, name, panelW)) {
+			gfx.drawString(font, Component.literal(titleLine)
+					.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
+			y += lineH;
+		}
+		y += 4;
 
 		// ── Separator line ──
 		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442244);
@@ -2175,7 +2333,7 @@ public class SkillTreeScreen extends Screen {
 		String desc = rite.getRiteDescription();
 		if (desc != null && !desc.isEmpty()) {
 			// Word-wrap the description
-			List<String> lines = wrapText(desc, panelW);
+			List<String> lines = ScreenDrawUtils.wrapText(font, desc, panelW);
 			for (String line : lines) {
 				gfx.drawString(font, Component.literal(line)
 						.withStyle(s -> s.withColor(0x999999).withItalic(true)), panelX, y, 0);
@@ -2209,14 +2367,15 @@ public class SkillTreeScreen extends Screen {
 			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
 			y += lineH;
 
-			// Render the item icon
 			gfx.renderItem(result, panelX, y);
 			gfx.renderItemDecorations(font, result, panelX, y);
-
-			// Item name next to the icon
-			gfx.drawString(font, result.getHoverName().copy()
-					.withStyle(s -> s.withColor(0xDDDDDD)), panelX + 20, y + 4, 0);
-			y += 20;
+			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
+			for (int li = 0; li < resultLines.size(); li++) {
+				int ix = li == 0 ? panelX + 20 : panelX + 4;
+				gfx.drawString(font, Component.literal(resultLines.get(li))
+						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+			}
+			y += Math.max(20, resultLines.size() * lineH + 4);
 		}
 
 		y += 6;
@@ -2233,36 +2392,20 @@ public class SkillTreeScreen extends Screen {
 					if (block == null || block == Blocks.AIR) continue;
 					int count = entry.getValue();
 
-					// Render block as item
 					ItemStack blockStack = new ItemStack(block);
 					if (!blockStack.isEmpty()) {
 						gfx.renderItem(blockStack, panelX + 2, y);
-						gfx.drawString(font, Component.literal(" x" + count + "  ")
-								.append(blockStack.getHoverName().copy())
-								.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4, 0);
-						y += 18;
+						String countPrefix = " x" + count + "  ";
+						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+						for (int li = 0; li < matLines.size(); li++) {
+							gfx.drawString(font, Component.literal(matLines.get(li))
+									.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4 + li * lineH, 0);
+						}
+						y += Math.max(18, matLines.size() * lineH + 4);
 					}
 				}
 			}
 		}
-	}
-
-	/** Simple word-wrap helper. */
-	private List<String> wrapText(String text, int maxWidth) {
-		List<String> lines = new ArrayList<>();
-		String[] words = text.split(" ");
-		StringBuilder current = new StringBuilder();
-		for (String word : words) {
-			if (current.length() > 0 && font.width(current + " " + word) > maxWidth) {
-				lines.add(current.toString());
-				current = new StringBuilder(word);
-			} else {
-				if (current.length() > 0) current.append(" ");
-				current.append(word);
-			}
-		}
-		if (current.length() > 0) lines.add(current.toString());
-		return lines;
 	}
 
 	/** Truncates text to fit within maxWidth, appending "..." if necessary. */
@@ -2477,28 +2620,17 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	/**
-	 * Draws the milestone drawer toggle tab — a small clickable arrow on the edge.
-	 * Matches the style from {@link UnstainedProgressScreen#drawSidebarToggleTab}.
+	 * Draws the milestone drawer toggle tab — delegates to the shared
+	 * {@link ScreenDrawUtils#drawSidebarToggleTab} with the blood-red theme.
 	 */
 	private void drawMilestoneToggleTab(GuiGraphics gfx, int tabX, int tabY,
 										boolean expanded, boolean hovered) {
-		int tw = MILESTONE_TAB_W;
-		int th = MILESTONE_TAB_H;
-
-		// Background — brighter when hovered
-		gfx.fill(tabX, tabY, tabX + tw, tabY + th, hovered ? 0xDD1A0505 : 0xCC120303);
-
-		// Border — highlight on hover
-		int bc = hovered ? 0xFFCC4444 : 0xFF332222;
-		gfx.fill(tabX, tabY, tabX + tw, tabY + 1, bc);
-		gfx.fill(tabX, tabY + th - 1, tabX + tw, tabY + th, bc);
-		gfx.fill(tabX, tabY, tabX + 1, tabY + th, bc);
-		gfx.fill(tabX + tw - 1, tabY, tabX + tw, tabY + th, bc);
-
-		// Arrow character: ◀ when expanded (collapse), ▶ when collapsed (expand)
-		String arrow = expanded ? "\u25C0" : "\u25B6";
-		int arrowCol = hovered ? 0xFFFFAAAA : 0xFF886666;
-		gfx.drawCenteredString(font, arrow, tabX + tw / 2, tabY + th / 2 - 4, arrowCol);
+		ScreenDrawUtils.drawSidebarToggleTab(gfx, font,
+				tabX, tabY, MILESTONE_TAB_W, MILESTONE_TAB_H,
+				expanded, hovered,
+				0xDD1A0505, 0xCC120303,  // hoverBg, idleBg
+				0xFFCC4444, 0xFF332222,  // hoverBc, idleBc
+				0xFFFFAAAA, 0xFF886666); // hoverArrow, idleArrow
 	}
 
 	/** Hit test for the milestone drawer toggle tab. */
@@ -2531,246 +2663,53 @@ public class SkillTreeScreen extends Screen {
 	//  Materials & Processes tab — node grid
 	// ────────────────────────────────────────────────────────────
 
-	/** Gap between material nodes in the grid (content-space). */
-	private static final int MAT_GAP_X = 70;
-	private static final int MAT_GAP_Y = 60;
-	private static final int MAT_COLS  = 5;
-
 	/**
 	 * Builds a grid layout of material nodes grouped by category.
 	 * Each category starts a new row block; nodes flow left-to-right.
 	 */
 	private void buildMaterialLayout() {
-		materialPositions.clear();
-		materialContentW = 0;
-		materialContentH = 0;
-
 		List<MaterialEntry> entries = MaterialsData.getBloodEntries();
-		if (entries.isEmpty()) return;
-
-		// Group entries by category, preserving insertion order
-		java.util.LinkedHashMap<String, List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
-		for (MaterialEntry e : entries) {
-			byCategory.computeIfAbsent(e.category(), k -> new ArrayList<>()).add(e);
-		}
-
-		int y = 30; // start below top margin
-		for (var catEntry : byCategory.entrySet()) {
-			y += 20; // category header space
-			List<MaterialEntry> catItems = catEntry.getValue();
-			for (int i = 0; i < catItems.size(); i++) {
-				int col = i % MAT_COLS;
-				int row = i / MAT_COLS;
-				int x = 20 + col * MAT_GAP_X;
-				int ny = y + row * MAT_GAP_Y;
-				materialPositions.put(catItems.get(i), new int[]{x, ny});
-				materialContentW = Math.max(materialContentW, x + NODE_SIZE + 20);
-				materialContentH = Math.max(materialContentH, ny + NODE_SIZE + 24);
-			}
-			int rows = (catItems.size() + MAT_COLS - 1) / MAT_COLS;
-			y += rows * MAT_GAP_Y + 10;
-		}
+		int[] bounds = new int[2];
+		MaterialsTabView.buildLayout(entries, materialPositions, bounds, NODE_SIZE);
+		materialContentW = bounds[0];
+		materialContentH = bounds[1];
 	}
 
 	/** Draw material category headers and nodes. */
 	private void drawMaterialNodes(GuiGraphics gfx) {
-		float time = System.nanoTime() / 1_000_000_000f;
-		int hn = halfNode();
-
-		// Draw category headers
-		List<MaterialEntry> entries = MaterialsData.getBloodEntries();
-		java.util.LinkedHashMap<String, List<MaterialEntry>> byCategory = new java.util.LinkedHashMap<>();
-		for (MaterialEntry e : entries) {
-			byCategory.computeIfAbsent(e.category(), k -> new ArrayList<>()).add(e);
-		}
-
-		int catY = 30;
-		for (var catEntry : byCategory.entrySet()) {
-			int scrY = sy(catY);
-			int scrX = sx(20);
-			gfx.drawString(font, Component.literal(catEntry.getKey())
-					.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)),
-					scrX, scrY, 0, false);
-			catY += 20;
-			int rows = (catEntry.getValue().size() + MAT_COLS - 1) / MAT_COLS;
-			catY += rows * MAT_GAP_Y + 10;
-		}
-
-		// Draw nodes
-		for (var e : materialPositions.entrySet()) {
-			MaterialEntry mat = e.getKey();
-			int[] pos = e.getValue();
-			int nx = sx(pos[0]);
-			int ny = sy(pos[1]);
-
-			EnumNodeShape shape = EnumNodeShape.SQUARE;
-			boolean isSelected = mat == selectedMaterial;
-
-			// Glow for selected node
-			if (isSelected) {
-				float pulse = 0.5f + 0.5f * Mth.sin(time * 2.5f);
-				int ga = (int)(45 * pulse);
-				NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn + 4,
-						(ga << 24) | 0x00CC6644);
-			}
-
-			// Fill
-			NodeShapeRenderer.drawFill(gfx, shape, nx, ny, hn, COL_NODE_BG);
-
-			// Border
-			int border = isSelected ? Tab.MATERIALS.color : 0xFFBB7733;
-			NodeShapeRenderer.drawOutline(gfx, shape, nx, ny, hn, border);
-
-			// Icon
-			if (zoom >= 0.5f) {
-				ItemStack stack = mat.iconStack().get();
-				if (stack != null && !stack.isEmpty()) {
-					renderScaledItem(gfx, stack, nx, ny, hn);
-				}
-			}
-		}
-
-		// If a material is selected, draw info panel on the right side
-		if (selectedMaterial != null) {
-			drawMaterialInfoPanel(gfx, selectedMaterial);
-		}
+		MaterialsTabView.drawNodes(gfx, font,
+				MaterialsData.getBloodEntries(), materialPositions,
+				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.SQUARE,
+				Tab.MATERIALS.color, selectedMaterial,
+				0x00CC6644, 0xFFBB7733);
 	}
 
 	/** Draws an info panel for the selected material on the right side of the screen. */
 	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
-		int panelW = 160;
-		int panelX = guiLeft + guiWidth - panelW - 8;
-		int panelY = guiTop + 30;
-
-		// Pre-calculate panel height based on content
-		List<String> descLines = wrapText(mat.description(), panelW - 16);
-		int panelH = 6 + 22 + 12 + 1 + 5 + descLines.size() * 10 + (mat.hasRecipe() ? 18 : 0) + 8;
-
-		// Background
-		gfx.fill(panelX, panelY, panelX + panelW, panelY + panelH, 0xDD1A0505);
-
-		// Border
-		int bc = Tab.MATERIALS.color;
-		gfx.fill(panelX, panelY, panelX + panelW, panelY + 1, bc);
-		gfx.fill(panelX, panelY + panelH - 1, panelX + panelW, panelY + panelH, bc);
-		gfx.fill(panelX, panelY, panelX + 1, panelY + panelH, bc);
-		gfx.fill(panelX + panelW - 1, panelY, panelX + panelW, panelY + panelH, bc);
-
-		int tx = panelX + 6;
-		int ty = panelY + 6;
-
-		// Item icon + name
-		ItemStack stack = mat.iconStack().get();
-		if (stack != null && !stack.isEmpty()) {
-			gfx.renderItem(stack, tx, ty);
-		}
-		gfx.drawString(font, Component.literal(mat.displayName())
-				.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)),
-				tx + 20, ty + 4, 0, false);
-		ty += 22;
-
-		// Category
-		gfx.drawString(font, Component.literal(mat.category())
-				.withStyle(s -> s.withColor(0xFF888888).withItalic(true)),
-				tx, ty, 0, false);
-		ty += 12;
-
-		// Divider
-		gfx.fill(tx, ty, panelX + panelW - 6, ty + 1, 0xFF442222);
-		ty += 5;
-
-		// Description (word-wrapped)
-		for (String line : descLines) {
-			gfx.drawString(font, line, tx, ty, 0xFF999999, false);
-			ty += 10;
-		}
-
-		// Recipe hint
-		if (mat.hasRecipe()) {
-			ty += 4;
-			gfx.drawString(font, Component.literal("\u2726 Has crafting recipe")
-					.withStyle(s -> s.withColor(0xFFBB8833).withItalic(true)),
-					tx, ty, 0, false);
-		}
+		MaterialsTabView.drawInfoPanel(gfx, font, mat,
+				guiLeft, guiTop, guiWidth,
+				Tab.MATERIALS.color, 0xFF442222, 0xDD1A0505,
+				MiniRecipeRenderer.BLOOD);
 	}
 
 	/** Tooltip for material nodes on hover. */
 	private void drawMaterialTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
-		if (!insideGui(mouseX, mouseY)) return;
-		int hn = halfNode();
-
-		for (var e : materialPositions.entrySet()) {
-			MaterialEntry mat = e.getKey();
-			int[] pos = e.getValue();
-			int nx = sx(pos[0]), ny = sy(pos[1]);
-
-			if (!NodeShapeRenderer.isInside(EnumNodeShape.SQUARE, mouseX, mouseY, nx, ny, hn)) continue;
-
-			List<Component> tip = new ArrayList<>();
-			tip.add(Component.literal(mat.displayName())
-					.withStyle(s -> s.withColor(Tab.MATERIALS.color).withBold(true)));
-			tip.add(Component.literal(mat.category())
-					.withStyle(s -> s.withColor(0xFF888888).withItalic(true)));
-			tip.add(Component.literal(mat.description())
-					.withStyle(s -> s.withColor(0xFF999999)));
-			if (mat.hasRecipe()) {
-				tip.add(Component.literal("Click to view details")
-						.withStyle(s -> s.withColor(0xFFBB8833)));
-			}
-
-			gfx.renderTooltip(font, tip, Optional.empty(), mouseX, mouseY);
-			break;
-		}
+		MaterialsTabView.drawTooltip(gfx, font, materialPositions,
+				view, guiLeft, guiTop, guiWidth, guiHeight, NODE_SIZE,
+				EnumNodeShape.SQUARE, Tab.MATERIALS.color, 0xFFBB8833,
+				mouseX, mouseY);
 	}
 
 	/** Returns the material entry under the mouse, or null. */
 	private MaterialEntry materialNodeUnder(double mx, double my) {
-		int hn = halfNode();
-		for (var e : materialPositions.entrySet()) {
-			int[] p = e.getValue();
-			int nx = sx(p[0]), ny = sy(p[1]);
-			if (NodeShapeRenderer.isInside(EnumNodeShape.SQUARE, mx, my, nx, ny, hn))
-				return e.getKey();
-		}
-		return null;
+		return MaterialsTabView.nodeUnder(materialPositions,
+				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.SQUARE, mx, my);
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Helpers
+	//  Helpers — delegate to ScreenDrawUtils
 	// ────────────────────────────────────────────────────────────
 
-	/** Padding pixels around the item icon inside a node. */
-	private static final int ITEM_PADDING = 4;
-
-	/**
-	 * Renders an ItemStack centred inside a node, scaled to fit within the node bounds.
-	 * Items render at 16x16 by default; this scales them to fit (2*hn - ITEM_PADDING) pixels.
-	 */
-	private void renderScaledItem(GuiGraphics gfx, ItemStack stack, int centerX, int centerY, int halfNodeSize) {
-		float nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
-		float itemScale = nodeInner / 16.0f;
-		PoseStack pose = gfx.pose();
-		pose.pushPose();
-		pose.translate(centerX - nodeInner / 2.0f, centerY - nodeInner / 2.0f, 0);
-		pose.scale(itemScale, itemScale, 1);
-		gfx.renderItem(stack, 0, 0);
-		pose.popPose();
-	}
-
-	/**
-	 * Renders a texture from any ResourceLocation centred inside a node, scaled to fit
-	 * within the node bounds. The entire texture is sampled (UV 0→1) and rendered at the
-	 * node's inner size, so it works for textures of any pixel dimensions.
-	 */
-	private void renderScaledTexture(GuiGraphics gfx, ResourceLocation texture, int centerX, int centerY, int halfNodeSize) {
-		int nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
-		int x = centerX - nodeInner / 2;
-		int y = centerY - nodeInner / 2;
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		gfx.blit(texture, x, y, 0, 0, nodeInner, nodeInner, nodeInner, nodeInner);
-		RenderSystem.disableBlend();
-	}
 
 	private static String getSkillInitial(SkillPoint sp) {
 		return switch (sp.getName()) {

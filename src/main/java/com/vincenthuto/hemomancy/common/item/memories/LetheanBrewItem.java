@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulatio
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
@@ -26,18 +27,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.network.PacketDistributor;
 
-public class LethianDewItem extends Item {
+public class LetheanBrewItem extends Item {
 
-	public LethianDewItem(Item.Properties p_42979_) {
-		super(p_42979_.stacksTo(16));
+	public LetheanBrewItem(Item.Properties p_42979_) {
+		super(p_42979_.stacksTo(1));
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Highly concentrated lethian dew"));
-		tooltip.add(Component.literal("Used to forget your selected manipulation"));
-		tooltip.add(Component.literal("\"Just a drop is all it takes...\""));
+		tooltip.add(Component.literal("Highly concentrated lethean dew"));
+		tooltip.add(Component.literal("Used to forget ALL your manipulations"));
+		tooltip.add(Component.literal("\"Dont Spill It...\""));
 	}
 
 	@Override
@@ -50,11 +51,8 @@ public class LethianDewItem extends Item {
 		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 				.orElseThrow(NullPointerException::new);
 
-		if (known.getKnownManips().containsKey(known.getSelectedManip())) {
-			known.getKnownManips().remove(known.getSelectedManip());
-		}
 		known.setSelectedManip(BloodManipulation.BLANK);
-
+		known.getKnownManips().clear();
 		if (!p_42985_.isClientSide) {
 			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 					new KnownManipulationServerPacket(known));
@@ -64,6 +62,16 @@ public class LethianDewItem extends Item {
 			player.awardStat(Stats.ITEM_USED.get(this));
 			if (!player.getAbilities().instabuild) {
 				p_42984_.shrink(1);
+			}
+		}
+
+		if (player == null || !player.getAbilities().instabuild) {
+			if (p_42984_.isEmpty()) {
+				return new ItemStack(HLItemInit.cured_clay_flask.get());
+			}
+
+			if (player != null) {
+				player.getInventory().add(new ItemStack(HLItemInit.cured_clay_flask.get()));
 			}
 		}
 
@@ -78,7 +86,7 @@ public class LethianDewItem extends Item {
 
 	@Override
 	public int getUseDuration(ItemStack p_43001_) {
-		return 16;
+		return 32;
 	}
 
 	@Override

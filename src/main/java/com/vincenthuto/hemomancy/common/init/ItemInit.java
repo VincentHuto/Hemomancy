@@ -19,8 +19,8 @@ import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.item.memories.BloodStainedStoneItem;
 import com.vincenthuto.hemomancy.common.item.memories.FerventHuskItem;
 import com.vincenthuto.hemomancy.common.item.memories.HematicMemoryItem;
-import com.vincenthuto.hemomancy.common.item.memories.LethianBrewItem;
-import com.vincenthuto.hemomancy.common.item.memories.LethianDewItem;
+import com.vincenthuto.hemomancy.common.item.memories.LetheanBrewItem;
+import com.vincenthuto.hemomancy.common.item.memories.LetheanDewItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.BatMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.CentipedeMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ChitiniteMorphlingItem;
@@ -29,7 +29,6 @@ import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
 import com.vincenthuto.hemomancy.common.item.morphlings.LeechesMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MoleMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.MothMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.PestsMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
@@ -199,8 +198,7 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> cleansing_hemolymph = SPECIALITEMS.register("cleansing_hemolymph",
 			() -> new CleansingHemolymphItem(new Item.Properties()));
-	public static final RegistryObject<Item> blood_rock = BASEITEMS.register("blood_rock",
-			() -> new Item(new Item.Properties()));
+
 	public static final RegistryObject<Item> vivianite_cluster = BASEITEMS.register("vivianite_cluster",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> vivianite_scalpel = BASEITEMS.register("vivianite_scalpel",
@@ -231,21 +229,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> neutralizing_gasket = BASEITEMS.register("neutralizing_gasket",
 			() -> new Item(new Item.Properties()));
 
-	// Unstained — Our Lady of Lethe materials
-	public static final RegistryObject<Item> tears_of_lethe = BASEITEMS.register("tears_of_lethe",
-			() -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
-			() -> new Item(new Item.Properties().stacksTo(16)));
-	public static final RegistryObject<Item> silver_chalice = BASEITEMS.register("silver_chalice",
-			() -> new Item(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
-			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-	public static final RegistryObject<Item> lethe_icon = BASEITEMS.register("lethe_icon",
-			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-	public static final RegistryObject<Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
-			() -> new Item(new Item.Properties()));
-	public static final RegistryObject<Item> lethean_extract = BASEITEMS.register("lethean_extract",
-			() -> new Item(new Item.Properties().stacksTo(16)));
+
 
 	// Enzymes
 	public static final RegistryObject<Item> vivacious_enzyme = BASEITEMS.register("vivacious_enzyme",
@@ -279,11 +263,27 @@ public class ItemInit {
 	public static final RegistryObject<Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
 			() -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
 
+	// Unstained — Our Lady of Lethe materials
+	public static final RegistryObject<Item> lethean_dew = BASEITEMS.register("lethean_dew",
+			() -> new LetheanDewItem(new Item.Properties()));
+	public static final RegistryObject<Item> lethean_brew = BASEITEMS.register("lethean_brew",
+			() -> new LetheanBrewItem(new Item.Properties()));
+	public static final RegistryObject<Item> tears_of_lethe = BASEITEMS.register("tears_of_lethe",
+			() -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
+			() -> new Item(new Item.Properties().stacksTo(16)));
+	public static final RegistryObject<Item> silver_chalice = BASEITEMS.register("silver_chalice",
+			() -> new Item(new Item.Properties().stacksTo(1)));
+	public static final RegistryObject<Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
+			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+	public static final RegistryObject<Item> lethe_icon = BASEITEMS.register("lethe_icon",
+			() -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+	public static final RegistryObject<Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> lethean_extract = BASEITEMS.register("lethean_extract",
+			() -> new Item(new Item.Properties().stacksTo(16)));
+
 	// Hematic Memories
-	public static final RegistryObject<Item> lethian_dew = BASEITEMS.register("lethian_dew",
-			() -> new LethianDewItem(new Item.Properties()));
-	public static final RegistryObject<Item> lethian_brew = BASEITEMS.register("lethian_brew",
-			() -> new LethianBrewItem(new Item.Properties()));
 	public static final RegistryObject<Item> fervent_husk = BASEITEMS.register("fervent_husk",
 			() -> new FerventHuskItem(new Item.Properties()));
 	public static final RegistryObject<Item> hematic_memory = BASEITEMS.register("hematic_memory",
@@ -429,12 +429,14 @@ public class ItemInit {
 			() -> new CurvedHornItem(EnumBloodGourdTiers.HORN));
 
 	// Flasks
+	public static final RegistryObject<Item> blood_rock = BASEITEMS
+			.register("blood_rock", () -> new BloodyFlaskItem(new Item.Properties(), 250));
 	public static final RegistryObject<Item> bloody_flask = BASEITEMS.register("bloody_flask",
-			() -> new BloodyFlaskItem(new Item.Properties(), 250));
-	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",
 			() -> new BloodyFlaskItem(new Item.Properties(), 2500));
-	public static final RegistryObject<Item> stabilized_sanguine_formation = BASEITEMS
-			.register("stabilized_sanguine_formation", () -> new BloodyFlaskItem(new Item.Properties(), 5000));
+	public static final RegistryObject<Item> bloody_jug = BASEITEMS.register("bloody_jug",
+			() -> new BloodyFlaskItem(new Item.Properties(), 5000));
+
+
 	public static final RegistryObject<Item> bloody_vial = SPECIALITEMS.register("bloody_vial",
 			() -> new BloodVialItem(new Item.Properties()));
 

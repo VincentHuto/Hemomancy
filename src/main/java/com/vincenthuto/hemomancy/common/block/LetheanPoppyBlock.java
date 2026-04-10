@@ -53,7 +53,7 @@ public class LetheanPoppyBlock extends FlowerBlock {
 			BlockHitResult hit) {
 		if (state.getValue(STATE) == BLOOMED) {
 			if (!level.isClientSide) {
-				popResource(level, pos, new ItemStack(ItemInit.lethian_dew.get()));
+				popResource(level, pos, new ItemStack(ItemInit.lethean_dew.get()));
 				level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
 				level.setBlock(pos, state.setValue(STATE, DORMANT), 2);
 			}

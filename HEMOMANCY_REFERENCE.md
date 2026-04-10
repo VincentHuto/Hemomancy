@@ -151,9 +151,9 @@ The Unstained revere a mysterious figure known only as **Our Lady of Lethe** (so
 Her origins are unknown — some Unstained texts suggest she is a being from before the fungal infection that birthed hemomancy, a guardian spirit of purity who was driven into hiding when blood magic first took root. Others believe she is a manifestation of the world's immune response to the alien fungus, a living antibody in humanoid form.
 
 **Connection to the Lethean Poppies:**
-The **Lethean Poppies** that grow across the world are said to bloom wherever Our Lady once walked. The dew they produce — **Lethian Dew** — carries her essence: the power of forgetting. Just as the mythological River Lethe washed away memories, the lethean poppies help players *forget* their blood manipulations, severing the ties that bind them to hemomancy. The Unstained believe that harvesting and refining these poppies is a sacred act of devotion to their patron.
+The **Lethean Poppies** that grow across the world are said to bloom wherever Our Lady once walked. The dew they produce — **Lethean Dew** — carries her essence: the power of forgetting. Just as the mythological River Lethe washed away memories, the lethean poppies help players *forget* their blood manipulations, severing the ties that bind them to hemomancy. The Unstained believe that harvesting and refining these poppies is a sacred act of devotion to their patron.
 
-**Tears of Lethe** are distilled from Lethian Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification — a one-time gift from the Lady herself.
+**Tears of Lethe** are distilled from Lethean Dew at an Altar of Cleansing, concentrating Our Lady's blessing into a single potent draught. When offered at her altar, these tears trigger a powerful purification — a one-time gift from the Lady herself.
 
 **The Lethe Icon** is an exceedingly rare relic depicting Our Lady, said to have been carved by the first Unstained from pale silver found at the bottom of a forgotten river. Those who possess it are considered to be under her direct protection.
 
@@ -539,7 +539,7 @@ One for each tendency:
 |------|----------|
 | ![](src/main/resources/assets/hemomancy/textures/item/bloody_flask.png) Bloody Flask | 250 |
 | ![](src/main/resources/assets/hemomancy/textures/item/bloody_jug.png) Bloody Jug | 2,500 |
-| ![](src/main/resources/assets/hemomancy/textures/item/stabilized_sanguine_formation.png) Stabilized Sanguine Formation | 5,000 |
+| ![](src/main/resources/assets/hemomancy/textures/item/sanguine_quintessence.png) Stabilized Sanguine Formation | 5,000 |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_white.png) Blood Gourd White | Simple tier |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_red.png) Blood Gourd Red | Crimson tier |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_gourd_black.png) Blood Gourd Black | Ashen tier |
@@ -557,8 +557,8 @@ One for each tendency:
 | Item | Purpose |
 |------|---------|
 | ![](src/main/resources/assets/hemomancy/textures/item/hematic_memory.png) Hematic Memory | Base blank memory item |
-| ![](src/main/resources/assets/hemomancy/textures/item/lethian_dew.png) Lethian Dew | Memory processing ingredient |
-| ![](src/main/resources/assets/hemomancy/textures/item/lethian_brew.png) Lethian Brew | Cursed clay jar from the River Lethe — enables forgetting memories |
+| ![](src/main/resources/assets/hemomancy/textures/item/lethean_dew.png) Lethean Dew | Memory processing ingredient |
+| ![](src/main/resources/assets/hemomancy/textures/item/lethean_brew.png) Lethean Brew | Cursed clay jar from the River Lethe — enables forgetting memories |
 | ![](src/main/resources/assets/hemomancy/textures/item/fervent_husk.png) Fervent Husk | Memory processing ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
@@ -606,7 +606,7 @@ One for each tendency:
 
 | Item | Purpose |
 |------|---------|
-| Tears of Lethe | Distilled from Lethian Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
+| Tears of Lethe | Distilled from Lethean Dew — used at the Altar of Cleansing for a one-time purity boost (+25) |
 | ![](src/main/resources/assets/hemomancy/textures/item/lethean_poppy_wreath.png) Lethean Poppy Wreath | Woven from Lethean Poppies — repeatable altar offering (+5 purity) |
 | ![](src/main/resources/assets/hemomancy/textures/item/silver_chalice.png) Silver Chalice | A ritual vessel of the Unstained — offered at the Altar of Cleansing for clarity (+5) |
 | Tome of the Unstained | A book of Unstained scripture describing Our Lady of Lethe and the path of purification |
@@ -857,7 +857,7 @@ A full block family with variants:
 - Infected Fungus (flower, Confusion effect — juiceinator → Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
 - Stinkhorn Fungus (Confusion effect — juiceinator → Foul Paste, brews Potion of Blood Binding)
 - Puffball Fungus (Saturation effect, **Unstained** — juiceinator → Spore Sac, incubator catalyst for Fungal Morphling)
-- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethian Dew, crafts Lethean Poppy Wreath)
+- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethean Dew, crafts Lethean Poppy Wreath)
 - Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — juiceinator → Lethean Extract)
 - Sarcodes (myco-heterotrophic, Regeneration effect — juiceinator → Dicentra Sap, brews Potion of Blood Rush)
 - Rafflesia (parasitic, Confusion effect — juiceinator → Spore Sac, brews Potion of Hemolysis)
@@ -967,14 +967,14 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Sarcodes | Dicentra Sap | 2 | 120 |
 | Rafflesia | Spore Sac | 2 | 120 |
 | Puffball Fungus | Spore Sac | 2 | 120 |
-| Lethean Poppy | Lethian Dew | 2 | 150 |
+| Lethean Poppy | Lethean Dew | 2 | 150 |
 
 **Crafting Recipes:**
 
 | Recipe | Type | Ingredients | Output |
 |--------|------|-------------|--------|
 | Lethean Poppy Wreath | Shapeless | 4× Lethean Poppy + String | 1 |
-| Lethean Extract | Shapeless | Lethian Dew + Consecrated Copper Ingot | 1 |
+| Lethean Extract | Shapeless | Lethean Dew + Consecrated Copper Ingot | 1 |
 | Tears of Lethe | Shapeless | Lethean Extract + Silver Chalice | 1 |
 | Pale Silver Ingot | Shapeless | Iron Ingot + Lethean Extract | 1 |
 | Spore Sac | Shapeless | Puffball Fungus + Hyphae | 2 |
@@ -1447,7 +1447,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of Le
 - **Lethean Crafting Recipes** — implemented recipes:
   - ✅ Tears of Lethe = Lethean Extract + Silver Chalice (crafting)
   - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
-  - ✅ Lethean Extract = Lethian Dew + Consecrated Copper Ingot (crafting)
+  - ✅ Lethean Extract = Lethean Dew + Consecrated Copper Ingot (crafting)
   - ✅ Pale Silver Ingot = Iron Ingot + Lethean Extract (crafting)
   - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting) — planned
   - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
