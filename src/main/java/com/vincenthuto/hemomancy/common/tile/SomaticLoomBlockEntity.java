@@ -59,8 +59,8 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
 
 	/** How much each enzyme click adjusts a tendency. */
 	private static final float TENDENCY_STEP = 0.2f;
-	/** Tolerance for comparing tendency floats when matching recipes (±0.1). */
-	private static final float TENDENCY_EPSILON = 0.1f;
+	/** Minimum tendency value required on the block for a recipe that needs it. */
+	private static final float TENDENCY_THRESHOLD = 3.0f;
 	/** Max squared distance the player can be during a ritual (6 blocks). */
 	private static final double MAX_RITUAL_DISTANCE_SQ = 36.0;
 	/** Ticks the player can be out of range before the ritual collapses (3s). */
@@ -314,12 +314,18 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
 		}
 	}
 
+	/**
+	 * Returns {@code true} when every tendency required by the recipe (value > 0)
+	 * has at least {@link #TENDENCY_THRESHOLD} (3.0) on the block.
+	 * Non-required tendencies are ignored regardless of block value.
+	 */
 	private static boolean tendenciesMatch(Map<EnumBloodTendency, Float> recipe,
 			Map<EnumBloodTendency, Float> block) {
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float a = recipe.getOrDefault(tend, 0f);
-			float b = block.getOrDefault(tend, 0f);
-			if (Math.abs(a - b) > TENDENCY_EPSILON) return false;
+			float required = recipe.getOrDefault(tend, 0f);
+			if (required <= 0f) continue; // not required by recipe
+			float actual = block.getOrDefault(tend, 0f);
+			if (actual < TENDENCY_THRESHOLD) return false;
 		}
 		return true;
 	}

@@ -30,8 +30,9 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 
 		Map<EnumBloodTendency, Float> tendency = MemoryWeavingRecipe.blank();
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			if (pJson.has(tend.toString().toLowerCase())) {
-				tendency.put(tend, pJson.get(tend.toString().toLowerCase()).getAsFloat());
+			String key = tend.toString().toLowerCase();
+			if (pJson.has(key)) {
+				tendency.put(tend, pJson.get(key).getAsBoolean() ? 1f : 0f);
 			} else {
 				tendency.put(tend, 0f);
 			}
@@ -72,7 +73,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 			Ingredient input = Ingredient.of(pBuffer.readItem());
 			Map<EnumBloodTendency, Float> tends = new HashMap<>();
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				tends.put(tend, pBuffer.readFloat());
+				tends.put(tend, pBuffer.readBoolean() ? 1f : 0f);
 			}
 			ItemStack output = pBuffer.readItem();
 			return new MemoryWeavingRecipe(id, input, tends, output);
@@ -92,7 +93,7 @@ public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWea
 				pBuffer.writeItem(ItemStack.EMPTY);
 			}
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-				pBuffer.writeFloat(pRecipe.getTendency().get(tend));
+				pBuffer.writeBoolean(pRecipe.getTendency().getOrDefault(tend, 0f) > 0f);
 			}
 			pBuffer.writeItemStack(pRecipe.getResultItem(null), false);
 		} catch (Exception e) {

@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,18 +19,57 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
+/**
+ * Renders the Somatic Loom's visual effects: fractal tendency star, enzyme
+ * indicator rings, blood volume ring, and crafting progress ring.
+ * <p>
+ * Uses flat POSITION_COLOR quads with proper depth testing (matching
+ * {@link com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer}
+ * and {@link com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer}),
+ * fixing the z-sorting issues of the old textured billboard approach.
+ */
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
 
-	/** Seeded random reused across frames — seed is set per-frame to keep fractal stable for a few ticks. */
+	/** Fractal random — reseeded each tick for stable-per-tick crackle. */
 	private static final Random FRAC_RAND = new Random();
+
+	// ── Star geometry (block-local coordinates) ──
+	private static final float CX = 0.5f;
+	private static final float CZ = 0.5f;
+	private static final float STAR_Y = 1.5f;
+	private static final float BASE_RADIUS = 1.0f;
+	private static final float SPIKE_BASE_HALF_ANGLE = 22.75f;
+	/** How far each unit of affinity extends a spoke beyond BASE_RADIUS. */
+	private static final float AFFINITY_RADIUS_SCALE = 0.5f;
+
+	// ── Fractal spoke widths & alphas ──
+	private static final float SPOKE_CORE_WIDTH = 0.04f;
+	private static final float SPOKE_GLOW_WIDTH = 0.12f;
+	private static final float SPOKE_CORE_ALPHA = 0.85f;
+	private static final float SPOKE_GLOW_ALPHA = 0.25f;
+	/** Fractal recursion terminates when displacement drops below this. */
+	private static final double FRACTAL_DETAIL = 0.04;
+
+	// ── Ring segment count ──
+	private static final int RING_SEGMENTS = 64;
+	/** Segment count for the thinner enzyme indicator rings. */
+	private static final int ENZYME_RING_SEGMENTS = 48;
+
+	// ── Ring widths (used by enzyme, blood, crafting rings) ──
+	private static final float RING_CORE_WIDTH = 0.06f;
+	private static final float RING_GLOW_WIDTH = 0.15f;
+
+	// ── Undulation for rings ──
+	private static final double UNDULATE_FREQ = 5.0;
+	private static final float UNDULATE_AMP = 0.04f;
+	private static final double UNDULATE_SPEED = 0.06;
+	private static final double UNDULATE_FREQ2 = 11.0;
+	private static final float UNDULATE_AMP2 = 0.015f;
+	private static final double UNDULATE_SPEED2 = 0.1;
 
 	public SomaticLoomRenderer(BlockEntityRendererProvider.Context ctx) {
 	}
@@ -41,59 +79,59 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		return true;
 	}
 
+	// ═══════════════════════════════════════════════════════════════
+	//  Main render entry point
+	// ═══════════════════════════════════════════════════════════════
+
 	@Override
-	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(SomaticLoomBlockEntity te, float partialTicks, PoseStack stack,
+			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
-		Vector3 startVec = Vector3.fromBlockEntityCenter(te);
-
-		// Only show effects when a hematic memory has been inserted
 		boolean showEffects = !te.contents.get(0).isEmpty();
 
-		// === Render items FIRST so they write to the depth buffer ===
-		matrixStackIn.pushPose();
-		renderItems(te, partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-		matrixStackIn.popPose();
+		// === Items (always rendered, depth writes first) ===
+		stack.pushPose();
+		renderItems(te, partialTicks, stack, buffer, combinedLight, combinedOverlay);
+		stack.popPose();
 
-		// === Render effects AFTER items ===
+		// === Flat-color effects ===
 		if (showEffects) {
-			double diameter = 4;
-			matrixStackIn.pushPose();
-			matrixStackIn.scale(0.5f, 0.5f, 0.5f);
-			matrixStackIn.translate(0.5f, 0.5f, 0.5f);
-
-			Vec3 centerPos = startVec.add(0.5).toVec3();
-
-			// Seed the fractal random per-tick so the lightning crackles actively
+			// Seed fractal random per-tick so the lightning crackles each tick
 			FRAC_RAND.setSeed(te.getLevel().getGameTime() * 31L + te.getBlockPos().hashCode());
 
-			drawCenter(matrixStackIn, bufferIn, te, centerPos, diameter, currentTime, combinedLightIn, combinedOverlayIn);
+			stack.pushPose();
+			Matrix4f mat = stack.last().pose();
+			VertexConsumer vc = buffer.getBuffer(RenderTypeInit.LOOM_EFFECT);
 
-			// Enzyme indicator rings — one concentric black ring per enzyme dose level reached
-			drawEnzymeIndicatorRings(matrixStackIn, bufferIn, te, centerPos, diameter, currentTime);
+			// Fractal tendency star
+			drawFractalStar(vc, mat, te, currentTime);
 
-			double bloodVolume = te.getBloodVolume();
-			double maxBloodVolume = te.getMaxBloodVolume();
-			if (maxBloodVolume > 0) {
-				double fillRatio = Mth.clamp(bloodVolume / maxBloodVolume, 0, 1);
-				drawBloodVolumeRing(matrixStackIn, bufferIn, te, centerPos, diameter, fillRatio, currentTime,
-						combinedLightIn, combinedOverlayIn);
+			// Enzyme indicator rings
+			drawEnzymeRings(vc, mat, te, currentTime);
+
+			// Blood volume ring
+			double bloodVol = te.getBloodVolume();
+			double maxBloodVol = te.getMaxBloodVolume();
+			if (maxBloodVol > 0) {
+				drawBloodVolumeRing(vc, mat,
+						Mth.clamp(bloodVol / maxBloodVol, 0, 1), currentTime);
 			}
 
-			// === Crafting progress ring ===
+			// Crafting progress ring
 			if (te.isCrafting() && te.getCraftingTotalTime() > 0) {
-				double progressRatio = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
-				boolean pulsing = te.getCraftingPhase() == 2; // completing
-				drawCraftingProgressRing(matrixStackIn, bufferIn, te, centerPos, diameter,
-						progressRatio, pulsing, currentTime, combinedLightIn, combinedOverlayIn);
+				double progress = 1.0 - ((double) te.getCraftingProgress() / te.getCraftingTotalTime());
+				drawCraftingProgressRing(vc, mat, progress,
+						te.getCraftingPhase() == 2, currentTime);
 			}
 
-			matrixStackIn.popPose();
+			stack.popPose();
 		}
 	}
 
-	// ========================== ITEM RENDERING ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Item rendering (unchanged)
+	// ═══════════════════════════════════════════════════════════════
 
 	public void renderItems(SomaticLoomBlockEntity te, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
@@ -140,408 +178,358 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		}
 	}
 
-	// ========================== FRACTAL STAR ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Fractal Tendency Star
+	// ═══════════════════════════════════════════════════════════════
 
-    /**
-	 * Returns the funnel Y offset for a given radial distance from center.
-	 * Points at baseRadius stay at baseY; points further out rise upward.
-	 */
-	private static double funnelY(double baseY, double radius, double baseRadius) {
-        /** How much Y rises per unit of radial distance beyond the base — controls funnel steepness. */
-        double FUNNEL_SLOPE = 0.98;
-        return baseY + Math.max(0, radius - baseRadius) * FUNNEL_SLOPE;
-	}
-
-	private void drawCenter(PoseStack stack, MultiBufferSource bufferIn, SomaticLoomBlockEntity te, Vec3 from,
-			double diameter, float currentTime, int combinedLightIn, int combinedOverlayIn) {
+	private void drawFractalStar(VertexConsumer vc, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime) {
 		Map<EnumBloodTendency, Float> affs = te.getTendency();
-		double cx = from.x;
-		double cy = from.z;
-		float rotAngle = -90f;
-		double spikeBaseWidth = 22.75;
-		double baseY = from.y + 2;
+		float angle = -90f;
+
+		// Global breathing pulse (0..1)
+		double pulse = (Math.sin(currentTime * 0.08) + 1.0) * 0.5;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 			float affinity = affs.getOrDefault(tend, 0f);
-
-			double cx1 = cx + Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter;
-			double cx2 = cx + Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter;
-			double cy1 = cy + Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * diameter;
-			double cy2 = cy + Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * diameter;
-
-			double depthDist = ((65 - diameter) * affinity * 0.0625 / 4 + diameter);
-			double lx = cx + Math.cos(Math.toRadians(rotAngle)) * depthDist;
-			double ly = cy + Math.sin(Math.toRadians(rotAngle)) * depthDist;
-
-			double displace = (Math.max(cx1, cx2) - Math.min(cx1, cx2) + Math.max(cy1, cy2) - Math.min(cy1, cy2)) / 2.0;
-
-			// Funnel: Y rises with distance from center
-			Vec3 tip = new Vec3(lx, funnelY(baseY, depthDist, diameter), ly);
-			Vec3 base1 = new Vec3(cx1, funnelY(baseY, diameter, diameter), cy1);
-			Vec3 base2 = new Vec3(cx2, funnelY(baseY, diameter, diameter), cy2);
-
 			ParticleColor color = tend.getColor();
+			float r = color.getRed() / 255f;
+			float g = color.getGreen() / 255f;
+			float b = color.getBlue() / 255f;
 
-			// Core beams — fine detail fractal
-			fracLine(stack, bufferIn, tip, base1, color, displace, 0.08, 0.05f);
-			fracLine(stack, bufferIn, tip, base2, color, displace, 0.08, 0.05f);
-			fracLine(stack, bufferIn, base1, tip, color, displace, 0.05, 0.04f);
-			fracLine(stack, bufferIn, base2, tip, color, displace, 0.05, 0.04f);
+			// Pulse modulation
+			float cAlpha = (float) (SPOKE_CORE_ALPHA * (0.7 + 0.3 * pulse));
+			float gAlpha = (float) (SPOKE_GLOW_ALPHA * (0.5 + 0.5 * pulse));
 
-			// Glow layer — thicker, more transparent, additive blend
-			fracLineGlow(stack, bufferIn, tip, base1, color, displace, 0.15, 0.12f, 0.45f);
-			fracLineGlow(stack, bufferIn, tip, base2, color, displace, 0.15, 0.12f, 0.45f);
+			// Spoke base corners (two points at BASE_RADIUS)
+			double a1Rad = Math.toRadians(angle + SPIKE_BASE_HALF_ANGLE);
+			double a2Rad = Math.toRadians(angle - SPIKE_BASE_HALF_ANGLE);
+			float bx1 = CX + (float) (Math.cos(a1Rad) * BASE_RADIUS);
+			float bz1 = CZ + (float) (Math.sin(a1Rad) * BASE_RADIUS);
+			float bx2 = CX + (float) (Math.cos(a2Rad) * BASE_RADIUS);
+			float bz2 = CZ + (float) (Math.sin(a2Rad) * BASE_RADIUS);
 
-			rotAngle += 45;
+			// Spoke tip
+			double tipRad = Math.toRadians(angle);
+			float tipDist = BASE_RADIUS + affinity * AFFINITY_RADIUS_SCALE;
+			float tx = CX + (float) (Math.cos(tipRad) * tipDist);
+			float tz = CZ + (float) (Math.sin(tipRad) * tipDist);
+
+			// Fractal displacement magnitude (based on base width)
+			float displace = (float) Math.sqrt(
+					(bx1 - bx2) * (bx1 - bx2) + (bz1 - bz2) * (bz1 - bz2)) * 0.5f;
+
+			// Primary fractal spokes (tip ↔ base corners)
+			fracLine(vc, mat, tx, STAR_Y, tz, bx1, STAR_Y, bz1,
+					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
+					displace, FRACTAL_DETAIL);
+			fracLine(vc, mat, tx, STAR_Y, tz, bx2, STAR_Y, bz2,
+					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
+					displace, FRACTAL_DETAIL);
+
+			// Secondary reverse spokes (dimmer, thinner)
+			fracLine(vc, mat, bx1, STAR_Y, bz1, tx, STAR_Y, tz,
+					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
+					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
+					displace * 0.8, FRACTAL_DETAIL);
+			fracLine(vc, mat, bx2, STAR_Y, bz2, tx, STAR_Y, tz,
+					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
+					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
+					displace * 0.8, FRACTAL_DETAIL);
+
+			angle += 45f;
 		}
 	}
 
-	// ========================== ENZYME INDICATOR RINGS ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Enzyme Indicator Rings
+	// ═══════════════════════════════════════════════════════════════
 
 	/**
-	 * Draws concentric black rings at the fractal star's Y-level. One ring appears
-	 * for each 0.2f enzyme dose that has been reached by ANY tendency. The rings sit
-	 * at radii matching where the spike tips would be at that affinity level, so they
-	 * visually "line up" with the spikes.
-	 *
-	 * Max 5 rings (affinity steps: 0.2, 0.4, 0.6, 0.8, 1.0).
+	 * Draws concentric dark rings at the fractal star's Y-level. One ring per
+	 * 0.2f enzyme dose reached by any tendency. Radii match spike tip positions.
 	 */
-	private void drawEnzymeIndicatorRings(PoseStack stack, MultiBufferSource bufferIn,
-			SomaticLoomBlockEntity te, Vec3 center, double diameter, float currentTime) {
+	private void drawEnzymeRings(VertexConsumer vc, Matrix4f mat,
+			SomaticLoomBlockEntity te, float currentTime) {
 		Map<EnumBloodTendency, Float> affs = te.getTendency();
 
-		// Find the highest enzyme step reached by any tendency
-		float maxAffinity = 0f;
-		for (Float val : affs.values()) {
-			if (val != null && val > maxAffinity) {
-				maxAffinity = val;
-			}
+		float maxAff = 0f;
+		for (Float v : affs.values()) {
+			if (v != null && v > maxAff) maxAff = v;
 		}
-		// How many complete 0.2 steps have been reached
-		int maxSteps = (int) Math.ceil(maxAffinity / 0.2f);
-		maxSteps = Math.min(maxSteps, 5);
+		int steps = Math.min((int) Math.ceil(maxAff / 0.2f), 5);
+		if (steps <= 0) return;
 
-		if (maxSteps <= 0) return;
-
-		double cx = center.x;
-		double cz = center.z;
-		double baseY = center.y + 2;
-		int segments = 48;
-
-		for (int step = 1; step <= maxSteps; step++) {
-			float stepAffinity = step * 0.2f;
-			// Match the spike radius formula from drawCenter:
-			// depthDist = ((65 - diameter) * affinity * 0.0625 / 4 + diameter)
-			double spikeRadius = ((65 - diameter) * stepAffinity * 0.0625 / 4 + diameter);
-			// Inset slightly so rings sit on the interior of the spikes
-			double ringRadius = diameter + (spikeRadius - diameter) * 0.85;
-			double ringY = funnelY(baseY, ringRadius, diameter);
-
-			for (int i = 0; i < segments; i++) {
-				float angle1 = (360f / segments) * i;
-				float angle2 = (360f / segments) * (i + 1);
-
-				// Subtle wave undulation on the ring height — less pronounced than blood ring
-				double wave1 = Math.sin(Math.toRadians(angle1 * 3) + currentTime * 0.1) * 0.03;
-				double wave2 = Math.sin(Math.toRadians(angle2 * 3) + currentTime * 0.1) * 0.03;
-
-				double x1 = cx + Math.cos(Math.toRadians(angle1)) * ringRadius;
-				double z1 = cz + Math.sin(Math.toRadians(angle1)) * ringRadius;
-				double x2 = cx + Math.cos(Math.toRadians(angle2)) * ringRadius;
-				double z2 = cz + Math.sin(Math.toRadians(angle2)) * ringRadius;
-
-				Vec3 from = new Vec3(x1, ringY + wave1, z1);
-				Vec3 to = new Vec3(x2, ringY + wave2, z2);
-
-				// Black ring — core only, thin, semi-transparent
-				drawBeamSegment(stack, bufferIn, from, to, 0.0f, 0.0f, 0.0f, 0.2f, 0.025f);
-			}
+		for (int s = 1; s <= steps; s++) {
+			float stepAff = s * 0.2f;
+			float radius = BASE_RADIUS + stepAff * AFFINITY_RADIUS_SCALE * 0.85f;
+			drawUndulatingRing(vc, mat, CX, STAR_Y, CZ, radius,
+					0f, 0f, 0f, 0.2f, 0.06f,
+					0.025f, 0.06f,
+					currentTime, 1.0f, ENZYME_RING_SEGMENTS);
 		}
 	}
 
-	// ========================== BLOOD VOLUME RING ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Blood Volume Ring
+	// ═══════════════════════════════════════════════════════════════
 
-	private void drawBloodVolumeRing(PoseStack stack, MultiBufferSource bufferIn, SomaticLoomBlockEntity te,
-			Vec3 center, double diameter, double fillRatio, float currentTime, int combinedLightIn,
-			int combinedOverlayIn) {
-		double ringRadius = diameter * 0.6;
-		double baseY = center.y + 2;
-		double ringY = funnelY(baseY, ringRadius, diameter) + 0.75;
-		double cx = center.x;
-		double cz = center.z;
-		float rotOffset = currentTime * 0.5f;
+	private void drawBloodVolumeRing(VertexConsumer vc, Matrix4f mat,
+			double fillRatio, float currentTime) {
+		float radius = 0.7f;
+		float ringY = STAR_Y + 0.3f;
+		float rotOff = currentTime * 0.5f;
+		int filled = (int) (RING_SEGMENTS * fillRatio);
 
-		int segments = 64;
-		int filledSegments = (int) (segments * fillRatio);
+		// Breathing pulse
+		double pulse = (Math.sin(currentTime * 0.12) + 1.0) * 0.5;
 
-		for (int i = 0; i < segments; i++) {
-			float angle1 = rotOffset + (360f / segments) * i;
-			float angle2 = rotOffset + (360f / segments) * (i + 1);
+		for (int i = 0; i < RING_SEGMENTS; i++) {
+			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
+			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
 
-			// Gentle wave undulation on the ring height
-			double wave1 = Math.sin(Math.toRadians(angle1 * 3) + currentTime * 0.1) * 0.06;
-			double wave2 = Math.sin(Math.toRadians(angle2 * 3) + currentTime * 0.1) * 0.06;
+			float wave1 = (float) (Math.sin(Math.toRadians(a1 * 3) + currentTime * 0.1) * 0.015);
+			float wave2 = (float) (Math.sin(Math.toRadians(a2 * 3) + currentTime * 0.1) * 0.015);
 
-			double x1 = cx + Math.cos(Math.toRadians(angle1)) * ringRadius;
-			double z1 = cz + Math.sin(Math.toRadians(angle1)) * ringRadius;
-			double x2 = cx + Math.cos(Math.toRadians(angle2)) * ringRadius;
-			double z2 = cz + Math.sin(Math.toRadians(angle2)) * ringRadius;
+			float r1 = radius + undulation(Math.toRadians(a1), currentTime, 1f) * 0.5f;
+			float r2 = radius + undulation(Math.toRadians(a2), currentTime, 1f) * 0.5f;
 
-			Vec3 from = new Vec3(x1, ringY + wave1, z1);
-			Vec3 to = new Vec3(x2, ringY + wave2, z2);
-
-			if (i < filledSegments) {
-				// Filled — bright core + glow
-				drawBeamSegment(stack, bufferIn, from, to, 0.8f, 0.08f, 0.08f, 1.0f, 0.04f);
-				drawBeamSegmentGlow(stack, bufferIn, from, to, 0.9f, 0.15f, 0.1f, 0.5f, 0.09f);
+			if (i < filled) {
+				float coreA = (float) (0.70 + 0.30 * pulse);
+				float glowA = (float) (0.20 + 0.15 * pulse);
+				emitRingArc(vc, mat, CX, ringY, CZ,
+						a1, a2, r1, r2, wave1, wave2,
+						0.8f, 0.08f, 0.08f, coreA, glowA,
+						0.04f, 0.10f);
 			} else {
-				// Empty — dim
-				drawBeamSegment(stack, bufferIn, from, to, 0.12f, 0.02f, 0.02f, 0.6f, 0.025f);
+				emitRingArc(vc, mat, CX, ringY, CZ,
+						a1, a2, r1, r2, wave1, wave2,
+						0.12f, 0.02f, 0.02f, 0.5f, 0.12f,
+						0.025f, 0.05f);
 			}
 		}
 	}
 
-	// ========================== CRAFTING PROGRESS RING ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Crafting Progress Ring
+	// ═══════════════════════════════════════════════════════════════
 
-	/**
-	 * Draws a ring that fills as ritual crafting progresses. Positioned above the
-	 * blood volume ring. When {@code pulsing} is true (awaiting attunement), the
-	 * ring oscillates in alpha to prompt the player to interact.
-	 */
-	private void drawCraftingProgressRing(PoseStack stack, MultiBufferSource bufferIn,
-			SomaticLoomBlockEntity te, Vec3 center, double diameter, double progressRatio,
-			boolean pulsing, float currentTime, int combinedLightIn, int combinedOverlayIn) {
-		double ringRadius = diameter * 0.45;
-		double baseY = center.y + 2;
-		double ringY = funnelY(baseY, ringRadius, diameter) + 1.1;
-		double cx = center.x;
-		double cz = center.z;
-		float rotOffset = -currentTime * 0.8f; // rotate opposite to blood ring
+	private void drawCraftingProgressRing(VertexConsumer vc, Matrix4f mat,
+			double progressRatio, boolean pulsing, float currentTime) {
+		float radius = 0.55f;
+		float ringY = STAR_Y + 0.5f;
+		float rotOff = -currentTime * 0.8f;
 
-		int segments = 64;
-		int filledSegments = (int) (segments * progressRatio);
-
-		// Pulsing alpha modulation for attunement phase
+		int filled = (int) (RING_SEGMENTS * progressRatio);
 		float pulseAlpha = pulsing
 				? 0.5f + 0.5f * Mth.sin(currentTime * 0.3f)
 				: 1.0f;
 
-		for (int i = 0; i < segments; i++) {
-			float angle1 = rotOffset + (360f / segments) * i;
-			float angle2 = rotOffset + (360f / segments) * (i + 1);
+		for (int i = 0; i < RING_SEGMENTS; i++) {
+			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
+			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
 
-			double wave1 = Math.sin(Math.toRadians(angle1 * 4) + currentTime * 0.15) * 0.04;
-			double wave2 = Math.sin(Math.toRadians(angle2 * 4) + currentTime * 0.15) * 0.04;
+			float wave1 = (float) (Math.sin(Math.toRadians(a1 * 4) + currentTime * 0.15) * 0.012);
+			float wave2 = (float) (Math.sin(Math.toRadians(a2 * 4) + currentTime * 0.15) * 0.012);
 
-			double x1 = cx + Math.cos(Math.toRadians(angle1)) * ringRadius;
-			double z1 = cz + Math.sin(Math.toRadians(angle1)) * ringRadius;
-			double x2 = cx + Math.cos(Math.toRadians(angle2)) * ringRadius;
-			double z2 = cz + Math.sin(Math.toRadians(angle2)) * ringRadius;
+			float r1 = radius + undulation(Math.toRadians(a1), currentTime, -1f) * 0.4f;
+			float r2 = radius + undulation(Math.toRadians(a2), currentTime, -1f) * 0.4f;
 
-			Vec3 from = new Vec3(x1, ringY + wave1, z1);
-			Vec3 to = new Vec3(x2, ringY + wave2, z2);
-
-			if (i < filledSegments) {
-				// Filled — purple core + glow
-				drawBeamSegment(stack, bufferIn, from, to,
-						0.55f, 0.1f, 0.7f, pulseAlpha, 0.04f);
-				drawBeamSegmentGlow(stack, bufferIn, from, to,
-						0.7f, 0.2f, 0.9f, 0.4f * pulseAlpha, 0.09f);
+			if (i < filled) {
+				emitRingArc(vc, mat, CX, ringY, CZ,
+						a1, a2, r1, r2, wave1, wave2,
+						0.55f, 0.1f, 0.7f, pulseAlpha * 0.85f, pulseAlpha * 0.25f,
+						0.04f, 0.09f);
 			} else {
-				// Empty — dim
-				drawBeamSegment(stack, bufferIn, from, to,
-						0.15f, 0.03f, 0.18f, 0.4f, 0.025f);
+				emitRingArc(vc, mat, CX, ringY, CZ,
+						a1, a2, r1, r2, wave1, wave2,
+						0.15f, 0.03f, 0.18f, 0.35f, 0.08f,
+						0.025f, 0.05f);
 			}
 		}
 	}
 
-	// ========================== LOW-LEVEL BEAM DRAWING ==========================
+	// ═══════════════════════════════════════════════════════════════
+	//  Fractal Line (recursive midpoint displacement)
+	// ═══════════════════════════════════════════════════════════════
 
 	/**
-	 * Fractal lightning line with core render type.
+	 * Recursively subdivides a line with random midpoint displacement to
+	 * produce a jagged fractal lightning effect, then draws each leaf segment
+	 * as a flat quad strip (core + glow) in the XZ plane.
 	 */
-	private void fracLine(PoseStack matrix, MultiBufferSource buffer, Vec3 from, Vec3 to, ParticleColor color,
-			double displace, double detail, float thickness) {
+	private void fracLine(VertexConsumer vc, Matrix4f mat,
+			float x1, float y1, float z1, float x2, float y2, float z2,
+			float r, float g, float b, float coreAlpha, float glowAlpha,
+			float coreWidth, float glowWidth, double displace, double detail) {
 		if (displace < detail) {
-			drawBeamSegment(matrix, buffer, from, to,
-					color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f,
-					1.0f, thickness);
+			drawFlatLine(vc, mat, x1, y1, z1, x2, y2, z2,
+					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth);
 		} else {
-			double offset = 0.25;
-			Vec3 mid = new Vec3(
-					(to.x + from.x) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset,
-					(to.y + from.y) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset,
-					(to.z + from.z) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset);
-			fracLine(matrix, buffer, from, mid, color, displace / 2, detail, thickness);
-			fracLine(matrix, buffer, to, mid, color, displace / 2, detail, thickness);
+			// Center bias for random displacement (shifts distribution away from midpoint)
+			float centerBias = 0.25f;
+			// Displace midpoint in XZ only (keep Y stable to stay flat)
+			float mx = (x1 + x2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
+			float my = (y1 + y2) * 0.5f;
+			float mz = (z1 + z2) * 0.5f + (FRAC_RAND.nextFloat() - centerBias) * (float) displace * centerBias;
+			fracLine(vc, mat, x1, y1, z1, mx, my, mz,
+					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth, displace / 2, detail);
+			fracLine(vc, mat, mx, my, mz, x2, y2, z2,
+					r, g, b, coreAlpha, glowAlpha, coreWidth, glowWidth, displace / 2, detail);
+		}
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	//  Low-level drawing helpers
+	// ═══════════════════════════════════════════════════════════════
+
+	/**
+	 * Draws a single flat line segment as three quads (inner glow + core + outer glow)
+	 * perpendicular to the line direction in the XZ plane.
+	 * Matches the CardinalRite ring segment approach but for straight lines.
+	 */
+	private static void drawFlatLine(VertexConsumer vc, Matrix4f mat,
+			float x1, float y1, float z1, float x2, float y2, float z2,
+			float r, float g, float b, float coreAlpha, float glowAlpha,
+			float coreWidth, float glowWidth) {
+		float dx = x2 - x1;
+		float dz = z2 - z1;
+		float len = (float) Math.sqrt(dx * dx + dz * dz);
+		if (len < 1e-6f) return;
+
+		// Perpendicular direction in XZ plane
+		float px = -dz / len;
+		float pz = dx / len;
+
+		float cHalf = coreWidth * 0.5f;
+		float gOuter = cHalf + glowWidth;
+
+		// Inner glow (transparent edge → opaque at core boundary)
+		emitQuad(vc, mat,
+				x1 - px * gOuter, y1, z1 - pz * gOuter, r, g, b, 0f,
+				x1 - px * cHalf, y1, z1 - pz * cHalf, r, g, b, glowAlpha,
+				x2 - px * cHalf, y2, z2 - pz * cHalf, r, g, b, glowAlpha,
+				x2 - px * gOuter, y2, z2 - pz * gOuter, r, g, b, 0f);
+
+		// Core (solid)
+		emitQuad(vc, mat,
+				x1 - px * cHalf, y1, z1 - pz * cHalf, r, g, b, coreAlpha,
+				x1 + px * cHalf, y1, z1 + pz * cHalf, r, g, b, coreAlpha,
+				x2 + px * cHalf, y2, z2 + pz * cHalf, r, g, b, coreAlpha,
+				x2 - px * cHalf, y2, z2 - pz * cHalf, r, g, b, coreAlpha);
+
+		// Outer glow (opaque at core boundary → transparent edge)
+		emitQuad(vc, mat,
+				x1 + px * cHalf, y1, z1 + pz * cHalf, r, g, b, glowAlpha,
+				x1 + px * gOuter, y1, z1 + pz * gOuter, r, g, b, 0f,
+				x2 + px * gOuter, y2, z2 + pz * gOuter, r, g, b, 0f,
+				x2 + px * cHalf, y2, z2 + pz * cHalf, r, g, b, glowAlpha);
+	}
+
+	/**
+	 * Draws a full undulating ring (all segments) with uniform color.
+	 * Used for enzyme indicator rings.
+	 */
+	private void drawUndulatingRing(VertexConsumer vc, Matrix4f mat,
+			float cx, float y, float cz, float baseRadius,
+			float r, float g, float b, float coreAlpha, float glowAlpha,
+			float coreW, float glowW,
+			float currentTime, float dir, int segments) {
+		for (int i = 0; i < segments; i++) {
+			float a1 = (360f / segments) * i;
+			float a2 = (360f / segments) * (i + 1);
+
+			float rUnd1 = undulation(Math.toRadians(a1), currentTime, dir);
+			float rUnd2 = undulation(Math.toRadians(a2), currentTime, dir);
+
+			float yW1 = (float) (Math.sin(Math.toRadians(a1 * 5) + currentTime * 0.08 * dir) * 0.008);
+			float yW2 = (float) (Math.sin(Math.toRadians(a2 * 5) + currentTime * 0.08 * dir) * 0.008);
+
+			emitRingArc(vc, mat, cx, y, cz,
+					a1, a2, baseRadius + rUnd1, baseRadius + rUnd2, yW1, yW2,
+					r, g, b, coreAlpha, glowAlpha, coreW, glowW);
 		}
 	}
 
 	/**
-	 * Fractal lightning line with additive glow render type.
+	 * Emits one arc segment of a ring: inner glow + core + outer glow.
+	 * Radial widths expand outward from center, matching the CardinalRite approach.
+	 *
+	 * @param r1, r2 undulated radius at each end of the arc
+	 * @param yOff1, yOff2 subtle Y wave offsets
 	 */
-	private void fracLineGlow(PoseStack matrix, MultiBufferSource buffer, Vec3 from, Vec3 to, ParticleColor color,
-			double displace, double detail, float thickness, float alpha) {
-		if (displace < detail) {
-			drawBeamSegmentGlow(matrix, buffer, from, to,
-					color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f,
-					alpha, thickness);
-		} else {
-			double offset = 0.25;
-			Vec3 mid = new Vec3(
-					(to.x + from.x) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset,
-					(to.y + from.y) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset,
-					(to.z + from.z) / 2 + (FRAC_RAND.nextFloat() - offset) * displace * offset);
-			fracLineGlow(matrix, buffer, from, mid, color, displace / 2, detail, thickness, alpha);
-			fracLineGlow(matrix, buffer, to, mid, color, displace / 2, detail, thickness, alpha);
-		}
+	private static void emitRingArc(VertexConsumer vc, Matrix4f mat,
+			float cx, float y, float cz,
+			float aDeg1, float aDeg2, float r1, float r2, float yOff1, float yOff2,
+			float r, float g, float b, float coreAlpha, float glowAlpha,
+			float coreW, float glowW) {
+
+		float cos1 = (float) Math.cos(Math.toRadians(aDeg1));
+		float sin1 = (float) Math.sin(Math.toRadians(aDeg1));
+		float cos2 = (float) Math.cos(Math.toRadians(aDeg2));
+		float sin2 = (float) Math.sin(Math.toRadians(aDeg2));
+
+		// Radial width bands for vertex 1
+		float iGlow1 = r1 - glowW - coreW * 0.5f;
+		float iCore1 = r1 - coreW * 0.5f;
+		float oCore1 = r1 + coreW * 0.5f;
+		float oGlow1 = r1 + glowW + coreW * 0.5f;
+
+		// Radial width bands for vertex 2
+		float iGlow2 = r2 - glowW - coreW * 0.5f;
+		float iCore2 = r2 - coreW * 0.5f;
+		float oCore2 = r2 + coreW * 0.5f;
+		float oGlow2 = r2 + glowW + coreW * 0.5f;
+
+		float y1 = y + yOff1;
+		float y2 = y + yOff2;
+
+		// Inner glow
+		emitQuad(vc, mat,
+				cx + cos1 * iGlow1, y1, cz + sin1 * iGlow1, r, g, b, 0f,
+				cx + cos1 * iCore1, y1, cz + sin1 * iCore1, r, g, b, glowAlpha,
+				cx + cos2 * iCore2, y2, cz + sin2 * iCore2, r, g, b, glowAlpha,
+				cx + cos2 * iGlow2, y2, cz + sin2 * iGlow2, r, g, b, 0f);
+
+		// Core
+		emitQuad(vc, mat,
+				cx + cos1 * iCore1, y1, cz + sin1 * iCore1, r, g, b, coreAlpha,
+				cx + cos1 * oCore1, y1, cz + sin1 * oCore1, r, g, b, coreAlpha,
+				cx + cos2 * oCore2, y2, cz + sin2 * oCore2, r, g, b, coreAlpha,
+				cx + cos2 * iCore2, y2, cz + sin2 * iCore2, r, g, b, coreAlpha);
+
+		// Outer glow
+		emitQuad(vc, mat,
+				cx + cos1 * oCore1, y1, cz + sin1 * oCore1, r, g, b, glowAlpha,
+				cx + cos1 * oGlow1, y1, cz + sin1 * oGlow1, r, g, b, 0f,
+				cx + cos2 * oGlow2, y2, cz + sin2 * oGlow2, r, g, b, 0f,
+				cx + cos2 * oCore2, y2, cz + sin2 * oCore2, r, g, b, glowAlpha);
 	}
 
-	/**
-	 * Draws a single beam segment using the core laser render type.
-	 */
-	private static void drawBeamSegment(PoseStack matrixStackIn, MultiBufferSource buffer, Vec3 from, Vec3 to,
-			float r, float g, float b, float alpha, float thickness) {
-		final Minecraft mc = Minecraft.getInstance();
-		Level world = mc.level;
-		long gameTime = world.getGameTime();
-		double v = gameTime * 0.04;
-		Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
+	// ═══════════════════════════════════════════════════════════════
+	//  Undulation
+	// ═══════════════════════════════════════════════════════════════
 
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(-view.x, -view.y, -view.z);
-
-		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LOOM_BEAM_CORE);
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(to.x, to.y, to.z);
-
-		float diffX = (float) (from.x - to.x);
-		float diffY = (float) (from.y - to.y);
-		float diffZ = (float) (from.z - to.z);
-
-		Vector3f startLaser = new Vector3f(0, 0, 0);
-		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
-		Vector3f sortPos = new Vector3f((float) to.x, (float) to.y, (float) to.z);
-		Matrix4f positionMatrix = matrixStackIn.last().pose();
-
-		// Dark backing for contrast
-		drawLaser(builder, positionMatrix, endLaser, startLaser, 0, 0, 0, alpha * 0.6f, thickness * 1.5f,
-				v, v + diffY * -5.5, new Vector3f(sortPos.x, sortPos.y - 0.05f, sortPos.z));
-		// Core beam
-		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, alpha, thickness,
-				v, v + diffY * -5.5, sortPos);
-
-		matrixStackIn.popPose();
-		matrixStackIn.popPose();
+	/** Layered sine-wave radial offset for ring segments. */
+	private static float undulation(double angleRad, float time, float dir) {
+		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED * dir) * UNDULATE_AMP;
+		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2 * dir) * UNDULATE_AMP2;
+		double throb = Math.sin(time * 0.04) * 0.02;
+		return (float) (w1 + w2 + throb);
 	}
 
-	/**
-	 * Draws a single beam segment using the additive glow render type for a bloom effect.
-	 */
-	private static void drawBeamSegmentGlow(PoseStack matrixStackIn, MultiBufferSource buffer, Vec3 from, Vec3 to,
-			float r, float g, float b, float alpha, float thickness) {
-		final Minecraft mc = Minecraft.getInstance();
-		Level world = mc.level;
-		long gameTime = world.getGameTime();
-		double v = gameTime * 0.04;
-		Vec3 view = mc.gameRenderer.getMainCamera().getPosition();
+	// ═══════════════════════════════════════════════════════════════
+	//  Quad helper (POSITION_COLOR format)
+	// ═══════════════════════════════════════════════════════════════
 
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(-view.x, -view.y, -view.z);
-
-		VertexConsumer builder = buffer.getBuffer(RenderTypeInit.LOOM_BEAM_GLOW);
-		matrixStackIn.pushPose();
-		matrixStackIn.translate(to.x, to.y, to.z);
-
-		float diffX = (float) (from.x - to.x);
-		float diffY = (float) (from.y - to.y);
-		float diffZ = (float) (from.z - to.z);
-
-		Vector3f startLaser = new Vector3f(0, 0, 0);
-		Vector3f endLaser = new Vector3f(diffX, diffY, diffZ);
-		Vector3f sortPos = new Vector3f((float) to.x, (float) to.y, (float) to.z);
-		Matrix4f positionMatrix = matrixStackIn.last().pose();
-
-		drawLaser(builder, positionMatrix, endLaser, startLaser, r, g, b, alpha, thickness,
-				v, v + diffY * -5.5, sortPos);
-
-		matrixStackIn.popPose();
-		matrixStackIn.popPose();
+	private static void emitQuad(VertexConsumer vc, Matrix4f mat,
+			float x1, float y1, float z1, float r1, float g1, float b1, float a1,
+			float x2, float y2, float z2, float r2, float g2, float b2, float a2,
+			float x3, float y3, float z3, float r3, float g3, float b3, float a3,
+			float x4, float y4, float z4, float r4, float g4, float b4, float a4) {
+		vc.vertex(mat, x1, y1, z1).color(r1, g1, b1, a1).endVertex();
+		vc.vertex(mat, x2, y2, z2).color(r2, g2, b2, a2).endVertex();
+		vc.vertex(mat, x3, y3, z3).color(r3, g3, b3, a3).endVertex();
+		vc.vertex(mat, x4, y4, z4).color(r4, g4, b4, a4).endVertex();
 	}
-
-	/**
-	 * Renders two perpendicular cross-quads between two points so the beam is
-	 * visible from every viewing angle (including top-down).
-	 */
-	private static void drawLaser(VertexConsumer builder, Matrix4f positionMatrix, Vector3f from, Vector3f to,
-			float r, float g, float b, float alpha, float thickness, double v1, double v2, Vector3f sortPos) {
-		Player player = Minecraft.getInstance().player;
-		if (player == null) return;
-
-		// Beam direction
-		Vector3f SE = new Vector3f(to);
-		SE.sub(from);
-		float seLen = SE.length();
-		if (seLen < 1e-6f) return; // zero-length segment
-
-		// First perpendicular: camera-facing billboard
-		Vector3f P = new Vector3f((float) player.getX() - sortPos.x(), (float) player.getEyeY() - sortPos.y(),
-				(float) player.getZ() - sortPos.z());
-		Vector3f PS = new Vector3f(from);
-		PS.sub(P);
-		Vector3f adjustedVec = new Vector3f(PS);
-		adjustedVec.cross(SE);
-		float len = adjustedVec.length();
-		if (len < 1e-6f) {
-			adjustedVec.set(0, 1, 0);
-			adjustedVec.cross(SE);
-			len = adjustedVec.length();
-			if (len < 1e-6f) {
-				adjustedVec.set(1, 0, 0);
-				adjustedVec.cross(SE);
-				len = adjustedVec.length();
-				if (len < 1e-6f) return;
-			}
-		}
-		adjustedVec.mul(thickness / len);
-
-		// Second perpendicular: 90° rotated around beam axis from the first
-		Vector3f perp2 = new Vector3f(adjustedVec);
-		Vector3f seNorm = new Vector3f(SE);
-		seNorm.normalize();
-		perp2.cross(seNorm);
-		float len2 = perp2.length();
-		if (len2 > 1e-6f) {
-			perp2.mul(thickness / len2);
-		} else {
-			perp2.set(adjustedVec); // fallback — shouldn't happen
-		}
-
-		// Draw first quad (billboard-facing)
-		drawQuad(builder, positionMatrix, from, to, adjustedVec, r, g, b, alpha, v1, v2);
-		// Draw second quad (perpendicular to the first — ensures top-down visibility)
-		drawQuad(builder, positionMatrix, from, to, perp2, r, g, b, alpha, v1, v2);
-	}
-
-	/**
-	 * Emits a single quad for a beam segment given the offset vector from the beam axis.
-	 */
-	private static void drawQuad(VertexConsumer builder, Matrix4f positionMatrix, Vector3f from, Vector3f to,
-			Vector3f offset, float r, float g, float b, float alpha, double v1, double v2) {
-		Vector3f p1 = new Vector3f(from).add(offset);
-		Vector3f p2 = new Vector3f(from).sub(offset);
-		Vector3f p3 = new Vector3f(to).add(offset);
-		Vector3f p4 = new Vector3f(to).sub(offset);
-
-		builder.vertex(positionMatrix, p1.x(), p1.y(), p1.z()).color(r, g, b, alpha).uv(1, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p3.x(), p3.y(), p3.z()).color(r, g, b, alpha).uv(1, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p4.x(), p4.y(), p4.z()).color(r, g, b, alpha).uv(0, (float) v2)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
-	}
-
 }
-

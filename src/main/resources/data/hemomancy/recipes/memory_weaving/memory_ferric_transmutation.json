@@ -3,14 +3,7 @@
   "ingredient": {
     "item": "hemomancy:hematic_iron_scrap"
   },
-  "animus": 0,
-  "mortem": 0,
-  "ductilis": 0,
-  "ferric": 3.0,
-  "lux": 0,
-  "tenebris": 0,
-  "flammeus": 0,
-  "congeatio": 0,
+  "ferric": true,
   "result": "hemomancy:memory_ferric_transmutation",
   "count": 1
 }

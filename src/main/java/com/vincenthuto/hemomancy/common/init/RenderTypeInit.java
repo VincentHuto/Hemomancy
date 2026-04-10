@@ -119,7 +119,7 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
-	// Somatic Loom beam render types — always render on top of world geometry
+	// Somatic Loom beam render types — always render on top of world geometry (legacy, used by MorphlingIncubator)
 	public static final RenderType LOOM_BEAM_CORE = create("LoomBeamCore",
 			DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setTextureState(new TextureStateShard(laserBeam, false, false))
@@ -134,6 +134,18 @@ public class RenderTypeInit extends RenderType {
 					.setShaderState(ShaderStateShard.POSITION_COLOR_TEX_SHADER)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(NO_DEPTH_TEST)
 					.setCullState(NO_CULL).setLightmapState(NO_LIGHTMAP).setWriteMaskState(COLOR_WRITE)
+					.createCompositeState(false));
+
+	// Somatic Loom flat-color effect — uses rite-style POSITION_COLOR with proper depth testing
+	public static final RenderType LOOM_EFFECT = create("LoomEffect",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
 	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",

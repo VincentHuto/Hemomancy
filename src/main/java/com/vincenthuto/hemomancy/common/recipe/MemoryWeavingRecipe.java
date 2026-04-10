@@ -21,11 +21,11 @@ import net.minecraft.world.level.Level;
 
 public class MemoryWeavingRecipe extends CustomRecipe {
 
-	/** Blood cost multiplier per unit of tendency. */
+	/** Blood cost multiplier per required tendency. */
 	private static final float BLOOD_COST_PER_TENDENCY = 50f;
 	/** Base crafting time in ticks before tendency scaling. */
 	private static final int BASE_CRAFT_TIME_TICKS = 100;
-	/** Additional ticks per unit of tendency. */
+	/** Additional ticks per required tendency. */
 	private static final int CRAFT_TIME_PER_TENDENCY = 20;
 
 	@SuppressWarnings("serial")
@@ -127,31 +127,39 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	}
 
 	/**
-	 * Computes the total absolute tendency required by this recipe.
+	 * Returns whether the given tendency is required by this recipe.
+	 * A tendency is required if its map value is > 0.
+	 */
+	public boolean isTendencyRequired(EnumBloodTendency tend) {
+		return tendency.getOrDefault(tend, 0f) > 0f;
+	}
+
+	/**
+	 * Counts the number of required tendencies for this recipe.
 	 * Used to scale ritual duration and blood cost.
 	 */
-	public float getTotalTendency() {
-		float total = 0;
+	public int getRequiredTendencyCount() {
+		int count = 0;
 		for (Float val : tendency.values()) {
-			if (val != null) {
-				total += Math.abs(val);
+			if (val != null && val > 0f) {
+				count++;
 			}
 		}
-		return total;
+		return count;
 	}
 
 	/**
-	 * Blood cost for the ritual, derived from total tendency strength.
+	 * Blood cost for the ritual, derived from number of required tendencies.
 	 */
 	public float getBloodCost() {
-		return getTotalTendency() * BLOOD_COST_PER_TENDENCY;
+		return getRequiredTendencyCount() * BLOOD_COST_PER_TENDENCY;
 	}
 
 	/**
-	 * Crafting time in ticks for the ritual, derived from total tendency.
+	 * Crafting time in ticks for the ritual, derived from number of required tendencies.
 	 */
 	public int getCraftTimeTicks() {
-		return BASE_CRAFT_TIME_TICKS + (int) (getTotalTendency() * CRAFT_TIME_PER_TENDENCY);
+		return BASE_CRAFT_TIME_TICKS + getRequiredTendencyCount() * CRAFT_TIME_PER_TENDENCY;
 	}
 
 

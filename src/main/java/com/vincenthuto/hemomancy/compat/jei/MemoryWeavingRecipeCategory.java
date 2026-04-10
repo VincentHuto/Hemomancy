@@ -73,6 +73,17 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	private static final int COST_COLOR = 0xFFAA0000;
 	private static final int LABEL_COLOR = 0xFF888888;
 
+	/** Greater-than-or-equal-to symbol shown on minimum tendency/cost labels. */
+	private static final String GTE = "\u2265";
+
+	/** Fixed spoke length for required tendencies in the JEI wheel. */
+	private static final double REQUIRED_SPOKE_LENGTH = 1.0;
+
+	/** Scale factor for tendency labels next to enzyme icons. */
+	private static final float LABEL_SCALE = 0.7f;
+	/** Vertical offset for tendency labels relative to icon center. */
+	private static final int LABEL_Y_OFFSET = -3;
+
 	private final IDrawable background;
 	private final IDrawable icon;
 
@@ -197,7 +208,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		int halfItem = ITEM_SIZE / 2;
 
 		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
-			float tendencyValue = tendencies.getOrDefault(tend, 0f);
+			boolean required = tendencies.getOrDefault(tend, 0f) > 0f;
 
 			// Base spoke endpoints
 			double baseAngleRad1 = Math.toRadians(angle + SPOKE_BASE_HALF_ANGLE);
@@ -207,9 +218,10 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			int cx2 = absCenterX + (int) (Math.cos(baseAngleRad2) * SPOKE_BASE_RADIUS);
 			int cy2 = absCenterY + (int) (Math.sin(baseAngleRad2) * SPOKE_BASE_RADIUS);
 
-			// Spoke tip — extends outward based on tendency value
+			// Spoke tip — fixed length for required tendencies, base only for non-required
 			double spokeAngleRad = Math.toRadians(angle);
-			double tipDist = (ICON_DIAMETER - SPOKE_BASE_RADIUS) * tendencyValue * 0.2 + SPOKE_BASE_RADIUS;
+			double spokeValue = required ? REQUIRED_SPOKE_LENGTH : 0;
+			double tipDist = (ICON_DIAMETER - SPOKE_BASE_RADIUS) * spokeValue * 0.2 + SPOKE_BASE_RADIUS;
 			int tipX = absCenterX + (int) (Math.cos(spokeAngleRad) * tipDist);
 			int tipY = absCenterY + (int) (Math.sin(spokeAngleRad) * tipDist);
 
@@ -228,6 +240,18 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			int iconX = absCenterX + (int) (Math.cos(spokeAngleRad) * iconDist) - halfItem;
 			int iconY = absCenterY + (int) (Math.sin(spokeAngleRad) * iconDist) - halfItem;
 			HLGuiUtils.renderItemStackInGui(gfx, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), iconX, iconY);
+
+			// Show "Required" label next to the enzyme icon for required tendencies
+			if (required) {
+				Font font = Minecraft.getInstance().font;
+				String label = GTE + "3";
+				ms.pushPose();
+				ms.scale(LABEL_SCALE, LABEL_SCALE, 1f);
+				int labelX = (int) ((iconX + ITEM_SIZE) / LABEL_SCALE);
+				int labelY = (int) ((iconY + ITEM_SIZE / 2 + LABEL_Y_OFFSET) / LABEL_SCALE);
+				gfx.drawString(font, label, labelX, labelY, tend.getColor(), false);
+				ms.popPose();
+			}
 
 			angle += 45f;
 		}

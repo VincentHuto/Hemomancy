@@ -3,14 +3,7 @@
   "ingredient": {
     "item": "hemomancy:spore_sac"
   },
-  "animus": 0,
-  "mortem": 0,
-  "ductilis": 0,
-  "ferric": 0,
-  "lux": 0,
-  "tenebris": 0,
-  "flammeus": 0,
-  "congeatio": 2.5,
+  "congeatio": true,
   "result": "hemomancy:memory_blood_cloud",
   "count": 1
 }
