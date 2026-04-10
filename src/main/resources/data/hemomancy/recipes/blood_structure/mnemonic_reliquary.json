@@ -1,0 +1,22 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 75,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:venous_stone",
+  "pattern": [
+    ["VTV"],
+    ["TVT"],
+    ["VTV"]
+  ],
+  "key": {
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:mnemonic_reliquary"
+  }
+}

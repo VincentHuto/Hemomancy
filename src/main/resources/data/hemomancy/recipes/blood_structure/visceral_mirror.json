@@ -1,0 +1,25 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 200,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:sanguine_glass",
+  "pattern": [
+    [" T ", " P ", " T "],
+    ["TGT", "PGP", "TGT"],
+    [" T ", " P ", " T "]
+  ],
+  "key": {
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "G": {
+      "block": "hemomancy:sanguine_glass"
+    }
+  },
+  "result": {
+    "item": "hemomancy:visceral_mirror"
+  }
+}

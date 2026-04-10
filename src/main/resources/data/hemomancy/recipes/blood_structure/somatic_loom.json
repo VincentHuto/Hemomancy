@@ -1,0 +1,25 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 150,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:infested_venous_stone",
+  "pattern": [
+    ["P P", "PTP"],
+    ["   ", "TIT"],
+    ["P P", "PTP"]
+  ],
+  "key": {
+    "P": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "I": {
+      "block": "hemomancy:infested_venous_stone"
+    }
+  },
+  "result": {
+    "item": "hemomancy:somatic_loom"
+  }
+}
