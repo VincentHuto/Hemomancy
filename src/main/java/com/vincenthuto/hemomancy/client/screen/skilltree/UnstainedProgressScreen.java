@@ -1676,20 +1676,8 @@ public class UnstainedProgressScreen extends Screen {
 		int panelY = guiTop + 30;
 
 		// Pre-calculate content for dynamic height
-		String desc = mat.description();
 		int maxW = panelW - 16;
-		java.util.List<String> descLines = new java.util.ArrayList<>();
-		StringBuilder line = new StringBuilder();
-		for (String word : desc.split(" ")) {
-			String test = line.isEmpty() ? word : line + " " + word;
-			if (font.width(test) > maxW && !line.isEmpty()) {
-				descLines.add(line.toString());
-				line = new StringBuilder(word);
-			} else {
-				line = new StringBuilder(test);
-			}
-		}
-		if (!line.isEmpty()) descLines.add(line.toString());
+		java.util.List<String> descLines = wrapText(mat.description(), maxW);
 
 		int panelH = 6 + 22 + 12 + 1 + 5 + descLines.size() * 10 + (mat.hasRecipe() ? 18 : 0) + 8;
 
@@ -1785,6 +1773,24 @@ public class UnstainedProgressScreen extends Screen {
 		pose.scale(itemScale, itemScale, 1);
 		gfx.renderItem(stack, 0, 0);
 		pose.popPose();
+	}
+
+	/** Simple word-wrap helper. */
+	private java.util.List<String> wrapText(String text, int maxWidth) {
+		java.util.List<String> lines = new java.util.ArrayList<>();
+		String[] words = text.split(" ");
+		StringBuilder current = new StringBuilder();
+		for (String word : words) {
+			if (current.length() > 0 && font.width(current + " " + word) > maxWidth) {
+				lines.add(current.toString());
+				current = new StringBuilder(word);
+			} else {
+				if (current.length() > 0) current.append(" ");
+				current.append(word);
+			}
+		}
+		if (current.length() > 0) lines.add(current.toString());
+		return lines;
 	}
 
 	// ────────────────────────────────────────────────────────────
