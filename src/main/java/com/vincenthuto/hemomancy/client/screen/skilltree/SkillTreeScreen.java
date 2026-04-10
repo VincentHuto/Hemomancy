@@ -811,7 +811,7 @@ public class SkillTreeScreen extends Screen {
 		renderVeinBackground(gfx, guiLeft, guiTop, guiWidth, guiHeight);
 
 		// ── 2. Border ──
-		drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight);
+		ScreenDrawUtils.drawBorder(gfx, guiLeft, guiTop, guiWidth, guiHeight, 0xFF330808, 0xFF220606);
 
 		// ── 3. Tree content (scissored so it clips when panned) ──
 		gfx.enableScissor(guiLeft + 2, guiTop + 2,
@@ -859,9 +859,9 @@ public class SkillTreeScreen extends Screen {
 		}
 
 		// ── 5. Overlay text ──
-		gfx.drawCenteredString(font,
-				Component.literal(activeTab.label),
-				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
+//		gfx.drawCenteredString(font,
+//				Component.literal(activeTab.label),
+//				guiLeft + guiWidth / 2, guiTop + 5, activeTab.color);
 
 		if (activeTab == Tab.SKILLS) {
 			// Display current skill points to the right of the home button
@@ -1000,15 +1000,6 @@ public class SkillTreeScreen extends Screen {
 					(a << 24) | (r << 16) | (g << 8) | b);
 		}
 	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Border
-	// ────────────────────────────────────────────────────────────
-
-	private void drawBorder(GuiGraphics gfx, int x, int y, int w, int h) {
-		ScreenDrawUtils.drawBorder(gfx, x, y, w, h, 0xFF330808, 0xFF220606);
-	}
-
 	// ────────────────────────────────────────────────────────────
 	//  Tree: connections
 	// ────────────────────────────────────────────────────────────

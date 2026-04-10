@@ -41,18 +41,18 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static final float CX = 0.5f;
 	private static final float CZ = 0.5f;
 	private static final float STAR_Y = 1.5f;
-	private static final float BASE_RADIUS = 1.0f;
+	private static final float BASE_RADIUS = 0.5f;
 	private static final float SPIKE_BASE_HALF_ANGLE = 22.75f;
 	/** How far each unit of affinity extends a spoke beyond BASE_RADIUS. */
 	private static final float AFFINITY_RADIUS_SCALE = 0.5f;
 
 	// ── Fractal spoke widths & alphas ──
-	private static final float SPOKE_CORE_WIDTH = 0.04f;
-	private static final float SPOKE_GLOW_WIDTH = 0.12f;
+	private static final float SPOKE_CORE_WIDTH = 0.004f;
+	private static final float SPOKE_GLOW_WIDTH = 0.012f;
 	private static final float SPOKE_CORE_ALPHA = 0.85f;
 	private static final float SPOKE_GLOW_ALPHA = 0.25f;
 	/** Fractal recursion terminates when displacement drops below this. */
-	private static final double FRACTAL_DETAIL = 0.04;
+	private static final double FRACTAL_DETAIL = 0.02;
 
 	// ── Ring segment count ──
 	private static final int RING_SEGMENTS = 64;
@@ -215,24 +215,29 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float tx = CX + (float) (Math.cos(tipRad) * tipDist);
 			float tz = CZ + (float) (Math.sin(tipRad) * tipDist);
 
+			// Vertical undulation per spoke vertex based on angular position
+			float yBase1 = STAR_Y + yUndulation(a1Rad, currentTime, 1f);
+			float yBase2 = STAR_Y + yUndulation(a2Rad, currentTime, 1f);
+			float yTip   = STAR_Y + yUndulation(tipRad, currentTime, 1f);
+
 			// Fractal displacement magnitude (based on base width)
 			float displace = (float) Math.sqrt(
 					(bx1 - bx2) * (bx1 - bx2) + (bz1 - bz2) * (bz1 - bz2)) * 0.5f;
 
 			// Primary fractal spokes (tip ↔ base corners)
-			fracLine(vc, mat, tx, STAR_Y, tz, bx1, STAR_Y, bz1,
+			fracLine(vc, mat, tx, yTip, tz, bx1, yBase1, bz1,
 					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
 					displace, FRACTAL_DETAIL);
-			fracLine(vc, mat, tx, STAR_Y, tz, bx2, STAR_Y, bz2,
+			fracLine(vc, mat, tx, yTip, tz, bx2, yBase2, bz2,
 					r, g, b, cAlpha, gAlpha, SPOKE_CORE_WIDTH, SPOKE_GLOW_WIDTH,
 					displace, FRACTAL_DETAIL);
 
 			// Secondary reverse spokes (dimmer, thinner)
-			fracLine(vc, mat, bx1, STAR_Y, bz1, tx, STAR_Y, tz,
+			fracLine(vc, mat, bx1, yBase1, bz1, tx, yTip, tz,
 					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
 					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
 					displace * 0.8, FRACTAL_DETAIL);
-			fracLine(vc, mat, bx2, STAR_Y, bz2, tx, STAR_Y, tz,
+			fracLine(vc, mat, bx2, yBase2, bz2, tx, yTip, tz,
 					r, g, b, cAlpha * 0.6f, gAlpha * 0.5f,
 					SPOKE_CORE_WIDTH * 0.7f, SPOKE_GLOW_WIDTH * 0.6f,
 					displace * 0.8, FRACTAL_DETAIL);
@@ -263,10 +268,12 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		for (int s = 1; s <= steps; s++) {
 			float stepAff = s * 0.2f;
 			float radius = BASE_RADIUS + stepAff * AFFINITY_RADIUS_SCALE * 0.85f;
+			// Offset the direction per step so concentric rings undulate out of phase
+			float dir = (s % 2 == 0) ? 1.0f : -1.0f;
 			drawUndulatingRing(vc, mat, CX, STAR_Y, CZ, radius,
 					0f, 0f, 0f, 0.2f, 0.06f,
 					0.025f, 0.06f,
-					currentTime, 1.0f, ENZYME_RING_SEGMENTS);
+					currentTime, dir, ENZYME_RING_SEGMENTS);
 		}
 	}
 
@@ -288,8 +295,8 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
 			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
 
-			float wave1 = (float) (Math.sin(Math.toRadians(a1 * 3) + currentTime * 0.1) * 0.015);
-			float wave2 = (float) (Math.sin(Math.toRadians(a2 * 3) + currentTime * 0.1) * 0.015);
+			float wave1 = yUndulation(Math.toRadians(a1), currentTime, 1f);
+			float wave2 = yUndulation(Math.toRadians(a2), currentTime, 1f);
 
 			float r1 = radius + undulation(Math.toRadians(a1), currentTime, 1f) * 0.5f;
 			float r2 = radius + undulation(Math.toRadians(a2), currentTime, 1f) * 0.5f;
@@ -329,8 +336,8 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float a1 = rotOff + (360f / RING_SEGMENTS) * i;
 			float a2 = rotOff + (360f / RING_SEGMENTS) * (i + 1);
 
-			float wave1 = (float) (Math.sin(Math.toRadians(a1 * 4) + currentTime * 0.15) * 0.012);
-			float wave2 = (float) (Math.sin(Math.toRadians(a2 * 4) + currentTime * 0.15) * 0.012);
+			float wave1 = yUndulation(Math.toRadians(a1), currentTime, -1f);
+			float wave2 = yUndulation(Math.toRadians(a2), currentTime, -1f);
 
 			float r1 = radius + undulation(Math.toRadians(a1), currentTime, -1f) * 0.4f;
 			float r2 = radius + undulation(Math.toRadians(a2), currentTime, -1f) * 0.4f;
@@ -442,8 +449,8 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 			float rUnd1 = undulation(Math.toRadians(a1), currentTime, dir);
 			float rUnd2 = undulation(Math.toRadians(a2), currentTime, dir);
 
-			float yW1 = (float) (Math.sin(Math.toRadians(a1 * 5) + currentTime * 0.08 * dir) * 0.008);
-			float yW2 = (float) (Math.sin(Math.toRadians(a2 * 5) + currentTime * 0.08 * dir) * 0.008);
+			float yW1 = yUndulation(Math.toRadians(a1), currentTime, dir);
+			float yW2 = yUndulation(Math.toRadians(a2), currentTime, dir);
 
 			emitRingArc(vc, mat, cx, y, cz,
 					a1, a2, baseRadius + rUnd1, baseRadius + rUnd2, yW1, yW2,
@@ -515,6 +522,14 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		double w1 = Math.sin(angleRad * UNDULATE_FREQ + time * UNDULATE_SPEED * dir) * UNDULATE_AMP;
 		double w2 = Math.sin(angleRad * UNDULATE_FREQ2 - time * UNDULATE_SPEED2 * dir) * UNDULATE_AMP2;
 		double throb = Math.sin(time * 0.04) * 0.02;
+		return (float) (w1 + w2 + throb);
+	}
+
+	/** Layered sine-wave vertical (Y) offset for ring segments and star spokes. */
+	private static float yUndulation(double angleRad, float time, float dir) {
+		double w1 = Math.sin(angleRad * 3.0 + time * 0.07 * dir) * 0.035;
+		double w2 = Math.sin(angleRad * 7.0 - time * 0.05 * dir) * 0.015;
+		double throb = Math.sin(time * 0.035) * 0.012;
 		return (float) (w1 + w2 + throb);
 	}
 
