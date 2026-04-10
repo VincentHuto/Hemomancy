@@ -387,6 +387,8 @@ public class ClientEvents {
 					SuspendedVivaniteRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.suspended_blood_crystal.get(),
 					SuspendedBloodCrystalRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.suspended_cleansed_blood_crystal.get(),
+					SuspendedCleansedBloodCrystalRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.dendritic_distributor.get(),
 					DendriticDistributorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mortal_display.get(), MortalDisplayRenderer::new);

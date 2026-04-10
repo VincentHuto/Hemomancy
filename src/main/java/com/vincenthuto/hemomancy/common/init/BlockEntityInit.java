@@ -86,6 +86,10 @@ public class BlockEntityInit {
 			.register("suspended_blood_crystal", () -> BlockEntityType.Builder
 					.of(SuspendedBloodCrystalBlockEntity::new, BlockInit.suspended_blood_crystal.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<SuspendedCleansedBloodCrystalBlockEntity>> suspended_cleansed_blood_crystal = TILES
+			.register("suspended_cleansed_blood_crystal", () -> BlockEntityType.Builder
+					.of(SuspendedCleansedBloodCrystalBlockEntity::new, BlockInit.suspended_cleansed_blood_crystal.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<FillerBlockEntity>> filler_block = TILES
 			.register("filler_block", () -> BlockEntityType.Builder
 					.of(FillerBlockEntity::new, BlockInit.filler_block.get()).build(null));

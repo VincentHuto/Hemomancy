@@ -37,6 +37,7 @@ public class HemoItemModelProvider extends ItemModelProvider {
 		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block != BlockInit.sanguine_pane.get()
+					&& block != BlockInit.cleansed_sanguine_pane.get()
 					&& block != BlockInit.active_befouling_ash_trail.get()
 					&& block != BlockInit.active_smouldering_ash_trail.get()
 					&& block != BlockInit.befouling_ash_trail.get()

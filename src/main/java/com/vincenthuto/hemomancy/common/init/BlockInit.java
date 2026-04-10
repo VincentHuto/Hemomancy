@@ -15,6 +15,7 @@ import com.vincenthuto.hemomancy.common.item.block.FungalImplantationPylonBlockI
 import com.vincenthuto.hemomancy.common.item.block.MnemonicReliquaryBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.MortalDisplayBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedBloodCrystalBlockItem;
+import com.vincenthuto.hemomancy.common.item.block.SuspendedCleansedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.SuspendedVivianiteBlockItem;
 import com.vincenthuto.hemomancy.common.item.block.VialCentrifugeBlockItem;
 
@@ -109,6 +110,14 @@ public class BlockInit {
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
 	public static final RegistryObject<Block> vivianite_pane = SPECIALBLOCKS.register("vivianite_pane",
+			() -> new IronBarsBlock(
+					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
+
+	public static final RegistryObject<Block> cleansed_sanguine_glass = BASEBLOCKS.register("cleansed_sanguine_glass",
+			() -> new GlassBlock(
+					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
+
+	public static final RegistryObject<Block> cleansed_sanguine_pane = SPECIALBLOCKS.register("cleansed_sanguine_pane",
 			() -> new IronBarsBlock(
 					BlockBehaviour.Properties.of().strength(0.1f, 1f).sound(SoundType.GLASS).noOcclusion()));
 
@@ -372,6 +381,10 @@ public class BlockInit {
 			() -> new SuspendedBloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
 
+	public static final RegistryObject<Block> suspended_cleansed_blood_crystal = MODELEDBLOCKS.register("suspended_cleansed_blood_crystal",
+			() -> new SuspendedCleansedBloodCrystalBlock(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops()
+					.strength(1.5F, 6.0F).sound(SoundType.AMETHYST)));
+
 	public static final RegistryObject<Block> bog_body = MODELEDBLOCKS.register("bog_body",
 			() -> new BogBodyBlock(BlockBehaviour.Properties.of().noOcclusion().strength(1.5F, 6.0F).sound(SoundType.WART_BLOCK)));
 
@@ -429,6 +442,10 @@ public class BlockInit {
 		if (b == BlockInit.suspended_blood_crystal.get()) {
 			return Pair.of(block.getSecond(),
 					new SuspendedBloodCrystalBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.suspended_cleansed_blood_crystal.get()) {
+			return Pair.of(block.getSecond(),
+					new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.mnemonic_reliquary.get()) {
 			return Pair.of(block.getSecond(),
