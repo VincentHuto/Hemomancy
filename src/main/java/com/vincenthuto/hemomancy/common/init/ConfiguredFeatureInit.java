@@ -66,7 +66,7 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> GHOST_PIPES = createKey("ghost_pipes");
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> SNOW_PLANTS = createKey("snow_plants");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SARCODES = createKey("sarcodes");
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> RAFFLESIA = createKey("rafflesia");
 
@@ -191,10 +191,10 @@ public class ConfiguredFeatureInit {
 						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
 								BlockStateProvider.simple(BlockInit.ghost_pipe.get())))))));
 
-		register(context, SNOW_PLANTS, Feature.SIMPLE_RANDOM_SELECTOR,
+		register(context, SARCODES, Feature.SIMPLE_RANDOM_SELECTOR,
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
 						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
-								BlockStateProvider.simple(BlockInit.snow_plant.get())))))));
+								BlockStateProvider.simple(BlockInit.sarcodes.get())))))));
 
 		register(context, RAFFLESIA, Feature.FLOWER,
 				grassPatch(BlockStateProvider.simple(BlockInit.rafflesia.get()), 1));

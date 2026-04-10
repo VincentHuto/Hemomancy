@@ -15,14 +15,15 @@ import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Snow Plant (Sarcodes sanguinea) — a striking, bright-red myco-heterotroph.
+ * Sarcodes (Sarcodes sanguinea) — a striking, bright-red myco-heterotroph.
  * Found in forested biomes, gains carbon from fungi.
  * Grows in the dark on mycelium, erythrocytic mycelium, or infested wood.
  * Gives off a bleeding particle effect when a player is nearby.
+ * A blood-faction flower used in hemomancy brewing.
  */
-public class SnowPlantBlock extends FlowerBlock {
+public class SarcodesBlock extends FlowerBlock {
 
-	public SnowPlantBlock(MobEffect effect, int effectDuration, Properties properties) {
+	public SarcodesBlock(MobEffect effect, int effectDuration, Properties properties) {
 		super(effect, effectDuration, properties);
 	}
 

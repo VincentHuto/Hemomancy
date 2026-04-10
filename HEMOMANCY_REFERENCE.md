@@ -847,17 +847,20 @@ A full block family with variants:
 | ![](src/main/resources/assets/hemomancy/textures/block/fruiting_infected_cap.png) Fruiting Infected Cap | ![](src/main/resources/assets/hemomancy/textures/block/erythrocytic_dirt.png) Erythrocytic Dirt | ![](src/main/resources/assets/hemomancy/textures/block/erythrocytic_mycelium_top.png) Erythrocytic Mycelium | ![](src/main/resources/assets/hemomancy/textures/block/bleeding_heart.png) Bleeding Heart |
 | ![](src/main/resources/assets/hemomancy/textures/block/infected_fungus.png) Infected Fungus | ![](src/main/resources/assets/hemomancy/textures/block/stinkhorn_fungus.png) Stinkhorn Fungus | ![](src/main/resources/assets/hemomancy/textures/block/lethean_poppy_bloomed.png) Lethean Poppy | |
 
-- Hyphae (cross-block, replaceable)
+- Hyphae (cross-block, replaceable — crafts into Spore Sac)
 - Hyphae Block
 - Infected Stem
 - Infected Cap / Fruiting Infected Cap
 - Erythrocytic Dirt
 - Erythrocytic Mycelium (spreads, random ticks)
-- Bleeding Heart (flower, Absorption effect)
-- Infected Fungus (flower, Confusion effect)
-- Stinkhorn Fungus (Confusion effect)
-- Puffball Fungus (Saturation effect)
-- Lethean Poppy (Regeneration effect, random ticks)
+- Bleeding Heart (flower, Absorption effect — crafts Dicentra Sap, brews Potion of Sanguine Siphon)
+- Infected Fungus (flower, Confusion effect — juiceinator → Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
+- Stinkhorn Fungus (Confusion effect — juiceinator → Foul Paste, brews Potion of Blood Binding)
+- Puffball Fungus (Saturation effect, **Unstained** — juiceinator → Spore Sac, incubator catalyst for Fungal Morphling)
+- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethian Dew, crafts Lethean Poppy Wreath)
+- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — juiceinator → Lethean Extract)
+- Sarcodes (myco-heterotrophic, Regeneration effect — juiceinator → Dicentra Sap, brews Potion of Blood Rush)
+- Rafflesia (parasitic, Confusion effect — juiceinator → Spore Sac, brews Potion of Hemolysis)
 
 All applicable flowers have **potted** variants.
 
@@ -950,7 +953,46 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 | **Lethe's Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player — a blasphemous assault on Our Lady's path |
 | **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness, receiving cryptic lore about hemomancy's origins |
 
-### 18.3 Food Recipes
+### 18.3 Plant & Fungi Recipes
+
+Plants and fungi found in hemomancy biomes serve as ingredients across multiple crafting systems:
+
+**Juiceinator Processing:**
+
+| Input | Output | Count | Cook Time |
+|-------|--------|-------|-----------|
+| Infected Fungus | Foul Paste | 2 | 100 |
+| Stinkhorn Fungus | Foul Paste | 2 | 100 |
+| Ghost Pipe | Lethean Extract | 1 | 150 |
+| Sarcodes | Dicentra Sap | 2 | 120 |
+| Rafflesia | Spore Sac | 2 | 120 |
+| Puffball Fungus | Spore Sac | 2 | 120 |
+| Lethean Poppy | Lethian Dew | 2 | 150 |
+
+**Crafting Recipes:**
+
+| Recipe | Type | Ingredients | Output |
+|--------|------|-------------|--------|
+| Lethean Poppy Wreath | Shapeless | 4× Lethean Poppy + String | 1 |
+| Lethean Extract | Shapeless | Lethian Dew + Consecrated Copper Ingot | 1 |
+| Tears of Lethe | Shapeless | Lethean Extract + Silver Chalice | 1 |
+| Pale Silver Ingot | Shapeless | Iron Ingot + Lethean Extract | 1 |
+| Spore Sac | Shapeless | Puffball Fungus + Hyphae | 2 |
+| Foul Paste (fungi) | Shapeless | Infected Fungus + Stinkhorn Fungus + Bone Meal | 3 |
+
+**Brewing Recipes (Awkward Potion + Plant → Potion):**
+
+Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe) deliberately do not brew blood-positive effects — their uses are in Juiceinator processing and Unstained crafting chains.
+
+| Plant Ingredient | Result Potion |
+|-----------------|---------------|
+| Bleeding Heart | Potion of Sanguine Siphon |
+| Infected Fungus | Potion of Mycorrhizal Mending |
+| Stinkhorn Fungus | Potion of Blood Binding |
+| Rafflesia | Potion of Hemolysis |
+| Sarcodes | Potion of Blood Rush |
+
+### 18.4 Food Recipes
 
 | Recipe | Type | Notes |
 |--------|------|-------|
@@ -1402,13 +1444,13 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of Le
 - **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Lethe Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
 - **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
 - **Unstained Dialogue Expansion** — Zealot dialogues should reference Our Lady of Lethe more directly, with lore about the River Lethe, the meaning of forgetting, and the significance of the poppies.
-- **Lethean Crafting Recipes** — planned recipes:
-  - Tears of Lethe = Lethean Extract + Silver Chalice (crafting or altar recipe)
-  - Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
-  - Lethean Extract = Lethian Dew + Consecrated Copper Ingot (juiceinator or crafting)
-  - Pale Silver Ingot = Iron Ingot + Lethean Extract (smelting or structure recipe)
-  - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting)
-  - Cleansed Stone = Stone + Hemolytic Solution (crafting)
+- **Lethean Crafting Recipes** — implemented recipes:
+  - ✅ Tears of Lethe = Lethean Extract + Silver Chalice (crafting)
+  - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
+  - ✅ Lethean Extract = Lethian Dew + Consecrated Copper Ingot (crafting)
+  - ✅ Pale Silver Ingot = Iron Ingot + Lethean Extract (crafting)
+  - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting) — planned
+  - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
 - **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
   - Begin the Unstained path
   - Receive the Altar's blessing

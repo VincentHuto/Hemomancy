@@ -30,11 +30,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -230,6 +235,21 @@ public class Hemomancy {
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
 
+            // Blood-Faction Plant Brewing Recipes
+            // Only blood-aligned plants brew into hemomancy potions.
+            // Unstained plants (puffball, lethean poppy, ghost pipe)
+            // deliberately do NOT brew blood-positive effects.
+            registerPlantBrewingRecipe(BlockInit.bleeding_heart.get().asItem(),
+                    EffectInit.potion_of_sanguine_siphon.get());
+            registerPlantBrewingRecipe(BlockInit.infected_fungus.get().asItem(),
+                    EffectInit.potion_of_mycorrhizal_mending.get());
+            registerPlantBrewingRecipe(BlockInit.stinkhorn_fungus.get().asItem(),
+                    EffectInit.potion_of_blood_binding.get());
+            registerPlantBrewingRecipe(BlockInit.rafflesia.get().asItem(),
+                    EffectInit.potion_of_hemolysis.get());
+            registerPlantBrewingRecipe(BlockInit.sarcodes.get().asItem(),
+                    EffectInit.potion_of_blood_rush.get());
+
         });
 
         HemoEntityPredicates.init();
@@ -253,6 +273,15 @@ public class Hemomancy {
         EnumClarityStage.VIGILANT.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pale_silver_ingot.get()));
         EnumClarityStage.RESOLUTE.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tome_of_the_unstained.get()));
         EnumClarityStage.ENLIGHTENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethe_icon.get()));
+    }
+
+    /** Registers a brewing recipe: Awkward Potion + plant item → mod potion. */
+    private static void registerPlantBrewingRecipe(Item plantItem,
+            net.minecraft.world.item.alchemy.Potion resultPotion) {
+        BrewingRecipeRegistry.addRecipe(
+                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
+                Ingredient.of(plantItem),
+                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
     }
 
 }

@@ -261,8 +261,8 @@ public class BlockInit {
 			() -> new GhostPipeBlock(MobEffects.NIGHT_VISION, 10,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));
 
-	public static final RegistryObject<Block> snow_plant = CROSSBLOCKS.register("snow_plant",
-			() -> new SnowPlantBlock(MobEffects.REGENERATION, 8,
+	public static final RegistryObject<Block> sarcodes = CROSSBLOCKS.register("sarcodes",
+			() -> new SarcodesBlock(MobEffects.REGENERATION, 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
 
 	public static final RegistryObject<Block> rafflesia = CROSSBLOCKS.register("rafflesia",
@@ -273,8 +273,8 @@ public class BlockInit {
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.ghost_pipe,
 					BlockBehaviour.Properties.of().noCollission()));
 
-	public static final RegistryObject<Block> potted_snow_plant = POTTEDBLOCKS.register("potted_snow_plant",
-			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.snow_plant,
+	public static final RegistryObject<Block> potted_sarcodes = POTTEDBLOCKS.register("potted_sarcodes",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.sarcodes,
 					BlockBehaviour.Properties.of().noCollission()));
 
 	// Gourd
@@ -518,8 +518,8 @@ public class BlockInit {
 					BlockInit.potted_puffball_fungus);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.ghost_pipe.getId(),
 					BlockInit.potted_ghost_pipe);
-			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.snow_plant.getId(),
-					BlockInit.potted_snow_plant);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.sarcodes.getId(),
+					BlockInit.potted_sarcodes);
 		});
 	}
 
