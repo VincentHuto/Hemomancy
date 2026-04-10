@@ -85,7 +85,7 @@ public class BloodVolumeOverlay {
 		// ── Organic vein tendrils around the frame ──
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		renderVeinTendrils(gfx, barX, barY, time);
+		//renderVeinTendrils(gfx, barX, barY, time);
 
 		// ── Outer frame — double border with organic bulge ──
 		// Slightly irregular outer shape

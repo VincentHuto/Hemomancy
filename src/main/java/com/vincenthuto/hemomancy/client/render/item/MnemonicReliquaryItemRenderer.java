@@ -54,8 +54,12 @@ public class MnemonicReliquaryItemRenderer extends BlockEntityWithoutLevelRender
 			poseStack.mulPose(new Quaternion(Vector3.ZN, 30, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 
-			poseStack.translate(-1.25, -1.75, -0.25);
-			poseStack.scale(1.5f,1.5f,1.5f);
+			poseStack.translate(-1, -1.75, -0.125);
+			poseStack.scale(1.25f,1.25f,1.25f);
+		}else{
+			poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
+			poseStack.translate(0, -1.5, -1);
+
 		}
 
 		poseStack.pushPose();
@@ -71,7 +75,7 @@ public class MnemonicReliquaryItemRenderer extends BlockEntityWithoutLevelRender
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
-		
+
 		poseStack.popPose();
 
 		if (isGui) {

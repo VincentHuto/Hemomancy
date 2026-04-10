@@ -114,16 +114,24 @@ public class RadialChooseManipScreen extends Screen {
 			IKnownManipulations manips = mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA)
 					.orElseThrow(NullPointerException::new);
 
-			for (int i = 0; i < manips.getKnownManips().size(); i++) {
-				BloodManipulation c = (BloodManipulation) manips.getKnownManips().keySet().toArray()[i];
-				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, i,
+			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary
+			List<BloodManipulation> allManips = manips.getManipList();
+			List<String> equippedNames = manips.getEquippedManipNames();
+
+			for (int i = 0; i < allManips.size(); i++) {
+				BloodManipulation c = allManips.get(i);
+				if (!equippedNames.contains(c.getName())) {
+					continue;
+				}
+				final int slot = i; // index into the full known manip list for the packet
+				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, slot,
 						Hemomancy.rloc("textures/item/memories/memory_" + c.getName() + "_overlay.png"),
 						Hemomancy.rloc("textures/item/memories/memory_blank.png"),
 						0, 0, 16, 16, 16, 16,
 						Component.literal(c.getProperName())) {
 					@Override
 					public boolean onClick() {
-						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentManipPacket(getSlot()));
+						PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new UpdateCurrentManipPacket(slot));
 						RadialChooseManipScreen.this.menu.close();
 						return true;
 					}
@@ -136,7 +144,7 @@ public class RadialChooseManipScreen extends Screen {
 			this.needsRecheckStacks = false;
 		}
 		if (this.cachedMenuItems.stream().noneMatch(RadialMenuItem::isVisible)) {
-			this.menu.setCentralText(Component.literal("No Known Manipulations"));
+			this.menu.setCentralText(Component.literal("No Memorized Manipulations"));
 		} else if (gourdEquipped != null) {
 
 			MutableComponent textComponents = MutableComponent.create(ComponentContents.EMPTY);
