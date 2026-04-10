@@ -17,6 +17,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -410,7 +412,7 @@ public class UnstainedProgressScreen extends Screen {
 	// ────────────────────────────────────────────────────────────
 
 	@Override
-	public void render(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+	public void render(@Nonnull GuiGraphics gfx, int mouseX, int mouseY, float partial) {
 		renderBackground(gfx);
 
 		cachePlayerData();
@@ -686,7 +688,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		// Column header
 		if (zoom >= 0.4f) {
-			gfx.drawCenteredString(font, Component.literal("\u2014 Purity \u2014"),
+			gfx.drawCenteredString(font, Component.literal("— Purity —"),
 					scrCenterX, sy(10), PURITY_COLOR);
 
 			// Progress bar
@@ -736,7 +738,7 @@ public class UnstainedProgressScreen extends Screen {
 		int startCY = nodeStartCY();
 
 		if (zoom >= 0.4f) {
-			gfx.drawCenteredString(font, Component.literal("\u2014 Clarity \u2014"),
+			gfx.drawCenteredString(font, Component.literal("— Clarity —"),
 					scrCenterX, sy(10), CLARITY_COLOR);
 
 			int barW = Math.max(20, (int)(100 * zoom));
@@ -994,9 +996,9 @@ public class UnstainedProgressScreen extends Screen {
 			tip.add(Component.literal("to all hemomancy abilities.")
 					.withStyle(s -> s.withColor(0xA08070)));
 			tip.add(Component.literal("")); // spacer
-			tip.add(Component.literal("Tainted: -10%  \u2022  Cleansing: -25%")
-					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
-			tip.add(Component.literal("Absolved: -50%  \u2022  Purified: -100%")
+		tip.add(Component.literal("Tainted: -10%  •  Cleansing: -25%")
+				.withStyle(s -> s.withColor(0x807060).withItalic(true)));
+		tip.add(Component.literal("Absolved: -50%  •  Purified: -100%")
 					.withStyle(s -> s.withColor(0x807060).withItalic(true)));
 			float penalty = currentPurityStage.getBloodMagicPenalty() * 100;
 			tip.add(Component.literal(String.format("Current: -%.0f%%", penalty))
@@ -1037,9 +1039,8 @@ public class UnstainedProgressScreen extends Screen {
 		int py = bonusPanelStartY();
 		int count = bonusButtonCount();
 		for (int i = 0; i < count; i++) {
-			int bx = px;
 			int by = py + i * (BONUS_BTN_SIZE + BONUS_BTN_GAP);
-			if (mx >= bx && mx <= bx + BONUS_BTN_SIZE && my >= by && my <= by + BONUS_BTN_SIZE) {
+			if (mx >= px && mx <= px + BONUS_BTN_SIZE && my >= by && my <= by + BONUS_BTN_SIZE) {
 				return i;
 			}
 		}
@@ -1155,12 +1156,12 @@ public class UnstainedProgressScreen extends Screen {
 				tip.add(Component.literal("while the Silver Ward effect is active.")
 						.withStyle(s -> s.withColor(0x8898B0)));
 				tip.add(Component.literal(""));
-				tip.add(Component.literal("Scales with Purity (purity \u00F7 100).")
-						.withStyle(s -> s.withColor(0x607090).withItalic(true)));
-				tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
-						.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
-				tip.add(Component.literal(""));
-				String state = silverWardEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
+			tip.add(Component.literal("Scales with Purity (purity ÷ 100).")
+					.withStyle(s -> s.withColor(0x607090).withItalic(true)));
+			tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
+					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+			tip.add(Component.literal(""));
+			String state = silverWardEnabled ? "✔ Enabled" : "✖ Disabled";
 				int stateCol = silverWardEnabled ? 0x60CC60 : 0xCC6060;
 				tip.add(Component.literal(state + " — click to toggle")
 						.withStyle(s -> s.withColor(stateCol)));
@@ -1174,12 +1175,12 @@ public class UnstainedProgressScreen extends Screen {
 			tip.add(Component.literal("weakens nearby blood magic entities and effects.")
 					.withStyle(s -> s.withColor(0x70A898)));
 			tip.add(Component.literal(""));
-			tip.add(Component.literal("Scales with Clarity (clarity \u00F7 100).")
-					.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-			tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
-					.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
-			tip.add(Component.literal(""));
-			String state = verdigrisAuraEnabled ? "\u2714 Enabled" : "\u2716 Disabled";
+		tip.add(Component.literal("Scales with Clarity (clarity ÷ 100).")
+				.withStyle(s -> s.withColor(0x508878).withItalic(true)));
+		tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
+				.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+		tip.add(Component.literal(""));
+		String state = verdigrisAuraEnabled ? "✔ Enabled" : "✖ Disabled";
 			int stateCol = verdigrisAuraEnabled ? 0x60CC60 : 0xCC6060;
 			tip.add(Component.literal(state + " — click to toggle")
 					.withStyle(s -> s.withColor(stateCol)));
@@ -1272,7 +1273,7 @@ public class UnstainedProgressScreen extends Screen {
 				"Advancements", mAdvancementsEarned, 10, 0xFFD0B060);
 		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
 				"Nights Slept", mNightsSlept, 10, 0xFF6080B0);
-		y = drawMilestoneBar(gfx, x, barX, y, barW, barH,
+		drawMilestoneBar(gfx, x, barX, y, barW, barH,
 				"Pets Healed", mPetsHealed, 15, 0xFFA0D0B0);
 
 		gfx.disableScissor();
@@ -1298,7 +1299,7 @@ public class UnstainedProgressScreen extends Screen {
 		gfx.fill(tabX + tw - 1, tabY, tabX + tw, tabY + th, bc);
 
 		// Arrow character: ◀ when expanded (click to collapse), ▶ when collapsed (click to expand)
-		String arrow = expanded ? "\u25C0" : "\u25B6";
+		String arrow = expanded ? "◀" : "▶";
 		int arrowCol = hovered ? 0xFFB0C8E8 : 0xFF8098C0;
 		gfx.drawCenteredString(font, arrow, tabX + tw / 2, tabY + th / 2 - 4, arrowCol);
 	}
@@ -1320,7 +1321,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	/** Draws a single checklist item with a check/cross icon. Returns the next Y. */
 	private int drawCheckItem(GuiGraphics gfx, int x, int y, String label, boolean complete) {
-		String icon = complete ? "\u2713" : "\u2717";
+		String icon = complete ? "✓" : "✗";
 		int iconCol = complete ? 0xFF60CC60 : 0xFF605060;
 		int labelCol = complete ? 0xFFA0C0D0 : 0xFF506070;
 
@@ -1334,7 +1335,7 @@ public class UnstainedProgressScreen extends Screen {
 								 int barW, int barH, String label, int current, int goal, int fillColor) {
 		// Label + count on the same line
 		gfx.drawString(font, label, labelX, y, 0xFF8898B0, false);
-		String countStr = current >= goal ? (current + "/" + goal + " \u2713") : (current + "/" + goal);
+		String countStr = current >= goal ? (current + "/" + goal + " ✓") : (current + "/" + goal);
 		int countCol = current >= goal ? 0xFF60CC60 : 0xFF6080A0;
 		int countW = font.width(countStr);
 		gfx.drawString(font, countStr, barX + barW - countW, y, countCol, false);
@@ -1401,14 +1402,14 @@ public class UnstainedProgressScreen extends Screen {
 							.withStyle(s -> s.withColor(0xAA6644)));
 				}
 
-				if (isCurrent) {
-					tip.add(Component.literal("\u25B8 Current Stage")
-							.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
-				} else if (reached) {
-					tip.add(Component.literal("\u2713 Achieved")
-							.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
-				} else {
-					float needed = stage.getMinPurity() - purity;
+			if (isCurrent) {
+				tip.add(Component.literal("▸ Current Stage")
+						.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
+			} else if (reached) {
+				tip.add(Component.literal("✓ Achieved")
+						.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+			} else {
+				float needed = stage.getMinPurity() - purity;
 					tip.add(Component.literal(String.format("%.1f%% more purity needed", needed))
 							.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
 				}
@@ -1446,14 +1447,14 @@ public class UnstainedProgressScreen extends Screen {
 				tip.add(Component.literal(String.format("Requires: %.0f%% Clarity", stage.getMinClarity()))
 						.withStyle(s -> s.withColor(0x888888)));
 
-				if (isCurrent) {
-					tip.add(Component.literal("\u25B8 Current Stage")
-							.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
-				} else if (reached) {
-					tip.add(Component.literal("\u2713 Achieved")
-							.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
-				} else {
-					float needed = stage.getMinClarity() - clarity;
+			if (isCurrent) {
+				tip.add(Component.literal("▸ Current Stage")
+						.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+			} else if (reached) {
+				tip.add(Component.literal("✓ Achieved")
+						.withStyle(s -> s.withColor(0x44AA44).withItalic(true)));
+			} else {
+				float needed = stage.getMinClarity() - clarity;
 					tip.add(Component.literal(String.format("%.1f%% more clarity needed", needed))
 							.withStyle(s -> s.withColor(0xAA4444).withItalic(true)));
 				}
@@ -1490,7 +1491,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		// House icon
 		int textCol = hovered ? 0xFFB0C0E0 : 0xFF506888;
-		gfx.drawCenteredString(font, "\u2302", bx + bs / 2, by + (bs - 8) / 2, textCol);
+		gfx.drawCenteredString(font, "⌂", bx + bs / 2, by + (bs - 8) / 2, textCol);
 
 		// Tooltip on hover
 		if (hovered) {
@@ -1717,7 +1718,7 @@ public class UnstainedProgressScreen extends Screen {
 
 		if (mat.hasRecipe()) {
 			ty += 4;
-			gfx.drawString(font, Component.literal("\u25C6 Has crafting recipe")
+			gfx.drawString(font, Component.literal("◆ Has crafting recipe")
 					.withStyle(s -> s.withColor(0xFF80B0A0).withItalic(true)),
 					tx, ty, 0, false);
 		}
@@ -1762,18 +1763,6 @@ public class UnstainedProgressScreen extends Screen {
 		return null;
 	}
 
-	private static final int ITEM_PADDING = 4;
-
-	private void renderScaledItem(GuiGraphics gfx, net.minecraft.world.item.ItemStack stack, int centerX, int centerY, int halfNodeSize) {
-		float nodeInner = Math.max(ITEM_PADDING, halfNodeSize * 2 - ITEM_PADDING);
-		float itemScale = nodeInner / 16.0f;
-		com.mojang.blaze3d.vertex.PoseStack pose = gfx.pose();
-		pose.pushPose();
-		pose.translate(centerX - nodeInner / 2.0f, centerY - nodeInner / 2.0f, 0);
-		pose.scale(itemScale, itemScale, 1);
-		gfx.renderItem(stack, 0, 0);
-		pose.popPose();
-	}
 
 	/** Simple word-wrap helper. */
 	private java.util.List<String> wrapText(String text, int maxWidth) {
@@ -1781,15 +1770,15 @@ public class UnstainedProgressScreen extends Screen {
 		String[] words = text.split(" ");
 		StringBuilder current = new StringBuilder();
 		for (String word : words) {
-			if (current.length() > 0 && font.width(current + " " + word) > maxWidth) {
+			if (!current.isEmpty() && font.width(current + " " + word) > maxWidth) {
 				lines.add(current.toString());
 				current = new StringBuilder(word);
 			} else {
-				if (current.length() > 0) current.append(" ");
+				if (!current.isEmpty()) current.append(" ");
 				current.append(word);
 			}
 		}
-		if (current.length() > 0) lines.add(current.toString());
+		if (!current.isEmpty()) lines.add(current.toString());
 		return lines;
 	}
 
