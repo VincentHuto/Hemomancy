@@ -79,6 +79,11 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	/** Fixed spoke length for required tendencies in the JEI wheel. */
 	private static final double REQUIRED_SPOKE_LENGTH = 1.0;
 
+	/** Scale factor for tendency labels next to enzyme icons. */
+	private static final float LABEL_SCALE = 0.7f;
+	/** Vertical offset for tendency labels relative to icon center. */
+	private static final int LABEL_Y_OFFSET = -3;
+
 	private final IDrawable background;
 	private final IDrawable icon;
 
@@ -241,9 +246,9 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 				Font font = Minecraft.getInstance().font;
 				String label = GTE + "3";
 				ms.pushPose();
-				ms.scale(0.7f, 0.7f, 1f);
-				int labelX = (int) ((iconX + ITEM_SIZE) / 0.7f);
-				int labelY = (int) ((iconY + ITEM_SIZE / 2 - 3) / 0.7f);
+				ms.scale(LABEL_SCALE, LABEL_SCALE, 1f);
+				int labelX = (int) ((iconX + ITEM_SIZE) / LABEL_SCALE);
+				int labelY = (int) ((iconY + ITEM_SIZE / 2 + LABEL_Y_OFFSET) / LABEL_SCALE);
 				gfx.drawString(font, label, labelX, labelY, tend.getColor(), false);
 				ms.popPose();
 			}

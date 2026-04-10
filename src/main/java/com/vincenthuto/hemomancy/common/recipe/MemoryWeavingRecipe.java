@@ -138,7 +138,7 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	 * Counts the number of required tendencies for this recipe.
 	 * Used to scale ritual duration and blood cost.
 	 */
-	public float getTotalTendency() {
+	public int getRequiredTendencyCount() {
 		int count = 0;
 		for (Float val : tendency.values()) {
 			if (val != null && val > 0f) {
@@ -149,17 +149,17 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	}
 
 	/**
-	 * Blood cost for the ritual, derived from total tendency strength.
+	 * Blood cost for the ritual, derived from number of required tendencies.
 	 */
 	public float getBloodCost() {
-		return getTotalTendency() * BLOOD_COST_PER_TENDENCY;
+		return getRequiredTendencyCount() * BLOOD_COST_PER_TENDENCY;
 	}
 
 	/**
-	 * Crafting time in ticks for the ritual, derived from total tendency.
+	 * Crafting time in ticks for the ritual, derived from number of required tendencies.
 	 */
 	public int getCraftTimeTicks() {
-		return BASE_CRAFT_TIME_TICKS + (int) (getTotalTendency() * CRAFT_TIME_PER_TENDENCY);
+		return BASE_CRAFT_TIME_TICKS + getRequiredTendencyCount() * CRAFT_TIME_PER_TENDENCY;
 	}
 
 
