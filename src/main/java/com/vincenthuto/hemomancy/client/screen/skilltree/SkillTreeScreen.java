@@ -64,6 +64,7 @@ public class SkillTreeScreen extends Screen {
 		SKILLS("Skills", 0xFFCC3333),
 		MANIPULATIONS("Manipulations", 0xFFCC8833),
 		CRAFTING("Crafting", 0xFFAA2222),
+		RUNES("Runes", 0xFF44AACC),
 		RITES("Rites", 0xFF8844CC),
 		MATERIALS("Materials", 0xFFCC6644);
 
@@ -149,6 +150,17 @@ public class SkillTreeScreen extends Screen {
 	private double craftingDragLastX = 0;
 	private int craftingVisibleLayer = -1;  // -1 = show all layers
 	private int craftingMaxLayer = 0;
+
+	// ── Rune Chisel data ──
+	private final List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> chiselRecipes = new ArrayList<>();
+	/** Chisel recipes grouped by tier for tier-based display. */
+	private final Map<String, List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe>> chiselByTier = new java.util.LinkedHashMap<>();
+	private static final String[] RUNE_TIER_NAMES = { "Tier 1", "Tier 2", "Tier 3" };
+	private static final int[] RUNE_TIER_THRESHOLDS = { 1, 2, 3 };
+	/** Minimum initiatory degree required to see each rune tier. */
+	private static final int[] RUNE_TIER_DEGREE_REQ = { 4, 4, 5 };
+	private String selectedRuneTier = null;
+	private int selectedRuneIndexInTier = 0;
 
 	// Shared nav button dimensions
 	private static final int RITE_NAV_BTN_W = 24;
@@ -240,6 +252,7 @@ public class SkillTreeScreen extends Screen {
 		cacheKnownManipulations();
 		cacheRiteRecipes();
 		cacheCraftingRecipes();
+		cacheChiselRecipes();
 
 		// Cache the player's initiatory degree for rendering
 		if (Minecraft.getInstance().player != null) {
@@ -263,13 +276,13 @@ public class SkillTreeScreen extends Screen {
 			case SKILLS        -> skillView;
 			case MANIPULATIONS -> manipView;
 			case MATERIALS     -> materialView;
-			default            -> view; // RITES / CRAFTING don't pan
+			default            -> view; // RITES / CRAFTING / RUNES don't pan
 		};
 	}
 
 	/** Save current view state and switch to a new tab's view. */
 	private void savePan() {
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) return;
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.RUNES) return;
 		view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
 	}
 
@@ -485,6 +498,37 @@ public class SkillTreeScreen extends Screen {
 		}
 	}
 
+	private void cacheChiselRecipes() {
+		chiselRecipes.clear();
+		chiselByTier.clear();
+		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
+			chiselRecipes.addAll(com.vincenthuto.hemomancy.common.recipe.ChiselRecipe.getAllRecipes(minecraft.level));
+		}
+		// Initialise empty tier lists
+		for (String tierName : RUNE_TIER_NAMES) {
+			chiselByTier.put(tierName, new ArrayList<>());
+		}
+		// Sort recipes into tiers based on recipe tier value
+		for (com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe : chiselRecipes) {
+			for (int i = 0; i < RUNE_TIER_THRESHOLDS.length; i++) {
+				if (recipe.getTier() <= RUNE_TIER_THRESHOLDS[i]) {
+					chiselByTier.get(RUNE_TIER_NAMES[i]).add(recipe);
+					break;
+				}
+			}
+		}
+		// Default selection: first accessible tier with recipes
+		selectedRuneTier = null;
+		selectedRuneIndexInTier = 0;
+		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
+			if (!chiselByTier.getOrDefault(RUNE_TIER_NAMES[i], List.of()).isEmpty()
+					&& playerDegree >= RUNE_TIER_DEGREE_REQ[i]) {
+				selectedRuneTier = RUNE_TIER_NAMES[i];
+				break;
+			}
+		}
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  Coordinate helpers  (content ↔ screen) — delegate to view
 	// ────────────────────────────────────────────────────────────
@@ -514,7 +558,7 @@ public class SkillTreeScreen extends Screen {
 	public boolean mouseClicked(double mx, double my, int btn) {
 		if (btn == 0) {
 			// Check home button click first (not on browse tabs)
-			if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && isOverHomeButton(mx, my)) {
+			if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES && isOverHomeButton(mx, my)) {
 				resetToHome();
 				return true;
 			}
@@ -571,6 +615,25 @@ public class SkillTreeScreen extends Screen {
 					if (mx >= guiLeft + TIER_SIDEBAR_W + 4) {
 						craftingDragging = true;
 						craftingDragLastX = mx;
+					}
+					return true;
+				}
+				if (activeTab == Tab.RUNES) {
+					// Check tier sidebar click
+					String clickedRuneTier = runeTierUnder(mx, my);
+					if (clickedRuneTier != null) {
+						int tierIdx = java.util.Arrays.asList(RUNE_TIER_NAMES).indexOf(clickedRuneTier);
+						if (tierIdx >= 0 && playerDegree >= RUNE_TIER_DEGREE_REQ[tierIdx]) {
+							selectedRuneTier = clickedRuneTier;
+							selectedRuneIndexInTier = 0;
+						}
+						return true;
+					}
+					// Check recipe list click
+					int clickedRuneIdx = runeRecipeUnder(mx, my);
+					if (clickedRuneIdx >= 0) {
+						selectedRuneIndexInTier = clickedRuneIdx;
+						return true;
 					}
 					return true;
 				}
@@ -681,8 +744,8 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 
-		// Rites & Crafting tabs consume scroll (no-op for now)
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING) {
+		// Rites, Crafting & Runes tabs consume scroll (no-op for now)
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.RUNES) {
 			return true;
 		}
 
@@ -762,6 +825,8 @@ public class SkillTreeScreen extends Screen {
 			drawManipNodes(gfx);
 		} else if (activeTab == Tab.CRAFTING) {
 			drawCraftingContent(gfx, mouseX, mouseY, partial);
+		} else if (activeTab == Tab.RUNES) {
+			drawRunesContent(gfx, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.RITES) {
 			drawRiteContent(gfx, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.MATERIALS) {
@@ -784,7 +849,7 @@ public class SkillTreeScreen extends Screen {
 		drawTabs(gfx, mouseX, mouseY);
 
 		// ── 4b. Home button (top-left, outside scissor; not on browse tabs) ──
-		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES) {
 			drawHomeButton(gfx, mouseX, mouseY);
 		}
 
@@ -807,7 +872,7 @@ public class SkillTreeScreen extends Screen {
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
 		}
 
-		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING) {
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES) {
 			// Hide zoom text when milestone drawer is open to avoid overlap
 			if (!(activeTab == Tab.SKILLS && milestoneDrawerOpen)) {
 				gfx.drawString(font,
@@ -2007,6 +2072,371 @@ public class SkillTreeScreen extends Screen {
 	// (Old nav buttons removed — now using tier sidebar)
 
 	// ────────────────────────────────────────────────────────────
+	//  Runes tab — chisel recipe display
+	// ────────────────────────────────────────────────────────────
+
+	private void drawRunesContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+		if (chiselRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No Rune recipes found",
+					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
+			return;
+		}
+
+		// ── Recipe content (right of sidebar) ──
+		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
+		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
+
+		// Push z so all overlays are above background
+		gfx.pose().pushPose();
+		gfx.pose().translate(0, 0, 400);
+
+		// ── Tier sidebar (left) ──
+		drawRunesTierSidebar(gfx, mouseX, mouseY);
+
+		if (selectedRuneTier == null) {
+			gfx.drawCenteredString(font, "Select a tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
+			return;
+		}
+
+		List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> tierRecipes =
+				chiselByTier.getOrDefault(selectedRuneTier, List.of());
+		if (tierRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No recipes in this tier",
+					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
+			gfx.pose().popPose();
+			return;
+		}
+		if (selectedRuneIndexInTier >= tierRecipes.size()) selectedRuneIndexInTier = 0;
+		com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe = tierRecipes.get(selectedRuneIndexInTier);
+
+		// Layout: left half = 8×8 pattern grid, right half = info panel
+		int patternAreaW = contentW / 2;
+		int patternX = contentX;
+		int infoX = contentX + patternAreaW + 10;
+		int infoW = contentW - patternAreaW - 20;
+
+		// ── 8×8 Rune pattern grid ──
+		drawRunePatternGrid(gfx, recipe, patternX + 10, guiTop + 30,
+				patternAreaW - 20, guiHeight - 60);
+
+		// ── Info panel ──
+		drawRuneInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
+
+		gfx.pose().popPose();
+	}
+
+	/**
+	 * Draws the 8×8 chisel pattern grid for a rune recipe.
+	 * Filled cells (value == 1) are drawn as solid colored squares;
+	 * empty cells are drawn as faint outlines.
+	 */
+	private void drawRunePatternGrid(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe,
+									 int areaX, int areaY, int areaW, int areaH) {
+		byte[][] pattern = recipe.getPattern();
+		if (pattern == null) return;
+
+		// Compute cell size to fit the grid in the available area
+		int gridDim = Math.min(areaW, areaH);
+		int cellSize = gridDim / 8;
+		int gridW = cellSize * 8;
+		int gridH = cellSize * 8;
+
+		// Centre the grid in the area
+		int gridX = areaX + (areaW - gridW) / 2;
+		int gridY = areaY + (areaH - gridH) / 2;
+
+		// Grid background
+		gfx.fill(gridX - 2, gridY - 2, gridX + gridW + 2, gridY + gridH + 2, 0xFF0A0404);
+		gfx.fill(gridX - 1, gridY - 1, gridX + gridW + 1, gridY + gridH + 1, Tab.RUNES.color & 0x33FFFFFF);
+
+		// Draw cells
+		int filledColor = Tab.RUNES.color;
+		int emptyBg = 0xFF120808;
+		int emptyBorder = 0xFF221111;
+
+		for (int row = 0; row < 8 && row < pattern.length; row++) {
+			for (int col = 0; col < 8 && col < pattern[row].length; col++) {
+				int cx = gridX + col * cellSize;
+				int cy = gridY + row * cellSize;
+
+				if (pattern[row][col] != 0) {
+					// Filled cell — solid color with pulse
+					float time = System.nanoTime() / 1_000_000_000f;
+					float pulse = 0.7f + 0.3f * (float) Math.sin(time * 2.0 + row * 0.5 + col * 0.3);
+					int r = (int) (((filledColor >> 16) & 0xFF) * pulse);
+					int g = (int) (((filledColor >> 8) & 0xFF) * pulse);
+					int b = (int) ((filledColor & 0xFF) * pulse);
+					int cellCol = 0xFF000000 | (r << 16) | (g << 8) | b;
+
+					gfx.fill(cx + 1, cy + 1, cx + cellSize - 1, cy + cellSize - 1, cellCol);
+					// Bright border
+					gfx.fill(cx, cy, cx + cellSize, cy + 1, filledColor);
+					gfx.fill(cx, cy + cellSize - 1, cx + cellSize, cy + cellSize, filledColor);
+					gfx.fill(cx, cy, cx + 1, cy + cellSize, filledColor);
+					gfx.fill(cx + cellSize - 1, cy, cx + cellSize, cy + cellSize, filledColor);
+				} else {
+					// Empty cell — faint outline
+					gfx.fill(cx + 1, cy + 1, cx + cellSize - 1, cy + cellSize - 1, emptyBg);
+					gfx.fill(cx, cy, cx + cellSize, cy + 1, emptyBorder);
+					gfx.fill(cx, cy + cellSize - 1, cx + cellSize, cy + cellSize, emptyBorder);
+					gfx.fill(cx, cy, cx + 1, cy + cellSize, emptyBorder);
+					gfx.fill(cx + cellSize - 1, cy, cx + cellSize, cy + cellSize, emptyBorder);
+				}
+			}
+		}
+
+		// Label below the grid
+		gfx.drawCenteredString(font, "Rune Pattern (8×8)", gridX + gridW / 2, gridY + gridH + 6, 0xFF888888);
+	}
+
+	/**
+	 * Draws the information panel for the selected chisel recipe.
+	 */
+	private void drawRuneInfoPanel(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe,
+								   int panelX, int panelY, int panelW) {
+		int y = panelY;
+		int lineH = 12;
+
+		// ── Recipe name (derived from ID) — word-wrapped ──
+		String namePath = recipe.getId().getPath();
+		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
+		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
+		for (String titleLine : ScreenDrawUtils.wrapText(font, name, panelW)) {
+			gfx.drawString(font, Component.literal(titleLine)
+					.withStyle(s -> s.withColor(Tab.RUNES.color).withBold(true)), panelX, y, 0);
+			y += lineH;
+		}
+		y += 4;
+
+		// ── Separator line ──
+		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
+		y += 6;
+
+		// ── Tier ──
+		gfx.drawString(font, Component.literal("Tier: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal(String.valueOf(recipe.getTier())).withStyle(s -> s.withColor(Tab.RUNES.color))), panelX, y, 0);
+		y += lineH + 4;
+
+		// ── Rune Type ──
+		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(0x888888))
+				.append(Component.literal(recipe.getRuneType().name()).withStyle(s -> s.withColor(0xDDDDDD))), panelX, y, 0);
+		y += lineH + 4;
+
+		// ── Ingredients ──
+		gfx.drawString(font, Component.literal("Ingredients:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+		y += lineH;
+
+		// Ingredient 1
+		net.minecraft.world.item.crafting.Ingredient ing1 = recipe.getIngredient1();
+		if (ing1 != null && !ing1.isEmpty()) {
+			ItemStack[] items1 = ing1.getItems();
+			if (items1.length > 0) {
+				ItemStack display1 = items1[0];
+				gfx.renderItem(display1, panelX + 2, y);
+				gfx.renderItemDecorations(font, display1, panelX + 2, y);
+				List<String> lines1 = ScreenDrawUtils.wrapText(font, display1.getHoverName().getString(), panelW - 24);
+				for (int li = 0; li < lines1.size(); li++) {
+					int ix = li == 0 ? panelX + 22 : panelX + 4;
+					gfx.drawString(font, Component.literal(lines1.get(li))
+							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+				}
+				y += Math.max(20, lines1.size() * lineH + 4);
+			}
+		}
+
+		// Ingredient 2
+		net.minecraft.world.item.crafting.Ingredient ing2 = recipe.getIngredient2();
+		if (ing2 != null && !ing2.isEmpty()) {
+			ItemStack[] items2 = ing2.getItems();
+			if (items2.length > 0) {
+				ItemStack display2 = items2[0];
+				gfx.renderItem(display2, panelX + 2, y);
+				gfx.renderItemDecorations(font, display2, panelX + 2, y);
+				List<String> lines2 = ScreenDrawUtils.wrapText(font, display2.getHoverName().getString(), panelW - 24);
+				for (int li = 0; li < lines2.size(); li++) {
+					int ix = li == 0 ? panelX + 22 : panelX + 4;
+					gfx.drawString(font, Component.literal(lines2.get(li))
+							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+				}
+				y += Math.max(20, lines2.size() * lineH + 4);
+			}
+		}
+
+		y += 6;
+
+		// ── Result item ──
+		ItemStack result = recipe.getResultItem();
+		if (result != null && !result.isEmpty()) {
+			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
+			y += lineH;
+
+			gfx.renderItem(result, panelX, y);
+			gfx.renderItemDecorations(font, result, panelX, y);
+			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
+			for (int li = 0; li < resultLines.size(); li++) {
+				int ix = li == 0 ? panelX + 20 : panelX + 4;
+				gfx.drawString(font, Component.literal(resultLines.get(li))
+						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
+			}
+			y += Math.max(20, resultLines.size() * lineH + 4);
+		}
+
+		y += 8;
+
+		// ── Lore / hint ──
+		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
+		y += 6;
+		String loreText = "Runes carve new venous and nervous pathways in the mind, "
+				+ "opening the practitioner to tendencies once sealed away.";
+		for (String loreLine : ScreenDrawUtils.wrapText(font, loreText, panelW)) {
+			gfx.drawString(font, Component.literal(loreLine)
+					.withStyle(s -> s.withColor(0xFF557788).withItalic(true)), panelX, y, 0);
+			y += lineH;
+		}
+	}
+
+	/**
+	 * Draws the tier sidebar for Runes, showing all tiers as rows.
+	 * Locked tiers are greyed/obfuscated. Recipes within selected tier are listed below.
+	 */
+	private void drawRunesTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		// Title
+		gfx.drawString(font, Component.literal("Rune Tiers")
+				.withStyle(s -> s.withColor(Tab.RUNES.color).withBold(true)), sx + 2, sy, 0);
+		sy += 14;
+
+		// Separator
+		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF224444);
+		sy += 4;
+
+		// Tier rows
+		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
+			String tierName = RUNE_TIER_NAMES[i];
+			boolean locked = playerDegree < RUNE_TIER_DEGREE_REQ[i];
+			boolean selected = tierName.equals(selectedRuneTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+					chiselByTier.getOrDefault(tierName, List.of());
+
+			boolean hovered = mouseX >= sx && mouseX <= sx + sw
+					&& mouseY >= sy && mouseY <= sy + rowH;
+
+			// Background
+			int bg = selected ? 0xDD0A1818 : (hovered && !locked ? 0xBB081414 : 0x99061010);
+			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
+
+			// Border
+			int bc = locked ? 0xFF333333 : (selected ? Tab.RUNES.color : 0xFF555555);
+			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
+			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
+			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
+			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
+
+			if (locked) {
+				// Dark overlay + lock indicator
+				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
+				gfx.drawString(font, "[X] " + tierName + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
+			} else {
+				String label = tierName + " (" + recipes.size() + ")";
+				int textCol = selected ? 0xFFAADDEE : 0xFF999999;
+				gfx.drawString(font, label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
+			}
+
+			// If this tier is selected, draw recipe list below
+			if (selected && !locked) {
+				sy += rowH + 2;
+				for (int j = 0; j < recipes.size(); j++) {
+					com.vincenthuto.hemomancy.common.recipe.ChiselRecipe r = recipes.get(j);
+					boolean recSel = (j == selectedRuneIndexInTier);
+					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
+							&& mouseY >= sy && mouseY <= sy + 16;
+
+					int recBg = recSel ? 0xCC102020 : (recHov ? 0xAA0A1818 : 0x00000000);
+					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
+
+					if (recSel) {
+						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.RUNES.color);
+					}
+
+					String recPath = r.getId().getPath();
+					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
+					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
+					int recCol = recSel ? 0xFFAADDEE : 0xFF888888;
+					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
+					sy += 18;
+				}
+			}
+			sy += rowH + 2;
+		}
+	}
+
+	/** Returns the tier name clicked in the runes sidebar, or null. */
+	private String runeTierUnder(double mx, double my) {
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
+			String tierName = RUNE_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedRuneTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+					chiselByTier.getOrDefault(tierName, List.of());
+
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+				return tierName;
+			}
+
+			if (selected) {
+				sy += rowH + 2 + recipes.size() * 18;
+			}
+			sy += rowH + 2;
+		}
+		return null;
+	}
+
+	/** Returns the recipe index clicked within the selected rune tier, or -1. */
+	private int runeRecipeUnder(double mx, double my) {
+		if (selectedRuneTier == null) return -1;
+		List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+				chiselByTier.getOrDefault(selectedRuneTier, List.of());
+		if (recipes.isEmpty()) return -1;
+
+		int sx = guiLeft + 4;
+		int sy = guiTop + 24 + 14 + 4;
+		int sw = TIER_SIDEBAR_W - 8;
+		int rowH = 22;
+
+		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
+			String tierName = RUNE_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedRuneTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> tierRecipes =
+					chiselByTier.getOrDefault(tierName, List.of());
+
+			sy += rowH + 2; // skip tier row
+
+			if (selected) {
+				for (int j = 0; j < tierRecipes.size(); j++) {
+					if (mx >= sx + 4 && mx <= sx + sw - 4
+							&& my >= sy && my <= sy + 16) {
+						return j;
+					}
+					sy += 18;
+				}
+				return -1;
+			}
+			// If not the selected tier, just advance past it
+		}
+		return -1;
+	}
+
+	// ────────────────────────────────────────────────────────────
 	//  Cardinal Rites tab — tier-based layout
 	// ────────────────────────────────────────────────────────────
 
@@ -2727,6 +3157,9 @@ public class SkillTreeScreen extends Screen {
 			case "skill_blood_flow"      -> "B";
 			case "skill_coagulation"     -> "G";
 			case "skill_sanguine_reach"  -> "R";
+			case "skill_rune_affinity"   -> "\u2721";
+			case "skill_rune_resonance"  -> "\u2721";
+			case "skill_rune_mastery"    -> "\u2721";
 			default                      -> "?";
 		};
 	}
