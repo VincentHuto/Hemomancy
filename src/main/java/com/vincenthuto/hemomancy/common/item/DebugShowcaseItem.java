@@ -277,17 +277,27 @@ public class DebugShowcaseItem extends Item {
 		int penSize = 7;
 		int penSpacing = penSize + 2;
 
+		int penIndex = 0;
 		for (int i = 0; i < mobEntities.size(); i++) {
-			int penCol = i % pensPerRow;
-			int penRow = i / pensPerRow;
+			RegistryObject<EntityType<?>> entityReg = mobEntities.get(i);
+			EntityType<?> type = entityReg.get();
+
+			// Skip entities that might not have a renderer registered to prevent crashes
+			try {
+				Entity testEntity = type.create(level);
+				if (testEntity == null) continue;
+				testEntity.discard();
+			} catch (Exception e) {
+				continue;
+			}
+
+			int penCol = penIndex % pensPerRow;
+			int penRow = penIndex / pensPerRow;
 			int penX = penCol * penSpacing;
 			int penZ = z + penRow * penSpacing;
 
 			BlockPos penOrigin = origin.offset(penX, 0, penZ);
 			buildFencedPen(level, penOrigin, penSize);
-
-			RegistryObject<EntityType<?>> entityReg = mobEntities.get(i);
-			EntityType<?> type = entityReg.get();
 
 			BlockPos center = penOrigin.offset(penSize / 2, 1, penSize / 2);
 			try {
@@ -301,9 +311,10 @@ public class DebugShowcaseItem extends Item {
 			} catch (Exception e) {
 				// Skip entities that fail to create
 			}
+			penIndex++;
 		}
 
-		int mobRows = (mobEntities.size() + pensPerRow - 1) / pensPerRow;
+		int mobRows = (penIndex + pensPerRow - 1) / pensPerRow;
 		z += mobRows * penSpacing + 3;
 
 		// List misc/projectile entities in chests as named paper items

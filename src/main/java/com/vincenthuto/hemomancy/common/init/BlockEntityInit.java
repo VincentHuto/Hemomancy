@@ -93,4 +93,8 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<VisceralMirrorBlockEntity>> visceral_mirror = TILES
 			.register("visceral_mirror", () -> BlockEntityType.Builder
 					.of(VisceralMirrorBlockEntity::new, BlockInit.visceral_mirror.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<MnemonicReliquaryBlockEntity>> mnemonic_reliquary = TILES
+			.register("mnemonic_reliquary", () -> BlockEntityType.Builder
+					.of(MnemonicReliquaryBlockEntity::new, BlockInit.mnemonic_reliquary.get()).build(null));
 }

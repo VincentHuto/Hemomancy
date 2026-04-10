@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/structure_spawner"
+    "layer0": "hemomancy:item/debug_showcase_spawner"
   }
 }

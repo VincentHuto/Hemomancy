@@ -109,6 +109,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import com.vincenthuto.hemomancy.client.render.entity.mob.SpectralCompanionRenderer;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -362,6 +363,8 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.sanguis_lancea.get(), SanguisLanceaRenderer::new);
 			event.registerEntityRenderer(EntityInit.unstained_zealot.get(), UnstainedZealotRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
+			event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
+			event.registerEntityRenderer(EntityInit.dark_arrow.get(), BloodShotRenderer::new);
 
 		}
 
@@ -391,6 +394,7 @@ public class ClientEvents {
 			BlockEntityRenderers.register(BlockEntityInit.somatic_loom.get(),
 					SomaticLoomRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
 			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
 			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);

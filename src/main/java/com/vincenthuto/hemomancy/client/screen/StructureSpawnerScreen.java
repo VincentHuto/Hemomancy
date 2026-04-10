@@ -34,7 +34,11 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
 	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
 
+	private static final int HEADER_HEIGHT = 14;
+
 	private final List<StructureEntry> entries = new ArrayList<>();
+	/** Flat display list: mix of section headers (null recipeId) and clickable entries. */
+	private final List<ListRow> displayRows = new ArrayList<>();
 	private int scrollOffset = 0;
 	private List<Button> entryButtons = new ArrayList<>();
 
@@ -78,8 +82,28 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 
 		entries.sort(Comparator.comparingInt(StructureEntry::sortOrder).thenComparing(StructureEntry::displayName));
 
+		// Build flat display list with section headers
+		displayRows.clear();
+		int lastDegree = -1;
+		for (StructureEntry entry : entries) {
+			if (entry.sortOrder() != lastDegree) {
+				lastDegree = entry.sortOrder();
+				displayRows.add(new ListRow(null, getSectionLabel(lastDegree), null, lastDegree, true));
+			}
+			displayRows.add(new ListRow(entry.recipeId(), entry.displayName(), entry.type(), entry.sortOrder(), false));
+		}
+
 		scrollOffset = 0;
 		rebuildButtons();
+	}
+
+	private static String getSectionLabel(int degree) {
+		if (degree == 0) return "§4── Tier I (No Degree) ──";
+		if (degree <= 1) return "§4── Tier II (Degree " + degree + ") ──";
+		if (degree <= 2) return "§4── Tier III (Degree " + degree + ") ──";
+		if (degree <= 3) return "§4── Tier IV (Degree " + degree + ") ──";
+		if (degree <= 4) return "§4── Tier V (Degree " + degree + ") ──";
+		return "§4── Tier VI (Degree " + degree + ") ──";
 	}
 
 	private void rebuildButtons() {
@@ -90,28 +114,36 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		entryButtons.clear();
 
 		int x = leftPos + LIST_X;
-		int y = topPos + LIST_Y;
+		int startY = topPos + LIST_Y;
+		int currentY = 0;
 
-		int maxVisible = Math.min(VISIBLE_ENTRIES, entries.size() - scrollOffset);
-		for (int i = 0; i < maxVisible; i++) {
-			int entryIndex = scrollOffset + i;
-			StructureEntry entry = entries.get(entryIndex);
+		for (int i = scrollOffset; i < displayRows.size(); i++) {
+			if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
+			ListRow row = displayRows.get(i);
 
-			Button btn = Button.builder(Component.literal(entry.displayName), (press) -> {
-				PacketHandler.CHANNELBLOODVOLUME.sendToServer(
-						new PlaceStructurePacket(entry.recipeId, entry.type)
-				);
-				onClose();
-			}).bounds(x, y + i * ENTRY_HEIGHT, LIST_WIDTH, ENTRY_HEIGHT - 2).build();
+			if (row.isHeader()) {
+				// Headers consume HEADER_HEIGHT, no button needed (drawn in renderBg)
+				currentY += HEADER_HEIGHT;
+			} else {
+				if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
+				final ListRow entryRow = row;
+				Button btn = Button.builder(Component.literal(entryRow.displayName()), (press) -> {
+					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+							new PlaceStructurePacket(entryRow.recipeId(), entryRow.type())
+					);
+					onClose();
+				}).bounds(x, startY + currentY, LIST_WIDTH, ENTRY_HEIGHT - 2).build();
 
-			entryButtons.add(btn);
-			addRenderableWidget(btn);
+				entryButtons.add(btn);
+				addRenderableWidget(btn);
+				currentY += ENTRY_HEIGHT;
+			}
 		}
 	}
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		int maxScroll = Math.max(0, entries.size() - VISIBLE_ENTRIES);
+		int maxScroll = Math.max(0, displayRows.size() - 1);
 		scrollOffset = (int) Math.max(0, Math.min(scrollOffset - delta, maxScroll));
 		rebuildButtons();
 		return true;
@@ -127,8 +159,32 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 		graphics.fill(leftPos, topPos, leftPos + 1, topPos + GUI_HEIGHT, 0xFF880000);
 		graphics.fill(leftPos + GUI_WIDTH - 1, topPos, leftPos + GUI_WIDTH, topPos + GUI_HEIGHT, 0xFF880000);
 
+		// Draw section headers
+		int startY = topPos + LIST_Y;
+		int currentY = 0;
+		for (int i = scrollOffset; i < displayRows.size(); i++) {
+			ListRow row = displayRows.get(i);
+			if (row.isHeader()) {
+				if (currentY + HEADER_HEIGHT > LIST_HEIGHT) break;
+				int headerY = startY + currentY;
+				// Dark background strip
+				graphics.fill(leftPos + LIST_X, headerY, leftPos + LIST_X + LIST_WIDTH, headerY + HEADER_HEIGHT, 0xFF0D0305);
+				// Decorative line across the top of the header
+				graphics.fill(leftPos + LIST_X, headerY, leftPos + LIST_X + LIST_WIDTH, headerY + 1, 0xFF660E0E);
+				// Draw the section label centered
+				String label = row.displayName();
+				int labelWidth = font.width(label);
+				int labelX = leftPos + LIST_X + (LIST_WIDTH - labelWidth) / 2;
+				graphics.drawString(font, label, labelX, headerY + 3, 0xFFAA3333, false);
+				currentY += HEADER_HEIGHT;
+			} else {
+				if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
+				currentY += ENTRY_HEIGHT;
+			}
+		}
+
 		// Draw scrollbar if needed
-		if (entries.size() > VISIBLE_ENTRIES) {
+		if (displayRows.size() > VISIBLE_ENTRIES) {
 			int scrollbarX = leftPos + GUI_WIDTH - 6;
 			int scrollbarTop = topPos + LIST_Y;
 			int scrollbarHeight = LIST_HEIGHT;
@@ -136,8 +192,8 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 			graphics.fill(scrollbarX, scrollbarTop, scrollbarX + 4, scrollbarTop + scrollbarHeight, 0xFF333333);
 
 			// Thumb
-			int maxScroll = Math.max(1, entries.size() - VISIBLE_ENTRIES);
-			int thumbHeight = Math.max(10, scrollbarHeight * VISIBLE_ENTRIES / entries.size());
+			int maxScroll = Math.max(1, displayRows.size() - 1);
+			int thumbHeight = Math.max(10, scrollbarHeight * VISIBLE_ENTRIES / displayRows.size());
 			int thumbY = scrollbarTop + (scrollbarHeight - thumbHeight) * scrollOffset / maxScroll;
 			graphics.fill(scrollbarX, thumbY, scrollbarX + 4, thumbY + thumbHeight, 0xFFAA0000);
 		}
@@ -198,4 +254,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	private record StructureEntry(ResourceLocation recipeId, String displayName, PlaceStructurePacket.StructureType type, int sortOrder) {}
+
+	/** A row in the display list – either a section header or a clickable entry. */
+	private record ListRow(ResourceLocation recipeId, String displayName, PlaceStructurePacket.StructureType type, int sortOrder, boolean isHeader) {}
 }

@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "hemomancy:block/mnemonic_reliquary"
-    }
+    "facing=north": { "model": "hemomancy:block/mnemonic_reliquary" },
+    "facing=south": { "model": "hemomancy:block/mnemonic_reliquary" },
+    "facing=west":  { "model": "hemomancy:block/mnemonic_reliquary" },
+    "facing=east":  { "model": "hemomancy:block/mnemonic_reliquary" }
   }
 }

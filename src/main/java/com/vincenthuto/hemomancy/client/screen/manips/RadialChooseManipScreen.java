@@ -117,7 +117,9 @@ public class RadialChooseManipScreen extends Screen {
 			for (int i = 0; i < manips.getKnownManips().size(); i++) {
 				BloodManipulation c = (BloodManipulation) manips.getKnownManips().keySet().toArray()[i];
 				BlitRadialMenuItem item = new BlitRadialMenuItem(this.menu, i,
-						Hemomancy.rloc("textures/item/memories/memory_" + c.getName() + ".png"), 0, 0, 16, 16, 16, 16,
+						Hemomancy.rloc("textures/item/memories/memory_" + c.getName() + "_overlay.png"),
+						Hemomancy.rloc("textures/item/memories/memory_blank.png"),
+						0, 0, 16, 16, 16, 16,
 						Component.literal(c.getProperName())) {
 					@Override
 					public boolean onClick() {

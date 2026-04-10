@@ -1253,11 +1253,17 @@ public class SkillTreeScreen extends Screen {
 					gfx.drawCenteredString(font, sym, nx, ny - 4, textCol);
 				}
 
-				// Name below node
+				// Name below node (word-wrap to avoid overlapping neighbours)
 				if (manip != null && zoom >= 0.7f) {
 					String label = HLTextUtils.toProperCase(manip.getName().replace("_", " "));
 					int labelCol = known ? (0xFF000000 | (tendR << 16) | (tendG << 8) | tendB) : 0xFF444444;
-					gfx.drawCenteredString(font, label, nx, ny + hn + 3, labelCol);
+					int maxLabelW = Math.max(20, (int)(NODE_GAP_X * zoom) - 4);
+					List<String> lines = wrapText(label, maxLabelW);
+					int ly = ny + hn + 3;
+					for (String line : lines) {
+						gfx.drawCenteredString(font, line, nx, ly, labelCol);
+						ly += font.lineHeight;
+					}
 				}
 			}
 		}

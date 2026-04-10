@@ -93,6 +93,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedVivianiteModel.LAYER_LOCATION, SuspendedVivianiteModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
+		event.registerLayerDefinition(MnemonicReliquaryModel.LAYER_LOCATION, MnemonicReliquaryModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);
 		event.registerLayerDefinition(IronWallModel.iron_wall, IronWallModel::createBodyLayer);

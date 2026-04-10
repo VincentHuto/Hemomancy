@@ -33,7 +33,7 @@ public class ChiselActionButton extends Button {
 
 	@Override
 	public void renderWidget(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
-		boolean hovered = this.isHoveredOrFocused();
+		boolean hovered = this.isHovered();
 
 		int x = this.getX();
 		int y = this.getY();

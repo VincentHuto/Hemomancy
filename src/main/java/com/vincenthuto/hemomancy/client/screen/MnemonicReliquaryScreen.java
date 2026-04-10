@@ -407,10 +407,10 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			int lx = cx + (int) (labelRadius * Math.cos(angle));
 			int ly = cy + (int) (labelRadius * Math.sin(angle));
 
-			float r = tend.getColor().getRed();
-			float g = tend.getColor().getGreen();
-			float b = tend.getColor().getBlue();
-			int color = 0xFF000000 | ((int) (r * 255) << 16) | ((int) (g * 255) << 8) | (int) (b * 255);
+			int r = (int) tend.getColor().getRed();
+			int g = (int) tend.getColor().getGreen();
+			int b = (int) tend.getColor().getBlue();
+			int color = 0xFF000000 | (r << 16) | (g << 8) | b;
 
 			List<BloodManipulation> manips = tendencyGroups.getOrDefault(tend, Collections.emptyList());
 			int count = manips.size();
