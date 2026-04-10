@@ -135,7 +135,7 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 		Font font = Minecraft.getInstance().font;
 
 		// Blood cost — top right
-		MutableComponent costText = Component.literal("Blood: " + (int) recipe.getBloodCost());
+		MutableComponent costText = Component.literal("\u2265 Blood: " + (int) recipe.getBloodCost());
 		int costWidth = font.width(costText);
 		gfx.drawString(font, costText, BG_W - costWidth - 3, 3, COST_COLOR, false);
 
@@ -229,6 +229,18 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 			int iconY = absCenterY + (int) (Math.sin(spokeAngleRad) * iconDist) - halfItem;
 			HLGuiUtils.renderItemStackInGui(gfx, new ItemStack(EnumBloodTendency.getRepEnzyme(tend)), iconX, iconY);
 
+			// Show minimum tendency requirement next to the enzyme icon
+			if (tendencyValue > 0f) {
+				Font font = Minecraft.getInstance().font;
+				String label = "\u2265" + formatTendency(tendencyValue);
+				ms.pushPose();
+				ms.scale(0.7f, 0.7f, 1f);
+				int labelX = (int) ((iconX + ITEM_SIZE) / 0.7f);
+				int labelY = (int) ((iconY + ITEM_SIZE / 2 - 3) / 0.7f);
+				gfx.drawString(font, label, labelX, labelY, tend.getColor(), false);
+				ms.popPose();
+			}
+
 			angle += 45f;
 		}
 
@@ -238,6 +250,12 @@ public class MemoryWeavingRecipeCategory implements IRecipeCategory<MemoryWeavin
 	// ═══════════════════════════════════════════════════════════════
 	//  Drawing helpers
 	// ═══════════════════════════════════════════════════════════════
+
+	/** Formats a tendency value, stripping trailing zeros. */
+	private static String formatTendency(float value) {
+		if (value == (int) value) return String.valueOf((int) value);
+		return String.valueOf(value);
+	}
 
 	/** Draws a subtle pulsing glow in the background. */
 	private void drawSubtleGlow(GuiGraphics gfx, int cx, int cy, float time) {
