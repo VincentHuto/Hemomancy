@@ -237,7 +237,7 @@ public class Hemomancy {
 
             // Blood-Faction Plant Brewing Recipes
             // Only blood-aligned plants brew into hemomancy potions.
-            // Unstained plants (puffball, lethean poppy, ghost pipe, snow plant)
+            // Unstained plants (puffball, lethean poppy, ghost pipe)
             // deliberately do NOT brew blood-positive effects.
             registerPlantBrewingRecipe(BlockInit.bleeding_heart.get().asItem(),
                     EffectInit.potion_of_sanguine_siphon.get());
@@ -247,6 +247,8 @@ public class Hemomancy {
                     EffectInit.potion_of_blood_binding.get());
             registerPlantBrewingRecipe(BlockInit.rafflesia.get().asItem(),
                     EffectInit.potion_of_hemolysis.get());
+            registerPlantBrewingRecipe(BlockInit.sarcodes.get().asItem(),
+                    EffectInit.potion_of_blood_rush.get());
 
         });
 

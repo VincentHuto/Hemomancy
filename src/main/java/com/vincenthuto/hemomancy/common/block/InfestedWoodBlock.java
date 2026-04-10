@@ -27,7 +27,7 @@ public class InfestedWoodBlock extends Block {
 		}
 		Block plant = plantable.getPlant(world, pos.relative(facing)).getBlock();
 		if (plant instanceof InfectedFungusBlock || plant instanceof GhostPipeBlock
-				|| plant instanceof SnowPlantBlock) {
+				|| plant instanceof SarcodesBlock) {
 			return true;
 		}
 		return super.canSustainPlant(state, world, pos, facing, plantable);

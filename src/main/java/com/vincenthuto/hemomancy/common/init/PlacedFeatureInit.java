@@ -48,7 +48,7 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> GHOST_PIPES = createKey("ghost_pipes");
 
-	public static final ResourceKey<PlacedFeature> SNOW_PLANTS = createKey("snow_plants");
+	public static final ResourceKey<PlacedFeature> SARCODES = createKey("sarcodes");
 
 	public static final ResourceKey<PlacedFeature> RAFFLESIA = createKey("rafflesia");
 
@@ -96,10 +96,10 @@ public class PlacedFeatureInit {
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 
-		final Holder<ConfiguredFeature<?, ?>> SNOW_PLANTS = configuredFeatureGetter
-				.getOrThrow(ConfiguredFeatureInit.SNOW_PLANTS);
+		final Holder<ConfiguredFeature<?, ?>> SARCODES = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.SARCODES);
 
-		register(context, PlacedFeatureInit.SNOW_PLANTS, SNOW_PLANTS, RarityFilter.onAverageOnceEvery(12),
+		register(context, PlacedFeatureInit.SARCODES, SARCODES, RarityFilter.onAverageOnceEvery(12),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
 				CountPlacement.of(ClampedInt.of(UniformInt.of(-3, 1), 0, 1)), BiomeFilter.biome());
 

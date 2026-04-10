@@ -1,5 +1,5 @@
 {
-  "feature": "hemomancy:snow_plants",
+  "feature": "hemomancy:sarcodes",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
@@ -17,13 +17,16 @@
       "count": {
         "type": "minecraft:clamped",
         "value": {
-          "max_inclusive": 1,
-          "min_inclusive": 0,
-          "source": {
-            "type": "minecraft:uniform",
-            "value": {
-              "max_inclusive": 1,
-              "min_inclusive": -3
+          "type": "minecraft:uniform",
+          "value": {
+            "max_inclusive": 1,
+            "min_inclusive": 0,
+            "source": {
+              "type": "minecraft:uniform",
+              "value": {
+                "max_inclusive": 1,
+                "min_inclusive": -3
+              }
             }
           }
         }

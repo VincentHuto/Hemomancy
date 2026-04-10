@@ -2,6 +2,6 @@
   "parent": "minecraft:block/cross",
   "render_type": "cutout",
   "textures": {
-    "cross": "hemomancy:block/snow_plant"
+    "cross": "hemomancy:block/sarcodes"
   }
 }

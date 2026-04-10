@@ -859,7 +859,7 @@ A full block family with variants:
 - Puffball Fungus (Saturation effect, **Unstained** — juiceinator → Spore Sac, incubator catalyst for Fungal Morphling)
 - Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethian Dew, crafts Lethean Poppy Wreath)
 - Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — juiceinator → Lethean Extract)
-- Snow Plant (myco-heterotrophic, Regeneration effect, **Unstained** — juiceinator → Dicentra Sap)
+- Sarcodes (myco-heterotrophic, Regeneration effect — juiceinator → Dicentra Sap, brews Potion of Blood Rush)
 - Rafflesia (parasitic, Confusion effect — juiceinator → Spore Sac, brews Potion of Hemolysis)
 
 All applicable flowers have **potted** variants.
@@ -964,7 +964,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Infected Fungus | Foul Paste | 2 | 100 |
 | Stinkhorn Fungus | Foul Paste | 2 | 100 |
 | Ghost Pipe | Lethean Extract | 1 | 150 |
-| Snow Plant | Dicentra Sap | 2 | 120 |
+| Sarcodes | Dicentra Sap | 2 | 120 |
 | Rafflesia | Spore Sac | 2 | 120 |
 | Puffball Fungus | Spore Sac | 2 | 120 |
 | Lethean Poppy | Lethian Dew | 2 | 150 |
@@ -982,7 +982,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 
 **Brewing Recipes (Awkward Potion + Plant → Potion):**
 
-Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe, Snow Plant) deliberately do not brew blood-positive effects — their uses are in Juiceinator processing and Unstained crafting chains.
+Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe) deliberately do not brew blood-positive effects — their uses are in Juiceinator processing and Unstained crafting chains.
 
 | Plant Ingredient | Result Potion |
 |-----------------|---------------|
@@ -990,6 +990,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Infected Fungus | Potion of Mycorrhizal Mending |
 | Stinkhorn Fungus | Potion of Blood Binding |
 | Rafflesia | Potion of Hemolysis |
+| Sarcodes | Potion of Blood Rush |
 
 ### 18.4 Food Recipes
 

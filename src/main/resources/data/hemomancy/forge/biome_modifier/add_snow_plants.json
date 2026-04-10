@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#hemomancy:snow_plant_spawnlist",
-  "features": "hemomancy:snow_plants",
-  "step": "vegetal_decoration"
-}

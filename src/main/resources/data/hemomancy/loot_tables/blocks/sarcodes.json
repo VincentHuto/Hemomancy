@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:snow_plant"
+          "name": "hemomancy:sarcodes"
         }
       ],
       "conditions": [

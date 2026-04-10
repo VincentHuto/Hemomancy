@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:juiceinator",
   "ingredient": {
-    "item": "hemomancy:snow_plant"
+    "item": "hemomancy:sarcodes"
   },
   "result": "hemomancy:dicentra_sap",
   "count": 2,
