@@ -7,6 +7,8 @@
     "minecraft:rabbit",
     "minecraft:silverfish",
     "minecraft:vex",
-    "minecraft:chicken"
+    "minecraft:chicken",
+    "hemomancy:sanguine_stalker",
+    "hemomancy:marrow_maggot"
   ]
 }

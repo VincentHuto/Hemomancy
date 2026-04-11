@@ -12,6 +12,7 @@
     "minecraft:stray",
     "minecraft:tadpole",
     "minecraft:tropical_fish",
-    "minecraft:turtle"
+    "minecraft:turtle",
+    "hemomancy:frozen_clot"
   ]
 }

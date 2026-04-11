@@ -6,6 +6,8 @@
     "minecraft:phantom",
     "minecraft:vex",
     "minecraft:witch",
-    "minecraft:wither"
+    "minecraft:wither",
+    "hemomancy:void_drinker",
+    "hemomancy:abyssal_siphon"
   ]
 }
