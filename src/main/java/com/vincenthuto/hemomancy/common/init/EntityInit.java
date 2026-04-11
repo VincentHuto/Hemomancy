@@ -172,15 +172,15 @@ public class EntityInit {
             () -> EntityType.Builder.of(AbyssalSiphonEntity::new, MobCategory.MONSTER)
                     .sized(1.2F, 0.6F).build(Hemomancy.rloc("abyssal_siphon").toString()));
 
-    public static final RegistryObject<EntityType<SanguineStalkerEntity>> sanguine_stalker = ENTITY_TYPES.register(
-            "sanguine_stalker",
-            () -> EntityType.Builder.of(SanguineStalkerEntity::new, MobCategory.MONSTER)
-                    .sized(0.8F, 1.0F).build(Hemomancy.rloc("sanguine_stalker").toString()));
+    public static final RegistryObject<EntityType<SynapseHoundEntity>> synapse_hound = ENTITY_TYPES.register(
+            "synapse_hound",
+            () -> EntityType.Builder.of(SynapseHoundEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.0F).build(Hemomancy.rloc("synapse_hound").toString()));
 
-    public static final RegistryObject<EntityType<MarrowMaggotEntity>> marrow_maggot = ENTITY_TYPES.register(
-            "marrow_maggot",
-            () -> EntityType.Builder.of(MarrowMaggotEntity::new, MobCategory.MONSTER)
-                    .sized(0.6F, 0.4F).build(Hemomancy.rloc("marrow_maggot").toString()));
+    public static final RegistryObject<EntityType<MyelinBorerEntity>> myelin_borer = ENTITY_TYPES.register(
+            "myelin_borer",
+            () -> EntityType.Builder.of(MyelinBorerEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 0.4F).build(Hemomancy.rloc("myelin_borer").toString()));
 
     // Passive Mobs
     public static final RegistryObject<EntityType<CrimsonDoeEntity>> crimson_doe = ENTITY_TYPES.register(
@@ -320,10 +320,10 @@ public class EntityInit {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.abyssal_siphon.get(), SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.sanguine_stalker.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SanguineStalkerEntity::canSpawnHere);
-            SpawnPlacements.register(EntityInit.marrow_maggot.get(), SpawnPlacements.Type.ON_GROUND,
-                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MarrowMaggotEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.synapse_hound.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.myelin_borer.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.crimson_doe.get(), SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.hemojelly.get(), SpawnPlacements.Type.ON_GROUND,
@@ -367,8 +367,8 @@ public class EntityInit {
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
         event.put(EntityInit.frozen_clot.get(), FrozenClotEntity.setAttributes().build());
         event.put(EntityInit.abyssal_siphon.get(), AbyssalSiphonEntity.setAttributes().build());
-        event.put(EntityInit.sanguine_stalker.get(), SanguineStalkerEntity.setAttributes().build());
-        event.put(EntityInit.marrow_maggot.get(), MarrowMaggotEntity.setAttributes().build());
+        event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
+        event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());

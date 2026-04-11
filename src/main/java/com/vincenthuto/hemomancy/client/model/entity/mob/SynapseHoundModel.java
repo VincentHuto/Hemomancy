@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.model.entity.mob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.mob.SanguineStalkerEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.SynapseHoundEntity;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -15,8 +15,8 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public class SanguineStalkerModel extends EntityModel<SanguineStalkerEntity> {
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("sanguine_stalker"), "main");
+public class SynapseHoundModel extends EntityModel<SynapseHoundEntity> {
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Hemomancy.rloc("synapse_hound"), "main");
 
 	private final ModelPart body;
 	private final ModelPart head;
@@ -26,7 +26,7 @@ public class SanguineStalkerModel extends EntityModel<SanguineStalkerEntity> {
 	private final ModelPart backRightLeg;
 	private final ModelPart tail;
 
-	public SanguineStalkerModel(ModelPart root) {
+	public SynapseHoundModel(ModelPart root) {
 		this.body = root.getChild("body");
 		this.head = root.getChild("head");
 		this.frontLeftLeg = root.getChild("frontLeftLeg");
@@ -76,7 +76,7 @@ public class SanguineStalkerModel extends EntityModel<SanguineStalkerEntity> {
 	}
 
 	@Override
-	public void setupAnim(SanguineStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(SynapseHoundEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.head.xRot = headPitch * ((float) Math.PI / 180F);
 		this.frontLeftLeg.xRot = (float) Math.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;

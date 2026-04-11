@@ -215,7 +215,7 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> abyssal_ichor = BASEITEMS.register("abyssal_ichor",
 			() -> new Item(new Item.Properties()));
-	public static final RegistryObject<Item> marrow_chunk = BASEITEMS.register("marrow_chunk",
+	public static final RegistryObject<Item> nerve_bundle = BASEITEMS.register("nerve_bundle",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> fungal_spine = BASEITEMS.register("fungal_spine",
 			() -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
@@ -713,12 +713,12 @@ public class ItemInit {
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
 			"spawn_egg_abyssal_siphon",
 			() -> new ForgeSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
-	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_sanguine_stalker = SPAWNEGGS.register(
-			"spawn_egg_sanguine_stalker",
-			() -> new ForgeSpawnEggItem(EntityInit.sanguine_stalker, 0xA0522D, 0x8B0000, new Item.Properties()));
-	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_marrow_maggot = SPAWNEGGS.register(
-			"spawn_egg_marrow_maggot",
-			() -> new ForgeSpawnEggItem(EntityInit.marrow_maggot, 0xE8D8C0, 0x6B3A3A, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
+			"spawn_egg_synapse_hound",
+			() -> new ForgeSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
+			"spawn_egg_myelin_borer",
+			() -> new ForgeSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
 
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
 			"spawn_egg_crimson_doe",

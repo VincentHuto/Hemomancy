@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.entity.mob;
 
+import com.vincenthuto.hemomancy.common.init.EffectInit;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -9,19 +11,20 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -29,30 +32,32 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
 /**
- * Cave mob - a cave-dwelling blood grub that bores into nerve-rich marrow.
- * Small, eyeless, spawns below Y=48. Its bite disrupts the nervous system,
- * causing Nausea and Mining Fatigue (loss of fine motor control).
- * Neurotic tendency.
+ * Savannah mob - a pack-hunting nerve-predator, wolf-like.
+ * Fast, can leap at targets, delivers a bioelectric bite that
+ * applies Neural Overload — stacking with repeated hits for
+ * escalating nervous system disruption. Neurotic tendency.
  */
-public class MarrowMaggotEntity extends Monster {
+public class SynapseHoundEntity extends Monster {
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 8.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.2D)
-				.add(Attributes.ATTACK_DAMAGE, 2.0D);
+				.add(Attributes.MAX_HEALTH, 10.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.38D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D)
+				.add(Attributes.FOLLOW_RANGE, 20.0D);
 	}
 
-	public MarrowMaggotEntity(EntityType<? extends MarrowMaggotEntity> type, Level worldIn) {
+	public SynapseHoundEntity(EntityType<? extends SynapseHoundEntity> type, Level worldIn) {
 		super(type, worldIn);
 	}
 
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
-		this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.6D));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
+		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2D, true));
+		this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
 	}
@@ -70,9 +75,11 @@ public class MarrowMaggotEntity extends Monster {
 	@Override
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
-		if (flag && target instanceof net.minecraft.world.entity.LivingEntity living) {
-			living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
-			living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 0));
+		if (flag && target instanceof LivingEntity living) {
+			// Stack neural_overload: if already present, bump amplifier
+			MobEffectInstance existing = living.getEffect(EffectInit.neural_overload.get());
+			int newAmp = existing != null ? Math.min(existing.getAmplifier() + 1, 4) : 0;
+			living.addEffect(new MobEffectInstance(EffectInit.neural_overload.get(), 160, newAmp));
 		}
 		return flag;
 	}
@@ -85,28 +92,27 @@ public class MarrowMaggotEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SILVERFISH_AMBIENT;
+		return SoundEvents.WOLF_AMBIENT;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.SILVERFISH_DEATH;
+		return SoundEvents.WOLF_DEATH;
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.SILVERFISH_HURT;
+		return SoundEvents.WOLF_HURT;
 	}
 
 	@Override
 	protected float getSoundVolume() {
-		return 0.3f;
+		return 0.4f;
 	}
 
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& pPos.getY() < 48
 				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 

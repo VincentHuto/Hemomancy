@@ -20,6 +20,7 @@ import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.effect.SpinedBarricadeEffect;
 import com.vincenthuto.hemomancy.common.effect.VenomousResilienceEffect;
 import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
+import com.vincenthuto.hemomancy.common.effect.NeuralOverloadEffect;
 import com.vincenthuto.hemomancy.common.effect.ArcaneResonanceEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineClarityEffect;
 
@@ -191,5 +192,11 @@ public class EffectInit {
 
 	public static final RegistryObject<MobEffect> sanguine_clarity = EFFECTS.register("sanguine_clarity",
 			() -> new SanguineClarityEffect(MobEffectCategory.BENEFICIAL, 0x4020A0));
+
+	// Neurotic Tendency Effect
+	public static final RegistryObject<MobEffect> neural_overload = EFFECTS.register("neural_overload",
+			() -> new NeuralOverloadEffect(MobEffectCategory.HARMFUL, 0x7DF9FF)
+					.addAttributeModifier(Attributes.MOVEMENT_SPEED, "D1E2F3A4-B5C6-7D8E-9F0A-1B2C3D4E5F6A",
+							-0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 }

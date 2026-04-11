@@ -883,8 +883,8 @@
 	"entity.hemomancy.void_drinker": "Void Drinker",
 	"entity.hemomancy.frozen_clot": "Frozen Clot",
 	"entity.hemomancy.abyssal_siphon": "Abyssal Siphon",
-	"entity.hemomancy.sanguine_stalker": "Sanguine Stalker",
-	"entity.hemomancy.marrow_maggot": "Marrow Maggot",
+	"entity.hemomancy.synapse_hound": "Synapse Hound",
+	"entity.hemomancy.myelin_borer": "Myelin Borer",
 	"entity.hemomancy.crimson_doe": "Crimson Doe",
 	"entity.hemomancy.hemojelly": "Hemojelly",
 	"entity.hemomancy.venous_strider": "Venous Strider",
@@ -894,16 +894,18 @@
 	"item.hemomancy.void_ichor": "Void Ichor",
 	"item.hemomancy.frozen_cruor": "Frozen Cruor",
 	"item.hemomancy.abyssal_ichor": "Abyssal Ichor",
-	"item.hemomancy.marrow_chunk": "Marrow Chunk",
+	"item.hemomancy.nerve_bundle": "Nerve Bundle",
 
 	"item.hemomancy.spawn_egg_dessicant": "Dessicant Spawn Egg",
 	"item.hemomancy.spawn_egg_cruor_fiend": "Cruor Fiend Spawn Egg",
 	"item.hemomancy.spawn_egg_void_drinker": "Void Drinker Spawn Egg",
 	"item.hemomancy.spawn_egg_frozen_clot": "Frozen Clot Spawn Egg",
 	"item.hemomancy.spawn_egg_abyssal_siphon": "Abyssal Siphon Spawn Egg",
-	"item.hemomancy.spawn_egg_sanguine_stalker": "Sanguine Stalker Spawn Egg",
-	"item.hemomancy.spawn_egg_marrow_maggot": "Marrow Maggot Spawn Egg",
+	"item.hemomancy.spawn_egg_synapse_hound": "Synapse Hound Spawn Egg",
+	"item.hemomancy.spawn_egg_myelin_borer": "Myelin Borer Spawn Egg",
 	"item.hemomancy.spawn_egg_crimson_doe": "Crimson Doe Spawn Egg",
 	"item.hemomancy.spawn_egg_hemojelly": "Hemojelly Spawn Egg",
-	"item.hemomancy.spawn_egg_venous_strider": "Venous Strider Spawn Egg"
+	"item.hemomancy.spawn_egg_venous_strider": "Venous Strider Spawn Egg",
+
+	"effect.hemomancy.neural_overload": "Neural Overload"
 }

@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:marrow_chunk",
+          "name": "hemomancy:nerve_bundle",
           "functions": [
             {
               "function": "minecraft:set_count",

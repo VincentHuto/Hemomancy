@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/marrow_chunk"
+    "layer0": "hemomancy:item/nerve_bundle"
   }
 }
