@@ -1,0 +1,36 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 3500,
+  "riteType": "grand",
+  "requiredDegree": 6,
+  "riteName": "Rite of the Curved Horn",
+  "riteDescription": "The final vessel transcends flesh and gourd alike. Shaped from gilded venous stone and ancient blood, the curved horn is the apex of sanguine containment — a relic that drinks the very essence of its bearer.",
+  "pattern": [
+    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   G   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
+    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  G  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
+    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
+    ["         ", " H     H ", "   G   G ", "     B   ", "    BEB  ", "     B   ", "   G   G ", " H     H ", "         "],
+    ["H       H", " G     G ", "  G   G  ", "   G G   ", "    E    ", "   G G   ", "  G   G  ", " G     G ", "H       H"],
+    ["         ", " H     H ", "   G   G ", "     B   ", "    BEB  ", "     B   ", "   G   G ", " H     H ", "         "],
+    ["         ", " H     H ", "   GGGGG ", "   G   G ", "   G E G ", "   G   G ", "   GGGGG ", " H     H ", "         "],
+    ["         ", " HHHHHHH ", " H     H ", " H     H ", " H  G  H ", " H     H ", " H     H ", " HHHHHHH ", "         "],
+    ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   G   H", "G       G", "H       H", "G       G", "HGHGHGHGH"]
+  ],
+  "key": {
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    }
+  },
+  "result": {
+    "item": "hemomancy:curved_horn"
+  }
+}
