@@ -185,7 +185,7 @@ public class KnownManipulationEvents {
 		// 3. Skill: Vital Link — chance to heal when using a manipulation
 		double vitalLinkChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getVitalLinkChance();
 		if (vitalLinkChance > 0 && player.level().random.nextDouble() < vitalLinkChance) {
-			player.heal(2.0f); // Heal 1 heart on successful proc
+			player.heal(2.0f); // Heal 2.0 health (1 heart) on successful proc
 		}
 
 		// 4. Grant XP to the manipulation's level

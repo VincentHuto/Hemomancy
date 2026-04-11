@@ -241,7 +241,7 @@ public class BloodManipulation  {
 						strongest = t;
 					}
 				}
-				if (strongest != null && strongest == tend) {
+				if (strongest != null && strongest.equals(tend)) {
 					// Dynamic Use returns e.g. 1.2 at level 2 — invert to
 					// get a discount: cost / 1.2 ≈ 17% discount.
 					effectiveCost /= com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getDynamicUseMultiplier();
