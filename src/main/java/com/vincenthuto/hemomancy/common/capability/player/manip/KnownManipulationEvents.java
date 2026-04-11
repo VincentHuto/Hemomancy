@@ -182,7 +182,13 @@ public class KnownManipulationEvents {
 		// 2. Tendency shift toward the manip's tendency
 		BloodTendencyEvents.shiftTendencyFromManipUse(player, manip.getTend());
 
-		// 3. Grant XP to the manipulation's level
+		// 3. Skill: Vital Link — chance to heal when using a manipulation
+		double vitalLinkChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getVitalLinkChance();
+		if (vitalLinkChance > 0 && player.level().random.nextDouble() < vitalLinkChance) {
+			player.heal(2.0f); // Heal 1 heart on successful proc
+		}
+
+		// 4. Grant XP to the manipulation's level
 		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(known -> {
 			ManipLevel level = known.getManipLevel(manip);
 			if (level != null && level != ManipLevel.BLANK) {
@@ -193,7 +199,7 @@ public class KnownManipulationEvents {
 					new KnownManipulationServerPacket(known));
 		});
 
-		// 4. Grant skill-point currency based on manipulation rank
+		// 5. Grant skill-point currency based on manipulation rank
 		int spGain = switch (manip.getRank()) {
 			case HUMILIS      -> 1;
 			case MEDIOCRITAS   -> 2;
@@ -203,7 +209,7 @@ public class KnownManipulationEvents {
 		};
 		SkillPointInit.skillPoints += spGain;
 
-		// 5. Check manipulation-use milestones (first use, tiered totals)
+		// 6. Check manipulation-use milestones (first use, tiered totals)
 		SkillPointGainEvents.onManipulationUsed(player);
 
 		// Sync skill tree (which includes skill-point balance) back to client

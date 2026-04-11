@@ -27,6 +27,11 @@ public class HemolysisEffect extends MobEffect {
 					unstained.addPurity(purityGain);
 				} else if (!unstained.hasBegunPurification()) {
 					// Hemomancer (blood active, not on Unstained path) — apply blood drain damage
+					// ── Skill: Coagulation — chance to block blood-drain tick ──
+					double coagChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getCoagulationChance();
+					if (coagChance > 0 && player.level().random.nextDouble() < coagChance) {
+						return; // Blocked by Coagulation skill
+					}
 					player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
 						if (volume.isActive()) {
 							float drainAmount = 5.0f * (amplifier + 1);

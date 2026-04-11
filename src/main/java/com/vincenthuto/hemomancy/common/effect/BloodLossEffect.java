@@ -35,6 +35,13 @@ public class BloodLossEffect extends MobEffect {
 			if (entity instanceof Player) {
 				if (!entity.level().isClientSide) {
 					Player playerIn = (Player) entity;
+
+					// ── Skill: Coagulation — chance to block this blood-drain tick ──
+					double coagChance = com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getCoagulationChance();
+					if (coagChance > 0 && playerIn.level().random.nextDouble() < coagChance) {
+						return; // Blocked by Coagulation skill
+					}
+
 					IBloodVolume playerVolume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 							.orElseThrow(NullPointerException::new);
 					if (playerVolume != null) {
