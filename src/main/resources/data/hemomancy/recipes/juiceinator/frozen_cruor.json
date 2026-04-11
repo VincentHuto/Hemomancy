@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:juiceinator",
+  "ingredient": {
+    "item": "hemomancy:frozen_cruor"
+  },
+  "result": "hemomancy:dicentra_sap",
+  "count": 3,
+  "experience": 0.5,
+  "cookingtime": 180
+}

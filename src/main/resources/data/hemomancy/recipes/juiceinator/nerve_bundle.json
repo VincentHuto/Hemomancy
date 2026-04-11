@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:juiceinator",
+  "ingredient": {
+    "item": "hemomancy:nerve_bundle"
+  },
+  "result": "hemomancy:vivacious_enzyme",
+  "count": 1,
+  "experience": 0.7,
+  "cookingtime": 200
+}

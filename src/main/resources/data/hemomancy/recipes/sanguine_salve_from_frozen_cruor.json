@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:frozen_cruor"
+    },
+    {
+      "item": "hemomancy:frozen_cruor"
+    },
+    {
+      "item": "hemomancy:dicentra_sap"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:sanguine_salve",
+    "count": 1
+  }
+}

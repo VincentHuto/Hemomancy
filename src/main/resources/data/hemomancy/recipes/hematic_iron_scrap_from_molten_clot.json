@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:molten_clot"
+    },
+    {
+      "item": "hemomancy:molten_clot"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:hematic_iron_scrap",
+    "count": 2
+  }
+}
