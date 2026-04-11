@@ -31,7 +31,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 /**
  * Savannah mob - a pack-hunting blood predator, wolf-like.
- * Fast, can leap at targets, applies bleeding (poison).
+ * Fast, can leap at targets, delivers a nerve-shock bite
+ * that causes Nausea (neurological disruption) and brief Slowness
+ * (motor nerve interference). Neurotic tendency.
  */
 public class SanguineStalkerEntity extends Monster {
 
@@ -72,7 +74,8 @@ public class SanguineStalkerEntity extends Monster {
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
 		if (flag && target instanceof net.minecraft.world.entity.LivingEntity living) {
-			living.addEffect(new MobEffectInstance(MobEffects.POISON, 80, 0));
+			living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100, 0));
+			living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0));
 		}
 		return flag;
 	}

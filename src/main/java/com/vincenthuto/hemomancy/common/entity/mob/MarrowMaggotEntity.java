@@ -29,8 +29,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
 /**
- * Cave mob - a cave-dwelling blood grub that feeds on marrow.
- * Small, eyeless, spawns below Y=48. Applies weakness on hit.
+ * Cave mob - a cave-dwelling blood grub that bores into nerve-rich marrow.
+ * Small, eyeless, spawns below Y=48. Its bite disrupts the nervous system,
+ * causing Nausea and Mining Fatigue (loss of fine motor control).
+ * Neurotic tendency.
  */
 public class MarrowMaggotEntity extends Monster {
 
@@ -69,7 +71,8 @@ public class MarrowMaggotEntity extends Monster {
 	public boolean doHurtTarget(Entity target) {
 		boolean flag = super.doHurtTarget(target);
 		if (flag && target instanceof net.minecraft.world.entity.LivingEntity living) {
-			living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+			living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
+			living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 0));
 		}
 		return flag;
 	}
