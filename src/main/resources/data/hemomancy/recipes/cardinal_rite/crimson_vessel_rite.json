@@ -8,9 +8,9 @@
   "pattern": [
     ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"],
     ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
-    ["       ", " V   V ", "   GBG ", "   B B ", "   GBG ", " V   V ", "       "],
-    ["       ", " V G V ", "   B B ", "   GEG ", "  GBGBG", "   GEG ", " V G V "],
-    ["       ", " V   V ", "   GBG ", "   B B ", "   GBG ", " V   V ", "       "],
+    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
+    ["       ", " V G V ", "  B B  ", "  GEG  ", " GBGBG ", "  GEG  ", " V G V "],
+    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
     ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
     ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"]
   ],
