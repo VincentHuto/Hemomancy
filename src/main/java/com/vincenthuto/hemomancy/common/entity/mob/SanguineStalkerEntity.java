@@ -27,7 +27,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.ServerLevelAccessor;
 
 /**
@@ -107,8 +106,7 @@ public class SanguineStalkerEntity extends Monster {
 	public static boolean canSpawnHere(EntityType<? extends Monster> pType, ServerLevelAccessor pLevel,
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
-				&& pLevel.getBrightness(LightLayer.SKY, pPos) > 8
-				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
 	@Override

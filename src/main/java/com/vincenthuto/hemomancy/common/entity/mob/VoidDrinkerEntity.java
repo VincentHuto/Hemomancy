@@ -88,6 +88,18 @@ public class VoidDrinkerEntity extends Monster {
 		return result;
 	}
 
+	@Override
+	public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag compound) {
+		super.addAdditionalSaveData(compound);
+		compound.putInt("TeleportCooldown", this.teleportCooldown);
+	}
+
+	@Override
+	public void readAdditionalSaveData(net.minecraft.nbt.CompoundTag compound) {
+		super.readAdditionalSaveData(compound);
+		this.teleportCooldown = compound.getInt("TeleportCooldown");
+	}
+
 	private void teleportRandomly() {
 		double x = this.getX() + (this.random.nextDouble() - 0.5D) * 16.0D;
 		double y = this.getY() + (this.random.nextInt(8) - 4);

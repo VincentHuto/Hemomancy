@@ -104,8 +104,7 @@ public class MarrowMaggotEntity extends Monster {
 			MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
 		return pLevel.getDifficulty() != Difficulty.PEACEFUL
 				&& pPos.getY() < 48
-				&& FargoneEntity.isDarkEnoughToSpawn(pLevel, pPos, pRandom)
-				&& checkMobSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
+				&& checkMonsterSpawnRules(pType, pLevel, pSpawnType, pPos, pRandom);
 	}
 
 	@Override

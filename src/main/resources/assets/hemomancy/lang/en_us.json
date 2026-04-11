@@ -893,11 +893,11 @@
 	"item.hemomancy.abyssal_ichor": "Abyssal Ichor",
 	"item.hemomancy.marrow_chunk": "Marrow Chunk",
 
-	"item.hemomancy.spawn_egg_dessicant": "Spawn Egg Dessicant",
-	"item.hemomancy.spawn_egg_cruor_fiend": "Spawn Egg Cruor Fiend",
-	"item.hemomancy.spawn_egg_void_drinker": "Spawn Egg Void Drinker",
-	"item.hemomancy.spawn_egg_frozen_clot": "Spawn Egg Frozen Clot",
-	"item.hemomancy.spawn_egg_abyssal_siphon": "Spawn Egg Abyssal Siphon",
-	"item.hemomancy.spawn_egg_sanguine_stalker": "Spawn Egg Sanguine Stalker",
-	"item.hemomancy.spawn_egg_marrow_maggot": "Spawn Egg Marrow Maggot"
+	"item.hemomancy.spawn_egg_dessicant": "Dessicant Spawn Egg",
+	"item.hemomancy.spawn_egg_cruor_fiend": "Cruor Fiend Spawn Egg",
+	"item.hemomancy.spawn_egg_void_drinker": "Void Drinker Spawn Egg",
+	"item.hemomancy.spawn_egg_frozen_clot": "Frozen Clot Spawn Egg",
+	"item.hemomancy.spawn_egg_abyssal_siphon": "Abyssal Siphon Spawn Egg",
+	"item.hemomancy.spawn_egg_sanguine_stalker": "Sanguine Stalker Spawn Egg",
+	"item.hemomancy.spawn_egg_marrow_maggot": "Marrow Maggot Spawn Egg"
 }
