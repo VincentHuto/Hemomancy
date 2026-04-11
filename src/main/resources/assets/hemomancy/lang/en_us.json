@@ -885,6 +885,9 @@
 	"entity.hemomancy.abyssal_siphon": "Abyssal Siphon",
 	"entity.hemomancy.sanguine_stalker": "Sanguine Stalker",
 	"entity.hemomancy.marrow_maggot": "Marrow Maggot",
+	"entity.hemomancy.crimson_doe": "Crimson Doe",
+	"entity.hemomancy.hemojelly": "Hemojelly",
+	"entity.hemomancy.venous_strider": "Venous Strider",
 
 	"item.hemomancy.desiccated_membrane": "Desiccated Membrane",
 	"item.hemomancy.molten_clot": "Molten Clot",
@@ -899,5 +902,8 @@
 	"item.hemomancy.spawn_egg_frozen_clot": "Frozen Clot Spawn Egg",
 	"item.hemomancy.spawn_egg_abyssal_siphon": "Abyssal Siphon Spawn Egg",
 	"item.hemomancy.spawn_egg_sanguine_stalker": "Sanguine Stalker Spawn Egg",
-	"item.hemomancy.spawn_egg_marrow_maggot": "Marrow Maggot Spawn Egg"
+	"item.hemomancy.spawn_egg_marrow_maggot": "Marrow Maggot Spawn Egg",
+	"item.hemomancy.spawn_egg_crimson_doe": "Crimson Doe Spawn Egg",
+	"item.hemomancy.spawn_egg_hemojelly": "Hemojelly Spawn Egg",
+	"item.hemomancy.spawn_egg_venous_strider": "Venous Strider Spawn Egg"
 }

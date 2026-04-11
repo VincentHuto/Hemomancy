@@ -21,6 +21,9 @@
     "minecraft:rabbit",
     "minecraft:sheep",
     "minecraft:trader_llama",
-    "minecraft:villager"
+    "minecraft:villager",
+    "hemomancy:crimson_doe",
+    "hemomancy:hemojelly",
+    "hemomancy:venous_strider"
   ]
 }

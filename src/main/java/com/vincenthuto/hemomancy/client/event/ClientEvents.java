@@ -42,6 +42,9 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.FrozenClotRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.AbyssalSiphonRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.SanguineStalkerRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.MarrowMaggotRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.CrimsonDoeRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.HemojellyRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
@@ -383,6 +386,9 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.abyssal_siphon.get(), AbyssalSiphonRenderer::new);
 			event.registerEntityRenderer(EntityInit.sanguine_stalker.get(), SanguineStalkerRenderer::new);
 			event.registerEntityRenderer(EntityInit.marrow_maggot.get(), MarrowMaggotRenderer::new);
+			event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
+			event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
+			event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);
 
 		}
 

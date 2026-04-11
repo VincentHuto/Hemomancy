@@ -720,6 +720,18 @@ public class ItemInit {
 			"spawn_egg_marrow_maggot",
 			() -> new ForgeSpawnEggItem(EntityInit.marrow_maggot, 0xE8D8C0, 0x6B3A3A, new Item.Properties()));
 
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
+			"spawn_egg_crimson_doe",
+			() -> new ForgeSpawnEggItem(EntityInit.crimson_doe, 0xFAE6E6, 0x8B0000, new Item.Properties()));
+
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_hemojelly = SPAWNEGGS.register(
+			"spawn_egg_hemojelly",
+			() -> new ForgeSpawnEggItem(EntityInit.hemojelly, 0xFF6B8A, 0xCC2244, new Item.Properties()));
+
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_venous_strider = SPAWNEGGS.register(
+			"spawn_egg_venous_strider",
+			() -> new ForgeSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));
+
 	// Item Property Override
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent

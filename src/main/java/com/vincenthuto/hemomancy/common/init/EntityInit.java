@@ -182,6 +182,22 @@ public class EntityInit {
             () -> EntityType.Builder.of(MarrowMaggotEntity::new, MobCategory.MONSTER)
                     .sized(0.6F, 0.4F).build(Hemomancy.rloc("marrow_maggot").toString()));
 
+    // Passive Mobs
+    public static final RegistryObject<EntityType<CrimsonDoeEntity>> crimson_doe = ENTITY_TYPES.register(
+            "crimson_doe",
+            () -> EntityType.Builder.of(CrimsonDoeEntity::new, MobCategory.CREATURE)
+                    .sized(0.9F, 1.4F).build(Hemomancy.rloc("crimson_doe").toString()));
+
+    public static final RegistryObject<EntityType<HemojellyEntity>> hemojelly = ENTITY_TYPES.register(
+            "hemojelly",
+            () -> EntityType.Builder.of(HemojellyEntity::new, MobCategory.CREATURE)
+                    .sized(0.7F, 0.9F).build(Hemomancy.rloc("hemojelly").toString()));
+
+    public static final RegistryObject<EntityType<VenousStriderEntity>> venous_strider = ENTITY_TYPES.register(
+            "venous_strider",
+            () -> EntityType.Builder.of(VenousStriderEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F).build(Hemomancy.rloc("venous_strider").toString()));
+
     // Projectiles
 
     public static final RegistryObject<EntityType<EntityFlyingCharm>> flying_charm = ENTITY_TYPES.register(
@@ -308,6 +324,12 @@ public class EntityInit {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SanguineStalkerEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.marrow_maggot.get(), SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MarrowMaggotEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.crimson_doe.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.hemojelly.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.venous_strider.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere);
             Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
         });
     }
@@ -347,6 +369,9 @@ public class EntityInit {
         event.put(EntityInit.abyssal_siphon.get(), AbyssalSiphonEntity.setAttributes().build());
         event.put(EntityInit.sanguine_stalker.get(), SanguineStalkerEntity.setAttributes().build());
         event.put(EntityInit.marrow_maggot.get(), MarrowMaggotEntity.setAttributes().build());
+        event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
+        event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
+        event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
 
     }
 

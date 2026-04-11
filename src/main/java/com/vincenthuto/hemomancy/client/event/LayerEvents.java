@@ -47,6 +47,9 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.FrozenClotModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.AbyssalSiphonModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.SanguineStalkerModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.MarrowMaggotModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.CrimsonDoeModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.HemojellyModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.VenousStriderModel;
 import com.vincenthuto.hemomancy.client.model.item.BarbedShieldModel;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
 import com.vincenthuto.hemomancy.client.model.item.ChitiniteShieldModel;
@@ -151,6 +154,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(AbyssalSiphonModel.LAYER_LOCATION, AbyssalSiphonModel::createBodyLayer);
 		event.registerLayerDefinition(SanguineStalkerModel.LAYER_LOCATION, SanguineStalkerModel::createBodyLayer);
 		event.registerLayerDefinition(MarrowMaggotModel.LAYER_LOCATION, MarrowMaggotModel::createBodyLayer);
+		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
+		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);
+		event.registerLayerDefinition(VenousStriderModel.LAYER_LOCATION, VenousStriderModel::createBodyLayer);
 
 		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
 				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
