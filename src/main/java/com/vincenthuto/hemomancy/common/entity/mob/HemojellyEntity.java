@@ -55,11 +55,6 @@ public class HemojellyEntity extends PathfinderMob {
 		return 0;
 	}
 
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-	}
-
 	public static boolean canSpawnHere(EntityType<? extends HemojellyEntity> type, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();

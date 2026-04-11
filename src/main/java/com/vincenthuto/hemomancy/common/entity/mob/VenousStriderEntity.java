@@ -52,16 +52,6 @@ public class VenousStriderEntity extends PathfinderMob {
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 	}
 
-	@Override
-	protected int calculateFallDamage(float distance, float damageMultiplier) {
-		return 0;
-	}
-
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-	}
-
 	public static boolean canSpawnHere(EntityType<? extends VenousStriderEntity> type, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();
