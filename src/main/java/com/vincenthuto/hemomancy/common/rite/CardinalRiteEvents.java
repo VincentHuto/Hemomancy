@@ -84,6 +84,12 @@ public class CardinalRiteEvents {
 		// Tick pending blood structure crafts (delayed block breaking)
 		PendingBloodCraftManager.tick();
 
+		// Periodically sync Qliphoth Bloom data to clients for tree rendering
+		// (must be outside the active-rite block since blooms persist after rites end)
+		if (sLevel.getGameTime() % 200 == 0) {
+			syncQliphothBlooms(sLevel);
+		}
+
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();
 
@@ -165,11 +171,6 @@ public class CardinalRiteEvents {
 			PacketHandler.CHANNELBLOODVOLUME.send(
 					PacketDistributor.ALL.noArg(),
 					new PacketSyncActiveRites(entries));
-		}
-
-		// Periodically sync Qliphoth Bloom data to clients for tree rendering
-		if (sLevel.getGameTime() % 200 == 0) {
-			syncQliphothBlooms(sLevel);
 		}
 	}
 
