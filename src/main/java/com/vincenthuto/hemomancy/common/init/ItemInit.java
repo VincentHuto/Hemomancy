@@ -205,6 +205,18 @@ public class ItemInit {
 			() -> new VivianiteScalpelItem(new Item.Properties()));
 	public static final RegistryObject<Item> spore_sac = BASEITEMS.register("spore_sac",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> desiccated_membrane = BASEITEMS.register("desiccated_membrane",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> molten_clot = BASEITEMS.register("molten_clot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> void_ichor = BASEITEMS.register("void_ichor",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> frozen_cruor = BASEITEMS.register("frozen_cruor",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> abyssal_ichor = BASEITEMS.register("abyssal_ichor",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> marrow_chunk = BASEITEMS.register("marrow_chunk",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> fungal_spine = BASEITEMS.register("fungal_spine",
 			() -> new FungalSpineItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> gourd_seeds = BASEITEMS.register("gourd_seeds",
@@ -685,6 +697,28 @@ public class ItemInit {
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
 			"spawn_egg_hemolymphopoda",
 			() -> new ForgeSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
+
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
+			"spawn_egg_dessicant",
+			() -> new ForgeSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
+			"spawn_egg_cruor_fiend",
+			() -> new ForgeSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
+			"spawn_egg_void_drinker",
+			() -> new ForgeSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
+			"spawn_egg_frozen_clot",
+			() -> new ForgeSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
+			"spawn_egg_abyssal_siphon",
+			() -> new ForgeSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_sanguine_stalker = SPAWNEGGS.register(
+			"spawn_egg_sanguine_stalker",
+			() -> new ForgeSpawnEggItem(EntityInit.sanguine_stalker, 0xA0522D, 0x8B0000, new Item.Properties()));
+	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_marrow_maggot = SPAWNEGGS.register(
+			"spawn_egg_marrow_maggot",
+			() -> new ForgeSpawnEggItem(EntityInit.marrow_maggot, 0xE8D8C0, 0x6B3A3A, new Item.Properties()));
 
 	// Item Property Override
 	@SuppressWarnings("deprecation")

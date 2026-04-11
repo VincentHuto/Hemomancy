@@ -876,5 +876,28 @@
 	"hemomancy.communion.v4.line2": "§4§oYou have earned the right to know. There is a name. The true name of the consciousness behind the blood.",
 	"hemomancy.communion.v4.name1": "§4§oIt is called... §4§l[a sound that is not a sound — you feel it in your marrow, in the iron of your blood, in the heme of every red cell]§4§o...",
 	"hemomancy.communion.v4.name2": "§4§oYou cannot speak it. No throat can shape it. But your blood §4§oknows§4§o it now.",
-	"hemomancy.communion.v4.name3": "§4§oAnd it knows §4§oyou§4§o."
+	"hemomancy.communion.v4.name3": "§4§oAnd it knows §4§oyou§4§o.",
+
+	"entity.hemomancy.dessicant": "Dessicant",
+	"entity.hemomancy.cruor_fiend": "Cruor Fiend",
+	"entity.hemomancy.void_drinker": "Void Drinker",
+	"entity.hemomancy.frozen_clot": "Frozen Clot",
+	"entity.hemomancy.abyssal_siphon": "Abyssal Siphon",
+	"entity.hemomancy.sanguine_stalker": "Sanguine Stalker",
+	"entity.hemomancy.marrow_maggot": "Marrow Maggot",
+
+	"item.hemomancy.desiccated_membrane": "Desiccated Membrane",
+	"item.hemomancy.molten_clot": "Molten Clot",
+	"item.hemomancy.void_ichor": "Void Ichor",
+	"item.hemomancy.frozen_cruor": "Frozen Cruor",
+	"item.hemomancy.abyssal_ichor": "Abyssal Ichor",
+	"item.hemomancy.marrow_chunk": "Marrow Chunk",
+
+	"item.hemomancy.spawn_egg_dessicant": "Spawn Egg Dessicant",
+	"item.hemomancy.spawn_egg_cruor_fiend": "Spawn Egg Cruor Fiend",
+	"item.hemomancy.spawn_egg_void_drinker": "Spawn Egg Void Drinker",
+	"item.hemomancy.spawn_egg_frozen_clot": "Spawn Egg Frozen Clot",
+	"item.hemomancy.spawn_egg_abyssal_siphon": "Spawn Egg Abyssal Siphon",
+	"item.hemomancy.spawn_egg_sanguine_stalker": "Spawn Egg Sanguine Stalker",
+	"item.hemomancy.spawn_egg_marrow_maggot": "Spawn Egg Marrow Maggot"
 }

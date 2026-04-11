@@ -35,6 +35,13 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.MorphlingPolypRenderer
 import com.vincenthuto.hemomancy.client.render.entity.mob.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.UnstainedZealotRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.HarbingerHermitRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.DessicantRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.CruorFiendRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.VoidDrinkerRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.FrozenClotRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.AbyssalSiphonRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.SanguineStalkerRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.MarrowMaggotRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
@@ -369,6 +376,13 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 			event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
 			event.registerEntityRenderer(EntityInit.dark_arrow.get(), BloodShotRenderer::new);
+			event.registerEntityRenderer(EntityInit.dessicant.get(), DessicantRenderer::new);
+			event.registerEntityRenderer(EntityInit.cruor_fiend.get(), CruorFiendRenderer::new);
+			event.registerEntityRenderer(EntityInit.void_drinker.get(), VoidDrinkerRenderer::new);
+			event.registerEntityRenderer(EntityInit.frozen_clot.get(), FrozenClotRenderer::new);
+			event.registerEntityRenderer(EntityInit.abyssal_siphon.get(), AbyssalSiphonRenderer::new);
+			event.registerEntityRenderer(EntityInit.sanguine_stalker.get(), SanguineStalkerRenderer::new);
+			event.registerEntityRenderer(EntityInit.marrow_maggot.get(), MarrowMaggotRenderer::new);
 
 		}
 
