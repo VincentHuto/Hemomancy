@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer;
 import com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer;
+import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
@@ -242,6 +243,7 @@ public class ClientEvents {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), event.getPartialTick());
 			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
+			QliphothBloomRenderer.render(event.getPoseStack(), event.getPartialTick());
 		}
 	}
 

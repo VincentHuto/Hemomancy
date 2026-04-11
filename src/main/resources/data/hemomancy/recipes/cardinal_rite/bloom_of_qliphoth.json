@@ -1,0 +1,37 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 1200,
+  "riteType": "lesser",
+  "riteName": "Bloom of the Qliphoth",
+  "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
+  "pattern": [
+    ["V E V", " G G ", "EGCGE", " G G ", "V E V"],
+    ["     ", " V V ", " VHV ", " V V ", "     "],
+    ["  E  ", " EPE ", "EPCPE", " EPE ", "  E  "],
+    ["     ", " V V ", " VHV ", " V V ", "     "],
+    ["V E V", " G G ", "EGCGE", " G G ", "V E V"]
+  ],
+  "key": {
+    "E": {
+      "block": "hemomancy:engram_block"
+    },
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "G": {
+      "block": "hemomancy:gilded_venous_stone"
+    },
+    "C": {
+      "block": "hemomancy:chiseled_hematic_iron_block"
+    },
+    "P": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "H": {
+      "block": "hemomancy:hematic_iron_pillar"
+    }
+  },
+  "result": {
+    "item": "hemomancy:sanguine_formation"
+  }
+}

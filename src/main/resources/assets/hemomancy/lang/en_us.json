@@ -555,6 +555,8 @@
 	"hemomancy.rite.illuminatus_rite.name": "Rite of the Crimson Lodge",
 	"hemomancy.rite.sanctified_rite.name": "Rite of the Bloodline Covenant",
 	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order",
+	"hemomancy.rite.bloom_of_qliphoth.name": "Bloom of the Qliphoth",
+	"hemomancy.rite.bloom_of_qliphoth.desc": "Summons a dark tree of the Qliphoth that empowers blood manipulations and grants regeneration within its 3-chunk radius.",
 
 	"entity.hemomancy.unstained_zealot": "Unstained Zealot",
 	"entity.hemomancy.spectral_companion": "Spectral Companion",
