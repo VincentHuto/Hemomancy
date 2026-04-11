@@ -471,9 +471,12 @@ public class QliphothBloomRenderer {
 	//  Helpers
 	// ════════════════════════════════════════════════════════════════════════
 
+	/** Golden ratio conjugate — used for deterministic pseudo-random distribution of geometry. */
+	private static final double GOLDEN_RATIO_CONJUGATE = 0.6180339887;
+
 	/** Deterministic pseudo-random 0..1 value for a given index. */
 	private static double hashIndex(int index) {
-		return ((index * 0.6180339887 + 0.3) % 1.0 + 1.0) % 1.0;
+		return ((index * GOLDEN_RATIO_CONJUGATE + 0.3) % 1.0 + 1.0) % 1.0;
 	}
 
 	private static void emitQuad(VertexConsumer vc, Matrix4f mat,

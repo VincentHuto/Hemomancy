@@ -29,7 +29,7 @@ import java.util.List;
 public class QliphothBloomEvents {
 
 	/** Interval in ticks between effect application (40 ticks = 2 seconds). */
-	private static final int EFFECT_INTERVAL = 40;
+	private static final int EFFECT_APPLICATION_INTERVAL_TICKS = 40;
 	/** Duration of the Regeneration effect in ticks (slightly longer than interval for seamless coverage). */
 	private static final int REGEN_DURATION = 50;
 	/** Extra blood regeneration per tick when within a bloom's radius. */
@@ -41,7 +41,7 @@ public class QliphothBloomEvents {
 		if (!(event.level instanceof ServerLevel sLevel)) return;
 
 		// Only process every EFFECT_INTERVAL ticks for performance
-		if (sLevel.getGameTime() % EFFECT_INTERVAL != 0) return;
+		if (sLevel.getGameTime() % EFFECT_APPLICATION_INTERVAL_TICKS != 0) return;
 
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(sLevel.getServer().overworld());
 		String dimension = sLevel.dimension().location().toString();
