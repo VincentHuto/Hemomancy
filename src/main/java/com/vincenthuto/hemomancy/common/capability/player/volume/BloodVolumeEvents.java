@@ -81,6 +81,13 @@ public class BloodVolumeEvents {
 				}
 			}
 
+			// ── Skill: Sanguine Surge — passive blood regen per tick ──
+			double surgeRegen = SkillPointHelper.getSanguineSurgeRegen();
+			if (surgeRegen > 0 && !volume.isFull()) {
+				volume.fill(surgeRegen);
+				syncVolume((ServerPlayer) player, volume);
+			}
+
 			// ── Skill: Last Wind — emergency regen when blood is critically low ──
 			double lastWindRegen = SkillPointHelper.getLastWindRegenPerTick();
 			if (lastWindRegen > 0) {
@@ -196,7 +203,14 @@ public class BloodVolumeEvents {
 
 		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
 			if (volume.isActive()) {
-				double drainAmount = event.getAmount() * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get();
+				// ── Skill: Iron Will — reduce incoming damage when blood is critically low ──
+				double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
+				if (volume.getBloodVolume() < ironWillThreshold && volume.getBloodVolume() > 0) {
+					event.setAmount((float) (event.getAmount() * SkillPointHelper.getIronWillMultiplier()));
+				}
+
+				double drainAmount = event.getAmount() * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get()
+						* SkillPointHelper.getHemostasisMultiplier();
 				volume.drain(drainAmount);
 				syncVolume((ServerPlayer) player, volume);
 

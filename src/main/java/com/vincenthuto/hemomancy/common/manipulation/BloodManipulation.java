@@ -165,7 +165,10 @@ public class BloodManipulation  {
 
 	private void startCooldown(Player player) {
 		if (cooldownTicks > 0) {
-			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + cooldownTicks);
+			// ── Skill: Blood Flow — reduce cooldown duration ──
+			long effectiveCooldown = (long) (cooldownTicks
+					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier());
+			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
 		}
 	}
 
@@ -226,6 +229,23 @@ public class BloodManipulation  {
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
+
+				// ── Skill: Dynamic Use — reduce cost further when this manipulation's
+				//    tendency matches the player's strongest tendency ──
+				EnumBloodTendency strongest = null;
+				float highestVal = 0;
+				for (EnumBloodTendency t : EnumBloodTendency.values()) {
+					float val = tendency.getAlignmentByTendency(t);
+					if (val > highestVal) {
+						highestVal = val;
+						strongest = t;
+					}
+				}
+				if (strongest != null && strongest.equals(tend)) {
+					// Dynamic Use returns e.g. 1.2 at level 2 — invert to
+					// get a discount: cost / 1.2 ≈ 17% discount.
+					effectiveCost /= com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getDynamicUseMultiplier();
+				}
 
 				// MnA Combo System: Arcane Resonance reduces blood cost
 				if (ModList.get().isLoaded("mna")
