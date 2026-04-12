@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
  * <h3>Rendering approach</h3>
  * <ol>
  *   <li>Write the mirror quad shape into the <b>stencil buffer</b>
- *       (Tesselator immediate draw — no colour/depth output).</li>
+ *       (Tesselator immediate draw — no color/depth output).</li>
  *   <li>With stencil in read mode, render the player entity reflected
  *       across the mirror plane. The stencil clips the model cleanly
  *       to the mirror bounds.</li>
@@ -333,7 +333,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		}
 
 		Vec3 normal = Vec3.atLowerCornerOf(facing.getNormal());
-		Vec3 toPlayer = player.position().subtract(cx, pos.getY(), cz);
+		Vec3 toPlayer = player.position().subtract(cx, cy, cz);
 		return toPlayer.dot(normal) > 0;
 	}
 }
