@@ -31,7 +31,8 @@ public class GourdVineRenderer {
 	private static final Set<String> VESSEL_RITE_PATHS = Set.of(
 			"cardinal_rite/pallid_vessel_rite",
 			"cardinal_rite/crimson_vessel_rite",
-			"cardinal_rite/ashen_vessel_rite");
+			"cardinal_rite/ashen_vessel_rite",
+			"cardinal_rite/horn_of_culmination_rite");
 
 	// ── Vine layout ──
 	/** Number of vine tendrils per rite. */
@@ -255,9 +256,17 @@ public class GourdVineRenderer {
 		return VESSEL_RITE_PATHS.contains(recipeId.getPath());
 	}
 
-	/** Deterministic pseudo-random 0..1 value for a given seed integer. */
+	/**
+	 * Deterministic pseudo-random 0..1 value for a given seed integer.
+	 * Uses a Murmur-style bit-mixing finalizer for good distribution
+	 * even with linearly-spaced inputs.
+	 */
 	private static double hash(int seed) {
-		return ((seed * 1664525 + 1013904223) & 0x7FFFFFFF) / (double) 0x7FFFFFFF;
+		int h = seed;
+		h = ((h >>> 16) ^ h) * 0x45d9f3b;
+		h = ((h >>> 16) ^ h) * 0x45d9f3b;
+		h = (h >>> 16) ^ h;
+		return (h & 0x7FFFFFFF) / (double) 0x7FFFFFFF;
 	}
 
 	private static float lerp(float a, float b, float t) {

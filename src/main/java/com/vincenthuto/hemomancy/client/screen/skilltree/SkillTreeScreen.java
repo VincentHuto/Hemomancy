@@ -464,6 +464,11 @@ public class SkillTreeScreen extends Screen {
 		for (CardinalRiteRecipe recipe : riteRecipes) {
 			ritesByTier.get(recipe.getRiteType()).add(recipe);
 		}
+		// Sort each tier by blood cost (ascending) so progression chains like
+		// dried gourd → pallid → crimson → ashen → horn appear in order
+		for (List<CardinalRiteRecipe> tierList : ritesByTier.values()) {
+			tierList.sort(java.util.Comparator.comparingDouble(CardinalRiteRecipe::getBloodCost));
+		}
 		// Default selection: first accessible tier with recipes
 		selectedRiteTier = null;
 		selectedRiteIndexInTier = 0;
