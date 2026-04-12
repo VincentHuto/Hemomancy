@@ -131,7 +131,7 @@ public class QliphothBloomRenderer {
 			float y0 = t0 * TREE_HEIGHT;
 			float y1 = t1 * TREE_HEIGHT;
 
-			// Smooth taper to a point: cubic ease-in gives a natural tree shape
+			// Smooth taper to a point: quadratic ease-in (1-t²) gives a natural tree shape
 			// (wider at base, accelerating taper toward the tip)
 			float taper0 = 1.0f - t0 * t0;
 			float taper1 = 1.0f - t1 * t1;
