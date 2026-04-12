@@ -106,6 +106,27 @@ public class QliphothBloomSavedData extends SavedData {
 	}
 
 	/**
+	 * Remove the bloom whose center is in the same chunk as the given position
+	 * in the given dimension. Returns the removed entry, or null if none found.
+	 */
+	public BloomEntry removeBloomInChunk(BlockPos pos, String dimension) {
+		int chunkX = pos.getX() >> 4;
+		int chunkZ = pos.getZ() >> 4;
+		for (int i = 0; i < blooms.size(); i++) {
+			BloomEntry entry = blooms.get(i);
+			if (!entry.dimension().equals(dimension)) continue;
+			int bloomChunkX = entry.center().getX() >> 4;
+			int bloomChunkZ = entry.center().getZ() >> 4;
+			if (bloomChunkX == chunkX && bloomChunkZ == chunkZ) {
+				blooms.remove(i);
+				setDirty();
+				return entry;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * A persistent Qliphoth Bloom entry.
 	 */
 	public record BloomEntry(UUID ownerUUID, BlockPos center, String dimension,
