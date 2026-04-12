@@ -17,11 +17,13 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.Vec3;
@@ -44,21 +46,52 @@ import net.minecraft.world.phys.Vec3;
  */
 public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirrorBlockEntity> {
 
-	// ── Mirror surface geometry ──────────────────────────────────────────
-	/** Half-width of the mirror surface (1 block wide → ±0.5). */
-	private static final float MIRROR_HALF_WIDTH = 0.5f;
-	/** Mirror surface starts just above the pedestal (y = 2/16). */
-	private static final float MIRROR_Y_START = 0.125f;
-	/** Mirror surface is 1.6 blocks tall. */
-	private static final float MIRROR_HEIGHT = 1.6f;
-	/** Top edge of the mirror surface. */
-	private static final float MIRROR_Y_END = MIRROR_Y_START + MIRROR_HEIGHT;
+	// =====================================================================
+	//  Mirror layout — adjust these values to align with your block model
+	// =====================================================================
+
 	/**
-	 * Z-offset from block centre to the front face of the mirror frame.
-	 * The frame spans z = 3/16 → 13/16; front face at 13/16 = 0.8125,
-	 * which is 0.3125 from the centre (0.5).
+	 * Centralised description of the mirror surface geometry.
+	 * <p>Change any of these values and every part of the renderer
+	 * (stencil quad, glass overlay, reflection position, facing
+	 * transform) will update automatically.</p>
+	 *
+	 * @param halfWidth    Half the mirror width.  0.5 = full block width (±0.5).
+	 * @param yStart       Bottom edge of the mirror surface in block-local Y.
+	 *                     e.g. 0.125 = 2 pixels above the block floor.
+	 * @param height       Height of the mirror surface in blocks.
+	 *                     e.g. 1.6 = extends 1.6 blocks above yStart.
+	 * @param zOffset      Distance from block centre (0.5) to the mirror face
+	 *                     along the facing axis.
+	 *                     e.g. 0.3125 = face sits at 13/16 of the block.
+	 * @param reflectionYOffset Additional Y shift applied to the reflected
+	 *                     player model (positive = up). Use this to nudge
+	 *                     the reflection vertically without moving the glass.
+	 * @param reflectionScale  Uniform scale of the reflected player model.
+	 *                     1.0 = normal size.
 	 */
-	private static final float MIRROR_Z_OFFSET = 0.3125f;
+	private record MirrorLayout(
+			float halfWidth,
+			float yStart,
+			float height,
+			float zOffset,
+			float reflectionYOffset,
+			float reflectionScale
+	) {
+		float yEnd()      { return yStart + height; }
+	}
+
+	// ┌──────────────────────────────────────────────────────────────────┐
+	// │  ★  TWEAK THESE VALUES to align the render with your model  ★   │
+	// └──────────────────────────────────────────────────────────────────┘
+	private static final MirrorLayout LAYOUT = new MirrorLayout(
+			0.5f,      // halfWidth         — half the mirror width (blocks)
+			0.125f,    // yStart            — bottom edge Y (blocks above block floor)
+			1.6f,      // height            — mirror height (blocks)
+			0.3125f,   // zOffset           — depth from block centre to mirror face
+			0.0f,      // reflectionYOffset — extra Y nudge for the reflected player
+			1.0f       // reflectionScale   — scale of the reflected player model
+	);
 
 	// ── Distance limits ──────────────────────────────────────────────────
 	/** Beyond this distance² the reflection is not rendered. */
@@ -69,6 +102,25 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 	private static final float GLASS_G = 0.08f;
 	private static final float GLASS_B = 0.12f;
 	private static final float GLASS_A = 0.18f;
+
+	// ── Ripple / swimming effect parameters ──────────────────────────────
+	/** Number of horizontal subdivisions for the ripple mesh. */
+	private static final int RIPPLE_COLS = 12;
+	/** Number of vertical subdivisions for the ripple mesh. */
+	private static final int RIPPLE_ROWS = 20;
+	/** Maximum Z displacement of a ripple crest (in blocks). */
+	private static final float RIPPLE_AMPLITUDE = 0.012f;
+	/** Primary wave frequency — controls how many ripples fit across the surface. */
+	private static final float RIPPLE_FREQ_X = 6.0f;
+	private static final float RIPPLE_FREQ_Y = 4.5f;
+	/** Secondary (detail) wave frequency for organic layering. */
+	private static final float RIPPLE_FREQ2_X = 11.0f;
+	private static final float RIPPLE_FREQ2_Y = 8.0f;
+	/** Speed at which the ripples scroll (radians per tick). */
+	private static final float RIPPLE_SPEED = 0.07f;
+	private static final float RIPPLE_SPEED2 = -0.045f;
+	/** Extra alpha variation on ripple crests for a shimmer highlight. */
+	private static final float RIPPLE_ALPHA_BOOST = 0.06f;
 
 	public VisceralMirrorRenderer(BlockEntityRendererProvider.Context ctx) {
 	}
@@ -115,6 +167,11 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		Minecraft mc = Minecraft.getInstance();
 		mc.getMainRenderTarget().enableStencil();
 
+		// Animated time for ripple synchronisation
+		float time = te.getLevel() != null
+				? te.getLevel().getGameTime() + mc.getFrameTime()
+				: 0f;
+
 		// ── Phase 1: write mirror quad into stencil ──────────────────────
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 		GL11.glStencilMask(0xFF);
@@ -124,7 +181,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		GL11.glColorMask(false, false, false, false);
 		GL11.glDepthMask(false);
 
-		drawStencilQuad(stack, facing);
+		drawStencilQuad(stack, facing, time);
 
 		GL11.glColorMask(true, true, true, true);
 		GL11.glDepthMask(true);
@@ -143,7 +200,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 	//  Stencil mask quad (Tesselator — drawn immediately)
 	// =====================================================================
 
-	private void drawStencilQuad(PoseStack stack, Direction facing) {
+	private void drawStencilQuad(PoseStack stack, Direction facing, float time) {
 		stack.pushPose();
 		applyFacingTransform(stack, facing);
 
@@ -153,17 +210,35 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		BufferBuilder builder = Tesselator.getInstance().getBuilder();
 		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
 
-		// Front face
-		builder.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).endVertex();
-		builder.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).endVertex();
-		builder.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).endVertex();
-		builder.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).endVertex();
+		// Subdivide to match ripple mesh so reflection clips to the swimming surface
+		float cellW = (LAYOUT.halfWidth() * 2f) / RIPPLE_COLS;
+		float cellH = LAYOUT.height() / RIPPLE_ROWS;
 
-		// Back face (ensures stencil is written regardless of camera side)
-		builder.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).endVertex();
-		builder.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).endVertex();
-		builder.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).endVertex();
-		builder.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).endVertex();
+		for (int row = 0; row < RIPPLE_ROWS; row++) {
+			for (int col = 0; col < RIPPLE_COLS; col++) {
+				float x0 = -LAYOUT.halfWidth() + col * cellW;
+				float x1 = x0 + cellW;
+				float y0 = LAYOUT.yStart() + row * cellH;
+				float y1 = y0 + cellH;
+
+				float z00 = rippleZ(x0, y0, time, 1f);
+				float z10 = rippleZ(x1, y0, time, 1f);
+				float z11 = rippleZ(x1, y1, time, 1f);
+				float z01 = rippleZ(x0, y1, time, 1f);
+
+				// Front face
+				builder.vertex(mat, x0, y0, z00).endVertex();
+				builder.vertex(mat, x0, y1, z01).endVertex();
+				builder.vertex(mat, x1, y1, z11).endVertex();
+				builder.vertex(mat, x1, y0, z10).endVertex();
+
+				// Back face
+				builder.vertex(mat, x1, y0, z10).endVertex();
+				builder.vertex(mat, x1, y1, z11).endVertex();
+				builder.vertex(mat, x0, y1, z01).endVertex();
+				builder.vertex(mat, x0, y0, z00).endVertex();
+			}
+		}
 
 		Tesselator.getInstance().end();
 
@@ -224,21 +299,88 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 			stack.scale(-1.0f, 1.0f, 1.0f);
 		}
 
-		// The negative scale reverses face winding; disable culling so
-		// both front and back faces draw correctly.
-		RenderSystem.disableCull();
+		// Force every fragment to pass the depth test so that blocks placed
+		// behind the mirror cannot occlude the reflection.
+		GL11.glDepthFunc(GL11.GL_ALWAYS);
+		GL11.glDepthMask(false);
 
-		EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-		dispatcher.setRenderShadow(false);
+		// The negative scale reverses face winding — flip front face so
+		// the base skin model renders correctly.
+		GL11.glFrontFace(GL11.GL_CW);
 
-		// Use the main buffer source and flush immediately so the geometry
-		// is drawn while the stencil test is still active.
-		MultiBufferSource.BufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
-		dispatcher.render(player, 0.0, 0.0, 0.0, player.getYRot(), partialTicks, stack, bs, light);
-		bs.endBatch();
+		// ── Render ONLY the base player model (skin) — no armor/layers ──
+		// This sidesteps the inside-out layer issue entirely.
+		if (player instanceof net.minecraft.client.player.AbstractClientPlayer clientPlayer) {
+			EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+			var renderer = dispatcher.getRenderer(clientPlayer);
+			if (renderer instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer playerRenderer) {
+				var model = playerRenderer.getModel();
 
-		dispatcher.setRenderShadow(true);
-		RenderSystem.enableCull();
+				// Pose the model to match the player's current animation state
+				float bodyYaw = net.minecraft.util.Mth.rotLerp(partialTicks, clientPlayer.yBodyRotO, clientPlayer.yBodyRot);
+				float headYaw = net.minecraft.util.Mth.rotLerp(partialTicks, clientPlayer.yHeadRotO, clientPlayer.yHeadRot);
+				float headRelYaw = headYaw - bodyYaw;
+				float headPitch = net.minecraft.util.Mth.lerp(partialTicks, clientPlayer.xRotO, clientPlayer.getXRot());
+				float limbSwing = clientPlayer.walkAnimation.position(partialTicks);
+				float limbSwingAmount = clientPlayer.walkAnimation.speed(partialTicks);
+				float ageInTicks = clientPlayer.tickCount + partialTicks;
+
+				model.attackTime = clientPlayer.getAttackAnim(partialTicks);
+				model.riding = clientPlayer.isPassenger();
+				model.young = clientPlayer.isBaby();
+				model.crouching = clientPlayer.isCrouching();
+
+				model.setupAnim(clientPlayer, limbSwing, limbSwingAmount, ageInTicks, headRelYaw, headPitch);
+				model.prepareMobModel(clientPlayer, limbSwing, limbSwingAmount, partialTicks);
+
+				// Hide all optional layers — only render the base skin parts
+				model.hat.visible = false;
+				model.jacket.visible = false;
+				model.leftSleeve.visible = false;
+				model.rightSleeve.visible = false;
+				model.leftPants.visible = false;
+				model.rightPants.visible = false;
+
+				stack.pushPose();
+				// Apply the same transform the vanilla player renderer uses:
+				// flip upside-down and shift up by 1.501 blocks (entity height offset)
+				stack.mulPose(Vector3.YP.rotationDegrees(180f - bodyYaw).toMoj());
+
+				// Apply reflection scale from layout (uniform scale before the flip)
+				float rs = LAYOUT.reflectionScale();
+				stack.scale(-rs, -rs, rs);
+
+				// Vanilla shifts the model down when crouching
+				float yOffset = clientPlayer.isCrouching() ? -1.501f + 0.125f : -1.501f;
+				// Apply the layout's extra Y nudge for alignment tweaking
+				yOffset += LAYOUT.reflectionYOffset();
+				stack.translate(0.0, yOffset, 0.0);
+
+				ResourceLocation skin = playerRenderer.getTextureLocation(clientPlayer);
+				MultiBufferSource.BufferSource bs = Minecraft.getInstance().renderBuffers().bufferSource();
+				bs.endBatch(); // flush prior batches so our GL state doesn't corrupt them
+
+				VertexConsumer vc = bs.getBuffer(RenderType.entityTranslucent(skin));
+				model.renderToBuffer(stack, vc, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,
+						1.0f, 1.0f, 1.0f, 1.0f);
+				bs.endBatch();
+
+				// Restore layer visibility so the player's normal render isn't affected
+				model.hat.visible = true;
+				model.jacket.visible = true;
+				model.leftSleeve.visible = true;
+				model.rightSleeve.visible = true;
+				model.leftPants.visible = true;
+				model.rightPants.visible = true;
+
+				stack.popPose();
+			}
+		}
+
+		// Restore GL state
+		GL11.glFrontFace(GL11.GL_CCW);
+		GL11.glDepthMask(true);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
 
 		stack.popPose();
 	}
@@ -258,28 +400,85 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		float r = GLASS_R;
 		float g = GLASS_G;
 		float b = GLASS_B;
-		float a = GLASS_A;
+		float baseA = GLASS_A;
 
 		// Subtle pulse during an active ritual
-		if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE && te.getLevel() != null) {
+		boolean ritualActive = te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE
+				&& te.getLevel() != null;
+		if (ritualActive) {
 			float pulse = (float) (Math.sin(te.getLevel().getGameTime() * 0.1) * 0.08);
-			a += pulse;
+			baseA += pulse;
 			r += 0.12f;
 		}
 
-		// Front face
-		vc.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).color(r, g, b, a).endVertex();
-		vc.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).color(r, g, b, a).endVertex();
-		vc.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).color(r, g, b, a).endVertex();
+		// Animated time value (ticks + partial for smooth motion)
+		float time = te.getLevel() != null
+				? te.getLevel().getGameTime() + Minecraft.getInstance().getFrameTime()
+				: 0f;
 
-		// Back face
-		vc.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).color(r, g, b, a).endVertex();
-		vc.vertex(mat,  MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_END,   0).color(r, g, b, a).endVertex();
-		vc.vertex(mat, -MIRROR_HALF_WIDTH, MIRROR_Y_START, 0).color(r, g, b, a).endVertex();
+		// Increase ripple during ritual
+		float ampScale = ritualActive ? 2.0f : 1.0f;
+
+		// Subdivide the mirror surface into a grid of quads and displace
+		// each vertex in Z with layered sine waves for a swimming/rippling look.
+		float cellW = (LAYOUT.halfWidth() * 2f) / RIPPLE_COLS;
+		float cellH = LAYOUT.height() / RIPPLE_ROWS;
+
+		for (int row = 0; row < RIPPLE_ROWS; row++) {
+			for (int col = 0; col < RIPPLE_COLS; col++) {
+				float x0 = -LAYOUT.halfWidth() + col * cellW;
+				float x1 = x0 + cellW;
+				float y0 = LAYOUT.yStart() + row * cellH;
+				float y1 = y0 + cellH;
+
+				float z00 = rippleZ(x0, y0, time, ampScale);
+				float z10 = rippleZ(x1, y0, time, ampScale);
+				float z11 = rippleZ(x1, y1, time, ampScale);
+				float z01 = rippleZ(x0, y1, time, ampScale);
+
+				float a00 = baseA + rippleAlpha(x0, y0, time) * ampScale;
+				float a10 = baseA + rippleAlpha(x1, y0, time) * ampScale;
+				float a11 = baseA + rippleAlpha(x1, y1, time) * ampScale;
+				float a01 = baseA + rippleAlpha(x0, y1, time) * ampScale;
+
+				// Front face
+				vc.vertex(mat, x0, y0, z00).color(r, g, b, a00).endVertex();
+				vc.vertex(mat, x0, y1, z01).color(r, g, b, a01).endVertex();
+				vc.vertex(mat, x1, y1, z11).color(r, g, b, a11).endVertex();
+				vc.vertex(mat, x1, y0, z10).color(r, g, b, a10).endVertex();
+
+				// Back face
+				vc.vertex(mat, x1, y0, z10).color(r, g, b, a10).endVertex();
+				vc.vertex(mat, x1, y1, z11).color(r, g, b, a11).endVertex();
+				vc.vertex(mat, x0, y1, z01).color(r, g, b, a01).endVertex();
+				vc.vertex(mat, x0, y0, z00).color(r, g, b, a00).endVertex();
+			}
+		}
 
 		stack.popPose();
+	}
+
+	// =====================================================================
+	//  Ripple displacement helpers
+	// =====================================================================
+
+	/**
+	 * Returns the Z displacement for a point (x, y) on the mirror surface
+	 * at the given animation time. Two sine layers are combined for an
+	 * organic, swimming look.
+	 */
+	private float rippleZ(float x, float y, float time, float ampScale) {
+		float wave1 = (float) Math.sin(x * RIPPLE_FREQ_X + y * RIPPLE_FREQ_Y + time * RIPPLE_SPEED);
+		float wave2 = (float) Math.sin(x * RIPPLE_FREQ2_X - y * RIPPLE_FREQ2_Y + time * RIPPLE_SPEED2);
+		return (wave1 * 0.65f + wave2 * 0.35f) * RIPPLE_AMPLITUDE * ampScale;
+	}
+
+	/**
+	 * Returns an alpha offset for the ripple shimmer highlight.
+	 */
+	private float rippleAlpha(float x, float y, float time) {
+		float wave = (float) Math.sin(x * RIPPLE_FREQ_X + y * RIPPLE_FREQ_Y + time * RIPPLE_SPEED);
+		return wave * RIPPLE_ALPHA_BOOST;
 	}
 
 	// =====================================================================
@@ -288,20 +487,24 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 
 	/**
 	 * Applies a Y-axis rotation to the PoseStack so that the mirror surface
-	 * is always on the XY plane at z = +{@link #MIRROR_Z_OFFSET} from the
+	 * is always on the XY plane at z = +{@code LAYOUT.zOffset()} from the
 	 * block centre, facing outward.
 	 */
 	private void applyFacingTransform(PoseStack stack, Direction facing) {
 		stack.translate(0.5, 0.0, 0.5);
+		// A Y-rotation of θ maps local +Z → world direction:
+		//   0° → +Z (south),  90° → +X (east),  180° → -Z (north),  270° → -X (west)
+		// We want the mirror surface pushed along the facing direction,
+		// so the angle must map the FACING direction to local +Z.
 		float angle = switch (facing) {
 			case SOUTH -> 0f;
-			case WEST  -> 90f;
+			case EAST  -> 90f;
 			case NORTH -> 180f;
-			case EAST  -> 270f;
+			case WEST  -> 270f;
 			default    -> 0f;
 		};
 		stack.mulPose(Vector3.YP.rotationDegrees(angle).toMoj());
-		stack.translate(0.0, 0.0, MIRROR_Z_OFFSET);
+		stack.translate(0.0, 0.0, LAYOUT.zOffset());
 	}
 
 	/**
@@ -310,10 +513,10 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 	 */
 	private double getMirrorSurfaceCoord(Direction facing) {
 		return switch (facing) {
-			case SOUTH -> 0.5 + MIRROR_Z_OFFSET;  // 0.8125
-			case NORTH -> 0.5 - MIRROR_Z_OFFSET;  // 0.1875
-			case EAST  -> 0.5 + MIRROR_Z_OFFSET;
-			case WEST  -> 0.5 - MIRROR_Z_OFFSET;
+			case SOUTH -> 0.5 + LAYOUT.zOffset();
+			case NORTH -> 0.5 - LAYOUT.zOffset();
+			case EAST  -> 0.5 + LAYOUT.zOffset();
+			case WEST  -> 0.5 - LAYOUT.zOffset();
 			default    -> 0.5;
 		};
 	}

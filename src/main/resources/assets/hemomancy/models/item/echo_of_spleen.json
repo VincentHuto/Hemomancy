@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/mna/blood_shot_occulus"
+    "layer0": "hemomancy:item/echo_of_spleen"
   }
 }
