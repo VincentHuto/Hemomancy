@@ -167,6 +167,15 @@ public class SkillTreeScreen extends Screen {
 	private static final int RITE_NAV_BTN_H = 18;
 	private static final int LAYER_BTN_SIZE = 16;
 
+	// ── Tier sidebar scroll offsets ──
+	private int riteSidebarScroll = 0;
+	private int craftingSidebarScroll = 0;
+	private int runeSidebarScroll = 0;
+
+	// ── Info panel scroll offsets ──
+	private int riteInfoScroll = 0;
+	private int craftingInfoScroll = 0;
+
 	// ── Materials & Processes data ──
 	private final Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
 	private int materialContentW, materialContentH;
@@ -585,9 +594,18 @@ public class SkillTreeScreen extends Screen {
 						// Only allow selecting unlocked tiers
 						int tierIdx = java.util.Arrays.asList(CRAFTING_TIER_NAMES).indexOf(clickedTier);
 						if (tierIdx >= 0 && playerDegree >= CRAFTING_TIER_DEGREE_REQ[tierIdx]) {
-							selectedCraftingTier = clickedTier;
-							selectedCraftingIndexInTier = 0;
-							craftingVisibleLayer = -1;
+							// Toggle: collapse if already selected, otherwise open
+							if (clickedTier.equals(selectedCraftingTier)) {
+								selectedCraftingTier = null;
+								craftingSidebarScroll = 0;
+								craftingInfoScroll = 0;
+							} else {
+								selectedCraftingTier = clickedTier;
+								selectedCraftingIndexInTier = 0;
+								craftingVisibleLayer = -1;
+								craftingSidebarScroll = 0;
+								craftingInfoScroll = 0;
+							}
 						}
 						return true;
 					}
@@ -596,6 +614,7 @@ public class SkillTreeScreen extends Screen {
 					if (clickedRecipeIdx >= 0) {
 						selectedCraftingIndexInTier = clickedRecipeIdx;
 						craftingVisibleLayer = -1;
+						craftingInfoScroll = 0;
 						return true;
 					}
 					// Check layer buttons
@@ -624,8 +643,15 @@ public class SkillTreeScreen extends Screen {
 					if (clickedRuneTier != null) {
 						int tierIdx = java.util.Arrays.asList(RUNE_TIER_NAMES).indexOf(clickedRuneTier);
 						if (tierIdx >= 0 && playerDegree >= RUNE_TIER_DEGREE_REQ[tierIdx]) {
-							selectedRuneTier = clickedRuneTier;
-							selectedRuneIndexInTier = 0;
+							// Toggle: collapse if already selected, otherwise open
+							if (clickedRuneTier.equals(selectedRuneTier)) {
+								selectedRuneTier = null;
+								runeSidebarScroll = 0;
+							} else {
+								selectedRuneTier = clickedRuneTier;
+								selectedRuneIndexInTier = 0;
+								runeSidebarScroll = 0;
+							}
 						}
 						return true;
 					}
@@ -643,9 +669,18 @@ public class SkillTreeScreen extends Screen {
 					if (clickedRiteTier != null) {
 						if (playerDegree >= riteMinDegree(clickedRiteTier)
 								&& !ritesByTier.getOrDefault(clickedRiteTier, List.of()).isEmpty()) {
-							selectedRiteTier = clickedRiteTier;
-							selectedRiteIndexInTier = 0;
-							riteVisibleLayer = -1;
+							// Toggle: collapse if already selected, otherwise open
+							if (clickedRiteTier == selectedRiteTier) {
+								selectedRiteTier = null;
+								riteSidebarScroll = 0;
+								riteInfoScroll = 0;
+							} else {
+								selectedRiteTier = clickedRiteTier;
+								selectedRiteIndexInTier = 0;
+								riteVisibleLayer = -1;
+								riteSidebarScroll = 0;
+								riteInfoScroll = 0;
+							}
 						}
 						return true;
 					}
@@ -654,6 +689,7 @@ public class SkillTreeScreen extends Screen {
 					if (clickedRiteIdx >= 0) {
 						selectedRiteIndexInTier = clickedRiteIdx;
 						riteVisibleLayer = -1;
+						riteInfoScroll = 0;
 						return true;
 					}
 					// Check layer buttons
@@ -744,8 +780,29 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 
-		// Rites, Crafting & Runes tabs consume scroll (no-op for now)
+		// Rites, Crafting & Runes tabs — scroll the tier sidebar or info panel
 		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.RUNES) {
+			if (isOverTierSidebar(mx, my)) {
+				int scrollAmt = (int)(-delta * 14);
+				if (activeTab == Tab.RITES) {
+					riteSidebarScroll = Math.max(0, riteSidebarScroll + scrollAmt);
+					clampRiteSidebarScroll();
+				} else if (activeTab == Tab.CRAFTING) {
+					craftingSidebarScroll = Math.max(0, craftingSidebarScroll + scrollAmt);
+					clampCraftingSidebarScroll();
+				} else {
+					runeSidebarScroll = Math.max(0, runeSidebarScroll + scrollAmt);
+					clampRuneSidebarScroll();
+				}
+			} else {
+				// Scroll the info panel (right side)
+				int scrollAmt = (int)(-delta * 14);
+				if (activeTab == Tab.RITES) {
+					riteInfoScroll = Math.max(0, riteInfoScroll + scrollAmt);
+				} else if (activeTab == Tab.CRAFTING) {
+					craftingInfoScroll = Math.max(0, craftingInfoScroll + scrollAmt);
+				}
+			}
 			return true;
 		}
 
@@ -1407,7 +1464,12 @@ public class SkillTreeScreen extends Screen {
 					// Tendency
 					ParticleColor pc = manip.getTend().getColor();
 					int tendCol = (int)pc.getRed() << 16 | (int)pc.getGreen() << 8 | (int)pc.getBlue();
-					tip.add(Component.literal("Tendency: " + HLTextUtils.toProperCase(manip.getTend().name()))
+					String tendTipName = HLTextUtils.toProperCase(manip.getTend().name());
+					double alignReq = manip.getAlignLevel();
+					String tendTipText = alignReq > 0
+							? "Tendency: " + tendTipName + " (" + (int) alignReq + ")"
+							: "Tendency: " + tendTipName;
+					tip.add(Component.literal(tendTipText)
 							.withStyle(s -> s.withColor(tendCol)));
 
 					// Blood cost
@@ -1557,9 +1619,14 @@ public class SkillTreeScreen extends Screen {
 			ty += lineH;
 
 			// Tendency
+			String tendName = HLTextUtils.toProperCase(manip.getTend().name());
+			double alignReq = manip.getAlignLevel();
+			String tendText = alignReq > 0
+					? tendName + " (" + (int) alignReq + ")"
+					: tendName;
 			gfx.drawString(font, Component.literal("Tendency: ")
 							.withStyle(s -> s.withColor(0xFF888888))
-							.append(Component.literal(HLTextUtils.toProperCase(manip.getTend().name()))
+							.append(Component.literal(tendText)
 									.withStyle(s -> s.withColor(tendCol))),
 					tx, ty, 0, false);
 			ty += lineH;
@@ -1732,7 +1799,7 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		// Title
+		// Title (drawn above the scrollable area)
 		gfx.drawString(font, Component.literal("Tiers")
 				.withStyle(s -> s.withColor(Tab.CRAFTING.color).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
@@ -1740,6 +1807,14 @@ public class SkillTreeScreen extends Screen {
 		// Separator
 		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF442222);
 		sy += 4;
+
+		// Scissor to clip scrollable content within the sidebar
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
+
+		// Apply scroll offset
+		sy -= craftingSidebarScroll;
 
 		// Tier rows
 		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
@@ -1749,7 +1824,8 @@ public class SkillTreeScreen extends Screen {
 			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH;
+					&& mouseY >= sy && mouseY <= sy + rowH
+					&& mouseY >= clipTop && mouseY <= clipBottom;
 
 			// Background
 			int bg = selected ? 0xDD1A0808 : (hovered && !locked ? 0xBB180505 : 0x99120303);
@@ -1779,7 +1855,8 @@ public class SkillTreeScreen extends Screen {
 					BloodStructureRecipe r = recipes.get(j);
 					boolean recSel = (j == selectedCraftingIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16;
+							&& mouseY >= sy && mouseY <= sy + 16
+							&& mouseY >= clipTop && mouseY <= clipBottom;
 
 					int recBg = recSel ? 0xCC221010 : (recHov ? 0xAA1A0808 : 0x00000000);
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
@@ -1798,6 +1875,20 @@ public class SkillTreeScreen extends Screen {
 			}
 			sy += rowH + 2;
 		}
+
+		gfx.disableScissor();
+
+		// Draw scroll indicators if content overflows
+		int contentH = craftingSidebarContentH();
+		int visibleH = tierSidebarVisibleH();
+		if (contentH > visibleH) {
+			if (craftingSidebarScroll > 0) {
+				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
+			}
+			if (craftingSidebarScroll < contentH - visibleH) {
+				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
+			}
+		}
 	}
 
 	/** Returns the tier name clicked in the crafting sidebar, or null. */
@@ -1807,12 +1898,20 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return null;
+
+		// Apply scroll offset
+		sy -= craftingSidebarScroll;
+
 		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
 			String tierName = CRAFTING_TIER_NAMES[i];
 			boolean selected = tierName.equals(selectedCraftingTier);
 			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
 
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
+					&& my >= clipTop && my <= clipBottom) {
 				return tierName;
 			}
 
@@ -1835,6 +1934,13 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return -1;
+
+		// Apply scroll offset
+		sy -= craftingSidebarScroll;
+
 		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
 			String tierName = CRAFTING_TIER_NAMES[i];
 			boolean selected = tierName.equals(selectedCraftingTier);
@@ -1845,7 +1951,8 @@ public class SkillTreeScreen extends Screen {
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {
 					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16) {
+							&& my >= sy && my <= sy + 16
+							&& my >= clipTop && my <= clipBottom) {
 						return j;
 					}
 					sy += 18;
@@ -1952,7 +2059,18 @@ public class SkillTreeScreen extends Screen {
 	 */
 	private void drawCraftingInfoPanel(GuiGraphics gfx, BloodStructureRecipe recipe,
 									   int panelX, int panelY, int panelW) {
-		int y = panelY;
+		int clipTop = panelY;
+		int clipBottom = guiTop + guiHeight - 8;
+		int visibleH = clipBottom - clipTop;
+
+		// Clamp scroll
+		int totalH = measureCraftingInfoPanelHeight(recipe, panelW);
+		int maxScroll = Math.max(0, totalH - visibleH);
+		if (craftingInfoScroll > maxScroll) craftingInfoScroll = maxScroll;
+
+		gfx.enableScissor(panelX - 2, clipTop, panelX + panelW + 2, clipBottom);
+
+		int y = panelY - craftingInfoScroll;
 		int lineH = 12;
 
 		// ── Recipe name (derived from ID) — word-wrapped ──
@@ -2058,6 +2176,85 @@ public class SkillTreeScreen extends Screen {
 				}
 			}
 		}
+
+		gfx.disableScissor();
+
+		// Draw scroll indicators if content overflows
+		if (totalH > visibleH) {
+			if (craftingInfoScroll > 0) {
+				gfx.drawCenteredString(font, "\u25B2", panelX + panelW / 2, clipTop, 0xAAFFFFFF);
+			}
+			if (craftingInfoScroll < maxScroll) {
+				gfx.drawCenteredString(font, "\u25BC", panelX + panelW / 2, clipBottom - 10, 0xAAFFFFFF);
+			}
+		}
+	}
+
+	/** Measures the total content height of the crafting info panel (without clipping). */
+	private int measureCraftingInfoPanelHeight(BloodStructureRecipe recipe, int panelW) {
+		int y = 0;
+		int lineH = 12;
+
+		// Name
+		String namePath = recipe.getId().getPath();
+		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
+		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
+		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH;
+		y += 4 + 1 + 6; // gap + separator + gap
+
+		// Blood cost
+		y += lineH + 4;
+
+		// Held item
+		ItemStack heldItem = recipe.getHeldItem();
+		if (heldItem != null && !heldItem.isEmpty()) {
+			y += lineH; // label
+			List<String> heldLines = ScreenDrawUtils.wrapText(font, heldItem.getHoverName().getString(), panelW - 20);
+			y += Math.max(20, heldLines.size() * lineH + 4);
+		}
+
+		// Hit block
+		Block hitBlock = recipe.getHitBlock();
+		if (hitBlock != null && hitBlock != Blocks.AIR) {
+			y += lineH; // label
+			ItemStack hitStack = new ItemStack(hitBlock);
+			if (!hitStack.isEmpty()) {
+				List<String> hitLines = ScreenDrawUtils.wrapText(font, hitStack.getHoverName().getString(), panelW - 20);
+				y += Math.max(20, hitLines.size() * lineH + 4);
+			}
+		}
+
+		y += 4; // gap
+
+		// Result
+		ItemStack result = recipe.getResult();
+		if (result != null && !result.isEmpty()) {
+			y += lineH; // label
+			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
+			y += Math.max(20, resultLines.size() * lineH + 4);
+		}
+
+		y += 6; // gap
+
+		// Materials
+		if (recipe.getPattern() != null) {
+			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
+			if (!blockCounts.isEmpty()) {
+				y += lineH; // "Materials:" label
+				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+					Block block = entry.getKey();
+					if (block == null || block == Blocks.AIR) continue;
+					ItemStack blockStack = new ItemStack(block);
+					if (!blockStack.isEmpty()) {
+						String countPrefix = " x" + entry.getValue() + "  ";
+						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+						y += Math.max(18, matLines.size() * lineH + 4);
+					}
+				}
+			}
+		}
+
+		return y;
 	}
 
 	// (Old nav buttons removed — now using tier sidebar)
@@ -2298,7 +2495,7 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		// Title
+		// Title (drawn above the scrollable area)
 		gfx.drawString(font, Component.literal("Rune Tiers")
 				.withStyle(s -> s.withColor(Tab.RUNES.color).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
@@ -2306,6 +2503,14 @@ public class SkillTreeScreen extends Screen {
 		// Separator
 		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF224444);
 		sy += 4;
+
+		// Scissor to clip scrollable content within the sidebar
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
+
+		// Apply scroll offset
+		sy -= runeSidebarScroll;
 
 		// Tier rows
 		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
@@ -2316,7 +2521,8 @@ public class SkillTreeScreen extends Screen {
 					chiselByTier.getOrDefault(tierName, List.of());
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH;
+					&& mouseY >= sy && mouseY <= sy + rowH
+					&& mouseY >= clipTop && mouseY <= clipBottom;
 
 			// Background
 			int bg = selected ? 0xDD0A1818 : (hovered && !locked ? 0xBB081414 : 0x99061010);
@@ -2346,7 +2552,8 @@ public class SkillTreeScreen extends Screen {
 					com.vincenthuto.hemomancy.common.recipe.ChiselRecipe r = recipes.get(j);
 					boolean recSel = (j == selectedRuneIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16;
+							&& mouseY >= sy && mouseY <= sy + 16
+							&& mouseY >= clipTop && mouseY <= clipBottom;
 
 					int recBg = recSel ? 0xCC102020 : (recHov ? 0xAA0A1818 : 0x00000000);
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
@@ -2365,6 +2572,20 @@ public class SkillTreeScreen extends Screen {
 			}
 			sy += rowH + 2;
 		}
+
+		gfx.disableScissor();
+
+		// Draw scroll indicators if content overflows
+		int contentH = runeSidebarContentH();
+		int visibleH = tierSidebarVisibleH();
+		if (contentH > visibleH) {
+			if (runeSidebarScroll > 0) {
+				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
+			}
+			if (runeSidebarScroll < contentH - visibleH) {
+				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
+			}
+		}
 	}
 
 	/** Returns the tier name clicked in the runes sidebar, or null. */
@@ -2374,13 +2595,21 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return null;
+
+		// Apply scroll offset
+		sy -= runeSidebarScroll;
+
 		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
 			String tierName = RUNE_TIER_NAMES[i];
 			boolean selected = tierName.equals(selectedRuneTier);
 			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
 					chiselByTier.getOrDefault(tierName, List.of());
 
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
+					&& my >= clipTop && my <= clipBottom) {
 				return tierName;
 			}
 
@@ -2404,6 +2633,13 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return -1;
+
+		// Apply scroll offset
+		sy -= runeSidebarScroll;
+
 		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
 			String tierName = RUNE_TIER_NAMES[i];
 			boolean selected = tierName.equals(selectedRuneTier);
@@ -2415,7 +2651,8 @@ public class SkillTreeScreen extends Screen {
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {
 					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16) {
+							&& my >= sy && my <= sy + 16
+							&& my >= clipTop && my <= clipBottom) {
 						return j;
 					}
 					sy += 18;
@@ -2505,7 +2742,7 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
-		// Title
+		// Title (drawn above the scrollable area)
 		gfx.drawString(font, Component.literal("Rite Tiers")
 				.withStyle(s -> s.withColor(Tab.RITES.color).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
@@ -2514,13 +2751,22 @@ public class SkillTreeScreen extends Screen {
 		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF332244);
 		sy += 4;
 
+		// Scissor to clip scrollable content within the sidebar
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
+
+		// Apply scroll offset
+		sy -= riteSidebarScroll;
+
 		for (CardinalRiteType type : CardinalRiteType.values()) {
 			boolean locked = playerDegree < riteMinDegree(type);
 			boolean selected = (type == selectedRiteTier);
 			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH;
+					&& mouseY >= sy && mouseY <= sy + rowH
+					&& mouseY >= clipTop && mouseY <= clipBottom;
 
 			// Background
 			int bg = selected ? 0xDD120818 : (hovered && !locked ? 0xBB100616 : 0x990C0410);
@@ -2552,7 +2798,8 @@ public class SkillTreeScreen extends Screen {
 					CardinalRiteRecipe r = recipes.get(j);
 					boolean recSel = (j == selectedRiteIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16;
+							&& mouseY >= sy && mouseY <= sy + 16
+							&& mouseY >= clipTop && mouseY <= clipBottom;
 
 					int recBg = recSel ? 0xCC180818 : (recHov ? 0xAA140614 : 0x00000000);
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
@@ -2576,6 +2823,22 @@ public class SkillTreeScreen extends Screen {
 			}
 			sy += rowH + 2;
 		}
+
+		gfx.disableScissor();
+
+		// Draw scroll indicators if content overflows
+		int contentH = riteSidebarContentH();
+		int visibleH = tierSidebarVisibleH();
+		if (contentH > visibleH) {
+			if (riteSidebarScroll > 0) {
+				// Up arrow indicator
+				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
+			}
+			if (riteSidebarScroll < contentH - visibleH) {
+				// Down arrow indicator
+				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
+			}
+		}
 	}
 
 	/** Returns the rite tier clicked in the sidebar, or null. */
@@ -2585,11 +2848,19 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return null;
+
+		// Apply scroll offset
+		sy -= riteSidebarScroll;
+
 		for (CardinalRiteType type : CardinalRiteType.values()) {
 			boolean selected = (type == selectedRiteTier);
 			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
 
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH) {
+			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
+					&& my >= clipTop && my <= clipBottom) {
 				return type;
 			}
 
@@ -2612,6 +2883,13 @@ public class SkillTreeScreen extends Screen {
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
+		int clipTop = sy;
+		int clipBottom = guiTop + guiHeight - 4;
+		if (my < clipTop || my > clipBottom) return -1;
+
+		// Apply scroll offset
+		sy -= riteSidebarScroll;
+
 		for (CardinalRiteType type : CardinalRiteType.values()) {
 			boolean selected = (type == selectedRiteTier);
 			List<CardinalRiteRecipe> tierRecipes = ritesByTier.getOrDefault(type, List.of());
@@ -2621,7 +2899,8 @@ public class SkillTreeScreen extends Screen {
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {
 					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16) {
+							&& my >= sy && my <= sy + 16
+							&& my >= clipTop && my <= clipBottom) {
 						return j;
 					}
 					sy += 18;
@@ -2728,7 +3007,18 @@ public class SkillTreeScreen extends Screen {
 	 */
 	private void drawRiteInfoPanel(GuiGraphics gfx, CardinalRiteRecipe rite,
 								   int panelX, int panelY, int panelW, int mouseX, int mouseY) {
-		int y = panelY;
+		int clipTop = panelY;
+		int clipBottom = guiTop + guiHeight - 8;
+		int visibleH = clipBottom - clipTop;
+
+		// Clamp scroll
+		int totalH = measureRiteInfoPanelHeight(rite, panelW);
+		int maxScroll = Math.max(0, totalH - visibleH);
+		if (riteInfoScroll > maxScroll) riteInfoScroll = maxScroll;
+
+		gfx.enableScissor(panelX - 2, clipTop, panelX + panelW + 2, clipBottom);
+
+		int y = panelY - riteInfoScroll;
 		int lineH = 12;
 
 		// ── Rite name ──
@@ -2838,6 +3128,79 @@ public class SkillTreeScreen extends Screen {
 				}
 			}
 		}
+
+		gfx.disableScissor();
+
+		// Draw scroll indicators if content overflows
+		if (totalH > visibleH) {
+			if (riteInfoScroll > 0) {
+				gfx.drawCenteredString(font, "\u25B2", panelX + panelW / 2, clipTop, 0xAAFFFFFF);
+			}
+			if (riteInfoScroll < maxScroll) {
+				gfx.drawCenteredString(font, "\u25BC", panelX + panelW / 2, clipBottom - 10, 0xAAFFFFFF);
+			}
+		}
+	}
+
+	/** Measures the total content height of the rite info panel (without clipping). */
+	private int measureRiteInfoPanelHeight(CardinalRiteRecipe rite, int panelW) {
+		int y = 0;
+		int lineH = 12;
+
+		// Name
+		String name = rite.getRiteName();
+		if (name == null || name.isEmpty()) {
+			String ritePath = rite.getId().getPath();
+			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
+			name = HLTextUtils.toProperCase(ritePath.replace("_", " "));
+		}
+		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH;
+		y += 4 + 1 + 6; // gap + separator + gap
+
+		// Description
+		String desc = rite.getRiteDescription();
+		if (desc != null && !desc.isEmpty()) {
+			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
+		}
+
+		y += lineH; // type
+		y += lineH; // blood cost
+
+		CardinalRiteType type = rite.getRiteType();
+		int reqDeg = rite.getRequiredDegree() >= 0 ? rite.getRequiredDegree() : riteMinDegree(type);
+		if (reqDeg > 0) y += lineH; // degree
+
+		y += lineH + 6; // cast time + gap
+
+		// Result
+		ItemStack result = rite.getResult();
+		if (result != null && !result.isEmpty()) {
+			y += lineH; // "Result:" label
+			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
+			y += Math.max(20, resultLines.size() * lineH + 4);
+		}
+
+		y += 6; // gap
+
+		// Materials
+		if (rite.getPattern() != null) {
+			Map<Block, Integer> blockCounts = rite.getPattern().getBlockCount(false);
+			if (!blockCounts.isEmpty()) {
+				y += lineH; // "Materials:" label
+				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
+					Block block = entry.getKey();
+					if (block == null || block == Blocks.AIR) continue;
+					ItemStack blockStack = new ItemStack(block);
+					if (!blockStack.isEmpty()) {
+						String countPrefix = " x" + entry.getValue() + "  ";
+						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
+						y += Math.max(18, matLines.size() * lineH + 4);
+					}
+				}
+			}
+		}
+
+		return y;
 	}
 
 	/** Truncates text to fit within maxWidth, appending "..." if necessary. */
@@ -3089,6 +3452,75 @@ public class SkillTreeScreen extends Screen {
 		int drawerH = guiHeight - (drawerY - guiTop) - 4;
 		return mx >= drawerX && mx <= drawerX + drawerW
 			&& my >= drawerY && my <= drawerY + drawerH;
+	}
+
+	/** Returns true if the mouse is inside the tier sidebar region (Rites/Crafting/Runes). */
+	private boolean isOverTierSidebar(double mx, double my) {
+		return mx >= guiLeft && mx <= guiLeft + TIER_SIDEBAR_W
+			&& my >= guiTop && my <= guiTop + guiHeight;
+	}
+
+	/** Visible height of the scrollable area inside the tier sidebar. */
+	private int tierSidebarVisibleH() {
+		return guiHeight - 42 - 4; // 42 = title(14) + separator(4) + top padding(24); 4 = bottom margin
+	}
+
+	/** Total content height for the Rites tier sidebar. */
+	private int riteSidebarContentH() {
+		int rowH = 22;
+		int total = 0;
+		for (CardinalRiteType type : CardinalRiteType.values()) {
+			total += rowH + 2;
+			if (type == selectedRiteTier) {
+				List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
+				total += rowH + 2 + recipes.size() * 18;
+			}
+		}
+		return total;
+	}
+
+	/** Total content height for the Crafting tier sidebar. */
+	private int craftingSidebarContentH() {
+		int rowH = 22;
+		int total = 0;
+		for (String tierName : CRAFTING_TIER_NAMES) {
+			total += rowH + 2;
+			if (tierName.equals(selectedCraftingTier)) {
+				List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
+				total += rowH + 2 + recipes.size() * 18;
+			}
+		}
+		return total;
+	}
+
+	/** Total content height for the Runes tier sidebar. */
+	private int runeSidebarContentH() {
+		int rowH = 22;
+		int total = 0;
+		for (String tierName : RUNE_TIER_NAMES) {
+			total += rowH + 2;
+			if (tierName.equals(selectedRuneTier)) {
+				List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+						chiselByTier.getOrDefault(tierName, List.of());
+				total += rowH + 2 + recipes.size() * 18;
+			}
+		}
+		return total;
+	}
+
+	private void clampRiteSidebarScroll() {
+		int maxScroll = Math.max(0, riteSidebarContentH() - tierSidebarVisibleH());
+		riteSidebarScroll = Math.min(riteSidebarScroll, maxScroll);
+	}
+
+	private void clampCraftingSidebarScroll() {
+		int maxScroll = Math.max(0, craftingSidebarContentH() - tierSidebarVisibleH());
+		craftingSidebarScroll = Math.min(craftingSidebarScroll, maxScroll);
+	}
+
+	private void clampRuneSidebarScroll() {
+		int maxScroll = Math.max(0, runeSidebarContentH() - tierSidebarVisibleH());
+		runeSidebarScroll = Math.min(runeSidebarScroll, maxScroll);
 	}
 
 	// ────────────────────────────────────────────────────────────
