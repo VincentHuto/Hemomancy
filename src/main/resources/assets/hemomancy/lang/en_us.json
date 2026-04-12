@@ -557,6 +557,8 @@
 	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order",
 	"hemomancy.rite.bloom_of_qliphoth.name": "Bloom of the Qliphoth",
 	"hemomancy.rite.bloom_of_qliphoth.desc": "Summons a dark tree of the Qliphoth that empowers blood manipulations and grants regeneration within its 3-chunk radius.",
+	"hemomancy.rite.pruning_of_qliphoth.name": "Pruning of the Qliphoth",
+	"hemomancy.rite.pruning_of_qliphoth.desc": "A small counter-rite that severs the roots of a nearby Qliphoth bloom, causing the dark tree to wither and vanish. Must be performed within the same chunk as the bloom.",
 
 	"hemomancy.rite.pallid_vessel_rite.name": "Rite of the Pallid Vessel",
 	"hemomancy.rite.crimson_vessel_rite.name": "Rite of the Crimson Vessel",

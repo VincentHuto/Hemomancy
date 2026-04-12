@@ -86,8 +86,10 @@ public class CardinalRiteEvents {
 
 		// Periodically sync Qliphoth Bloom data to clients for tree rendering
 		// (must be outside the active-rite block since blooms persist after rites end)
-		if (sLevel.getGameTime() % 200 == 0) {
-			syncQliphothBlooms(sLevel);
+		// Only sync from the overworld to prevent other dimension ticks from overwriting
+		// the client bloom list with an empty set.
+		if (sLevel == sLevel.getServer().overworld() && sLevel.getGameTime() % 200 == 0) {
+			syncQliphothBlooms(sLevel.getServer());
 		}
 
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
@@ -402,6 +404,7 @@ public class CardinalRiteEvents {
 	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
 	private static final String LETHES_SHADOW_RITE = "cardinal_rite/lethes_shadow";
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
+	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -546,6 +549,11 @@ public class CardinalRiteEvents {
 		// Bloom of the Qliphoth: summon a persistent bloom tree that buffs nearby players
 		if (BLOOM_OF_QLIPHOTH_RITE.equals(ritePath)) {
 			completeBloomOfQliphoth(sLevel, caster, center);
+		}
+
+		// Pruning of the Qliphoth: remove a bloom tree rooted in the same chunk
+		if (PRUNING_OF_QLIPHOTH_RITE.equals(ritePath)) {
+			completePruningOfQliphoth(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1031,7 +1039,7 @@ public class CardinalRiteEvents {
 		data.addBloom(entry);
 
 		// Sync to all nearby clients so the tree renders immediately
-		syncQliphothBlooms(sLevel);
+		syncQliphothBlooms(sLevel.getServer());
 
 		int blockRadius = QLIPHOTH_BLOOM_CHUNK_RADIUS * 16;
 		caster.displayClientMessage(
@@ -1042,21 +1050,52 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Syncs all Qliphoth Bloom locations to nearby clients for rendering.
+	 * Pruning of the Qliphoth (Degree 0, Minor):
+	 * Removes a Qliphoth Bloom tree whose center is in the same chunk as the rite.
 	 */
-	private static void syncQliphothBlooms(ServerLevel sLevel) {
-		QliphothBloomSavedData data = QliphothBloomSavedData.get(sLevel.getServer().overworld());
+	private static void completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
-		java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
-		for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
-			if (bloom.dimension().equals(dimension)) {
-				clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
-						bloom.center(), bloom.chunkRadius()));
-			}
+
+		QliphothBloomSavedData.BloomEntry removed = data.removeBloomInChunk(center, dimension);
+
+		if (removed != null) {
+			// Sync updated bloom list to all clients
+			syncQliphothBlooms(sLevel.getServer());
+
+			caster.displayClientMessage(
+					Component.literal("The Qliphoth withers... the dark tree has been pruned.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			sLevel.playSound(null, center, SoundEvents.WITHER_BREAK_BLOCK, SoundSource.BLOCKS, 0.6f, 1.2f);
+		} else {
+			caster.displayClientMessage(
+					Component.literal("There is no Qliphoth bloom rooted in this chunk to prune.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
 		}
-		com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
-				new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
-		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), packet);
+	}
+
+	/**
+	 * Syncs all Qliphoth Bloom locations to each connected client for rendering.
+	 * Each player receives only the blooms in their current dimension.
+	 */
+	private static void syncQliphothBlooms(net.minecraft.server.MinecraftServer server) {
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(server.overworld());
+		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			String dimension = player.level().dimension().location().toString();
+			java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
+			for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
+				if (bloom.dimension().equals(dimension)) {
+					clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
+							bloom.center(), bloom.chunkRadius()));
+				}
+			}
+			com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
+					new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player), packet);
+		}
 	}
 
 	/**
