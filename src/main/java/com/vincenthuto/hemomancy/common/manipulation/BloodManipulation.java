@@ -256,6 +256,12 @@ public class BloodManipulation  {
 					} catch (Exception ignored) {}
 				}
 
+				// Qliphoth Bloom: 25% cost reduction when within a bloom's radius
+				if (player instanceof ServerPlayer serverPlayer
+						&& com.vincenthuto.hemomancy.common.rite.QliphothBloomEvents.isInQliphothBloom(serverPlayer)) {
+					effectiveCost *= 0.75;
+				}
+
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);

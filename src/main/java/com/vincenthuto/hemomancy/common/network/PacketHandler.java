@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticles
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
@@ -287,6 +288,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(DialogueOptionPacket.class, networkID++)
 				.decoder(DialogueOptionPacket::decode).encoder(DialogueOptionPacket::encode)
 				.consumerNetworkThread(DialogueOptionPacket::handle).add();
+
+		// Qliphoth Bloom sync packet
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncQliphothBlooms.class, networkID++)
+				.decoder(PacketSyncQliphothBlooms::decode).encoder(PacketSyncQliphothBlooms::encode)
+				.consumerNetworkThread(PacketSyncQliphothBlooms::handle).add();
 
 	}
 

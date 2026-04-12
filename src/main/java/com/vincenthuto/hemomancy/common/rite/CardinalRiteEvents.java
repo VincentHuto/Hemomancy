@@ -84,6 +84,12 @@ public class CardinalRiteEvents {
 		// Tick pending blood structure crafts (delayed block breaking)
 		PendingBloodCraftManager.tick();
 
+		// Periodically sync Qliphoth Bloom data to clients for tree rendering
+		// (must be outside the active-rite block since blooms persist after rites end)
+		if (sLevel.getGameTime() % 200 == 0) {
+			syncQliphothBlooms(sLevel);
+		}
+
 		CardinalRiteSavedData savedData = CardinalRiteSavedData.get(sLevel);
 		Map<UUID, ActiveCardinalRite> activeRites = savedData.getActiveRites();
 
@@ -395,6 +401,7 @@ public class CardinalRiteEvents {
 	private static final String EXSANGUINATION_RITE = "cardinal_rite/exsanguination";
 	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
 	private static final String LETHES_SHADOW_RITE = "cardinal_rite/lethes_shadow";
+	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -404,6 +411,8 @@ public class CardinalRiteEvents {
 	private static final int HUNGERING_EARTH_RADIUS = 16;
 	/** Chunk radius for Sanguine Dominion blood domain. */
 	private static final int DOMINION_CHUNK_RADIUS = 3;
+	/** Chunk radius for Qliphoth Bloom effect zone. */
+	private static final int QLIPHOTH_BLOOM_CHUNK_RADIUS = 3;
 	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
 	private static final float SUMMONS_COST_PER_MEMBER = 200f;
 
@@ -532,6 +541,11 @@ public class CardinalRiteEvents {
 		// Rite of the Lethe's Shadow: strip Unstained progress from a nearby player
 		if (LETHES_SHADOW_RITE.equals(ritePath)) {
 			completeLethesShadow(sLevel, caster, center);
+		}
+
+		// Bloom of the Qliphoth: summon a persistent bloom tree that buffs nearby players
+		if (BLOOM_OF_QLIPHOTH_RITE.equals(ritePath)) {
+			completeBloomOfQliphoth(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -999,6 +1013,50 @@ public class CardinalRiteEvents {
 
 		// Visual/sound feedback
 		sLevel.playSound(null, center, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7f, 1.5f);
+	}
+
+	/**
+	 * Bloom of the Qliphoth (Degree 4, Lesser):
+	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
+	 * radius, all blood manipulations cost 25% less blood and players receive
+	 * passive health regeneration and enhanced blood regeneration.
+	 */
+	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+
+		QliphothBloomSavedData.BloomEntry entry = new QliphothBloomSavedData.BloomEntry(
+				caster.getUUID(), center, dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS, sLevel.getGameTime());
+		data.addBloom(entry);
+
+		// Sync to all nearby clients so the tree renders immediately
+		syncQliphothBlooms(sLevel);
+
+		int blockRadius = QLIPHOTH_BLOOM_CHUNK_RADIUS * 16;
+		caster.displayClientMessage(
+				Component.literal("The Qliphoth blooms! A dark tree takes root, empowering blood within "
+						+ blockRadius + " blocks.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Syncs all Qliphoth Bloom locations to nearby clients for rendering.
+	 */
+	private static void syncQliphothBlooms(ServerLevel sLevel) {
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(sLevel.getServer().overworld());
+		String dimension = sLevel.dimension().location().toString();
+		java.util.List<com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry> clientEntries = new ArrayList<>();
+		for (QliphothBloomSavedData.BloomEntry bloom : data.getBlooms()) {
+			if (bloom.dimension().equals(dimension)) {
+				clientEntries.add(new com.vincenthuto.hemomancy.client.data.QliphothBloomClientData.BloomEntry(
+						bloom.center(), bloom.chunkRadius()));
+			}
+		}
+		com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
+				new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
+		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), packet);
 	}
 
 	/**
