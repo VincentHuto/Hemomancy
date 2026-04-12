@@ -10,6 +10,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.block.VisceralMirrorModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -21,6 +23,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -84,7 +87,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 	// ┌──────────────────────────────────────────────────────────────────┐
 	// │  ★  TWEAK THESE VALUES to align the render with your model  ★   │
 	// └──────────────────────────────────────────────────────────────────┘
-	private static final MirrorLayout LAYOUT = new MirrorLayout(
+	private   final MirrorLayout LAYOUT = new MirrorLayout(
 			0.5f,      // halfWidth         — half the mirror width (blocks)
 			0.125f,    // yStart            — bottom edge Y (blocks above block floor)
 			1.6f,      // height            — mirror height (blocks)
@@ -122,7 +125,13 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 	/** Extra alpha variation on ripple crests for a shimmer highlight. */
 	private static final float RIPPLE_ALPHA_BOOST = 0.06f;
 
+	// ── Stand model ──────────────────────────────────────────────────────
+	private static final ResourceLocation MODEL_TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/model_visceral_mirror.png");
+	private final VisceralMirrorModel standModel;
+
 	public VisceralMirrorRenderer(BlockEntityRendererProvider.Context ctx) {
+		standModel = new VisceralMirrorModel(ctx.bakeLayer(VisceralMirrorModel.LAYER_LOCATION));
 	}
 
 	/** The mirror surface extends above the block boundary. */
@@ -148,6 +157,9 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		Direction facing = te.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
 		Player player = Minecraft.getInstance().player;
 
+		// Render the stand / frame model
+		renderStandModel(stack, buffer, facing, light, overlay);
+
 		// Always draw the tinted glass overlay
 		renderMirrorGlass(stack, buffer, facing, te);
 
@@ -155,6 +167,47 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 		if (player != null && isPlayerInFront(te, player, facing)) {
 			renderReflection(te, partialTicks, stack, facing, player, light);
 		}
+	}
+
+	// =====================================================================
+	//  Stand / frame model rendering
+	// =====================================================================
+
+	/**
+	 * Renders the custom stand / frame model around the mirror.
+	 * <p>
+	 * The model is authored facing SOUTH (frame flat face perpendicular to X,
+	 * spanning Z). We rotate it around Y so the frame aligns with the block's
+	 * FACING direction. The model is flipped 180° on X because it is authored
+	 * Y-down (Blockbench convention).
+	 */
+	private void renderStandModel(PoseStack stack, MultiBufferSource buffer,
+			Direction facing, int light, int overlay) {
+		stack.pushPose();
+
+		// Centre on the block
+		stack.translate(0.5D, 1.5D, 0.5D);
+
+		// Flip model upside-down (Blockbench Y-down → world Y-up)
+		stack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
+
+		// Rotate the model based on the block's facing direction.
+		// The model's frame face points along -X; we rotate so that face
+		// aligns with the block's FACING direction (the side the player sees).
+		float yRot = switch (facing) {
+			case SOUTH -> 180f;
+			case WEST  -> 270f;
+			case NORTH -> 0f;
+			case EAST  -> 90f;
+			default    -> 180f;
+		};
+		stack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+
+		VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(MODEL_TEXTURE));
+		standModel.renderToBuffer(stack, vc, light, OverlayTexture.NO_OVERLAY,
+				1.0F, 1.0F, 1.0F, 1.0F);
+
+		stack.popPose();
 	}
 
 	// =====================================================================

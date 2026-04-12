@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.item.tile.SuspendedBloodCrystalBlockItem
 import com.vincenthuto.hemomancy.common.item.tile.SuspendedCleansedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.SuspendedVivianiteBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.VialCentrifugeBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.VisceralMirrorBlockItem;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
@@ -450,6 +451,10 @@ public class BlockInit {
 		if (b == BlockInit.mnemonic_reliquary.get()) {
 			return Pair.of(block.getSecond(),
 					new MnemonicReliquaryBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.visceral_mirror.get()) {
+			return Pair.of(block.getSecond(),
+					new VisceralMirrorBlockItem(b, new Item.Properties()));
 		}
 		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
 	}

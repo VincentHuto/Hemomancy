@@ -100,6 +100,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(FloatingHeartModel.mortal_display, FloatingHeartModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeArmsModel.LAYER_LOCATION, CentrifugeArmsModel::createBodyLayer);
 		event.registerLayerDefinition(CentrifugeStandModel.LAYER_LOCATION, CentrifugeStandModel::createBodyLayer);
+		event.registerLayerDefinition(VisceralMirrorModel.LAYER_LOCATION, VisceralMirrorModel::createBodyLayer);
 		event.registerLayerDefinition(SanguisLanceaModel.LAYER_LOCATION, SanguisLanceaModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedVivianiteModel.LAYER_LOCATION, SuspendedVivianiteModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
