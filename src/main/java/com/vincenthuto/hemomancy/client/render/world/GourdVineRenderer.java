@@ -96,7 +96,7 @@ public class GourdVineRenderer {
 		float scatterRadius = halfSize * SCATTER_FRACTION;
 
 		double cx = center.getX() + 0.5;
-		double cy = center.getY() + 0.0;   // ground level
+		double cy = center.getY();   // ground level
 		double cz = center.getZ() + 0.5;
 
 		// progress ∈ [0,1]: how far the rite has advanced
@@ -117,7 +117,7 @@ public class GourdVineRenderer {
 
 			// Root position scattered within the rite area (polar coordinates)
 			double angle = h1 * Math.PI * 2.0;
-			double dist = Math.sqrt(h2) * scatterRadius;    // sqrt for uniform distribution
+			double dist = Math.sqrt(h2) * scatterRadius;    // square root for uniform distribution
 			float rootX = (float) (Math.cos(angle) * dist);
 			float rootZ = (float) (Math.sin(angle) * dist);
 
