@@ -30,8 +30,6 @@ public class QliphothBloomRenderer {
 	private static final float TREE_HEIGHT = 8.0f;
 	/** Trunk base radius. */
 	private static final float TRUNK_BASE_RADIUS = 0.45f;
-	/** Trunk top radius. */
-	private static final float TRUNK_TOP_RADIUS = 0.15f;
 	/** Number of vertical segments for the trunk. */
 	private static final int TRUNK_SEGMENTS_V = 12;
 	/** Number of circumference segments for the trunk. */
@@ -48,6 +46,12 @@ public class QliphothBloomRenderer {
 	private static final float BLOOM_RADIUS = 1.2f;
 	/** Root count spreading on the ground. */
 	private static final int ROOT_COUNT = 8;
+	/** Number of segments per root. */
+	private static final int ROOT_SEGS = 8;
+	/** Number of sub-branches per root. */
+	private static final int ROOT_SUB_BRANCHES = 2;
+	/** Number of segments per sub-root branch. */
+	private static final int ROOT_SUB_SEGS = 5;
 
 	// ── Pulsing ring parameters ──
 	/** Number of concentric rings. */
@@ -115,6 +119,7 @@ public class QliphothBloomRenderer {
 
 	/**
 	 * Draws the main trunk — a tapered column of dark quads with subtle red veining.
+	 * Tapers smoothly to a point at the top.
 	 */
 	private static void drawTrunk(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse) {
@@ -126,8 +131,12 @@ public class QliphothBloomRenderer {
 			float y0 = t0 * TREE_HEIGHT;
 			float y1 = t1 * TREE_HEIGHT;
 
-			float r0 = TRUNK_BASE_RADIUS * (1.0f - t0 * 0.7f);
-			float r1 = TRUNK_BASE_RADIUS * (1.0f - t1 * 0.7f);
+			// Smooth taper to a point: quadratic ease-in (1-t²) gives a natural tree shape
+			// (wider at base, accelerating taper toward the tip)
+			float taper0 = 1.0f - t0 * t0;
+			float taper1 = 1.0f - t1 * t1;
+			float r0 = TRUNK_BASE_RADIUS * taper0;
+			float r1 = TRUNK_BASE_RADIUS * taper1;
 
 			// Subtle sway
 			float swayX0 = (float) (Math.sin(time * 0.02 + t0 * 2.0) * 0.05 * t0);
@@ -176,6 +185,9 @@ public class QliphothBloomRenderer {
 
 	/**
 	 * Draws surface roots that spread outward from the trunk base.
+	 * Roots connect seamlessly to the trunk, have 3D volume (tube-like cross section),
+	 * writhe with time-based sinusoidal animation, and branch off into
+	 * smaller sub-roots to look like veins rather than tentacles.
 	 */
 	private static void drawRoots(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse) {
@@ -183,45 +195,156 @@ public class QliphothBloomRenderer {
 		for (int i = 0; i < ROOT_COUNT; i++) {
 			double baseAngle = (Math.PI * 2.0 / ROOT_COUNT) * i;
 			double seed = hashIndex(i) * 0.5 + 0.5;
-			float rootLength = (float) (1.5 + seed * 1.5);
-			double curvature = Math.sin(seed * 13.7) * 0.3;
+			float rootLength = (float) (1.8 + seed * 2.0);
+			double curvature = Math.sin(seed * 13.7) * 0.4;
 
-			for (int s = 0; s < 5; s++) {
-				float t0 = (float) s / 5;
-				float t1 = (float) (s + 1) / 5;
+			// Writhing frequency and phase unique to each root
+			double writheFreq = 0.06 + seed * 0.03;
+			double writhePhase = i * 2.3;
 
-				float rad0 = TRUNK_BASE_RADIUS + t0 * rootLength;
-				float rad1 = TRUNK_BASE_RADIUS + t1 * rootLength;
+			drawSingleRoot(coreVC, glowVC, mat, time, pulse,
+					baseAngle, rootLength, curvature,
+					TRUNK_BASE_RADIUS * 0.85f, writheFreq, writhePhase,
+					0.10f, ROOT_SEGS, i);
 
-				double ang0 = baseAngle + curvature * t0 * t0;
-				double ang1 = baseAngle + curvature * t1 * t1;
+			// Sub-branches fork off from the main root
+			for (int sub = 0; sub < ROOT_SUB_BRANCHES; sub++) {
+				double subSeed = hashIndex(i * 17 + sub * 7 + 500);
+				// Fork point along the main root (between 25% and 70%)
+				float forkT = 0.25f + (float) subSeed * 0.45f;
+				float forkDist = TRUNK_BASE_RADIUS + forkT * rootLength;
+				double forkAngle = baseAngle + curvature * forkT * forkT;
 
-				float y0 = (float) Math.max(-0.3, -0.08 - t0 * 0.15);
-				float y1 = (float) Math.max(-0.3, -0.08 - t1 * 0.15);
+				// Sub-branch diverges at an angle from the main root
+				double subAngleOffset = (subSeed - 0.5) * 1.2 + (sub == 0 ? 0.35 : -0.35);
+				double subAngle = forkAngle + subAngleOffset;
+				float subLength = rootLength * (0.3f + (float) subSeed * 0.3f);
 
-				float w0 = 0.08f * (1.0f - t0 * 0.7f);
-				float w1 = 0.08f * (1.0f - t1 * 0.7f);
+				// Writhe slightly differently from parent
+				double subWritheFreq = writheFreq * 1.3;
+				double subWrithePhase = writhePhase + sub * 3.7;
 
-				float rootR = (float) (0.06 + 0.04 * pulse);
-				float rootG = 0.01f;
-				float rootB = 0.01f;
-				float rootA = 0.85f * (1.0f - t0 * 0.4f);
+				// Starting radius smaller than main root at fork point
+				float subStartRadius = 0.06f * (1.0f - forkT * 0.5f);
 
-				float cos0 = (float) Math.cos(ang0);
-				float sin0 = (float) Math.sin(ang0);
-				float cos1 = (float) Math.cos(ang1);
-				float sin1 = (float) Math.sin(ang1);
+				drawSingleRoot(coreVC, glowVC, mat, time, pulse,
+						subAngle, subLength, curvature * 0.6,
+						forkDist, subWritheFreq, subWrithePhase,
+						subStartRadius, ROOT_SUB_SEGS, i * 100 + sub);
+			}
+		}
+	}
 
-				float px0 = (float) -Math.sin(ang0);
-				float pz0 = (float) Math.cos(ang0);
-				float px1 = (float) -Math.sin(ang1);
-				float pz1 = (float) Math.cos(ang1);
+	/**
+	 * Draws a single root strand as a 3D tube with writhing animation.
+	 * Used for both main roots and sub-branch roots.
+	 */
+	private static void drawSingleRoot(VertexConsumer coreVC, VertexConsumer glowVC,
+			Matrix4f mat, float time, double pulse,
+			double baseAngle, float rootLength, double curvature,
+			float startDist, double writheFreq, double writhePhase,
+			float baseWidth, int segments, int colorSeed) {
 
+		// Number of faces around the root tube cross-section
+		int tubeFaces = 4;
+
+		for (int s = 0; s < segments; s++) {
+			float t0 = (float) s / segments;
+			float t1 = (float) (s + 1) / segments;
+
+			float rad0 = startDist + t0 * rootLength;
+			float rad1 = startDist + t1 * rootLength;
+
+			double ang0 = baseAngle + curvature * t0 * t0;
+			double ang1 = baseAngle + curvature * t1 * t1;
+
+			// Writhing: sinusoidal displacement in the perpendicular and Y directions
+			float writheAmp = 0.06f + t0 * 0.10f; // amplitude grows along the root
+			float writheX0 = (float) (Math.sin(time * writheFreq + writhePhase + t0 * 4.0) * writheAmp);
+			float writheY0 = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + t0 * 3.5) * writheAmp * 0.5f);
+			float writheX1 = (float) (Math.sin(time * writheFreq + writhePhase + t1 * 4.0) * writheAmp);
+			float writheY1 = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + t1 * 3.5) * writheAmp * 0.5f);
+
+			// Y position: roots dip below ground then re-emerge slightly
+			float yBase0 = (float) (-0.02 - t0 * 0.35 * (1.0 + Math.sin(t0 * Math.PI) * 0.6));
+			float yBase1 = (float) (-0.02 - t1 * 0.35 * (1.0 + Math.sin(t1 * Math.PI) * 0.6));
+			float y0 = yBase0 + writheY0;
+			float y1 = yBase1 + writheY1;
+
+			// Width tapers along the root
+			float w0 = baseWidth * (1.0f - t0 * 0.8f);
+			float w1 = baseWidth * (1.0f - t1 * 0.8f);
+
+			float cos0 = (float) Math.cos(ang0);
+			float sin0 = (float) Math.sin(ang0);
+			float cos1 = (float) Math.cos(ang1);
+			float sin1 = (float) Math.sin(ang1);
+
+			// Center positions with writhe applied perpendicular to root direction
+			float perpX0 = (float) -Math.sin(ang0);
+			float perpZ0 = (float) Math.cos(ang0);
+			float perpX1 = (float) -Math.sin(ang1);
+			float perpZ1 = (float) Math.cos(ang1);
+
+			float cx0 = cos0 * rad0 + perpX0 * writheX0;
+			float cz0 = sin0 * rad0 + perpZ0 * writheX0;
+			float cx1 = cos1 * rad1 + perpX1 * writheX1;
+			float cz1 = sin1 * rad1 + perpZ1 * writheX1;
+
+			// Colors
+			float rootR = (float) (0.06 + 0.04 * pulse);
+			float rootG = 0.01f;
+			float rootB = 0.01f;
+			float rootA = 0.85f * (1.0f - t0 * 0.35f);
+
+			// Vein glow running along roots
+			float veinPulse = (float) (Math.sin(time * 0.09 + colorSeed * 0.7 + t0 * 5.0) + 1.0) * 0.5f;
+			float glowR = (float) (0.45 + 0.35 * veinPulse * pulse);
+			float glowA = 0.12f * veinPulse * (1.0f - t0 * 0.5f);
+
+			// Draw tube cross-section — quads around the circumference
+			for (int f = 0; f < tubeFaces; f++) {
+				double faceAngle0 = Math.toRadians((360.0 / tubeFaces) * f);
+				double faceAngle1 = Math.toRadians((360.0 / tubeFaces) * (f + 1));
+
+				// Cross-section offsets using perpendicular (horizontal) and Y (vertical)
+				float fCos0 = (float) Math.cos(faceAngle0);
+				float fSin0 = (float) Math.sin(faceAngle0);
+				float fCos1 = (float) Math.cos(faceAngle1);
+				float fSin1 = (float) Math.sin(faceAngle1);
+
+				// Ring 0 vertices (at t0)
+				float x00 = cx0 + perpX0 * fCos0 * w0;
+				float y00 = y0 + fSin0 * w0;
+				float z00 = cz0 + perpZ0 * fCos0 * w0;
+
+				float x01 = cx0 + perpX0 * fCos1 * w0;
+				float y01 = y0 + fSin1 * w0;
+				float z01 = cz0 + perpZ0 * fCos1 * w0;
+
+				// Ring 1 vertices (at t1)
+				float x10 = cx1 + perpX1 * fCos0 * w1;
+				float y10 = y1 + fSin0 * w1;
+				float z10 = cz1 + perpZ1 * fCos0 * w1;
+
+				float x11 = cx1 + perpX1 * fCos1 * w1;
+				float y11 = y1 + fSin1 * w1;
+				float z11 = cz1 + perpZ1 * fCos1 * w1;
+
+				// Core root quad
 				emitQuad(coreVC, mat,
-						cos0 * rad0 - px0 * w0, y0, sin0 * rad0 - pz0 * w0, rootR, rootG, rootB, rootA,
-						cos0 * rad0 + px0 * w0, y0, sin0 * rad0 + pz0 * w0, rootR, rootG, rootB, rootA,
-						cos1 * rad1 + px1 * w1, y1, sin1 * rad1 + pz1 * w1, rootR, rootG, rootB, rootA * 0.8f,
-						cos1 * rad1 - px1 * w1, y1, sin1 * rad1 - pz1 * w1, rootR, rootG, rootB, rootA * 0.8f);
+						x00, y00, z00, rootR, rootG, rootB, rootA,
+						x01, y01, z01, rootR, rootG, rootB, rootA,
+						x11, y11, z11, rootR, rootG, rootB, rootA * 0.9f,
+						x10, y10, z10, rootR, rootG, rootB, rootA * 0.9f);
+
+				// Glow overlay for veining effect
+				float glowOff = 0.015f;
+				emitQuad(glowVC, mat,
+						x00 + perpX0 * glowOff, y00, z00 + perpZ0 * glowOff, glowR, 0.02f, 0.02f, glowA,
+						x01 + perpX0 * glowOff, y01, z01 + perpZ0 * glowOff, glowR, 0.02f, 0.02f, glowA,
+						x11 + perpX1 * glowOff, y11, z11 + perpZ1 * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f,
+						x10 + perpX1 * glowOff, y10, z10 + perpZ1 * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f);
 			}
 		}
 	}
