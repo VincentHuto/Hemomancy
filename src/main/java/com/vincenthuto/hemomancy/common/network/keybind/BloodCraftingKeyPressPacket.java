@@ -288,7 +288,9 @@ public class BloodCraftingKeyPressPacket {
 			if (match != null) {
 				// ── Tier degree check ──
 				int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
-				int requiredDegree = getRequiredDegreeForRite(recipe.getRiteType());
+				int requiredDegree = recipe.getRequiredDegree() >= 0
+						? recipe.getRequiredDegree()
+						: getRequiredDegreeForRite(recipe.getRiteType());
 				if (playerDegree < requiredDegree) {
 					String riteTypeName = recipe.getRiteType().getSerializedName().substring(0, 1).toUpperCase()
 							+ recipe.getRiteType().getSerializedName().substring(1);

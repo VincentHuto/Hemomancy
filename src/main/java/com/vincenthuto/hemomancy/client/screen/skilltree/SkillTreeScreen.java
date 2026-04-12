@@ -2775,6 +2775,17 @@ public class SkillTreeScreen extends Screen {
 				.append(Component.literal((int) rite.getBloodCost() + " mL").withStyle(s -> s.withColor(0xAA4444))), panelX, y, 0);
 		y += lineH;
 
+		// ── Required degree ──
+		int reqDeg = rite.getRequiredDegree() >= 0 ? rite.getRequiredDegree() : riteMinDegree(type);
+		if (reqDeg > 0) {
+			EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
+			String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
+			int degColor = playerDegree >= reqDeg ? 0xFF88CC88 : 0xFFCC4444;
+			gfx.drawString(font, Component.literal("Requires: ").withStyle(s -> s.withColor(0x888888))
+					.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))), panelX, y, 0);
+			y += lineH;
+		}
+
 		// ── Cast time ──
 		int ticks = type.getCastingDurationTicks();
 		float seconds = ticks / 20f;

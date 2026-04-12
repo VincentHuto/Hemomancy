@@ -1,0 +1,34 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 1000,
+  "riteType": "greater",
+  "requiredDegree": 4,
+  "riteName": "Rite of the Crimson Vessel",
+  "riteDescription": "The pallid vessel is steeped in the deepest scarlet, its walls drinking in the vitality of the blood arts until they flush crimson with purpose.",
+  "pattern": [
+    ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"],
+    ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
+    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
+    ["       ", " V G V ", "  B B  ", "  GEG  ", " GBGBG ", "  GEG  ", " V G V "],
+    ["       ", " V   V ", "  GBG  ", "  B B  ", "  GBG  ", " V   V ", "       "],
+    ["       ", " VVVVV ", " V   V ", " V G V ", " V   V ", " VVVVV ", "       "],
+    ["VGVGVGV", "G     G", "V     V", "G  G  G", "V     V", "G     G", "VGVGVGV"]
+  ],
+  "key": {
+    "V": {
+      "block": "hemomancy:venous_stone"
+    },
+    "G": {
+      "block": "hemomancy:gourd"
+    },
+    "B": {
+      "block": "hemomancy:befouling_ash_trail"
+    },
+    "E": {
+      "block": "hemomancy:engram_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:blood_gourd_red"
+  }
+}

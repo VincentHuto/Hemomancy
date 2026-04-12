@@ -34,9 +34,16 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected ItemStack result;
 	protected String riteName;
 	protected String riteDescription;
+	protected int requiredDegree;
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1);
+	}
+
+	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
+			int requiredDegree) {
 		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
 		this.riteType = riteType;
@@ -44,6 +51,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		this.result = result;
 		this.riteName = riteName;
 		this.riteDescription = riteDescription;
+		this.requiredDegree = requiredDegree;
 	}
 
 	@Override
@@ -126,6 +134,18 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setRiteDescription(String riteDescription) {
 		this.riteDescription = riteDescription;
+	}
+
+	/**
+	 * Returns the per-recipe degree requirement, or -1 if the default
+	 * rite-type degree should be used.
+	 */
+	public int getRequiredDegree() {
+		return requiredDegree;
+	}
+
+	public void setRequiredDegree(int requiredDegree) {
+		this.requiredDegree = requiredDegree;
 	}
 
 	@Override
