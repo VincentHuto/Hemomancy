@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -7,7 +9,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 
@@ -54,6 +55,7 @@ public class ManipCooldownOverlay {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
+		Matrix4f matrix = guiGraphics.pose().last().pose();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
 
@@ -66,28 +68,28 @@ public class ManipCooldownOverlay {
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		// Top edge
-		buffer.vertex(0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
 
 		// Bottom edge
-		buffer.vertex(0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
 
 		// Left edge
-		buffer.vertex(0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
 
 		// Right edge
-		buffer.vertex(screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
 
 		BufferUploader.drawWithShader(buffer.end());
 
