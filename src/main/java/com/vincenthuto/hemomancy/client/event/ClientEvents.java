@@ -423,6 +423,7 @@ public class ClientEvents {
 					SomaticLoomRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.earthen_vein.get(), EarthenVeinRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.mnemonic_reliquary.get(), MnemonicReliquaryRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.visceral_mirror.get(), VisceralMirrorRenderer::new);
 			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
 			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);
