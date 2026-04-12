@@ -50,21 +50,33 @@ public class VisceralMirrorItemRenderer extends BlockEntityWithoutLevelRenderer 
 		boolean isGui = displayContext == ItemDisplayContext.GUI;
 		if (isGui) {
 			Lighting.setupForEntityInInventory();
-			poseStack.mulPose(new Quaternion(Vector3.YN, 90, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.ZN, 30, true).toMoj());
-			poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-			poseStack.translate(-0.75, -1.5, 0.0);
-			poseStack.scale(0.85f, 0.85f, 0.85f);
-		} else {
-			poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-			poseStack.translate(0, -1.5, -1);
 		}
 
 		poseStack.pushPose();
-		poseStack.translate(0.5, 1.2, 0.5);
-		poseStack.scale(0.5f, 0.5f, 0.5f);
-		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
-		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+
+		if (isGui) {
+			// ── GUI / inventory slot ──
+			// Centre the model in the 16×16 slot, scale to fit
+			poseStack.translate(0.5, 0.75, 0.5);
+			poseStack.scale(0.45f, 0.45f, 0.45f);
+			// Flip Y-down → Y-up (Blockbench convention)
+			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			// Isometric-ish viewing angle
+			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.XP, 0, true).toMoj());
+		} else if (displayContext == ItemDisplayContext.FIXED) {
+			// ── Item frame ──
+			poseStack.translate(0.5, 0.15, 0.5);
+			poseStack.scale(0.4f, 0.4f, 0.4f);
+			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+		} else {
+			// ── Hand / ground / third-person ──
+			poseStack.translate(0.5, 0.6, 0.5);
+			poseStack.scale(0.35f, 0.35f, 0.35f);
+			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
+		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
