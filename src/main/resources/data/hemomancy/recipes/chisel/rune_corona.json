@@ -1,0 +1,95 @@
+{
+	"type": "hemomancy:chisel_recipe",
+	"tier": 3,
+	"runetype": "rune",
+	"ingredient1": {
+		"item": "hemomancy:rune_blank"
+	},
+	"ingredient2": {
+		"item": "minecraft:sea_lantern"
+	},
+	"pattern": [
+		[
+			1,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			1
+		],
+		[
+			0,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0
+		],
+		[
+			1,
+			1,
+			1,
+			0,
+			0,
+			1,
+			1,
+			1
+		],
+		[
+			1,
+			1,
+			1,
+			0,
+			0,
+			1,
+			1,
+			1
+		],
+		[
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		]
+	],
+	"result": "hemomancy:rune_corona",
+	"count": 1
+}
