@@ -153,11 +153,14 @@ public class BefoulingAshTrailBlock extends Block {
 		return state.isFaceSturdy(reader, pos, Direction.UP) || state.is(Blocks.HOPPER);
 	}
 
+	/**
+	 * Befouling ash trails are magical ritual components that can float freely
+	 * in 3D multiblock structures. Unlike redstone wire, they do not require
+	 * a solid block beneath them to survive.
+	 */
 	@Override
 	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-		BlockPos blockpos = pos.below();
-		BlockState blockstate = worldIn.getBlockState(blockpos);
-		return this.canPlaceOnTopOf(worldIn, blockpos, blockstate);
+		return true;
 	}
 
 	@Override
