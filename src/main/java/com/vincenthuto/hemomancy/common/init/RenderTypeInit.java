@@ -148,6 +148,17 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	public static final RenderType MIRROR_SURFACE = create("MirrorSurface",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(POSITION_COLOR_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",
 			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)

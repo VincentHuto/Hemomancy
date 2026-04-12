@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Block entity for the Visceral Mirror — a ritualistic apparatus that allows
@@ -452,6 +453,11 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	public float getRitualProgress() {
 		if (totalRitualTicks <= 0) return 0;
 		return (float) ritualTicks / totalRitualTicks;
+	}
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		return new AABB(worldPosition).inflate(1.0D, 1.0D, 1.0D).expandTowards(0.0D, 1.0D, 0.0D);
 	}
 
 	// ========================== NBT ==========================
