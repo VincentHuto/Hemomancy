@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
@@ -28,6 +29,7 @@ public class PacketSyncActiveRites {
 			buf.writeBlockPos(entry.getCenter());
 			buf.writeInt(entry.getRiteSize());
 			buf.writeDouble(entry.getProgress());
+			buf.writeResourceLocation(entry.getRecipeId());
 		}
 	}
 
@@ -38,7 +40,8 @@ public class PacketSyncActiveRites {
 			BlockPos center = buf.readBlockPos();
 			int riteSize = buf.readInt();
 			double progress = buf.readDouble();
-			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress));
+			ResourceLocation recipeId = buf.readResourceLocation();
+			entries.add(new ActiveRiteClientData.RiteEntry(center, riteSize, progress, recipeId));
 		}
 		return new PacketSyncActiveRites(entries);
 	}

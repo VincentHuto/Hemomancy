@@ -168,7 +168,7 @@ public class CardinalRiteEvents {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : activeRites.values()) {
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
 			}
 			PacketHandler.CHANNELBLOODVOLUME.send(
 					PacketDistributor.ALL.noArg(),
@@ -195,7 +195,7 @@ public class CardinalRiteEvents {
 			List<ActiveRiteClientData.RiteEntry> entries = new ArrayList<>();
 			for (ActiveCardinalRite rite : savedData.getActiveRites().values()) {
 				entries.add(new ActiveRiteClientData.RiteEntry(
-						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress()));
+						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
 			}
 			PacketHandler.CHANNELBLOODVOLUME.send(
 					PacketDistributor.ALL.noArg(),
