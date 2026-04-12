@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
-import com.vincenthuto.hemomancy.common.tile.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 
 import net.minecraft.server.level.ServerPlayer;

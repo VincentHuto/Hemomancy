@@ -5,10 +5,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.AnimationHelper;
 import com.vincenthuto.hemomancy.client.model.IAnimatedModel;
-import com.vincenthuto.hemomancy.client.render.tile.FungalImplantationPylonRenderer;
-import com.vincenthuto.hemomancy.client.render.tile.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
+import com.vincenthuto.hemomancy.client.render.tile.functional.FungalImplantationPylonRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.functional.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;

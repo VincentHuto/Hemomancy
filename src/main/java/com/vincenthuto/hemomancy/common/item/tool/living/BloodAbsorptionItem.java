@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
-import com.vincenthuto.hemomancy.client.render.item.CellHandItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;

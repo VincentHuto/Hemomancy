@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.CentrifugeSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
-import com.vincenthuto.hemomancy.common.tile.VialCentrifugeBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 import com.vincenthuto.hutoslib.common.container.SlotSelectiveType;
 
 import net.minecraft.network.FriendlyByteBuf;

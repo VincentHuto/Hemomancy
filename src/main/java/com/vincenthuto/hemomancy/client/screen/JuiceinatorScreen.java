@@ -5,7 +5,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.menu.JuiceinatorMenu;
-import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.JuicinatorBlockEntity;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

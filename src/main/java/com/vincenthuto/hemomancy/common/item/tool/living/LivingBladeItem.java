@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.living.LivingBladeItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.hematic.LivingBladeItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;

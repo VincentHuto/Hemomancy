@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.runes;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
-import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.ChiselStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;

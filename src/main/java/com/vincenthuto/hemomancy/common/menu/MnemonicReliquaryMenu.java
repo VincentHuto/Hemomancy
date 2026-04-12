@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.tile.MnemonicReliquaryBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.manips;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.tile.SomaticLoomBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

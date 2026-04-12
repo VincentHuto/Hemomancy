@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.AbsrobedBloodCellPartic
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingStaffItemHandler;
 import com.vincenthuto.hemomancy.common.menu.LivingStaffMenu;
@@ -21,7 +21,6 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

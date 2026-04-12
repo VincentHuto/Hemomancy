@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.entity.blood.iron;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.IronPillarModel;
-import com.vincenthuto.hemomancy.common.entity.blood.iron.EntityIronPillar;
+import com.vincenthuto.hemomancy.client.model.entity.summon.IronPillarModel;
+import com.vincenthuto.hemomancy.common.entity.summon.EntityIronPillar;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

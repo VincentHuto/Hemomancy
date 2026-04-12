@@ -3,14 +3,11 @@ package com.vincenthuto.hemomancy.client.render.layer.mob;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.FerventChitiniteModel;
-import com.vincenthuto.hemomancy.common.entity.mob.FerventChitiniteEntity;
+import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.FerventChitiniteModel;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.FerventChitiniteEntity;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.SlimeModel;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;

@@ -26,8 +26,8 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEven
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
-import com.vincenthuto.hemomancy.common.dialogue.AncestralCommunionDialogueTrees;
-import com.vincenthuto.hemomancy.common.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;

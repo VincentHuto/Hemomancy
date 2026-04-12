@@ -3,6 +3,8 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.tile.*;
 
+import com.vincenthuto.hemomancy.common.tile.crafting.*;
+import com.vincenthuto.hemomancy.common.tile.functional.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

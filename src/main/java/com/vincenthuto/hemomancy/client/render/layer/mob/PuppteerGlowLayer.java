@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.mob;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.mob.BloodDrunkPuppeteerModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.monster.BloodDrunkPuppeteerModel;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

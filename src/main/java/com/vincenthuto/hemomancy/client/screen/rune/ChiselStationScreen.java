@@ -16,11 +16,10 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketChiselCraftingEvent;
 import com.vincenthuto.hemomancy.common.network.capa.runes.PacketUpdateChiselRunes;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
-import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.ChiselStationBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;

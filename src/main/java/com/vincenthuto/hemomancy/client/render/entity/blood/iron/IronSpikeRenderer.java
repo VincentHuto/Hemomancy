@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.client.render.entity.blood.iron;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.entity.IronSpikeModel;
-import com.vincenthuto.hemomancy.common.entity.blood.iron.EntityIronSpike;
+import com.vincenthuto.hemomancy.client.model.entity.summon.IronSpikeModel;
+import com.vincenthuto.hemomancy.common.entity.summon.EntityIronSpike;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

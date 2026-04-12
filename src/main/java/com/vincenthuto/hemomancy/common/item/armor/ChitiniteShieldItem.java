@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.client.render.item.ChitiniteShieldItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.hematic.ChitiniteShieldItemRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

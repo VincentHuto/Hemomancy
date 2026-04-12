@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.menu.slot.ChiselSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.OutputSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.RunePatternSlot;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
-import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.ChiselStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

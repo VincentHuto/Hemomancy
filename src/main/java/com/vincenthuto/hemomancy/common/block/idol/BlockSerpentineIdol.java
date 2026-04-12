@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.block.idol;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.tile.SerpentineIdolBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.SerpentineIdolBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

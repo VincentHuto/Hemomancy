@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.slot.JuiceinatorFlaskSlot;
-import com.vincenthuto.hemomancy.common.tile.JuicinatorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.JuicinatorBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.network.FriendlyByteBuf;

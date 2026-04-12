@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingPolyp;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCatalystSlot;
 import com.vincenthuto.hemomancy.common.menu.slot.IncubatorCenterSlot;
-import com.vincenthuto.hemomancy.common.tile.MorphlingIncubatorBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.common.entity.mob.HemolymphopodaEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.arthropod.HemolymphopodaEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.resources.language.I18n;

@@ -4,8 +4,8 @@ import org.joml.Vector3d;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
-import com.vincenthuto.hemomancy.common.entity.blood.TrackingBloodOrbEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.TrackingBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;

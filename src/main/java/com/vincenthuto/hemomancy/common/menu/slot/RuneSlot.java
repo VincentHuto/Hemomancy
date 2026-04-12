@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.menu.slot;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
-import com.vincenthuto.hemomancy.common.item.VasculariumCharmItem;
+import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
 
 import net.minecraft.world.entity.player.Player;

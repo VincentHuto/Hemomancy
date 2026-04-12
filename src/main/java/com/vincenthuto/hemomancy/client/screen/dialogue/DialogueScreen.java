@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.dialogue.DialogueNode;
-import com.vincenthuto.hemomancy.common.dialogue.DialogueOption;
-import com.vincenthuto.hemomancy.common.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueNode;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueOption;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 

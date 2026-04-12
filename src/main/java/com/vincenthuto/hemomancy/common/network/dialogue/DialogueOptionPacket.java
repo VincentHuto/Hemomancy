@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.dialogue;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.dialogue.DialogueEvent;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;

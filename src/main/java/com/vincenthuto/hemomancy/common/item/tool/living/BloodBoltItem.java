@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.living;
 
-import com.vincenthuto.hemomancy.common.entity.blood.BloodBoltEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodBoltEntity;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArrowItem;

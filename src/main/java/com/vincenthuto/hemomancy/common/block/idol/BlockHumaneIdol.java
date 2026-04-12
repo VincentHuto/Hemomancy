@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.idol;
 
-import com.vincenthuto.hemomancy.common.tile.HumaneIdolBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.HumaneIdolBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -3,9 +3,9 @@ package com.vincenthuto.hemomancy.common.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.living.LivingPistolItemRenderer;
-import com.vincenthuto.hemomancy.common.entity.blood.BloodBulletEntity;
-import com.vincenthuto.hemomancy.common.entity.blood.BloodNeedleEntity;
+import com.vincenthuto.hemomancy.client.render.item.hematic.LivingPistolItemRenderer;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodBulletEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.BloodNeedleEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.Vector3;
 

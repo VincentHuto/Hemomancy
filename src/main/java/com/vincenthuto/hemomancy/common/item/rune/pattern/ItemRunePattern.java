@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.rune.pattern;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.RunePatternItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.RunePatternItemRenderer;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
 

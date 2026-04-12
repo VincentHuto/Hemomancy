@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.item.tool.living;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.living.LivingSpearItemRenderer;
-import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
+import com.vincenthuto.hemomancy.client.render.item.hematic.LivingSpearItemRenderer;
+import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.Vector3;

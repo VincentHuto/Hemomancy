@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
-import com.vincenthuto.hemomancy.common.tile.ChiselStationBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.crafting.ChiselStationBlockEntity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;

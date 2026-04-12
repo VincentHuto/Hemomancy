@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.tool.living;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
-import com.vincenthuto.hemomancy.client.render.item.CellHandItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
-import com.vincenthuto.hutoslib.client.HLClientUtils;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

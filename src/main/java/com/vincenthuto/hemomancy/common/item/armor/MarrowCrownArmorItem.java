@@ -5,13 +5,11 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.render.item.MarrowCrownItemRenderer;
-import com.vincenthuto.hemomancy.client.render.item.living.SanguisLanceaItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;

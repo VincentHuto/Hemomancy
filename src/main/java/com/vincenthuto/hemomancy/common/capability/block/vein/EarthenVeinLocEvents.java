@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.block.vein;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.EarthenVeinBlockEntity;
+import com.vincenthuto.hemomancy.common.tile.functional.EarthenVeinBlockEntity;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;

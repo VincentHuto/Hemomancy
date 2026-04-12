@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.tool;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.BloodGourdItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
 import com.vincenthuto.hemomancy.common.capability.player.rune.RuneType;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;

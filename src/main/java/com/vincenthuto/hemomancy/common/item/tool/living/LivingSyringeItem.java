@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.blood.DirectedBloodOrbEntity;
+import com.vincenthuto.hemomancy.common.entity.projectile.DirectedBloodOrbEntity;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.itemhandler.LivingSyringeItemHandler;
 import com.vincenthuto.hemomancy.common.menu.LivingSyringeMenu;

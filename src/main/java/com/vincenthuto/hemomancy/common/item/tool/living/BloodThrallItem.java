@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
-import com.vincenthuto.hemomancy.common.entity.mob.BloodThrallEntity;
+import com.vincenthuto.hemomancy.common.entity.summon.BloodThrallEntity;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 
 import net.minecraft.ChatFormatting;
