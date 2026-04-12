@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -90,6 +92,7 @@ public class FungalWhisperVignetteOverlay {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
+		Matrix4f matrix = guiGraphics.pose().last().pose();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder buffer = tesselator.getBuilder();
 
@@ -105,28 +108,28 @@ public class FungalWhisperVignetteOverlay {
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
 		// Top edge — opaque at top, fading to transparent
-		buffer.vertex(0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
 
 		// Bottom edge
-		buffer.vertex(0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
 
 		// Left edge
-		buffer.vertex(0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
 
 		// Right edge
-		buffer.vertex(screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		buffer.vertex(matrix, screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
 
 		// Corner intensifiers — small triangular quads in the four corners
 		// for extra blood pooling effect
@@ -134,28 +137,28 @@ public class FungalWhisperVignetteOverlay {
 		float cornerAlpha = alpha * 0.5f;
 
 		// Top-left corner fill
-		buffer.vertex(0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
 
 		// Top-right corner fill
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(screenWidth, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth - cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, screenWidth, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth - cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
 
 		// Bottom-left corner fill
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(0, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, 0, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
 
 		// Bottom-right corner fill
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(screenWidth - cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
+		buffer.vertex(matrix, screenWidth - cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
+		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
 
 		BufferUploader.drawWithShader(buffer.end());
 
