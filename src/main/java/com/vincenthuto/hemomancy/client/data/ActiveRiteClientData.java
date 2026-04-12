@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client-side cache for active cardinal rite boundaries.
@@ -16,11 +17,13 @@ public class ActiveRiteClientData {
 		private final BlockPos center;
 		private final int riteSize;
 		private final double progress;
+		private final ResourceLocation recipeId;
 
-		public RiteEntry(BlockPos center, int riteSize, double progress) {
+		public RiteEntry(BlockPos center, int riteSize, double progress, ResourceLocation recipeId) {
 			this.center = center;
 			this.riteSize = riteSize;
 			this.progress = progress;
+			this.recipeId = recipeId;
 		}
 
 		public BlockPos getCenter() {
@@ -33,6 +36,10 @@ public class ActiveRiteClientData {
 
 		public double getProgress() {
 			return progress;
+		}
+
+		public ResourceLocation getRecipeId() {
+			return recipeId;
 		}
 	}
 

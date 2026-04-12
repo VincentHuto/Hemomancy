@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.client.render.tile.crafting.VialCentrifugeRende
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer;
 import com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer;
+import com.vincenthuto.hemomancy.client.render.world.GourdVineRenderer;
 import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.screen.*;
@@ -251,6 +252,7 @@ public class ClientEvents {
 	public static void renderLevelLastEvent(RenderLevelStageEvent event) {
 		if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			CardinalRiteBoundaryRenderer.render(event.getPoseStack(), event.getPartialTick());
+			GourdVineRenderer.render(event.getPoseStack(), event.getPartialTick());
 			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
 			QliphothBloomRenderer.render(event.getPoseStack(), event.getPartialTick());
 		}
