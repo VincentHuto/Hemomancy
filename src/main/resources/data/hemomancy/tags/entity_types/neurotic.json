@@ -7,6 +7,8 @@
     "minecraft:rabbit",
     "minecraft:silverfish",
     "minecraft:vex",
-    "minecraft:chicken"
+    "minecraft:chicken",
+    "hemomancy:synapse_hound",
+    "hemomancy:myelin_borer"
   ]
 }

@@ -250,6 +250,21 @@ public class Hemomancy {
             registerPlantBrewingRecipe(BlockInit.sarcodes.get().asItem(),
                     EffectInit.potion_of_blood_rush.get());
 
+            // Mob Drop Brewing Recipes
+            // Hostile mob drops brew into existing hemomancy potions as alternative catalysts.
+            registerDropBrewingRecipe(ItemInit.desiccated_membrane.get(),
+                    EffectInit.potion_of_blood_loss.get());
+            registerDropBrewingRecipe(ItemInit.molten_clot.get(),
+                    EffectInit.potion_of_blood_rush.get());
+            registerDropBrewingRecipe(ItemInit.void_ichor.get(),
+                    EffectInit.potion_of_echoic_perception.get());
+            registerDropBrewingRecipe(ItemInit.frozen_cruor.get(),
+                    EffectInit.potion_of_chitinous_bulwark.get());
+            registerDropBrewingRecipe(ItemInit.abyssal_ichor.get(),
+                    EffectInit.potion_of_luminous_dissipation.get());
+            registerDropBrewingRecipe(ItemInit.nerve_bundle.get(),
+                    EffectInit.potion_of_serpentine_guile.get());
+
         });
 
         HemoEntityPredicates.init();
@@ -281,6 +296,15 @@ public class Hemomancy {
         BrewingRecipeRegistry.addRecipe(
                 Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
                 Ingredient.of(plantItem),
+                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
+    }
+
+    /** Registers a brewing recipe: Awkward Potion + mob drop → mod potion. */
+    private static void registerDropBrewingRecipe(Item dropItem,
+            net.minecraft.world.item.alchemy.Potion resultPotion) {
+        BrewingRecipeRegistry.addRecipe(
+                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
+                Ingredient.of(dropItem),
                 PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
     }
 

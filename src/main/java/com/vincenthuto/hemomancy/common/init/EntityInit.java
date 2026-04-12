@@ -146,6 +146,58 @@ public class EntityInit {
             () -> EntityType.Builder.of(ChthonianQueenEntity::new, MobCategory.MONSTER)
                     .sized(1F, 1F).build(Hemomancy.rloc("chthonian").toString()));
 
+    // New biome mobs
+    public static final RegistryObject<EntityType<DessicantEntity>> dessicant = ENTITY_TYPES.register(
+            "dessicant",
+            () -> EntityType.Builder.of(DessicantEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 0.5F).build(Hemomancy.rloc("dessicant").toString()));
+
+    public static final RegistryObject<EntityType<CruorFiendEntity>> cruor_fiend = ENTITY_TYPES.register(
+            "cruor_fiend",
+            () -> EntityType.Builder.of(CruorFiendEntity::new, MobCategory.MONSTER)
+                    .fireImmune().sized(0.8F, 2.0F).build(Hemomancy.rloc("cruor_fiend").toString()));
+
+    public static final RegistryObject<EntityType<VoidDrinkerEntity>> void_drinker = ENTITY_TYPES.register(
+            "void_drinker",
+            () -> EntityType.Builder.of(VoidDrinkerEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 1.5F).build(Hemomancy.rloc("void_drinker").toString()));
+
+    public static final RegistryObject<EntityType<FrozenClotEntity>> frozen_clot = ENTITY_TYPES.register(
+            "frozen_clot",
+            () -> EntityType.Builder.of(FrozenClotEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 1.0F).build(Hemomancy.rloc("frozen_clot").toString()));
+
+    public static final RegistryObject<EntityType<AbyssalSiphonEntity>> abyssal_siphon = ENTITY_TYPES.register(
+            "abyssal_siphon",
+            () -> EntityType.Builder.of(AbyssalSiphonEntity::new, MobCategory.MONSTER)
+                    .sized(1.2F, 0.6F).build(Hemomancy.rloc("abyssal_siphon").toString()));
+
+    public static final RegistryObject<EntityType<SynapseHoundEntity>> synapse_hound = ENTITY_TYPES.register(
+            "synapse_hound",
+            () -> EntityType.Builder.of(SynapseHoundEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.0F).build(Hemomancy.rloc("synapse_hound").toString()));
+
+    public static final RegistryObject<EntityType<MyelinBorerEntity>> myelin_borer = ENTITY_TYPES.register(
+            "myelin_borer",
+            () -> EntityType.Builder.of(MyelinBorerEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 0.4F).build(Hemomancy.rloc("myelin_borer").toString()));
+
+    // Passive Mobs
+    public static final RegistryObject<EntityType<CrimsonDoeEntity>> crimson_doe = ENTITY_TYPES.register(
+            "crimson_doe",
+            () -> EntityType.Builder.of(CrimsonDoeEntity::new, MobCategory.CREATURE)
+                    .sized(0.9F, 1.4F).build(Hemomancy.rloc("crimson_doe").toString()));
+
+    public static final RegistryObject<EntityType<HemojellyEntity>> hemojelly = ENTITY_TYPES.register(
+            "hemojelly",
+            () -> EntityType.Builder.of(HemojellyEntity::new, MobCategory.CREATURE)
+                    .sized(0.7F, 0.9F).build(Hemomancy.rloc("hemojelly").toString()));
+
+    public static final RegistryObject<EntityType<VenousStriderEntity>> venous_strider = ENTITY_TYPES.register(
+            "venous_strider",
+            () -> EntityType.Builder.of(VenousStriderEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.8F).build(Hemomancy.rloc("venous_strider").toString()));
+
     // Projectiles
 
     public static final RegistryObject<EntityType<EntityFlyingCharm>> flying_charm = ENTITY_TYPES.register(
@@ -258,6 +310,26 @@ public class EntityInit {
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FargoneEntity::checkMonsterSpawnRules);
             SpawnPlacements.register(EntityInit.abhorent_thought.get(), SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbhorentThoughtEntity::checkMonsterSpawnRules);
+            SpawnPlacements.register(EntityInit.dessicant.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, DessicantEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.cruor_fiend.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CruorFiendEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.void_drinker.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VoidDrinkerEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.frozen_clot.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FrozenClotEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.abyssal_siphon.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbyssalSiphonEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.synapse_hound.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SynapseHoundEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.myelin_borer.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MyelinBorerEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.crimson_doe.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CrimsonDoeEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.hemojelly.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HemojellyEntity::canSpawnHere);
+            SpawnPlacements.register(EntityInit.venous_strider.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, VenousStriderEntity::canSpawnHere);
             Hemomancy.LOGGER.info("[Hemomancy] Spawn placements registered successfully!");
         });
     }
@@ -290,6 +362,16 @@ public class EntityInit {
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
+        event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
+        event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
+        event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
+        event.put(EntityInit.frozen_clot.get(), FrozenClotEntity.setAttributes().build());
+        event.put(EntityInit.abyssal_siphon.get(), AbyssalSiphonEntity.setAttributes().build());
+        event.put(EntityInit.synapse_hound.get(), SynapseHoundEntity.setAttributes().build());
+        event.put(EntityInit.myelin_borer.get(), MyelinBorerEntity.setAttributes().build());
+        event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
+        event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
+        event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
 
     }
 

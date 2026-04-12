@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:abyssal_ichor"
+    },
+    {
+      "item": "hemomancy:foul_paste"
+    },
+    {
+      "item": "hemomancy:dicentra_sap"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:befouling_ash",
+    "count": 4
+  }
+}

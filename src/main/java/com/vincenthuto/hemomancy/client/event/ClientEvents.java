@@ -35,6 +35,16 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.MorphlingPolypRenderer
 import com.vincenthuto.hemomancy.client.render.entity.mob.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.UnstainedZealotRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.HarbingerHermitRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.DessicantRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.CruorFiendRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.VoidDrinkerRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.FrozenClotRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.AbyssalSiphonRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.SynapseHoundRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.MyelinBorerRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.CrimsonDoeRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.HemojellyRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingPestsRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.projectile.TrackingSerpentRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
@@ -369,6 +379,16 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 			event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
 			event.registerEntityRenderer(EntityInit.dark_arrow.get(), BloodShotRenderer::new);
+			event.registerEntityRenderer(EntityInit.dessicant.get(), DessicantRenderer::new);
+			event.registerEntityRenderer(EntityInit.cruor_fiend.get(), CruorFiendRenderer::new);
+			event.registerEntityRenderer(EntityInit.void_drinker.get(), VoidDrinkerRenderer::new);
+			event.registerEntityRenderer(EntityInit.frozen_clot.get(), FrozenClotRenderer::new);
+			event.registerEntityRenderer(EntityInit.abyssal_siphon.get(), AbyssalSiphonRenderer::new);
+			event.registerEntityRenderer(EntityInit.synapse_hound.get(), SynapseHoundRenderer::new);
+			event.registerEntityRenderer(EntityInit.myelin_borer.get(), MyelinBorerRenderer::new);
+			event.registerEntityRenderer(EntityInit.crimson_doe.get(), CrimsonDoeRenderer::new);
+			event.registerEntityRenderer(EntityInit.hemojelly.get(), HemojellyRenderer::new);
+			event.registerEntityRenderer(EntityInit.venous_strider.get(), VenousStriderRenderer::new);
 
 		}
 

@@ -40,6 +40,16 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.MorphlingPolypModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.ThirsterModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.UnstainedZealotModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.HarbingerHermitModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.DessicantModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.CruorFiendModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.VoidDrinkerModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.FrozenClotModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.AbyssalSiphonModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.SynapseHoundModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.MyelinBorerModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.CrimsonDoeModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.HemojellyModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.VenousStriderModel;
 import com.vincenthuto.hemomancy.client.model.item.BarbedShieldModel;
 import com.vincenthuto.hemomancy.client.model.item.BloodArmModel;
 import com.vincenthuto.hemomancy.client.model.item.ChitiniteShieldModel;
@@ -137,6 +147,16 @@ public class LayerEvents {
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
+		event.registerLayerDefinition(DessicantModel.LAYER_LOCATION, DessicantModel::createBodyLayer);
+		event.registerLayerDefinition(CruorFiendModel.LAYER_LOCATION, CruorFiendModel::createBodyLayer);
+		event.registerLayerDefinition(VoidDrinkerModel.LAYER_LOCATION, VoidDrinkerModel::createBodyLayer);
+		event.registerLayerDefinition(FrozenClotModel.LAYER_LOCATION, FrozenClotModel::createBodyLayer);
+		event.registerLayerDefinition(AbyssalSiphonModel.LAYER_LOCATION, AbyssalSiphonModel::createBodyLayer);
+		event.registerLayerDefinition(SynapseHoundModel.LAYER_LOCATION, SynapseHoundModel::createBodyLayer);
+		event.registerLayerDefinition(MyelinBorerModel.LAYER_LOCATION, MyelinBorerModel::createBodyLayer);
+		event.registerLayerDefinition(CrimsonDoeModel.LAYER_LOCATION, CrimsonDoeModel::createBodyLayer);
+		event.registerLayerDefinition(HemojellyModel.LAYER_LOCATION, HemojellyModel::createBodyLayer);
+		event.registerLayerDefinition(VenousStriderModel.LAYER_LOCATION, VenousStriderModel::createBodyLayer);
 
 		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
 				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
