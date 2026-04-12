@@ -11,9 +11,11 @@ import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -33,7 +35,7 @@ public class GourdVineRenderer {
 
 	// ── Vine layout ──
 	/** Number of vine tendrils per rite. */
-	private static final int VINE_COUNT = 20;
+	private static final int VINE_COUNT = 40;
 	/** Quad segments per vine (higher = smoother curve). */
 	private static final int VINE_SEGS = 10;
 	/** Maximum height a fully-grown vine reaches (in blocks). */
@@ -41,7 +43,9 @@ public class GourdVineRenderer {
 	/** Base width at the root of a vine. */
 	private static final float VINE_ROOT_WIDTH = 0.055f;
 	/** Fraction of the rite radius used when scattering vine roots. */
-	private static final float SCATTER_FRACTION = 0.85f;
+	private static final float SCATTER_FRACTION = 0.95f;
+	/** Minimum distance from center (fraction of scatter radius) to avoid clumping at center. */
+	private static final float MIN_DIST_FRACTION = 0.20f;
 
 	// ── Sway parameters ──
 	private static final double SWAY_FREQ = 1.4;
@@ -91,50 +95,72 @@ public class GourdVineRenderer {
 	private static void drawVines(PoseStack stack, MultiBufferSource buffer,
 			ActiveRiteClientData.RiteEntry rite, float time, Vec3 cam) {
 
+		Minecraft mc = Minecraft.getInstance();
+		ClientLevel level = mc.level;
+		if (level == null) return;
+
 		BlockPos center = rite.getCenter();
 		float halfSize = (float) (rite.getRiteSize() / 2.0);
 		float scatterRadius = halfSize * SCATTER_FRACTION;
 
 		double cx = center.getX() + 0.5;
-		double cy = center.getY();   // ground level
 		double cz = center.getZ() + 0.5;
 
 		// progress ∈ [0,1]: how far the rite has advanced
 		float progress = (float) Math.min(1.0, rite.getProgress());
 
-		stack.pushPose();
-		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
-		Matrix4f mat = stack.last().pose();
-
 		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
 		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
+		stack.pushPose();
+		Matrix4f mat = stack.last().pose();
+
 		for (int v = 0; v < VINE_COUNT; v++) {
-			// Deterministic per-vine offsets
-			double h1 = hash(v * 3);
-			double h2 = hash(v * 3 + 1);
-			double h3 = hash(v * 3 + 2);
+			// Deterministic per-vine offsets using different hash seeds for variety
+			double h1 = hash(v * 7 + 13);
+			double h2 = hash(v * 7 + 47);
+			double h3 = hash(v * 7 + 89);
+			double h4 = hash(v * 7 + 131);
 
 			// Root position scattered within the rite area (polar coordinates)
+			// Enforce a minimum distance from center to prevent clumping
 			double angle = h1 * Math.PI * 2.0;
-			double dist = Math.sqrt(h2) * scatterRadius;    // square root for uniform distribution
-			float rootX = (float) (Math.cos(angle) * dist);
-			float rootZ = (float) (Math.sin(angle) * dist);
+			double distFraction = MIN_DIST_FRACTION + (1.0 - MIN_DIST_FRACTION) * Math.sqrt(h2);
+			double dist = distFraction * scatterRadius;
+			double worldRootX = cx + Math.cos(angle) * dist;
+			double worldRootZ = cz + Math.sin(angle) * dist;
+
+			// Query actual ground height at this vine's XZ world position
+			int groundY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) Math.floor(worldRootX), (int) Math.floor(worldRootZ));
+			// Clamp to a reasonable range around the rite center to avoid wild offsets
+			int centerY = center.getY();
+			if (Math.abs(groundY - centerY) > halfSize + 3) {
+				groundY = centerY;
+			}
 
 			// Individual vine properties
-			float lengthMult = 0.55f + 0.45f * (float) h3;
-			float vineHeight = VINE_MAX_HEIGHT * lengthMult * progress;
+			float lengthMult = 0.45f + 0.55f * (float) h3;
+
+			// Stagger growth: vines farther from center start growing slightly later
+			float distProgress = (float) (distFraction * 0.35);
+			float delayedProgress = Math.max(0.0f, (progress - distProgress) / (1.0f - distProgress));
+			float vineHeight = VINE_MAX_HEIGHT * lengthMult * delayedProgress;
 
 			// Vine pulsing alpha (each vine breathes at its own phase)
 			double vinePulse = (Math.sin(time * 0.08 + v * 2.3) + 1.0) * 0.5;
 			float vineAlpha = (float) (0.55 + 0.35 * vinePulse);
 
 			// Sway direction (each vine leans in a unique direction)
-			double swayAngle = h2 * Math.PI * 2.0;
+			double swayAngle = h4 * Math.PI * 2.0;
 			float swayDirX = (float) Math.cos(swayAngle);
 			float swayDirZ = (float) Math.sin(swayAngle);
 
-			drawSingleVine(coreVC, glowVC, mat, rootX, rootZ,
+			// Position each vine at its own ground level (camera-relative coords)
+			float rootX = (float) (worldRootX - cam.x);
+			float rootZ = (float) (worldRootZ - cam.z);
+			float rootY = (float) (groundY - cam.y);
+
+			drawSingleVine(coreVC, glowVC, mat, rootX, rootZ, rootY,
 					vineHeight, swayDirX, swayDirZ,
 					vineAlpha, time, v);
 		}
@@ -147,7 +173,7 @@ public class GourdVineRenderer {
 	// ════════════════════════════════════════════════════════════════════════
 
 	private static void drawSingleVine(VertexConsumer coreVC, VertexConsumer glowVC, Matrix4f mat,
-			float rootX, float rootZ,
+			float rootX, float rootZ, float rootY,
 			float vineHeight, float swayDirX, float swayDirZ,
 			float vineAlpha, float time, int vineIndex) {
 
@@ -162,8 +188,8 @@ public class GourdVineRenderer {
 			float t0 = (float) s / VINE_SEGS;
 			float t1 = (float) (s + 1) / VINE_SEGS;
 
-			float y0 = t0 * vineHeight;
-			float y1 = t1 * vineHeight;
+			float y0 = rootY + t0 * vineHeight;
+			float y1 = rootY + t1 * vineHeight;
 
 			// Sway: horizontal displacement that increases with height
 			double swayPhase = time * SWAY_SPEED + vineIndex * 0.87;

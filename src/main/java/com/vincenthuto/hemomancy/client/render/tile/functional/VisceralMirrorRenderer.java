@@ -96,10 +96,10 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
     // │  ★  TWEAK THESE VALUES to align the render with your model  ★   │
     // └──────────────────────────────────────────────────────────────────┘
     private static final MirrorLayout LAYOUT = new MirrorLayout(
-            0.25f,      // halfWidth         — half the mirror width (blocks)
-            0.365f,    // yStart            — bottom edge Y (blocks above block floor)
-            1.4f,      // height            — mirror height (blocks)
-            0.15f,   // zOffset           — depth from block centre to mirror face
+            0.3125f,      // halfWidth         — half the mirror width (blocks)
+            0.5f,    // yStart            — bottom edge Y (blocks above block floor)
+            1.4f ,      // height            — mirror height (blocks)
+            0.125f-.09f,   // zOffset           — depth from block centre to mirror face
             0.0f,      // reflectionYOffset — extra Y nudge for the reflected player
             1.0f       // reflectionScale   — scale of the reflected player model
     );
@@ -238,7 +238,7 @@ public class VisceralMirrorRenderer implements BlockEntityRenderer<VisceralMirro
 
         // Subdivide to match ripple mesh so reflection clips to the swimming surface
         float cellW = (LAYOUT.halfWidth() * 2f) / RIPPLE_COLS;
-        float cellH = LAYOUT.height() / RIPPLE_ROWS;
+        float cellH = LAYOUT.height()/ RIPPLE_ROWS;
 
         for (int row = 0; row < RIPPLE_ROWS; row++) {
             for (int col = 0; col < RIPPLE_COLS; col++) {

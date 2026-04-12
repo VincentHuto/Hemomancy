@@ -70,6 +70,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 				for (String element3 : element) {
 					List<String> distinct = getDistinctChars(element3);
 					for (String element2 : distinct) {
+ 						// Skip the space character — leave it as the default "any block" wildcard.
+						if (" ".equals(element2)) continue;
 						builder.where(element2.toCharArray()[0], blockPredFromHash(symbolList, element2));
 					}
 				}

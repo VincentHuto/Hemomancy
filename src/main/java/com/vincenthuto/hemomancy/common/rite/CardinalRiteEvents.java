@@ -29,6 +29,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedD
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.UnsignedLedgerItem;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -52,7 +53,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
@@ -325,7 +325,8 @@ public class CardinalRiteEvents {
 			int mismatches = 0;
 			for (var pair : blockPairs) {
 				Block expected = pair.getBlock();
-				if (expected == null) expected = Blocks.AIR;
+				// Null or air expected means this was a space (wildcard) — skip it
+				if (expected == null || expected == Blocks.AIR) continue;
 				BlockPos relPos = pair.getPos();
 				BlockPos worldPos = center.offset(
 						relPos.getX() - halfW,
@@ -335,17 +336,14 @@ public class CardinalRiteEvents {
 				Block actualBlock = sLevel.getBlockState(worldPos).getBlock();
 				boolean mismatch = actualBlock != expected;
 				if (mismatch) mismatches++;
-				// Always log mismatches; only log OK lines for non-air to reduce spam
-				if (mismatch || expected != Blocks.AIR) {
-					Hemomancy.LOGGER.warn("  {} Expected [{}] at rel {} -> world {} | Found [{}]{}",
-							mismatch ? "XX" : "OK",
-							expected,
-							relPos, worldPos,
-							actualBlock,
-							mismatch ? " << MISMATCH" : "");
-				}
+				Hemomancy.LOGGER.warn("  {} Expected [{}] at rel {} -> world {} | Found [{}]{}",
+						mismatch ? "XX" : "OK",
+						expected,
+						relPos, worldPos,
+						actualBlock,
+						mismatch ? " << MISMATCH" : "");
 			}
-			Hemomancy.LOGGER.warn("  Total mismatches: {} / {} positions", mismatches, blockPairs.size());
+			Hemomancy.LOGGER.warn("  Total mismatches: {} / {} non-wildcard positions", mismatches, blockPairs.size());
 		}
 		return match != null;
 	}
@@ -406,6 +404,12 @@ public class CardinalRiteEvents {
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 
+	// ── Gourd upgrade rite paths ──
+	private static final String PALLID_VESSEL_RITE = "cardinal_rite/pallid_vessel_rite";
+	private static final String CRIMSON_VESSEL_RITE = "cardinal_rite/crimson_vessel_rite";
+	private static final String ASHEN_VESSEL_RITE = "cardinal_rite/ashen_vessel_rite";
+	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
+
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
 	/** NBT key stored on player persistent data to track covenant usage. */
@@ -441,18 +445,38 @@ public class CardinalRiteEvents {
 			BloodVolumeEvents.syncVolume(caster, volume);
 		});
 
-		// Destroy the multiblock pattern
+		// Destroy the multiblock pattern (only structure blocks, not wildcard positions)
 		BlockPos center = rite.getCenterPos();
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
 		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
 		if (match != null) {
-			for (int i = 0; i < blockPattern.getWidth(); i++) {
-				for (int j = 0; j < blockPattern.getHeight(); j++) {
-					for (int k = 0; k < blockPattern.getDepth(); k++) {
-						BlockInWorld cachedBlockInfo = match.getBlock(i, j, k);
-						sLevel.setBlock(cachedBlockInfo.getPos(), Blocks.AIR.defaultBlockState(), 2);
-						sLevel.levelEvent(2001, cachedBlockInfo.getPos(),
-								Block.getId(cachedBlockInfo.getState()));
+			// Build a lookup of which (charIndex, invertedRow, aisle) positions are
+			// actual structure blocks vs wildcard spaces
+			String[][] patternArray = recipe.getPattern().getPatternArray();
+			java.util.Map<String, Block> symbolList = recipe.getPattern().getSymbolList();
+			int width = blockPattern.getWidth();
+			int height = blockPattern.getHeight();
+			int depth = blockPattern.getDepth();
+
+			// patternArray maps as: aisle -> rows (top-to-bottom) -> chars (left-to-right)
+			// BlockPattern maps as: i=charIndex (width), j=invertedRow (height), k=aisle (depth)
+			for (int k = 0; k < depth; k++) {
+				String[] aisle = patternArray[k];
+				for (int j = 0; j < height; j++) {
+					String row = aisle[j];
+					for (int i = 0; i < width; i++) {
+						if (i >= row.length()) continue;
+						char c = row.charAt(i);
+						// Space character is a wildcard — don't destroy whatever happens to be there
+						if (c == ' ') continue;
+						Block expected = symbolList.get(String.valueOf(c));
+						if (expected == null || expected == Blocks.AIR) continue;
+
+						// match.getBlock handles rotation so we get the correct world pos
+						BlockPos worldPos = match.getBlock(i, j, k).getPos();
+						BlockState state = sLevel.getBlockState(worldPos);
+						sLevel.setBlock(worldPos, Blocks.AIR.defaultBlockState(), 2);
+						sLevel.levelEvent(2001, worldPos, Block.getId(state));
 					}
 				}
 			}
@@ -462,6 +486,67 @@ public class CardinalRiteEvents {
 		String ritePath = rite.getRecipeId().getPath();
 		if (!recipe.getResult().isEmpty()) {
 			ItemStack resultStack = recipe.getResult().copy();
+
+			// === Gourd upgrade rites: consume the prerequisite gourd from player ===
+			if (PALLID_VESSEL_RITE.equals(ritePath)) {
+				if (!consumeGourdPrerequisite(caster, ItemInit.dried_gourd.get())) {
+					caster.displayClientMessage(
+							Component.literal("You carry no dried gourd to consecrate. The rite yields nothing.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+					resultStack = ItemStack.EMPTY;
+				} else {
+					caster.displayClientMessage(
+							Component.literal("The dried gourd awakens, its pallid shell now a vessel for living blood.")
+									.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+							false);
+				}
+			}
+
+			if (CRIMSON_VESSEL_RITE.equals(ritePath)) {
+				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_white.get())) {
+					caster.displayClientMessage(
+							Component.literal("You carry no pallid vessel to steep. The rite yields nothing.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+					resultStack = ItemStack.EMPTY;
+				} else {
+					caster.displayClientMessage(
+							Component.literal("The pallid vessel flushes crimson — reborn in the deepest scarlet.")
+									.withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
+							false);
+				}
+			}
+
+			if (ASHEN_VESSEL_RITE.equals(ritePath)) {
+				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_red.get())) {
+					caster.displayClientMessage(
+							Component.literal("You carry no crimson vessel to temper. The rite yields nothing.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+					resultStack = ItemStack.EMPTY;
+				} else {
+					caster.displayClientMessage(
+							Component.literal("Through fire and ash the vessel is reborn — blackened, hardened, and hungry.")
+									.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+							false);
+				}
+			}
+
+			if (HORN_OF_CULMINATION_RITE.equals(ritePath)) {
+				if (!consumeGourdPrerequisite(caster, ItemInit.blood_gourd_black.get())) {
+					caster.displayClientMessage(
+							Component.literal("You carry no ashen vessel to transcend. The rite yields nothing.")
+									.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+							false);
+					resultStack = ItemStack.EMPTY;
+				} else {
+					caster.displayClientMessage(
+							Component.literal("The final vessel transcends flesh and gourd alike — the Curved Horn is born.")
+									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+							false);
+				}
+			}
 
 			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
 			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
@@ -489,9 +574,11 @@ public class CardinalRiteEvents {
 						false);
 			}
 
-			sLevel.addFreshEntity(new ItemEntity(sLevel,
-					center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
-					resultStack));
+			if (!resultStack.isEmpty()) {
+				sLevel.addFreshEntity(new ItemEntity(sLevel,
+						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5,
+						resultStack));
+			}
 		}
 
 		// === Utility rite effects (no result item needed) ===
@@ -610,6 +697,42 @@ public class CardinalRiteEvents {
 				}
 			});
 		}
+	}
+
+	// ══════════════════════════════════════════════════════════════════════
+	// Gourd Upgrade Helpers
+	// ══════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Searches the player's main hand, off hand, and inventory for an item matching
+	 * the given prerequisite. If found, one stack entry is consumed and true is returned.
+	 * Prefers the main hand, then off hand, then the first matching inventory slot.
+	 */
+	private static boolean consumeGourdPrerequisite(ServerPlayer caster, net.minecraft.world.item.Item prerequisite) {
+		// Check main hand first
+		ItemStack mainHand = caster.getMainHandItem();
+		if (mainHand.getItem() == prerequisite) {
+			mainHand.shrink(1);
+			return true;
+		}
+
+		// Check off hand
+		ItemStack offHand = caster.getOffhandItem();
+		if (offHand.getItem() == prerequisite) {
+			offHand.shrink(1);
+			return true;
+		}
+
+		// Search entire inventory
+		for (int i = 0; i < caster.getInventory().getContainerSize(); i++) {
+			ItemStack stack = caster.getInventory().getItem(i);
+			if (stack.getItem() == prerequisite) {
+				stack.shrink(1);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// ══════════════════════════════════════════════════════════════════════

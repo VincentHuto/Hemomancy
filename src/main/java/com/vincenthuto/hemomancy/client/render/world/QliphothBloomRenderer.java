@@ -39,7 +39,11 @@ public class QliphothBloomRenderer {
 	/** Number of segments per branch. */
 	private static final int BRANCH_SEGS = 6;
 	/** Branch maximum length. */
-	private static final float BRANCH_LENGTH = 3.5f;
+	private static final float BRANCH_LENGTH = 8.5f;
+	/** Number of sub-branches per main branch. */
+	private static final int BRANCH_SUB_COUNT = 2;
+	/** Number of segments per sub-branch. */
+	private static final int BRANCH_SUB_SEGS = 4;
 	/** Canopy bloom sphere count. */
 	private static final int CANOPY_BLOOMS = 14;
 	/** Canopy bloom radius. */
@@ -55,7 +59,7 @@ public class QliphothBloomRenderer {
 
 	// ── Pulsing ring parameters ──
 	/** Number of concentric rings. */
-	private static final int RING_COUNT = 3;
+	private static final int RING_COUNT = 5;
 	/** Ring segment count. */
 	private static final int RING_SEGMENTS = 72;
 	/** Ring core width. */
@@ -65,7 +69,7 @@ public class QliphothBloomRenderer {
 	/** Maximum ring radius in blocks. */
 	private static final float RING_MAX_RADIUS = 6.0f;
 	/** How fast rings pulse outward. */
-	private static final double RING_PULSE_SPEED = 0.03;
+	private static final double RING_PULSE_SPEED = 0.005;
 
 	public static void render(PoseStack poseStack, float partialTick) {
 		List<QliphothBloomClientData.BloomEntry> blooms = QliphothBloomClientData.getActiveBlooms();
@@ -119,10 +123,17 @@ public class QliphothBloomRenderer {
 
 	/**
 	 * Draws the main trunk — a tapered column of dark quads with subtle red veining.
-	 * Tapers smoothly to a point at the top.
+	 * Tapers smoothly to a point at the top. The base flares outward with organic
+	 * buttress ridges that align with root positions, blending the trunk into the roots.
 	 */
 	private static void drawTrunk(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse) {
+
+		// Precompute root base angles for buttress bulging
+		double[] rootAngles = new double[ROOT_COUNT];
+		for (int i = 0; i < ROOT_COUNT; i++) {
+			rootAngles[i] = (Math.PI * 2.0 / ROOT_COUNT) * i;
+		}
 
 		for (int v = 0; v < TRUNK_SEGMENTS_V; v++) {
 			float t0 = (float) v / TRUNK_SEGMENTS_V;
@@ -135,8 +146,18 @@ public class QliphothBloomRenderer {
 			// (wider at base, accelerating taper toward the tip)
 			float taper0 = 1.0f - t0 * t0;
 			float taper1 = 1.0f - t1 * t1;
-			float r0 = TRUNK_BASE_RADIUS * taper0;
-			float r1 = TRUNK_BASE_RADIUS * taper1;
+			float baseR0 = TRUNK_BASE_RADIUS * taper0;
+			float baseR1 = TRUNK_BASE_RADIUS * taper1;
+
+			// ── Buttress flare: widen the lowest portion of the trunk ──
+			// flareStrength is 1.0 at the very base and drops to 0 by ~25% up the trunk
+			float flareStrength0 = Math.max(0f, 1.0f - t0 * 4.0f);
+			float flareStrength1 = Math.max(0f, 1.0f - t1 * 4.0f);
+			// Smooth the falloff with a cubic ease-out so it's not a hard cutoff
+			flareStrength0 = flareStrength0 * flareStrength0 * (3.0f - 2.0f * flareStrength0);
+			flareStrength1 = flareStrength1 * flareStrength1 * (3.0f - 2.0f * flareStrength1);
+			// Uniform radial flare amount
+			float flareAmount = 0.25f;
 
 			// Subtle sway
 			float swayX0 = (float) (Math.sin(time * 0.02 + t0 * 2.0) * 0.05 * t0);
@@ -153,6 +174,18 @@ public class QliphothBloomRenderer {
 				float cos2 = (float) Math.cos(a2);
 				float sin2 = (float) Math.sin(a2);
 
+				// ── Per-vertex buttress bulge toward nearest root angles ──
+				float bulge1_r0 = computeRootBulge(a1, rootAngles, flareStrength0);
+				float bulge2_r0 = computeRootBulge(a2, rootAngles, flareStrength0);
+				float bulge1_r1 = computeRootBulge(a1, rootAngles, flareStrength1);
+				float bulge2_r1 = computeRootBulge(a2, rootAngles, flareStrength1);
+
+				// Final radii: base taper + uniform flare + directional root bulge
+				float r0_v1 = baseR0 + flareStrength0 * flareAmount + bulge1_r0;
+				float r0_v2 = baseR0 + flareStrength0 * flareAmount + bulge2_r0;
+				float r1_v1 = baseR1 + flareStrength1 * flareAmount + bulge1_r1;
+				float r1_v2 = baseR1 + flareStrength1 * flareAmount + bulge2_r1;
+
 				// Dark trunk color (near-black with subtle dark red)
 				float trunkR = (float) (0.08 + 0.03 * pulse);
 				float trunkG = 0.02f;
@@ -168,19 +201,54 @@ public class QliphothBloomRenderer {
 
 				// Core trunk quad
 				emitQuad(coreVC, mat,
-						cos1 * r0 + swayX0, y0, sin1 * r0 + swayZ0, trunkR, trunkG, trunkB, trunkA,
-						cos2 * r0 + swayX0, y0, sin2 * r0 + swayZ0, trunkR, trunkG, trunkB, trunkA,
-						cos2 * r1 + swayX1, y1, sin2 * r1 + swayZ1, trunkR, trunkG, trunkB, trunkA,
-						cos1 * r1 + swayX1, y1, sin1 * r1 + swayZ1, trunkR, trunkG, trunkB, trunkA);
+						cos1 * r0_v1 + swayX0, y0, sin1 * r0_v1 + swayZ0, trunkR, trunkG, trunkB, trunkA,
+						cos2 * r0_v2 + swayX0, y0, sin2 * r0_v2 + swayZ0, trunkR, trunkG, trunkB, trunkA,
+						cos2 * r1_v2 + swayX1, y1, sin2 * r1_v2 + swayZ1, trunkR, trunkG, trunkB, trunkA,
+						cos1 * r1_v1 + swayX1, y1, sin1 * r1_v1 + swayZ1, trunkR, trunkG, trunkB, trunkA);
 
 				// Glow overlay for veins
 				emitQuad(glowVC, mat,
-						cos1 * (r0 + 0.02f) + swayX0, y0, sin1 * (r0 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
-						cos2 * (r0 + 0.02f) + swayX0, y0, sin2 * (r0 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
-						cos2 * (r1 + 0.02f) + swayX1, y1, sin2 * (r1 + 0.02f) + swayZ1, veinR, veinG, veinB, veinA,
-						cos1 * (r1 + 0.02f) + swayX1, y1, sin1 * (r1 + 0.02f) + swayZ1, veinR, veinG, veinB, veinA);
+						cos1 * (r0_v1 + 0.02f) + swayX0, y0, sin1 * (r0_v1 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
+						cos2 * (r0_v2 + 0.02f) + swayX0, y0, sin2 * (r0_v2 + 0.02f) + swayZ0, veinR, veinG, veinB, veinA,
+						cos2 * (r1_v2 + 0.02f) + swayX1, y1, sin2 * (r1_v2 + 0.02f) + swayZ1, veinR, veinG, veinB, veinA,
+						cos1 * (r1_v1 + 0.02f) + swayX1, y1, sin1 * (r1_v1 + 0.02f) + swayZ1, veinR, veinG, veinB, veinA);
 			}
 		}
+	}
+
+	/**
+	 * Computes the buttress bulge amount at a given circumference angle based on
+	 * proximity to root base angles. Creates smooth ridges that radiate from the
+	 * trunk toward each root, blending the two together organically.
+	 *
+	 * @param circumAngle  the angle around the trunk circumference (radians)
+	 * @param rootAngles   array of root base angles
+	 * @param flareStrength how much flare is active at this height (0 = none, 1 = full)
+	 * @return additional radius to add at this angle
+	 */
+	private static float computeRootBulge(double circumAngle, double[] rootAngles, float flareStrength) {
+		if (flareStrength <= 0f) return 0f;
+
+		float totalBulge = 0f;
+		// Width of each buttress ridge (in radians) — controls how sharp/broad the ridges are
+		float ridgeWidth = 0.55f;
+		// Maximum extra radius each ridge contributes
+		float ridgeStrength = 0.30f;
+
+		for (double rootAng : rootAngles) {
+			// Angular distance (wrapped to -PI..PI)
+			double diff = circumAngle - rootAng;
+			diff = ((diff + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+			float absDiff = (float) Math.abs(diff);
+
+			// Smooth ridge falloff: cosine-based bell curve
+			if (absDiff < ridgeWidth) {
+				float ridgeFactor = (float) (Math.cos(absDiff / ridgeWidth * Math.PI) + 1.0) * 0.5f;
+				totalBulge = Math.max(totalBulge, ridgeFactor * ridgeStrength * flareStrength);
+			}
+		}
+
+		return totalBulge;
 	}
 
 	/**
@@ -202,9 +270,11 @@ public class QliphothBloomRenderer {
 			double writheFreq = 0.06 + seed * 0.03;
 			double writhePhase = i * 2.3;
 
+			float mainStartDist = TRUNK_BASE_RADIUS * 0.85f;
+
 			drawSingleRoot(coreVC, glowVC, mat, time, pulse,
 					baseAngle, rootLength, curvature,
-					TRUNK_BASE_RADIUS * 0.85f, writheFreq, writhePhase,
+					mainStartDist, 0f, 0f, 0f, writheFreq, writhePhase,
 					0.10f, ROOT_SEGS, i);
 
 			// Sub-branches fork off from the main root
@@ -212,10 +282,28 @@ public class QliphothBloomRenderer {
 				double subSeed = hashIndex(i * 17 + sub * 7 + 500);
 				// Fork point along the main root (between 25% and 70%)
 				float forkT = 0.25f + (float) subSeed * 0.45f;
-				float forkDist = TRUNK_BASE_RADIUS + forkT * rootLength;
+
+				// Compute the actual fork position on the main root (matching drawSingleRoot logic)
+				float forkRad = mainStartDist + forkT * rootLength;
 				double forkAngle = baseAngle + curvature * forkT * forkT;
 
-				// Sub-branch diverges at an angle from the main root
+				// Writhing displacement at the fork point (same formulae as in drawSingleRoot)
+				float forkWritheAmp = 0.06f + forkT * 0.10f;
+				float forkWritheX = (float) (Math.sin(time * writheFreq + writhePhase + forkT * 4.0) * forkWritheAmp);
+				float forkWritheY = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + forkT * 3.5) * forkWritheAmp * 0.5f);
+
+				// Y at the fork point on the main root (same formula as drawSingleRoot)
+				float forkYBase = (float) (-0.02 - forkT * 0.35 * (1.0 + Math.sin(forkT * Math.PI) * 0.6));
+				float forkY = forkYBase + forkWritheY;
+
+				float forkPerpX = (float) -Math.sin(forkAngle);
+				float forkPerpZ = (float) Math.cos(forkAngle);
+
+				// Actual fork point on the main root in world-local coords
+				float forkX = (float) Math.cos(forkAngle) * forkRad + forkPerpX * forkWritheX;
+				float forkZ = (float) Math.sin(forkAngle) * forkRad + forkPerpZ * forkWritheX;
+
+				// Sub-branch diverges at an angle from the main root's direction at the fork
 				double subAngleOffset = (subSeed - 0.5) * 1.2 + (sub == 0 ? 0.35 : -0.35);
 				double subAngle = forkAngle + subAngleOffset;
 				float subLength = rootLength * (0.3f + (float) subSeed * 0.3f);
@@ -227,9 +315,10 @@ public class QliphothBloomRenderer {
 				// Starting radius smaller than main root at fork point
 				float subStartRadius = 0.06f * (1.0f - forkT * 0.5f);
 
+				// Draw sub-root starting from the actual fork point, growing outward from there
 				drawSingleRoot(coreVC, glowVC, mat, time, pulse,
 						subAngle, subLength, curvature * 0.6,
-						forkDist, subWritheFreq, subWrithePhase,
+						0f, forkX, forkY, forkZ, subWritheFreq, subWrithePhase,
 						subStartRadius, ROOT_SUB_SEGS, i * 100 + sub);
 			}
 		}
@@ -238,58 +327,59 @@ public class QliphothBloomRenderer {
 	/**
 	 * Draws a single root strand as a 3D tube with writhing animation.
 	 * Used for both main roots and sub-branch roots.
+	 * <p>
+	 * All ring positions are precomputed so adjacent segments share exact vertex
+	 * positions at their boundary, eliminating visible seams between segments.
+	 *
+	 * @param originX X offset for the root origin (0 for main roots, fork point X for sub-branches)
+	 * @param originY Y offset for the root origin (0 for main roots, fork point Y for sub-branches)
+	 * @param originZ Z offset for the root origin (0 for main roots, fork point Z for sub-branches)
 	 */
 	private static void drawSingleRoot(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse,
 			double baseAngle, float rootLength, double curvature,
-			float startDist, double writheFreq, double writhePhase,
+			float startDist, float originX, float originY, float originZ, double writheFreq, double writhePhase,
 			float baseWidth, int segments, int colorSeed) {
 
-		// Number of faces around the root tube cross-section
 		int tubeFaces = 4;
+		int ringCount = segments + 1;
 
+		// ── Precompute per-ring data ──
+		float[] ringCX = new float[ringCount];
+		float[] ringCZ = new float[ringCount];
+		float[] ringY  = new float[ringCount];
+		float[] ringW  = new float[ringCount];
+		float[] ringPerpX = new float[ringCount];
+		float[] ringPerpZ = new float[ringCount];
+
+		for (int r = 0; r < ringCount; r++) {
+			float t = (float) r / segments;
+
+			float rad = startDist + t * rootLength;
+			double ang = baseAngle + curvature * t * t;
+
+			float writheAmp = 0.06f + t * 0.10f;
+			float writheX = (float) (Math.sin(time * writheFreq + writhePhase + t * 4.0) * writheAmp);
+			float writheY = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + t * 3.5) * writheAmp * 0.5f);
+
+			float yBase = (float) (-0.02 - t * 0.35 * (1.0 + Math.sin(t * Math.PI) * 0.6));
+
+			float cosA = (float) Math.cos(ang);
+			float sinA = (float) Math.sin(ang);
+			float pX = (float) -Math.sin(ang);
+			float pZ = (float)  Math.cos(ang);
+
+			ringCX[r] = originX + cosA * rad + pX * writheX;
+			ringCZ[r] = originZ + sinA * rad + pZ * writheX;
+			ringY[r]  = originY + yBase + writheY;
+			ringW[r]  = baseWidth * (1.0f - t * 0.8f);
+			ringPerpX[r] = pX;
+			ringPerpZ[r] = pZ;
+		}
+
+		// ── Draw tube segments between adjacent precomputed rings ──
 		for (int s = 0; s < segments; s++) {
 			float t0 = (float) s / segments;
-			float t1 = (float) (s + 1) / segments;
-
-			float rad0 = startDist + t0 * rootLength;
-			float rad1 = startDist + t1 * rootLength;
-
-			double ang0 = baseAngle + curvature * t0 * t0;
-			double ang1 = baseAngle + curvature * t1 * t1;
-
-			// Writhing: sinusoidal displacement in the perpendicular and Y directions
-			float writheAmp = 0.06f + t0 * 0.10f; // amplitude grows along the root
-			float writheX0 = (float) (Math.sin(time * writheFreq + writhePhase + t0 * 4.0) * writheAmp);
-			float writheY0 = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + t0 * 3.5) * writheAmp * 0.5f);
-			float writheX1 = (float) (Math.sin(time * writheFreq + writhePhase + t1 * 4.0) * writheAmp);
-			float writheY1 = (float) (Math.sin(time * writheFreq * 0.7 + writhePhase + 1.5 + t1 * 3.5) * writheAmp * 0.5f);
-
-			// Y position: roots dip below ground then re-emerge slightly
-			float yBase0 = (float) (-0.02 - t0 * 0.35 * (1.0 + Math.sin(t0 * Math.PI) * 0.6));
-			float yBase1 = (float) (-0.02 - t1 * 0.35 * (1.0 + Math.sin(t1 * Math.PI) * 0.6));
-			float y0 = yBase0 + writheY0;
-			float y1 = yBase1 + writheY1;
-
-			// Width tapers along the root
-			float w0 = baseWidth * (1.0f - t0 * 0.8f);
-			float w1 = baseWidth * (1.0f - t1 * 0.8f);
-
-			float cos0 = (float) Math.cos(ang0);
-			float sin0 = (float) Math.sin(ang0);
-			float cos1 = (float) Math.cos(ang1);
-			float sin1 = (float) Math.sin(ang1);
-
-			// Center positions with writhe applied perpendicular to root direction
-			float perpX0 = (float) -Math.sin(ang0);
-			float perpZ0 = (float) Math.cos(ang0);
-			float perpX1 = (float) -Math.sin(ang1);
-			float perpZ1 = (float) Math.cos(ang1);
-
-			float cx0 = cos0 * rad0 + perpX0 * writheX0;
-			float cz0 = sin0 * rad0 + perpZ0 * writheX0;
-			float cx1 = cos1 * rad1 + perpX1 * writheX1;
-			float cz1 = sin1 * rad1 + perpZ1 * writheX1;
 
 			// Colors
 			float rootR = (float) (0.06 + 0.04 * pulse);
@@ -297,39 +387,36 @@ public class QliphothBloomRenderer {
 			float rootB = 0.01f;
 			float rootA = 0.85f * (1.0f - t0 * 0.35f);
 
-			// Vein glow running along roots
 			float veinPulse = (float) (Math.sin(time * 0.09 + colorSeed * 0.7 + t0 * 5.0) + 1.0) * 0.5f;
 			float glowR = (float) (0.45 + 0.35 * veinPulse * pulse);
 			float glowA = 0.12f * veinPulse * (1.0f - t0 * 0.5f);
 
-			// Draw tube cross-section — quads around the circumference
 			for (int f = 0; f < tubeFaces; f++) {
 				double faceAngle0 = Math.toRadians((360.0 / tubeFaces) * f);
 				double faceAngle1 = Math.toRadians((360.0 / tubeFaces) * (f + 1));
 
-				// Cross-section offsets using perpendicular (horizontal) and Y (vertical)
 				float fCos0 = (float) Math.cos(faceAngle0);
 				float fSin0 = (float) Math.sin(faceAngle0);
 				float fCos1 = (float) Math.cos(faceAngle1);
 				float fSin1 = (float) Math.sin(faceAngle1);
 
-				// Ring 0 vertices (at t0)
-				float x00 = cx0 + perpX0 * fCos0 * w0;
-				float y00 = y0 + fSin0 * w0;
-				float z00 = cz0 + perpZ0 * fCos0 * w0;
+				// Ring s vertices
+				float x00 = ringCX[s] + ringPerpX[s] * fCos0 * ringW[s];
+				float y00 = ringY[s]  + fSin0 * ringW[s];
+				float z00 = ringCZ[s] + ringPerpZ[s] * fCos0 * ringW[s];
 
-				float x01 = cx0 + perpX0 * fCos1 * w0;
-				float y01 = y0 + fSin1 * w0;
-				float z01 = cz0 + perpZ0 * fCos1 * w0;
+				float x01 = ringCX[s] + ringPerpX[s] * fCos1 * ringW[s];
+				float y01 = ringY[s]  + fSin1 * ringW[s];
+				float z01 = ringCZ[s] + ringPerpZ[s] * fCos1 * ringW[s];
 
-				// Ring 1 vertices (at t1)
-				float x10 = cx1 + perpX1 * fCos0 * w1;
-				float y10 = y1 + fSin0 * w1;
-				float z10 = cz1 + perpZ1 * fCos0 * w1;
+				// Ring s+1 vertices
+				float x10 = ringCX[s+1] + ringPerpX[s+1] * fCos0 * ringW[s+1];
+				float y10 = ringY[s+1]  + fSin0 * ringW[s+1];
+				float z10 = ringCZ[s+1] + ringPerpZ[s+1] * fCos0 * ringW[s+1];
 
-				float x11 = cx1 + perpX1 * fCos1 * w1;
-				float y11 = y1 + fSin1 * w1;
-				float z11 = cz1 + perpZ1 * fCos1 * w1;
+				float x11 = ringCX[s+1] + ringPerpX[s+1] * fCos1 * ringW[s+1];
+				float y11 = ringY[s+1]  + fSin1 * ringW[s+1];
+				float z11 = ringCZ[s+1] + ringPerpZ[s+1] * fCos1 * ringW[s+1];
 
 				// Core root quad
 				emitQuad(coreVC, mat,
@@ -341,16 +428,19 @@ public class QliphothBloomRenderer {
 				// Glow overlay for veining effect
 				float glowOff = 0.015f;
 				emitQuad(glowVC, mat,
-						x00 + perpX0 * glowOff, y00, z00 + perpZ0 * glowOff, glowR, 0.02f, 0.02f, glowA,
-						x01 + perpX0 * glowOff, y01, z01 + perpZ0 * glowOff, glowR, 0.02f, 0.02f, glowA,
-						x11 + perpX1 * glowOff, y11, z11 + perpZ1 * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f,
-						x10 + perpX1 * glowOff, y10, z10 + perpZ1 * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f);
+						x00 + ringPerpX[s] * glowOff, y00, z00 + ringPerpZ[s] * glowOff, glowR, 0.02f, 0.02f, glowA,
+						x01 + ringPerpX[s] * glowOff, y01, z01 + ringPerpZ[s] * glowOff, glowR, 0.02f, 0.02f, glowA,
+						x11 + ringPerpX[s+1] * glowOff, y11, z11 + ringPerpZ[s+1] * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f,
+						x10 + ringPerpX[s+1] * glowOff, y10, z10 + ringPerpZ[s+1] * glowOff, glowR, 0.02f, 0.02f, glowA * 0.7f);
 			}
 		}
 	}
 
 	/**
-	 * Draws branches that spread from the upper trunk, curving upward and outward.
+	 * Draws branches that spread from the upper trunk, curving organically
+	 * outward and upward with lateral bending and gentle writhing.
+	 * Each segment bends from the previous one for a natural, non-linear shape.
+	 * Sub-branches fork off main branches for added complexity.
 	 */
 	private static void drawBranches(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse) {
@@ -358,41 +448,81 @@ public class QliphothBloomRenderer {
 		for (int b = 0; b < BRANCH_COUNT; b++) {
 			double baseAngle = (Math.PI * 2.0 / BRANCH_COUNT) * b;
 			double seed = hashIndex(b + 100);
+			double seed2 = hashIndex(b + 150);
 
 			// Branches start between 40%-80% up the trunk
 			float startHeight = TREE_HEIGHT * (0.4f + (float) seed * 0.4f);
 			float branchLen = BRANCH_LENGTH * (0.6f + (float) seed * 0.4f);
+			float segLen = branchLen / BRANCH_SEGS;
 
-			// Initial direction: outward and upward
-			float elevAngle = (float) (0.3 + seed * 0.5); // radians from horizontal
+			// Initial direction: outward and upward (elevation from horizontal)
+			float elevAngle = (float) (0.3 + seed * 0.5);
+
+			// Per-branch lateral curvature strength and direction (unique bend per branch)
+			double lateralCurve = (seed2 - 0.5) * 0.18;
+			// Per-branch vertical curvature: some droop, some reach up
+			double verticalCurve = 0.06 + seed * 0.08;
+
+			// Accumulate position segment-by-segment
+			float curX = 0f, curY = startHeight, curZ = 0f;
+			double curAzimuth = baseAngle;
+			double curElev = elevAngle;
+
+			// Trunk sway at start height for seamless attachment
+			float startT = startHeight / TREE_HEIGHT;
+			float trunkSwayX = (float) (Math.sin(time * 0.02 + startT * 2.0) * 0.05 * startT);
+			float trunkSwayZ = (float) (Math.cos(time * 0.025 + startT * 1.5) * 0.04 * startT);
+			curX += trunkSwayX;
+			curZ += trunkSwayZ;
+
+			// Store per-segment endpoint data for sub-branch forking
+			float[] segX = new float[BRANCH_SEGS + 1];
+			float[] segY = new float[BRANCH_SEGS + 1];
+			float[] segZ = new float[BRANCH_SEGS + 1];
+			double[] segAz = new double[BRANCH_SEGS + 1];
+			double[] segEl = new double[BRANCH_SEGS + 1];
+			segX[0] = curX; segY[0] = curY; segZ[0] = curZ;
+			segAz[0] = curAzimuth; segEl[0] = curElev;
 
 			for (int s = 0; s < BRANCH_SEGS; s++) {
 				float t0 = (float) s / BRANCH_SEGS;
 				float t1 = (float) (s + 1) / BRANCH_SEGS;
 
-				// Branch curves upward more as it extends
-				float curveUp = t0 * t0 * 0.6f;
+				// Save start of this segment
+				float x0 = curX;
+				float y0 = curY;
+				float z0 = curZ;
+				double az0 = curAzimuth;
 
-				float outDist0 = t0 * branchLen * (float) Math.cos(elevAngle);
-				float outDist1 = t1 * branchLen * (float) Math.cos(elevAngle);
+				// Bend azimuth (lateral curvature — S-curve via sin for organic feel)
+				curAzimuth += lateralCurve + Math.sin(t1 * Math.PI * 1.5 + seed * 5.0) * 0.08;
 
-				float yOff0 = t0 * branchLen * (float) Math.sin(elevAngle) + curveUp;
-				float yOff1 = t1 * branchLen * (float) Math.sin(elevAngle) + t1 * t1 * 0.6f;
+				// Bend elevation upward progressively (branches reach for the sky)
+				curElev += verticalCurve * (1.0 + t1 * 0.5);
 
-				// Subtle sway
-				float swayX = (float) (Math.sin(time * 0.015 + b * 1.5) * 0.03 * t0);
-				float swayZ = (float) (Math.cos(time * 0.02 + b * 2.1) * 0.025 * t0);
+				// Per-segment writhing/sway that grows along the branch
+				float writheAmt = t1 * 0.12f;
+				float writheAz = (float) (Math.sin(time * 0.03 + b * 1.7 + t1 * 3.0) * writheAmt);
+				float writheElev = (float) (Math.sin(time * 0.025 + b * 2.3 + t1 * 2.5) * writheAmt * 0.5f);
 
-				float cos0 = (float) Math.cos(baseAngle);
-				float sin0 = (float) Math.sin(baseAngle);
+				// Step forward along the current direction
+				double az1 = curAzimuth + writheAz;
+				double el1 = curElev + writheElev;
+				float dx = (float) (Math.cos(az1) * Math.cos(el1) * segLen);
+				float dy = (float) (Math.sin(el1) * segLen);
+				float dz = (float) (Math.sin(az1) * Math.cos(el1) * segLen);
 
-				float x0 = cos0 * outDist0 + swayX;
-				float z0 = sin0 * outDist0 + swayZ;
-				float x1 = cos0 * outDist1 + swayX;
-				float z1 = sin0 * outDist1 + swayZ;
+				curX += dx;
+				curY += dy;
+				curZ += dz;
 
-				float branchY0 = startHeight + yOff0;
-				float branchY1 = startHeight + yOff1;
+				float x1 = curX;
+				float y1 = curY;
+				float z1 = curZ;
+
+				// Record endpoint
+				segX[s + 1] = curX; segY[s + 1] = curY; segZ[s + 1] = curZ;
+				segAz[s + 1] = curAzimuth; segEl[s + 1] = curElev;
 
 				// Branch width tapers
 				float w0 = 0.06f * (1.0f - t0 * 0.75f);
@@ -404,15 +534,24 @@ public class QliphothBloomRenderer {
 				float brB = 0.01f;
 				float brA = 0.85f * (1.0f - t0 * 0.3f);
 
-				// Perpendicular direction
-				float px = (float) -Math.sin(baseAngle);
-				float pz = (float) Math.cos(baseAngle);
+				// Perpendicular direction derived from actual segment direction for proper facing
+				float segDx = x1 - x0;
+				float segDz = z1 - z0;
+				float segHLen = (float) Math.sqrt(segDx * segDx + segDz * segDz);
+				float px, pz;
+				if (segHLen > 0.001f) {
+					px = -segDz / segHLen;
+					pz = segDx / segHLen;
+				} else {
+					px = (float) -Math.sin(az0);
+					pz = (float) Math.cos(az0);
+				}
 
 				emitQuad(coreVC, mat,
-						x0 - px * w0, branchY0, z0 - pz * w0, brR, brG, brB, brA,
-						x0 + px * w0, branchY0, z0 + pz * w0, brR, brG, brB, brA,
-						x1 + px * w1, branchY1, z1 + pz * w1, brR, brG, brB, brA * 0.9f,
-						x1 - px * w1, branchY1, z1 - pz * w1, brR, brG, brB, brA * 0.9f);
+						x0 - px * w0, y0, z0 - pz * w0, brR, brG, brB, brA,
+						x0 + px * w0, y0, z0 + pz * w0, brR, brG, brB, brA,
+						x1 + px * w1, y1, z1 + pz * w1, brR, brG, brB, brA * 0.9f,
+						x1 - px * w1, y1, z1 - pz * w1, brR, brG, brB, brA * 0.9f);
 
 				// Red glow along branches
 				float glowPulse = (float) (Math.sin(time * 0.07 + b * 1.2 + s * 0.8) + 1.0) * 0.5f;
@@ -420,10 +559,118 @@ public class QliphothBloomRenderer {
 				float gA = 0.12f * glowPulse * (1.0f - t0 * 0.5f);
 
 				emitQuad(glowVC, mat,
-						x0 - px * w0 * 2, branchY0, z0 - pz * w0 * 2, gR, 0.02f, 0.02f, gA,
-						x0 + px * w0 * 2, branchY0, z0 + pz * w0 * 2, gR, 0.02f, 0.02f, gA,
-						x1 + px * w1 * 2, branchY1, z1 + pz * w1 * 2, gR, 0.02f, 0.02f, gA * 0.7f,
-						x1 - px * w1 * 2, branchY1, z1 - pz * w1 * 2, gR, 0.02f, 0.02f, gA * 0.7f);
+						x0 - px * w0 * 2, y0, z0 - pz * w0 * 2, gR, 0.02f, 0.02f, gA,
+						x0 + px * w0 * 2, y0, z0 + pz * w0 * 2, gR, 0.02f, 0.02f, gA,
+						x1 + px * w1 * 2, y1, z1 + pz * w1 * 2, gR, 0.02f, 0.02f, gA * 0.7f,
+						x1 - px * w1 * 2, y1, z1 - pz * w1 * 2, gR, 0.02f, 0.02f, gA * 0.7f);
+			}
+
+			// ── Sub-branches forking off the main branch ──
+			for (int sub = 0; sub < BRANCH_SUB_COUNT; sub++) {
+				double subSeed = hashIndex(b * 31 + sub * 13 + 700);
+				double subSeed2 = hashIndex(b * 23 + sub * 11 + 800);
+
+				// Fork point: between 25% and 65% along the main branch
+				float forkFrac = 0.25f + (float) subSeed * 0.40f;
+				// Map to a segment index + interpolation fraction
+				float forkSegF = forkFrac * BRANCH_SEGS;
+				int forkSeg = Math.min((int) forkSegF, BRANCH_SEGS - 1);
+				float forkLerp = forkSegF - forkSeg;
+
+				// Interpolate fork position and direction from stored segment data
+				float forkX = segX[forkSeg] + (segX[forkSeg + 1] - segX[forkSeg]) * forkLerp;
+				float forkY = segY[forkSeg] + (segY[forkSeg + 1] - segY[forkSeg]) * forkLerp;
+				float forkZ = segZ[forkSeg] + (segZ[forkSeg + 1] - segZ[forkSeg]) * forkLerp;
+				double forkAz = segAz[forkSeg] + (segAz[forkSeg + 1] - segAz[forkSeg]) * forkLerp;
+				double forkEl = segEl[forkSeg] + (segEl[forkSeg + 1] - segEl[forkSeg]) * forkLerp;
+
+				// Sub-branch diverges from parent direction
+				double subAzOffset = (subSeed2 - 0.5) * 1.6 + (sub == 0 ? 0.4 : -0.4);
+				double subElOffset = (subSeed - 0.5) * 0.5;
+
+				double subAz = forkAz + subAzOffset;
+				double subEl = forkEl + subElOffset;
+
+				// Sub-branch is shorter and thinner
+				float subLen = branchLen * (0.25f + (float) subSeed * 0.2f);
+				float subSegLen = subLen / BRANCH_SUB_SEGS;
+				float subBaseWidth = 0.04f * (1.0f - forkFrac * 0.4f);
+
+				// Sub-branch lateral and vertical curvature
+				double subLatCurve = (subSeed2 - 0.5) * 0.22;
+				double subVertCurve = 0.05 + subSeed * 0.06;
+
+				float sCurX = forkX, sCurY = forkY, sCurZ = forkZ;
+				double sCurAz = subAz, sCurEl = subEl;
+
+				for (int ss = 0; ss < BRANCH_SUB_SEGS; ss++) {
+					float st0 = (float) ss / BRANCH_SUB_SEGS;
+					float st1 = (float) (ss + 1) / BRANCH_SUB_SEGS;
+
+					float sx0 = sCurX, sy0 = sCurY, sz0 = sCurZ;
+					double sAz0 = sCurAz;
+
+					// Lateral and vertical bending
+					sCurAz += subLatCurve + Math.sin(st1 * Math.PI * 1.3 + subSeed * 7.0) * 0.10;
+					sCurEl += subVertCurve * (1.0 + st1 * 0.4);
+
+					// Writhing
+					float sWritheAmt = st1 * 0.09f;
+					float sWritheAz = (float) (Math.sin(time * 0.035 + b * 2.1 + sub * 3.5 + st1 * 3.0) * sWritheAmt);
+					float sWritheEl = (float) (Math.sin(time * 0.028 + b * 1.9 + sub * 2.7 + st1 * 2.5) * sWritheAmt * 0.5f);
+
+					double sAz1 = sCurAz + sWritheAz;
+					double sEl1 = sCurEl + sWritheEl;
+					float sdx = (float) (Math.cos(sAz1) * Math.cos(sEl1) * subSegLen);
+					float sdy = (float) (Math.sin(sEl1) * subSegLen);
+					float sdz = (float) (Math.sin(sAz1) * Math.cos(sEl1) * subSegLen);
+
+					sCurX += sdx;
+					sCurY += sdy;
+					sCurZ += sdz;
+
+					float sx1 = sCurX, sy1 = sCurY, sz1 = sCurZ;
+
+					// Width tapers
+					float sw0 = subBaseWidth * (1.0f - st0 * 0.8f);
+					float sw1 = subBaseWidth * (1.0f - st1 * 0.8f);
+
+					// Color
+					float sbrR = (float) (0.06 + 0.03 * pulse);
+					float sbrG = 0.01f;
+					float sbrB = 0.01f;
+					float sbrA = 0.80f * (1.0f - st0 * 0.4f);
+
+					// Perpendicular from segment direction
+					float sSegDx = sx1 - sx0;
+					float sSegDz = sz1 - sz0;
+					float sSegHLen = (float) Math.sqrt(sSegDx * sSegDx + sSegDz * sSegDz);
+					float spx, spz;
+					if (sSegHLen > 0.001f) {
+						spx = -sSegDz / sSegHLen;
+						spz = sSegDx / sSegHLen;
+					} else {
+						spx = (float) -Math.sin(sAz0);
+						spz = (float) Math.cos(sAz0);
+					}
+
+					emitQuad(coreVC, mat,
+							sx0 - spx * sw0, sy0, sz0 - spz * sw0, sbrR, sbrG, sbrB, sbrA,
+							sx0 + spx * sw0, sy0, sz0 + spz * sw0, sbrR, sbrG, sbrB, sbrA,
+							sx1 + spx * sw1, sy1, sz1 + spz * sw1, sbrR, sbrG, sbrB, sbrA * 0.9f,
+							sx1 - spx * sw1, sy1, sz1 - spz * sw1, sbrR, sbrG, sbrB, sbrA * 0.9f);
+
+					// Glow
+					float sGlowPulse = (float) (Math.sin(time * 0.08 + b * 1.5 + sub * 2.0 + ss * 0.9) + 1.0) * 0.5f;
+					float sgR = (float) (0.55 + 0.3 * sGlowPulse);
+					float sgA = 0.10f * sGlowPulse * (1.0f - st0 * 0.5f);
+
+					emitQuad(glowVC, mat,
+							sx0 - spx * sw0 * 2, sy0, sz0 - spz * sw0 * 2, sgR, 0.02f, 0.02f, sgA,
+							sx0 + spx * sw0 * 2, sy0, sz0 + spz * sw0 * 2, sgR, 0.02f, 0.02f, sgA,
+							sx1 + spx * sw1 * 2, sy1, sz1 + spz * sw1 * 2, sgR, 0.02f, 0.02f, sgA * 0.7f,
+							sx1 - spx * sw1 * 2, sy1, sz1 - spz * sw1 * 2, sgR, 0.02f, 0.02f, sgA * 0.7f);
+				}
 			}
 		}
 	}
