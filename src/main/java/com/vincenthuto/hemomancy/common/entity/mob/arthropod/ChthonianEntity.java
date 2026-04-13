@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -228,17 +228,17 @@ public class ChthonianEntity extends Spider {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SPIDER_AMBIENT;
+		return SoundInit.ENTITY_CHTHONIAN_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.SPIDER_DEATH;
+		return SoundInit.ENTITY_CHTHONIAN_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.SPIDER_HURT;
+		return SoundInit.ENTITY_CHTHONIAN_HURT.get();
 	}
 
 	@Override

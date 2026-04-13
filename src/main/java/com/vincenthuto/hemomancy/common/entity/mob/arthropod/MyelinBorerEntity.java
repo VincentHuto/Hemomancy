@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -89,17 +89,17 @@ public class MyelinBorerEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SILVERFISH_AMBIENT;
+		return SoundInit.ENTITY_MYELIN_BORER_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.SILVERFISH_DEATH;
+		return SoundInit.ENTITY_MYELIN_BORER_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.SILVERFISH_HURT;
+		return SoundInit.ENTITY_MYELIN_BORER_HURT.get();
 	}
 
 	@Override

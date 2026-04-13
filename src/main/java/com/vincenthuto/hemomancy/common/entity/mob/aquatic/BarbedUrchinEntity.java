@@ -11,6 +11,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -235,15 +236,15 @@ public class BarbedUrchinEntity extends AbstractFish {
 	}
 
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.PUFFER_FISH_AMBIENT;
+		return SoundInit.ENTITY_BARBED_URCHIN_AMBIENT.get();
 	}
 
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.PUFFER_FISH_DEATH;
+		return SoundInit.ENTITY_BARBED_URCHIN_DEATH.get();
 	}
 
 	protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-		return SoundEvents.PUFFER_FISH_HURT;
+		return SoundInit.ENTITY_BARBED_URCHIN_HURT.get();
 	}
 
 	protected SoundEvent getFlopSound() {

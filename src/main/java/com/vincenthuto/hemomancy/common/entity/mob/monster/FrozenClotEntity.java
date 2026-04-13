@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -86,17 +86,17 @@ public class FrozenClotEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.GLASS_BREAK;
+		return SoundInit.ENTITY_FROZEN_CLOT_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.GLASS_BREAK;
+		return SoundInit.ENTITY_FROZEN_CLOT_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.GLASS_HIT;
+		return SoundInit.ENTITY_FROZEN_CLOT_HURT.get();
 	}
 
 	@Override

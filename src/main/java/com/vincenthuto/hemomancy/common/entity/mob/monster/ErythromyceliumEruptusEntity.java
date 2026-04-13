@@ -141,17 +141,17 @@ public class ErythromyceliumEruptusEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundInit.ENTITY_ABHORENT_THOUGHT_AMBIENT.get();
+		return SoundInit.ENTITY_ERYTHROMYCELIUM_ERUPTUS_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundInit.ENTITY_ABHORENT_THOUGHT_DEATH.get();
+		return SoundInit.ENTITY_ERYTHROMYCELIUM_ERUPTUS_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundInit.ENTITY_ABHORENT_THOUGHT_HURT.get();
+		return SoundInit.ENTITY_ERYTHROMYCELIUM_ERUPTUS_HURT.get();
 	}
 
 	@Override
