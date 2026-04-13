@@ -132,8 +132,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
+		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree);
+				riteDescription, requiredDegree, breakBlocksOnCreation);
 
 		return recipe;
 	}
@@ -174,9 +175,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
 		ItemStack result = pBuffer.readItem();
 		int requiredDegree = pBuffer.readInt();
+		boolean breakBlocksOnCreation = pBuffer.readBoolean();
 
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree);
+				riteDescription, requiredDegree, breakBlocksOnCreation);
 
 		return recipe;
 	}
@@ -203,5 +205,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		});
 		pBuffer.writeItem(pRecipe.getResult());
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
+		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
 	}
 }

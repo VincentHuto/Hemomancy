@@ -467,7 +467,7 @@ public class CardinalRiteEvents {
 		BlockPos center = rite.getCenterPos();
 		BlockPattern blockPattern = recipe.getPattern().getBlockPattern();
 		BlockPattern.BlockPatternMatch match = findPatternNearCenter(blockPattern, sLevel, center);
-		if (match != null) {
+		if (match != null && recipe.shouldBreakBlocksOnCreation()) {
 			// Build a lookup of which (charIndex, invertedRow, aisle) positions are
 			// actual structure blocks vs wildcard spaces
 			String[][] patternArray = recipe.getPattern().getPatternArray();

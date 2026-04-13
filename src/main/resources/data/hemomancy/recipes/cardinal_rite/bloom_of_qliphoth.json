@@ -4,6 +4,7 @@
   "riteType": "lesser",
   "riteName": "Bloom of the Qliphoth",
   "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
+  "breakBlocksOnCreation": false,
   "pattern": [
     [
       "A     A",
