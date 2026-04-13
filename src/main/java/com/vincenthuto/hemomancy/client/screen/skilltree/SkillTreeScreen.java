@@ -2478,11 +2478,12 @@ public class SkillTreeScreen extends Screen {
 
 		y += 8;
 
-		// ── Lore / hint ──
+		// ── Per-rune lore ──
 		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
 		y += 6;
-		String loreText = "Runes carve new venous and nervous pathways in the mind, "
-				+ "opening the practitioner to tendencies once sealed away.";
+		String recipeKey = recipe.getId().getPath();
+		if (recipeKey.contains("/")) recipeKey = recipeKey.substring(recipeKey.lastIndexOf('/') + 1);
+		String loreText = RuneLoreData.getLore(recipeKey);
 		for (String loreLine : ScreenDrawUtils.wrapText(font, loreText, panelW)) {
 			gfx.drawString(font, Component.literal(loreLine)
 					.withStyle(s -> s.withColor(0xFF557788).withItalic(true)), panelX, y, 0);
