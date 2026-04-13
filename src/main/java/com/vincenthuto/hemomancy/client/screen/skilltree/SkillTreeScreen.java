@@ -2478,11 +2478,10 @@ public class SkillTreeScreen extends Screen {
 
 		y += 8;
 
-		// ── Lore / hint ──
+		// ── Per-rune lore ──
 		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
 		y += 6;
-		String loreText = "Runes carve new venous and nervous pathways in the mind, "
-				+ "opening the practitioner to tendencies once sealed away.";
+		String loreText = RuneLoreData.getLore(chiselRecipeKey(recipe));
 		for (String loreLine : ScreenDrawUtils.wrapText(font, loreText, panelW)) {
 			gfx.drawString(font, Component.literal(loreLine)
 					.withStyle(s -> s.withColor(0xFF557788).withItalic(true)), panelX, y, 0);
@@ -3526,6 +3525,12 @@ public class SkillTreeScreen extends Screen {
 	private void clampRuneSidebarScroll() {
 		int maxScroll = Math.max(0, runeSidebarContentH() - tierSidebarVisibleH());
 		runeSidebarScroll = Math.min(runeSidebarScroll, maxScroll);
+	}
+
+	/** Returns the trailing path segment of a chisel recipe's ResourceLocation (e.g. {@code "rune_heart"}). */
+	private static String chiselRecipeKey(com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe) {
+		String path = recipe.getId().getPath();
+		return path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path;
 	}
 
 	// ────────────────────────────────────────────────────────────
