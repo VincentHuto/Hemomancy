@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.RiteHintItem;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
@@ -67,9 +68,12 @@ public class DialogueEventHandler {
 				Entity entity = player.level().getEntity(event.getEntityId());
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					Vec3 pos = hermit.position();
-					// Drop the rite hint item
-					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z,
-							new ItemStack(ItemInit.harbinger_rite_hint.get()));
+					// Drop the rite hint item — configured for the Sanguine Initiation rite
+					ItemStack riteHint = RiteHintItem.createForRite(
+							ItemInit.rite_hint.get(),
+							new net.minecraft.resources.ResourceLocation(Hemomancy.MOD_ID,
+									"cardinal_rite/sanguine_initiation"));
+					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
 					hermit.level().addFreshEntity(drop);
 					// Visual effects: blood particles rising from the hermit
 					for (int i = 0; i < 8; i++) {
