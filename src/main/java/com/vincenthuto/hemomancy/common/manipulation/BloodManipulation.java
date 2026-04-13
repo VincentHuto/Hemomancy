@@ -262,6 +262,11 @@ public class BloodManipulation  {
 					effectiveCost *= 0.75;
 				}
 
+				// Blood Moon: 25% cost reduction while the blood moon is active
+				if (com.vincenthuto.hemomancy.common.worldevent.BloodMoonEvents.isBloodMoonActive(world)) {
+					effectiveCost *= 0.75;
+				}
+
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);

@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticles
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
@@ -297,6 +298,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncQliphothBlooms.class, networkID++)
 				.decoder(PacketSyncQliphothBlooms::decode).encoder(PacketSyncQliphothBlooms::encode)
 				.consumerNetworkThread(PacketSyncQliphothBlooms::handle).add();
+
+		// Blood Moon sync packet
+		CHANNELBLOODVOLUME.messageBuilder(PacketSyncBloodMoon.class, networkID++)
+				.decoder(PacketSyncBloodMoon::decode).encoder(PacketSyncBloodMoon::encode)
+				.consumerNetworkThread(PacketSyncBloodMoon::handle).add();
 
 		// Visceral Mirror packets
 		CHANNELBLOODVOLUME.messageBuilder(OpenVisceralMirrorPacket.class, networkID++)
