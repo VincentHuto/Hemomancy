@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.item.armor.BloodLustArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.ChitiniteArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.ChitiniteShieldItem;
 import com.vincenthuto.hemomancy.common.item.armor.EnumModArmorTiers;
+import com.vincenthuto.hemomancy.common.item.armor.HematicIronArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.MarrowCrownArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.UnstainedArmorItem;
 import com.vincenthuto.hemomancy.common.item.armor.UnstainedShieldItem;
@@ -472,17 +473,13 @@ public class ItemInit {
 
 	// Hematic
 	public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.HELMET,
-					(new Item.Properties()).fireResistant()));
+			() -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.HELMET));
 	public static final RegistryObject<Item> hematic_iron_chestplate = BASEITEMS.register("hematic_iron_chestplate",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.CHESTPLATE,
-					(new Item.Properties()).fireResistant()));
+			() -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.CHESTPLATE));
 	public static final RegistryObject<Item> hematic_iron_leggings = BASEITEMS.register("hematic_iron_leggings",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.LEGGINGS,
-					(new Item.Properties()).fireResistant()));
+			() -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.LEGGINGS));
 	public static final RegistryObject<Item> hematic_iron_boots = BASEITEMS.register("hematic_iron_boots",
-			() -> new ArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.BOOTS,
-					(new Item.Properties()).fireResistant()));
+			() -> new HematicIronArmorItem(EnumModArmorTiers.HEMATIC_IRON, ArmorItem.Type.BOOTS));
 	public static final RegistryObject<Item> hematic_iron_sword = HANDHELDITEMS.register("hematic_iron_sword",
 			() -> new SwordItem(EnumModToolTiers.HEMATIC_IRON, 3, -2.4F, new Item.Properties()));
 	public static final RegistryObject<Item> hematic_iron_knapper = HANDHELDITEMS.register("hematic_iron_knapper",

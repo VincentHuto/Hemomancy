@@ -955,5 +955,12 @@
 	"item.hemomancy.spawn_egg_hemojelly": "Hemojelly Spawn Egg",
 	"item.hemomancy.spawn_egg_venous_strider": "Venous Strider Spawn Egg",
 
-	"effect.hemomancy.neural_overload": "Neural Overload"
+	"effect.hemomancy.neural_overload": "Neural Overload",
+
+	"tooltip.hemomancy.hematic_iron_set_bonus": "Set Bonus (4): Passive blood regeneration (+2/tick)",
+	"tooltip.hemomancy.bloodlust_set_bonus": "Set Bonus (4): Lifesteal — 10% of melee damage heals you",
+	"tooltip.hemomancy.barbed_set_bonus": "Set Bonus (4): Thorns — attackers take damage and Blood Loss",
+	"tooltip.hemomancy.chitinite_set_bonus": "Set Bonus (4): +2 Armor Toughness, 25% projectile reduction",
+	"tooltip.hemomancy.unstained_set_bonus": "Set Bonus (4): Immunity to Blood Loss and Hemolysis",
+	"tooltip.hemomancy.marrow_crown_bonus": "Artifact: +10% melee damage when blood > 50%"
 }
