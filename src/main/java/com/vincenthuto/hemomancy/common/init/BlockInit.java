@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.block.functional.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
+import com.vincenthuto.hemomancy.common.item.tile.ChiselStationBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
@@ -312,7 +313,7 @@ public class BlockInit {
 	// Tiles
 	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
 			() -> new BlockChiselStation(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
+					.strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
 			() -> new MorphlingIncubatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -460,6 +461,10 @@ public class BlockInit {
 		if (b == BlockInit.visceral_mirror.get()) {
 			return Pair.of(block.getSecond(),
 					new VisceralMirrorBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.runic_chisel_station.get()) {
+			return Pair.of(block.getSecond(),
+					new ChiselStationBlockItem(b, new Item.Properties()));
 		}
 		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
 	}

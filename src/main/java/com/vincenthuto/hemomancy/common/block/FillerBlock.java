@@ -48,6 +48,21 @@ public class FillerBlock extends BaseEntityBlock {
         return Shapes.block();
     }
 
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Shapes.empty();
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+        return 1.0F;
+    }
+
     /**
      * Delegate right-click interactions to the main block.
      */

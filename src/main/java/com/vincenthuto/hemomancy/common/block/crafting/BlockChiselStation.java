@@ -1,7 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.crafting;
 
-import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.tile.crafting.ChiselStationBlockEntity;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -20,33 +22,36 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
-public class BlockChiselStation extends Block implements EntityBlock {
+public class BlockChiselStation extends Block implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(1.0999999999999996, 6.9, 1.0999999999999996, 14.9, 7.9, 14.899999999999999),
-					Block.box(1.0999999999999996, 0.09999999999999998, 1.0999999999999996, 14.9, 1, 14.899999999999999),
-					Block.box(12.5, 0, 12.7, 15, 8.2, 15.2), Block.box(12.5, 0, 1, 15, 8.2, 3.5),
-					Block.box(1, 0, 1, 3.5, 8.2, 3.5), Block.box(1, 0, 12.7, 3.5, 8.2, 15.2),
-					Block.box(2, 1, 2, 14, 8, 14))
-			.reduce((v1, v2) -> {
-				return Shapes.join(v1, v2, BooleanOp.OR);
-			}).get();
+
+	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
+	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+			new BlockPos(0, 1, 0)
+	};
+
+	/** Full-block collision shape for the base block. */
+	private static final VoxelShape SHAPE = Shapes.block();
 
 	public BlockChiselStation(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+	}
 
+	@Override
+	public BlockPos[] getFillerOffsets() {
+		return FILLER_OFFSETS;
 	}
 
 	@Override
@@ -55,29 +60,74 @@ public class BlockChiselStation extends Block implements EntityBlock {
 		if (!worldIn.isClientSide) {
 			BlockEntity tile = worldIn.getBlockEntity(pos);
 
-			if (tile instanceof ChiselStationBlockEntity) {
-				ChiselStationBlockEntity te = (ChiselStationBlockEntity) tile;
+			if (tile instanceof ChiselStationBlockEntity te) {
 				te.sendUpdates();
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 				if (te.numPlayersUsing < 2) {
-					//NetworkHooks.openGui((ServerPlayer) player, (ChiselStationBlockEntity) tile, pos);
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 					NetworkHooks.openScreen((ServerPlayer) player, te, pos);
-			
-					
 					return InteractionResult.SUCCESS;
 				}
 			} else {
 				return InteractionResult.PASS;
-
 			}
 		}
 		return InteractionResult.FAIL;
 	}
 
 	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE_N;
+		return SHAPE;
+	}
+
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+		return true;
+	}
+
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		// Need 1 block above the base (Y+1) for the filler
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		}
+		return null; // Prevents placement if there's not enough room
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+			@Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			if (!level.isClientSide) {
+				removeFillers(level, pos);
+			}
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
 	@Override
@@ -88,11 +138,6 @@ public class BlockChiselStation extends Block implements EntityBlock {
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 			boolean isMoving) {
-	}
-
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
 	@Override

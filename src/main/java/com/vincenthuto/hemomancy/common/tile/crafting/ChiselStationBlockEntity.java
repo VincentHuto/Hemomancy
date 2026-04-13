@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.menu.ChiselStationMenu;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
@@ -35,8 +36,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.world.phys.AABB;
 
-public class ChiselStationBlockEntity extends BaseContainerBlockEntity implements MenuProvider {
+public class ChiselStationBlockEntity extends BaseContainerBlockEntity implements MenuProvider, IMultiBlockEntity {
 	public NonNullList<ItemStack> contents = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 
 	public int numPlayersUsing = 0;
@@ -50,7 +52,12 @@ public class ChiselStationBlockEntity extends BaseContainerBlockEntity implement
 	public ChiselStationBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.runic_chisel_station.get(), pos, state);
 	}
-	
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		return IMultiBlockEntity.computeMultiBlockAABB(this);
+	}
+
 
 	@Override
 	public void onLoad() {

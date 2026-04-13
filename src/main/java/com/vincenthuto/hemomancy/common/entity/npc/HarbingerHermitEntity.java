@@ -58,6 +58,10 @@ public class HarbingerHermitEntity extends PathfinderMob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // Allow damage when invulnerability has been explicitly cleared (e.g. farewell sequence)
+        if (!this.isInvulnerable()) {
+            return super.hurt(source, amount);
+        }
         if (source.getEntity() instanceof Player player && player.isCreative()) {
             return super.hurt(source, amount);
         }

@@ -2,7 +2,6 @@ package com.vincenthuto.hemomancy.compat.mna.faction;
 
 import com.mna.api.faction.BaseFaction;
 import com.mna.api.sound.SFX;
-import com.mna.api.tools.RLoc;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import net.minecraft.ChatFormatting;
@@ -68,7 +67,7 @@ public class HarbingersFaction extends BaseFaction {
     }
 
     public ResourceLocation getSanctumStructure() {
-        return RLoc.create("multiblock/council_circle");
+        return Hemomancy.rloc("qliphoth_bloom");
     }
 
 

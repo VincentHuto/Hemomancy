@@ -5,6 +5,8 @@ import com.vincenthuto.hemomancy.common.rite.CardinalRiteEvents;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -49,6 +51,26 @@ public class QliphothBloomBlock extends BaseEntityBlock implements IMultiBlock {
 	@Override
 	public BlockPos[] getFillerOffsets() {
 		return FILLER_OFFSETS;
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		// Need 7 blocks above the base (Y+1 through Y+7)
+		if (pos.getY() + 7 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState();
+		}
+		return null; // Prevents placement if there's not enough room
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+			@Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
 	}
 
 	@Nullable
