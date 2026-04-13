@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -68,6 +69,13 @@ public class StructureScannerItem extends Item {
 		}
 		if (ctx.getPlayer() == null) {
 			return InteractionResult.PASS;
+		}
+		if (!ctx.getPlayer().isCreative()) {
+			ctx.getPlayer().displayClientMessage(
+					Component.literal("Structure Scanner requires creative mode!")
+							.withStyle(ChatFormatting.RED),
+					true);
+			return InteractionResult.FAIL;
 		}
 
 		ItemStack stack = ctx.getItemInHand();
@@ -193,7 +201,9 @@ public class StructureScannerItem extends Item {
 
 		// Write files
 		String stamp = String.valueOf(System.currentTimeMillis());
-		File outDir = new File("hemomancy_scans");
+		MinecraftServer server = level.getServer();
+		File baseDir = server != null ? server.getServerDirectory() : new File(".");
+		File outDir = new File(baseDir, "hemomancy_scans");
 		outDir.mkdirs();
 
 		String bloodFile = "blood_structure_" + stamp + ".json";
