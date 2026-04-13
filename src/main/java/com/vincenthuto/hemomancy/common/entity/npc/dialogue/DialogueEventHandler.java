@@ -81,7 +81,8 @@ public class DialogueEventHandler {
 								64.0f, hermit.level().dimension(),
 								ParticleColor.BLOOD, 2, 15, 6, 0.8f);
 					}
-					// Remove the hermit — its duty is fulfilled
+					// The hermit is invulnerable by default (see HarbingerHermitEntity constructor),
+					// so clear the flag before killing. Its duty is fulfilled.
 					hermit.setInvulnerable(false);
 					hermit.kill();
 				}
