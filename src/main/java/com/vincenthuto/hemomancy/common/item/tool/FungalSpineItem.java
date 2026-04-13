@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.item.tool;
 
+import java.util.List;
+
 import com.vincenthuto.hemomancy.Hemomancy;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +17,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
@@ -94,6 +99,12 @@ public class FungalSpineItem extends Item {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		return true;
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal("A calcified tendril from somewhere deep below. It hums faintly, as if listening.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 	}
 }
 

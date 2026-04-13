@@ -50,7 +50,7 @@ public class TalaromycesMinusItem extends ItemFungalRune {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Not to be confused with Talaromyces Flavus").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("A quiet decomposer. The hands quicken — the rune is impatient.").withStyle(ChatFormatting.ITALIC));
 	}
 
 }

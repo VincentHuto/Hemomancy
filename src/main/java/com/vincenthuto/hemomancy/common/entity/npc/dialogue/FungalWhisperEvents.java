@@ -15,11 +15,12 @@ import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Periodically triggers mysterious "fungal whisper" dialogues for players who
- * have reached initiation tiers 5–7 (Illuminatus, Sanctified, Archon). The
- * whispers hint at the potential fungal origins of the blood infection itself.
+ * have reached initiation tiers 4–7 (Adept through Archon). The whispers hint
+ * at the potential fungal origins of the blood infection itself.
  * <p>
- * The interval between whispers shortens as the player's degree increases,
- * and each tier has 3 variant messages to avoid repetition.
+ * At degree 4 the whispers are extremely rare and subliminal — barely
+ * perceptible intrusive thoughts that plant seeds of doubt. As the player's
+ * degree increases, the interval shortens and the content grows more explicit.
  */
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FungalWhisperEvents {
@@ -27,11 +28,13 @@ public class FungalWhisperEvents {
 	/**
 	 * Base interval in ticks between whisper checks.
 	 * <ul>
+	 *   <li>Adept (4): every ~30 minutes (36000 ticks) — very rare, subliminal</li>
 	 *   <li>Illuminatus (5): every ~20 minutes (24000 ticks)</li>
 	 *   <li>Sanctified (6): every ~15 minutes (18000 ticks)</li>
 	 *   <li>Archon (7): every ~10 minutes (12000 ticks)</li>
 	 * </ul>
 	 */
+	private static final int ADEPT_INTERVAL = 36000;
 	private static final int ILLUMINATUS_INTERVAL = 24000;
 	private static final int SANCTIFIED_INTERVAL = 18000;
 	private static final int ARCHON_INTERVAL = 12000;
@@ -53,7 +56,7 @@ public class FungalWhisperEvents {
 		if ((player.tickCount + stagger) % 200 != 0) return;
 
 		int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
-		if (degree < 5) return;
+		if (degree < 4) return;
 
 		// Ensure the player has active blood
 		boolean hasBlood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
@@ -65,6 +68,7 @@ public class FungalWhisperEvents {
 		// (the actual screen check happens client-side, but we avoid spamming)
 
 		int interval = switch (degree) {
+			case 4 -> ADEPT_INTERVAL;
 			case 5 -> ILLUMINATUS_INTERVAL;
 			case 6 -> SANCTIFIED_INTERVAL;
 			default -> ARCHON_INTERVAL;

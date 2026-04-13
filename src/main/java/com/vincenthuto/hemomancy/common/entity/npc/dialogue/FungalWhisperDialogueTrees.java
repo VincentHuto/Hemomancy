@@ -8,9 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 
 /**
  * Static factory that produces {@link DialogueTree} variants for the
- * mysterious "fungal whisper" events that plague players at high initiation
- * tiers (5–7). Each tier receives progressively more disturbing revelations
- * about the true fungal origins of hemomancy.
+ * mysterious "fungal whisper" events that plague players at initiation
+ * tiers 4–7 (Adept through Archon). Each tier receives progressively more
+ * disturbing revelations about the true fungal origins of hemomancy.
+ * <p>
+ * Degree 4 whispers are subliminal — fleeting intrusive sensations that the
+ * player might dismiss. They plant the first seeds of doubt without revealing
+ * anything explicit.
  * <p>
  * The speaker is anonymous ("???") with a mystery question-mark icon.
  */
@@ -23,18 +27,53 @@ public final class FungalWhisperDialogueTrees {
 	private FungalWhisperDialogueTrees() {}
 
 	/**
-	 * Returns a dialogue tree for the given degree. Only tiers 5–7 have
-	 * whisper content; lower tiers should never call this.
+	 * Returns a dialogue tree for the given degree. Tiers 4–7 have whisper
+	 * content; lower tiers should never call this.
 	 *
-	 * @param degree   The player's current initiatory degree (5, 6, or 7).
+	 * @param degree   The player's current initiatory degree (4, 5, 6, or 7).
 	 * @param variant  A variant index (0–2) for message variety within a tier.
 	 */
 	public static DialogueTree forDegree(int degree, int variant) {
 		// entityId of 0 means no entity — this is a disembodied voice
 		return switch (degree) {
+			case 4 -> adeptWhisper(variant);
 			case 5 -> illuminatusWhisper(variant);
 			case 6 -> sanctifiedWhisper(variant);
 			default -> archonWhisper(variant); // degree 7+
+		};
+	}
+
+	// ── Degree 4 — Adept whispers: subliminal intrusions, barely perceptible ──
+
+	private static DialogueTree adeptWhisper(int variant) {
+		return switch (variant) {
+			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.whisper.adept.v0.line1"
+					), List.of(
+							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+					)))
+					.build();
+			case 1 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.whisper.adept.v1.line1"
+					), List.of(
+							new DialogueOption("hemomancy.whisper.option.what_was_that", "follow", null),
+							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+					)))
+					.addNode(new DialogueNode("follow", List.of(
+							"hemomancy.whisper.adept.v1.follow"
+					), List.of(
+							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+					)))
+					.build();
+			default -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.whisper.adept.v2.line1"
+					), List.of(
+							new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+					)))
+					.build();
 		};
 	}
 

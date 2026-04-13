@@ -119,6 +119,28 @@ public final class RuneLoreData {
 		LORE.put("rune_wither",
 				"The Wither rune is not destruction — it is reduction. It drains the vital excess "
 				+ "from a target, leaving just enough for the practitioner to claim what remains.");
+
+		// ── Fungal runes — these are not carved so much as cultivated ──
+
+		LORE.put("respergillus",
+				"Named for a mould that colonises grain stores, the Respergillus rune draws moisture "
+				+ "from the practitioner's blood and redistributes it. You may breathe underwater — "
+				+ "but something in the gills feels borrowed, not given.");
+
+		LORE.put("talaromyces_minus",
+				"Talaromyces Minus is a soil-dweller, a quiet decomposer of dead matter. Etched into "
+				+ "the hemomantic lattice it accelerates the hands, quickens the pulse of labour — "
+				+ "as if the rune is impatient for you to break things down.");
+
+		LORE.put("lumina_devorans",
+				"Noctilumina Devorans. 'The light-eater.' This rune does not merely grant vision in "
+				+ "the dark — it feeds on illumination, growing stronger in the absence of light. "
+				+ "Those who wear it too long begin to find daylight... irritating.");
+
+		LORE.put("noctifly_agaric",
+				"The Noctifly Agaric cap unfurls wings of pale mycelium in response to the wearer's "
+				+ "will. Flight granted by fungus. The practitioner hovers effortlessly, but the "
+				+ "sensation is less like flying and more like being carried.");
 	}
 
 	/**
