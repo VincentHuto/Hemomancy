@@ -34,7 +34,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RemoveBlockGoal;
 import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +41,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -230,17 +228,17 @@ public class ChthonianEntity extends Spider {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
+		return SoundEvents.SPIDER_AMBIENT;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
+		return SoundEvents.SPIDER_DEATH;
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
+		return SoundEvents.SPIDER_HURT;
 	}
 
 	@Override
@@ -260,9 +258,9 @@ public class ChthonianEntity extends Spider {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(1, new RemoveBlockGoal(Blocks.OAK_WOOD, this, 1.5d, 10));
+		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
 		this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
-		// this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 

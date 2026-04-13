@@ -12,12 +12,11 @@ import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
 import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
 import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
-import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
+import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginManipulationInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.MnAPluginSpellInit;
-import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
 import com.vincenthuto.hemomancy.compat.mna.tile.MnAPluginBlockEntityInit;
 import com.vincenthuto.hemomancy.config.HemoConfig;
 import com.vincenthuto.hemomancy.config.HemoMnAConfig;
@@ -31,12 +30,9 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -54,7 +50,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -200,6 +195,28 @@ public class Hemomancy {
         return new ResourceLocation(MOD_ID, path);
     }
 
+    /**
+     * Registers a brewing recipe: Awkward Potion + plant item → mod potion.
+     */
+    private static void registerPlantBrewingRecipe(Item plantItem,
+                                                   net.minecraft.world.item.alchemy.Potion resultPotion) {
+        BrewingRecipeRegistry.addRecipe(
+                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
+                Ingredient.of(plantItem),
+                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
+    }
+
+    /**
+     * Registers a brewing recipe: Awkward Potion + mob drop → mod potion.
+     */
+    private static void registerDropBrewingRecipe(Item dropItem,
+                                                  net.minecraft.world.item.alchemy.Potion resultPotion) {
+        BrewingRecipeRegistry.addRecipe(
+                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
+                Ingredient.of(dropItem),
+                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
+    }
+
     public void buildContents(BuildCreativeModeTabContentsEvent populator) {
         if (populator.getTabKey() == hemomancytab.getKey()) {
             // Items
@@ -275,7 +292,9 @@ public class Hemomancy {
 
     }
 
-    /** Assigns icon items to each purity and clarity stage for rendering on the progress tree. */
+    /**
+     * Assigns icon items to each purity and clarity stage for rendering on the progress tree.
+     */
     private void initUnstainedStageIcons() {
         EnumPurityStage.CORRUPTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.blood_stained_stone.get()));
         EnumPurityStage.TAINTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_poppy_wreath.get()));
@@ -288,24 +307,6 @@ public class Hemomancy {
         EnumClarityStage.VIGILANT.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pale_silver_ingot.get()));
         EnumClarityStage.RESOLUTE.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tome_of_the_unstained.get()));
         EnumClarityStage.ENLIGHTENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethe_icon.get()));
-    }
-
-    /** Registers a brewing recipe: Awkward Potion + plant item → mod potion. */
-    private static void registerPlantBrewingRecipe(Item plantItem,
-            net.minecraft.world.item.alchemy.Potion resultPotion) {
-        BrewingRecipeRegistry.addRecipe(
-                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
-                Ingredient.of(plantItem),
-                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
-    }
-
-    /** Registers a brewing recipe: Awkward Potion + mob drop → mod potion. */
-    private static void registerDropBrewingRecipe(Item dropItem,
-            net.minecraft.world.item.alchemy.Potion resultPotion) {
-        BrewingRecipeRegistry.addRecipe(
-                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
-                Ingredient.of(dropItem),
-                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
     }
 
 }

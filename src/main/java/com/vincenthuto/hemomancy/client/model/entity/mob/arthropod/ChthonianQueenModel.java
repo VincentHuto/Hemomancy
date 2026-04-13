@@ -210,23 +210,46 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 
 		PartDefinition rMandible = skull.addOrReplaceChild("rMandible",
 				CubeListBuilder.create().texOffs(20, 21)
-						.addBox(-1.0F, -0.125F, -3.25F, 1.0F, 0.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(26, 30)
-						.addBox(-0.5F, -0.375F, -3.75F, 1.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(-1.5F, 1.125F, -1.75F));
+						.addBox(-1.0F, -0.375F, -3.25F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(26, 30)
+						.addBox(-0.5F, -0.625F, -3.75F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+				PartPose.offset(-1.5F, 20.625F, -5.75F));
 
 		PartDefinition lMandible = skull.addOrReplaceChild("lMandible",
 				CubeListBuilder.create().texOffs(12, 21)
-						.addBox(0.0F, -0.2F, -2.75F, 1.0F, 0.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(6, 23)
-						.addBox(-0.5F, -0.45F, -3.25F, 1.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(1.5F, 1.2F, -2.25F));
+						.addBox(0.0F, -0.45F, -2.75F, 1.0F, 1.0F, 3.0F, new CubeDeformation(0.0F)).texOffs(6, 23)
+						.addBox(-0.5F, -0.7F, -3.25F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)),
+				PartPose.offset(1.5F, 20.7F, -6.25F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	private final ModelPart whole;
+	private final ModelPart skull;
+	private final ModelPart lMandible;
+	private final ModelPart rMandible;
+	// Right leg group
+	private final ModelPart rFrontLeg;
+	private final ModelPart rMidLeg;
+	private final ModelPart rBackLeg;
+	// Left leg group
+	private final ModelPart lFrontLeg;
+	private final ModelPart lMidLeg;
+	private final ModelPart lBackLeg;
 
 	public ChthonianQueenModel(ModelPart root) {
 		this.whole = root.getChild("whole");
+		this.skull = this.whole.getChild("skull");
+		this.lMandible = this.skull.getChild("lMandible");
+		this.rMandible = this.skull.getChild("rMandible");
+		ModelPart thorax = this.whole.getChild("thorax");
+		ModelPart rLegs = thorax.getChild("rLegs");
+		this.rFrontLeg = rLegs.getChild("rFrontLeg");
+		this.rMidLeg = rLegs.getChild("rMidLeg");
+		this.rBackLeg = rLegs.getChild("rBackLeg");
+		ModelPart lLegs = thorax.getChild("lLegs");
+		this.lFrontLeg = lLegs.getChild("lFrontLeg");
+		this.lMidLeg = lLegs.getChild("lMidLeg");
+		this.lBackLeg = lLegs.getChild("lBackLeg");
 	}
 
 	@Override
@@ -238,6 +261,37 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
+		// Head tracking
+		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
 
+		// Mandible idle chewing motion
+		float mandibleChew = (float) Math.sin(ageInTicks * 0.3F) * 0.15F;
+		this.lMandible.yRot = mandibleChew;
+		this.rMandible.yRot = -mandibleChew;
+
+		// Leg walking animation — spider-style zRot
+		float legSpeed = 0.6662F;
+		float legAmplitude = 0.6F;
+
+		float swing1 = (float) Math.cos(limbSwing * legSpeed) * legAmplitude * limbSwingAmount;
+		float swing2 = (float) Math.cos(limbSwing * legSpeed + (float) Math.PI) * legAmplitude * limbSwingAmount;
+
+		// Right legs (base zRot = 0.2618): front & back in phase, mid anti-phase
+		this.rFrontLeg.zRot = 0.2618F + swing1;
+		this.rMidLeg.zRot   = 0.2618F + swing2;
+		this.rBackLeg.zRot  = 0.2618F + swing1;
+
+		// Left legs (base zRot = -0.2618): mirrored
+		this.lFrontLeg.zRot = -0.2618F - swing2;
+		this.lMidLeg.zRot   = -0.2618F - swing1;
+		this.lBackLeg.zRot  = -0.2618F - swing2;
+
+		// Slight yRot on front/back legs for forward/backward reach
+		float ySwing = (float) Math.cos(limbSwing * legSpeed) * 0.3F * limbSwingAmount;
+		this.rFrontLeg.yRot = -ySwing;
+		this.lFrontLeg.yRot = ySwing;
+		this.rBackLeg.yRot = ySwing;
+		this.lBackLeg.yRot = -ySwing;
 	}
 }

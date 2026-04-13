@@ -236,13 +236,41 @@ public class ChthonianModel<T extends Entity> extends EntityModel<T> {
 	@Override
 	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
 			float headPitch) {
+		// Head tracking
 		this.skull.yRot = netHeadYaw * ((float) Math.PI / 180F);
 		this.skull.xRot = headPitch * ((float) Math.PI / 180F);
 
-		this.lMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		// Mandibles follow head rotation + idle chewing motion
+		float mandibleChew = (float) Math.sin(ageInTicks * 0.3F) * 0.15F;
+		this.lMandible.yRot = netHeadYaw * ((float) Math.PI / 180F) + mandibleChew;
 		this.lMandible.xRot = headPitch * ((float) Math.PI / 180F);
-		this.rMandible.yRot = netHeadYaw * ((float) Math.PI / 180F);
+		this.rMandible.yRot = netHeadYaw * ((float) Math.PI / 180F) - mandibleChew;
 		this.rMandible.xRot = headPitch * ((float) Math.PI / 180F);
 
+		// Leg walking animation — spider-style zRot for sideways-extending legs
+		// Right legs have positive base zRot (0.2618), left legs have negative (-0.2618)
+		// Alternating pairs: front & back in phase, mid in anti-phase
+		float legSpeed = 0.6662F;
+		float legAmplitude = 0.6F;
+
+		float swing1 = (float) Math.cos(limbSwing * legSpeed) * legAmplitude * limbSwingAmount;
+		float swing2 = (float) Math.cos(limbSwing * legSpeed + (float) Math.PI) * legAmplitude * limbSwingAmount;
+
+		// Right legs (base zRot = 0.2618): swing makes them go more/less outward
+		this.rFrontLeg.zRot = 0.2618F + swing1;
+		this.rMidLeg.zRot   = 0.2618F + swing2;
+		this.rBackLeg.zRot  = 0.2618F + swing1;
+
+		// Left legs (base zRot = -0.2618): mirror
+		this.lFrontLeg.zRot = -0.2618F - swing2;
+		this.lMidLeg.zRot   = -0.2618F - swing1;
+		this.lBackLeg.zRot  = -0.2618F - swing2;
+
+		// Add slight yRot to front/back legs for forward/backward reach
+		float ySwing = (float) Math.cos(limbSwing * legSpeed) * 0.3F * limbSwingAmount;
+		this.rFrontLeg.yRot = -ySwing;
+		this.lFrontLeg.yRot = ySwing;
+		this.rBackLeg.yRot = ySwing;
+		this.lBackLeg.yRot = -ySwing;
 	}
 }
