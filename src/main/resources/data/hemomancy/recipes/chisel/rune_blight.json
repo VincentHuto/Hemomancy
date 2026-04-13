@@ -1,0 +1,95 @@
+{
+	"type": "hemomancy:chisel_recipe",
+	"tier": 2,
+	"runetype": "rune",
+	"ingredient1": {
+		"item": "hemomancy:rune_blank"
+	},
+	"ingredient2": {
+		"item": "minecraft:fermented_spider_eye"
+	},
+	"pattern": [
+		[
+			0,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			0
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			1,
+			0,
+			0,
+			0
+		]
+	],
+	"result": "hemomancy:rune_blight",
+	"count": 1
+}

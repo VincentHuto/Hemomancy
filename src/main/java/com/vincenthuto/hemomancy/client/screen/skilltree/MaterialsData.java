@@ -267,6 +267,84 @@ public final class MaterialsData {
 				"Ductilis-aligned rune. Awakens primal nervous pathways long dormant.",
 				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_feral.get())));
 
+		// ── Tier 1 Runes (new) ──
+
+		list.add(new MaterialEntry("rune_thorn", "Rune of the Thorn",
+				"Ferric-aligned rune. Draws iron from the blood to harden resolve.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_thorn.get())));
+
+		list.add(new MaterialEntry("rune_shade", "Rune of the Shade",
+				"Tenebris-aligned rune. Cloaks the bearer in the penumbra between worlds.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_shade.get())));
+
+		// ── Tier 2 Runes ──
+
+		list.add(new MaterialEntry("rune_pyre", "Rune of the Pyre",
+				"Flammeus-aligned rune. Stokes the cremation fire that purifies sanguine impurities.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_pyre.get())));
+
+		list.add(new MaterialEntry("rune_marrow", "Rune of Marrow",
+				"Animus-aligned rune. Taps the deep marrow where new blood is forged.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_marrow.get())));
+
+		list.add(new MaterialEntry("rune_blight", "Rune of Blight",
+				"Mortem-aligned rune. Channels the rot that consumes living tissue.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_blight.get())));
+
+		list.add(new MaterialEntry("rune_rime", "Rune of Rime",
+				"Congeatio-aligned rune. Crystallizes the blood into protective frost lattices.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_rime.get())));
+
+		list.add(new MaterialEntry("rune_flux", "Rune of Flux",
+				"Ductilis-aligned rune. Loosens the boundaries of form, permitting adaptation.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_flux.get())));
+
+		list.add(new MaterialEntry("rune_halo", "Rune of the Halo",
+				"Lux-aligned rune. Projects an aureole of purified sanguine radiance.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_halo.get())));
+
+		list.add(new MaterialEntry("rune_anvil", "Rune of the Anvil",
+				"Ferric-aligned rune. Tempers the blood's iron into an unyielding lattice.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_anvil.get())));
+
+		list.add(new MaterialEntry("rune_veil", "Rune of the Veil",
+				"Tenebris-aligned rune. Parts the membrane between the seen and unseen.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_veil.get())));
+
+		// ── Tier 3 Runes ──
+
+		list.add(new MaterialEntry("rune_phoenix", "Rune of the Phoenix",
+				"Flammeus-aligned rune. Inscribes the cycle of immolation and rebirth into the bloodline.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_phoenix.get())));
+
+		list.add(new MaterialEntry("rune_ichor", "Rune of Ichor",
+				"Animus-aligned rune. Awakens the primordial ichor that flows beneath mortal blood.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_ichor.get())));
+
+		list.add(new MaterialEntry("rune_wither", "Rune of Withering",
+				"Mortem-aligned rune. Accelerates entropy within the vital humours.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_wither.get())));
+
+		list.add(new MaterialEntry("rune_glacier", "Rune of the Glacier",
+				"Congeatio-aligned rune. Invokes the stillness of primordial ice to arrest all change.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_glacier.get())));
+
+		list.add(new MaterialEntry("rune_chimera", "Rune of the Chimera",
+				"Ductilis-aligned rune. Grafts disparate essences into a single protean bloodline.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_chimera.get())));
+
+		list.add(new MaterialEntry("rune_corona", "Rune of the Corona",
+				"Lux-aligned rune. Crowns the bearer in blinding sanguine luminescence.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_corona.get())));
+
+		list.add(new MaterialEntry("rune_crucible", "Rune of the Crucible",
+				"Ferric-aligned rune. Subjects the blood's metals to the ultimate forge-trial.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_crucible.get())));
+
+		list.add(new MaterialEntry("rune_oblivion", "Rune of Oblivion",
+				"Tenebris-aligned rune. Opens a void that consumes memory and substance alike.",
+				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_oblivion.get())));
+
 		return Collections.unmodifiableList(list);
 	}
 

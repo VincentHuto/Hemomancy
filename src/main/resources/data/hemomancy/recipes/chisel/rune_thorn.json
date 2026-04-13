@@ -1,0 +1,95 @@
+{
+	"type": "hemomancy:chisel_recipe",
+	"tier": 1,
+	"runetype": "rune",
+	"ingredient1": {
+		"item": "hemomancy:rune_blank"
+	},
+	"ingredient2": {
+		"item": "minecraft:iron_ingot"
+	},
+	"pattern": [
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0
+		],
+		[
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0
+		],
+		[
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			1
+		]
+	],
+	"result": "hemomancy:rune_thorn",
+	"count": 1
+}
