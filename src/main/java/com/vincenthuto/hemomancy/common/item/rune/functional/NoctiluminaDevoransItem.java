@@ -70,7 +70,7 @@ public class NoctiluminaDevoransItem extends ItemFungalRune {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Consumes light and thrives in darkness").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("Feeds on light. Thrives in darkness. Daylight grows... irritating.").withStyle(ChatFormatting.ITALIC));
 	}
 
 }

@@ -52,7 +52,7 @@ public class NoctiflyAgaricItem extends ItemFungalRune {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Grants the ability to hover and glide on wings of mycelium!").withStyle(ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("Wings of pale mycelium. Less like flying — more like being carried.").withStyle(ChatFormatting.ITALIC));
 	}
 
 }
