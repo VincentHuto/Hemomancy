@@ -259,7 +259,7 @@ public class ChthonianEntity extends Spider {
 	@Override
 	protected void registerGoals() {
 		this.goalSelector.addGoal(1, new ChewWoodGoal(this, 1.2d, 16));
-		this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
+		//this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
 		this.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(this, 0.8D));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));

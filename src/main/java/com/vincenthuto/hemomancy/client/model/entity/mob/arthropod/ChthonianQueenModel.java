@@ -227,6 +227,11 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 	private final ModelPart skull;
 	private final ModelPart lMandible;
 	private final ModelPart rMandible;
+	// Abdomen segments (for egg pulse animation)
+	private final ModelPart abdomen;
+	private final ModelPart abdomenSeg1; // bone3
+	private final ModelPart abdomenSeg2; // bone
+	private final ModelPart abdomenSeg3; // bone2
 	// Right leg group
 	private final ModelPart rFrontLeg;
 	private final ModelPart rMidLeg;
@@ -241,6 +246,10 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 		this.skull = this.whole.getChild("skull");
 		this.lMandible = this.skull.getChild("lMandible");
 		this.rMandible = this.skull.getChild("rMandible");
+		this.abdomen = this.whole.getChild("abdomen");
+		this.abdomenSeg1 = this.abdomen.getChild("bone3");
+		this.abdomenSeg2 = this.abdomenSeg1.getChild("bone");
+		this.abdomenSeg3 = this.abdomenSeg2.getChild("bone2");
 		ModelPart thorax = this.whole.getChild("thorax");
 		ModelPart rLegs = thorax.getChild("rLegs");
 		this.rFrontLeg = rLegs.getChild("rFrontLeg");
@@ -269,6 +278,31 @@ public class ChthonianQueenModel<T extends Entity> extends EntityModel<T> {
 		float mandibleChew = (float) Math.sin(ageInTicks * 0.3F) * 0.15F;
 		this.lMandible.yRot = mandibleChew;
 		this.rMandible.yRot = -mandibleChew;
+
+		// --- Abdomen egg pulse ---
+		// Slow overall breathing pulse on the whole abdomen
+		float breathPulse = 1.0F + (float) Math.sin(ageInTicks * 0.08F) * 0.06F;
+		this.abdomen.xScale = breathPulse;
+		this.abdomen.yScale = breathPulse;
+		this.abdomen.zScale = breathPulse;
+
+		// Peristaltic wave through the 3 segments — each offset in phase
+		// so it looks like eggs are being pushed toward the rear
+		float pulseSpeed = 0.15F;
+		float pulseStrength = 0.12F;
+		float seg1Pulse = 1.0F + (float) Math.sin(ageInTicks * pulseSpeed) * pulseStrength;
+		float seg2Pulse = 1.0F + (float) Math.sin(ageInTicks * pulseSpeed - 1.2F) * pulseStrength;
+		float seg3Pulse = 1.0F + (float) Math.sin(ageInTicks * pulseSpeed - 2.4F) * pulseStrength;
+
+		this.abdomenSeg1.xScale = seg1Pulse;
+		this.abdomenSeg1.yScale = seg1Pulse;
+		this.abdomenSeg2.xScale = seg2Pulse;
+		this.abdomenSeg2.yScale = seg2Pulse;
+		this.abdomenSeg3.xScale = seg3Pulse;
+		this.abdomenSeg3.yScale = seg3Pulse;
+
+		// Subtle abdomen droop / sway for organic feel
+		this.abdomen.xRot = (float) Math.sin(ageInTicks * 0.05F) * 0.03F;
 
 		// Leg walking animation — spider-style zRot
 		float legSpeed = 0.6662F;

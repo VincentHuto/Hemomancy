@@ -4,8 +4,9 @@ import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,12 +42,12 @@ public class SanguineFervorEvents {
 	// ── Spawn check: force-allow spawns inside active fervor zones ─────────────
 
 	@SubscribeEvent
-	public static void onCheckSpawn(LivingSpawnEvent.CheckSpawn event) {
+	public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
 		// Skip spawner-block spawns — only boost naturally-spawned mobs
-		if (event.isSpawner()) return;
+		if (event.getSpawnType() == MobSpawnType.SPAWNER) return;
 
-		net.minecraft.world.level.LevelAccessor level = event.getLevel();
-		if (!(level instanceof ServerLevel sLevel)) return;
+		net.minecraft.world.level.ServerLevelAccessor levelAccessor = event.getLevel();
+		ServerLevel sLevel = levelAccessor.getLevel();
 
 		ServerLevel overworld = sLevel.getServer().overworld();
 		SanguineFervorSavedData data = SanguineFervorSavedData.get(overworld);

@@ -10,6 +10,8 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.UnstainedAcolyteEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.UnstainedGuardianEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
@@ -54,6 +56,18 @@ public class EntityInit {
             () -> EntityType.Builder.of(UnstainedZealotEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("unstained_zealot").toString()));
+
+    public static final RegistryObject<EntityType<UnstainedGuardianEntity>> unstained_guardian = ENTITY_TYPES.register(
+            "unstained_guardian",
+            () -> EntityType.Builder.of(UnstainedGuardianEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("unstained_guardian").toString()));
+
+    public static final RegistryObject<EntityType<UnstainedAcolyteEntity>> unstained_acolyte = ENTITY_TYPES.register(
+            "unstained_acolyte",
+            () -> EntityType.Builder.of(UnstainedAcolyteEntity::new, MobCategory.CREATURE)
+                    .sized(0.6F, 1.95F)
+                    .build(Hemomancy.rloc("unstained_acolyte").toString()));
 
     public static final RegistryObject<EntityType<SpectralCompanionEntity>> spectral_companion = ENTITY_TYPES.register(
             "spectral_companion",
@@ -364,6 +378,8 @@ public class EntityInit {
         event.put(EntityInit.enthralled_doll.get(), EnthralledDollEntity.setAttributes().build());
         event.put(EntityInit.blood_thrall.get(), BloodThrallEntity.setAttributes().build());
         event.put(EntityInit.unstained_zealot.get(), UnstainedZealotEntity.setAttributes().build());
+        event.put(EntityInit.unstained_guardian.get(), UnstainedGuardianEntity.setAttributes().build());
+        event.put(EntityInit.unstained_acolyte.get(), UnstainedAcolyteEntity.setAttributes().build());
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());

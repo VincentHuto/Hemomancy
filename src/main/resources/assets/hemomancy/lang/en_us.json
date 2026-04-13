@@ -604,6 +604,8 @@
 	"hemomancy.rite.horn_of_culmination_rite.name": "Rite of the Curved Horn",
 
 	"entity.hemomancy.unstained_zealot": "Unstained Zealot",
+	"entity.hemomancy.unstained_guardian": "Unstained Guardian",
+	"entity.hemomancy.unstained_acolyte": "Unstained Acolyte",
 	"entity.hemomancy.spectral_companion": "Spectral Companion",
 	"hemomancy.zealot.plea.line1": "§7[The Zealot regards you with silver eyes]",
 	"hemomancy.zealot.plea.line2": "You carry the stain of the Hematic Covenant upon your blood, Votary...",

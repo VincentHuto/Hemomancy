@@ -38,6 +38,8 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LeechModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LumpOfThoughtModel;
 import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingPolypModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.ThirsterModel;
+import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedAcolyteModel;
+import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedGuardianModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedZealotModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.DessicantModel;
@@ -147,6 +149,8 @@ public class LayerEvents {
 		event.registerLayerDefinition(BarbedUrchinMidModel.LAYER_LOCATION, BarbedUrchinMidModel::createBodyLayer);
 		event.registerLayerDefinition(HemolymphopodaModel.LAYER_LOCATION, HemolymphopodaModel::createBodyLayer);
 		event.registerLayerDefinition(UnstainedZealotModel.LAYER_LOCATION, UnstainedZealotModel::createBodyLayer);
+		event.registerLayerDefinition(UnstainedGuardianModel.LAYER_LOCATION, UnstainedGuardianModel::createBodyLayer);
+		event.registerLayerDefinition(UnstainedAcolyteModel.LAYER_LOCATION, UnstainedAcolyteModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
 		event.registerLayerDefinition(DessicantModel.LAYER_LOCATION, DessicantModel::createBodyLayer);
 		event.registerLayerDefinition(CruorFiendModel.LAYER_LOCATION, CruorFiendModel::createBodyLayer);
