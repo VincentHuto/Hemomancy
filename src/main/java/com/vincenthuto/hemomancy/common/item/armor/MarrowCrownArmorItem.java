@@ -31,7 +31,7 @@ public class MarrowCrownArmorItem extends ArmorItem {
 	
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal(""));
+		tooltip.add(Component.translatable("tooltip.hemomancy.marrow_crown_bonus").withStyle(ChatFormatting.GOLD));
 	}
 
 

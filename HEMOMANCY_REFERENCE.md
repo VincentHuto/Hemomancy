@@ -700,6 +700,7 @@ Standard blood-infused iron armor set (fire resistant):
 - ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_boots.png) Boots
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Hematic Iron Scrap
+- **Set Bonus (4 pieces):** Passive blood regeneration — +2 blood/second while wearing full set
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_2.png)
 
@@ -711,6 +712,7 @@ Special armor with mask variants:
 - Mask items: ![](src/main/resources/assets/hemomancy/textures/item/tengu_mask.png) Tengu Mask, ![](src/main/resources/assets/hemomancy/textures/item/horned_mask.png) Horned Mask (crafting ingredients)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Hematic Iron Scrap
+- **Set Bonus (4 pieces):** Lifesteal — 10% of direct melee damage dealt heals the player
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/blood_lust_layer_2.png)
 
@@ -721,6 +723,7 @@ Defensive barbed armor set:
 - Barbed Shield ![](src/main/resources/assets/hemomancy/textures/entity/barbed_shield/model_barbed_shield.png)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Chitinous Husk
+- **Set Bonus (4 pieces):** Thorns — attackers take 2 damage and receive Blood Loss effect (3 seconds)
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/barbed_layer_2.png)
 
@@ -732,6 +735,7 @@ Insectoid/chitin-based armor:
 - Chitinite Arm Banner (dyeable, 16 colors)
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Chitinous Husk
+- **Set Bonus (4 pieces):** +2.0 Armor Toughness (via attribute modifier) and 25% projectile damage reduction
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/chitinite_layer_2.png)
 
@@ -741,6 +745,7 @@ Anti-blood zealot armor (for the Unstained path):
 - ![](src/main/resources/assets/hemomancy/textures/item/unstained_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/unstained_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/unstained_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/unstained_boots.png) Boots
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Chitinous Husk (placeholder — should be Pale Silver Ingot or Consecrated Copper)
+- **Set Bonus (4 pieces):** Immunity to Blood Loss and Hemolysis effects (auto-removed on tick)
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/unstained_layer_2.png)
 
@@ -749,8 +754,9 @@ Anti-blood zealot armor (for the Unstained path):
 Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 - **Stats:** Same as Hematic Iron (Defense 3/6/8/3, Toughness 3.0, KB Resist 0.1)
 - **Repair:** Hematic Iron Scrap
+- **Artifact Bonus:** +10% melee damage (via attribute modifier) when blood volume is above 50%
 
-> **Note:** All armor sets currently share identical stat distributions (equivalent to Netherite-tier defense/toughness). Set bonuses beyond the stats are **not yet implemented** — no `onArmorTick` or set-bonus logic exists. This is an area for future differentiation (e.g., Blood Lust → lifesteal on hit, Barbed → thorns damage, Chitinite → knockback resistance, Unstained → blood magic resistance).
+> **Note:** All armor sets share identical base stat distributions (equivalent to Netherite-tier defense/toughness) but each has a unique set bonus implemented in `ArmorSetBonusHandler`. The Marrow Crown is an artifact helmet with its own standalone bonus that doesn't require a full set.
 
 ---
 
@@ -1413,15 +1419,15 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 
 ## 30. Known WIP / Incomplete Systems
 
-- **Entity Loot Tables** — All entity loot tables in `HemoEntityLootProvider` are entirely commented out and the data generator is disabled in `DataGeneration.java`. **No mobs drop items.** See §19.6 for intended drop list. This is gameplay-critical.
+- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 25 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum** — `HemoProgressionScreen.setupEntries()` is entirely commented out. The `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. Needs entry definitions and page content.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Skill Effect Wiring** — 7 of 13 skills have helper methods in `SkillPointHelper` but are NOT wired into any event handlers: Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Iron Will, Blood Flow, Coagulation. See §9 skill wiring table. Only Capacity, Efficiency, Last Wind, Feeding Frenzy, Crimson Mastery, and Sanguine Reach are actually functional.
+- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **RESOLVED:** All 13 skills in `SkillPointHelper` are fully wired into event handlers: Capacity, Efficiency, Last Wind, Dynamic Use, Feeding Frenzy, Hemostasis, Sanguine Surge, Crimson Mastery, Vital Link, Iron Will, Blood Flow, Coagulation, and Sanguine Reach. See `BloodVolumeEvents`, `BloodManipulation`, `KnownManipulationEvents`, `BloodLossEffect`, `HemolysisEffect`, and individual manipulation classes.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
-- **Armor Set Bonuses** — All 6 armor sets share identical stats (20 defense, 3.0 toughness). No `onArmorTick` or set bonus logic exists. Each set should have unique gameplay bonuses.
+- **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
 - **Old Morphling Maturity** — The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.
 - **Rune Gameplay Effects** — Standard runes only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
