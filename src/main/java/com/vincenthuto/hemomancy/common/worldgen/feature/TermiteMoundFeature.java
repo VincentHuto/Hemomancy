@@ -5,9 +5,11 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -65,7 +67,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		carveTunnels(level, groundPos, baseRadius, height, random);
 
 		// Spawn termites and queen
-		spawnInhabitants(level, groundPos, height, random);
+		spawnInhabitants(level, groundPos, height, baseRadius, random);
 
 		return true;
 	}
@@ -315,31 +317,89 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	/**
-	 * Spawn chthonian termites and their queen inside the mound.
+	 * Spawn chthonian termites around and inside the mound, with at least one
+	 * guaranteed queen in the central chamber.
+	 * <p>
+	 * Note: During world-gen, the level is a {@code WorldGenRegion}, not a
+	 * {@code ServerLevel}, so we cannot use {@code EntityType.spawn(ServerLevel...)}.
+	 * Instead we manually create each entity and add it via
+	 * {@code addFreshEntityWithPassengers}.
 	 */
-	private void spawnInhabitants(WorldGenLevel level, BlockPos base, int height, RandomSource random) {
-		if (!(level instanceof ServerLevel serverLevel)) {
-			return;
-		}
+	private void spawnInhabitants(WorldGenLevel level, BlockPos base, int height, int baseRadius,
+			RandomSource random) {
 
 		int chamberY = height / 3;
-		BlockPos chamberCenter = base.offset(0, chamberY + 1, 0);
 
-		// Spawn the queen in the central chamber
-		EntityInit.chthonian_queen.get().spawn(serverLevel, chamberCenter, MobSpawnType.STRUCTURE);
-
-		// Spawn 4-8 worker termites throughout the mound
-		int termiteCount = 4 + random.nextInt(5);
-		for (int i = 0; i < termiteCount; i++) {
-			int dx = random.nextInt(5) - 2;
-			int dy = random.nextInt(height / 2);
-			int dz = random.nextInt(5) - 2;
-			BlockPos spawnPos = base.offset(dx, chamberY + dy, dz);
-
-			// Find air space for spawning
-			if (level.getBlockState(spawnPos).isAir()) {
-				EntityInit.chthonian.get().spawn(serverLevel, spawnPos, MobSpawnType.STRUCTURE);
+		// --- Guarantee at least 1 queen inside the central chamber ---
+		boolean queenSpawned = false;
+		// Try the exact center first, then search nearby air blocks
+		for (int attempt = 0; attempt < 16 && !queenSpawned; attempt++) {
+			int dx = (attempt == 0) ? 0 : random.nextInt(5) - 2;
+			int dy = (attempt == 0) ? 0 : random.nextInt(3) - 1;
+			int dz = (attempt == 0) ? 0 : random.nextInt(5) - 2;
+			BlockPos queenPos = base.offset(dx, chamberY + 1 + dy, dz);
+			if (level.getBlockState(queenPos).isAir()) {
+				spawnMob(level, EntityInit.chthonian_queen.get(), queenPos);
+				queenSpawned = true;
 			}
 		}
+		// Last resort: force-clear the center and spawn the queen there
+		if (!queenSpawned) {
+			BlockPos queenPos = base.offset(0, chamberY + 1, 0);
+			level.setBlock(queenPos, Blocks.AIR.defaultBlockState(), 2);
+			spawnMob(level, EntityInit.chthonian_queen.get(), queenPos);
+		}
+
+		// --- Spawn 3-5 chthonians inside the mound tunnels/chambers ---
+		int innerCount = 3 + random.nextInt(3);
+		for (int i = 0; i < innerCount; i++) {
+			for (int attempt = 0; attempt < 8; attempt++) {
+				int dx = random.nextInt(5) - 2;
+				int dy = random.nextInt(height / 2);
+				int dz = random.nextInt(5) - 2;
+				BlockPos spawnPos = base.offset(dx, chamberY + dy, dz);
+				if (level.getBlockState(spawnPos).isAir()) {
+					spawnMob(level, EntityInit.chthonian.get(), spawnPos);
+					break;
+				}
+			}
+		}
+
+		// --- Spawn 4-7 chthonians around the outside of the mound ---
+		int outerCount = 4 + random.nextInt(4);
+		for (int i = 0; i < outerCount; i++) {
+			float angle = random.nextFloat() * Mth.TWO_PI;
+			int distance = baseRadius + 1 + random.nextInt(3); // just outside the base
+			int ox = Mth.floor(Math.cos(angle) * distance);
+			int oz = Mth.floor(Math.sin(angle) * distance);
+			// Find ground level at this position
+			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(
+					base.getX() + ox, base.getY() + 4, base.getZ() + oz);
+			for (int scan = 0; scan < 10; scan++) {
+				if (level.getBlockState(mutable).isAir()
+						&& level.getBlockState(mutable.below()).isFaceSturdy(level, mutable.below(), Direction.UP)) {
+					spawnMob(level, EntityInit.chthonian.get(), mutable.immutable());
+					break;
+				}
+				mutable.move(Direction.DOWN);
+			}
+		}
+	}
+
+	/**
+	 * Manually creates and adds a mob entity during world generation.
+	 * Uses {@code EntityType.create()} + {@code addFreshEntityWithPassengers()}
+	 * because the standard {@code EntityType.spawn()} requires a {@code ServerLevel}
+	 * which is not available during feature placement (only {@code WorldGenRegion}).
+	 */
+	private <T extends Entity> void spawnMob(WorldGenLevel level, EntityType<T> type, BlockPos pos) {
+		T entity = type.create(level.getLevel());
+		if (entity == null) return;
+		entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.getRandom().nextFloat() * 360.0f, 0.0f);
+		if (entity instanceof Mob mob) {
+			mob.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+			mob.setPersistenceRequired();
+		}
+		level.addFreshEntityWithPassengers(entity);
 	}
 }

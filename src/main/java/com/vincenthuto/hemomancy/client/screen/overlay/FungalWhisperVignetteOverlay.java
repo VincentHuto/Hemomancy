@@ -1,16 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 
 /**
@@ -55,7 +45,7 @@ public class FungalWhisperVignetteOverlay {
 		}
 	}
 
-	public void renderHUD(GuiGraphics guiGraphics, int screenWidth, int screenHeight, float partialTicks) {
+	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
 		if (remainingTicks <= 0) {
 			return;
 		}
@@ -67,7 +57,6 @@ public class FungalWhisperVignetteOverlay {
 		if (elapsed < FLASH_IN_TICKS) {
 			// Phase 1: rapid flash in
 			float t = elapsed / FLASH_IN_TICKS;
-			// Use ease-out (fast start, slow finish) for a sudden flash feel
 			alpha = PEAK_ALPHA * (1.0f - (1.0f - t) * (1.0f - t));
 		} else if (elapsed < FLASH_IN_TICKS + HOLD_TICKS) {
 			// Phase 2: hold at peak with slight pulsing
@@ -79,91 +68,99 @@ public class FungalWhisperVignetteOverlay {
 			float fadeElapsed = elapsed - FLASH_IN_TICKS - HOLD_TICKS;
 			float fadeDuration = TOTAL_DURATION - FLASH_IN_TICKS - HOLD_TICKS;
 			float t = Math.min(1.0f, fadeElapsed / fadeDuration);
-			// Ease-in for gentle fade (slow start, fast end)
 			alpha = PEAK_ALPHA * (1.0f - t * t);
 		}
 
 		alpha = Mth.clamp(alpha, 0.0f, 1.0f);
 		if (alpha <= 0.001f) return;
 
-		RenderSystem.disableDepthTest();
-		RenderSystem.depthMask(false);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
-
-		Matrix4f matrix = guiGraphics.pose().last().pose();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
-
 		// Deep blood red with a slight dark tint
-		float r = 0.45f;
-		float g = 0.0f;
-		float b = 0.02f;
+		int ri = 115; // ~0.45 * 255
+		int gi = 0;
+		int bi = 5;   // ~0.02 * 255
 
-		// Inner alpha is 0 (transparent center), outer alpha is the computed value
-		// Use a wider edge for a more dramatic, enveloping vignette
-		float edgeSize = Math.min(screenWidth, screenHeight) * 0.45f;
+		int a = (int) (alpha * 255);
+		int opaqueColor = (a << 24) | (ri << 16) | (gi << 8) | bi;
+		int transparentColor = (0 << 24) | (ri << 16) | (gi << 8) | bi;
 
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		int edgeSize = (int) (Math.min(screenWidth, screenHeight) * 0.45f);
 
 		// Top edge — opaque at top, fading to transparent
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
+		gfx.fillGradient(0, 0, screenWidth, edgeSize, opaqueColor, transparentColor);
 
-		// Bottom edge
-		buffer.vertex(matrix, 0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		// Bottom edge — transparent at top, fading to opaque
+		gfx.fillGradient(0, screenHeight - edgeSize, screenWidth, screenHeight, transparentColor, opaqueColor);
 
-		// Left edge
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
+		// Left edge — per-column fill, opaque at left fading right
+		for (int col = 0; col < edgeSize; col++) {
+			float t = 1.0f - (float) col / edgeSize;
+			int ca = (int) (a * t);
+			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(col, 0, col + 1, screenHeight, color);
+		}
 
-		// Right edge
-		buffer.vertex(matrix, screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
+		// Right edge — per-column fill, opaque at right fading left
+		for (int col = 0; col < edgeSize; col++) {
+			float t = (float) col / edgeSize;
+			int ca = (int) (a * t);
+			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(screenWidth - edgeSize + col, 0, screenWidth - edgeSize + col + 1, screenHeight, color);
+		}
 
-		// Corner intensifiers — small triangular quads in the four corners
-		// for extra blood pooling effect
-		float cornerSize = edgeSize * 0.6f;
-		float cornerAlpha = alpha * 0.5f;
+		// Corner intensifiers — extra darkening in the four corners
+		int cornerSize = (int) (edgeSize * 0.6f);
+		int cornerAlpha = (int) (a * 0.5f);
 
-		// Top-left corner fill
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, cornerAlpha).endVertex();
+		// Top-left corner
+		for (int row = 0; row < cornerSize; row++) {
+			float rowFade = 1.0f - (float) row / cornerSize;
+			for (int col = 0; col < cornerSize - row; col++) {
+				float colFade = 1.0f - (float) col / cornerSize;
+				int ca = (int) (cornerAlpha * rowFade * colFade);
+				if (ca > 0) {
+					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+					gfx.fill(col, row, col + 1, row + 1, color);
+				}
+			}
+		}
 
-		// Top-right corner fill
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, screenWidth, cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth - cornerSize, 0, 0).color(r, g, b, 0.0f).endVertex();
+		// Top-right corner
+		for (int row = 0; row < cornerSize; row++) {
+			float rowFade = 1.0f - (float) row / cornerSize;
+			for (int col = 0; col < cornerSize - row; col++) {
+				float colFade = 1.0f - (float) col / cornerSize;
+				int ca = (int) (cornerAlpha * rowFade * colFade);
+				if (ca > 0) {
+					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+					gfx.fill(screenWidth - 1 - col, row, screenWidth - col, row + 1, color);
+				}
+			}
+		}
 
-		// Bottom-left corner fill
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
+		// Bottom-left corner
+		for (int row = 0; row < cornerSize; row++) {
+			float rowFade = 1.0f - (float) row / cornerSize;
+			for (int col = 0; col < cornerSize - row; col++) {
+				float colFade = 1.0f - (float) col / cornerSize;
+				int ca = (int) (cornerAlpha * rowFade * colFade);
+				if (ca > 0) {
+					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+					gfx.fill(col, screenHeight - 1 - row, col + 1, screenHeight - row, color);
+				}
+			}
+		}
 
-		// Bottom-right corner fill
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-		buffer.vertex(matrix, screenWidth - cornerSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight - cornerSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, cornerAlpha).endVertex();
-
-		BufferUploader.drawWithShader(buffer.end());
-
-		RenderSystem.depthMask(true);
-		RenderSystem.enableDepthTest();
-		RenderSystem.disableBlend();
+		// Bottom-right corner
+		for (int row = 0; row < cornerSize; row++) {
+			float rowFade = 1.0f - (float) row / cornerSize;
+			for (int col = 0; col < cornerSize - row; col++) {
+				float colFade = 1.0f - (float) col / cornerSize;
+				int ca = (int) (cornerAlpha * rowFade * colFade);
+				if (ca > 0) {
+					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+					gfx.fill(screenWidth - 1 - col, screenHeight - 1 - row, screenWidth - col, screenHeight - row, color);
+				}
+			}
+		}
 	}
 }

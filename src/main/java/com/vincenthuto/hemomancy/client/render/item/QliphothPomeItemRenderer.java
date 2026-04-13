@@ -22,7 +22,7 @@ public class QliphothPomeItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	/** Sphere resolution. */
 	private static final int LAT = 24;
-	private static final int LON = 24;
+	private static final int LON = 7;
 	/** Orb visual radius — kept small so it reads as a collectable fruit. */
 	private static final float ORB_RADIUS = 0.1f;
 	/** Radius of the glow shell (slightly larger than the orb). */

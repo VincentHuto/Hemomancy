@@ -566,8 +566,8 @@ public class ItemInit {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> runic_motif_paper = BASEITEMS.register("runic_motif_paper",
 			() -> new Item(new Item.Properties()));
-	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
-			() -> new Item(new Item.Properties()));
+//	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
+//			() -> new Item(new Item.Properties()));
 
 	public static final RegistryObject<Item> rune_binder = BASEITEMS.register("rune_binder",
 			() -> new ItemRuneBinder("rune_binder", 18, Rarity.UNCOMMON));

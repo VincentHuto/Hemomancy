@@ -45,6 +45,6 @@ public class TestRegion1 extends Region
             .build().forEach(point -> builder.add(point, TerraBiomeInit.COLD_BLUE));
 
         // Add our points to the mapper
-        builder.build().forEach(mapper);
+        //builder.build().forEach(mapper);
     }
 }

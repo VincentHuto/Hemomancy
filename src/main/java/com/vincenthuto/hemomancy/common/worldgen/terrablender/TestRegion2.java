@@ -28,7 +28,7 @@ public class TestRegion2 extends Region
         this.addModifiedVanillaOverworldBiomes(mapper, builder -> {
             // Simple example:
             // Replace the Vanilla desert with our hot_red biome
-            builder.replaceBiome(Biomes.DESERT, TerraBiomeInit.HOT_RED);
+      //      builder.replaceBiome(Biomes.DESERT, TerraBiomeInit.HOT_RED);
         });
         
 

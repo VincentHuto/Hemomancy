@@ -1,16 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.overlay;
 
-import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
 
 /**
  * HUD overlay that renders a reddish vignette around the screen edges
@@ -39,7 +29,7 @@ public class ManipCooldownOverlay {
 		}
 	}
 
-	public void renderHUD(GuiGraphics guiGraphics, int screenWidth, int screenHeight, float partialTicks) {
+	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTicks) {
 		if (cooldownRemaining <= 0 || cooldownDuration <= 0) {
 			return;
 		}
@@ -48,53 +38,35 @@ public class ManipCooldownOverlay {
 		progress = Math.max(0.0f, Math.min(1.0f, progress));
 
 		float alpha = progress * 0.6f;
+		int edgeSize = (int) (Math.min(screenWidth, screenHeight) * 0.35f);
 
-		RenderSystem.disableDepthTest();
-		RenderSystem.depthMask(false);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		int ri = 153; // 0.6 * 255
+		int gi = 0;
+		int bi = 0;
+		int a = (int) (alpha * 255);
+		int opaqueColor = (a << 24) | (ri << 16) | (gi << 8) | bi;
+		int transparentColor = (0 << 24) | (ri << 16) | (gi << 8) | bi;
 
-		Matrix4f matrix = guiGraphics.pose().last().pose();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		// Top edge — opaque at top, fading to transparent
+		gfx.fillGradient(0, 0, screenWidth, edgeSize, opaqueColor, transparentColor);
 
-		float r = 0.6f;
-		float g = 0.0f;
-		float b = 0.0f;
+		// Bottom edge — transparent at top, fading to opaque
+		gfx.fillGradient(0, screenHeight - edgeSize, screenWidth, screenHeight, transparentColor, opaqueColor);
 
-		float edgeSize = Math.min(screenWidth, screenHeight) * 0.35f;
+		// Left edge — per-column fill, opaque at left fading right
+		for (int col = 0; col < edgeSize; col++) {
+			float t = 1.0f - (float) col / edgeSize;
+			int ca = (int) (a * t);
+			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(col, 0, col + 1, screenHeight, color);
+		}
 
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-
-		// Top edge
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-
-		// Bottom edge
-		buffer.vertex(matrix, 0, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight - edgeSize, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
-
-		// Left edge
-		buffer.vertex(matrix, 0, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, 0, screenHeight, 0).color(r, g, b, alpha).endVertex();
-
-		// Right edge
-		buffer.vertex(matrix, screenWidth - edgeSize, 0, 0).color(r, g, b, 0.0f).endVertex();
-		buffer.vertex(matrix, screenWidth, 0, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth, screenHeight, 0).color(r, g, b, alpha).endVertex();
-		buffer.vertex(matrix, screenWidth - edgeSize, screenHeight, 0).color(r, g, b, 0.0f).endVertex();
-
-		BufferUploader.drawWithShader(buffer.end());
-
-		RenderSystem.depthMask(true);
-		RenderSystem.enableDepthTest();
-		RenderSystem.disableBlend();
+		// Right edge — per-column fill, opaque at right fading left
+		for (int col = 0; col < edgeSize; col++) {
+			float t = (float) col / edgeSize;
+			int ca = (int) (a * t);
+			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(screenWidth - edgeSize + col, 0, screenWidth - edgeSize + col + 1, screenHeight, color);
+		}
 	}
 }
