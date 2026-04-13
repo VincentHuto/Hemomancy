@@ -4,10 +4,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 /**
- * Full-screen blood vignette overlay that flashes briefly when a fungal
+ * Full-screen orange vignette overlay that flashes briefly when a fungal
  * whisper dialogue is triggered. The effect rapidly flashes in over a few
  * ticks, holds briefly, then fades out smoothly — giving the impression
- * of blood rushing to the edges of the player's vision.
+ * of fungal spores at the edges of the player's vision.
  */
 public class FungalWhisperVignetteOverlay {
 
@@ -74,10 +74,10 @@ public class FungalWhisperVignetteOverlay {
 		alpha = Mth.clamp(alpha, 0.0f, 1.0f);
 		if (alpha <= 0.001f) return;
 
-		// Deep blood red with a slight dark tint
-		int ri = 115; // ~0.45 * 255
-		int gi = 0;
-		int bi = 5;   // ~0.02 * 255
+		// Warm fungal orange
+		int ri = 210;
+		int gi = 120;
+		int bi = 10;
 
 		int a = (int) (alpha * 255);
 		int opaqueColor = (a << 24) | (ri << 16) | (gi << 8) | bi;
@@ -91,76 +91,50 @@ public class FungalWhisperVignetteOverlay {
 		// Bottom edge — transparent at top, fading to opaque
 		gfx.fillGradient(0, screenHeight - edgeSize, screenWidth, screenHeight, transparentColor, opaqueColor);
 
-		// Left edge — per-column fill, opaque at left fading right
-		for (int col = 0; col < edgeSize; col++) {
-			float t = 1.0f - (float) col / edgeSize;
-			int ca = (int) (a * t);
-			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-			gfx.fill(col, 0, col + 1, screenHeight, color);
+		// Left edge — use banded uniform strips to approximate left-to-right fade
+		int bands = 8;
+		int bandWidth = edgeSize / bands;
+		for (int b = 0; b < bands; b++) {
+			int x0 = b * bandWidth;
+			int x1 = (b + 1) * bandWidth;
+			float t = 1.0f - ((float) b + 0.5f) / bands;
+			int ba = (int) (a * t);
+			int color = (ba << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(x0, 0, x1, screenHeight, color);
 		}
 
-		// Right edge — per-column fill, opaque at right fading left
-		for (int col = 0; col < edgeSize; col++) {
-			float t = (float) col / edgeSize;
-			int ca = (int) (a * t);
-			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-			gfx.fill(screenWidth - edgeSize + col, 0, screenWidth - edgeSize + col + 1, screenHeight, color);
+		// Right edge — banded uniform strips
+		for (int b = 0; b < bands; b++) {
+			int x0 = screenWidth - edgeSize + b * bandWidth;
+			int x1 = screenWidth - edgeSize + (b + 1) * bandWidth;
+			float t = ((float) b + 0.5f) / bands;
+			int ba = (int) (a * t);
+			int color = (ba << 24) | (ri << 16) | (gi << 8) | bi;
+			gfx.fill(x0, 0, x1, screenHeight, color);
 		}
 
-		// Corner intensifiers — extra darkening in the four corners
+		// Corner intensifiers — use a small number of overlapping gradient
+		// rectangles to approximate the radial fade, instead of per-pixel fills.
 		int cornerSize = (int) (edgeSize * 0.6f);
 		int cornerAlpha = (int) (a * 0.5f);
+		int cornerBands = 6;
+		int cBandSize = cornerSize / cornerBands;
 
-		// Top-left corner
-		for (int row = 0; row < cornerSize; row++) {
-			float rowFade = 1.0f - (float) row / cornerSize;
-			for (int col = 0; col < cornerSize - row; col++) {
-				float colFade = 1.0f - (float) col / cornerSize;
-				int ca = (int) (cornerAlpha * rowFade * colFade);
-				if (ca > 0) {
-					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-					gfx.fill(col, row, col + 1, row + 1, color);
-				}
-			}
-		}
+		for (int b = 0; b < cornerBands; b++) {
+			int size = cornerSize - b * cBandSize;
+			float fade = 1.0f - (float) b / cornerBands;
+			int ca = (int) (cornerAlpha * fade * fade);
+			if (ca <= 0) continue;
+			int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
 
-		// Top-right corner
-		for (int row = 0; row < cornerSize; row++) {
-			float rowFade = 1.0f - (float) row / cornerSize;
-			for (int col = 0; col < cornerSize - row; col++) {
-				float colFade = 1.0f - (float) col / cornerSize;
-				int ca = (int) (cornerAlpha * rowFade * colFade);
-				if (ca > 0) {
-					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-					gfx.fill(screenWidth - 1 - col, row, screenWidth - col, row + 1, color);
-				}
-			}
-		}
-
-		// Bottom-left corner
-		for (int row = 0; row < cornerSize; row++) {
-			float rowFade = 1.0f - (float) row / cornerSize;
-			for (int col = 0; col < cornerSize - row; col++) {
-				float colFade = 1.0f - (float) col / cornerSize;
-				int ca = (int) (cornerAlpha * rowFade * colFade);
-				if (ca > 0) {
-					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-					gfx.fill(col, screenHeight - 1 - row, col + 1, screenHeight - row, color);
-				}
-			}
-		}
-
-		// Bottom-right corner
-		for (int row = 0; row < cornerSize; row++) {
-			float rowFade = 1.0f - (float) row / cornerSize;
-			for (int col = 0; col < cornerSize - row; col++) {
-				float colFade = 1.0f - (float) col / cornerSize;
-				int ca = (int) (cornerAlpha * rowFade * colFade);
-				if (ca > 0) {
-					int color = (ca << 24) | (ri << 16) | (gi << 8) | bi;
-					gfx.fill(screenWidth - 1 - col, screenHeight - 1 - row, screenWidth - col, screenHeight - row, color);
-				}
-			}
+			// Top-left
+			gfx.fill(0, 0, size, size, color);
+			// Top-right
+			gfx.fill(screenWidth - size, 0, screenWidth, size, color);
+			// Bottom-left
+			gfx.fill(0, screenHeight - size, size, screenHeight, color);
+			// Bottom-right
+			gfx.fill(screenWidth - size, screenHeight - size, screenWidth, screenHeight, color);
 		}
 	}
 }
