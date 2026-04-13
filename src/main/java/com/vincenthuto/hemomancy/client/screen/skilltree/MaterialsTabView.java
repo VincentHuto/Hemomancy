@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
  *
  * <p>Categories are arranged as visually distinct <b>clusters</b> packed into a
  * two-column grid. Each cluster has a tinted background panel, a thin accent
- * border, and a centred header label, giving a more compact and aesthetic feel
+ * border, and a centered header label, giving a more compact and aesthetic feel
  * compared to a simple row-per-category list.
  *
  * <p>Callers supply three things that differ between the two screens:
@@ -119,7 +119,7 @@ public final class MaterialsTabView {
 			int clusterLeft = colX[shortest];
 			int clusterTop  = colHeights[shortest];
 
-			// Centre items horizontally inside the cluster
+			// Center items horizontally inside the cluster
 			int usedW   = cols > 1 ? (cols - 1) * NODE_GAP_X : 0;
 			int offsetX = (clusterInnerW - usedW) / 2;
 
