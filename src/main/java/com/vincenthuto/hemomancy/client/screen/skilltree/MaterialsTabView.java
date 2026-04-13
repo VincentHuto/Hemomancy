@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,11 @@ import net.minecraft.world.item.ItemStack;
  * {@link SkillTreeScreen} (blood faction) and {@link UnstainedProgressScreen}
  * (Unstained faction).
  *
+ * <p>Categories are arranged as visually distinct <b>clusters</b> packed into a
+ * two-column grid. Each cluster has a tinted background panel, a thin accent
+ * border, and a centered header label, giving a more compact and aesthetic feel
+ * compared to a simple row-per-category list.
+ *
  * <p>Callers supply three things that differ between the two screens:
  * <ul>
  *   <li>The list of {@link MaterialEntry} objects to show</li>
@@ -25,10 +31,26 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class MaterialsTabView {
 
-	// Layout constants
-	public static final int MAT_GAP_X = 70;
-	public static final int MAT_GAP_Y = 60;
-	public static final int MAT_COLS  = 5;
+	// ── Cluster-grid layout constants (content-space) ───────────
+
+	/** Max item columns inside a single cluster. */
+	private static final int CLUSTER_ITEM_COLS = 4;
+	/** Horizontal distance between node centres within a cluster. */
+	private static final int NODE_GAP_X = 56;
+	/** Vertical distance between node centres within a cluster. */
+	private static final int NODE_GAP_Y = 54;
+	/** Number of cluster columns in the overall layout. */
+	private static final int GRID_COLS = 2;
+	/** Horizontal gap between cluster columns. */
+	private static final int CLUSTER_SPACING_X = 28;
+	/** Vertical gap between stacked clusters. */
+	private static final int CLUSTER_SPACING_Y = 22;
+	/** Content-space padding around outermost node centres inside a cluster. */
+	private static final int CLUSTER_PAD = 28;
+	/** Extra vertical space above the first node row for the cluster header. */
+	private static final int CLUSTER_HEADER_H = 20;
+	/** Left / top margin for the entire layout. */
+	private static final int ORIGIN = 20;
 
 	// Node rendering colours (common across both screens)
 	private static final int COL_NODE_BG = 0xCC0C0808;
@@ -38,13 +60,14 @@ public final class MaterialsTabView {
 	// ── Layout ──────────────────────────────────────────────────
 
 	/**
-	 * Computes content-space node positions and fills {@code positionsOut},
-	 * also writing the total content width/height into {@code boundsOut[0..1]}.
+	 * Computes content-space node positions arranged in a two-column cluster
+	 * grid and fills {@code positionsOut}, also writing the total content
+	 * width/height into {@code boundsOut[0..1]}.
 	 *
-	 * @param entries     entries to lay out
+	 * @param entries      entries to lay out
 	 * @param positionsOut map to populate (entry → int[]{x, y})
-	 * @param boundsOut   int[2] — boundsOut[0] = contentW, boundsOut[1] = contentH
-	 * @param nodeSize    NODE_SIZE from the parent screen
+	 * @param boundsOut    int[2] — boundsOut[0] = contentW, boundsOut[1] = contentH
+	 * @param nodeSize     NODE_SIZE from the parent screen
 	 */
 	public static void buildLayout(List<MaterialEntry> entries,
 								   Map<MaterialEntry, int[]> positionsOut,
@@ -55,29 +78,74 @@ public final class MaterialsTabView {
 		if (entries.isEmpty()) return;
 
 		LinkedHashMap<String, List<MaterialEntry>> byCategory = groupByCategory(entries);
+		List<String> cats = new ArrayList<>(byCategory.keySet());
 
-		int y = 30;
-		for (var catEntry : byCategory.entrySet()) {
-			y += 20;
-			List<MaterialEntry> catItems = catEntry.getValue();
-			for (int i = 0; i < catItems.size(); i++) {
-				int col = i % MAT_COLS;
-				int row = i / MAT_COLS;
-				int x = 20 + col * MAT_GAP_X;
-				int ny = y + row * MAT_GAP_Y;
-				positionsOut.put(catItems.get(i), new int[]{x, ny});
-				boundsOut[0] = Math.max(boundsOut[0], x + nodeSize + 20);
-				boundsOut[1] = Math.max(boundsOut[1], ny + nodeSize + 24);
+		// Standard cluster inner width (based on max columns, for consistency)
+		int clusterInnerW = (CLUSTER_ITEM_COLS - 1) * NODE_GAP_X;
+		int fullClusterW  = clusterInnerW + 2 * CLUSTER_PAD;
+
+		// Compute per-cluster column counts and heights
+		int[] colCounts   = new int[cats.size()];
+		int[] clusterHeights = new int[cats.size()];
+		for (int ci = 0; ci < cats.size(); ci++) {
+			int count = byCategory.get(cats.get(ci)).size();
+			int cols  = Math.min(count, CLUSTER_ITEM_COLS);
+			int rows  = (count + cols - 1) / cols;
+			colCounts[ci]      = cols;
+			clusterHeights[ci] = CLUSTER_HEADER_H + 2 * CLUSTER_PAD
+					+ (rows > 1 ? (rows - 1) * NODE_GAP_Y : 0);
+		}
+
+		// Two-column greedy packing: always place the next cluster in the
+		// shortest column to keep the layout balanced.
+		int[] colHeights = new int[GRID_COLS];
+		int[] colX       = new int[GRID_COLS];
+		for (int i = 0; i < GRID_COLS; i++) {
+			colHeights[i] = ORIGIN;
+			colX[i]       = ORIGIN + i * (fullClusterW + CLUSTER_SPACING_X);
+		}
+
+		for (int ci = 0; ci < cats.size(); ci++) {
+			String cat = cats.get(ci);
+			List<MaterialEntry> items = byCategory.get(cat);
+			int cols = colCounts[ci];
+
+			// Pick the shortest column
+			int shortest = 0;
+			for (int i = 1; i < GRID_COLS; i++) {
+				if (colHeights[i] < colHeights[shortest]) shortest = i;
 			}
-			int rows = (catItems.size() + MAT_COLS - 1) / MAT_COLS;
-			y += rows * MAT_GAP_Y + 10;
+
+			int clusterLeft = colX[shortest];
+			int clusterTop  = colHeights[shortest];
+
+			// Center items horizontally inside the cluster
+			int usedW   = cols > 1 ? (cols - 1) * NODE_GAP_X : 0;
+			int offsetX = (clusterInnerW - usedW) / 2;
+
+			for (int i = 0; i < items.size(); i++) {
+				int col = i % cols;
+				int row = i / cols;
+				int x = clusterLeft + CLUSTER_PAD + offsetX + col * NODE_GAP_X;
+				int y = clusterTop  + CLUSTER_HEADER_H + CLUSTER_PAD + row * NODE_GAP_Y;
+				positionsOut.put(items.get(i), new int[]{x, y});
+			}
+
+			colHeights[shortest] = clusterTop + clusterHeights[ci] + CLUSTER_SPACING_Y;
+		}
+
+		// Final content bounds (for centreOn / clamp)
+		for (int i = 0; i < GRID_COLS; i++) {
+			boundsOut[0] = Math.max(boundsOut[0], colX[i] + fullClusterW + ORIGIN);
+			boundsOut[1] = Math.max(boundsOut[1], colHeights[i] + ORIGIN);
 		}
 	}
 
 	// ── Drawing ──────────────────────────────────────────────────
 
 	/**
-	 * Draws all category headers and material nodes for one frame.
+	 * Draws cluster backgrounds, category headers, and material nodes for one
+	 * frame.
 	 *
 	 * @param gfx           graphics context
 	 * @param font          font renderer
@@ -104,22 +172,60 @@ public final class MaterialsTabView {
 		float time = System.nanoTime() / 1_000_000_000f;
 		int hn = state.halfNode(nodeSize);
 
-		// Category headers
+		// ── Cluster backgrounds & headers ───────────────────────
 		LinkedHashMap<String, List<MaterialEntry>> byCategory = groupByCategory(entries);
-		int catY = 30;
+
+		int bgColor     = (0x18 << 24) | (accentColor & 0x00FFFFFF);
+		int borderColor = (0x40 << 24) | (accentColor & 0x00FFFFFF);
+
+		// Half the full cluster width (content-space) — used to ensure even
+		// small clusters get the same visual width as large ones.
+		int fullHalfW = (CLUSTER_ITEM_COLS - 1) * NODE_GAP_X / 2 + CLUSTER_PAD;
+
 		for (var catEntry : byCategory.entrySet()) {
-			int scrY = state.sy(guiTop, catY);
-			int scrX = state.sx(guiLeft, 20);
-			gfx.drawString(font,
-					Component.literal(catEntry.getKey())
-							.withStyle(s -> s.withColor(accentColor).withBold(true)),
-					scrX, scrY, 0, false);
-			catY += 20;
-			int rows = (catEntry.getValue().size() + MAT_COLS - 1) / MAT_COLS;
-			catY += rows * MAT_GAP_Y + 10;
+			String catName = catEntry.getKey();
+			List<MaterialEntry> catItems = catEntry.getValue();
+
+			// Derive cluster bounding box from node positions
+			int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+			int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+			for (MaterialEntry item : catItems) {
+				int[] pos = positions.get(item);
+				if (pos == null) continue;
+				minX = Math.min(minX, pos[0]);
+				minY = Math.min(minY, pos[1]);
+				maxX = Math.max(maxX, pos[0]);
+				maxY = Math.max(maxY, pos[1]);
+			}
+			if (minX == Integer.MAX_VALUE) continue;
+
+			// Use the centre of node positions + full cluster half-width so
+			// small clusters (fewer than CLUSTER_ITEM_COLS items) still get
+			// the same background width as fully populated ones.
+			int centerX = (minX + maxX) / 2;
+			int sx1 = state.sx(guiLeft, centerX - fullHalfW);
+			int sy1 = state.sy(guiTop,  minY - CLUSTER_PAD - CLUSTER_HEADER_H);
+			int sx2 = state.sx(guiLeft, centerX + fullHalfW);
+			int sy2 = state.sy(guiTop,  maxY + CLUSTER_PAD);
+
+			// Background panel
+			gfx.fill(sx1, sy1, sx2, sy2, bgColor);
+
+			// Border
+			ScreenDrawUtils.drawSimpleBorder(gfx, sx1, sy1, sx2 - sx1, sy2 - sy1, borderColor);
+
+			// Category header (hidden at very low zoom where text would be illegible)
+			if (state.zoom >= 0.4f) {
+				int headerX = (sx1 + sx2) / 2;
+				int headerY = sy1 + Math.max(2, (int)(5 * state.zoom));
+				gfx.drawCenteredString(font,
+						Component.literal(catName)
+								.withStyle(s -> s.withColor(accentColor).withBold(true)),
+						headerX, headerY, 0);
+			}
 		}
 
-		// Nodes
+		// ── Nodes ───────────────────────────────────────────────
 		for (var e : positions.entrySet()) {
 			MaterialEntry mat = e.getKey();
 			int[] pos = e.getValue();
