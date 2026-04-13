@@ -139,6 +139,9 @@ public class ItemInit {
 	public static final RegistryObject<Item> debug_showcase = SPECIALITEMS.register("debug_showcase",
 			() -> new DebugShowcaseItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
+	public static final RegistryObject<Item> structure_scanner = SPECIALITEMS.register("structure_scanner",
+			() -> new StructureScannerItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+
 	// Book
 
 	public static final RegistryObject<Item> liber_sanguinum = SPECIALITEMS.register("liber_sanguinum",
