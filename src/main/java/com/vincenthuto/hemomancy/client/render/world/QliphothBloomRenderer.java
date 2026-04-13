@@ -56,6 +56,13 @@ public class QliphothBloomRenderer {
 	private static final int ROOT_SUB_BRANCHES = 2;
 	/** Number of segments per sub-root branch. */
 	private static final int ROOT_SUB_SEGS = 5;
+	/** Number of small dark orbs embedded in the trunk. */
+	private static final int TRUNK_ORB_COUNT = 9;
+	/** Radius of each small trunk orb. */
+	private static final float TRUNK_ORB_RADIUS = 0.12f;
+	/** Lat/lon resolution for small trunk orbs. */
+	private static final int TRUNK_ORB_LAT = 6;
+	private static final int TRUNK_ORB_LON = 8;
 
 	// ── Pulsing ring parameters ──
 	/** Number of concentric rings. */
@@ -114,9 +121,11 @@ public class QliphothBloomRenderer {
 		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
 
 		drawTrunk(coreVC, glowVC, mat, time, pulse);
+		drawTrunkOrbs(coreVC, glowVC, mat, time, pulse);
 		drawRoots(coreVC, glowVC, mat, time, pulse);
 		drawBranches(coreVC, glowVC, mat, time, pulse);
 		drawCanopy(coreVC, glowVC, mat, time, pulse);
+		drawApexOrb(coreVC, glowVC, mat, time, pulse);
 
 		stack.popPose();
 	}
@@ -249,6 +258,142 @@ public class QliphothBloomRenderer {
 		}
 
 		return totalBulge;
+	}
+
+	/**
+	 * Draws small dark orbs that fade in and out at different positions on the
+	 * trunk surface. Each orb runs on its own time cycle — it fades in at a
+	 * random spot, holds briefly, fades out, then reappears at a new location.
+	 */
+	private static void drawTrunkOrbs(VertexConsumer coreVC, VertexConsumer glowVC,
+			Matrix4f mat, float time, double pulse) {
+
+		for (int i = 0; i < TRUNK_ORB_COUNT; i++) {
+			// ── Per-orb lifecycle timing ──
+			// Each orb has a different cycle duration and phase offset
+			double phaseOffset = hashIndex(i + 1300) * 200.0; // large offset so they don't sync
+			float cycleDuration = 120f + (float) hashIndex(i + 1400) * 80f; // 120-200 ticks per cycle
+
+			// Current position in the cycle (0..1)
+			float cyclePos = (float) (((time + phaseOffset) % cycleDuration) / cycleDuration);
+
+			// Fade envelope: fade in (0..0.2), hold (0.2..0.7), fade out (0.7..1.0)
+			float fadeAlpha;
+			if (cyclePos < 0.2f) {
+				fadeAlpha = cyclePos / 0.2f; // fade in
+			} else if (cyclePos < 0.7f) {
+				fadeAlpha = 1.0f; // hold
+			} else {
+				fadeAlpha = 1.0f - (cyclePos - 0.7f) / 0.3f; // fade out
+			}
+			// Smoothstep the fade for a softer transition
+			fadeAlpha = fadeAlpha * fadeAlpha * (3.0f - 2.0f * fadeAlpha);
+
+			if (fadeAlpha < 0.01f) continue; // fully invisible, skip rendering
+
+			// ── Position changes each cycle ──
+			// Cycle index increments each time the orb completes a full cycle
+			int cycleIndex = (int) ((time + phaseOffset) / cycleDuration);
+
+			// Use cycle index + orb index to seed position so it changes each cycle
+			double seedH = hashIndex(i * 73 + cycleIndex * 37 + 2000);
+			double seedA = hashIndex(i * 59 + cycleIndex * 23 + 3000);
+			double seedP = hashIndex(i * 41 + cycleIndex * 19 + 4000);
+
+			// Height along the trunk: spread between 10% and 85%
+			float t = 0.10f + (float) seedH * 0.75f;
+			float orbCenterY = t * TREE_HEIGHT;
+
+			// Trunk radius at this height (matching drawTrunk taper logic)
+			float taper = 1.0f - t * t;
+			float trunkR = TRUNK_BASE_RADIUS * taper;
+
+			// Circumference angle — fully random per cycle, no spiral
+			double angle = seedA * Math.PI * 2.0;
+
+			// Trunk sway at this height
+			float swayX = (float) (Math.sin(time * 0.02 + t * 2.0) * 0.05 * t);
+			float swayZ = (float) (Math.cos(time * 0.025 + t * 1.5) * 0.04 * t);
+
+			// Orb center on the trunk surface (slightly inset so it looks embedded)
+			float embedDepth = TRUNK_ORB_RADIUS * 0.4f;
+			float surfaceDist = trunkR - embedDepth;
+			float orbX = swayX + (float) Math.cos(angle) * surfaceDist;
+			float orbZ = swayZ + (float) Math.sin(angle) * surfaceDist;
+
+			// ── Dark sphere ──
+			float orbPulse = (float) (Math.sin(time * 0.06 + seedP * 10.0) + 1.0) * 0.5f;
+			float oR = (float) (0.02 + 0.015 * orbPulse);
+			float oG = 0.004f;
+			float oB = 0.004f;
+			float oA = 0.95f * fadeAlpha;
+
+			// Scale the orb radius with the fade so it grows in and shrinks out
+			float currentRadius = TRUNK_ORB_RADIUS * (0.5f + 0.5f * fadeAlpha);
+
+			for (int lat = 0; lat < TRUNK_ORB_LAT; lat++) {
+				double theta0 = Math.PI * lat / TRUNK_ORB_LAT;
+				double theta1 = Math.PI * (lat + 1) / TRUNK_ORB_LAT;
+
+				float cosT0 = (float) Math.cos(theta0);
+				float sinT0 = (float) Math.sin(theta0);
+				float cosT1 = (float) Math.cos(theta1);
+				float sinT1 = (float) Math.sin(theta1);
+
+				for (int lon = 0; lon < TRUNK_ORB_LON; lon++) {
+					double phi0 = 2.0 * Math.PI * lon / TRUNK_ORB_LON;
+					double phi1 = 2.0 * Math.PI * (lon + 1) / TRUNK_ORB_LON;
+
+					float cosP0 = (float) Math.cos(phi0);
+					float sinP0 = (float) Math.sin(phi0);
+					float cosP1 = (float) Math.cos(phi1);
+					float sinP1 = (float) Math.sin(phi1);
+
+					float x00 = orbX + sinT0 * cosP0 * currentRadius;
+					float y00 = orbCenterY + cosT0 * currentRadius;
+					float z00 = orbZ + sinT0 * sinP0 * currentRadius;
+
+					float x01 = orbX + sinT0 * cosP1 * currentRadius;
+					float y01 = orbCenterY + cosT0 * currentRadius;
+					float z01 = orbZ + sinT0 * sinP1 * currentRadius;
+
+					float x10 = orbX + sinT1 * cosP0 * currentRadius;
+					float y10 = orbCenterY + cosT1 * currentRadius;
+					float z10 = orbZ + sinT1 * sinP0 * currentRadius;
+
+					float x11 = orbX + sinT1 * cosP1 * currentRadius;
+					float y11 = orbCenterY + cosT1 * currentRadius;
+					float z11 = orbZ + sinT1 * sinP1 * currentRadius;
+
+					emitQuad(coreVC, mat,
+							x00, y00, z00, oR, oG, oB, oA,
+							x01, y01, z01, oR, oG, oB, oA,
+							x11, y11, z11, oR, oG, oB, oA,
+							x10, y10, z10, oR, oG, oB, oA);
+				}
+			}
+
+			// ── Glow halo around each embedded orb ──
+			float glowRadius = currentRadius * 2.2f;
+			float glowPulse = (float) (Math.sin(time * 0.07 + seedP * 8.0 + i * 1.5) + 1.0) * 0.5f;
+			float gR = (float) (0.50 + 0.30 * glowPulse);
+			float gA = (float) (0.10 + 0.08 * glowPulse) * fadeAlpha;
+
+			// Billboard-style glow diamond facing outward from trunk
+			float outX = (float) Math.cos(angle);
+			float outZ = (float) Math.sin(angle);
+			float perpX = (float) -Math.sin(angle);
+			float perpZ = (float) Math.cos(angle);
+
+			float glowCX = swayX + outX * (trunkR + 0.01f);
+			float glowCZ = swayZ + outZ * (trunkR + 0.01f);
+
+			emitQuad(glowVC, mat,
+					glowCX - perpX * glowRadius, orbCenterY, glowCZ - perpZ * glowRadius, gR, 0.01f, 0.01f, 0f,
+					glowCX, orbCenterY + glowRadius, glowCZ, gR, 0.01f, 0.01f, gA,
+					glowCX + perpX * glowRadius, orbCenterY, glowCZ + perpZ * glowRadius, gR, 0.01f, 0.01f, 0f,
+					glowCX, orbCenterY - glowRadius, glowCZ, gR, 0.01f, 0.01f, 0f);
+		}
 	}
 
 	/**
@@ -677,7 +822,8 @@ public class QliphothBloomRenderer {
 
 	/**
 	 * Draws canopy blooms — clusters of red/dark red glowing diamond shapes
-	 * at the ends of branches and around the crown, giving a "blooming" tree look.
+	 * that twinkle and slowly wander around the tree crown, giving a living,
+	 * shimmering canopy effect rather than static fixed-position blooms.
 	 */
 	private static void drawCanopy(VertexConsumer coreVC, VertexConsumer glowVC,
 			Matrix4f mat, float time, double pulse) {
@@ -685,29 +831,52 @@ public class QliphothBloomRenderer {
 		for (int i = 0; i < CANOPY_BLOOMS; i++) {
 			double seed = hashIndex(i + 200);
 			double seed2 = hashIndex(i + 300);
+			double seed3 = hashIndex(i + 400);
 
-			// Position blooms in a spherical shell around the tree crown
-			double azimuth = (Math.PI * 2.0 / CANOPY_BLOOMS) * i + seed * 0.5;
-			float elevation = TREE_HEIGHT * 0.55f + (float) seed * TREE_HEIGHT * 0.5f;
-			float outward = BLOOM_RADIUS + (float) seed2 * 1.5f;
+			// ── Wandering position: blooms drift slowly around the canopy ──
+			// Base position (spread evenly) plus time-varying drift
+			double baseAzimuth = (Math.PI * 2.0 / CANOPY_BLOOMS) * i + seed * 0.5;
+			// Azimuth drifts back and forth over time (each bloom at its own speed/phase)
+			double azimuthDrift = Math.sin(time * 0.012 + i * 2.7 + seed * 10.0) * 0.8
+					+ Math.sin(time * 0.007 + i * 1.3) * 0.4;
+			double azimuth = baseAzimuth + azimuthDrift;
+
+			// Elevation wanders up and down the tree crown
+			float baseElevation = TREE_HEIGHT * 0.55f + (float) seed * TREE_HEIGHT * 0.5f;
+			float elevDrift = (float) (Math.sin(time * 0.015 + i * 1.9 + seed2 * 8.0) * TREE_HEIGHT * 0.15
+					+ Math.sin(time * 0.009 + i * 3.1) * TREE_HEIGHT * 0.08);
+			float elevation = baseElevation + elevDrift;
+
+			// Outward distance drifts so blooms move closer/farther from trunk
+			float baseOutward = BLOOM_RADIUS + (float) seed2 * 1.5f;
+			float outwardDrift = (float) (Math.sin(time * 0.011 + i * 2.3 + seed3 * 6.0) * 0.6);
+			float outward = baseOutward + outwardDrift;
 
 			float bx = (float) (Math.cos(azimuth) * outward);
 			float bz = (float) (Math.sin(azimuth) * outward);
 			float by = elevation;
 
-			// Subtle bob
-			by += (float) (Math.sin(time * 0.04 + i * 1.3) * 0.08);
-			bx += (float) (Math.sin(time * 0.02 + i * 0.7) * 0.05);
+			// ── Twinkling: gentle shimmer with calm pulsing ──
+			// Layer multiple slow sin waves for a soft sparkle effect
+			float twinkle1 = (float) Math.max(0, Math.sin(time * 0.08 + i * 3.7 + seed * 20.0));
+			float twinkle2 = (float) Math.max(0, Math.sin(time * 0.12 + i * 5.3 + seed2 * 15.0));
+			float twinkle3 = (float) Math.max(0, Math.sin(time * 0.05 + i * 2.1 + seed3 * 12.0));
+			// Soften the peaks — just a gentle square, not harsh
+			twinkle1 *= twinkle1;
+			twinkle2 *= twinkle2;
+			twinkle3 *= twinkle3;
+			// Combine: higher base visibility with gentle twinkle variation
+			float twinkle = 0.35f + 0.65f * Math.max(twinkle1, Math.max(twinkle2, twinkle3));
 
-			// Bloom size varies
-			float bloomSize = 0.25f + (float) seed * 0.35f;
+			// Bloom size varies and pulses with the twinkle
+			float baseBloomSize = 0.25f + (float) seed * 0.35f;
+			float bloomSize = baseBloomSize * (0.6f + 0.4f * twinkle);
 
-			// Bloom pulse — each bloom throbs individually
-			float bloomPulse = (float) ((Math.sin(time * 0.08 + i * 2.1) + 1.0) * 0.5);
-			float alpha = (float) (0.5 + 0.4 * bloomPulse);
+			// Alpha driven by twinkle — gentle variation, never fully dim
+			float alpha = 0.30f + 0.55f * twinkle;
 
-			// Red/dark-red bloom color with variation
-			float coreR = (float) (0.65 + 0.35 * bloomPulse);
+			// Red/dark-red bloom color — brighter during twinkle peaks
+			float coreR = (float) (0.45 + 0.55 * twinkle);
 			float coreG = (float) (0.02 + 0.03 * seed);
 			float coreB = (float) (0.02 + 0.02 * seed);
 
@@ -726,10 +895,10 @@ public class QliphothBloomRenderer {
 					bx + bloomSize * 0.5f, by, bz, coreR, coreG, coreB, alpha * 0.7f,
 					bx, by, bz + bloomSize * 0.3f, coreR, coreG, coreB, alpha * 0.5f);
 
-			// Glow halo around each bloom
+			// Glow halo — also driven by twinkle so it flares during peaks
 			float glowSize = bloomSize * 2.0f;
-			float gA = alpha * 0.2f;
-			float gR = (float) (0.5 + 0.3 * bloomPulse);
+			float gA = alpha * 0.25f * twinkle;
+			float gR = (float) (0.4 + 0.5 * twinkle);
 
 			emitQuad(glowVC, mat,
 					bx - glowSize, by, bz, gR, 0.01f, 0.01f, 0f,
@@ -737,6 +906,163 @@ public class QliphothBloomRenderer {
 					bx + glowSize, by, bz, gR, 0.01f, 0.01f, 0f,
 					bx, by - glowSize, bz, gR, 0.01f, 0.01f, 0f);
 		}
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  Apex Orb — dark "black hole" sphere at the very tip of the tree
+	// ════════════════════════════════════════════════════════════════════════
+
+	/** Radius of the dark apex orb. */
+	private static final float ORB_RADIUS = 0.65f;
+	/** Number of latitude bands for the orb sphere. */
+	private static final int ORB_LAT = 10;
+	/** Number of longitude segments for the orb sphere. */
+	private static final int ORB_LON = 12;
+	/** Number of concentric glow rings around the orb. */
+	private static final int ORB_GLOW_RINGS = 3;
+
+	/**
+	 * Draws a large dark orb at the very tip of the tree that looks like a
+	 * small black hole — an opaque near-black sphere surrounded by layers of
+	 * pulsing dark-red / crimson glow halos that slowly rotate.
+	 */
+	private static void drawApexOrb(VertexConsumer coreVC, VertexConsumer glowVC,
+			Matrix4f mat, float time, double pulse) {
+
+		// Orb center: at the very top of the trunk, matching sway
+		float tipT = 1.0f;
+		float orbY = TREE_HEIGHT;
+		float orbSwayX = (float) (Math.sin(time * 0.02 + tipT * 2.0) * 0.05 * tipT);
+		float orbSwayZ = (float) (Math.cos(time * 0.025 + tipT * 1.5) * 0.04 * tipT);
+
+		// Gentle slow bob
+		orbY += (float) (Math.sin(time * 0.03) * 0.06);
+
+		// ── Dark sphere core ──
+		for (int lat = 0; lat < ORB_LAT; lat++) {
+			double theta0 = Math.PI * lat / ORB_LAT;
+			double theta1 = Math.PI * (lat + 1) / ORB_LAT;
+
+			float cosT0 = (float) Math.cos(theta0);
+			float sinT0 = (float) Math.sin(theta0);
+			float cosT1 = (float) Math.cos(theta1);
+			float sinT1 = (float) Math.sin(theta1);
+
+			for (int lon = 0; lon < ORB_LON; lon++) {
+				double phi0 = 2.0 * Math.PI * lon / ORB_LON;
+				double phi1 = 2.0 * Math.PI * (lon + 1) / ORB_LON;
+
+				float cosP0 = (float) Math.cos(phi0);
+				float sinP0 = (float) Math.sin(phi0);
+				float cosP1 = (float) Math.cos(phi1);
+				float sinP1 = (float) Math.sin(phi1);
+
+				// Sphere vertex positions
+				float x00 = orbSwayX + sinT0 * cosP0 * ORB_RADIUS;
+				float y00 = orbY     + cosT0 * ORB_RADIUS;
+				float z00 = orbSwayZ + sinT0 * sinP0 * ORB_RADIUS;
+
+				float x01 = orbSwayX + sinT0 * cosP1 * ORB_RADIUS;
+				float y01 = orbY     + cosT0 * ORB_RADIUS;
+				float z01 = orbSwayZ + sinT0 * sinP1 * ORB_RADIUS;
+
+				float x10 = orbSwayX + sinT1 * cosP0 * ORB_RADIUS;
+				float y10 = orbY     + cosT1 * ORB_RADIUS;
+				float z10 = orbSwayZ + sinT1 * sinP0 * ORB_RADIUS;
+
+				float x11 = orbSwayX + sinT1 * cosP1 * ORB_RADIUS;
+				float y11 = orbY     + cosT1 * ORB_RADIUS;
+				float z11 = orbSwayZ + sinT1 * sinP1 * ORB_RADIUS;
+
+				// Very dark color — near-black with faint dark-red tinge pulsing
+				float orbR = (float) (0.03 + 0.02 * pulse);
+				float orbG = 0.005f;
+				float orbB = 0.005f;
+				float orbA = 0.95f;
+
+				emitQuad(coreVC, mat,
+						x00, y00, z00, orbR, orbG, orbB, orbA,
+						x01, y01, z01, orbR, orbG, orbB, orbA,
+						x11, y11, z11, orbR, orbG, orbB, orbA,
+						x10, y10, z10, orbR, orbG, orbB, orbA);
+			}
+		}
+
+		// ── Glow halos — rings that slowly rotate around the orb ──
+		for (int ring = 0; ring < ORB_GLOW_RINGS; ring++) {
+			double ringPhase = hashIndex(ring + 900);
+			// Each ring tilts at a different angle and rotates at its own speed
+			double tiltAngle = Math.PI * 0.3 * (ring + 1) / ORB_GLOW_RINGS;
+			double rotSpeed = 0.015 + ring * 0.008;
+			double rotAngle = time * rotSpeed + ringPhase * Math.PI * 2.0;
+
+			float haloRadius = ORB_RADIUS * (1.3f + ring * 0.35f);
+			float haloWidth = 0.06f + ring * 0.02f;
+
+			// Glow color: deep red to crimson, pulsing
+			float glowPulse = (float) (Math.sin(time * 0.05 + ring * 2.0) + 1.0) * 0.5f;
+			float hR = (float) (0.55 + 0.35 * glowPulse);
+			float hG = 0.02f;
+			float hB = 0.02f;
+			float hA = (float) (0.20 + 0.15 * glowPulse) * (1.0f - ring * 0.2f);
+
+			int haloSegs = 36;
+			for (int s = 0; s < haloSegs; s++) {
+				double a0 = 2.0 * Math.PI * s / haloSegs;
+				double a1 = 2.0 * Math.PI * (s + 1) / haloSegs;
+
+				float innerR = haloRadius - haloWidth;
+				float outerR = haloRadius + haloWidth;
+
+				// Inner edge at a0, a1
+				float ix0 = tiltAndRotateX(innerR, a0, tiltAngle, rotAngle);
+				float iy0 = tiltAndRotateY(innerR, a0, tiltAngle) + orbY;
+				float iz0 = tiltAndRotateZ(innerR, a0, tiltAngle, rotAngle);
+				float ix1 = tiltAndRotateX(innerR, a1, tiltAngle, rotAngle);
+				float iy1 = tiltAndRotateY(innerR, a1, tiltAngle) + orbY;
+				float iz1 = tiltAndRotateZ(innerR, a1, tiltAngle, rotAngle);
+
+				// Outer edge at a0, a1
+				float ox0 = tiltAndRotateX(outerR, a0, tiltAngle, rotAngle);
+				float oy0 = tiltAndRotateY(outerR, a0, tiltAngle) + orbY;
+				float oz0 = tiltAndRotateZ(outerR, a0, tiltAngle, rotAngle);
+				float ox1 = tiltAndRotateX(outerR, a1, tiltAngle, rotAngle);
+				float oy1 = tiltAndRotateY(outerR, a1, tiltAngle) + orbY;
+				float oz1 = tiltAndRotateZ(outerR, a1, tiltAngle, rotAngle);
+
+				// Inner-to-outer strip quad with sway offset
+				emitQuad(glowVC, mat,
+						ix0 + orbSwayX, iy0, iz0 + orbSwayZ, hR, hG, hB, hA * 0.3f,
+						ox0 + orbSwayX, oy0, oz0 + orbSwayZ, hR, hG, hB, hA,
+						ox1 + orbSwayX, oy1, oz1 + orbSwayZ, hR, hG, hB, hA,
+						ix1 + orbSwayX, iy1, iz1 + orbSwayZ, hR, hG, hB, hA * 0.3f);
+			}
+		}
+	}
+
+	/** Helper: tilt a ring point (radius, angle) by tiltAngle around X, then rotate around Y. Returns X component. */
+	private static float tiltAndRotateX(float radius, double ringAngle, double tiltAngle, double rotAngle) {
+		// Point on ring in XZ: (radius*cos(ringAngle), 0, radius*sin(ringAngle))
+		// Tilt around X axis: y' = y*cos(tilt) - z*sin(tilt), z' = y*sin(tilt) + z*cos(tilt)
+		float rx = radius * (float) Math.cos(ringAngle);
+		float rz = radius * (float) Math.sin(ringAngle);
+		float tiltedZ = (float) (rz * Math.cos(tiltAngle));
+		// Rotate around Y axis: x'' = rx*cos(rot) - tiltedZ*sin(rot)
+		return (float) (rx * Math.cos(rotAngle) - tiltedZ * Math.sin(rotAngle));
+	}
+
+	/** Helper: returns Y component after tilting. */
+	private static float tiltAndRotateY(float radius, double ringAngle, double tiltAngle) {
+		float rz = radius * (float) Math.sin(ringAngle);
+		return (float) (-rz * Math.sin(tiltAngle));
+	}
+
+	/** Helper: returns Z component after tilt + Y rotation. */
+	private static float tiltAndRotateZ(float radius, double ringAngle, double tiltAngle, double rotAngle) {
+		float rx = radius * (float) Math.cos(ringAngle);
+		float rz = radius * (float) Math.sin(ringAngle);
+		float tiltedZ = (float) (rz * Math.cos(tiltAngle));
+		return (float) (rx * Math.sin(rotAngle) + tiltedZ * Math.cos(rotAngle));
 	}
 
 	// ════════════════════════════════════════════════════════════════════════

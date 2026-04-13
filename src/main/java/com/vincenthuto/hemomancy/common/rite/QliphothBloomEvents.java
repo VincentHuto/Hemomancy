@@ -3,11 +3,16 @@ package com.vincenthuto.hemomancy.common.rite;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,6 +39,17 @@ public class QliphothBloomEvents {
 	private static final int REGEN_DURATION = 50;
 	/** Extra blood regeneration per tick when within a bloom's radius. */
 	private static final double BLOOD_REGEN_PER_TICK = 5.0;
+
+	/**
+	 * Chance (1 in N) per bloom per effect tick that a Qliphoth Pome drops
+	 * from the tree. At 40-tick intervals this averages ~1 pome every
+	 * 1 in 80 checks ≈ every 3 minutes.
+	 */
+	private static final int POME_DROP_CHANCE = 80;
+	/** Maximum number of pome item entities allowed near a bloom before it stops dropping more. */
+	private static final int POME_MAX_NEARBY = 3;
+	/** Radius (blocks) around the bloom center to check for existing pome item entities. */
+	private static final double POME_SEARCH_RADIUS = 8.0;
 
 	@SubscribeEvent
 	public static void onLevelTick(TickEvent.LevelTickEvent event) {
@@ -71,7 +87,43 @@ public class QliphothBloomEvents {
 					}
 				});
 			}
+
+			// ── Rare Qliphoth Pome drop ──
+			trySpawnPome(sLevel, bloom.center());
 		}
+	}
+
+	/**
+	 * Attempts to spawn a Qliphoth Pome item entity near the bloom's tree.
+	 * Only succeeds rarely (1 in {@link #POME_DROP_CHANCE}) and caps the number
+	 * of pome items on the ground nearby to prevent accumulation.
+	 */
+	private static void trySpawnPome(ServerLevel level, BlockPos center) {
+		RandomSource rand = level.getRandom();
+		if (rand.nextInt(POME_DROP_CHANCE) != 0) return;
+
+		// Cap: don't drop if too many pome items already lying around the tree
+		AABB searchBox = new AABB(center).inflate(POME_SEARCH_RADIUS, 10, POME_SEARCH_RADIUS);
+		long existingPomes = level.getEntitiesOfClass(ItemEntity.class, searchBox,
+				e -> e.isAlive() && e.getItem().is(ItemInit.qliphoth_pome.get())).size();
+		if (existingPomes >= POME_MAX_NEARBY) return;
+
+		// Spawn at the tree center with a small random horizontal offset,
+		// a few blocks up (as if falling from the canopy), with slight outward velocity
+		double spawnX = center.getX() + 0.5 + (rand.nextDouble() - 0.5) * 3.0;
+		double spawnY = center.getY() + 4.0 + rand.nextDouble() * 3.0;
+		double spawnZ = center.getZ() + 0.5 + (rand.nextDouble() - 0.5) * 3.0;
+
+		ItemEntity pomeEntity = new ItemEntity(level, spawnX, spawnY, spawnZ,
+				new ItemStack(ItemInit.qliphoth_pome.get()));
+		// Small random velocity so it tumbles away from the trunk
+		pomeEntity.setDeltaMovement(
+				(rand.nextDouble() - 0.5) * 0.1,
+				0.05,
+				(rand.nextDouble() - 0.5) * 0.1);
+		// Slight pickup delay so it looks like it just dropped
+		pomeEntity.setPickUpDelay(20);
+		level.addFreshEntity(pomeEntity);
 	}
 
 	/**

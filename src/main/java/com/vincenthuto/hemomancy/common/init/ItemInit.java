@@ -175,7 +175,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> chitinous_husk = BASEITEMS.register("chitinous_husk",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> sanguine_conduit = BASEITEMS.register("sanguine_conduit",
-			() -> new Item(new Item.Properties()));
+			() -> new ItemSanguineConduit(new Item.Properties()));
 	public static final RegistryObject<Item> scrying_dish = BASEITEMS.register("scrying_dish",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> vitality_chalice = BASEITEMS.register("vitality_chalice",
@@ -232,6 +232,11 @@ public class ItemInit {
 	public static final RegistryObject<Item> gourd_stew = BASEITEMS.register("gourd_stew",
 			() -> new BowlFoodItem(new Item.Properties().stacksTo(1)
 					.food(new FoodProperties.Builder().nutrition(7).saturationMod(0.6F).build())));
+
+	// Qliphoth Reagent
+	public static final RegistryObject<Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
+			() -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+					.food(new FoodProperties.Builder().nutrition(4).saturationMod(0.8F).alwaysEat().build())));
 
 	// Anti blood
 	public static final RegistryObject<Item> hemolytic_solution = BASEITEMS.register("hemolytic_solution",
@@ -579,29 +584,29 @@ public class ItemInit {
 			() -> new NoctiflyAgaricItem(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 
 	// Spores
-	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
-
-	public static final RegistryObject<Item> fervent_spores = BASEITEMS.register("fervent_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
-
-	public static final RegistryObject<Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
-
-	public static final RegistryObject<Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
-
-	public static final RegistryObject<Item> umbral_spores = BASEITEMS.register("umbral_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
-
-	public static final RegistryObject<Item> frigid_spores = BASEITEMS.register("frigid_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
-
-	public static final RegistryObject<Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
-
-	public static final RegistryObject<Item> ferric_spores = BASEITEMS.register("ferric_spores",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
+//	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
+//
+//	public static final RegistryObject<Item> fervent_spores = BASEITEMS.register("fervent_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
+//
+//	public static final RegistryObject<Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+//
+//	public static final RegistryObject<Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
+//
+//	public static final RegistryObject<Item> umbral_spores = BASEITEMS.register("umbral_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
+//
+//	public static final RegistryObject<Item> frigid_spores = BASEITEMS.register("frigid_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
+//
+//	public static final RegistryObject<Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+//
+//	public static final RegistryObject<Item> ferric_spores = BASEITEMS.register("ferric_spores",
+//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
 
 	// Fungal Runes
 
