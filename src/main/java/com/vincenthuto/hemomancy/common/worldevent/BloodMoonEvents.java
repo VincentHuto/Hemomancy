@@ -215,7 +215,7 @@ public class BloodMoonEvents {
 	// ---------------------------------------------------------------------------
 
 	private static void broadcastToPlayers(ServerLevel sLevel, Component message) {
-		for (ServerPlayer player : sLevel.getPlayers(p -> true)) {
+		for (ServerPlayer player : sLevel.getPlayers(ServerPlayer::isAlive)) {
 			player.sendSystemMessage(message);
 		}
 	}

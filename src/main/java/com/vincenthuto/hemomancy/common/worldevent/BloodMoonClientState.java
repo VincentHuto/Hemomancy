@@ -6,7 +6,7 @@ package com.vincenthuto.hemomancy.common.worldevent;
  */
 public class BloodMoonClientState {
 
-	private static boolean active = false;
+	private static volatile boolean active = false;
 
 	public static boolean isActive() {
 		return active;
