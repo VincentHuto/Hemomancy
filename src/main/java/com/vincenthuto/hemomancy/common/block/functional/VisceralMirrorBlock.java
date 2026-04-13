@@ -2,16 +2,25 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
+import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import com.vincenthuto.hemomancy.common.item.OrganEchoItem;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -30,6 +39,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * The Visceral Mirror — a ritualistic block that allows the player to gaze into
@@ -37,14 +47,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * sanguine modification. Requires initiatory degree 3+.
  *
  * <h3>Interaction Flow</h3>
- * <ul>
- *   <li><b>Right-click (standing, empty hand):</b> cycles through organs in
- *       the mirror, displaying a status preview (name, tier, current level,
- *       blood cost, eligibility).</li>
- *   <li><b>Right-click (crouching, empty hand):</b> when an organ is selected
- *       (mirror active), confirms the selection and begins the extraction
- *       ritual. When a ritual is already in progress, cancels it instead.</li>
- * </ul>
+ * <p>Right-clicking the mirror with an empty hand opens a GUI screen where
+ * the player can browse all organs, view their status, and initiate or cancel
+ * extraction rituals with a visual progress bar.</p>
  */
 public class VisceralMirrorBlock extends Block implements EntityBlock {
 
@@ -121,12 +126,8 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 	/**
 	 * Player interaction with the Visceral Mirror.
 	 *
-	 * <p><b>Standing + empty hand:</b> cycle through organs in the mirror,
-	 * showing a status preview for each one.</p>
-	 *
-	 * <p><b>Crouching + empty hand:</b> if an organ is selected and no ritual
-	 * is active, confirm selection and begin extraction. If a ritual is already
-	 * running, cancel it.</p>
+	 * <p>Right-click with an empty hand opens the GUI screen, which sends
+	 * the player all organ data needed to make informed extraction choices.</p>
 	 */
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player,
@@ -141,29 +142,43 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 			return InteractionResult.PASS;
 		}
 
-		if (player.isCrouching()) {
-			// ---- Crouching + empty hand ----
-			if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE) {
-				// Cancel an active ritual
-				te.cancelRitual(player);
-				return InteractionResult.SUCCESS;
-			}
-			// Confirm selected organ and begin extraction
-			if (te.confirmSelection(player)) {
-				return InteractionResult.SUCCESS;
-			}
-			return InteractionResult.SUCCESS; // feedback was already shown by confirmSelection
+		if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.PASS;
+
+		// Gather organ data for the screen
+		EnumOrgan[] organs = EnumOrgan.values();
+		int[] organLevels = new int[organs.length];
+		boolean[] hasEcho = new boolean[organs.length];
+
+		IVisceralOrgans organsCap = player.getCapability(VisceralOrgansProvider.ORGANS_CAPA).orElse(null);
+		for (int i = 0; i < organs.length; i++) {
+			organLevels[i] = organsCap != null ? organsCap.getOrganLevel(organs[i]) : 0;
+			hasEcho[i] = playerHasEcho(player, organs[i]);
 		}
 
-		// ---- Standing + empty hand = cycle organs ----
-		if (te.getPhase() != VisceralMirrorBlockEntity.RitualPhase.IDLE) {
-			player.displayClientMessage(
-					Component.literal("The mirror ripples... the ritual is in progress.")
-							.withStyle(ChatFormatting.DARK_PURPLE), true);
-			return InteractionResult.SUCCESS;
-		}
+		double bloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.map(IBloodVolume::getBloodVolume).orElse(0.0);
+		double maxBloodVol = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.map(IBloodVolume::getMaxBloodVolume).orElse(0.0);
+		int degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+				.map(d -> d.getDegreeNumber()).orElse(0);
 
-		te.cycleOrgan(player);
+		// Send the packet to open the screen
+		PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> serverPlayer),
+				new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVol, maxBloodVol, degree));
+
 		return InteractionResult.SUCCESS;
+	}
+
+	private boolean playerHasEcho(Player player, EnumOrgan organ) {
+		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+			ItemStack invStack = player.getInventory().getItem(i);
+			if (!invStack.isEmpty()
+					&& invStack.getItem() instanceof OrganEchoItem echoItem
+					&& echoItem.getOrgan() == organ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
