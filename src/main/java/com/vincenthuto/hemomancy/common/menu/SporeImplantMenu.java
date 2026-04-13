@@ -84,9 +84,35 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 
 		if (index < containerEnd) {
 			// Moving FROM a rune slot → player inventory
-			if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarEnd + 1, true)) {
+			// Use explicit slot manipulation so that slot.set(ItemStack.EMPTY)
+			// fires onUnequipped while the slot still has its item.
+			boolean placed = false;
+			// Try hotbar first (prefer hotbar for quick access)
+			for (int i = hotbarStart; i <= hotbarEnd; i++) {
+				Slot target = this.slots.get(i);
+				if (!target.hasItem() && target.mayPlace(stackInSlot)) {
+					target.set(stackInSlot.copy());
+					slot.set(ItemStack.EMPTY);
+					placed = true;
+					break;
+				}
+			}
+			// Then try main inventory
+			if (!placed) {
+				for (int i = playerInvStart; i < hotbarStart; i++) {
+					Slot target = this.slots.get(i);
+					if (!target.hasItem() && target.mayPlace(stackInSlot)) {
+						target.set(stackInSlot.copy());
+						slot.set(ItemStack.EMPTY);
+						placed = true;
+						break;
+					}
+				}
+			}
+			if (!placed) {
 				return ItemStack.EMPTY;
 			}
+			return originalStack;
 		} else {
 			// Moving FROM player inventory / hotbar → rune slots
 			boolean moved = false;
