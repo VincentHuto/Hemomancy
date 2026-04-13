@@ -213,7 +213,7 @@ main{display:flex;flex:1;overflow:hidden}
   <!-- Palette -->
   <section>
     <h3>Paint Palette</h3>
-    <p style="font-size:.75rem;color:var(--fg2);margin-bottom:6px">Click = paint • Right-click = erase • Middle-click = pick</p>
+    <p style="font-size:.75rem;color:var(--fg2);margin-bottom:6px">Click = paint • Right-click / Space = erase • Middle-click = pick<br>Press A-Z to select palette key • [ ] to navigate layers</p>
     <div id="palette" class="palette-grid"></div>
     <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
       <div class="palette-cell selected" style="background:var(--bg);border-color:var(--fg2);width:24px;height:24px" onclick="selectPaletteKey(' ')" id="eraserBtn" title="Air / Eraser"></div>
@@ -455,7 +455,7 @@ function selectLayer(idx) {
 function addKeyEntry(ch, block) {
   if (!ch) {
     ch = nextAvailableChar();
-    if (!ch) { toast("Max 24 block keys reached", true); return; }
+    if (!ch) { toast("Max " + KEY_COLORS.length + " block keys reached", true); return; }
   }
   const colorIdx = Object.keys(keyMap).length % KEY_COLORS.length;
   keyMap[ch] = { block: block || "", color: KEY_COLORS[colorIdx] };
@@ -846,7 +846,7 @@ function copyJson() {
   const str = document.getElementById("jsonTextarea").value;
   navigator.clipboard.writeText(str).then(
     () => toast("Copied to clipboard!"),
-    () => toast("Copy failed", true)
+    (err) => toast("Copy failed — try selecting the text and using Ctrl+C", true)
   );
 }
 
