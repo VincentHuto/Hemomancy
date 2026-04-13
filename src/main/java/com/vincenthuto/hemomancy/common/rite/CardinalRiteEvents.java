@@ -1172,14 +1172,14 @@ public class CardinalRiteEvents {
 
 		// Verify there is room for the 1×1×8 column
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
-		if (bloomBlock instanceof com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock) {
-			if (!multiBlock.canPlaceMultiBlock(sLevel, center)) {
-				caster.displayClientMessage(
-						Component.literal("There is not enough room for the Qliphoth to bloom here.")
-								.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-						false);
-				return;
-			}
+		com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock =
+				(com.vincenthuto.hemomancy.common.block.IMultiBlock) bloomBlock;
+		if (!multiBlock.canPlaceMultiBlock(sLevel, center)) {
+			caster.displayClientMessage(
+					Component.literal("There is not enough room for the Qliphoth to bloom here.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
 		}
 
 		// Place the multi-block
@@ -1190,9 +1190,7 @@ public class CardinalRiteEvents {
 			bloomBE.setChunkRadius(QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		}
 		// Place filler blocks above
-		if (bloomBlock instanceof com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock) {
-			multiBlock.placeFillers(sLevel, center, bloomBlock.defaultBlockState());
-		}
+		multiBlock.placeFillers(sLevel, center, bloomBlock.defaultBlockState());
 
 		// Register in SavedData
 		QliphothBloomSavedData.BloomEntry entry = new QliphothBloomSavedData.BloomEntry(
