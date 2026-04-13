@@ -855,6 +855,9 @@
 	"hemomancy.dialogue.event.hermit_farewell_die": "§7The Hermit's body dissolves into crimson motes of light, leaving behind a blood-stained scroll.",
 	"hemomancy.dialogue.event.hermit_archon_wisdom": "The Hermit bows deeply. 'All that I know is already written in your blood, Archon.'",
 
+	"hemomancy.mortal_display.charm_equipped": "A living adornment has latched itself around your neck, marking you as destined for the path of the harbinger.",
+	"hemomancy.rite.sanguine_initiation.conduit_granted": "A sanguine conduit materializes — a living instrument attuned to your blood. Use it to monitor your progress.",
+
 	"hemomancy.whisper.speaker_name": "???",
 
 	"hemomancy.whisper.option.dismiss": "[Ignore the voice]",

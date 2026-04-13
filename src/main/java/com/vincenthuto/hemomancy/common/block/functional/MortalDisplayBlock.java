@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -124,6 +125,25 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 					HLPacketHandler.sendLightningSpawn(startVec, endVec, 64.0f, player.level().dimension(),
 							ParticleColor.RED, 2, 20, 9, 1.2f);
 				}
+			}
+
+			// Equip the Charm of Vascularium into the player's VASC rune slot
+			if (!worldIn.isClientSide) {
+				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
+					int vascSlot = 5; // RuneType.VASC slot
+					if (runes.getStackInSlot(vascSlot).isEmpty()) {
+						runes.setStackInSlot(vascSlot, charm);
+						player.displayClientMessage(
+								Component.translatable("hemomancy.mortal_display.charm_equipped")
+										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+								false);
+					} else {
+						// Slot occupied — drop the charm as an item entity instead
+						ItemEntity drop = new ItemEntity(worldIn, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, charm);
+						worldIn.addFreshEntity(drop);
+					}
+				});
 			}
 
 		} else {
