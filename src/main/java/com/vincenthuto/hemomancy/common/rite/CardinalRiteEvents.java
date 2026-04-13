@@ -403,6 +403,7 @@ public class CardinalRiteEvents {
 	private static final String LETHES_SHADOW_RITE = "cardinal_rite/lethes_shadow";
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
+	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
 
 	// ── Gourd upgrade rite paths ──
 	private static final String PALLID_VESSEL_RITE = "cardinal_rite/pallid_vessel_rite";
@@ -420,6 +421,10 @@ public class CardinalRiteEvents {
 	private static final int DOMINION_CHUNK_RADIUS = 3;
 	/** Chunk radius for Qliphoth Bloom effect zone. */
 	private static final int QLIPHOTH_BLOOM_CHUNK_RADIUS = 3;
+	/** Chunk radius for the Sanguine Fervor spawn-boost zone. */
+	private static final int SANGUINE_FERVOR_CHUNK_RADIUS = 3;
+	/** Duration in ticks for the Sanguine Fervor spawn-boost effect (5 minutes). */
+	private static final long SANGUINE_FERVOR_DURATION_TICKS = 6000L;
 	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
 	private static final float SUMMONS_COST_PER_MEMBER = 200f;
 
@@ -641,6 +646,11 @@ public class CardinalRiteEvents {
 		// Pruning of the Qliphoth: remove a bloom tree rooted in the same chunk
 		if (PRUNING_OF_QLIPHOTH_RITE.equals(ritePath)) {
 			completePruningOfQliphoth(sLevel, caster, center);
+		}
+
+		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
+		if (SANGUINE_FERVOR_RITE.equals(ritePath)) {
+			completeSanguineFervor(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1198,6 +1208,33 @@ public class CardinalRiteEvents {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 		}
+	}
+
+	/**
+	 * Rite of Sanguine Fervor (Lesser):
+	 * Registers a time-limited spawn-boost zone centred on the rite. For
+	 * {@link #SANGUINE_FERVOR_DURATION_TICKS} ticks (5 minutes) natural mob
+	 * spawns within a {@link #SANGUINE_FERVOR_CHUNK_RADIUS}-chunk radius are
+	 * force-allowed regardless of the global mob cap, greatly increasing local
+	 * mob density and making the area ideal for farming.
+	 */
+	private static void completeSanguineFervor(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		SanguineFervorSavedData data = SanguineFervorSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + SANGUINE_FERVOR_DURATION_TICKS;
+
+		SanguineFervorSavedData.FervorEntry entry = new SanguineFervorSavedData.FervorEntry(
+				caster.getUUID(), center, dimension, SANGUINE_FERVOR_CHUNK_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		int blockRadius = SANGUINE_FERVOR_CHUNK_RADIUS * 16;
+		long durationMinutes = SANGUINE_FERVOR_DURATION_TICKS / 1200;
+		caster.displayClientMessage(
+				Component.literal("The blood heats the earth! Mobs will swarm within "
+						+ blockRadius + " blocks for " + durationMinutes + " minutes.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
 	}
 
 	/**
