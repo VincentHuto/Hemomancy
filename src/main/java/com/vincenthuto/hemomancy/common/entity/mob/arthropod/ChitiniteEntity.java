@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -12,6 +13,9 @@ import com.vincenthuto.hutoslib.math.MathUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
@@ -25,10 +29,11 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
@@ -41,8 +46,10 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class ChitiniteEntity extends PathfinderMob {
 
-//	private Animation animation = NO_ANIMATION;
-//	public static final Animation ROLLUP_ANIMATION = new Animation(128);
+	private static final EntityDataAccessor<Boolean> ROLLED_UP =
+			SynchedEntityData.defineId(ChitiniteEntity.class, EntityDataSerializers.BOOLEAN);
+
+	private static final int ROLLUP_DURATION = 80;
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 7.0D).add(Attributes.MOVEMENT_SPEED, 0.3D)
@@ -51,11 +58,24 @@ public class ChitiniteEntity extends PathfinderMob {
 
 	public int puffCooldown = 0;
 
-	private int animationTick;
-
 	public ChitiniteEntity(EntityType<? extends ChitiniteEntity> type, Level worldIn) {
 		super(type, worldIn);
+	}
 
+	public boolean isRolledUp() {
+		return this.entityData.get(ROLLED_UP);
+	}
+
+	private void setRolledUp(boolean rolledUp) {
+		this.entityData.set(ROLLED_UP, rolledUp);
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		if (isRolledUp()) {
+			return false;
+		}
+		return super.hurt(source, amount);
 	}
 
 	public void attackInBox(AABB box, int disabledShieldTime) {
@@ -79,7 +99,6 @@ public class ChitiniteEntity extends PathfinderMob {
 		return 0;
 	}
 
-
 	public static boolean canSpawnInCave(EntityType<? extends ChitiniteEntity> type, LevelAccessor world,
 			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
 		BlockPos below = pos.below();
@@ -95,7 +114,7 @@ public class ChitiniteEntity extends PathfinderMob {
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-
+		this.entityData.define(ROLLED_UP, false);
 	}
 
 	@Override
@@ -109,9 +128,7 @@ public class ChitiniteEntity extends PathfinderMob {
 			MobSpawnType reason, @Nullable SpawnGroupData spawnDataIn, @Nullable CompoundTag dataTag) {
 		spawnDataIn = super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 		this.populateDefaultEquipmentSlots(random, difficultyIn);
-
 		return spawnDataIn;
-
 	}
 
 	@Override
@@ -142,18 +159,13 @@ public class ChitiniteEntity extends PathfinderMob {
 	@Override
 	public void playerTouch(Player entityIn) {
 		super.playerTouch(entityIn);
-
 	}
 
 	@Override
 	protected void registerGoals() {
-		// this.goalSelector.addGoal(1, new BreakBlockGoal(Blocks.OAK_WOOD, this, 1.5d,
-		// 10));
-		// this.goalSelector.addGoal(2, new RollupGoal(this, 1.0f));
-		// this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
+		this.goalSelector.addGoal(1, new RollupGoal(this));
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-
 	}
 
 	public void sporePuff(Level world, AABB effectBounds, double x, double y, double z) {
@@ -192,146 +204,49 @@ public class ChitiniteEntity extends PathfinderMob {
 		}
 	}
 
-//	@Override
-//	public int getAnimationTick() {
-//		return animationTick;
-//	}
-//
-//	@Override
-//	public void setAnimationTick(int tick) {
-//		animationTick = tick;
-//
-//	}
-//
-//	@Override
-//	public Animation getAnimation() {
-//		return animation;
-//	}
-//
-//	@Override
-//	public void setAnimation(Animation animation) {
-//		if (animation == null)
-//			animation = NO_ANIMATION;
-//		setAnimationTick(0);
-//		this.animation = animation;
-//	}
-//
-//	@Override
-//	public Animation[] getAnimations() {
-//		return new Animation[] { ROLLUP_ANIMATION };
-//	}
-//
-//	public boolean isVulnerable() {
-//		return this.getHealth() <= this.getMaxHealth() / 4.0F;
-//	}
-//
-//	// Roll Goal
-//	private class RollupGoal extends Goal {
-//		protected final PathfinderMob creature;
-//		protected boolean running;
-//
-//		public RollupGoal(PathfinderMob creature, double speedIn) {
-//			this.creature = creature;
-//			this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-//		}
-//
-//		@Override
-//		public void tick() {
-//			creature.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10, 100, false, false));
-//			if (noActiveAnimation()) {
-//				AnimationPacket.send(EntityChitinite.this, ROLLUP_ANIMATION);
-//			}
-//		}
-//
-//		/**
-//		 * Returns whether execution should begin. You can also read and cache any state
-//		 * necessary for execution in this method as well.
-//		 */
-//		@Override
-//		public boolean canUse() {
-//			if (this.creature.getLastHurtByMob() == null && !this.creature.isOnFire()) {
-//				return false;
-//			} else {
-//				if (this.creature.isOnFire()) {
-//					BlockPos blockpos = this.getRandPos(this.creature.level, this.creature, 5, 4);
-//					if (blockpos != null) {
-//						return true;
-//					}
-//				}
-//
-//				return this.findRandomPosition();
-//			}
-//		}
-//
-//		protected boolean findRandomPosition() {
-//			Vector3d vector3d = RandomPositionGenerator.getPos(this.creature, 5, 4);
-//			if (vector3d == null) {
-//				return false;
-//			} else {
-//				return true;
-//			}
-//		}
-//
-//		@SuppressWarnings("unused")
-//		public boolean isRunning() {
-//			return this.running;
-//		}
-//
-//		/**
-//		 * Execute a one shot task or start executing a continuous task
-//		 */
-//		@Override
-//		public void start() {
-//			// this.creature.getNavigator().tryMoveToXYZ(this.randPosX, this.randPosY,
-//			// this.randPosZ, this.speed);
-//			this.running = true;
-//		}
-//
-//		/**
-//		 * Reset the task's internal state. Called when this task is interrupted by
-//		 * another one
-//		 */
-//		@Override
-//		public void stop() {
-//			this.running = false;
-//		}
-//
-//		/**
-//		 * Returns whether an in-progress EntityAIBase should continue executing
-//		 */
-//		@Override
-//		public boolean canContinueToUse() {
-//			return !this.creature.getNavigation().isDone();
-//		}
-//
-//		@Nullable
-//		protected BlockPos getRandPos(BlockGetter worldIn, Entity entityIn, int horizontalRange, int verticalRange) {
-//			BlockPos blockpos = entityIn.blockPosition();
-//			int i = blockpos.getX();
-//			int j = blockpos.getY();
-//			int k = blockpos.getZ();
-//			float f = horizontalRange * horizontalRange * verticalRange * 2;
-//			BlockPos blockpos1 = null;
-//			BlockPos. blockpos$mutable = new BlockPos.Mutable();
-//
-//			for (int l = i - horizontalRange; l <= i + horizontalRange; ++l) {
-//				for (int i1 = j - verticalRange; i1 <= j + verticalRange; ++i1) {
-//					for (int j1 = k - horizontalRange; j1 <= k + horizontalRange; ++j1) {
-//						blockpos$mutable.set(l, i1, j1);
-//						if (worldIn.getFluidState(blockpos$mutable).is(FluidTags.WATER)) {
-//							float f1 = (l - i) * (l - i) + (i1 - j) * (i1 - j) + (j1 - k) * (j1 - k);
-//							if (f1 < f) {
-//								f = f1;
-//								blockpos1 = new BlockPos(blockpos$mutable);
-//
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//			return blockpos1;
-//		}
-//	}
+	// Rolls up into a defensive ball when hurt, becoming completely immune to
+	// damage for ROLLUP_DURATION ticks before uncurling.
+	private class RollupGoal extends Goal {
+		private final ChitiniteEntity chitinite;
+		private int rollupTimer;
+		private int cooldown;
+
+		public RollupGoal(ChitiniteEntity chitinite) {
+			this.chitinite = chitinite;
+			this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+		}
+
+		@Override
+		public boolean canUse() {
+			if (cooldown > 0) {
+				cooldown--;
+				return false;
+			}
+			return chitinite.getLastHurtByMob() != null;
+		}
+
+		@Override
+		public boolean canContinueToUse() {
+			return rollupTimer > 0;
+		}
+
+		@Override
+		public void start() {
+			rollupTimer = ROLLUP_DURATION;
+			chitinite.setRolledUp(true);
+			chitinite.getNavigation().stop();
+		}
+
+		@Override
+		public void tick() {
+			rollupTimer--;
+		}
+
+		@Override
+		public void stop() {
+			cooldown = 100;
+			chitinite.setRolledUp(false);
+		}
+	}
 
 }
