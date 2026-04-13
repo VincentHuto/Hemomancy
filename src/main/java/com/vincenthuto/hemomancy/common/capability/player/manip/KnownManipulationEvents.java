@@ -188,11 +188,19 @@ public class KnownManipulationEvents {
 			player.heal(2.0f); // Heal 2.0 health (1 heart) on successful proc
 		}
 
-		// 4. Grant XP to the manipulation's level
+		// 4. Grant XP to the manipulation's level and check for rank-up
 		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(known -> {
 			ManipLevel level = known.getManipLevel(manip);
 			if (level != null && level != ManipLevel.BLANK) {
 				level.setXp(level.getXp() + 1.0);
+				if (level.tryLevelUp()) {
+					player.displayClientMessage(
+							net.minecraft.network.chat.Component.translatable(
+									"hemomancy.manipulation.levelup",
+									manip.getProperName(),
+									level.getCurrentLevel()),
+							false);
+				}
 			}
 			PacketHandler.CHANNELKNOWNMANIPS.send(
 					PacketDistributor.PLAYER.with(() -> player),

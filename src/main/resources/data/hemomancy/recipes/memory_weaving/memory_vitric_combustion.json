@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:fervent_husk"
+  },
+  "flammeus": true,
+  "animus": true,
+  "result": "hemomancy:memory_vitric_combustion",
+  "count": 1
+}

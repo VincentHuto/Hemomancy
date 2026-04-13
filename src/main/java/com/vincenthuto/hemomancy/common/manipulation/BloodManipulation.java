@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyP
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
@@ -168,6 +169,14 @@ public class BloodManipulation  {
 			// ── Skill: Blood Flow — reduce cooldown duration ──
 			long effectiveCooldown = (long) (cooldownTicks
 					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier());
+
+			// ── ManipLevel — per-use mastery further reduces cooldown ──
+			double levelCooldownMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					.map(k -> k.getManipLevel(this))
+					.map(ManipLevel::getCooldownMultiplier)
+					.orElse(1.0);
+			effectiveCooldown = (long) (effectiveCooldown * levelCooldownMultiplier);
+
 			UNIVERSAL_COOLDOWN_MAP.put(player.getUUID(), player.level().getGameTime() + effectiveCooldown);
 		}
 	}
@@ -229,6 +238,13 @@ public class BloodManipulation  {
 			if (volume.isActive()) {
 				// Apply Efficiency skill discount to manipulation cost
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
+
+				// ── ManipLevel — per-use mastery reduces cost ──
+				double levelCostMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+						.map(k -> k.getManipLevel(this))
+						.map(ManipLevel::getCostMultiplier)
+						.orElse(1.0);
+				effectiveCost *= levelCostMultiplier;
 
 				// ── Skill: Dynamic Use — reduce cost further when this manipulation's
 				//    tendency matches the player's strongest tendency ──

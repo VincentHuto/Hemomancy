@@ -14,6 +14,7 @@ import com.vincenthuto.hemomancy.common.manipulation.continuous.BloodAneurysmMan
 import com.vincenthuto.hemomancy.common.manipulation.continuous.SanguineWardManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.ActivationPotentialManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodCloudManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.BloodEclipseManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodNeedleManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodRushManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodShotManip;
@@ -21,18 +22,25 @@ import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonFlameConjurationManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonHarvestManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.CrimsonSightManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.CryogenicPulseManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.DeadlyGazeManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.ExsanguinateManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.FerricTransmutationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.GlacialBastionManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.GlacialGraspManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.HemorrhageManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.HemosynthesisManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.BloodLampManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.PyreticForgeManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineExcavationManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineIgnitionManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SanguineMendingManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonAvatarManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.UmbralStepManip;
 import com.vincenthuto.hemomancy.common.manipulation.quick.VitalReservoirManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.VitricCombustionManip;
+import com.vincenthuto.hemomancy.common.manipulation.quick.VoidShroudManip;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -187,6 +195,54 @@ public class ManipulationInit {
 			() -> new VitalReservoirManip("vital_reservoir", 50, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
 					.setCooldownTicks(60));
+
+	// ── CONGEATIO — expanded tendencies ──
+
+	public static final RegistryObject<BloodManipulation> cryogenic_pulse = MANIPS.register("cryogenic_pulse",
+			() -> new CryogenicPulseManip("cryogenic_pulse", 150, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
+					.setCooldownTicks(30));
+
+	public static final RegistryObject<BloodManipulation> glacial_bastion = MANIPS.register("glacial_bastion",
+			() -> new GlacialBastionManip("glacial_bastion", 350, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.CONGEATIO, EnumVeinSections.LEFTARM)
+					.setCooldownTicks(50));
+
+	// ── FLAMMEUS — expanded tendencies ──
+
+	public static final RegistryObject<BloodManipulation> sanguine_ignition = MANIPS.register("sanguine_ignition",
+			() -> new SanguineIgnitionManip("sanguine_ignition", 125, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
+					.setCooldownTicks(25));
+
+	public static final RegistryObject<BloodManipulation> vitric_combustion = MANIPS.register("vitric_combustion",
+			() -> new VitricCombustionManip("vitric_combustion", 500, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.FLAMMEUS, EnumVeinSections.BODY)
+					.setCooldownTicks(60));
+
+	// ── TENEBRIS — expanded tendencies ──
+
+	public static final RegistryObject<BloodManipulation> void_shroud = MANIPS.register("void_shroud",
+			() -> new VoidShroudManip("void_shroud", 100, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.TENEBRIS, EnumVeinSections.BODY)
+					.setCooldownTicks(20));
+
+	public static final RegistryObject<BloodManipulation> blood_eclipse = MANIPS.register("blood_eclipse",
+			() -> new BloodEclipseManip("blood_eclipse", 300, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.TENEBRIS, EnumVeinSections.HEAD)
+					.setCooldownTicks(45));
+
+	// ── MORTEM — expanded tendencies ──
+
+	public static final RegistryObject<BloodManipulation> hemorrhage = MANIPS.register("hemorrhage",
+			() -> new HemorrhageManip("hemorrhage", 100, 0, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.MORTEM, EnumVeinSections.RIGHTARM)
+					.setCooldownTicks(20));
+
+	public static final RegistryObject<BloodManipulation> exsanguinate = MANIPS.register("exsanguinate",
+			() -> new ExsanguinateManip("exsanguinate", 300, 10, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.RIGHTARM)
+					.setCooldownTicks(50));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();

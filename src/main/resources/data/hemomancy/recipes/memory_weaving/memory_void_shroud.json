@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:ink_sac"
+  },
+  "tenebris": true,
+  "result": "hemomancy:memory_void_shroud",
+  "count": 1
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:fire_charge"
+  },
+  "flammeus": true,
+  "result": "hemomancy:memory_sanguine_ignition",
+  "count": 1
+}

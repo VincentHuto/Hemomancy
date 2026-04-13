@@ -1,0 +1,9 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:wither_rose"
+  },
+  "mortem": true,
+  "result": "hemomancy:memory_hemorrhage",
+  "count": 1
+}

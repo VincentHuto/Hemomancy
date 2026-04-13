@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "minecraft:packed_ice"
+  },
+  "congeatio": true,
+  "ferric": true,
+  "result": "hemomancy:memory_glacial_bastion",
+  "count": 1
+}

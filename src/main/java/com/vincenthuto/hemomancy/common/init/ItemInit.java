@@ -376,6 +376,23 @@ public class ItemInit {
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_sight));
 	public static final RegistryObject<Item> memory_vital_reservoir = BASEITEMS.register("memory_vital_reservoir",
 			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vital_reservoir));
+	// ── Expanded tendency memories ──
+	public static final RegistryObject<Item> memory_cryogenic_pulse = BASEITEMS.register("memory_cryogenic_pulse",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.cryogenic_pulse));
+	public static final RegistryObject<Item> memory_glacial_bastion = BASEITEMS.register("memory_glacial_bastion",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.glacial_bastion));
+	public static final RegistryObject<Item> memory_sanguine_ignition = BASEITEMS.register("memory_sanguine_ignition",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.sanguine_ignition));
+	public static final RegistryObject<Item> memory_vitric_combustion = BASEITEMS.register("memory_vitric_combustion",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.vitric_combustion));
+	public static final RegistryObject<Item> memory_void_shroud = BASEITEMS.register("memory_void_shroud",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.void_shroud));
+	public static final RegistryObject<Item> memory_blood_eclipse = BASEITEMS.register("memory_blood_eclipse",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.blood_eclipse));
+	public static final RegistryObject<Item> memory_hemorrhage = BASEITEMS.register("memory_hemorrhage",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
+	public static final RegistryObject<Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
+			() -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
 	// Living
 	public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
 			() -> new BloodAbsorptionItem(new Item.Properties()));
