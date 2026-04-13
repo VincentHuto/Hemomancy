@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,7 +34,7 @@ import net.minecraftforge.fml.common.Mod;
  * Full-set bonuses require all 4 armor pieces of the same material.
  *
  * <ul>
- *   <li><b>Hematic Iron:</b> Passive blood regeneration (+2 blood/tick)</li>
+ *   <li><b>Hematic Iron:</b> Passive blood regeneration (+2 blood/second)</li>
  *   <li><b>Blood Lust:</b> Lifesteal — 10% of melee damage dealt heals the player</li>
  *   <li><b>Barbed:</b> Thorns — attackers take 2 damage and receive Blood Loss</li>
  *   <li><b>Chitinite:</b> +2.0 Armor Toughness and 25% projectile damage reduction</li>
@@ -48,6 +49,7 @@ public class ArmorSetBonusHandler {
 	private static final UUID MARROW_CROWN_DAMAGE_UUID = UUID.fromString("a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d");
 
 	private static final double HEMATIC_IRON_BLOOD_REGEN = 2.0;
+	private static final int HEMATIC_IRON_REGEN_INTERVAL = 20; // Every 20 ticks = 1 second
 	private static final float BLOOD_LUST_LIFESTEAL_FRACTION = 0.10f;
 	private static final float BARBED_THORNS_DAMAGE = 2.0f;
 	private static final int BARBED_BLOOD_LOSS_DURATION = 60; // 3 seconds
@@ -56,6 +58,7 @@ public class ArmorSetBonusHandler {
 	private static final float CHITINITE_PROJECTILE_REDUCTION = 0.25f;
 	private static final double MARROW_CROWN_DAMAGE_BONUS = 0.10;
 	private static final double MARROW_CROWN_BLOOD_THRESHOLD = 0.50;
+	private static final int UNSTAINED_CHECK_INTERVAL = 10; // Check every 10 ticks
 
 	/**
 	 * Count how many armor pieces of a given material the player is wearing.
@@ -77,7 +80,27 @@ public class ArmorSetBonusHandler {
 		return countArmorPieces(player, material) >= 4;
 	}
 
-	// ───── Hematic Iron: Passive Blood Regen ─────
+	// ───── Equipment Change: Attribute Modifiers ─────
+
+	/**
+	 * Update attribute modifiers when armor equipment changes, avoiding per-tick overhead.
+	 */
+	@SubscribeEvent
+	public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (player.level().isClientSide()) return;
+
+		EquipmentSlot slot = event.getSlot();
+		if (slot.getType() != EquipmentSlot.Type.ARMOR) return;
+
+		// Chitinite set bonus: attribute modifier for toughness
+		updateChitiniteToughness(player);
+
+		// Marrow Crown artifact: damage bonus attribute modifier
+		updateMarrowCrownDamage(player);
+	}
+
+	// ───── Tick-Based Bonuses (rate-limited) ─────
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -85,8 +108,8 @@ public class ArmorSetBonusHandler {
 		Player player = event.player;
 		if (player.level().isClientSide()) return;
 
-		// Hematic Iron set bonus: passive blood regen
-		if (hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
+		// Hematic Iron set bonus: passive blood regen (every HEMATIC_IRON_REGEN_INTERVAL ticks)
+		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.HEMATIC_IRON)) {
 			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
 				if (volume.isActive() && !volume.isFull()) {
 					volume.fill(HEMATIC_IRON_BLOOD_REGEN);
@@ -95,14 +118,13 @@ public class ArmorSetBonusHandler {
 			});
 		}
 
-		// Chitinite set bonus: attribute modifier for toughness
-		updateChitiniteToughness(player);
+		// Marrow Crown: re-check blood threshold periodically (blood level can change without equipment change)
+		if (player.tickCount % HEMATIC_IRON_REGEN_INTERVAL == 0) {
+			updateMarrowCrownDamage(player);
+		}
 
-		// Marrow Crown artifact: damage bonus attribute modifier
-		updateMarrowCrownDamage(player);
-
-		// Unstained set bonus: remove blood-related debuffs
-		if (hasFullSet(player, EnumModArmorTiers.UNSTAINED)) {
+		// Unstained set bonus: remove blood-related debuffs (check every UNSTAINED_CHECK_INTERVAL ticks)
+		if (player.tickCount % UNSTAINED_CHECK_INTERVAL == 0 && hasFullSet(player, EnumModArmorTiers.UNSTAINED)) {
 			if (player.hasEffect(EffectInit.blood_loss.get())) {
 				player.removeEffect(EffectInit.blood_loss.get());
 			}

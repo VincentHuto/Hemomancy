@@ -700,7 +700,7 @@ Standard blood-infused iron armor set (fire resistant):
 - ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_helm.png) Helm, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_chestplate.png) Chestplate, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_leggings.png) Leggings, ![](src/main/resources/assets/hemomancy/textures/item/hematic_iron_boots.png) Boots
 - **Stats:** Defense 3/6/8/3 (20 total), Toughness 3.0, KB Resist 0.1, Durability ×37, Enchantability 15
 - **Repair:** Hematic Iron Scrap
-- **Set Bonus (4 pieces):** Passive blood regeneration — +2 blood/tick while wearing full set
+- **Set Bonus (4 pieces):** Passive blood regeneration — +2 blood/second while wearing full set
 
 > Armor model: ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_1.png) ![](src/main/resources/assets/hemomancy/textures/models/armor/hematic_iron_layer_2.png)
 
