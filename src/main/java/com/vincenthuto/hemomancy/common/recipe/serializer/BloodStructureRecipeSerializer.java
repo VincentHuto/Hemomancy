@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
-import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStructureRecipe> {
@@ -57,7 +56,12 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	}
 
 	private static Predicate<BlockInWorld> blockPredFromHash(Map<String, Block> symbolList, String string) {
-		return (BlockInWorld.hasState(BlockStatePredicate.forBlock(symbolList.get(string))));
+		Block target = symbolList.get(string);
+		// Only match the block type, ignoring block state properties (facing, half, shape, etc.)
+		// BlockStatePredicate.forBlock() matches ALL properties against the default state,
+		// which causes blocks like stairs, gourds, and engrams to fail matching when placed
+		// in the world with non-default state values.
+		return BlockInWorld.hasState(state -> state.getBlock() == target);
 	}
 
 	// Structure Helpers

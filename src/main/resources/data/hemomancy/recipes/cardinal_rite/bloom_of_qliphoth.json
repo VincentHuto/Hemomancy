@@ -5,30 +5,53 @@
   "riteName": "Bloom of the Qliphoth",
   "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
   "pattern": [
-    ["V E V", " G G ", "EGCGE", " G G ", "V E V"],
-    ["     ", " V V ", " VHV ", " V V ", "     "],
-    ["  E  ", " EPE ", "EPCPE", " EPE ", "  E  "],
-    ["     ", " V V ", " VHV ", " V V ", "     "],
-    ["V E V", " G G ", "EGCGE", " G G ", "V E V"]
+    [
+      "A     A",
+      "ABBBBBA"
+    ],
+    [
+      " EB BE ",
+      "BACDCAB"
+    ],
+    [
+      " BAFAB ",
+      "BCFFFCB"
+    ],
+    [
+      "  FAF  ",
+      "BDFAFDB"
+    ],
+    [
+      " BAFAB ",
+      "BCFFFCB"
+    ],
+    [
+      " EB BE ",
+      "BACDCAB"
+    ],
+    [
+      "A     A",
+      "ABBBBBA"
+    ]
   ],
   "key": {
+    "A": {
+      "block": "hemomancy:blood_wood_log"
+    },
+    "B": {
+      "block": "hemomancy:polished_venous_stone_brick_stairs"
+    },
+    "C": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "D": {
+      "block": "hemomancy:chiseled_polished_venous_stone"
+    },
     "E": {
       "block": "hemomancy:engram_block"
     },
-    "V": {
+    "F": {
       "block": "hemomancy:venous_stone"
-    },
-    "G": {
-      "block": "hemomancy:gilded_venous_stone"
-    },
-    "C": {
-      "block": "hemomancy:chiseled_hematic_iron_block"
-    },
-    "P": {
-      "block": "hemomancy:polished_venous_stone"
-    },
-    "H": {
-      "block": "hemomancy:hematic_iron_pillar"
     }
   },
   "result": {

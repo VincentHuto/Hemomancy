@@ -66,9 +66,12 @@ public class HarbingersFaction extends BaseFaction {
         return Component.translatable("fnc:rituals/pact");
     }
 
+    @Override
     public ResourceLocation getSanctumStructure() {
-        return Hemomancy.rloc("qliphoth_bloom");
+        return Hemomancy.rloc("qliphoth_sanctum");
     }
+
+
 
 
 }

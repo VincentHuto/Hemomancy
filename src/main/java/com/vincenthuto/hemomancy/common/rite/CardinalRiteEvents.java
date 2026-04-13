@@ -40,6 +40,7 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -275,20 +276,31 @@ public class CardinalRiteEvents {
 	/**
 	 * Searches for a block pattern match near a center position.
 	 * <p>
-	 * Vanilla {@link BlockPattern#find} only scans from {@code pos} to
-	 * {@code pos + (maxDim - 1)} in the <b>positive</b> direction. When
-	 * the stored center is in the middle of the structure, the pattern
-	 * origin can lie in the negative direction and be missed entirely.
-	 * <p>
-	 * This helper offsets the search start back by {@code (maxDim - 1)}
-	 * so that the full structure volume is within the scan range.
+	 * Vanilla {@link BlockPattern#find} scans a cube of only
+	 * {@code maxDim × maxDim × maxDim} starting positions, which is too
+	 * small when the stored center sits in the middle of the structure.
+	 * Depending on which rotation matches, the pattern's
+	 * {@code frontTopLeft} anchor can be up to {@code (maxDim - 1)} blocks
+	 * from center in <b>any</b> direction. We therefore scan a larger cube
+	 * of radius {@code (maxDim - 1)} around center to guarantee coverage.
 	 */
 	private static BlockPattern.BlockPatternMatch findPatternNearCenter(
 			BlockPattern blockPattern, ServerLevel sLevel, BlockPos center) {
 		int maxDim = Math.max(Math.max(
 				blockPattern.getWidth(), blockPattern.getHeight()), blockPattern.getDepth());
-		BlockPos searchStart = center.offset(-(maxDim - 1), -(maxDim - 1), -(maxDim - 1));
-		return blockPattern.find(sLevel, searchStart);
+		int radius = maxDim - 1;
+		for (BlockPos candidate : BlockPos.betweenClosed(
+				center.offset(-radius, -radius, -radius),
+				center.offset(radius, radius, radius))) {
+			for (Direction finger : Direction.values()) {
+				for (Direction thumb : Direction.values()) {
+					if (thumb == finger || thumb == finger.getOpposite()) continue;
+					BlockPattern.BlockPatternMatch match = blockPattern.matches(sLevel, candidate, finger, thumb);
+					if (match != null) return match;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -1188,7 +1200,7 @@ public class CardinalRiteEvents {
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
 		com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock =
 				(com.vincenthuto.hemomancy.common.block.IMultiBlock) bloomBlock;
-		if (!multiBlock.canPlaceMultiBlock(sLevel, center)) {
+		if (!multiBlock.canPlaceMultiBlock(sLevel, center.above(2))) {
 			caster.displayClientMessage(
 					Component.literal("There is not enough room for the Qliphoth to bloom here.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -1197,18 +1209,18 @@ public class CardinalRiteEvents {
 		}
 
 		// Place the multi-block
-		sLevel.setBlockAndUpdate(center, bloomBlock.defaultBlockState());
-		net.minecraft.world.level.block.entity.BlockEntity be = sLevel.getBlockEntity(center);
+		sLevel.setBlockAndUpdate(center.above(2), bloomBlock.defaultBlockState());
+		net.minecraft.world.level.block.entity.BlockEntity be = sLevel.getBlockEntity(center.above(2));
 		if (be instanceof com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity bloomBE) {
 			bloomBE.setOwnerUUID(caster.getUUID());
 			bloomBE.setChunkRadius(QLIPHOTH_BLOOM_CHUNK_RADIUS);
 		}
 		// Place filler blocks above
-		multiBlock.placeFillers(sLevel, center, bloomBlock.defaultBlockState());
+		multiBlock.placeFillers(sLevel, center.above(2), bloomBlock.defaultBlockState());
 
 		// Register in SavedData
 		QliphothBloomSavedData.BloomEntry entry = new QliphothBloomSavedData.BloomEntry(
-				caster.getUUID(), center, dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS, sLevel.getGameTime());
+				caster.getUUID(), center.above(2),dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS, sLevel.getGameTime());
 		data.addBloom(entry);
 
 		// Sync to all nearby clients so the tree renders immediately

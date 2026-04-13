@@ -1,0 +1,14 @@
+{
+	"type": "mna:multiblock",
+	"structure": "hemomancy:qliphoth_sanctum",
+	"replacements": [],
+	"symmetrical": true,
+    "tier": 3,
+	"matchers": [
+		{
+			"block": "mna:chalk_rune",
+			"matcher": "mna:wizard_chalk"
+		}
+	],
+	"tags": []
+}

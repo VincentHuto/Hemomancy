@@ -173,9 +173,11 @@ public class StructureScannerItem extends Item {
 		}
 
 		// Build pattern: [aisle / Z] [row / Y] = string of chars along X
+		// Row 0 must be the TOP (highest Y) to match BlockPatternBuilder.aisle() convention.
+		// Iterate Y from maxY down to minY so the array is top-to-bottom.
 		String[][] pattern = new String[sizeZ][sizeY];
 		for (int z = minZ; z <= maxZ; z++) {
-			for (int y = minY; y <= maxY; y++) {
+			for (int y = maxY; y >= minY; y--) {
 				StringBuilder row = new StringBuilder();
 				for (int x = minX; x <= maxX; x++) {
 					Block block = level.getBlockState(new BlockPos(x, y, z)).getBlock();
@@ -185,7 +187,7 @@ public class StructureScannerItem extends Item {
 						row.append(blockToChar.get(block));
 					}
 				}
-				pattern[z - minZ][y - minY] = row.toString();
+				pattern[z - minZ][maxY - y] = row.toString();
 			}
 		}
 
