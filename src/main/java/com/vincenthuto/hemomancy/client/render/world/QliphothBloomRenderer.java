@@ -90,12 +90,160 @@ public class QliphothBloomRenderer {
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
+			// Skip blooms that have a corresponding block in the world —
+			// those are rendered by QliphothBloomBlockRenderer via the BER pipeline.
+			BlockPos center = bloom.getCenter();
+			if (mc.level.getBlockState(center).getBlock() instanceof
+					com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock) {
+				continue;
+			}
 			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
 			drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
 		}
 
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_CORE);
 		buffer.endBatch(RenderTypeInit.RITE_BOUNDARY_GLOW);
+	}
+
+	// ════════════════════════════════════════════════════════════════════════
+	//  Public API for BlockEntityRenderer usage
+	// ════════════════════════════════════════════════════════════════════════
+
+	/**
+	 * Renders the Qliphoth tree geometry (trunk, branches, canopy, roots, orbs)
+	 * at the given offset from the current PoseStack origin.
+	 * <p>
+	 * For use by the block entity renderer where the PoseStack is already
+	 * translated to the block entity position.
+	 *
+	 * @param stack   PoseStack already positioned at the block entity origin
+	 * @param buffer  multi buffer source
+	 * @param time    current game time + partial tick
+	 * @param offsetX X offset from PoseStack origin to center the tree
+	 * @param offsetY Y offset from PoseStack origin (e.g. 0.1 for slight raise)
+	 * @param offsetZ Z offset from PoseStack origin to center the tree
+	 */
+	public static void renderTree(PoseStack stack, MultiBufferSource buffer, float time,
+			double offsetX, double offsetY, double offsetZ) {
+		stack.pushPose();
+		stack.translate(offsetX, offsetY, offsetZ);
+		Matrix4f mat = stack.last().pose();
+
+		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
+
+		double pulse = (Math.sin(time * 0.06) + 1.0) * 0.5;
+
+		drawTrunk(coreVC, glowVC, mat, time, pulse);
+		drawTrunkOrbs(coreVC, glowVC, mat, time, pulse);
+		drawRoots(coreVC, glowVC, mat, time, pulse);
+		drawBranches(coreVC, glowVC, mat, time, pulse);
+		drawCanopy(coreVC, glowVC, mat, time, pulse);
+		drawApexOrb(coreVC, glowVC, mat, time, pulse);
+
+		stack.popPose();
+	}
+
+	/**
+	 * Renders the pulsing concentric rings at the given offset from the
+	 * current PoseStack origin.
+	 *
+	 * @param stack   PoseStack already positioned at the block entity origin
+	 * @param buffer  multi buffer source
+	 * @param time    current game time + partial tick
+	 * @param offsetX X offset
+	 * @param offsetY Y offset
+	 * @param offsetZ Z offset
+	 */
+	public static void renderRings(PoseStack stack, MultiBufferSource buffer, float time,
+			double offsetX, double offsetY, double offsetZ) {
+		stack.pushPose();
+		stack.translate(offsetX, offsetY, offsetZ);
+		drawRingsInternal(stack, buffer, time);
+		stack.popPose();
+	}
+
+	/**
+	 * Internal ring drawing logic shared by both the world renderer and BER.
+	 * Expects the PoseStack to already be translated to the ring center.
+	 */
+	private static void drawRingsInternal(PoseStack stack, MultiBufferSource buffer, float time) {
+		Matrix4f mat = stack.last().pose();
+
+		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
+		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
+
+		double pulse = (Math.sin(time * 0.08) + 1.0) * 0.5;
+
+		for (int ring = 0; ring < RING_COUNT; ring++) {
+			double phase = (time * RING_PULSE_SPEED + ring * (1.0 / RING_COUNT)) % 1.0;
+			float ringRadius = (float) (1.5 + phase * RING_MAX_RADIUS);
+
+			float fadeProgress = (float) phase;
+			float fadeAlpha = 1.0f - fadeProgress * fadeProgress;
+
+			if (fadeAlpha < 0.02f) continue;
+
+			float coreAlpha = (float) (0.55 + 0.25 * pulse) * fadeAlpha;
+			float glowAlpha = (float) (0.12 + 0.10 * pulse) * fadeAlpha;
+
+			float coreR = (float) Math.min(1.0, 0.85 + 0.15 * pulse);
+			float coreG = 0.04f;
+			float coreB = 0.03f;
+			float glowR = (float) Math.min(1.0, 0.55 + 0.2 * pulse);
+			float glowG = 0.02f;
+			float glowB = 0.02f;
+
+			for (int i = 0; i < RING_SEGMENTS; i++) {
+				double a1 = Math.toRadians((360.0 / RING_SEGMENTS) * i);
+				double a2 = Math.toRadians((360.0 / RING_SEGMENTS) * (i + 1));
+
+				float undulate1 = (float) (Math.sin(a1 * 6.0 + time * 0.05 + ring * 2.0) * 0.08 * (1.0 - fadeProgress * 0.5));
+				float undulate2 = (float) (Math.sin(a2 * 6.0 + time * 0.05 + ring * 2.0) * 0.08 * (1.0 - fadeProgress * 0.5));
+
+				float r1 = ringRadius + undulate1;
+				float r2 = ringRadius + undulate2;
+
+				float y1 = (float) (Math.sin(a1 * 4.0 + time * 0.06) * 0.01);
+				float y2 = (float) (Math.sin(a2 * 4.0 + time * 0.06) * 0.01);
+
+				float cos1 = (float) Math.cos(a1);
+				float sin1 = (float) Math.sin(a1);
+				float cos2 = (float) Math.cos(a2);
+				float sin2 = (float) Math.sin(a2);
+
+				float iGlow1 = r1 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
+				float iCore1 = r1 - RING_CORE_WIDTH * 0.5f;
+				float oCore1 = r1 + RING_CORE_WIDTH * 0.5f;
+				float oGlow1 = r1 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
+
+				float iGlow2 = r2 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
+				float iCore2 = r2 - RING_CORE_WIDTH * 0.5f;
+				float oCore2 = r2 + RING_CORE_WIDTH * 0.5f;
+				float oGlow2 = r2 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
+
+				// Inner glow
+				emitQuad(glowVC, mat,
+						cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
+						cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
+						cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
+						cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
+
+				// Core
+				emitQuad(coreVC, mat,
+						cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
+						cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
+						cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
+						cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
+
+				// Outer glow
+				emitQuad(glowVC, mat,
+						cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
+						cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
+						cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
+						cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
+			}
+		}
 	}
 
 	// ════════════════════════════════════════════════════════════════════════
@@ -1079,87 +1227,7 @@ public class QliphothBloomRenderer {
 
 		stack.pushPose();
 		stack.translate(cx - cam.x, cy - cam.y, cz - cam.z);
-		Matrix4f mat = stack.last().pose();
-
-		VertexConsumer coreVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_CORE);
-		VertexConsumer glowVC = buffer.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
-
-		double pulse = (Math.sin(time * 0.08) + 1.0) * 0.5;
-
-		for (int ring = 0; ring < RING_COUNT; ring++) {
-			// Each ring pulses outward at a different phase, creating a radiating effect
-			double phase = (time * RING_PULSE_SPEED + ring * (1.0 / RING_COUNT)) % 1.0;
-			float ringRadius = (float) (1.5 + phase * RING_MAX_RADIUS);
-
-			// Rings fade as they expand outward
-			float fadeProgress = (float) phase;
-			float fadeAlpha = 1.0f - fadeProgress * fadeProgress; // quadratic fade
-
-			if (fadeAlpha < 0.02f) continue;
-
-			float coreAlpha = (float) (0.55 + 0.25 * pulse) * fadeAlpha;
-			float glowAlpha = (float) (0.12 + 0.10 * pulse) * fadeAlpha;
-
-			// Red core color
-			float coreR = (float) Math.min(1.0, 0.85 + 0.15 * pulse);
-			float coreG = 0.04f;
-			float coreB = 0.03f;
-			float glowR = (float) Math.min(1.0, 0.55 + 0.2 * pulse);
-			float glowG = 0.02f;
-			float glowB = 0.02f;
-
-			// Undulation for organic feel
-			for (int i = 0; i < RING_SEGMENTS; i++) {
-				double a1 = Math.toRadians((360.0 / RING_SEGMENTS) * i);
-				double a2 = Math.toRadians((360.0 / RING_SEGMENTS) * (i + 1));
-
-				float undulate1 = (float) (Math.sin(a1 * 6.0 + time * 0.05 + ring * 2.0) * 0.08 * (1.0 - fadeProgress * 0.5));
-				float undulate2 = (float) (Math.sin(a2 * 6.0 + time * 0.05 + ring * 2.0) * 0.08 * (1.0 - fadeProgress * 0.5));
-
-				float r1 = ringRadius + undulate1;
-				float r2 = ringRadius + undulate2;
-
-				float y1 = (float) (Math.sin(a1 * 4.0 + time * 0.06) * 0.01);
-				float y2 = (float) (Math.sin(a2 * 4.0 + time * 0.06) * 0.01);
-
-				float cos1 = (float) Math.cos(a1);
-				float sin1 = (float) Math.sin(a1);
-				float cos2 = (float) Math.cos(a2);
-				float sin2 = (float) Math.sin(a2);
-
-				float iGlow1 = r1 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
-				float iCore1 = r1 - RING_CORE_WIDTH * 0.5f;
-				float oCore1 = r1 + RING_CORE_WIDTH * 0.5f;
-				float oGlow1 = r1 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
-
-				float iGlow2 = r2 - RING_GLOW_WIDTH - RING_CORE_WIDTH * 0.5f;
-				float iCore2 = r2 - RING_CORE_WIDTH * 0.5f;
-				float oCore2 = r2 + RING_CORE_WIDTH * 0.5f;
-				float oGlow2 = r2 + RING_GLOW_WIDTH + RING_CORE_WIDTH * 0.5f;
-
-				// Inner glow
-				emitQuad(glowVC, mat,
-						cos1 * iGlow1, y1, sin1 * iGlow1, glowR, glowG, glowB, 0f,
-						cos1 * iCore1, y1, sin1 * iCore1, glowR, glowG, glowB, glowAlpha,
-						cos2 * iCore2, y2, sin2 * iCore2, glowR, glowG, glowB, glowAlpha,
-						cos2 * iGlow2, y2, sin2 * iGlow2, glowR, glowG, glowB, 0f);
-
-				// Core
-				emitQuad(coreVC, mat,
-						cos1 * iCore1, y1, sin1 * iCore1, coreR, coreG, coreB, coreAlpha,
-						cos1 * oCore1, y1, sin1 * oCore1, coreR, coreG, coreB, coreAlpha,
-						cos2 * oCore2, y2, sin2 * oCore2, coreR, coreG, coreB, coreAlpha,
-						cos2 * iCore2, y2, sin2 * iCore2, coreR, coreG, coreB, coreAlpha);
-
-				// Outer glow
-				emitQuad(glowVC, mat,
-						cos1 * oCore1, y1, sin1 * oCore1, glowR, glowG, glowB, glowAlpha,
-						cos1 * oGlow1, y1, sin1 * oGlow1, glowR, glowG, glowB, 0f,
-						cos2 * oGlow2, y2, sin2 * oGlow2, glowR, glowG, glowB, 0f,
-						cos2 * oCore2, y2, sin2 * oCore2, glowR, glowG, glowB, glowAlpha);
-			}
-		}
-
+		drawRingsInternal(stack, buffer, time);
 		stack.popPose();
 	}
 

@@ -1175,12 +1175,38 @@ public class CardinalRiteEvents {
 	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
 	 * radius, all blood manipulations cost 25% less blood and players receive
 	 * passive health regeneration and enhanced blood regeneration.
+	 * <p>
+	 * Places a 1×1×8 multi-block (QliphothBloomBlock + 7 fillers) at the
+	 * ritual center and registers the bloom in world SavedData.
 	 */
 	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
 
+		// Verify there is room for the 1×1×8 column
+		Block bloomBlock = BlockInit.qliphoth_bloom.get();
+		com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock =
+				(com.vincenthuto.hemomancy.common.block.IMultiBlock) bloomBlock;
+		if (!multiBlock.canPlaceMultiBlock(sLevel, center)) {
+			caster.displayClientMessage(
+					Component.literal("There is not enough room for the Qliphoth to bloom here.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Place the multi-block
+		sLevel.setBlockAndUpdate(center, bloomBlock.defaultBlockState());
+		net.minecraft.world.level.block.entity.BlockEntity be = sLevel.getBlockEntity(center);
+		if (be instanceof com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity bloomBE) {
+			bloomBE.setOwnerUUID(caster.getUUID());
+			bloomBE.setChunkRadius(QLIPHOTH_BLOOM_CHUNK_RADIUS);
+		}
+		// Place filler blocks above
+		multiBlock.placeFillers(sLevel, center, bloomBlock.defaultBlockState());
+
+		// Register in SavedData
 		QliphothBloomSavedData.BloomEntry entry = new QliphothBloomSavedData.BloomEntry(
 				caster.getUUID(), center, dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS, sLevel.getGameTime());
 		data.addBloom(entry);
@@ -1199,6 +1225,7 @@ public class CardinalRiteEvents {
 	/**
 	 * Pruning of the Qliphoth (Degree 0, Minor):
 	 * Removes a Qliphoth Bloom tree whose center is in the same chunk as the rite.
+	 * Destroys the physical multi-block and removes the SavedData entry.
 	 */
 	private static void completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
@@ -1208,6 +1235,14 @@ public class CardinalRiteEvents {
 		QliphothBloomSavedData.BloomEntry removed = data.removeBloomInChunk(center, dimension);
 
 		if (removed != null) {
+			// Destroy the physical bloom block and its fillers
+			BlockPos bloomPos = removed.center();
+			BlockState bloomState = sLevel.getBlockState(bloomPos);
+			if (bloomState.getBlock() instanceof com.vincenthuto.hemomancy.common.block.IMultiBlock multiBlock) {
+				multiBlock.removeFillers(sLevel, bloomPos);
+			}
+			sLevel.removeBlock(bloomPos, false);
+
 			// Sync updated bloom list to all clients
 			syncQliphothBlooms(sLevel.getServer());
 
@@ -1270,6 +1305,20 @@ public class CardinalRiteEvents {
 					new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
 			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player), packet);
 		}
+	}
+
+	/**
+	 * Public helper called by {@link com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock#onRemove}
+	 * when the bloom block is broken (directly or via filler destruction).
+	 * Removes the SavedData entry and syncs clients.
+	 */
+	public static void removeBloomAt(net.minecraft.world.level.Level level, BlockPos pos) {
+		if (!(level instanceof ServerLevel sLevel)) return;
+		ServerLevel overworld = sLevel.getServer().overworld();
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		data.removeBloomInChunk(pos, dimension);
+		syncQliphothBlooms(sLevel.getServer());
 	}
 
 	/**

@@ -96,6 +96,10 @@ public class BlockEntityInit {
 			.register("filler_block", () -> BlockEntityType.Builder
 					.of(FillerBlockEntity::new, BlockInit.filler_block.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<QliphothBloomBlockEntity>> qliphoth_bloom = TILES
+			.register("qliphoth_bloom", () -> BlockEntityType.Builder
+					.of(QliphothBloomBlockEntity::new, BlockInit.qliphoth_bloom.get()).build(null));
+
 	public static final RegistryObject<BlockEntityType<VisceralMirrorBlockEntity>> visceral_mirror = TILES
 			.register("visceral_mirror", () -> BlockEntityType.Builder
 					.of(VisceralMirrorBlockEntity::new, BlockInit.visceral_mirror.get()).build(null));
