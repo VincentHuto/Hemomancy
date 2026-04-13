@@ -388,6 +388,7 @@ public class CardinalRiteEvents {
 
 	private static final String BLOODLINE_FOUNDING_RITE = "cardinal_rite/bloodline_founding";
 	private static final String BLOODLINE_RECALL_RITE = "cardinal_rite/bloodline_recall";
+	private static final String SANGUINE_INITIATION_RITE = "cardinal_rite/sanguine_initiation";
 
 	// ── New utility rite paths ──
 	private static final String SANGUINE_ATTUNEMENT_RITE = "cardinal_rite/sanguine_attunement";
@@ -706,6 +707,19 @@ public class CardinalRiteEvents {
 					}
 				}
 			});
+		}
+
+		// Sanguine Initiation: give the caster a Sanguine Conduit so they can monitor their progress
+		if (SANGUINE_INITIATION_RITE.equals(ritePath)) {
+			ItemStack conduit = new ItemStack(ItemInit.sanguine_conduit.get());
+			if (!caster.getInventory().add(conduit)) {
+				sLevel.addFreshEntity(new ItemEntity(sLevel,
+						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, conduit));
+			}
+			caster.displayClientMessage(
+					Component.translatable("hemomancy.rite.sanguine_initiation.conduit_granted")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
 		}
 	}
 

@@ -42,23 +42,41 @@ public final class HarbingerHermitDialogueTrees {
 		};
 	}
 
-	/** Player has no blood magic active — the hermit senses nothing. */
+	/** Player has no blood magic active — the hermit offers his heart and welcomes the newcomer. */
 	public static DialogueTree noBlood(int entityId) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
 				.addNode(new DialogueNode("root", List.of(
-						"hemomancy.hermit.no_blood"
+						"hemomancy.hermit.no_blood.line1",
+						"hemomancy.hermit.no_blood.line2",
+						"hemomancy.hermit.no_blood.line3"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.who_are_you", "hermit_duty", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("heart_lore", List.of(
+						"hemomancy.hermit.no_blood.heart_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.accept_heart", null, "hermit_heart_offered"),
+						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("hermit_duty", List.of(
+						"hemomancy.hermit.no_blood.duty.line1",
+						"hemomancy.hermit.no_blood.duty.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.what_heart", "heart_lore", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();
 	}
 
-	/** Degree 0 — uninitiated but has active blood. The hermit offers guidance. */
+	/** Degree 0 — uninitiated but has active blood. The hermit congratulates and offers final guidance. */
 	public static DialogueTree uninitiated(int entityId) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.uninitiated.line1",
-						"hemomancy.hermit.uninitiated.line2"
+						"hemomancy.hermit.uninitiated.line2",
+						"hemomancy.hermit.uninitiated.line3"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_i_begin", "guidance", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.what_is_this_place", "temple_lore", null),
@@ -67,13 +85,20 @@ public final class HarbingerHermitDialogueTrees {
 				.addNode(new DialogueNode("guidance", List.of(
 						"hemomancy.hermit.uninitiated.guidance"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.accept_guidance", null, "hermit_accept_guidance"),
+						new DialogueOption("hemomancy.dialogue.hermit.option.accept_guidance", "farewell", "hermit_accept_guidance"),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("temple_lore", List.of(
 						"hemomancy.hermit.temple_lore"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_i_begin", "guidance", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("farewell", List.of(
+						"hemomancy.hermit.uninitiated.farewell.line1",
+						"hemomancy.hermit.uninitiated.farewell.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.hermit.option.farewell", null, "hermit_farewell_die")
 				)))
 				.build();
 	}
