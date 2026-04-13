@@ -60,11 +60,7 @@ public class DialogueEventHandler {
 						false);
 			}
 			case "hermit_farewell_die" -> {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
-								.withStyle(ChatFormatting.DARK_RED),
-						false);
-				// Find the hermit entity and kill it, dropping the rite hint
+				// Find the hermit entity, drop the rite hint, then end the hermit
 				Entity entity = player.level().getEntity(event.getEntityId());
 				if (entity instanceof HarbingerHermitEntity hermit) {
 					Vec3 pos = hermit.position();
@@ -75,6 +71,15 @@ public class DialogueEventHandler {
 									"cardinal_rite/sanguine_initiation"));
 					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z, riteHint);
 					hermit.level().addFreshEntity(drop);
+					// Passing text passage — the mortal display was the hermit’s heart
+					player.displayClientMessage(
+							Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
+									.withStyle(ChatFormatting.DARK_RED),
+							false);
+					player.displayClientMessage(
+							Component.translatable("hemomancy.dialogue.event.hermit_passing")
+									.withStyle(ChatFormatting.GRAY),
+							false);
 					// Visual effects: blood particles rising from the hermit
 					for (int i = 0; i < 8; i++) {
 						Vec3 particlePos = pos.add(
@@ -86,7 +91,7 @@ public class DialogueEventHandler {
 								ParticleColor.BLOOD, 2, 15, 6, 0.8f);
 					}
 					// The hermit is invulnerable by default (see HarbingerHermitEntity constructor),
-					// so clear the flag before killing. Its duty is fulfilled.
+					// so clear the flag before ending it. Its duty is fulfilled.
 					hermit.setInvulnerable(false);
 					hermit.kill();
 				}

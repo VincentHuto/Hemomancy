@@ -863,7 +863,8 @@
 	"hemomancy.dialogue.hermit.option.farewell": "Thank you, Hermit. Rest now.",
 	"hemomancy.dialogue.event.hermit_accept_guidance": "The path of hemomancy begins at the cardinal altar. Seek it out.",
 	"hemomancy.dialogue.event.hermit_heart_offered": "The Hermit gestures toward the Mortal Display with reverence. 'It has waited long enough.'",
-	"hemomancy.dialogue.event.hermit_farewell_die": "§7The Hermit's body dissolves into crimson motes of light, leaving behind a blood-stained scroll.",
+	"hemomancy.dialogue.event.hermit_farewell_die": "§7[The Hermit clutches at the hollow in its chest where its heart once beat — the Mortal Display, now claimed. Crimson light spills from the wound as its body begins to unravel.]",
+	"hemomancy.dialogue.event.hermit_passing": "§o'The heart was never mine to keep... only to give. The Mortal Display carried my last breath, and you have set it free. Walk the crimson path, young Harbinger — I go now where the blood returns to silence.'",
 	"hemomancy.dialogue.event.hermit_archon_wisdom": "The Hermit bows deeply. 'All that I know is already written in your blood, Archon.'",
 
 	"hemomancy.mortal_display.charm_equipped": "A living adornment has latched itself around your neck, marking you as destined for the path of the harbinger.",
