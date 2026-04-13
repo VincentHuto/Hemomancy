@@ -564,6 +564,8 @@ public class ItemInit {
 			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
 	public static final RegistryObject<Item> rune_blank = BASEITEMS.register("rune_blank",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> carbon_rune_paper = BASEITEMS.register("carbon_rune_paper",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
 			() -> new Item(new Item.Properties()));
 
