@@ -56,7 +56,7 @@ public class TermiteMoundFeature extends Feature<NoneFeatureConfiguration> {
 		// Randomize mound dimensions
 		int baseRadius = 4 + random.nextInt(4); // 4-7
 		int height = 10 + random.nextInt(7); // 10-16
-		int chimneyHeight = 2 + random.nextInt(3); // 2-4 extra chimney on top
+		int chimneyHeight = 2 + random.nextInt(3); // 2-4
 
 		// Build the mound
 		buildMound(level, groundPos, baseRadius, height, chimneyHeight, random);
