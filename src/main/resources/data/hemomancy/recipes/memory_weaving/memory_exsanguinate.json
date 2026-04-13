@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:vitality_chalice"
+  },
+  "mortem": true,
+  "tenebris": true,
+  "result": "hemomancy:memory_exsanguinate",
+  "count": 1
+}
