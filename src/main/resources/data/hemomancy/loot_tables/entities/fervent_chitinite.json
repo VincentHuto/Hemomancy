@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:chitinous_husk",
+          "name": "hemomancy:fervent_husk",
           "functions": [
             {
               "function": "minecraft:set_count",

@@ -320,6 +320,10 @@ public class EntityInit {
     public static void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             Hemomancy.LOGGER.info("[Hemomancy] Registering spawn placements...");
+            SpawnPlacements.register(EntityInit.chitinite.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ChitiniteEntity::canSpawnInCave);
+            SpawnPlacements.register(EntityInit.fervent_chitinite.get(), SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, FerventChitiniteEntity::canSpawnInCave);
             SpawnPlacements.register(EntityInit.barbed_urchin.get(), SpawnPlacements.Type.IN_WATER,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarbedUrchinEntity::canSpawnHere);
             SpawnPlacements.register(EntityInit.hemolymphopoda.get(), SpawnPlacements.Type.ON_GROUND,

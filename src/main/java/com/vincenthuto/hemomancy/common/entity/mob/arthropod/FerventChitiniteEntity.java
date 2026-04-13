@@ -31,6 +31,8 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -77,6 +79,13 @@ public class FerventChitiniteEntity extends PathfinderMob {
 		return 0;
 	}
 
+
+	public static boolean canSpawnInCave(EntityType<? extends FerventChitiniteEntity> type, LevelAccessor world,
+			MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+		BlockPos below = pos.below();
+		return world.getBlockState(below).isSolidRender(world, below)
+				&& world.getRawBrightness(pos, 0) <= 7;
+	}
 
 	@Override
 	public boolean checkSpawnRules(LevelAccessor pLevel, MobSpawnType pSpawnReason) {
