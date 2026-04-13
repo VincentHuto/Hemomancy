@@ -96,6 +96,11 @@ public class BlockInit {
 	public static final RegistryObject<Block> filler_block = SPECIALBLOCKS.register("filler_block",
 			() -> new FillerBlock(BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()));
 
+	public static final RegistryObject<Block> qliphoth_bloom = SPECIALBLOCKS.register("qliphoth_bloom",
+			() -> new com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock(
+					BlockBehaviour.Properties.of().strength(-1.0F, 3600000.0F).noOcclusion().noLootTable()
+							.lightLevel(state -> 7)));
+
 	// Blocks
 
 	public static final RegistryObject<Block> sanguine_glass = BASEBLOCKS.register("sanguine_glass",
@@ -473,7 +478,8 @@ public class BlockInit {
 					|| item.getSecond().getBlock() != BlockInit.active_befouling_ash_trail.get()
 					|| item.getSecond().getBlock() != BlockInit.active_smouldering_ash_trail.get()
 					|| item.getSecond().getBlock() != BlockInit.engram_block.get()
-					|| item.getSecond().getBlock() != BlockInit.filler_block.get()) {
+					|| item.getSecond().getBlock() != BlockInit.filler_block.get()
+					|| item.getSecond().getBlock() != BlockInit.qliphoth_bloom.get()) {
 				registerBlockItem(event, item);
 			}
 		});
