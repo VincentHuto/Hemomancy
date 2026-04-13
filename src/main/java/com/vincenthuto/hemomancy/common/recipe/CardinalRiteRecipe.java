@@ -35,15 +35,22 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected String riteName;
 	protected String riteDescription;
 	protected int requiredDegree;
+	protected boolean breakBlocksOnCreation;
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
-		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1);
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1, true);
 	}
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree) {
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, true);
+	}
+
+	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
+			int requiredDegree, boolean breakBlocksOnCreation) {
 		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
 		this.riteType = riteType;
@@ -52,6 +59,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		this.riteName = riteName;
 		this.riteDescription = riteDescription;
 		this.requiredDegree = requiredDegree;
+		this.breakBlocksOnCreation = breakBlocksOnCreation;
 	}
 
 	@Override
@@ -146,6 +154,20 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setRequiredDegree(int requiredDegree) {
 		this.requiredDegree = requiredDegree;
+	}
+
+	/**
+	 * Returns whether the rite should break the multiblock structure blocks
+	 * upon completion. Defaults to {@code true}. Set to {@code false} to
+	 * preserve the built structure (e.g. the Qliphoth Bloom ritual keeps the
+	 * platform beneath the spawned tree).
+	 */
+	public boolean shouldBreakBlocksOnCreation() {
+		return breakBlocksOnCreation;
+	}
+
+	public void setBreakBlocksOnCreation(boolean breakBlocksOnCreation) {
+		this.breakBlocksOnCreation = breakBlocksOnCreation;
 	}
 
 	@Override
