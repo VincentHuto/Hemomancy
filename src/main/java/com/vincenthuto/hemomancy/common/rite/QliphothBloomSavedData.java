@@ -106,6 +106,30 @@ public class QliphothBloomSavedData extends SavedData {
 	}
 
 	/**
+	 * Check if placing a new bloom at the given position would overlap with any
+	 * existing bloom's radius in the same dimension. Two blooms overlap if
+	 * either center falls within the other's chunk radius.
+	 *
+	 * @return the existing bloom that would overlap, or null if placement is clear
+	 */
+	public BloomEntry getOverlappingBloom(BlockPos newCenter, String dimension, int newChunkRadius) {
+		int newBlockRadius = newChunkRadius * 16;
+		for (BloomEntry existing : blooms) {
+			if (!existing.dimension().equals(dimension)) continue;
+			int existingBlockRadius = existing.chunkRadius() * 16;
+			int dx = Math.abs(newCenter.getX() - existing.center().getX());
+			int dz = Math.abs(newCenter.getZ() - existing.center().getZ());
+			// Overlap if the new center is inside the existing radius
+			// or the existing center is inside the new radius
+			if ((dx <= existingBlockRadius && dz <= existingBlockRadius)
+					|| (dx <= newBlockRadius && dz <= newBlockRadius)) {
+				return existing;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Remove the bloom whose center is in the same chunk as the given position
 	 * in the given dimension. Returns the removed entry, or null if none found.
 	 */

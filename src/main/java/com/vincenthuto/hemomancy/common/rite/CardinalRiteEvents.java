@@ -112,8 +112,12 @@ public class CardinalRiteEvents {
 			}
 
 			BlockPos center = rite.getCenterPos();
-			int halfSize = rite.getRiteSize() / 2;
-			AABB bounds = new AABB(center).inflate(halfSize + 1); // +1 on each side = riteSize + 2 total buffer
+			// Compute the outermost boundary radius to match the rendered ring.
+			// Renderer: baseRadius = riteSize / 2.0 + 1.0, ringCount rings spaced 2 blocks apart.
+			int riteSize = rite.getRiteSize();
+			int ringCount = Math.max(1, (riteSize - 1) / 2);
+			double outermostRadius = riteSize / 2.0 + 1.0 + (ringCount - 1) * 2.0;
+			AABB bounds = new AABB(center).inflate(outermostRadius);
 
 			// === Caster boundary enforcement ===
 			// Only the caster takes damage and blood drain for leaving the rite bounds
@@ -1195,6 +1199,19 @@ public class CardinalRiteEvents {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
+
+		// Check if a bloom already exists within the radius — only one bloom per 3-chunk area
+		QliphothBloomSavedData.BloomEntry overlapping = data.getOverlappingBloom(
+				center.above(2), dimension, QLIPHOTH_BLOOM_CHUNK_RADIUS);
+		if (overlapping != null) {
+			caster.displayClientMessage(
+					Component.literal("A Qliphoth Bloom already exists within " + QLIPHOTH_BLOOM_CHUNK_RADIUS
+							+ " chunks of here. Only one bloom may exist per " + QLIPHOTH_BLOOM_CHUNK_RADIUS
+							+ "-chunk radius.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
 
 		// Verify there is room for the 1×1×8 column
 		Block bloomBlock = BlockInit.qliphoth_bloom.get();
