@@ -278,6 +278,13 @@ public class BloodManipulation  {
 					effectiveCost *= 0.75;
 				}
 
+				// Qliphoth Pome Empowerment: 25% cost reduction for 3 minutes after eating a Pome
+				long pomeExpiry = player.getPersistentData()
+						.getLong(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.POME_EMPOWERMENT_KEY);
+				if (player.level().getGameTime() < pomeExpiry) {
+					effectiveCost *= 0.75;
+				}
+
 				// Blood Moon: 25% cost reduction while the blood moon is active
 				if (com.vincenthuto.hemomancy.common.worldevent.BloodMoonEvents.isBloodMoonActive(world)) {
 					effectiveCost *= 0.75;
