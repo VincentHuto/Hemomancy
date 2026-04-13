@@ -5,14 +5,14 @@
       "item": "minecraft:paper"
     },
     {
-      "item": "minecraft:coal"
+      "item": "minecraft:charcoal"
     },
     {
       "item": "hemomancy:sanguine_formation"
     }
   ],
   "result": {
-    "item": "hemomancy:carbon_rune_paper",
+    "item": "hemomancy:runic_motif_paper",
     "count": 1
   }
 }
