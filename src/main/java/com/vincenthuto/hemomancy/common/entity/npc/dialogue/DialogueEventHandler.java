@@ -1,10 +1,18 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
+import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -43,6 +51,40 @@ public class DialogueEventHandler {
 						Component.translatable("hemomancy.dialogue.event.hermit_accept_guidance")
 								.withStyle(ChatFormatting.DARK_RED),
 						false);
+			}
+			case "hermit_heart_offered" -> {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.hermit_heart_offered")
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+			}
+			case "hermit_farewell_die" -> {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.event.hermit_farewell_die")
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+				// Find the hermit entity and kill it, dropping the rite hint
+				Entity entity = player.level().getEntity(event.getEntityId());
+				if (entity instanceof HarbingerHermitEntity hermit) {
+					Vec3 pos = hermit.position();
+					// Drop the rite hint item
+					ItemEntity drop = new ItemEntity(hermit.level(), pos.x, pos.y + 0.5, pos.z,
+							new ItemStack(ItemInit.harbinger_rite_hint.get()));
+					hermit.level().addFreshEntity(drop);
+					// Visual effects: blood particles rising from the hermit
+					for (int i = 0; i < 8; i++) {
+						Vec3 particlePos = pos.add(
+								hermit.level().random.nextDouble() - 0.5,
+								hermit.level().random.nextDouble() * 1.5,
+								hermit.level().random.nextDouble() - 0.5);
+						HLPacketHandler.sendLightningSpawn(pos.add(0, 1, 0), particlePos,
+								64.0f, hermit.level().dimension(),
+								ParticleColor.BLOOD, 2, 15, 6, 0.8f);
+					}
+					// Remove the hermit — its duty is fulfilled
+					hermit.setInvulnerable(false);
+					hermit.kill();
+				}
 			}
 			case "hermit_archon_wisdom" -> {
 				player.displayClientMessage(
