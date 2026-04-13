@@ -54,6 +54,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
 
+	public static final ResourceKey<PlacedFeature> TERMITE_MOUND = createKey("termite_mound");
+
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
 		HolderGetter<ConfiguredFeature<?, ?>> configuredFeatureGetter = context.lookup(Registries.CONFIGURED_FEATURE);
@@ -115,6 +117,13 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.BOG_BODY, BOG_BODY, RarityFilter.onAverageOnceEvery(14),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
+		// Termite Mound — rare surface structure in savannahs
+		final Holder<ConfiguredFeature<?, ?>> TERMITE_MOUND = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.TERMITE_MOUND);
+
+		register(context, PlacedFeatureInit.TERMITE_MOUND, TERMITE_MOUND, RarityFilter.onAverageOnceEvery(60),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 
 		

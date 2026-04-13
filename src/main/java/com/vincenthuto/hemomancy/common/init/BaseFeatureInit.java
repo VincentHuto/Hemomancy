@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.worldgen.feature.FungusFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.RedCanopyMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.TermiteMoundFeature;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -49,6 +50,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> BOG_BODY = register("bog_body",
 			new BogBodyFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> TERMITE_MOUND = register("termite_mound",
+			new TermiteMoundFeature(NoneFeatureConfiguration.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);

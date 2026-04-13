@@ -72,6 +72,8 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> BOG_BODY = createKey("bog_body");
 
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TERMITE_MOUND = createKey("termite_mound");
+
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
 	}
@@ -200,6 +202,8 @@ public class ConfiguredFeatureInit {
 				grassPatch(BlockStateProvider.simple(BlockInit.rafflesia.get()), 1));
 
 		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
+
+		register(context, TERMITE_MOUND, BaseFeatureInit.TERMITE_MOUND, NoneFeatureConfiguration.INSTANCE);
 
 	}
 
