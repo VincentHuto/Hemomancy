@@ -140,7 +140,7 @@ public class ArmorSetBonusHandler {
 	public static void onLivingDamage(LivingDamageEvent event) {
 		if (!(event.getSource().getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide()) return;
-		if (!event.getSource().isDirect()) return;
+		if (event.getSource().isIndirect()) return;
 
 		if (hasFullSet(player, EnumModArmorTiers.BLOODLUST)) {
 			float healAmount = event.getAmount() * BLOOD_LUST_LIFESTEAL_FRACTION;

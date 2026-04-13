@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.render.item.MarrowCrownItemRenderer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -57,19 +58,5 @@ public class MarrowCrownArmorItem extends ArmorItem {
 
 	}
 
-	@Override
-	public void onArmorTick(ItemStack stack, Level world, Player player) {
-//		if (world.isClientSide) {
-//			for (int i = 0; i < 1; ++i) {
-//				if (i % 2 == 0) {
-//					world.addParticle(DustParticleOptions.REDSTONE, player.getRandomX(0.5D), player.getY(),
-//							player.getRandomZ(0.5D), (world.random.nextDouble() - 0.5D) * 2.0D,
-//							-world.random.nextDouble(), (world.random.nextDouble() - 0.5D) * 2.0D);
-//				}
-//			}
-//		}
-
-		super.onArmorTick(stack, world, player);
-	}
 
 }
