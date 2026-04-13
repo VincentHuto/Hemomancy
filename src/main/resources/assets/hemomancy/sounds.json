@@ -33,13 +33,12 @@
 
 	"_comment_animals": "=== Animals ===",
 
-	"_comment_crimson_doe": "Crimson Doe - graceful blood-veined deer. Ideal: soft breathy calls, crystalline antler chimes, gentle heartbeat pulse",
 	"entity.crimson_doe.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.crimson_doe.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/ambient",
+				"name": "hemomancy:entity/crimson_doe/ambient",
 				"stream": true
 			}
 		]
@@ -49,7 +48,7 @@
 		"subtitle": "subtitle.hemomancy.entity.crimson_doe.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/hurt",
+				"name": "hemomancy:entity/crimson_doe/hurt",
 				"stream": true
 			}
 		]
@@ -59,19 +58,18 @@
 		"subtitle": "subtitle.hemomancy.entity.crimson_doe.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/death",
+				"name": "hemomancy:entity/crimson_doe/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_venous_strider": "Venous Strider - elegant wading bird with visible veins. Ideal: ethereal trilling, muffled pulse whooshes, delicate membrane flutter",
 	"entity.venous_strider.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.venous_strider.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/ambient",
+				"name": "hemomancy:entity/venous_strider/ambient",
 				"stream": true
 			}
 		]
@@ -81,7 +79,7 @@
 		"subtitle": "subtitle.hemomancy.entity.venous_strider.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/hurt",
+				"name": "hemomancy:entity/venous_strider/hurt",
 				"stream": true
 			}
 		]
@@ -91,19 +89,18 @@
 		"subtitle": "subtitle.hemomancy.entity.venous_strider.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/death",
+				"name": "hemomancy:entity/venous_strider/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_leech": "Leech - small aquatic blood-feeder. Ideal: wet slurping, squelchy suction, bubbling gurgle",
 	"entity.leech.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.leech.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/ambient",
+				"name": "hemomancy:entity/leech/ambient",
 				"stream": true
 			}
 		]
@@ -113,7 +110,7 @@
 		"subtitle": "subtitle.hemomancy.entity.leech.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/hurt",
+				"name": "hemomancy:entity/leech/hurt",
 				"stream": true
 			}
 		]
@@ -123,19 +120,18 @@
 		"subtitle": "subtitle.hemomancy.entity.leech.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/death",
+				"name": "hemomancy:entity/leech/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_fungling": "Fungling - small aggressive fungal creature. Ideal: spore puff hisses, chittering fungal clicks, mushroom pop squeaks",
 	"entity.fungling.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.fungling.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/ambient",
+				"name": "hemomancy:entity/fungling/ambient",
 				"stream": true
 			}
 		]
@@ -145,7 +141,7 @@
 		"subtitle": "subtitle.hemomancy.entity.fungling.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/hurt",
+				"name": "hemomancy:entity/fungling/hurt",
 				"stream": true
 			}
 		]
@@ -155,7 +151,7 @@
 		"subtitle": "subtitle.hemomancy.entity.fungling.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/death",
+				"name": "hemomancy:entity/fungling/death",
 				"stream": true
 			}
 		]
@@ -163,13 +159,12 @@
 
 	"_comment_aquatic": "=== Aquatic ===",
 
-	"_comment_hemojelly": "Hemojelly - bioluminescent blood jellyfish. Ideal: resonant crystalline hum, wet membrane flutter, pulsing bioluminescent chime",
 	"entity.hemojelly.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.hemojelly.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/ambient",
+				"name": "hemomancy:entity/hemojelly/ambient",
 				"stream": true
 			}
 		]
@@ -179,7 +174,7 @@
 		"subtitle": "subtitle.hemomancy.entity.hemojelly.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/hurt",
+				"name": "hemomancy:entity/hemojelly/hurt",
 				"stream": true
 			}
 		]
@@ -189,19 +184,18 @@
 		"subtitle": "subtitle.hemomancy.entity.hemojelly.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/seraphim/death",
+				"name": "hemomancy:entity/hemojelly/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_barbed_urchin": "Barbed Urchin - spiny puffer creature. Ideal: needle rattle, pressurized hiss (inflate), spine scraping clicks",
 	"entity.barbed_urchin.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/ambient",
+				"name": "hemomancy:entity/barbed_urchin/ambient",
 				"stream": true
 			}
 		]
@@ -211,7 +205,7 @@
 		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/hurt",
+				"name": "hemomancy:entity/barbed_urchin/hurt",
 				"stream": true
 			}
 		]
@@ -221,7 +215,7 @@
 		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/death",
+				"name": "hemomancy:entity/barbed_urchin/death",
 				"stream": true
 			}
 		]
@@ -229,13 +223,12 @@
 
 	"_comment_arthropods": "=== Arthropods ===",
 
-	"_comment_chitinite": "Chitinite - armored insectoid that rolls up. Ideal: chitin plate clicks, rolling ball rumble, armored carapace scraping",
 	"entity.chitinite.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.chitinite.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/ambient",
+				"name": "hemomancy:entity/chitinite/ambient",
 				"stream": true
 			}
 		]
@@ -245,7 +238,7 @@
 		"subtitle": "subtitle.hemomancy.entity.chitinite.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/hurt",
+				"name": "hemomancy:entity/chitinite/hurt",
 				"stream": true
 			}
 		]
@@ -255,19 +248,18 @@
 		"subtitle": "subtitle.hemomancy.entity.chitinite.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/death",
+				"name": "hemomancy:entity/chitinite/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_fervent_chitinite": "Fervent Chitinite - heated insectoid variant. Ideal: sizzling chitin clicks, steam hiss, crackling carapace",
 	"entity.fervent_chitinite.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/ambient",
+				"name": "hemomancy:entity/fervent_chitinite/ambient",
 				"stream": true
 			}
 		]
@@ -277,7 +269,7 @@
 		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/hurt",
+				"name": "hemomancy:entity/fervent_chitinite/hurt",
 				"stream": true
 			}
 		]
@@ -287,19 +279,18 @@
 		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/death",
+				"name": "hemomancy:entity/fervent_chitinite/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_chthonian": "Chthonian - cave-dwelling spider. Ideal: deep mandible clicks, subterranean chittering, wood-gnawing crunch",
 	"entity.chthonian.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.chthonian.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/ambient",
+				"name": "hemomancy:entity/chthonian/ambient",
 				"stream": true
 			}
 		]
@@ -309,7 +300,7 @@
 		"subtitle": "subtitle.hemomancy.entity.chthonian.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/hurt",
+				"name": "hemomancy:entity/chthonian/hurt",
 				"stream": true
 			}
 		]
@@ -319,19 +310,18 @@
 		"subtitle": "subtitle.hemomancy.entity.chthonian.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/death",
+				"name": "hemomancy:entity/chthonian/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_chthonian_queen": "Chthonian Queen - matriarch spider boss. Ideal: resonant rumbling hiss, commanding screech, heavy carapace impact",
 	"entity.chthonian_queen.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/ambient",
+				"name": "hemomancy:entity/chthonian_queen/ambient",
 				"stream": true
 			}
 		]
@@ -341,7 +331,7 @@
 		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/hurtother",
+				"name": "hemomancy:entity/chthonian_queen/hurt",
 				"stream": true
 			}
 		]
@@ -351,19 +341,18 @@
 		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/death",
+				"name": "hemomancy:entity/chthonian_queen/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_hemolymphopoda": "Hemolymphopoda - aquatic centipede. Ideal: wet scuttling clicks, aquatic chittering, segmented body ripple",
 	"entity.hemolymphopoda.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/ambient",
+				"name": "hemomancy:entity/hemolymphopoda/ambient",
 				"stream": true
 			}
 		]
@@ -373,7 +362,7 @@
 		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/hurt",
+				"name": "hemomancy:entity/hemolymphopoda/hurt",
 				"stream": true
 			}
 		]
@@ -383,19 +372,18 @@
 		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/death",
+				"name": "hemomancy:entity/hemolymphopoda/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_myelin_borer": "Myelin Borer - nerve-burrowing cave grub. Ideal: nervous electric crackle, burrowing scrape, high-pitched whine",
 	"entity.myelin_borer.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.myelin_borer.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/ambient",
+				"name": "hemomancy:entity/myelin_borer/ambient",
 				"stream": true
 			}
 		]
@@ -405,7 +393,7 @@
 		"subtitle": "subtitle.hemomancy.entity.myelin_borer.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/hurt",
+				"name": "hemomancy:entity/myelin_borer/hurt",
 				"stream": true
 			}
 		]
@@ -415,19 +403,18 @@
 		"subtitle": "subtitle.hemomancy.entity.myelin_borer.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/denizen/death",
+				"name": "hemomancy:entity/myelin_borer/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_fargone": "Fargone - aggressive cave creature. Ideal: guttural snarling, frenzied chittering, distorted rasp",
 	"entity.fargone.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.fargone.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/ambient",
+				"name": "hemomancy:entity/fargone/ambient",
 				"stream": true
 			}
 		]
@@ -437,7 +424,7 @@
 		"subtitle": "subtitle.hemomancy.entity.fargone.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/hurt",
+				"name": "hemomancy:entity/fargone/hurt",
 				"stream": true
 			}
 		]
@@ -447,7 +434,7 @@
 		"subtitle": "subtitle.hemomancy.entity.fargone.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/death",
+				"name": "hemomancy:entity/fargone/death",
 				"stream": true
 			}
 		]
@@ -455,13 +442,12 @@
 
 	"_comment_monsters": "=== Monsters ===",
 
-	"_comment_thirster": "Thirster - blood-draining predator. Ideal: hungry ragged panting, slurping growl, blood-gurgling snarl",
 	"entity.thirster.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.thirster.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/ambient",
+				"name": "hemomancy:entity/thirster/ambient",
 				"stream": true
 			}
 		]
@@ -471,7 +457,7 @@
 		"subtitle": "subtitle.hemomancy.entity.thirster.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/hurt",
+				"name": "hemomancy:entity/thirster/hurt",
 				"stream": true
 			}
 		]
@@ -481,19 +467,18 @@
 		"subtitle": "subtitle.hemomancy.entity.thirster.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/death",
+				"name": "hemomancy:entity/thirster/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_lump_of_thought": "Lump of Thought - amorphous psychic horror. Ideal: distorted whispers, wet brain-squelch, low droning hum",
 	"entity.lump_of_thought.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/ambient",
+				"name": "hemomancy:entity/lump_of_thought/ambient",
 				"stream": true
 			}
 		]
@@ -503,7 +488,7 @@
 		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/hurt",
+				"name": "hemomancy:entity/lump_of_thought/hurt",
 				"stream": true
 			}
 		]
@@ -513,19 +498,18 @@
 		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/death",
+				"name": "hemomancy:entity/lump_of_thought/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_erythromycelium_eruptus": "Erythromycelium Eruptus - erupting fungal horror. Ideal: pressurized spore blast, wet tearing, subterranean rumble",
 	"entity.erythromycelium_eruptus.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/ambient",
+				"name": "hemomancy:entity/erythromycelium_eruptus/ambient",
 				"stream": true
 			}
 		]
@@ -535,7 +519,7 @@
 		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/hurt",
+				"name": "hemomancy:entity/erythromycelium_eruptus/hurt",
 				"stream": true
 			}
 		]
@@ -545,19 +529,18 @@
 		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/tentacle/death",
+				"name": "hemomancy:entity/erythromycelium_eruptus/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_blood_drunk_puppeteer": "Blood Drunk Puppeteer - deranged humanoid puppet-master. Ideal: distorted giggling, unhinged muttering, wet string-pulling snap",
 	"entity.blood_drunk_puppeteer.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/ambient",
+				"name": "hemomancy:entity/blood_drunk_puppeteer/ambient",
 				"stream": true
 			}
 		]
@@ -567,7 +550,7 @@
 		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/hurt",
+				"name": "hemomancy:entity/blood_drunk_puppeteer/hurt",
 				"stream": true
 			}
 		]
@@ -577,19 +560,18 @@
 		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/colin/death",
+				"name": "hemomancy:entity/blood_drunk_puppeteer/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_enthralled_doll": "Enthralled Doll - possessed puppet construct. Ideal: wooden creak, porcelain clink, muffled puppet whimper",
 	"entity.enthralled_doll.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/ambient",
+				"name": "hemomancy:entity/enthralled_doll/ambient",
 				"stream": true
 			}
 		]
@@ -599,7 +581,7 @@
 		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/hurt",
+				"name": "hemomancy:entity/enthralled_doll/hurt",
 				"stream": true
 			}
 		]
@@ -609,19 +591,18 @@
 		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dread_bot/death",
+				"name": "hemomancy:entity/enthralled_doll/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_cruor_fiend": "Cruor Fiend - Nether blood fiend. Ideal: boiling blood bubble, fiery snarl, molten blood splash",
 	"entity.cruor_fiend.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/ambient",
+				"name": "hemomancy:entity/cruor_fiend/ambient",
 				"stream": true
 			}
 		]
@@ -631,7 +612,7 @@
 		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/hurt",
+				"name": "hemomancy:entity/cruor_fiend/hurt",
 				"stream": true
 			}
 		]
@@ -641,19 +622,18 @@
 		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/death",
+				"name": "hemomancy:entity/cruor_fiend/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_void_drinker": "Void Drinker - End dimension blood siphoner. Ideal: vacuum drone, reversed whisper, reality-tearing hum",
 	"entity.void_drinker.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.void_drinker.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/ambient",
+				"name": "hemomancy:entity/void_drinker/ambient",
 				"stream": true
 			}
 		]
@@ -663,7 +643,7 @@
 		"subtitle": "subtitle.hemomancy.entity.void_drinker.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/hurt",
+				"name": "hemomancy:entity/void_drinker/hurt",
 				"stream": true
 			}
 		]
@@ -673,19 +653,18 @@
 		"subtitle": "subtitle.hemomancy.entity.void_drinker.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/death",
+				"name": "hemomancy:entity/void_drinker/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_dessicant": "Dessicant - desert scorpion blood-drainer. Ideal: dry rattling, sand-paper scrape, desiccated hiss",
 	"entity.dessicant.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.dessicant.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/ambient",
+				"name": "hemomancy:entity/dessicant/ambient",
 				"stream": true
 			}
 		]
@@ -695,7 +674,7 @@
 		"subtitle": "subtitle.hemomancy.entity.dessicant.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/hurt",
+				"name": "hemomancy:entity/dessicant/hurt",
 				"stream": true
 			}
 		]
@@ -705,23 +684,18 @@
 		"subtitle": "subtitle.hemomancy.entity.dessicant.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/death",
+				"name": "hemomancy:entity/dessicant/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_synapse_hound": "Synapse Hound - neural pack predator. Ideal: electric-tinged howl, crackling growl, bioelectric bark",
 	"entity.synapse_hound.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.synapse_hound.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/ambient",
-				"stream": true
-			},
-			{
-				"name": "hemomancy:entity/beast_from_beyond/howl",
+				"name": "hemomancy:entity/synapse_hound/ambient",
 				"stream": true
 			}
 		]
@@ -731,7 +705,7 @@
 		"subtitle": "subtitle.hemomancy.entity.synapse_hound.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/hurt",
+				"name": "hemomancy:entity/synapse_hound/hurt",
 				"stream": true
 			}
 		]
@@ -741,19 +715,18 @@
 		"subtitle": "subtitle.hemomancy.entity.synapse_hound.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/beast_from_beyond/death",
+				"name": "hemomancy:entity/synapse_hound/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_frozen_clot": "Frozen Clot - animated frozen blood mass. Ideal: cracking ice, frozen blood shatter, glacial grinding",
 	"entity.frozen_clot.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.frozen_clot.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/ambient",
+				"name": "hemomancy:entity/frozen_clot/ambient",
 				"stream": true
 			}
 		]
@@ -763,7 +736,7 @@
 		"subtitle": "subtitle.hemomancy.entity.frozen_clot.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/hurtother",
+				"name": "hemomancy:entity/frozen_clot/hurt",
 				"stream": true
 			}
 		]
@@ -773,19 +746,18 @@
 		"subtitle": "subtitle.hemomancy.entity.frozen_clot.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/dark_young/death",
+				"name": "hemomancy:entity/frozen_clot/death",
 				"stream": true
 			}
 		]
 	},
 
-	"_comment_abyssal_siphon": "Abyssal Siphon - deep dark blood horror. Ideal: deep resonant drone, soul-draining suction, void echo",
 	"entity.abyssal_siphon.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.ambient",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/ambient",
+				"name": "hemomancy:entity/abyssal_siphon/ambient",
 				"stream": true
 			}
 		]
@@ -795,7 +767,7 @@
 		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.hurt",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/hit",
+				"name": "hemomancy:entity/abyssal_siphon/hurt",
 				"stream": true
 			}
 		]
@@ -805,7 +777,7 @@
 		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.death",
 		"sounds": [
 			{
-				"name": "hemomancy:entity/hastur/death",
+				"name": "hemomancy:entity/abyssal_siphon/death",
 				"stream": true
 			}
 		]
