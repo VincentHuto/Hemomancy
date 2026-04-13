@@ -43,6 +43,10 @@ import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPack
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.OpenVisceralMirrorPacket;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorCancelPacket;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorExtractPacket;
+import com.vincenthuto.hemomancy.common.network.capa.visceral.VisceralMirrorUpdatePacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnLivingToolParticlesPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.PacketSpawnLightningParticle;
@@ -293,6 +297,20 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncQliphothBlooms.class, networkID++)
 				.decoder(PacketSyncQliphothBlooms::decode).encoder(PacketSyncQliphothBlooms::encode)
 				.consumerNetworkThread(PacketSyncQliphothBlooms::handle).add();
+
+		// Visceral Mirror packets
+		CHANNELBLOODVOLUME.messageBuilder(OpenVisceralMirrorPacket.class, networkID++)
+				.decoder(OpenVisceralMirrorPacket::decode).encoder(OpenVisceralMirrorPacket::encode)
+				.consumerNetworkThread(OpenVisceralMirrorPacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(VisceralMirrorExtractPacket.class, networkID++)
+				.decoder(VisceralMirrorExtractPacket::decode).encoder(VisceralMirrorExtractPacket::encode)
+				.consumerNetworkThread(VisceralMirrorExtractPacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(VisceralMirrorCancelPacket.class, networkID++)
+				.decoder(VisceralMirrorCancelPacket::decode).encoder(VisceralMirrorCancelPacket::encode)
+				.consumerNetworkThread(VisceralMirrorCancelPacket::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(VisceralMirrorUpdatePacket.class, networkID++)
+				.decoder(VisceralMirrorUpdatePacket::decode).encoder(VisceralMirrorUpdatePacket::encode)
+				.consumerNetworkThread(VisceralMirrorUpdatePacket::handle).add();
 
 	}
 
