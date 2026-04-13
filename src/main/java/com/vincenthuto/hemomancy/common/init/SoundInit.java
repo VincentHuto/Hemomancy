@@ -12,7 +12,7 @@ public class SoundInit {
 			Hemomancy.MOD_ID);
 
 	private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
-		return SOUNDS.register(name, () -> SoundEvent.createFixedRangeEvent(Hemomancy.rloc(name), 0));
+		return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Hemomancy.rloc(name)));
 	}
 
 	// ===== Abhorent Thought (psychic nightmare) =====

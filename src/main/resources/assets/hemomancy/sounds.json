@@ -1,5 +1,4 @@
 {
-	"_comment": "=== Abhorent Thought (psychic nightmare - custom sounds) ===",
 	"entity.abhorent_thought.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.abhorent_thought.ambient",
@@ -30,9 +29,6 @@
 			}
 		]
 	},
-
-	"_comment_animals": "=== Animals ===",
-
 	"entity.crimson_doe.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.crimson_doe.ambient",
@@ -156,9 +152,6 @@
 			}
 		]
 	},
-
-	"_comment_aquatic": "=== Aquatic ===",
-
 	"entity.hemojelly.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.hemojelly.ambient",
@@ -220,9 +213,6 @@
 			}
 		]
 	},
-
-	"_comment_arthropods": "=== Arthropods ===",
-
 	"entity.chitinite.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.chitinite.ambient",
@@ -439,9 +429,6 @@
 			}
 		]
 	},
-
-	"_comment_monsters": "=== Monsters ===",
-
 	"entity.thirster.ambient": {
 		"category": "entity",
 		"subtitle": "subtitle.hemomancy.entity.thirster.ambient",
