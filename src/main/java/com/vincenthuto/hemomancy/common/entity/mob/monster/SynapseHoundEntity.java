@@ -5,7 +5,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -92,17 +92,17 @@ public class SynapseHoundEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
+		return SoundInit.ENTITY_SYNAPSE_HOUND_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
+		return SoundInit.ENTITY_SYNAPSE_HOUND_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
+		return SoundInit.ENTITY_SYNAPSE_HOUND_HURT.get();
 	}
 
 	@Override

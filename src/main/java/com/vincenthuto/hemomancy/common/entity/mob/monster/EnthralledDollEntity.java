@@ -18,7 +18,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.players.OldUsersConverter;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -117,17 +117,17 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
+		return SoundInit.ENTITY_ENTHRALLED_DOLL_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
+		return SoundInit.ENTITY_ENTHRALLED_DOLL_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
+		return SoundInit.ENTITY_ENTHRALLED_DOLL_HURT.get();
 	}
 
 	@Override

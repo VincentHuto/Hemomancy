@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -69,17 +69,17 @@ public class HemolymphopodaEntity extends PathfinderMob {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.ENDERMITE_AMBIENT;
+		return SoundInit.ENTITY_HEMOLYMPHOPODA_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.ENDERMITE_DEATH;
+		return SoundInit.ENTITY_HEMOLYMPHOPODA_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.ENDERMITE_HURT;
+		return SoundInit.ENTITY_HEMOLYMPHOPODA_HURT.get();
 	}
 
 	@Override

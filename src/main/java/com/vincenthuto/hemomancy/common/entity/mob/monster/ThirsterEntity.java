@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -62,17 +63,17 @@ public class ThirsterEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
+		return SoundInit.ENTITY_THIRSTER_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
+		return SoundInit.ENTITY_THIRSTER_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
+		return SoundInit.ENTITY_THIRSTER_HURT.get();
 	}
 
 	@Override

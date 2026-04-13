@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -92,17 +92,17 @@ public class CruorFiendEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.BLAZE_AMBIENT;
+		return SoundInit.ENTITY_CRUOR_FIEND_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.BLAZE_DEATH;
+		return SoundInit.ENTITY_CRUOR_FIEND_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.BLAZE_HURT;
+		return SoundInit.ENTITY_CRUOR_FIEND_HURT.get();
 	}
 
 	@Override

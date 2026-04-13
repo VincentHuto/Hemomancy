@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -61,17 +61,17 @@ public class VenousStriderEntity extends PathfinderMob {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.PARROT_AMBIENT;
+		return SoundInit.ENTITY_VENOUS_STRIDER_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.PARROT_DEATH;
+		return SoundInit.ENTITY_VENOUS_STRIDER_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.PARROT_HURT;
+		return SoundInit.ENTITY_VENOUS_STRIDER_HURT.get();
 	}
 
 	@Override

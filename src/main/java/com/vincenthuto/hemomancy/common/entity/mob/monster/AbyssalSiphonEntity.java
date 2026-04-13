@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -86,17 +86,17 @@ public class AbyssalSiphonEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.SCULK_CLICKING;
+		return SoundInit.ENTITY_ABYSSAL_SIPHON_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.SCULK_BLOCK_BREAK;
+		return SoundInit.ENTITY_ABYSSAL_SIPHON_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.SCULK_BLOCK_HIT;
+		return SoundInit.ENTITY_ABYSSAL_SIPHON_HURT.get();
 	}
 
 	@Override

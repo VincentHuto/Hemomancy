@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.arthropod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -71,17 +72,17 @@ public class FargoneEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.WOLF_AMBIENT;
+		return SoundInit.ENTITY_FARGONE_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.WOLF_DEATH;
+		return SoundInit.ENTITY_FARGONE_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.WOLF_HURT;
+		return SoundInit.ENTITY_FARGONE_HURT.get();
 	}
 
 	@Override

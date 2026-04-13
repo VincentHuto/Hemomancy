@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AnimationState;
@@ -60,17 +60,17 @@ public class CrimsonDoeEntity extends PathfinderMob {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.GOAT_AMBIENT;
+		return SoundInit.ENTITY_CRIMSON_DOE_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.GOAT_DEATH;
+		return SoundInit.ENTITY_CRIMSON_DOE_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.GOAT_HURT;
+		return SoundInit.ENTITY_CRIMSON_DOE_HURT.get();
 	}
 
 	@Override

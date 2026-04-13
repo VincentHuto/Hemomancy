@@ -17,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -89,7 +90,7 @@ public class LeechEntity extends Animal {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.BAT_AMBIENT;
+		return SoundInit.ENTITY_LEECH_AMBIENT.get();
 	}
 
 	/*
@@ -126,12 +127,12 @@ public class LeechEntity extends Animal {
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.BAT_DEATH;
+		return SoundInit.ENTITY_LEECH_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.BAT_HURT;
+		return SoundInit.ENTITY_LEECH_HURT.get();
 	}
 
 	public int getLeechType() {

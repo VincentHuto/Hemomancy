@@ -997,5 +997,105 @@
 	"tooltip.hemomancy.unstained_set_bonus": "Set Bonus (4): Immunity to Blood Loss and Hemolysis",
 	"tooltip.hemomancy.marrow_crown_bonus": "Artifact: +10% melee damage when blood > 50%",
 	"hemomancy.blood_moon.start": "§4§lA Blood Moon rises... Thirsters and Fargones stir in the darkness.",
-	"hemomancy.blood_moon.end": "§7§oThe Blood Moon wanes. The darkness retreats."
+	"hemomancy.blood_moon.end": "§7§oThe Blood Moon wanes. The darkness retreats.",
+
+	"subtitle.hemomancy.entity.abhorent_thought.ambient": "Abhorent Thought whispers",
+	"subtitle.hemomancy.entity.abhorent_thought.hurt": "Abhorent Thought shrieks",
+	"subtitle.hemomancy.entity.abhorent_thought.death": "Abhorent Thought dissolves",
+
+	"subtitle.hemomancy.entity.crimson_doe.ambient": "Crimson Doe breathes",
+	"subtitle.hemomancy.entity.crimson_doe.hurt": "Crimson Doe cries",
+	"subtitle.hemomancy.entity.crimson_doe.death": "Crimson Doe dies",
+
+	"subtitle.hemomancy.entity.venous_strider.ambient": "Venous Strider trills",
+	"subtitle.hemomancy.entity.venous_strider.hurt": "Venous Strider screeches",
+	"subtitle.hemomancy.entity.venous_strider.death": "Venous Strider dies",
+
+	"subtitle.hemomancy.entity.leech.ambient": "Leech squelches",
+	"subtitle.hemomancy.entity.leech.hurt": "Leech writhes",
+	"subtitle.hemomancy.entity.leech.death": "Leech pops",
+
+	"subtitle.hemomancy.entity.fungling.ambient": "Fungling chitters",
+	"subtitle.hemomancy.entity.fungling.hurt": "Fungling squeaks",
+	"subtitle.hemomancy.entity.fungling.death": "Fungling bursts",
+
+	"subtitle.hemomancy.entity.hemojelly.ambient": "Hemojelly pulses",
+	"subtitle.hemomancy.entity.hemojelly.hurt": "Hemojelly shudders",
+	"subtitle.hemomancy.entity.hemojelly.death": "Hemojelly ruptures",
+
+	"subtitle.hemomancy.entity.barbed_urchin.ambient": "Barbed Urchin rattles",
+	"subtitle.hemomancy.entity.barbed_urchin.hurt": "Barbed Urchin hisses",
+	"subtitle.hemomancy.entity.barbed_urchin.death": "Barbed Urchin crumbles",
+
+	"subtitle.hemomancy.entity.chitinite.ambient": "Chitinite clicks",
+	"subtitle.hemomancy.entity.chitinite.hurt": "Chitinite cracks",
+	"subtitle.hemomancy.entity.chitinite.death": "Chitinite shatters",
+
+	"subtitle.hemomancy.entity.fervent_chitinite.ambient": "Fervent Chitinite sizzles",
+	"subtitle.hemomancy.entity.fervent_chitinite.hurt": "Fervent Chitinite crackles",
+	"subtitle.hemomancy.entity.fervent_chitinite.death": "Fervent Chitinite erupts",
+
+	"subtitle.hemomancy.entity.chthonian.ambient": "Chthonian skitters",
+	"subtitle.hemomancy.entity.chthonian.hurt": "Chthonian screeches",
+	"subtitle.hemomancy.entity.chthonian.death": "Chthonian collapses",
+
+	"subtitle.hemomancy.entity.chthonian_queen.ambient": "Chthonian Queen rumbles",
+	"subtitle.hemomancy.entity.chthonian_queen.hurt": "Chthonian Queen shrieks",
+	"subtitle.hemomancy.entity.chthonian_queen.death": "Chthonian Queen crumbles",
+
+	"subtitle.hemomancy.entity.hemolymphopoda.ambient": "Hemolymphopoda scuttles",
+	"subtitle.hemomancy.entity.hemolymphopoda.hurt": "Hemolymphopoda writhes",
+	"subtitle.hemomancy.entity.hemolymphopoda.death": "Hemolymphopoda dies",
+
+	"subtitle.hemomancy.entity.myelin_borer.ambient": "Myelin Borer burrows",
+	"subtitle.hemomancy.entity.myelin_borer.hurt": "Myelin Borer squeals",
+	"subtitle.hemomancy.entity.myelin_borer.death": "Myelin Borer dies",
+
+	"subtitle.hemomancy.entity.fargone.ambient": "Fargone snarls",
+	"subtitle.hemomancy.entity.fargone.hurt": "Fargone yelps",
+	"subtitle.hemomancy.entity.fargone.death": "Fargone dies",
+
+	"subtitle.hemomancy.entity.thirster.ambient": "Thirster pants",
+	"subtitle.hemomancy.entity.thirster.hurt": "Thirster howls",
+	"subtitle.hemomancy.entity.thirster.death": "Thirster dies",
+
+	"subtitle.hemomancy.entity.lump_of_thought.ambient": "Lump of Thought murmurs",
+	"subtitle.hemomancy.entity.lump_of_thought.hurt": "Lump of Thought recoils",
+	"subtitle.hemomancy.entity.lump_of_thought.death": "Lump of Thought dissipates",
+
+	"subtitle.hemomancy.entity.erythromycelium_eruptus.ambient": "Erythromycelium Eruptus rumbles",
+	"subtitle.hemomancy.entity.erythromycelium_eruptus.hurt": "Erythromycelium Eruptus tears",
+	"subtitle.hemomancy.entity.erythromycelium_eruptus.death": "Erythromycelium Eruptus collapses",
+
+	"subtitle.hemomancy.entity.blood_drunk_puppeteer.ambient": "Blood Drunk Puppeteer mutters",
+	"subtitle.hemomancy.entity.blood_drunk_puppeteer.hurt": "Blood Drunk Puppeteer cries",
+	"subtitle.hemomancy.entity.blood_drunk_puppeteer.death": "Blood Drunk Puppeteer dies",
+
+	"subtitle.hemomancy.entity.enthralled_doll.ambient": "Enthralled Doll creaks",
+	"subtitle.hemomancy.entity.enthralled_doll.hurt": "Enthralled Doll cracks",
+	"subtitle.hemomancy.entity.enthralled_doll.death": "Enthralled Doll breaks",
+
+	"subtitle.hemomancy.entity.cruor_fiend.ambient": "Cruor Fiend bubbles",
+	"subtitle.hemomancy.entity.cruor_fiend.hurt": "Cruor Fiend sizzles",
+	"subtitle.hemomancy.entity.cruor_fiend.death": "Cruor Fiend extinguishes",
+
+	"subtitle.hemomancy.entity.void_drinker.ambient": "Void Drinker drones",
+	"subtitle.hemomancy.entity.void_drinker.hurt": "Void Drinker distorts",
+	"subtitle.hemomancy.entity.void_drinker.death": "Void Drinker collapses",
+
+	"subtitle.hemomancy.entity.dessicant.ambient": "Dessicant rattles",
+	"subtitle.hemomancy.entity.dessicant.hurt": "Dessicant hisses",
+	"subtitle.hemomancy.entity.dessicant.death": "Dessicant crumbles",
+
+	"subtitle.hemomancy.entity.synapse_hound.ambient": "Synapse Hound growls",
+	"subtitle.hemomancy.entity.synapse_hound.hurt": "Synapse Hound yelps",
+	"subtitle.hemomancy.entity.synapse_hound.death": "Synapse Hound dies",
+
+	"subtitle.hemomancy.entity.frozen_clot.ambient": "Frozen Clot groans",
+	"subtitle.hemomancy.entity.frozen_clot.hurt": "Frozen Clot cracks",
+	"subtitle.hemomancy.entity.frozen_clot.death": "Frozen Clot shatters",
+
+	"subtitle.hemomancy.entity.abyssal_siphon.ambient": "Abyssal Siphon drones",
+	"subtitle.hemomancy.entity.abyssal_siphon.hurt": "Abyssal Siphon recoils",
+	"subtitle.hemomancy.entity.abyssal_siphon.death": "Abyssal Siphon dies"
 }

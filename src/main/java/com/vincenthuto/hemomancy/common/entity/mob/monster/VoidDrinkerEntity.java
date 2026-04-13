@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.entity.mob.monster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
+import com.vincenthuto.hemomancy.common.init.SoundInit;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -117,17 +118,17 @@ public class VoidDrinkerEntity extends Monster {
 
 	@Override
 	protected SoundEvent getAmbientSound() {
-		return SoundEvents.ENDERMAN_AMBIENT;
+		return SoundInit.ENTITY_VOID_DRINKER_AMBIENT.get();
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() {
-		return SoundEvents.ENDERMAN_DEATH;
+		return SoundInit.ENTITY_VOID_DRINKER_DEATH.get();
 	}
 
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
-		return SoundEvents.ENDERMAN_HURT;
+		return SoundInit.ENTITY_VOID_DRINKER_HURT.get();
 	}
 
 	@Override
