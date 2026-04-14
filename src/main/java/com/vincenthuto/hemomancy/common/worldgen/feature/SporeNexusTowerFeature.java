@@ -29,21 +29,32 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  */
 public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 
-	private static final BlockState STEM = BlockInit.infected_stem.get().defaultBlockState();
-	private static final BlockState HYPHAE = BlockInit.hyphae_block.get().defaultBlockState();
-	private static final BlockState CONSCIOUS_MASS = BlockInit.conscious_mass.get().defaultBlockState();
-	private static final BlockState CAP;
-	private static final BlockState SPORITE = BlockInit.sporite_crystal.get().defaultBlockState();
-	private static final BlockState VENOUS_STONE = BlockInit.venous_stone.get().defaultBlockState();
-	private static final BlockState CALCIFIED = BlockInit.calcified_hyphae.get().defaultBlockState();
+	// Lazily resolved – RegistryObjects are not available at class-load time.
+	private static BlockState STEM;
+	private static BlockState HYPHAE;
+	private static BlockState CONSCIOUS_MASS;
+	private static BlockState CAP;
+	private static BlockState SPORITE;
+	private static BlockState VENOUS_STONE;
+	private static BlockState CALCIFIED;
+	private static boolean resolved = false;
 
-	static {
+	private static void ensureResolved() {
+		if (resolved) return;
+		STEM = BlockInit.infected_stem.get().defaultBlockState();
+		HYPHAE = BlockInit.hyphae_block.get().defaultBlockState();
+		CONSCIOUS_MASS = BlockInit.conscious_mass.get().defaultBlockState();
+		SPORITE = BlockInit.sporite_crystal.get().defaultBlockState();
+		VENOUS_STONE = BlockInit.venous_stone.get().defaultBlockState();
+		CALCIFIED = BlockInit.calcified_hyphae.get().defaultBlockState();
+
 		BlockState capState = BlockInit.infected_cap.get().defaultBlockState();
 		if (capState.hasProperty(HugeMushroomBlock.UP)) {
 			capState = capState.setValue(HugeMushroomBlock.UP, Boolean.TRUE)
 					.setValue(HugeMushroomBlock.DOWN, Boolean.FALSE);
 		}
 		CAP = capState;
+		resolved = true;
 	}
 
 	public SporeNexusTowerFeature(Codec<NoneFeatureConfiguration> codec) {
@@ -52,6 +63,7 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 
 	@Override
 	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
+		ensureResolved();
 		WorldGenLevel level = ctx.level();
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();

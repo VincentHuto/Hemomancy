@@ -22,7 +22,7 @@
   "argument2": {
     "type": "minecraft:noise",
     "noise": "minecraft:gravel",
-    "xz_scale": 0.08,
-    "y_scale": 0.16
+    "xz_scale": 0.05,
+    "y_scale": 0.1
   }
 }

@@ -1,15 +1,15 @@
 {
-  "temperature": 0.5,
-  "downfall": 0.0,
+  "temperature": 0.7,
+  "downfall": 0.8,
   "has_precipitation": false,
   "effects": {
-    "sky_color": 329228,
-    "fog_color": 657936,
-    "water_color": 3033144,
-    "water_fog_color": 854034,
+    "sky_color": 1315860,
+    "fog_color": 1973790,
+    "water_color": 10980608,
+    "water_fog_color": 10980608,
     "particle": {
       "type": "minecraft:warped_spore",
-      "probability": 0.005
+      "probability": 0.035
     },
     "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
     "mood_sound": {
@@ -19,51 +19,58 @@
       "offset": 2
     },
     "additions_sound": {
-      "sound": "minecraft:ambient.soul_sand_valley.additions",
+      "sound": "minecraft:ambient.crimson_forest.additions",
       "tick_probability": 0.0111
     }
   },
   "spawners": {
     "ambient": [
       {
-        "type": "hemomancy:hemolymphopoda",
-        "weight": 20,
-        "minCount": 3,
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 4,
         "maxCount": 8
       }
     ],
     "axolotls": [],
     "creature": [
       {
-        "type": "hemomancy:hemojelly",
-        "weight": 6,
-        "minCount": 1,
-        "maxCount": 3
+        "type": "hemomancy:fungling",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
       }
     ],
     "misc": [],
     "monster": [
       {
-        "type": "hemomancy:myelin_borer",
-        "weight": 18,
+        "type": "hemomancy:abhorent_thought",
+        "weight": 15,
         "minCount": 1,
-        "maxCount": 4
+        "maxCount": 3
       },
       {
-        "type": "hemomancy:abyssal_siphon",
-        "weight": 10,
+        "type": "hemomancy:fargone",
+        "weight": 8,
         "minCount": 1,
         "maxCount": 2
       },
       {
-        "type": "hemomancy:erythromycelium_eruptus",
-        "weight": 8,
+        "type": "hemomancy:chthonian",
+        "weight": 6,
         "minCount": 1,
         "maxCount": 2
       }
     ],
     "underground_water_creature": [],
-    "water_ambient": [],
+    "water_ambient": [
+      {
+        "type": "hemomancy:barbed_urchin",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
     "water_creature": []
   },
   "spawn_costs": {},
@@ -79,22 +86,22 @@
     [],
     [],
     [],
-    [
-      "hemomancy:spore_nexus_tower"
-    ],
+    [],
     [],
     [
-      "hemomancy:ore_hematic_iron",
       "hemomancy:hyphae_tendril",
-      "hemomancy:mushroom/canopy_mushrooms_dense",
+      "hemomancy:mushroom/canopy_mushrooms_sparse",
       "hemomancy:huge_fungus",
+      "hemomancy:mycelium_blob",
       "hemomancy:conscious_mass_blob"
     ],
     [],
     [],
     [
-      "hemomancy:ghost_pipes",
-      "hemomancy:sporite_crystal_cluster"
+      "hemomancy:patch_hyphae",
+      "hemomancy:small_infected_fungus",
+      "hemomancy:bleeding_hearts",
+      "hemomancy:ghost_pipes"
     ],
     []
   ]

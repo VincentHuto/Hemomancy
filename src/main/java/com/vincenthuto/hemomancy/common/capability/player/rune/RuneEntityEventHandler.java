@@ -223,17 +223,16 @@ public class RuneEntityEventHandler {
 	@SubscribeEvent
 	public static void onLivingHurt(LivingHurtEvent event) {
 		// Player attacks another entity
-		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
-			if (event.getEntity() instanceof LivingEntity target) {
-				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
-						ItemStack stack = runes.getStackInSlot(i);
-						if (stack.getItem() instanceof ItemRune rune) {
-							rune.onPlayerAttack(player, target);
-						}
+	if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
+			LivingEntity target = event.getEntity();
+			player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+				for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
+					ItemStack stack = runes.getStackInSlot(i);
+					if (stack.getItem() instanceof ItemRune rune) {
+						rune.onPlayerAttack(player, target);
 					}
-				});
-			}
+				}
+			});
 		}
 
 		// Player is attacked by another entity
@@ -254,16 +253,15 @@ public class RuneEntityEventHandler {
 	@SubscribeEvent
 	public static void onEntityKilledByPlayer(LivingDeathEvent event) {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
-			if (event.getEntity() instanceof LivingEntity killed) {
-				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
-						ItemStack stack = runes.getStackInSlot(i);
-						if (stack.getItem() instanceof ItemRune rune) {
-							rune.onPlayerKill(player, killed);
-						}
+			LivingEntity killed = event.getEntity();
+			player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+				for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
+					ItemStack stack = runes.getStackInSlot(i);
+					if (stack.getItem() instanceof ItemRune rune) {
+						rune.onPlayerKill(player, killed);
 					}
-				});
-			}
+				}
+			});
 		}
 	}
 

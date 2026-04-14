@@ -78,16 +78,15 @@
     ],
     [],
     [
-      "hemomancy:ore_hematic_iron"
-    ],
-    [
-      "hemomancy:infested_venous_stone_blob",
-      "hemomancy:mushroom/canopy_mushrooms_sparse"
+      "hemomancy:ore_hematic_iron",
+      "hemomancy:mushroom/canopy_mushrooms_sparse",
+      "hemomancy:infested_venous_stone_blob"
     ],
     [],
+    [],
     [
-      "hemomancy:stink_horns",
-      "hemomancy:bleeding_hearts"
+      "hemomancy:bleeding_hearts",
+      "hemomancy:stink_horns"
     ],
     []
   ]
