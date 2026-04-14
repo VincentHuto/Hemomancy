@@ -29,7 +29,7 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 9. [Skill Tree](#9-skill-tree)
 10. [Bloodlines](#10-bloodlines)
 11. [Morphlings](#11-morphlings)
-12. [Runes & Spores](#12-runes--spores)
+12. [Scars & Spores](#12-scars--spores)
 13. [Items & Materials](#13-items--materials)
 14. [Tools & Weapons](#14-tools--weapons)
 15. [Armor Sets](#15-armor-sets)
@@ -78,8 +78,8 @@ All player-attached Forge capabilities, registered in `CapabilityInit`:
 | Vascular System | `IVascularSystem` | Health state of 7 vein sections |
 | Known Manipulations | `IKnownManipulations` | Unlocked blood manipulations, selected manip, vein locations |
 | Equipped Morphling | `IEquippedMorphling` | Currently equipped morphling for the Living Staff |
-| Rune | `IRune` | Rune slot / rune binder state |
-| Rune Item Handler | `IRunesItemHandler` | Inventory for rune binder contents |
+| Scar | `IScar` | Scar slot / scar binder state |
+| Scar Item Handler | `IScarsItemHandler` | Inventory for scar binder contents |
 | Initiatory Degree | `IInitiatoryDegree` | Harbinger rank (0–7) |
 | Unstained Progress | `IUnstainedProgress` | Purification path state (purity, clarity, flags) |
 | Earthen Vein Location | `IEarthenVeinLoc` | Block capability for earthen vein blocks |
@@ -365,7 +365,7 @@ Opened from the **Dendritic Distributor** block. Has six tabs:
 - **Skills** — panning/zoomable blood skill tree with skill nodes
 - **Manipulations** — panning/zoomable manipulation tree with manipulation nodes
 - **Crafting** — sidebar listing blood structure recipes grouped by tier (Basic/Advanced/Expert) with degree gating (0/2/4)
-- **Runes** — sidebar listing chisel station recipes grouped by tier (1/2/3) with degree gating (4/4/5)
+- **Scars** — sidebar listing scar station recipes grouped by tier (1/2/3) with degree gating (4/4/5)
 - **Rites** — sidebar listing cardinal rite recipes
 - **Materials** — panning/zoomable catalogue of mod items and blocks
 
@@ -388,9 +388,9 @@ Skills cost **skill points** (earned from using manipulations) and many require 
 | Crimson Mastery | 8 | 3 | 3 | 4 | +15% manipulation damage/effectiveness per level | Dynamic Use |
 | Vital Link | 9 | 3 | 4 | 5 | +10% chance to heal on dealing manipulation damage | Feeding Frenzy |
 | Sanguine Reach | 13 | 3 | 3 | 5 | +15% range for ranged blood manipulations | Crimson Mastery |
-| Rune Affinity | 15 | 3 | 3 | 4 | Enhances attunement strength when runes are equipped | Crimson Mastery |
-| Rune Resonance | 16 | 3 | 3 | 4 | Amplifies passive effects of equipped runes | Rune Affinity |
-| Rune Mastery | 17 | 3 | 4 | 5 | Maximizes rune power and synergy | Rune Resonance |
+| Scar Affinity | 15 | 3 | 3 | 4 | Opens the mind to cerebral scarring; +10% scar effect potency per level | Crimson Mastery |
+| Scar Resonance | 16 | 3 | 3 | 4 | The bond between scar and blood deepens; +1 equippable scar slot per level | Scar Affinity |
+| Scar Mastery | 17 | 3 | 4 | 5 | Scarred pathways fully colonised; scar effects last 20% longer per level | Scar Resonance |
 
 Skill bonuses are computed in `SkillPointHelper`.
 
@@ -412,9 +412,9 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Blood Flow | ⚠️ Helper only | `SkillPointHelper.getBloodFlowMultiplier()` exists but no event caller found |
 | Coagulation | ⚠️ Helper only | `SkillPointHelper.getCoagulationChance()` exists but no event caller found |
 | Sanguine Reach | ✅ Yes | `BloodLampManip`, `CrimsonFlameConjurationManip`, `UmbralStepManip`, `SanguineExcavationManip` — scales range |
-| Rune Affinity | ⚠️ Helper only | Helper exists; rune deepening amount scaling not yet wired |
-| Rune Resonance | ⚠️ Helper only | Helper exists; rune synergy effects not yet wired |
-| Rune Mastery | ⚠️ Helper only | Helper exists; rune power maximization not yet wired |
+| Scar Affinity | ⚠️ Helper only | Helper exists; scar effect potency scaling not yet wired |
+| Scar Resonance | ⚠️ Helper only | Helper exists; scar slot expansion not yet wired |
+| Scar Mastery | ⚠️ Helper only | Helper exists; scar effect duration not yet wired |
 
 > **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers (damage events, regen ticks, cooldown calculations, etc.) to have actual gameplay effects.
 
@@ -479,71 +479,71 @@ Each morphling type has a **preferred tendency** and **secondary tendency** — 
 
 ---
 
-## 12. Runes & Spores
+## 12. Scars & Spores
 
-### 12.1 Runes
+### 12.1 Scars
 
-Runes are equippable items stored in a **Rune Binder** ![Rune Binder](src/main/resources/assets/hemomancy/textures/item/rune_binder.png) (18 slots) or **Upgraded Rune Binder** ![Rune Binder Upgraded](src/main/resources/assets/hemomancy/textures/item/rune_binder_upgraded.png) (27 slots). They are crafted at the **Runic Chisel Station**. Rune crafting requires **Initiatory Degree 4 (Adept)** minimum.
+Scars are equippable items stored in a **Scar Binder** ![Scar Binder](src/main/resources/assets/hemomancy/textures/item/scar_binder.png) (18 slots) or **Scar Binder Upgraded** ![Scar Binder Upgraded](src/main/resources/assets/hemomancy/textures/item/scar_binder_upgraded.png) (27 slots). They are crafted at the **Cerebral Scarring Station**. Scar crafting requires **Initiatory Degree 4 (Adept)** minimum.
 
-Runes are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot:
+Scars are organized in **three tiers** by `deepenAmount` — how strongly they shift tendency alignment per equipped slot:
 
-**Tier 1 Runes (deepenAmount = 1) — Basic, available at Degree 4:**
+**Tier 1 Scars (deepenAmount = 1) — Basic, available at Degree 4:**
 
-| Rune | Tendency | Effect |
+| Scar | Tendency | Effect |
 |------|----------|--------|
 | ![](src/main/resources/assets/hemomancy/textures/item/mind_spike.png) Mind Spike | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_transcendence.png) Rune Transcendence | Lux | Deepens Lux tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_sol.png) Rune Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_heart.png) Rune Heart | Animus | Deepens Animus tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_descendence.png) Rune Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_moon.png) Rune Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_eye.png) Rune Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| ![](src/main/resources/assets/hemomancy/textures/item/rune_feral.png) Rune Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
-| Rune Thorn | Ferric | Deepens Ferric tendency alignment when equipped |
-| Rune Shade | Tenebris | Deepens Tenebris tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_transcendence.png) Scar of Transcendence | Lux | Deepens Lux tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_sol.png) Scar of Sol | Flammeus | Deepens Flammeus tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_heart.png) Scar of the Heart | Animus | Deepens Animus tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_descendence.png) Scar of Descendence | Mortem | Deepens Mortem tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_moon.png) Scar of the Moon | Congeatio | Deepens Congeatio tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_eye.png) Scar of the Eye | Ductilis | Deepens Ductilis tendency alignment when equipped |
+| ![](src/main/resources/assets/hemomancy/textures/item/scars/scar_feral.png) Scar of the Feral | Ductilis | Deepens Ductilis tendency alignment when equipped |
+| Scar of the Thorn | Ferric | Deepens Ferric tendency alignment when equipped |
+| Scar of the Shade | Tenebris | Deepens Tenebris tendency alignment when equipped |
 
-**Tier 2 Runes (deepenAmount = 2) — Advanced, available at Degree 4:**
+**Tier 2 Scars (deepenAmount = 2) — Advanced, available at Degree 4:**
 
-| Rune | Tendency |
+| Scar | Tendency |
 |------|----------|
-| Rune Pyre | Flammeus |
-| Rune Marrow | Animus |
-| Rune Blight | Mortem |
-| Rune Rime | Congeatio |
-| Rune Flux | Ductilis |
-| Rune Halo | Lux |
-| Rune Anvil | Ferric |
-| Rune Veil | Tenebris |
+| Scar of the Pyre | Flammeus |
+| Scar of Marrow | Animus |
+| Scar of Blight | Mortem |
+| Scar of Rime | Congeatio |
+| Scar of Flux | Ductilis |
+| Scar of the Halo | Lux |
+| Scar of the Anvil | Ferric |
+| Scar of the Veil | Tenebris |
 
-**Tier 3 Runes (deepenAmount = 3) — Expert, available at Degree 5:**
+**Tier 3 Scars (deepenAmount = 3) — Expert, available at Degree 5:**
 
-| Rune | Tendency |
+| Scar | Tendency |
 |------|----------|
-| Rune Phoenix | Flammeus |
-| Rune Ichor | Animus |
-| Rune Wither | Mortem |
-| Rune Glacier | Congeatio |
-| Rune Chimera | Ductilis |
-| Rune Corona | Lux |
-| Rune Crucible | Ferric |
-| Rune Oblivion | Tenebris |
+| Scar of the Phoenix | Flammeus |
+| Scar of Ichor | Animus |
+| Scar of Withering | Mortem |
+| Scar of the Glacier | Congeatio |
+| Scar of the Chimera | Ductilis |
+| Scar of the Corona | Lux |
+| Scar of the Crucible | Ferric |
+| Scar of Oblivion | Tenebris |
 
-> **Rune Mechanic:** All standard runes extend `ItemRune` and share the same core mechanic: when equipped in a Rune Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per rune via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard runes.
+> **Scar Mechanic:** All standard scars extend `ItemScar` and share the same core mechanic: when equipped in a Scar Binder slot, they deepen the player's Blood Tendency alignment toward their assigned tendency by a fixed amount (set per scar via `deepenAmount`). This shifts which manipulations the player has strongest affinity with. Individual gameplay bonuses beyond tendency alignment are not yet implemented for standard scars.
 
-Each rune has a corresponding **Rune Pattern** item used in crafting.
+Each scar has a corresponding **Scar Pattern** item used in crafting.
 
-### 12.2 Functional Spores (Rune-type items)
+### 12.2 Functional Spores (Scar-type items)
 
-Special fungal rune items with active effects (extend `ItemFungalRune`):
+Special fungal scar items with active effects (extend `ItemFungalScar`):
 
 | Item | Tendency | Effect |
 |------|----------|--------|
 | ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Fungal spore with custom 3D render when equipped (specific effect TBD) |
-| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) effect while equipped in Rune Binder |
+| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) effect while equipped in Scar Binder |
 | ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Fungal spore with custom 3D render when equipped (specific effect TBD) |
 | ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the Noctifly Agaric (Fungal Elytra) flight effect |
 
-### 12.3 Spores (Passive rune items)
+### 12.3 Spores (Passive scar items)
 
 One for each tendency:
 ![](src/main/resources/assets/hemomancy/textures/item/vivacious_spores.png) Vivacious,
@@ -642,7 +642,7 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_tendency_gauge.png) Blood Tendency Gauge | Inspect current blood tendency alignment |
 | ![](src/main/resources/assets/hemomancy/textures/item/vascular_status_gauge.png) Vascular Status Gauge | Inspect vein section health |
 | ![](src/main/resources/assets/hemomancy/textures/item/bloodline_pool_monitor.png) Bloodline Pool Monitor | View bloodline shared pool status |
-| ![](src/main/resources/assets/hemomancy/textures/item/self_reflection_mirror.png) Self Reflection Mirror | Rune-related inspection |
+| ![](src/main/resources/assets/hemomancy/textures/item/self_reflection_mirror.png) Self Reflection Mirror | Scar-related inspection |
 
 ### 13.5 Miscellaneous
 
@@ -826,7 +826,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Visceral Artificial Recaller** | `VisceralRecallerBlockEntity` | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts |
 | **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_stand.png) ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
 | **ghastly_alembic** | `GhastlyAlembicBlockEntity` | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** — an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top → input, bottom → result, sides → flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware). |
-| **Runic Chisel Station** | `ChiselStationBlockEntity` | Crafts runes from patterns and blanks |
+| **Cerebral Scarring Station** | `ScarStationBlockEntity` | Crafts scars from patterns and blanks |
 | **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Has 7 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd (slot 6). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). |
 | **Fungal Podium** | `FungalPodiumBlockEntity` | Fungal-related interaction station |
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
@@ -956,7 +956,7 @@ All applicable flowers have **potted** variants.
 
 | Recipe Type | Serializer | Station | Purpose |
 |-------------|-----------|---------|---------|
-| `chisel_recipe` | `ChiselRecipeSerializer` | Runic Chisel Station | Crafting runes |
+| `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
 | `ghastly_alembic_recipe_type` | `GhastlyAlembicSerializer` | Ghastly Alembic | Squeezes items for blood/extracts. Has 4 slots: input, flask (auto-fills Cured Clay Flasks), result, and catalyst (modifies output) |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts. 13 recipes for all morphling types (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin). JEI-integrated via `IncubatorRecipeCategory`. |
@@ -1419,7 +1419,7 @@ JEI recipe category support for:
 | | | |
 |---|---|---|
 | ![](src/main/resources/assets/hemomancy/textures/gui/centrifuge_gui.png) Centrifuge | ![](src/main/resources/assets/hemomancy/textures/gui/ghastly_alembic_gui.png) ghastly_alembic | ![](src/main/resources/assets/hemomancy/textures/gui/recaller_gui.png) Recaller |
-| ![](src/main/resources/assets/hemomancy/textures/gui/chisel_station.png) Chisel Station | ![](src/main/resources/assets/hemomancy/textures/gui/rune_binder_gui.png) Rune Binder | ![](src/main/resources/assets/hemomancy/textures/gui/morphling_jar_gui.png) Morphling Jar |
+| ![](src/main/resources/assets/hemomancy/textures/gui/chisel_station.png) Chisel Station | ![](src/main/resources/assets/hemomancy/textures/gui/rune_binder_gui.png) Scar Binder | ![](src/main/resources/assets/hemomancy/textures/gui/morphling_jar_gui.png) Morphling Jar |
 | ![](src/main/resources/assets/hemomancy/textures/gui/tendency_view.png) Tendency View | ![](src/main/resources/assets/hemomancy/textures/gui/vascular_view.png) Vascular View | ![](src/main/resources/assets/hemomancy/textures/gui/fungal_implantation_pylon.png) Spore Implant |
 
 | Screen | Opened From | Purpose |
@@ -1482,7 +1482,7 @@ All under the "Hemomancy" category:
 | Open Morphling Jar | Open jar viewer |
 | Open Morphling Jar Viewer | Open detailed jar viewer |
 | Toggle Gourd Open/Closed | Toggle blood gourd state |
-| Toggle Rune Binder Pickup | Toggle rune pickup mode |
+| Toggle Scar Binder Pickup | Toggle scar pickup mode |
 
 ---
 
@@ -1518,12 +1518,12 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **PARTIALLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (7): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach. Still helper-only/not called from events (10): Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Iron Will, Blood Flow, Coagulation, Rune Affinity, Rune Resonance, Rune Mastery.
+- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **PARTIALLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (7): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach. Still helper-only/not called from events (10): Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Iron Will, Blood Flow, Coagulation, Scar Affinity, Scar Resonance, Scar Mastery.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
 - **Old Morphling Maturity** — The 6 original morphlings (Fungal, Leeches, Chitinite, Serpent, Pests, Spider) lack named maturity-tier reactive abilities unlike the 6 newer morphlings.
-- **Rune Gameplay Effects** — Standard runes only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
+- **Scar Gameplay Effects** — Standard scars only deepen tendency alignment when equipped. Individual gameplay bonuses (e.g., stat boosts, triggered effects) are not yet implemented beyond the Functional Spores.
 - **Vial Centrifuge Rework** — New 3D stand model (`CentrifugeStandModel`) and custom item renderer implemented; UI and menu updated. `VialCentrifugeBlockItem` has custom `BlockEntityWithoutLevelRenderer`.
 - **Memory Overlay Textures** — All manipulations now have unique overlay textures (`textures/item/memories/memory_*_overlay.png`) for the layered memory item model system. The `HemoItemModelProvider` generates 2-layer models (base `memory_blank` + per-manipulation overlay) for all `BloodMemoryItem` instances.
 - **Incubator Recipe System** — Full `IncubatorRecipe` + `IncubatorRecipeSerializer` added with 13 JSON recipes for all morphling types. JEI integration via `IncubatorRecipeCategory`. Recipes stored in `data/hemomancy/recipes/incubator/`.
@@ -1539,8 +1539,8 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **New Monster Mobs (WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). Spawn rules are registered but specific spawn biomes, AI, drops, and loot tables are still being designed/implemented.
 - **New NPC Entities (WIP)** — Unstained Guardian, Unstained Acolyte, Harbinger Hermit, and Spectral Companion entities are registered but their AI, dialogue, and drop content is still being developed.
 - **New Manipulation Expansions** — 8 new manipulations added covering new tendencies: Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
-- **Rune Tier System** — All three tiers of runes now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total runes) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
-- **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemRunePattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
+- **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
+- **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 
 ### 30.1 Unstained Expansion — Planned Features
 
@@ -1699,9 +1699,9 @@ All packets are registered in `PacketHandler.registerChannels()` across 8 `Simpl
 | `CHANNELBLOODVOLUME` | `bloodvolumechannel` | Blood volume sync, blood draw, skill tree, bloodline pool, cardinal rites, degree sync, unstained progress, structure spawner, dialogue | 16 |
 | `CHANNELKNOWNMANIPS` | `knownmanipulationchannel` | Manipulation sync, use/cast packets, cooldowns, vein teleport, avatar tracking, centrifuge start, equip manipulation | 14 |
 | `CHANNELPARTICLES` | `particlechannel` | Blood flask, avatar hit, blood claw, and living tool break particle spawning | 4 |
-| `CHANNELRUNES` | `runechannel` | Elytra flight, spore/rune/normal inventory open, rune sync, gourd sync, horn animation, gourd toggle, chisel station packets | 11 |
+| `CHANNELSCARS` | `scarchannel` | Elytra flight, spore/scar/normal inventory open, scar sync, gourd sync, horn animation, gourd toggle, scar station packets | 11 |
 | `CHANNELMORPHLINGJAR` | `morphlingjarchannel` | Jar toggle pickup, open jar, toggle jar message, living staff open, staff morph update, morph key change, equipped morphling sync | 7 |
-| `CHANNELRUNEBINDER` | `runebinderchannel` | Open rune binder, toggle binder message | 2 |
+| `CHANNELSCARBINDER` | `scarbinderchannel` | Open scar binder, toggle binder message | 2 |
 
 **Total:** ~60 registered packets across 8 channels.
 
