@@ -398,6 +398,10 @@ public final class MaterialsData {
 				"Translucent glass made from vivianite mineral.",
 				"Building Blocks", () -> new ItemStack(BlockInit.vivianite_glass.get())));
 
+		list.add(new MaterialEntry("pale_silver_block", "Pale Silver Block",
+				"A block of compressed pale silver. Used in Unstained rite structures.",
+				"Building Blocks", () -> new ItemStack(BlockInit.pale_silver_block.get())));
+
 		// ── Plants ──
 		list.add(new MaterialEntry("lethean_poppy", "Lethean Poppy",
 				"Sacred flower of Lethe. Source of lethean extract and poppy wreaths.",

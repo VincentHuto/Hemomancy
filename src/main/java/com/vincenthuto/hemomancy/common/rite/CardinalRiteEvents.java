@@ -49,6 +49,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -1445,5 +1446,151 @@ public class CardinalRiteEvents {
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		return true;
+	}
+
+	// ────────────────────────────────────────────────────────────────────────
+	// Unstained Rite Completion Handlers
+	// ────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Rite of Lethean Baptism (Minor, 0 blood):
+	 * Entry rite that formally begins the Unstained path. Grants starting
+	 * purity and sets the purification flag.
+	 */
+	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.hasBegunPurification()) {
+				unstained.setBegunPurification(true);
+			}
+			unstained.addPurity(5.0f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+		});
+
+		caster.displayClientMessage(
+				Component.literal("The waters of Lethe wash over you. The Unstained path has begun.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				caster.getX(), caster.getY() + 1.0, caster.getZ(),
+				30, 0.5, 1.0, 0.5, 0.05);
+	}
+
+	/**
+	 * Rite of the Silver Veil (Lesser, 0 blood):
+	 * Grants the Silver Ward mob effect for 30 minutes and adds 10 purity.
+	 * Requires purity >= 25 (Tainted stage).
+	 */
+	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (unstained.getPurity() < 25.0f) {
+				caster.displayClientMessage(
+						Component.literal("Your soul is not yet pure enough to bear the Silver Veil.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+			unstained.addPurity(10.0f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			// Apply Silver Ward effect (amplifier 1, 30 minutes)
+			caster.addEffect(new MobEffectInstance(
+					EffectInit.silver_ward.get(), SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
+
+			caster.displayClientMessage(
+					Component.literal("A veil of pale silver light surrounds you. Blood magic cannot touch you.")
+							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+					false);
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					50, 1.0, 1.5, 1.0, 0.02);
+		});
+	}
+
+	/**
+	 * Rite of Clarity Ascension (Greater, 0 blood):
+	 * Unlocks the clarity phase for a fully purified Unstained player.
+	 * Requires purity = 100 (Purified stage).
+	 */
+	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.isPurified()) {
+				caster.displayClientMessage(
+						Component.literal("You must achieve full purity before ascending to clarity.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+			if (unstained.hasClarityUnlocked()) {
+				caster.displayClientMessage(
+						Component.literal("Clarity has already been unlocked within you.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			unstained.setClarityUnlocked(true);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			caster.displayClientMessage(
+					Component.literal("The veil parts. True sight is yours — clarity has been unlocked.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+					false);
+			caster.displayClientMessage(
+					Component.literal("Blood magic is no longer your domain. Walk the path of enlightenment.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					80, 1.5, 2.0, 1.5, 0.03);
+		});
+	}
+
+	/**
+	 * Rite of Lethean Judgment (Grand, 0 blood):
+	 * Offensive rite that disrupts all blood-active Hemomancers within 16
+	 * blocks, applying Hemolysis and stripping active blood effects.
+	 */
+	private static void completeLetheanJudgment(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(LETHEAN_JUDGMENT_RADIUS);
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(
+				ServerPlayer.class, area, p -> p != caster);
+
+		int affected = 0;
+		for (ServerPlayer target : nearbyPlayers) {
+			target.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				if (volume.isActive()) {
+					// Apply Hemolysis effect (amplifier 2, 30 seconds)
+					target.addEffect(new MobEffectInstance(
+							EffectInit.hemolysis.get(), 600, 2, false, true, true));
+
+					// Disrupt vascular system
+					target.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+						Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+						for (EnumVeinSections section : EnumVeinSections.values()) {
+							float current = sys.getOrDefault(section, 100f);
+							sys.put(section, Math.max(0f, current - 30f));
+						}
+						vascular.setVascularSystem(sys);
+						VascularSystemEvents.syncVascular(target, vascular);
+					});
+
+					target.displayClientMessage(
+							Component.literal("A wave of silver light burns through your veins!")
+									.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+							false);
+				}
+			});
+			affected++;
+		}
+
+		String msg = affected > 0
+				? "Lethean judgment descends. " + affected + " hemomancer(s) have been purged."
+				: "Lethean judgment descends, but no blood-wielders were found nearby.";
+		caster.displayClientMessage(
+				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
 	}
 }

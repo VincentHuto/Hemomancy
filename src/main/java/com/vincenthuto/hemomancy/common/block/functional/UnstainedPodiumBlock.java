@@ -4,6 +4,8 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryD
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -13,6 +15,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.tile.functional.UnstainedPodiumBlockEntity;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -143,6 +146,9 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 				handleConsecratedCopper(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.hemolytic_plating.get()) {
 				handleHemolyticPlating(worldIn, pos, player, stack, unstained);
+			} else {
+				// Empty-hand or unrecognized item — show purity/clarity stage lore
+				showUnstainedProgress(player, unstained);
 			}
 		});
 	}
@@ -273,5 +279,35 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 		}
 	}
 
+	private void showUnstainedProgress(Player player, IUnstainedProgress unstained) {
+		if (!unstained.hasBegunPurification()) {
+			player.displayClientMessage(
+					Component.literal("The podium hums faintly. You have not yet begun the Unstained path.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		EnumPurityStage purityStage = EnumPurityStage.byPurity(unstained.getPurity());
+		player.displayClientMessage(
+				Component.literal("Purity: " + String.format("%.0f", unstained.getPurity())
+						+ "/100 — " + purityStage.getTitle())
+						.withStyle(ChatFormatting.AQUA),
+				false);
+
+		if (unstained.hasClarityUnlocked()) {
+			EnumClarityStage clarityStage = EnumClarityStage.byClarity(unstained.getClarity());
+			player.displayClientMessage(
+					Component.literal("Clarity: " + String.format("%.0f", unstained.getClarity())
+							+ "/100 — " + clarityStage.getTitle())
+							.withStyle(ChatFormatting.WHITE),
+					false);
+		} else if (unstained.isPurified()) {
+			player.displayClientMessage(
+					Component.literal("You are fully purified. Seek the Rite of Clarity Ascension to unlock clarity.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+		}
+	}
 }
 

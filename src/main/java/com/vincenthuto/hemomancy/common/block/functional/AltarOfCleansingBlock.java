@@ -115,6 +115,10 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 				handlePoppyWreath(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.silver_chalice.get()) {
 				handleSilverChalice(worldIn, pos, player, stack, unstained);
+			} else if (stack.getItem() == ItemInit.lethe_icon.get()) {
+				handleLetheIcon(worldIn, pos, player, stack, unstained);
+			} else if (stack.getItem() == ItemInit.lethean_brew.get()) {
+				handleLetheanBrew(worldIn, pos, player, stack, unstained);
 			} else {
 				// Empty-hand interaction — show lore
 				player.displayClientMessage(
@@ -181,6 +185,54 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 				Component.translatable("hemomancy.altar.chalice_offered"), false);
 		worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);
 		spawnClarityParticles(worldIn, pos);
+
+		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+			UnstainedProgressEvents.syncProgress(serverPlayer, unstained);
+		}
+	}
+
+	private void handleLetheIcon(Level worldIn, BlockPos pos, Player player, ItemStack stack,
+			IUnstainedProgress unstained) {
+		// One-time rare offering: grants +10 clarity (requires clarity unlocked)
+		if (!unstained.hasClarityUnlocked()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.altar.clarity_not_unlocked"), false);
+			return;
+		}
+		// Check one-time use via player persistent data
+		String tag = "hemomancy:lethe_icon_offered";
+		if (player.getPersistentData().getBoolean(tag)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.altar.icon_already_offered"), false);
+			return;
+		}
+		stack.shrink(1);
+		player.getPersistentData().putBoolean(tag, true);
+		unstained.addClarity(10.0f);
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.altar.icon_offered"), false);
+		worldIn.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.5f, 1.0f);
+		worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 0.8f);
+		spawnClarityParticles(worldIn, pos);
+		spawnBlessingParticles(worldIn, pos);
+
+		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
+			UnstainedProgressEvents.syncProgress(serverPlayer, unstained);
+		}
+	}
+
+	private void handleLetheanBrew(Level worldIn, BlockPos pos, Player player, ItemStack stack,
+			IUnstainedProgress unstained) {
+		// Consuming a brew at the altar grants +15 purity (repeatable, consumes item)
+		stack.shrink(1);
+		unstained.addPurity(15.0f);
+
+		player.displayClientMessage(
+				Component.translatable("hemomancy.altar.brew_offered"), false);
+		worldIn.playSound(null, pos, SoundEvents.GENERIC_DRINK, SoundSource.BLOCKS, 1.0f, 1.0f);
+		worldIn.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 1.0f, 0.8f);
+		spawnPurityParticles(worldIn, pos);
 
 		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			UnstainedProgressEvents.syncProgress(serverPlayer, unstained);
