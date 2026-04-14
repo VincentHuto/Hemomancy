@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:pale_silver_ingot" },
+    { "item": "minecraft:book" },
+    { "item": "hemomancy:lethean_extract" }
+  ],
+  "result": {
+    "item": "hemomancy:tome_of_the_unstained",
+    "count": 1
+  }
+}

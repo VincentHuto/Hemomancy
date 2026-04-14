@@ -1,0 +1,33 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "riteName": "Rite of Clarity Ascension",
+  "riteDescription": "The Purified supplicant steps beyond mere cleansing into true sight. Surrounded by silver and crystal, the mind opens to clarity — the second phase of the Unstained path, where enlightenment begins.",
+  "pattern": [
+    ["LSCSCSL", "S     S", "C     C", "S  L  S", "C     C", "S     S", "LSCSCSL"],
+    ["       ", " LLLLL ", " L   L ", " L P L ", " L   L ", " LLLLL ", "       "],
+    ["       ", " L   L ", "  SCS  ", "  C C  ", "  SCS  ", " L   L ", "       "],
+    ["       ", " L P L ", "  C C  ", "  SPS  ", " SCSCS ", "  SCS  ", " L P L "],
+    ["       ", " L   L ", "  SCS  ", "  C C  ", "  SCS  ", " L   L ", "       "],
+    ["       ", " LLLLL ", " L   L ", " L P L ", " L   L ", " LLLLL ", "       "],
+    ["LSCSCSL", "S     S", "C     C", "S  L  S", "C     C", "S     S", "LSCSCSL"]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "hemomancy:lethe_lantern"
+    },
+    "C": {
+      "block": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:lethe_icon"
+  }
+}

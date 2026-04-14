@@ -338,6 +338,10 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
+	public static final RegistryObject<Block> pale_silver_block = BASEBLOCKS.register("pale_silver_block",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(3.0F, 6.0F).sound(SoundType.METAL)));
+
 	public static final RegistryObject<Block> lethe_lantern = BASEBLOCKS.register("lethe_lantern",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.0F, 3.0F).sound(SoundType.LANTERN).lightLevel(s -> 12)));

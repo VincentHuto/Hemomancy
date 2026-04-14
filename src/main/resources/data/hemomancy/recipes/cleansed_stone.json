@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:stone" },
+    { "item": "hemomancy:hemolytic_solution" }
+  ],
+  "result": {
+    "item": "hemomancy:cleansed_stone",
+    "count": 4
+  }
+}

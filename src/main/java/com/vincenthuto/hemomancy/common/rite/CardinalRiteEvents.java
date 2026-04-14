@@ -36,17 +36,20 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -428,6 +431,12 @@ public class CardinalRiteEvents {
 	private static final String ASHEN_VESSEL_RITE = "cardinal_rite/ashen_vessel_rite";
 	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
 
+	// ── Unstained rite paths ──
+	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
+	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
+	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
+	private static final String LETHEAN_JUDGMENT_RITE = "cardinal_rite/lethean_judgment";
+
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
 	/** NBT key stored on player persistent data to track covenant usage. */
@@ -444,6 +453,10 @@ public class CardinalRiteEvents {
 	private static final long SANGUINE_FERVOR_DURATION_TICKS = 6000L;
 	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
 	private static final float SUMMONS_COST_PER_MEMBER = 200f;
+	/** Radius (in blocks) for Lethean Judgment anti-blood disruption. */
+	private static final int LETHEAN_JUDGMENT_RADIUS = 16;
+	/** Duration in ticks for Silver Veil effect (30 minutes = 36000 ticks). */
+	private static final int SILVER_VEIL_DURATION_TICKS = 36000;
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
@@ -668,6 +681,28 @@ public class CardinalRiteEvents {
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
 		if (SANGUINE_FERVOR_RITE.equals(ritePath)) {
 			completeSanguineFervor(sLevel, caster, center);
+		}
+
+		// ── Unstained rites ──
+
+		// Rite of Lethean Baptism: begin the Unstained path
+		if (LETHEAN_BAPTISM_RITE.equals(ritePath)) {
+			completeLetheanBaptism(sLevel, caster);
+		}
+
+		// Rite of the Silver Veil: grant Silver Ward effect and purity
+		if (SILVER_VEIL_RITE.equals(ritePath)) {
+			completeSilverVeil(sLevel, caster);
+		}
+
+		// Rite of Clarity Ascension: unlock clarity phase
+		if (CLARITY_ASCENSION_RITE.equals(ritePath)) {
+			completeClarityAscension(sLevel, caster);
+		}
+
+		// Rite of Lethean Judgment: disrupt nearby hemomancers
+		if (LETHEAN_JUDGMENT_RITE.equals(ritePath)) {
+			completeLetheanJudgment(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1411,5 +1446,151 @@ public class CardinalRiteEvents {
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 		return true;
+	}
+
+	// ────────────────────────────────────────────────────────────────────────
+	// Unstained Rite Completion Handlers
+	// ────────────────────────────────────────────────────────────────────────
+
+	/**
+	 * Rite of Lethean Baptism (Minor, 0 blood):
+	 * Entry rite that formally begins the Unstained path. Grants starting
+	 * purity and sets the purification flag.
+	 */
+	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.hasBegunPurification()) {
+				unstained.setBegunPurification(true);
+			}
+			unstained.addPurity(5.0f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+		});
+
+		caster.displayClientMessage(
+				Component.literal("The waters of Lethe wash over you. The Unstained path has begun.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				caster.getX(), caster.getY() + 1.0, caster.getZ(),
+				30, 0.5, 1.0, 0.5, 0.05);
+	}
+
+	/**
+	 * Rite of the Silver Veil (Lesser, 0 blood):
+	 * Grants the Silver Ward mob effect for 30 minutes and adds 10 purity.
+	 * Requires purity >= 25 (Tainted stage).
+	 */
+	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (unstained.getPurity() < 25.0f) {
+				caster.displayClientMessage(
+						Component.literal("Your soul is not yet pure enough to bear the Silver Veil.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+			unstained.addPurity(10.0f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			// Apply Silver Ward effect (amplifier 1, 30 minutes)
+			caster.addEffect(new MobEffectInstance(
+					EffectInit.silver_ward.get(), SILVER_VEIL_DURATION_TICKS, 1, false, true, true));
+
+			caster.displayClientMessage(
+					Component.literal("A veil of pale silver light surrounds you. Blood magic cannot touch you.")
+							.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+					false);
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					50, 1.0, 1.5, 1.0, 0.02);
+		});
+	}
+
+	/**
+	 * Rite of Clarity Ascension (Greater, 0 blood):
+	 * Unlocks the clarity phase for a fully purified Unstained player.
+	 * Requires purity = 100 (Purified stage).
+	 */
+	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.isPurified()) {
+				caster.displayClientMessage(
+						Component.literal("You must achieve full purity before ascending to clarity.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+			if (unstained.hasClarityUnlocked()) {
+				caster.displayClientMessage(
+						Component.literal("Clarity has already been unlocked within you.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			unstained.setClarityUnlocked(true);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			caster.displayClientMessage(
+					Component.literal("The veil parts. True sight is yours — clarity has been unlocked.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+					false);
+			caster.displayClientMessage(
+					Component.literal("Blood magic is no longer your domain. Walk the path of enlightenment.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					80, 1.5, 2.0, 1.5, 0.03);
+		});
+	}
+
+	/**
+	 * Rite of Lethean Judgment (Grand, 0 blood):
+	 * Offensive rite that disrupts all blood-active Hemomancers within 16
+	 * blocks, applying Hemolysis and stripping active blood effects.
+	 */
+	private static void completeLetheanJudgment(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(LETHEAN_JUDGMENT_RADIUS);
+		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(
+				ServerPlayer.class, area, p -> p != caster);
+
+		int[] affected = {0};
+		for (ServerPlayer target : nearbyPlayers) {
+			target.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+				if (volume.isActive()) {
+					// Apply Hemolysis effect (amplifier 2, 30 seconds)
+					target.addEffect(new MobEffectInstance(
+							EffectInit.hemolysis.get(), 600, 2, false, true, true));
+
+					// Disrupt vascular system
+					target.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+						Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
+						for (EnumVeinSections section : EnumVeinSections.values()) {
+							float current = sys.getOrDefault(section, 100f);
+							sys.put(section, Math.max(0f, current - 30f));
+						}
+						vascular.setVascularSystem(sys);
+						VascularSystemEvents.syncVascular(target, vascular);
+					});
+
+					target.displayClientMessage(
+							Component.literal("A wave of silver light burns through your veins!")
+									.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+							false);
+					affected[0]++;
+				}
+			});
+		}
+
+		String msg = affected[0] > 0
+				? "Lethean judgment descends. " + affected[0] + " hemomancer(s) have been purged."
+				: "Lethean judgment descends, but no blood-wielders were found nearby.";
+		caster.displayClientMessage(
+				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
 	}
 }

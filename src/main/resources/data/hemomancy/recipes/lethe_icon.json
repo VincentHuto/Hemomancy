@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "hemomancy:pale_silver_ingot" },
+    { "item": "hemomancy:lethean_extract" },
+    { "item": "hemomancy:cleansed_blood_crystal_shard" }
+  ],
+  "result": {
+    "item": "hemomancy:lethe_icon",
+    "count": 1
+  }
+}
