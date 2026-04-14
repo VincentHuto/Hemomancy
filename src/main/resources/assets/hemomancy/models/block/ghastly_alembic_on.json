@@ -1,8 +1,6 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "block/block",
   "textures": {
-    "top": "hemomancy:block/ghastly_alembic_top",
-    "front": "hemomancy:block/ghastly_alembic_front_on",
-    "side": "hemomancy:block/ghastly_alembic_side"
+    "particle": "hemomancy:entity/model_ghastly_alembic"
   }
 }

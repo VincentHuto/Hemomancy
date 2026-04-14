@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.block.crafting;
 
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
@@ -41,16 +43,50 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
-public class GhastlyAlembicBlock extends BaseEntityBlock {
+public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty LIT = BlockStateProperties.LIT;
+
+	/** Filler offset: 1×2×1 — one filler block directly above the base. */
+	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+			new BlockPos(0, 1, 0)
+	};
 
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {
 		super(props);
 		this.registerDefaultState(
 				this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
+	}
+
+	@Override
+	public BlockPos[] getFillerOffsets() {
+		return FILLER_OFFSETS;
+	}
+
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+		return true;
+	}
+
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+		// Full 1×1×1 collision box — model rendering is handled by entity renderer
+		return Shapes.block();
 	}
 
 	@Override
@@ -102,12 +138,17 @@ public class GhastlyAlembicBlock extends BaseEntityBlock {
 
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.MODEL;
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		}
+		return null; // Prevents placement if there's not enough room
 	}
 
 	@Override
@@ -156,6 +197,9 @@ public class GhastlyAlembicBlock extends BaseEntityBlock {
 				}
 				level.updateNeighbourForOutputSignal(pos, this);
 			}
+			if (!level.isClientSide) {
+				removeFillers(level, pos);
+			}
 			super.onRemove(state, level, pos, newState, isMoving);
 		}
 	}
@@ -177,6 +221,10 @@ public class GhastlyAlembicBlock extends BaseEntityBlock {
 
 	@Override
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity entity, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, entity, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
 		if (stack.hasCustomHoverName()) {
 			BlockEntity be = level.getBlockEntity(pos);
 			if (be instanceof GhastlyAlembicBlockEntity alembic) {

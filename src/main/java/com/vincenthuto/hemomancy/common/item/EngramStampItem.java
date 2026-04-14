@@ -22,7 +22,7 @@ public class EngramStampItem extends Item {
 				ctx.getLevel().setBlockAndUpdate(ctx.getClickedPos().above(),
 						(BlockState) (BlockInit.engram_block.get()).defaultBlockState()
 								.setValue(EngramBlock.CHARACTERINDEX, (int) Math.floor(Math.random()
-										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size() - 1))));
+										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size()))));
 				ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), (player) -> {
 					player.broadcastBreakEvent(ctx.getHand());
 				});
@@ -32,7 +32,7 @@ public class EngramStampItem extends Item {
 				ctx.getLevel().setBlockAndUpdate(ctx.getClickedPos(),
 						(BlockState) (BlockInit.engram_block.get()).defaultBlockState()
 								.setValue(EngramBlock.CHARACTERINDEX, (int) Math.floor(Math.random()
-										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size() - 1))));
+										* (double) (EngramBlock.CHARACTERINDEX.getPossibleValues().size()))));
 				ctx.getItemInHand().hurtAndBreak(1, ctx.getPlayer(), (player) -> {
 					player.broadcastBreakEvent(ctx.getHand());
 				});

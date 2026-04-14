@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.model.block.MorphlingIncubatorModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;
@@ -15,9 +16,12 @@ import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -32,10 +36,15 @@ import net.minecraft.world.phys.Vec3;
 
 public class MorphlingIncubatorRenderer implements BlockEntityRenderer<MorphlingIncubatorBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final ResourceLocation TEXTURE = new ResourceLocation("hemomancy",
+			"textures/entity/morphling_incubator_model.png");
+
+	private final MorphlingIncubatorModel model;
 	Minecraft mc;
 
 	public MorphlingIncubatorRenderer(BlockEntityRendererProvider.Context p_173636_) {
 		mc = Minecraft.getInstance();
+		this.model = new MorphlingIncubatorModel(p_173636_.bakeLayer(MorphlingIncubatorModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -46,6 +55,8 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 	@Override
 	public void render(MorphlingIncubatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
+
+		renderIncubatorModel(ms, bufferIn, te, combinedLightIn);
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
@@ -326,5 +337,33 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
 		builder.vertex(positionMatrix, p2.x(), p2.y(), p2.z()).color(r, g, b, alpha).uv(0, (float) v1)
 				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).endVertex();
+	}
+
+	/**
+	 * Renders the morphling incubator entity model. Flips Y-down → Y-up
+	 * (Blockbench convention) and rotates to match the block's FACING direction.
+	 */
+	private void renderIncubatorModel(PoseStack poseStack, MultiBufferSource bufferIn,
+			MorphlingIncubatorBlockEntity te, int combinedLightIn) {
+		poseStack.pushPose();
+
+		poseStack.translate(0.5D, 1.5D, 0.5D);
+		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
+
+		Direction facing = te.getBlockState().getValue(FACING);
+		float yRot = switch (facing) {
+			case NORTH -> 180f;
+			case EAST  -> 270f;
+			case SOUTH -> 0f;
+			case WEST  -> 90f;
+			default    -> 0f;
+		};
+		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
+				1.0F, 1.0F, 1.0F, 1.0F);
+
+		poseStack.popPose();
 	}
 }

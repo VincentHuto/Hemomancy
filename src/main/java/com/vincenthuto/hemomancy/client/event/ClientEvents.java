@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.client.render.entity.summon.*;
 import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.ChiselStationRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.crafting.GhastlyAlembicRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.SomaticLoomRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.VialCentrifugeRenderer;
@@ -409,6 +410,7 @@ public class ClientEvents {
 			FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);

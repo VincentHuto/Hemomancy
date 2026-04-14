@@ -17,6 +17,8 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
 import com.vincenthuto.hemomancy.common.item.tile.ChiselStationBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
@@ -466,6 +468,14 @@ public class BlockInit {
 		if (b == BlockInit.runic_chisel_station.get()) {
 			return Pair.of(block.getSecond(),
 					new ChiselStationBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.ghastly_alembic.get()) {
+			return Pair.of(block.getSecond(),
+					new GhastlyAlembicBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.morphling_incubator.get()) {
+			return Pair.of(block.getSecond(),
+					new MorphlingIncubatorBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.somatic_loom.get()) {
 			return Pair.of(block.getSecond(),

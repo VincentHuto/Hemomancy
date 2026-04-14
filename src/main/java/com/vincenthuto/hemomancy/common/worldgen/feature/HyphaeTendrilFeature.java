@@ -34,7 +34,7 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 			|| world.getBlockState(pos).getBlock() == Blocks.WATER;
 
 	private static final int MIN_DISTANCE = 8;
-	private static final int MAX_DISTANCE = 32;
+	private static final int MAX_DISTANCE = 16;
 	private static final float MID_POS_MULTIPLIER = 0.9F;
 	private static final float TENDON_STEP = 0.005f;
 
@@ -66,10 +66,16 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 		int zOff = rand.nextInt(MAX_DISTANCE * 2) - MAX_DISTANCE;
 		int minX = rand.nextBoolean() ? MIN_DISTANCE : -MIN_DISTANCE;
 		int minZ = rand.nextBoolean() ? MIN_DISTANCE : -MIN_DISTANCE;
-		BlockPos endPos = pos.offset(Math.abs(xOff) < MIN_DISTANCE ? minX : xOff, pos.getY(),
+		BlockPos endPos = pos.offset(Math.abs(xOff) < MIN_DISTANCE ? minX : xOff, 0,
 				Math.abs(zOff) < MIN_DISTANCE ? minZ : zOff);
 
-		while (world.isEmptyBlock(endPos) && endPos.getY() < 126) {
+		// Guard against reading blocks from unloaded chunks
+		if (world instanceof WorldGenRegion region && !respectsCutoff(region, endPos)) {
+			return false;
+		}
+
+		int maxY = world.getMaxBuildHeight() - 1;
+		while (world.isEmptyBlock(endPos) && endPos.getY() < maxY) {
 			endPos = endPos.above();
 		}
 
@@ -80,7 +86,7 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 		for (float d = 0.0f; d < 1.0f; d += TENDON_STEP) {
 			BlockPos curPos = quadratic(d, pos, midPos, endPos);
 
-			if (curPos.getY() < 256) {
+			if (curPos.getY() < world.getMaxBuildHeight()) {
 				BlockState sporeBlock = BlockInit.hyphae_block.get().defaultBlockState();
 				if (rand.nextInt(5) == 0) {
 					sporeBlock = BlockInit.hyphae_block.get().defaultBlockState();
@@ -161,7 +167,10 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	public boolean setBlock(WorldGenLevel world, BlockPos pos, BlockState state) {
-		if (this.respectsCutoff((WorldGenRegion) world, pos) && this.replace.matches(world, pos)) {
+		if (world instanceof WorldGenRegion region) {
+			if (!this.respectsCutoff(region, pos)) return false;
+		}
+		if (this.replace.matches(world, pos)) {
 			super.setBlock(world, pos, state);
 			return true;
 		}
@@ -169,7 +178,10 @@ public class HyphaeTendrilFeature extends Feature<NoneFeatureConfiguration> {
 	}
 
 	public boolean setBlock(WorldGenLevel world, BlockPos pos, BlockState state, int flags) {
-		if (this.respectsCutoff((WorldGenRegion) world, pos) && this.replace.matches(world, pos)) {
+		if (world instanceof WorldGenRegion region) {
+			if (!this.respectsCutoff(region, pos)) return false;
+		}
+		if (this.replace.matches(world, pos)) {
 			world.setBlock(pos, state, flags);
 			return true;
 		}
