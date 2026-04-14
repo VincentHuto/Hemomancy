@@ -55,14 +55,16 @@ public class EarthenVeinFeature extends Feature<NoneFeatureConfiguration> {
 	 */
 	private BlockPos findSurface(WorldGenLevel level, BlockPos start, int maxDepth) {
 		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
+		BlockPos.MutableBlockPos below = new BlockPos.MutableBlockPos();
 
 		for (int dy = 0; dy < maxDepth; dy++) {
+			below.setWithOffset(mutable, Direction.DOWN);
 			BlockState current = level.getBlockState(mutable);
-			BlockState below = level.getBlockState(mutable.below());
+			BlockState belowState = level.getBlockState(below);
 
 			if ((current.isAir() || current.canBeReplaced())
-					&& below.isFaceSturdy(level, mutable.below(), Direction.UP)
-					&& !below.liquid()) {
+					&& belowState.isFaceSturdy(level, below, Direction.UP)
+					&& belowState.getFluidState().isEmpty()) {
 				return mutable.immutable();
 			}
 
