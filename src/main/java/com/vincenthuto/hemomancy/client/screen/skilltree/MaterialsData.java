@@ -49,9 +49,9 @@ public final class MaterialsData {
 				"Loadout block for equipping and managing blood manipulations.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.mnemonic_reliquary.get())));
 
-		list.add(new MaterialEntry("juiceinator", "Juiceinator",
+		list.add(new MaterialEntry("ghastly_alembic", "ghastly_alembic",
 				"Processes organic materials into useful blood-craft reagents.",
-				"Functional Blocks", () -> new ItemStack(BlockInit.juiceinator.get())));
+				"Functional Blocks", () -> new ItemStack(BlockInit.ghastly_alembic.get())));
 
 		list.add(new MaterialEntry("vial_centrifuge", "Vial Centrifuge",
 				"Separates blood samples into component enzymes.",

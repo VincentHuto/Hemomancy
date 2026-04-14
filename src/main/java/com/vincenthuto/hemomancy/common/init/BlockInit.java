@@ -9,7 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
 import com.vincenthuto.hemomancy.common.block.crafting.BlockChiselStation;
-import com.vincenthuto.hemomancy.common.block.crafting.JuiceinatorBlock;
+import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.VialCentrifugeBlock;
 import com.vincenthuto.hemomancy.common.block.functional.*;
@@ -369,8 +369,8 @@ public class BlockInit {
 	public static final RegistryObject<Block> iron_brazier = MODELEDBLOCKS.register("iron_brazier",
 			() -> new BrazierBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));
-	public static final RegistryObject<Block> juiceinator = MODELEDBLOCKS.register("juiceinator",
-			() -> new JuiceinatorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+	public static final RegistryObject<Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
+			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",

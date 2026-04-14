@@ -22,7 +22,7 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * Fully programmatic blood volume HUD overlay.
- * Renders an organic vial-style bar matching the Juiceinator / Morphling
+ * Renders an organic vial-style bar matching the Ghastly Alembic / Morphling
  * Incubator aesthetic — gradient fill, meniscus, specular highlight,
  * animated bubbles, pulsing vein tendrils around the frame, and tick marks.
  */

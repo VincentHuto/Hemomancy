@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:juiceinator"
+      "item": "hemomancy:ghastly_alembic"
     },
     "title": {
       "translate": "advancements.hemomancy.bleeding_a_stone.title"
@@ -15,13 +15,13 @@
   },
   "parent": "hemomancy:hemomancy/root",
   "criteria": {
-    "has_juiceinator": {
+    "has_ghastly_alembic": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "hemomancy:juiceinator"
+              "hemomancy:ghastly_alembic"
             ]
           }
         ]
@@ -30,7 +30,7 @@
   },
   "requirements": [
     [
-      "has_juiceinator"
+      "has_ghastly_alembic"
     ]
   ]
 }

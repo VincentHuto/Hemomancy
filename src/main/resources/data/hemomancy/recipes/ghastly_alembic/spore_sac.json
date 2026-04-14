@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:spore_sac"
+  },
+  "result": "hemomancy:recycled_enzyme",
+  "count": 1,
+  "experience": 0.5,
+  "cookingtime": 150
+}

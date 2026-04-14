@@ -768,7 +768,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Scrying Podium** | `ScryingPodiumBlockEntity` | Opens the Charm/Gourd slot screen for equipping the Charm of Vascularium and Blood Gourds |
 | **Visceral Artificial Recaller** | `VisceralRecallerBlockEntity` | Crafting station for creating Hematic Memories using enzymes, blank memories, and catalysts |
 | **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_stand.png) ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
-| **Juiceinator** | `JuicinatorBlockEntity` | Squeezes items to extract blood (requires fire below) |
+| **ghastly_alembic** | `GhastlyAlembicBlockEntity` | Squeezes items to extract blood (requires fire below) |
 | **Runic Chisel Station** | `ChiselStationBlockEntity` | Crafts runes from patterns and blanks |
 | **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. |
 | **Fungal Podium** | `FungalPodiumBlockEntity` | Fungal-related interaction station |
@@ -860,13 +860,13 @@ A full block family with variants:
 - Erythrocytic Dirt
 - Erythrocytic Mycelium (spreads, random ticks)
 - Bleeding Heart (flower, Absorption effect — crafts Dicentra Sap, brews Potion of Sanguine Siphon)
-- Infected Fungus (flower, Confusion effect — juiceinator → Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
-- Stinkhorn Fungus (Confusion effect — juiceinator → Foul Paste, brews Potion of Blood Binding)
-- Puffball Fungus (Saturation effect, **Unstained** — juiceinator → Spore Sac, incubator catalyst for Fungal Morphling)
-- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — juiceinator → Lethean Dew, crafts Lethean Poppy Wreath)
-- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — juiceinator → Lethean Extract)
-- Sarcodes (myco-heterotrophic, Regeneration effect — juiceinator → Dicentra Sap, brews Potion of Blood Rush)
-- Rafflesia (parasitic, Confusion effect — juiceinator → Spore Sac, brews Potion of Hemolysis)
+- Infected Fungus (flower, Confusion effect — ghastly_alembic → Foul Paste, brews Potion of Mycorrhizal Mending, incubator catalyst for Fungal Morphling)
+- Stinkhorn Fungus (Confusion effect — ghastly_alembic → Foul Paste, brews Potion of Blood Binding)
+- Puffball Fungus (Saturation effect, **Unstained** — ghastly_alembic → Spore Sac, incubator catalyst for Fungal Morphling)
+- Lethean Poppy (Regeneration effect, random ticks, **Unstained** — ghastly_alembic → Lethean Dew, crafts Lethean Poppy Wreath)
+- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — ghastly_alembic → Lethean Extract)
+- Sarcodes (myco-heterotrophic, Regeneration effect — ghastly_alembic → Dicentra Sap, brews Potion of Blood Rush)
+- Rafflesia (parasitic, Confusion effect — ghastly_alembic → Spore Sac, brews Potion of Hemolysis)
 
 All applicable flowers have **potted** variants.
 
@@ -900,7 +900,7 @@ All applicable flowers have **potted** variants.
 | Recipe Type | Serializer | Station | Purpose |
 |-------------|-----------|---------|---------|
 | `chisel_recipe` | `ChiselRecipeSerializer` | Runic Chisel Station | Crafting runes |
-| `juiceinator_recipe_type` | `JuiceinatorSerializer` | Juiceinator | Squeezing items for blood |
+| `ghastly_alembic_recipe_type` | `GhastlyAlembicSerializer` | ghastly_alembic | Squeezing items for blood |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts. 13 recipes for all morphling types (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin). JEI-integrated via `IncubatorRecipeCategory`. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
@@ -963,7 +963,7 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 
 Plants and fungi found in hemomancy biomes serve as ingredients across multiple crafting systems:
 
-**Juiceinator Processing:**
+**ghastly_alembic Processing:**
 
 | Input | Output | Count | Cook Time |
 |-------|--------|-------|-----------|
@@ -988,7 +988,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 
 **Brewing Recipes (Awkward Potion + Plant → Potion):**
 
-Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe) deliberately do not brew blood-positive effects — their uses are in Juiceinator processing and Unstained crafting chains.
+Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffball Fungus, Lethean Poppy, Ghost Pipe) deliberately do not brew blood-positive effects — their uses are in ghastly_alembic processing and Unstained crafting chains.
 
 | Plant Ingredient | Result Potion |
 |-----------------|---------------|
@@ -1324,7 +1324,7 @@ JEI recipe category support for:
 
 | | | |
 |---|---|---|
-| ![](src/main/resources/assets/hemomancy/textures/gui/centrifuge_gui.png) Centrifuge | ![](src/main/resources/assets/hemomancy/textures/gui/juiceinator_gui.png) Juiceinator | ![](src/main/resources/assets/hemomancy/textures/gui/recaller_gui.png) Recaller |
+| ![](src/main/resources/assets/hemomancy/textures/gui/centrifuge_gui.png) Centrifuge | ![](src/main/resources/assets/hemomancy/textures/gui/ghastly_alembic_gui.png) ghastly_alembic | ![](src/main/resources/assets/hemomancy/textures/gui/recaller_gui.png) Recaller |
 | ![](src/main/resources/assets/hemomancy/textures/gui/chisel_station.png) Chisel Station | ![](src/main/resources/assets/hemomancy/textures/gui/rune_binder_gui.png) Rune Binder | ![](src/main/resources/assets/hemomancy/textures/gui/morphling_jar_gui.png) Morphling Jar |
 | ![](src/main/resources/assets/hemomancy/textures/gui/tendency_view.png) Tendency View | ![](src/main/resources/assets/hemomancy/textures/gui/vascular_view.png) Vascular View | ![](src/main/resources/assets/hemomancy/textures/gui/fungal_implantation_pylon.png) Spore Implant |
 
@@ -1336,7 +1336,7 @@ JEI recipe category support for:
 | `VascularViewScreen` | Vascular Status Gauge | View vein section health |
 | `VascularStatusScreen` | — | Detailed vascular status |
 | `BloodlinePoolScreen` | Bloodline Pool Monitor | View/manage bloodline shared pool |
-| `JuiceinatorScreen` | Juiceinator block | Juiceinator crafting GUI |
+| `GhastlyAlembicScreen` | ghastly_alembic block | ghastly_alembic crafting GUI |
 | `VialCentrifugeScreen` | Vial Centrifuge | Centrifuge crafting GUI (reworked with new 3D stand model) |
 | `MorphlingIncubatorScreen` | Morphling Incubator | Incubation crafting GUI |
 | `MnemonicReliquaryScreen` | Mnemonic Reliquary block | Reliquary viewing GUI — opens animated lid on interaction |
@@ -1368,7 +1368,7 @@ JEI recipe category support for:
 | **Lady of the Forgotten Waters** | Obtain Tears of Lethe |
 | **Path of Purity** | Obtain the Tome of the Unstained |
 | **Our Lady of Lethe** | Obtain the Icon of Our Lady (challenge) |
-| **Bleeding a Stone** | Craft a Juiceinator |
+| **Bleeding a Stone** | Craft a ghastly_alembic |
 
 ---
 

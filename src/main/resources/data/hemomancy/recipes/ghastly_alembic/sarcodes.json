@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:sarcodes"
+  },
+  "result": "hemomancy:dicentra_sap",
+  "count": 2,
+  "experience": 0.4,
+  "cookingtime": 120
+}

@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
+import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import mezz.jei.api.IModPlugin;
@@ -27,8 +27,8 @@ import net.minecraft.world.item.ItemStack;
 public class JEIPlugin implements IModPlugin {
 
 	private static final ResourceLocation ID = Hemomancy.rloc("main");
-	public static final RecipeType<JuiceinatorRecipe> juiceinator_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
-			"juiceinator", JuiceinatorRecipe.class);
+	public static final RecipeType<GhastlyAlembicRecipe> ghastly_alembic_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
+			"ghastly_alembic", GhastlyAlembicRecipe.class);
 	public static final RecipeType<MemoryWeavingRecipe> memory_weaving_type = RecipeType.create(Hemomancy.MOD_ID,
 			"memory_weaving", MemoryWeavingRecipe.class);
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
@@ -46,7 +46,7 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
-		registry.addRecipeCategories(new JuiceinatorRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new GhastlyAlembicRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ChiselStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -56,7 +56,7 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
-		registry.addRecipeCatalyst(new ItemStack(BlockInit.juiceinator.get()), juiceinator_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), ghastly_alembic_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.runic_chisel_station.get()), chisel_station_recipe_type);
@@ -66,7 +66,7 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
-		registry.addRecipes(juiceinator_recipe_type, JuiceinatorRecipe.getAllRecipes(world));
+		registry.addRecipes(ghastly_alembic_recipe_type, GhastlyAlembicRecipe.getAllRecipes(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(chisel_station_recipe_type, ChiselRecipe.getAllRecipes(world));

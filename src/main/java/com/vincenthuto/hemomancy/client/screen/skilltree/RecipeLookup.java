@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
+import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import net.minecraft.client.Minecraft;
@@ -29,7 +29,7 @@ public final class RecipeLookup {
 
 	public enum RecipeKind {
 		VANILLA_CRAFTING,
-		JUICEINATOR,
+		GHASTLY_ALEMBIC,
 		MEMORY_WEAVING,
 		BLOOD_STRUCTURE,
 		CHISEL,
@@ -72,11 +72,11 @@ public final class RecipeLookup {
 		var rm = level.getRecipeManager();
 		var ra = level.registryAccess();
 
-		// Juiceinator recipes
-		for (JuiceinatorRecipe r : rm.getAllRecipesFor(RecipeInit.juiceinator_recipe_type.get())) {
+		// Ghastly Alembic recipes
+		for (GhastlyAlembicRecipe r : rm.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())) {
 			ItemStack result = r.getResultItem(ra);
 			if (result != null && !result.isEmpty()) {
-				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.JUICEINATOR));
+				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.GHASTLY_ALEMBIC));
 			}
 		}
 

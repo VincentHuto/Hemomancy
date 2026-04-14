@@ -62,8 +62,8 @@ public enum HemoMilestone {
     /** Obtain any enzyme. */
     OLD_HABITS("old_habits", 1, Category.DISCOVERY, 0, "Obtain any enzyme"),
 
-    /** Craft a Juiceinator. */
-    BLEEDING_A_STONE("bleeding_a_stone", 1, Category.DISCOVERY, 0, "Craft a Juiceinator"),
+    /** Craft a Ghastly Alembic. */
+    BLEEDING_A_STONE("bleeding_a_stone", 1, Category.DISCOVERY, 0, "Craft a Ghastly Alembic"),
 
     // ═══════════════════════════════════════════════════
     //  DEGREE — Initiatory Degree advancement

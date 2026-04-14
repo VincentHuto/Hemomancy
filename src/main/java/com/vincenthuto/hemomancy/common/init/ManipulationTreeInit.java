@@ -109,21 +109,48 @@ public class ManipulationTreeInit {
 
 		// ═══════════════════════════════════════════
 		//  Elemental / Esoteric clusters
-		//  (smaller tendency groups, one or two nodes each)
 		// ═══════════════════════════════════════════
 		int ex = lx + COL_GAP + 160;  // gap after LUX
 
-		// CONGEATIO (blue / cold) — HUMILIS
+		// ── CONGEATIO (blue / cold) ──
+		// Row 0 (top) — MEDIOCRITAS
+		register("glacial_bastion",      ex + 40,    TREE_TOP_Y,             "glacial_grasp", "cryogenic_pulse");
+
+		// Row 1 (bottom) — HUMILIS
 		register("glacial_grasp",        ex,         TREE_TOP_Y + ROW_GAP);
+		register("cryogenic_pulse",      ex + COL_GAP, TREE_TOP_Y + ROW_GAP);
 
-		// FLAMMEUS (orange / fire) — MEDIOCRITAS
-		register("pyretic_forge",        ex + COL_GAP, TREE_TOP_Y);
+		// ── FLAMMEUS (orange / fire) ──
+		int fmx = ex + COL_GAP * 2 + 80;  // gap after CONGEATIO
 
-		// TENEBRIS (dark purple / shadow) — MEDIOCRITAS
-		register("umbral_step",          ex + COL_GAP * 2, TREE_TOP_Y);
+		// Row 0 (top) — SUMMA
+		register("vitric_combustion",    fmx + 40,   TREE_TOP_Y,             "pyretic_forge", "sanguine_ignition");
 
-		// MORTEM (dark green / death) — MEDIOCRITAS
-		register("vital_reservoir",      ex + COL_GAP * 3, TREE_TOP_Y);
+		// Row 1 (middle) — MEDIOCRITAS
+		register("pyretic_forge",        fmx,        TREE_TOP_Y + ROW_GAP,   "sanguine_ignition");
+
+		// Row 2 (bottom) — HUMILIS
+		register("sanguine_ignition",    fmx,        TREE_TOP_Y + ROW_GAP * 2);
+
+		// ── TENEBRIS (dark purple / shadow) ──
+		int tx = fmx + COL_GAP + 80;  // gap after FLAMMEUS
+
+		// Row 0 (top) — MEDIOCRITAS
+		register("umbral_step",          tx + 40,    TREE_TOP_Y,             "void_shroud", "blood_eclipse");
+
+		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
+		register("void_shroud",          tx,         TREE_TOP_Y + ROW_GAP);
+		register("blood_eclipse",        tx + COL_GAP, TREE_TOP_Y + ROW_GAP);
+
+		// ── MORTEM (dark green / death) ──
+		int mx = tx + COL_GAP * 2 + 80;  // gap after TENEBRIS
+
+		// Row 0 (top) — MEDIOCRITAS
+		register("vital_reservoir",      mx + 40,    TREE_TOP_Y,             "hemorrhage", "exsanguinate");
+
+		// Row 1 (bottom) — HUMILIS / MEDIOCRITAS
+		register("hemorrhage",           mx,         TREE_TOP_Y + ROW_GAP);
+		register("exsanguinate",         mx + COL_GAP, TREE_TOP_Y + ROW_GAP);
 	}
 
 	// ────────────────────────────────────────────────────────────

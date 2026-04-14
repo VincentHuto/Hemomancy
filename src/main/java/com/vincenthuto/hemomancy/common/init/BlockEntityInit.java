@@ -72,9 +72,9 @@ public class BlockEntityInit {
 			.register("somatic_loom", () -> BlockEntityType.Builder
 					.of(SomaticLoomBlockEntity::new, BlockInit.somatic_loom.get()).build(null));
 
-	public static final RegistryObject<BlockEntityType<JuicinatorBlockEntity>> juiceinator = TILES.register(
-			"juiceinator",
-			() -> BlockEntityType.Builder.of(JuicinatorBlockEntity::new, BlockInit.juiceinator.get()).build(null));
+	public static final RegistryObject<BlockEntityType<GhastlyAlembicBlockEntity>> ghastly_alembic = TILES.register(
+			"ghastly_alembic",
+			() -> BlockEntityType.Builder.of(GhastlyAlembicBlockEntity::new, BlockInit.ghastly_alembic.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES
 			.register("vial_centrifuge", () -> BlockEntityType.Builder

@@ -438,7 +438,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.morphling_jar.get(), MorphlingJarScreen::new);
 			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
-			MenuScreens.register(ContainerInit.juiceinator.get(), JuiceinatorScreen::new);
+			MenuScreens.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
 			MenuScreens.register(ContainerInit.runic_chisel_station.get(), ChiselStationScreen::new);
 			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen::new);
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);

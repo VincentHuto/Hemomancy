@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:vivacious_spores"
+  },
+  "result": "hemomancy:dicentra_sap",
+  "count": 2,
+  "experience": 0.4,
+  "cookingtime": 100
+}

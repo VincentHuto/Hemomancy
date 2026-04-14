@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.JuiceinatorRecipe;
+import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import net.minecraft.client.Minecraft;
@@ -65,7 +65,7 @@ public final class MiniRecipeRenderer {
 		if (found == null) return 0;
 		return switch (found.kind()) {
 			case VANILLA_CRAFTING -> 58;
-			case JUICEINATOR      -> 34;
+			case GHASTLY_ALEMBIC      -> 34;
 			case MEMORY_WEAVING   -> 40;
 			case BLOOD_STRUCTURE  -> 44;
 			case CHISEL           -> 56;
@@ -97,7 +97,7 @@ public final class MiniRecipeRenderer {
 
 		return 11 + switch (found.kind()) {
 			case VANILLA_CRAFTING -> drawVanillaCrafting(gfx, font, (CraftingRecipe) found.recipe(), x, y, maxW, theme);
-			case JUICEINATOR      -> drawJuiceinator(gfx, font, (JuiceinatorRecipe) found.recipe(), x, y, maxW, theme);
+			case GHASTLY_ALEMBIC      -> drawGhastlyAlembic(gfx, font, (GhastlyAlembicRecipe) found.recipe(), x, y, maxW, theme);
 			case MEMORY_WEAVING   -> drawMemoryWeaving(gfx, font, (MemoryWeavingRecipe) found.recipe(), x, y, maxW, theme);
 			case BLOOD_STRUCTURE  -> drawBloodStructure(gfx, font, (BloodStructureRecipe) found.recipe(), x, y, maxW, theme);
 			case CHISEL           -> drawChisel(gfx, font, (ChiselRecipe) found.recipe(), x, y, maxW, theme);
@@ -162,7 +162,7 @@ public final class MiniRecipeRenderer {
 		return gridH * slotS + 2;
 	}
 
-	private static int drawJuiceinator(GuiGraphics gfx, Font font, JuiceinatorRecipe recipe,
+	private static int drawGhastlyAlembic(GuiGraphics gfx, Font font, GhastlyAlembicRecipe recipe,
 									   int x, int y, int maxW, Theme theme) {
 		NonNullList<Ingredient> ingredients = recipe.getIngredients();
 		long tick = getAnimTick();
@@ -458,7 +458,7 @@ public final class MiniRecipeRenderer {
 		gfx.fill(x + 8, y + 3, x + 9, y + 4, c);
 	}
 
-	/** Draws a small flame icon for juiceinator recipes. */
+	/** Draws a small flame icon for Ghastly Alembic recipes. */
 	private static void drawFlameIcon(GuiGraphics gfx, int x, int y) {
 		float time = System.nanoTime() / 1_000_000_000f;
 		for (int row = 0; row < 8; row++) {
@@ -484,7 +484,7 @@ public final class MiniRecipeRenderer {
 	private static String getTypeLabel(RecipeKind kind) {
 		return switch (kind) {
 			case VANILLA_CRAFTING -> "Crafting Recipe:";
-			case JUICEINATOR      -> "Juiceinator Recipe:";
+			case GHASTLY_ALEMBIC      -> "Ghastly Alembic Recipe:";
 			case MEMORY_WEAVING   -> "Memory Weaving:";
 			case BLOOD_STRUCTURE  -> "Blood Structure:";
 			case CHISEL           -> "Chisel Recipe:";

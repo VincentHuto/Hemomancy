@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:rafflesia"
+  },
+  "result": "hemomancy:spore_sac",
+  "count": 2,
+  "experience": 0.4,
+  "cookingtime": 120
+}

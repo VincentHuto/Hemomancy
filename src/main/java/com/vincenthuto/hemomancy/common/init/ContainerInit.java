@@ -26,8 +26,8 @@ public class ContainerInit {
 	public static final RegistryObject<MenuType<VialCentrifugeMenu>> vial_centrifuge = CONTAINERS
 			.register("vial_centrifuge", () -> IForgeMenuType.create(VialCentrifugeMenu::new));
 
-	public static final RegistryObject<MenuType<JuiceinatorMenu>> juiceinator = CONTAINERS.register("juiceinator",
-			() -> IForgeMenuType.create(JuiceinatorMenu::new));
+	public static final RegistryObject<MenuType<GhastlyAlembicMenu>> ghastly_alembic = CONTAINERS.register("ghastly_alembic",
+			() -> IForgeMenuType.create(GhastlyAlembicMenu::new));
 
 	public static final RegistryObject<MenuType<MorphlingJarMenu>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IForgeMenuType.create(MorphlingJarMenu::new));

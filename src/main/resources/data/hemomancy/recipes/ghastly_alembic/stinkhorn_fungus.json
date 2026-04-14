@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:stinkhorn_fungus"
+  },
+  "result": "hemomancy:foul_paste",
+  "count": 2,
+  "experience": 0.3,
+  "cookingtime": 100
+}

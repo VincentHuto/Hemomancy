@@ -51,7 +51,7 @@ public class ChiselStationRecipeCategory implements IRecipeCategory<ChiselRecipe
 	private static final int GRID_X = 42;
 	private static final int GRID_Y = 8;
 
-	// Colors — matching Juiceinator / Somatic Loom dark theme
+	// Colors — matching Ghastly Alembic / Somatic Loom dark theme
 	private static final int BG_COLOR = 0xFF0A0204;
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;

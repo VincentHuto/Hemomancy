@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:hematic_iron_scrap"
+  },
+  "result": "hemomancy:hematic_iron_powder",
+  "count": 3,
+  "experience": 0.5,
+  "cookingtime": 200
+}

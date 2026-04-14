@@ -38,7 +38,7 @@ public class ChiselStationScreen extends AbstractContainerScreen<ChiselStationMe
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
 			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
 
-	// ── Hemomancy theme colors (matching JuiceinatorScreen) ──
+	// ── Hemomancy theme colors (matching GhastlyAlembicScreen) ──
 	private static final int SLOT_BG = 0xFF1A0808;
 	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
 	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
