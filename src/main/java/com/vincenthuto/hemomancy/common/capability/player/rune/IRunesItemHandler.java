@@ -9,6 +9,10 @@ public interface IRunesItemHandler extends IItemHandlerModifiable {
 
 	boolean isItemValidForSlot(int slot, ItemStack stack);
 
+	boolean isRunesUnlocked();
+
+	void setRunesUnlocked(boolean unlocked);
+
 	void setEventBlock(boolean blockEvents);
 
 	void tick();

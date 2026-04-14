@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,6 +22,7 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 	private final ItemStack[] previous = new ItemStack[RUNE_SLOTS];
 	private boolean[] changed = new boolean[RUNE_SLOTS];
 	private boolean blockEvents = false;
+	private boolean runesUnlocked = false;
 	private LivingEntity holder;
 
 	public RunesContainer(LivingEntity player) {
@@ -51,7 +53,19 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 		if (stack.isEmpty() || !opt.isPresent())
 			return false;
 		IRune mindrune = opt.orElseThrow(NullPointerException::new);
+		if (mindrune.getRuneType() == RuneType.RUNE && !runesUnlocked)
+			return false;
 		return mindrune.canEquip(holder) && mindrune.getRuneType().hasSlot(slot);
+	}
+
+	@Override
+	public boolean isRunesUnlocked() {
+		return runesUnlocked;
+	}
+
+	@Override
+	public void setRunesUnlocked(boolean unlocked) {
+		this.runesUnlocked = unlocked;
 	}
 
 	@Override
@@ -89,6 +103,19 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 	public void setSize(int size) {
 		if (size != RUNE_SLOTS)
 			System.out.println("Cannot resize rune container");
+	}
+
+	@Override
+	public CompoundTag serializeNBT() {
+		CompoundTag nbt = super.serializeNBT();
+		nbt.putBoolean("RunesUnlocked", runesUnlocked);
+		return nbt;
+	}
+
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		super.deserializeNBT(nbt);
+		this.runesUnlocked = nbt.getBoolean("RunesUnlocked");
 	}
 
 	@Override
