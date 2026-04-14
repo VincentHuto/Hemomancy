@@ -19,11 +19,13 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
 
 public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
@@ -55,6 +57,18 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
 
 	public static final ResourceKey<PlacedFeature> TERMITE_MOUND = createKey("termite_mound");
+
+	// Conscious mass blob
+	public static final ResourceKey<PlacedFeature> PLACED_CONSCIOUS_MASS_BLOB = createKey("conscious_mass_blob");
+
+	// Fungal dimension ores
+	public static final ResourceKey<PlacedFeature> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
+
+	// Spore Nexus Tower - rare mega-structure
+	public static final ResourceKey<PlacedFeature> SPORE_NEXUS_TOWER = createKey("spore_nexus_tower");
+
+	// Sporite Crystal cluster patches (for Mycelial Depths)
+	public static final ResourceKey<PlacedFeature> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
@@ -162,6 +176,35 @@ public class PlacedFeatureInit {
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),
 								BlockInit.infected_fungus.get().defaultBlockState())));
+
+		// Conscious mass blob - surface decoration for fungal dimension
+		context.register(PLACED_CONSCIOUS_MASS_BLOB,
+				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CONSCIOUS_MASS_BLOB),
+						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(4),
+								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
+								.build()));
+
+		// Fungal dimension ores
+		final Holder<ConfiguredFeature<?, ?>> ORE_HEMATIC_IRON = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.ORE_HEMATIC_IRON);
+		register(context, PlacedFeatureInit.ORE_HEMATIC_IRON, ORE_HEMATIC_IRON, List.of(
+				CountPlacement.of(10), InSquarePlacement.spread(),
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(-32), VerticalAnchor.absolute(96)),
+				BiomeFilter.biome()));
+
+		// Spore Nexus Tower - very rare mega-structure, once every ~150 chunks
+		final Holder<ConfiguredFeature<?, ?>> SPORE_NEXUS_TOWER = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.SPORE_NEXUS_TOWER);
+		register(context, PlacedFeatureInit.SPORE_NEXUS_TOWER, SPORE_NEXUS_TOWER, List.of(
+				RarityFilter.onAverageOnceEvery(150), InSquarePlacement.spread(),
+				PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome()));
+
+		// Sporite Crystal patches - occasional glowing clusters
+		final Holder<ConfiguredFeature<?, ?>> SPORITE_CRYSTAL_CLUSTER = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.SPORITE_CRYSTAL_CLUSTER);
+		register(context, PlacedFeatureInit.SPORITE_CRYSTAL_CLUSTER, SPORITE_CRYSTAL_CLUSTER,
+				RarityFilter.onAverageOnceEvery(6), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP,
+				CountPlacement.of(ClampedInt.of(UniformInt.of(-2, 2), 0, 2)), BiomeFilter.biome());
 
 	}
 

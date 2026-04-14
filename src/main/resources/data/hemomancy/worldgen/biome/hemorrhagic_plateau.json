@@ -1,0 +1,94 @@
+{
+  "temperature": 2.5,
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 7012352,
+    "fog_color": 3997696,
+    "water_color": 6029312,
+    "water_fog_color": 2752512,
+    "ambient_sound": "minecraft:ambient.nether_wastes.loop",
+    "mood_sound": {
+      "sound": "minecraft:ambient.nether_wastes.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "additions_sound": {
+      "sound": "minecraft:ambient.nether_wastes.additions",
+      "tick_probability": 0.0111
+    }
+  },
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "hemomancy:venous_strider",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "hemomancy:cruor_fiend",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "hemomancy:dessicant",
+        "weight": 15,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "hemomancy:abhorent_thought",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "minecraft:ghast",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "hemomancy:fungal_cave",
+      "hemomancy:fungal_cave_large"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:spore_nexus_tower"
+    ],
+    [],
+    [
+      "hemomancy:ore_hematic_iron"
+    ],
+    [
+      "hemomancy:infested_venous_stone_blob",
+      "hemomancy:mushroom/canopy_mushrooms_sparse"
+    ],
+    [],
+    [
+      "hemomancy:stink_horns",
+      "hemomancy:bleeding_hearts"
+    ],
+    []
+  ]
+}
