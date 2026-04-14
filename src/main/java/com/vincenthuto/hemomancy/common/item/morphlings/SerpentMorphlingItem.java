@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,16 +23,23 @@ import net.minecraft.world.item.ItemStack;
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Venom Strike — melee attacks apply scaling Poison to
  *   targets (serpent injects venom through the player's strikes)
- * - Mature (3): Shed Skin — periodically purge all negative status effects
- *   (serpent helps the player shed like a snake shedding its skin)
- * - Apex (4): Predator's Mark — melee attacks apply Glowing to the target
- *   and reduce their armor with Weakness, making them take more damage
- *   from all sources (marked prey of the apex predator)
+ * - Mature (3): Constrict — repeated strikes on the same target build
+ *   constriction stacks; at 3 stacks the target is rooted and crushed
+ *   with burst Wither damage (serpent coils and squeezes prey)
+ * - Apex (4): Ambush Predator — the first melee attack after sneaking for
+ *   3+ seconds deals triple venom damage and inflicts Darkness, rewarding
+ *   patient, calculated strikes (apex serpent ambush from stealth)
  */
 public class SerpentMorphlingItem extends MorphlingItem {
 
-	/** Interval in ticks between Shed Skin activations (20 seconds). */
-	private static final int SHED_SKIN_INTERVAL = 400;
+	/** Number of hits within the window to trigger Constrict. */
+	private static final int CONSTRICT_THRESHOLD = 3;
+	/** Time window in ticks for Constrict hits to count (5 seconds). */
+	private static final int CONSTRICT_WINDOW = 100;
+	/** Minimum sneak ticks required for Ambush Predator (3 seconds). */
+	private static final long AMBUSH_SNEAK_TICKS = 60;
+	/** Cooldown for Ambush Predator in ticks (8 seconds). */
+	private static final int AMBUSH_COOLDOWN = 160;
 
 	public SerpentMorphlingItem(Properties prop) {
 		super(prop);
@@ -60,26 +66,15 @@ public class SerpentMorphlingItem extends MorphlingItem {
 					100, amplifier, false, true, true));
 		}
 
-		// Mature (3+): Shed Skin — periodically purge all negative effects
-		if (maturity >= 3 && !player.level().isClientSide) {
-			long now = player.level().getGameTime();
-			long lastShed = getLastAbilityTick(stack, "ShedSkin");
-			if (now - lastShed >= SHED_SKIN_INTERVAL) {
-				boolean hadNegative = player.getActiveEffects().stream()
-						.anyMatch(e -> !e.getEffect().isBeneficial());
-				if (hadNegative) {
-					// Collect harmful effects and remove them
-					List<MobEffect> toRemove = new ArrayList<>();
-					for (MobEffectInstance effectInstance : player.getActiveEffects()) {
-						if (!effectInstance.getEffect().isBeneficial()) {
-							toRemove.add(effectInstance.getEffect());
-						}
-					}
-					for (MobEffect effect : toRemove) {
-						player.removeEffect(effect);
-					}
-					setLastAbilityTick(stack, "ShedSkin", now);
+		// Track sneak start time for Ambush Predator (Apex 4)
+		if (maturity >= 4 && !player.level().isClientSide) {
+			var tag = stack.getOrCreateTag();
+			if (player.isShiftKeyDown()) {
+				if (!tag.contains("SneakStart")) {
+					tag.putLong("SneakStart", player.level().getGameTime());
 				}
+			} else {
+				tag.remove("SneakStart");
 			}
 		}
 	}
@@ -96,12 +91,63 @@ public class SerpentMorphlingItem extends MorphlingItem {
 					venomDuration, venomAmplifier, true, true, true));
 		}
 
-		// Apex (4): Predator's Mark — mark target with Glowing + Weakness
-		if (maturity >= 4) {
-			target.addEffect(new MobEffectInstance(MobEffects.GLOWING,
-					200, 0, true, false, true));
-			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
-					200, 1, true, true, true));
+		// Mature (3+): Constrict — repeated hits on same target build stacks,
+		// at 3 stacks the target is rooted and takes burst Wither damage
+		if (maturity >= 3 && !player.level().isClientSide) {
+			var tag = stack.getOrCreateTag();
+			String targetId = target.getStringUUID();
+			long now = player.level().getGameTime();
+
+			String lastTargetId = tag.getString("ConstrTarget");
+			long lastHitTime = tag.getLong("ConstrLastHit");
+			int hits = tag.getInt("ConstrHits");
+
+			if (targetId.equals(lastTargetId) && (now - lastHitTime) <= CONSTRICT_WINDOW) {
+				hits++;
+			} else {
+				hits = 1;
+			}
+
+			tag.putString("ConstrTarget", targetId);
+			tag.putLong("ConstrLastHit", now);
+			tag.putInt("ConstrHits", hits);
+
+			if (hits >= CONSTRICT_THRESHOLD) {
+				// Root the target (Slowness 127 = effectively frozen)
+				target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+						40, 127, true, true, true)); // 2 seconds
+				// Burst Wither damage (constriction crush)
+				int witherDuration = 60 + (maturity - 3) * 40; // 3s at Mature, 5s at Apex
+				target.addEffect(new MobEffectInstance(MobEffects.WITHER,
+						witherDuration, 1, true, true, true)); // Wither II
+				// Reset stacks
+				tag.putInt("ConstrHits", 0);
+			}
+		}
+
+		// Apex (4): Ambush Predator — first hit from stealth deals triple venom + Darkness
+		if (maturity >= 4 && !player.level().isClientSide) {
+			var tag = stack.getOrCreateTag();
+			if (tag.contains("SneakStart")) {
+				long sneakStart = tag.getLong("SneakStart");
+				long now = player.level().getGameTime();
+				long lastAmbush = getLastAbilityTick(stack, "AmbushPredator");
+
+				if ((now - sneakStart) >= AMBUSH_SNEAK_TICKS
+						&& (now - lastAmbush) >= AMBUSH_COOLDOWN) {
+					setLastAbilityTick(stack, "AmbushPredator", now);
+					tag.remove("SneakStart");
+
+					// Triple venom: apply Poison II with extended duration
+					target.addEffect(new MobEffectInstance(MobEffects.POISON,
+							200, 2, true, true, true)); // Poison III for 10s
+					// Darkness — serpent strikes from shadow
+					target.addEffect(new MobEffectInstance(MobEffects.DARKNESS,
+							80, 0, true, true, true)); // 4 seconds
+					// Bonus magic damage burst (serpent fang strike)
+					target.hurt(player.damageSources().magic(), 6.0f);
+				}
+			}
 		}
 	}
 
@@ -109,8 +155,8 @@ public class SerpentMorphlingItem extends MorphlingItem {
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Venom Strike (Poison on melee hit)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Shed Skin (Purge negative effects periodically)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Predator's Mark (Weaken & expose targets)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Constrict (3 hits roots & crushes target)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Ambush Predator (Sneak 3s for lethal first strike)", 4, currentMaturity));
 		return list;
 	}
 

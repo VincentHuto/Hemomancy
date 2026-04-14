@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Chitinite morphling that grants damage resistance by applying the
@@ -23,17 +24,19 @@ import net.minecraft.world.item.ItemStack;
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Carapace Thorns — reflect a percentage of melee damage
  *   back at attackers (chitin spines lacerate on contact)
- * - Mature (3): Molt — periodically purge all negative status effects as the
- *   morphling sheds its outer layer (like a molting insect)
+ * - Mature (3): Ablative Plating — periodically grow Absorption hearts
+ *   (golden hearts) that act as a regenerating damage buffer, absorbing
+ *   hits before they reach real health (layered chitin regrowth)
  * - Apex (4): Ironhide — after taking a hit greater than 6 damage, gain brief
- *   invulnerability (60 tick cooldown, simulates hardened carapace)
+ *   invulnerability AND emit a retaliatory thorn burst that damages all
+ *   nearby hostiles (hardened carapace shatters outward on impact)
  */
 public class ChitiniteMorphlingItem extends MorphlingItem {
 
 	/** Cooldown in ticks between Ironhide triggers (3 seconds). */
 	private static final int IRONHIDE_COOLDOWN = 60;
-	/** Molt interval in ticks (15 seconds). */
-	private static final int MOLT_INTERVAL = 300;
+	/** Interval in ticks between Ablative Plating grants (8 seconds). */
+	private static final int ABLATIVE_PLATING_INTERVAL = 160;
 
 	public ChitiniteMorphlingItem(Properties prop) {
 		super(prop);
@@ -60,22 +63,17 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 					100, amplifier, false, true, true));
 		}
 
-		// Mature (3+): Molt — periodically shed all negative effects
+		// Mature (3+): Ablative Plating — periodically grant Absorption hearts
 		if (maturity >= 3 && !player.level().isClientSide) {
 			long now = player.level().getGameTime();
-			long lastMolt = getLastAbilityTick(stack, "Molt");
-			if (now - lastMolt >= MOLT_INTERVAL) {
-				List<net.minecraft.world.effect.MobEffect> toRemove = new ArrayList<>();
-				for (MobEffectInstance effectInstance : player.getActiveEffects()) {
-					if (!effectInstance.getEffect().isBeneficial()) {
-						toRemove.add(effectInstance.getEffect());
-					}
-				}
-				if (!toRemove.isEmpty()) {
-					for (net.minecraft.world.effect.MobEffect effect : toRemove) {
-						player.removeEffect(effect);
-					}
-					setLastAbilityTick(stack, "Molt", now);
+			long lastPlating = getLastAbilityTick(stack, "AblativePlating");
+			if (now - lastPlating >= ABLATIVE_PLATING_INTERVAL) {
+				// Only grant if current absorption is low (don't over-stack)
+				if (player.getAbsorptionAmount() < 4.0f) {
+					setLastAbilityTick(stack, "AblativePlating", now);
+					float absorptionAmount = 4.0f + (maturity - 3) * 2.0f; // 4 at Mature, 6 at Apex
+					player.setAbsorptionAmount(
+							Math.min(player.getAbsorptionAmount() + absorptionAmount, 8.0f));
 				}
 			}
 		}
@@ -94,14 +92,34 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 			}
 		}
 
-		// Apex (4): Ironhide — brief invulnerability after a heavy hit
+		// Apex (4): Ironhide — invulnerability + retaliatory thorn burst
 		if (maturity >= 4 && amount >= 6.0f) {
 			long lastIronhide = getLastAbilityTick(stack, "Ironhide");
 			long now = player.level().getGameTime();
 			if (now - lastIronhide >= IRONHIDE_COOLDOWN) {
 				setLastAbilityTick(stack, "Ironhide", now);
-				// Grant 1.5 seconds of invulnerability
+				// Brief invulnerability
 				player.invulnerableTime = 30;
+
+				// Retaliatory thorn burst: damage all nearby hostiles
+				if (!player.level().isClientSide) {
+					double radius = 4.0;
+					AABB area = player.getBoundingBox().inflate(radius);
+					List<net.minecraft.world.entity.monster.Monster> hostiles =
+							player.level().getEntitiesOfClass(
+									net.minecraft.world.entity.monster.Monster.class, area);
+					float burstDamage = amount * 0.5f; // 50% of triggering hit
+					for (net.minecraft.world.entity.monster.Monster mob : hostiles) {
+						mob.hurt(player.damageSources().thorns(player), burstDamage);
+						// Knockback from the burst
+						double dx = mob.getX() - player.getX();
+						double dz = mob.getZ() - player.getZ();
+						double dist = Math.sqrt(dx * dx + dz * dz);
+						if (dist > 0) {
+							mob.push(dx / dist * 0.5, 0.2, dz / dist * 0.5);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -110,8 +128,8 @@ public class ChitiniteMorphlingItem extends MorphlingItem {
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Carapace Thorns (Reflect melee damage)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Molt (Purge negative effects periodically)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Ironhide (Brief invulnerability after heavy hit)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Ablative Plating (Regenerating Absorption shield)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Ironhide (Invulnerability + thorn burst on heavy hit)", 4, currentMaturity));
 		return list;
 	}
 

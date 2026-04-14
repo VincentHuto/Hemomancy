@@ -7,7 +7,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -26,8 +25,8 @@ import net.minecraft.world.phys.AABB;
  * Maturity bonuses (unique reactive abilities):
  * - Developing (2): Swarm Retaliation — when damaged, spawn tracking pest
  *   projectiles that hunt the attacker
- * - Mature (3): Carrion Harvest — kills grant bonus XP from the swarm
- *   scavenging nutrients
+ * - Mature (3): Infest — kills cause pest swarm to erupt from the corpse,
+ *   automatically targeting nearby hostiles for chain-kill potential
  * - Apex (4): Plague Burst — when health drops below 25%, emit a massive
  *   AoE burst that withers all nearby hostiles
  */
@@ -109,12 +108,25 @@ public class PestsMorphlingItem extends MorphlingItem {
 	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Mature (3+): Carrion Harvest — kills grant bonus XP
-		if (maturity >= 3 && player.level() instanceof ServerLevel serverLevel) {
-			int bonusXp = 3 + (maturity - 3) * 3; // 3 at Mature, 6 at Apex
-			// Award bonus XP orbs at the victim's position (on top of normal drops)
-			net.minecraft.world.entity.ExperienceOrb.award(serverLevel,
-					victim.position(), bonusXp);
+		// Mature (3+): Infest — kills cause pest swarm to erupt from corpse,
+		// automatically targeting nearby hostiles for chain-kill potential
+		if (maturity >= 3 && !player.level().isClientSide) {
+			int pestCount = 2 + (maturity - 3); // 2 at Mature, 3 at Apex
+			double searchRadius = 12.0;
+			AABB area = victim.getBoundingBox().inflate(searchRadius);
+			List<Monster> nearbyHostiles = player.level().getEntitiesOfClass(Monster.class, area,
+					m -> m != victim && m.isAlive());
+
+			if (!nearbyHostiles.isEmpty()) {
+				for (int i = 0; i < Math.min(pestCount, nearbyHostiles.size()); i++) {
+					var pest = new com.vincenthuto.hemomancy.common.entity.projectile.TrackingPestsEntity(
+							player, false);
+					// Spawn pests from the victim's corpse location
+					pest.setPos(victim.getX(), victim.getY() + 0.5, victim.getZ());
+					pest.setTarget(nearbyHostiles.get(i % nearbyHostiles.size()));
+					player.level().addFreshEntity(pest);
+				}
+			}
 		}
 	}
 
@@ -122,7 +134,7 @@ public class PestsMorphlingItem extends MorphlingItem {
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Swarm Retaliation (Pests hunt your attacker)", 2, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Carrion Harvest (Bonus XP from kills)", 3, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Infest (Kills spawn pests targeting nearby foes)", 3, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Plague Burst (AoE Wither at low health)", 4, currentMaturity));
 		return list;
 	}

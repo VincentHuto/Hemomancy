@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -28,17 +29,19 @@ import net.minecraft.world.phys.AABB;
  * ANIMUS as secondary (life force aids regeneration).
  *
  * Maturity bonuses (unique reactive abilities):
- * - Developing (2): Spore Cloud — when damaged, release blinding spores that
- *   inflict Blindness on the attacker
+ * - Developing (2): Sporulation — when damaged, emit a burst of toxic spores
+ *   that inflict Wither and Slowness on ALL nearby hostiles in a radius
+ *   (not just the attacker — area denial through spore dispersal)
  * - Mature (3): Mycorrhizal Network — passively heal nearby allied players
  *   (symbiotic fungal healing link)
- * - Apex (4): Decomposer — killed mobs have their loot table rolled again,
- *   granting bonus item drops (fungal breakdown of organic matter)
+ * - Apex (4): Cordyceps Burst — killed mobs explode in a toxic fungal bloom
+ *   that poisons and slows all nearby hostiles AND drops bonus loot
+ *   (parasitic fungi consume the corpse and burst outward)
  */
 public class FungalMorphlingItem extends MorphlingItem {
 
-	/** Cooldown in ticks between Spore Cloud triggers (3 seconds). */
-	private static final int SPORE_CLOUD_COOLDOWN = 60;
+	/** Cooldown in ticks between Sporulation triggers (3 seconds). */
+	private static final int SPORULATION_COOLDOWN = 60;
 
 	public FungalMorphlingItem(Properties prop) {
 		super(prop);
@@ -81,18 +84,25 @@ public class FungalMorphlingItem extends MorphlingItem {
 	public void onEquippedHurt(Player player, ItemStack stack, DamageSource source, float amount) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Developing (2+): Spore Cloud — blind the attacker
-		if (maturity >= 2 && source.getEntity() instanceof LivingEntity attacker) {
-			long lastSpore = getLastAbilityTick(stack, "SporeCloud");
+		// Developing (2+): Sporulation — toxic spore burst hits ALL nearby hostiles
+		if (maturity >= 2 && !player.level().isClientSide) {
+			long lastSpore = getLastAbilityTick(stack, "Sporulation");
 			long now = player.level().getGameTime();
-			if (now - lastSpore >= SPORE_CLOUD_COOLDOWN) {
-				setLastAbilityTick(stack, "SporeCloud", now);
+			if (now - lastSpore >= SPORULATION_COOLDOWN) {
+				setLastAbilityTick(stack, "Sporulation", now);
 
-				int blindDuration = 40 + (maturity - 2) * 20; // 2s at Developing, 3s Mature, 4s Apex
-				attacker.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-						blindDuration, 0, true, true, true));
-				attacker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
-						blindDuration, 0, true, true, true));
+				double radius = 5.0 + (maturity - 2) * 1.0; // 5 at Developing, 6 Mature, 7 Apex
+				AABB area = player.getBoundingBox().inflate(radius);
+				List<Monster> hostiles = player.level().getEntitiesOfClass(Monster.class, area);
+
+				int witherDuration = 40 + (maturity - 2) * 20; // 2s at Developing, 3s Mature, 4s Apex
+				int slowDuration = 30 + (maturity - 2) * 15; // 1.5s at Developing, 2.25s Mature, 3s Apex
+				for (Monster mob : hostiles) {
+					mob.addEffect(new MobEffectInstance(MobEffects.WITHER,
+							witherDuration, 0, true, true, true));
+					mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+							slowDuration, 0, true, true, true));
+				}
 			}
 		}
 	}
@@ -101,9 +111,22 @@ public class FungalMorphlingItem extends MorphlingItem {
 	public void onEquippedKill(Player player, ItemStack stack, LivingEntity victim) {
 		int maturity = MorphlingItem.getMaturityLevel(stack);
 
-		// Apex (4): Decomposer — killed mobs drop bonus loot
-		// Re-roll the mob's loot table for extra drops
+		// Apex (4): Cordyceps Burst — toxic fungal explosion from the corpse
+		// poisons and slows nearby hostiles AND drops bonus loot
 		if (maturity >= 4 && player.level() instanceof ServerLevel serverLevel) {
+			// Toxic burst: Poison + Slowness to all nearby hostiles
+			double radius = 6.0;
+			AABB area = victim.getBoundingBox().inflate(radius);
+			List<Monster> hostiles = serverLevel.getEntitiesOfClass(Monster.class, area,
+					m -> m != victim && m.isAlive());
+			for (Monster mob : hostiles) {
+				mob.addEffect(new MobEffectInstance(MobEffects.POISON,
+						100, 1, true, true, true)); // Poison II for 5s
+				mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+						80, 0, true, true, true)); // Slowness for 4s
+			}
+
+			// Bonus loot: re-roll the mob's loot table
 			var lootTableId = victim.getLootTable();
 			LootTable lootTable = serverLevel.getServer().getLootData().getLootTable(lootTableId);
 			LootParams.Builder lootParams = new LootParams.Builder(serverLevel)
@@ -126,9 +149,9 @@ public class FungalMorphlingItem extends MorphlingItem {
 	@Override
 	public List<Component> getMaturityBonusDescriptions(int currentMaturity) {
 		List<Component> list = new ArrayList<>();
-		list.add(MorphlingItem.maturityBonusLine("Spore Cloud (Blind attacker on hit)", 2, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Sporulation (AoE toxic spores when hit)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Mycorrhizal Network (Heal nearby allies)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Decomposer (Bonus loot from kills)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Cordyceps Burst (Kills explode, poison foes + bonus loot)", 4, currentMaturity));
 		return list;
 	}
 
