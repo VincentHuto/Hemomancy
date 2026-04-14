@@ -122,9 +122,10 @@ public class ScarsContainer extends ItemStackHandler implements IScarsItemHandle
 
 	@Override
 	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-		if (stack.isEmpty() || this.isItemValidForSlot(slot, stack)) {
-			super.setStackInSlot(slot, stack);
-		}
+		// No validation here: setStackInSlot is used for authoritative operations
+		// (network sync, menu sync, deserialization). Player-initiated inserts are
+		// already validated by insertItem() and slot mayPlace() checks.
+		super.setStackInSlot(slot, stack);
 	}
 
 	private void sync() {
