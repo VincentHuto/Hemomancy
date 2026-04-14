@@ -36,21 +36,28 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected String riteDescription;
 	protected int requiredDegree;
 	protected boolean breakBlocksOnCreation;
+	protected boolean unstained;
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
-		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1, true);
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1, true, false);
 	}
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree) {
-		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, true);
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, true, false);
 	}
 
 	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation) {
+		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, breakBlocksOnCreation, false);
+	}
+
+	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
+			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained) {
 		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
 		this.riteType = riteType;
@@ -60,6 +67,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		this.riteDescription = riteDescription;
 		this.requiredDegree = requiredDegree;
 		this.breakBlocksOnCreation = breakBlocksOnCreation;
+		this.unstained = unstained;
 	}
 
 	@Override
@@ -168,6 +176,19 @@ public class CardinalRiteRecipe extends CustomRecipe {
 
 	public void setBreakBlocksOnCreation(boolean breakBlocksOnCreation) {
 		this.breakBlocksOnCreation = breakBlocksOnCreation;
+	}
+
+	/**
+	 * Returns whether this rite belongs to the Unstained path rather than
+	 * the blood faction. Unstained rites are displayed in the
+	 * UnstainedProgressScreen instead of the SkillTreeScreen.
+	 */
+	public boolean isUnstained() {
+		return unstained;
+	}
+
+	public void setUnstained(boolean unstained) {
+		this.unstained = unstained;
 	}
 
 	@Override

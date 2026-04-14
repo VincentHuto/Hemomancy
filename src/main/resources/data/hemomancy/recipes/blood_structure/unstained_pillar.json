@@ -4,9 +4,21 @@
   "heldItem": "minecraft:glowstone_dust",
   "hitBlock": "hemomancy:hematic_iron_block",
   "pattern": [
-  	 ["   ", "   ", "SSS"],
-     [" T ", " P ", "SPS"],
- 	 ["   ", "   ", "SSS"]
+    [
+      "   ",
+      "   ",
+      "SSS"
+    ],
+    [
+      " T ",
+      " P ",
+      "SPS"
+    ],
+    [
+      "   ",
+      "   ",
+      "SSS"
+    ]
   ],
   "key": {
     "P": {
@@ -21,5 +33,6 @@
   },
   "result": {
     "item": "hemomancy:unstained_podium"
-  }
+  },
+  "unstained": true
 }

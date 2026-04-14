@@ -42,14 +42,22 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	protected ItemStack result = null;
 
+	protected boolean unstained;
+
 	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result) {
+		this(pId, bloodCost, pattern, heldItem, hitBlock, result, false);
+	}
+
+	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
+			Block hitBlock, ItemStack result, boolean unstained) {
 		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
 		this.pattern = pattern;
 		this.heldItem = heldItem;
 		this.hitBlock = hitBlock;
 		this.result = result;
+		this.unstained = unstained;
 	}
 
 	@Override
@@ -129,6 +137,19 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	public void setResult(ItemStack result) {
 		this.result = result;
+	}
+
+	/**
+	 * Returns whether this structure recipe belongs to the Unstained path.
+	 * Unstained recipes are displayed in the UnstainedProgressScreen instead
+	 * of the SkillTreeScreen.
+	 */
+	public boolean isUnstained() {
+		return unstained;
+	}
+
+	public void setUnstained(boolean unstained) {
+		this.unstained = unstained;
 	}
 
 	@Override

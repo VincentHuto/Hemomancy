@@ -146,7 +146,8 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		// Building
 		BlockPattern bp = generateBlockPatternFromArray(keyMap, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
-		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
+		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
+		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained);
 
 		return recipe;
 	}
@@ -184,8 +185,9 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 		BlockPattern bp = generateBlockPatternFromArray(map, pattern);
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, map, pattern);
 		ItemStack result = pBuffer.readItem();
+		boolean unstained = pBuffer.readBoolean();
 
-		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result);
+		BloodStructureRecipe recipe = new BloodStructureRecipe(pRecipeId, cost, mbPattern, heldItem, hitBlock, result, unstained);
 
 		return recipe;
 	}
@@ -211,6 +213,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 			pBuffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(v));
 		});
 		pBuffer.writeItem(pRecipe.getResult());
+		pBuffer.writeBoolean(pRecipe.isUnstained());
 
 	}
 	// Json Helpers
