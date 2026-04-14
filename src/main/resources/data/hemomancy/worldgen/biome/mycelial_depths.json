@@ -1,0 +1,102 @@
+{
+  "temperature": 0.5,
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 329228,
+    "fog_color": 657936,
+    "water_color": 3033144,
+    "water_fog_color": 854034,
+    "particle": {
+      "type": "minecraft:warped_spore",
+      "probability": 0.005
+    },
+    "ambient_sound": "minecraft:ambient.soul_sand_valley.loop",
+    "mood_sound": {
+      "sound": "minecraft:ambient.soul_sand_valley.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "additions_sound": {
+      "sound": "minecraft:ambient.soul_sand_valley.additions",
+      "tick_probability": 0.0111
+    }
+  },
+  "spawners": {
+    "ambient": [
+      {
+        "type": "hemomancy:hemolymphopoda",
+        "weight": 20,
+        "minCount": 3,
+        "maxCount": 8
+      }
+    ],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "hemomancy:hemojelly",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "hemomancy:myelin_borer",
+        "weight": 18,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "hemomancy:abyssal_siphon",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "hemomancy:erythromycelium_eruptus",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "hemomancy:fungal_cave",
+      "hemomancy:fungal_cave_large",
+      "hemomancy:fungal_canyon"
+    ]
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "hemomancy:spore_nexus_tower"
+    ],
+    [],
+    [
+      "hemomancy:ore_hematic_iron"
+    ],
+    [
+      "hemomancy:hyphae_tendril",
+      "hemomancy:huge_fungus",
+      "hemomancy:conscious_mass_blob",
+      "hemomancy:mushroom/canopy_mushrooms_dense"
+    ],
+    [],
+    [
+      "hemomancy:ghost_pipes",
+      "hemomancy:sporite_crystal_cluster"
+    ],
+    []
+  ]
+}
