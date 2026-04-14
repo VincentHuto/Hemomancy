@@ -37,8 +37,8 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 		if (pJson.has("tier")) {
 			tier = pJson.get("tier").getAsInt();
 		}
-		if (pJson.has("ScarType")) {
-			scarType = ScarType.fromString(pJson.get("ScarType").getAsString());
+		if (pJson.has("scartype")) {
+			scarType = ScarType.fromString(pJson.get("scartype").getAsString());
 		}
 		JsonArray arr = pJson.getAsJsonArray("pattern");
 		pattern = new byte[arr.size()][];
