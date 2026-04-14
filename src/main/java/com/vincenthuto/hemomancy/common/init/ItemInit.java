@@ -72,7 +72,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.Item;
@@ -632,44 +635,57 @@ public class ItemInit {
 	// Fungal Runes
 
 	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1, 1)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_transcendence_kb", 0.1,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
 			"rune_pattern_transcendence",
 			() -> new ItemRunePattern(new Item.Properties(), rune_transcendence, "rune_transcendence"));
 
 	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1, 1)
+					.withEffect(MobEffects.FIRE_RESISTANCE, 0));
 
 	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
 			() -> new ItemRunePattern(new Item.Properties(), rune_sol, "rune_sol"));
 
 	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
+					.withModifier(Attributes.MAX_HEALTH, "rune_heart_hp", 2.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
 			() -> new ItemRunePattern(new Item.Properties(), rune_heart, "rune_heart"));
 
 	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1, 1)
+					.withModifier(Attributes.ATTACK_DAMAGE, "rune_descendence_ad", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
 			() -> new ItemRunePattern(new Item.Properties(), rune_descendence, "rune_descendence"));
 
 	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1, 1)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_moon_ms", 0.05,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
 			() -> new ItemRunePattern(new Item.Properties(), rune_moon, "rune_moon"));
 
 	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
+					.withModifier(Attributes.LUCK, "rune_eye_luck", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
 			() -> new ItemRunePattern(new Item.Properties(), rune_eye, "rune_eye"));
 
 	public static final RegistryObject<Item> rune_feral = BASEITEMS.register("rune_feral",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
+					.withModifier(Attributes.ATTACK_SPEED, "rune_feral_as", 0.05,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
 			() -> new ItemRunePattern(new Item.Properties(), rune_feral, "rune_feral"));
@@ -677,13 +693,17 @@ public class ItemInit {
 	// Tier 1 Runes (fill remaining tendencies)
 
 	public static final RegistryObject<Item> rune_thorn = BASEITEMS.register("rune_thorn",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1, 1)
+					.withModifier(Attributes.ARMOR, "rune_thorn_armor", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_thorn = BASEITEMS.register("rune_pattern_thorn",
 			() -> new ItemRunePattern(new Item.Properties(), rune_thorn, "rune_thorn"));
 
 	public static final RegistryObject<Item> rune_shade = BASEITEMS.register("rune_shade",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1, 1)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_shade_ms", 0.05,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_shade = BASEITEMS.register("rune_pattern_shade",
 			() -> new ItemRunePattern(new Item.Properties(), rune_shade, "rune_shade"));
@@ -691,49 +711,70 @@ public class ItemInit {
 	// Tier 2 Runes (intermediate, one per tendency)
 
 	public static final RegistryObject<Item> rune_pyre = BASEITEMS.register("rune_pyre",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2, 2)
+					.withEffect(MobEffects.FIRE_RESISTANCE, 0)
+					.withModifier(Attributes.ATTACK_DAMAGE, "rune_pyre_ad", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_pyre = BASEITEMS.register("rune_pattern_pyre",
 			() -> new ItemRunePattern(new Item.Properties(), rune_pyre, "rune_pyre"));
 
 	public static final RegistryObject<Item> rune_marrow = BASEITEMS.register("rune_marrow",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2, 2)
+					.withModifier(Attributes.MAX_HEALTH, "rune_marrow_hp", 4.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_marrow = BASEITEMS.register("rune_pattern_marrow",
 			() -> new ItemRunePattern(new Item.Properties(), rune_marrow, "rune_marrow"));
 
 	public static final RegistryObject<Item> rune_blight = BASEITEMS.register("rune_blight",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 2, 2)
+					.withModifier(Attributes.ATTACK_DAMAGE, "rune_blight_ad", 2.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_blight = BASEITEMS.register("rune_pattern_blight",
 			() -> new ItemRunePattern(new Item.Properties(), rune_blight, "rune_blight"));
 
 	public static final RegistryObject<Item> rune_rime = BASEITEMS.register("rune_rime",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 2, 2)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_rime_ms", 0.10,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_rime = BASEITEMS.register("rune_pattern_rime",
 			() -> new ItemRunePattern(new Item.Properties(), rune_rime, "rune_rime"));
 
 	public static final RegistryObject<Item> rune_flux = BASEITEMS.register("rune_flux",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 2, 2)
+					.withModifier(Attributes.ATTACK_SPEED, "rune_flux_as", 0.10,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_flux = BASEITEMS.register("rune_pattern_flux",
 			() -> new ItemRunePattern(new Item.Properties(), rune_flux, "rune_flux"));
 
 	public static final RegistryObject<Item> rune_halo = BASEITEMS.register("rune_halo",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 2, 2)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_halo_kb", 0.2,
+							AttributeModifier.Operation.ADDITION)
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_halo_at", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_halo = BASEITEMS.register("rune_pattern_halo",
 			() -> new ItemRunePattern(new Item.Properties(), rune_halo, "rune_halo"));
 
 	public static final RegistryObject<Item> rune_anvil = BASEITEMS.register("rune_anvil",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2, 2)
+					.withModifier(Attributes.ARMOR, "rune_anvil_armor", 2.0,
+							AttributeModifier.Operation.ADDITION)
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_anvil_at", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_anvil = BASEITEMS.register("rune_pattern_anvil",
 			() -> new ItemRunePattern(new Item.Properties(), rune_anvil, "rune_anvil"));
 
 	public static final RegistryObject<Item> rune_veil = BASEITEMS.register("rune_veil",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2, 2)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_veil_ms", 0.10,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_veil = BASEITEMS.register("rune_pattern_veil",
 			() -> new ItemRunePattern(new Item.Properties(), rune_veil, "rune_veil"));
@@ -741,49 +782,72 @@ public class ItemInit {
 	// Tier 3 Runes (advanced, one per tendency)
 
 	public static final RegistryObject<Item> rune_phoenix = BASEITEMS.register("rune_phoenix",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 3, 3)
+					.withEffect(MobEffects.FIRE_RESISTANCE, 0)
+					.withModifier(Attributes.ATTACK_DAMAGE, "rune_phoenix_ad", 2.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_phoenix = BASEITEMS.register("rune_pattern_phoenix",
 			() -> new ItemRunePattern(new Item.Properties(), rune_phoenix, "rune_phoenix"));
 
 	public static final RegistryObject<Item> rune_ichor = BASEITEMS.register("rune_ichor",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 3, 3)
+					.withModifier(Attributes.MAX_HEALTH, "rune_ichor_hp", 6.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_ichor = BASEITEMS.register("rune_pattern_ichor",
 			() -> new ItemRunePattern(new Item.Properties(), rune_ichor, "rune_ichor"));
 
 	public static final RegistryObject<Item> rune_wither = BASEITEMS.register("rune_wither",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3, 3)
+					.withModifier(Attributes.ATTACK_DAMAGE, "rune_wither_ad", 3.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_wither = BASEITEMS.register("rune_pattern_wither",
 			() -> new ItemRunePattern(new Item.Properties(), rune_wither, "rune_wither"));
 
 	public static final RegistryObject<Item> rune_glacier = BASEITEMS.register("rune_glacier",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3, 3)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_glacier_ms", 0.15,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_glacier = BASEITEMS.register("rune_pattern_glacier",
 			() -> new ItemRunePattern(new Item.Properties(), rune_glacier, "rune_glacier"));
 
 	public static final RegistryObject<Item> rune_chimera = BASEITEMS.register("rune_chimera",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3, 3)
+					.withModifier(Attributes.ATTACK_SPEED, "rune_chimera_as", 0.15,
+							AttributeModifier.Operation.MULTIPLY_TOTAL)
+					.withModifier(Attributes.LUCK, "rune_chimera_luck", 1.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_chimera = BASEITEMS.register("rune_pattern_chimera",
 			() -> new ItemRunePattern(new Item.Properties(), rune_chimera, "rune_chimera"));
 
 	public static final RegistryObject<Item> rune_corona = BASEITEMS.register("rune_corona",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3, 3)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_corona_kb", 0.3,
+							AttributeModifier.Operation.ADDITION)
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_corona_at", 2.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_corona = BASEITEMS.register("rune_pattern_corona",
 			() -> new ItemRunePattern(new Item.Properties(), rune_corona, "rune_corona"));
 
 	public static final RegistryObject<Item> rune_crucible = BASEITEMS.register("rune_crucible",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 3, 3)
+					.withModifier(Attributes.ARMOR, "rune_crucible_armor", 3.0,
+							AttributeModifier.Operation.ADDITION)
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_crucible_at", 2.0,
+							AttributeModifier.Operation.ADDITION));
 
 	public static final RegistryObject<Item> rune_pattern_crucible = BASEITEMS.register("rune_pattern_crucible",
 			() -> new ItemRunePattern(new Item.Properties(), rune_crucible, "rune_crucible"));
 
 	public static final RegistryObject<Item> rune_oblivion = BASEITEMS.register("rune_oblivion",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 3));
+			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 3, 3)
+					.withModifier(Attributes.MOVEMENT_SPEED, "rune_oblivion_ms", 0.15,
+							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
 	public static final RegistryObject<Item> rune_pattern_oblivion = BASEITEMS.register("rune_pattern_oblivion",
 			() -> new ItemRunePattern(new Item.Properties(), rune_oblivion, "rune_oblivion"));
