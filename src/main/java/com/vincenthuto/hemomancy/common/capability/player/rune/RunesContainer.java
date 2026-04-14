@@ -53,6 +53,8 @@ public class RunesContainer extends ItemStackHandler implements IRunesItemHandle
 		if (stack.isEmpty() || !opt.isPresent())
 			return false;
 		IRune mindrune = opt.orElseThrow(NullPointerException::new);
+		// Only RUNE-type items (slots 1-4) require the mind spike unlock;
+		// other types (FUNGAL, VASC, GOURD, JAR) remain freely equippable.
 		if (mindrune.getRuneType() == RuneType.RUNE && !runesUnlocked)
 			return false;
 		return mindrune.canEquip(holder) && mindrune.getRuneType().hasSlot(slot);

@@ -14,6 +14,10 @@ import net.minecraft.world.level.Level;
 
 public class ItemMindSpike extends Item {
 
+	/** Rune slots 1–4 hold regular (non-fungal) runes. */
+	private static final int RUNE_SLOT_MIN = 1;
+	private static final int RUNE_SLOT_MAX = 4;
+
 	public ItemMindSpike(Properties properties) {
 		super(properties);
 	}
@@ -35,8 +39,8 @@ public class ItemMindSpike extends Item {
 											ChatFormatting.BOLD)),
 							false);
 				} else {
-					// Drop any equipped runes from RUNE-type slots (1-4) before locking
-					for (int i = 1; i <= 4; i++) {
+					// Drop any equipped runes from RUNE-type slots before locking
+					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
 						ItemStack runeStack = runes.getStackInSlot(i);
 						if (!runeStack.isEmpty()) {
 							player.drop(runeStack.copy(), false);
