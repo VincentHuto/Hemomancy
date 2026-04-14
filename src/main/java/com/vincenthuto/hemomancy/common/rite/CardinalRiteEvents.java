@@ -36,11 +36,13 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -428,6 +430,12 @@ public class CardinalRiteEvents {
 	private static final String ASHEN_VESSEL_RITE = "cardinal_rite/ashen_vessel_rite";
 	private static final String HORN_OF_CULMINATION_RITE = "cardinal_rite/horn_of_culmination_rite";
 
+	// ── Unstained rite paths ──
+	private static final String LETHEAN_BAPTISM_RITE = "cardinal_rite/lethean_baptism";
+	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
+	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
+	private static final String LETHEAN_JUDGMENT_RITE = "cardinal_rite/lethean_judgment";
+
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
 	/** NBT key stored on player persistent data to track covenant usage. */
@@ -444,6 +452,10 @@ public class CardinalRiteEvents {
 	private static final long SANGUINE_FERVOR_DURATION_TICKS = 6000L;
 	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
 	private static final float SUMMONS_COST_PER_MEMBER = 200f;
+	/** Radius (in blocks) for Lethean Judgment anti-blood disruption. */
+	private static final int LETHEAN_JUDGMENT_RADIUS = 16;
+	/** Duration in ticks for Silver Veil effect (30 minutes = 36000 ticks). */
+	private static final int SILVER_VEIL_DURATION_TICKS = 36000;
 
 	private static final java.util.Map<String, Integer> DEGREE_RITE_PATHS = new java.util.HashMap<>();
 
@@ -668,6 +680,28 @@ public class CardinalRiteEvents {
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
 		if (SANGUINE_FERVOR_RITE.equals(ritePath)) {
 			completeSanguineFervor(sLevel, caster, center);
+		}
+
+		// ── Unstained rites ──
+
+		// Rite of Lethean Baptism: begin the Unstained path
+		if (LETHEAN_BAPTISM_RITE.equals(ritePath)) {
+			completeLetheanBaptism(sLevel, caster);
+		}
+
+		// Rite of the Silver Veil: grant Silver Ward effect and purity
+		if (SILVER_VEIL_RITE.equals(ritePath)) {
+			completeSilverVeil(sLevel, caster);
+		}
+
+		// Rite of Clarity Ascension: unlock clarity phase
+		if (CLARITY_ASCENSION_RITE.equals(ritePath)) {
+			completeClarityAscension(sLevel, caster);
+		}
+
+		// Rite of Lethean Judgment: disrupt nearby hemomancers
+		if (LETHEAN_JUDGMENT_RITE.equals(ritePath)) {
+			completeLetheanJudgment(sLevel, caster, center);
 		}
 
 		// Play completion sound
