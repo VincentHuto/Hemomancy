@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
 import com.vincenthuto.hemomancy.compat.mna.block.MnAPluginBlockInit;
 import com.vincenthuto.hemomancy.compat.mna.entity.MnAPluginEntityInit;
+import com.vincenthuto.hemomancy.compat.mna.faction.HarbingerEventHandler;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import com.vincenthuto.hemomancy.compat.mna.ritual.MnAPluginRitualInit;
 import com.vincenthuto.hemomancy.compat.mna.spell.BloodTitheHandler;
@@ -149,6 +150,8 @@ public class Hemomancy {
             // Blood Tithe & Spell↔Manipulation combo event handlers
             forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
             forgeBus.addListener(BloodTitheHandler::onSpellCast);
+            // Harbinger faction event handlers (registered manually to avoid class loading without MnA)
+            modEventBus.register(HarbingerEventHandler.class);
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
                 return () -> {
                     modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
@@ -158,6 +161,8 @@ public class Hemomancy {
                     modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
 
                     forgeBus.addListener(MnAPluginClientEvents::onClientTick);
+                    modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
+                    modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
                 };
             });
         }

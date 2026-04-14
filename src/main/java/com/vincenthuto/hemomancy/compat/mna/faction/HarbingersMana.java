@@ -1,14 +1,11 @@
 package com.vincenthuto.hemomancy.compat.mna.faction;
 
-import com.mna.ManaAndArtifice;
 import com.mna.api.capabilities.resource.ICastingResourceGuiProvider;
 import com.mna.api.capabilities.resource.SimpleCastingResource;
-import com.mna.items.ItemInit;
 import com.vincenthuto.hemomancy.compat.mna.item.MnAPluginItemInit;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 public class HarbingersMana extends SimpleCastingResource {
     public HarbingersMana() {
@@ -30,7 +27,6 @@ public class HarbingersMana extends SimpleCastingResource {
 	public static class HarbingersManaGui implements ICastingResourceGuiProvider {
 
 		public ResourceLocation getTexture() {
-			// TODO: this texture is not being loaded, and the default MnA texture is being used instead.
 			return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
 		}
 

@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class MnAPluginBlockInit {
 	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
 			Hemomancy.MOD_ID);

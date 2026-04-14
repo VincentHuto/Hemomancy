@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "package": "com.vincenthuto.hemomancy.mixin.core",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "hemomancy.refmap.json",
+  "client": [
+    "MixinHUDOverlayRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "minVersion": "0.8"
+}

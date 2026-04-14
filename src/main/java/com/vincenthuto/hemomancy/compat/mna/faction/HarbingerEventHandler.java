@@ -15,7 +15,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
 
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class HarbingerEventHandler {
 
     public static final IFaction HARBINGERS_FACTION = new HarbingersFaction();
@@ -39,7 +38,6 @@ public class HarbingerEventHandler {
         CastingResourceRegistry.Instance.register(HARBINGERS_MANA, HarbingersMana.class);
     }
 
-    @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class HarbingerClientEventHandler {
         @SubscribeEvent
         public static void registerResourceGuis(FMLClientSetupEvent event) {

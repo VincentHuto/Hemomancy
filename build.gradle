@@ -36,6 +36,7 @@ minecraft {
    
          
             arg "-mixin.config=hemomancy.mixins.json"
+            arg "-mixin.config=hemomancy.mna.mixins.json"
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
@@ -160,7 +161,7 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "hemomancy.mixins.json"
+                "MixinConfigs"            : "hemomancy.mixins.json,hemomancy.mna.mixins.json"
 
         ])
     }

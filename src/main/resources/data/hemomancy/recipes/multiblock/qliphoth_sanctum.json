@@ -3,7 +3,7 @@
 	"structure": "hemomancy:qliphoth_sanctum",
 	"replacements": [],
 	"symmetrical": true,
-    "tier": 3,
+	"tier": 3,
 	"matchers": [
 		{
 			"block": "mna:chalk_rune",

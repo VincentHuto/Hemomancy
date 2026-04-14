@@ -68,7 +68,7 @@ public class HarbingersFaction extends BaseFaction {
 
     @Override
     public ResourceLocation getSanctumStructure() {
-        return Hemomancy.rloc("qliphoth_sanctum");
+        return Hemomancy.rloc("multiblock/qliphoth_sanctum");
     }
 
 
