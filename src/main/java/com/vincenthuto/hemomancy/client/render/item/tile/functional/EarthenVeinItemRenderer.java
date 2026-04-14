@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.item.tile.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.EarthenVeinModel;
+import com.vincenthuto.hemomancy.client.model.tile.functional.EarthenVeinModel;
 import com.vincenthuto.hemomancy.client.render.tile.functional.EarthenVeinRenderer.EarthenVeinAnimContext;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;

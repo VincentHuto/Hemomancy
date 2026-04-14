@@ -43,22 +43,8 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 			new BlockPos(0, 1, 0)
 	};
 
-	private static final VoxelShape SHAPE_N = Stream
-			.of(Block.box(1.5, 5, 3.25, 2.5, 6, 12.75), Block.box(0.75, 0.1, 0.75, 3.25, 14.1, 3.25),
-					Block.box(2, 10, 2, 14, 14, 14), Block.box(0.5, 0, 0.5, 3.5, 2, 3.5),
-					Block.box(12.75, 0.1, 0.75, 15.25, 14.1, 3.25), Block.box(12.5, 0, 0.5, 15.5, 2, 3.5),
-					Block.box(0.75, 0.1, 12.75, 3.25, 14.1, 15.25), Block.box(0.5, 0, 12.5, 3.5, 2, 15.5),
-					Block.box(12.75, 0.1, 12.75, 15.25, 14.1, 15.25), Block.box(12.5, 0, 12.5, 15.5, 2, 15.5),
-					Block.box(13.5, 7, 3, 14.5, 8, 12.75), Block.box(13.5, 5, 3, 14.5, 6, 12.75),
-					Block.box(1.5, 7, 3.25, 2.5, 8, 12.75), Block.box(3.25, 7, 1.5, 12.75, 8, 2.5),
-					Block.box(3.25, 5, 1.5, 12.75, 6, 2.5), Block.box(3.25, 5, 13.5, 12.75, 6, 14.5),
-					Block.box(3.25, 7, 13.5, 12.75, 8, 14.5), Block.box(2.75, 12.75, 2.75, 13.25, 14.75, 13.25),
-					Block.box(1, 12.25, 1, 15, 14.25, 15), Block.box(1, 13.35, -1, 15, 15.35, 1),
-					Block.box(1, 13.35, 15, 15, 15.35, 17), Block.box(15, 13.35, 1, 17, 15.35, 15),
-					Block.box(-1, 13.35, 1, 1, 15.35, 15), Block.box(12.5, 8.5, 12.5, 15.5, 15.5, 15.5),
-					Block.box(0.5, 8.5, 12.5, 3.5, 15.5, 15.5), Block.box(0.5, 8.5, 0.5, 3.5, 15.5, 3.5),
-					Block.box(12.5, 8.5, 0.5, 15.5, 15.5, 3.5))
-			.reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+	private static final VoxelShape SHAPE_N = Shapes.block();
+
 
 	@Nullable
 	@SuppressWarnings("unchecked")

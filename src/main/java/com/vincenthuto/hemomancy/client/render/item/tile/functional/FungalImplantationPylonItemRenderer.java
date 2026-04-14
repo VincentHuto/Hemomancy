@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.FungalImplantationPylonModel;
+import com.vincenthuto.hemomancy.client.model.tile.functional.FungalImplantationPylonModel;
 import com.vincenthuto.hemomancy.client.render.tile.functional.FungalImplantationPylonRenderer.FungalImplantationPylonAnimContext;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;

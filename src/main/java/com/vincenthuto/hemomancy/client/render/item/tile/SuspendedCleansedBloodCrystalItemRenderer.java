@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.client.render.item.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.SuspendedCleansedBloodCrystalModel;
+import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 

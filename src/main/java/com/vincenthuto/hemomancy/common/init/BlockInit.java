@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
-import com.vincenthuto.hemomancy.common.block.crafting.BlockScarStation;
+import com.vincenthuto.hemomancy.common.block.crafting.ScarStationBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.VialCentrifugeBlock;
@@ -331,7 +331,7 @@ public class BlockInit {
 
 	// Tiles
 	public static final RegistryObject<Block> scar_station = MODELEDBLOCKS.register("scar_station",
-			() -> new BlockScarStation(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+			() -> new ScarStationBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",

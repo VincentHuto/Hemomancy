@@ -5,14 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.SuspendedVivianiteModel;
+import com.vincenthuto.hemomancy.client.model.tile.SuspendedVivianiteModel;
 import com.vincenthuto.hemomancy.common.tile.SuspendedVivianiteBlockEntity;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
-import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -20,7 +18,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraftforge.client.model.pipeline.VertexConsumerWrapper;
 
 public class SuspendedVivaniteRenderer implements BlockEntityRenderer<SuspendedVivianiteBlockEntity> {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;

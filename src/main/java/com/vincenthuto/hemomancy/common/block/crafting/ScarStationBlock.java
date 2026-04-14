@@ -33,7 +33,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
-public class BlockScarStation extends Block implements EntityBlock, IMultiBlock {
+public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
 	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
@@ -44,7 +44,7 @@ public class BlockScarStation extends Block implements EntityBlock, IMultiBlock 
 	/** Full-block collision shape for the base block. */
 	private static final VoxelShape SHAPE = Shapes.block();
 
-	public BlockScarStation(Properties properties) {
+	public ScarStationBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
 	}

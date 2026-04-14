@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.SuspendedCleansedBloodCrystalModel;
+import com.vincenthuto.hemomancy.client.model.tile.SuspendedCleansedBloodCrystalModel;
 import com.vincenthuto.hemomancy.common.tile.SuspendedCleansedBloodCrystalBlockEntity;
 import com.vincenthuto.hutoslib.client.HlClientTickHandler;
 import com.vincenthuto.hutoslib.math.Quaternion;

@@ -126,7 +126,7 @@ public class BloodMoonEvents {
 		if (gameTime % EFFECT_INTERVAL_TICKS == 0) {
 			for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
 				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
-				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+				//player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
 			}
 		}
 

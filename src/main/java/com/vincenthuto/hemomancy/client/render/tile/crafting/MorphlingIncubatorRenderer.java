@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.vincenthuto.hemomancy.client.model.block.MorphlingIncubatorModel;
+import com.vincenthuto.hemomancy.client.model.tile.crafting.MorphlingIncubatorModel;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 import com.vincenthuto.hutoslib.client.particle.factory.EmberParticleFactory;

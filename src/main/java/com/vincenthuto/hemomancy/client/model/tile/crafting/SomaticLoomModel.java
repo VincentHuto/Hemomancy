@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.model.block;
+package com.vincenthuto.hemomancy.client.model.tile.crafting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -54,7 +54,7 @@ public class SomaticLoomModel extends Model {
                 .texOffs(55, 42).addBox(5.0F, -34.0F, -3.0F, 7.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
                 .texOffs(46, 63).addBox(-12.0F, -34.0F, -3.0F, 7.0F, 4.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition TopBeam = SomaticLoom.addOrReplaceChild("TopBeam", CubeListBuilder.create().texOffs(46, 53).addBox(-11.0F, -2.0F, -3.0F, 22.0F, 3.0F, 6.0F, new CubeDeformation(0.0F))
+        PartDefinition TopBeam = SomaticLoom.addOrReplaceChild("TopBeam", CubeListBuilder.create().texOffs(47, 53).addBox(-10.0F, -1.0F, -3.0F, 20.0F, 2.0F, 6.0F, new CubeDeformation(0.0F))
                 .texOffs(86, 29).addBox(7.0F, -5.0F, -2.0F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(86, 63).addBox(-11.0F, -5.0F, -2.0F, 4.0F, 3.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -36.0F, 0.0F));
 
@@ -63,8 +63,7 @@ public class SomaticLoomModel extends Model {
 
         PartDefinition CrankRight = SomaticLoom.addOrReplaceChild("CrankRight", CubeListBuilder.create().texOffs(72, 82).addBox(-2.0F, -3.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(-11.0F, -19.0F, 0.0F));
 
-        PartDefinition WarpPanel = SomaticLoom.addOrReplaceChild("WarpPanel", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -14.0F, -1.0F, 14.0F, 27.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(73, 63).addBox(3.0F, -14.0F, -2.0F, 2.0F, 14.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition WarpPanel = SomaticLoom.addOrReplaceChild("WarpPanel", CubeListBuilder.create().texOffs(73, 63).addBox(3.0F, -14.0F, -2.0F, 2.0F, 14.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(46, 74).addBox(-1.0F, -14.0F, -2.0F, 2.0F, 14.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(59, 74).addBox(-5.0F, -14.0F, -2.0F, 2.0F, 14.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -21.0F, 0.0F));
 
@@ -76,13 +75,11 @@ public class SomaticLoomModel extends Model {
 
         PartDefinition HangingThreads = SomaticLoom.addOrReplaceChild("HangingThreads", CubeListBuilder.create().texOffs(46, 93).addBox(5.0F, -29.0F, 2.0F, 1.0F, 4.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(92, 78).addBox(1.0F, -29.0F, 2.0F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
-                .texOffs(92, 86).addBox(-3.0F, -29.0F, 2.0F, 1.0F, 5.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(87, 78).addBox(3.0F, -29.0F, 2.0F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(87, 87).addBox(-4.0F, -29.0F, 2.0F, 1.0F, 7.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -8.0F, -6.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
-
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         SomaticLoom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
