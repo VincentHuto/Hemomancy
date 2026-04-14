@@ -2,14 +2,18 @@ package com.vincenthuto.hemomancy.common.capability.player.rune;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
@@ -25,8 +29,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +44,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -47,6 +55,42 @@ import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RuneEntityEventHandler {
+
+	// --- Synergy bonus definitions (one per tendency) ---
+
+	private record SynergyBonus(Attribute attribute, UUID uuid, String name, double amount,
+			AttributeModifier.Operation operation) {
+	}
+
+	private static final EnumMap<EnumBloodTendency, SynergyBonus> SYNERGY_BONUSES = new EnumMap<>(
+			EnumBloodTendency.class);
+
+	static {
+		SYNERGY_BONUSES.put(EnumBloodTendency.ANIMUS, makeSynergy(EnumBloodTendency.ANIMUS,
+				Attributes.MAX_HEALTH, 2.0, AttributeModifier.Operation.ADDITION));
+		SYNERGY_BONUSES.put(EnumBloodTendency.FLAMMEUS, makeSynergy(EnumBloodTendency.FLAMMEUS,
+				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADDITION));
+		SYNERGY_BONUSES.put(EnumBloodTendency.MORTEM, makeSynergy(EnumBloodTendency.MORTEM,
+				Attributes.ATTACK_DAMAGE, 1.0, AttributeModifier.Operation.ADDITION));
+		SYNERGY_BONUSES.put(EnumBloodTendency.CONGEATIO, makeSynergy(EnumBloodTendency.CONGEATIO,
+				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+		SYNERGY_BONUSES.put(EnumBloodTendency.DUCTILIS, makeSynergy(EnumBloodTendency.DUCTILIS,
+				Attributes.ATTACK_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+		SYNERGY_BONUSES.put(EnumBloodTendency.LUX, makeSynergy(EnumBloodTendency.LUX,
+				Attributes.ARMOR_TOUGHNESS, 1.0, AttributeModifier.Operation.ADDITION));
+		SYNERGY_BONUSES.put(EnumBloodTendency.FERRIC, makeSynergy(EnumBloodTendency.FERRIC,
+				Attributes.ARMOR, 1.0, AttributeModifier.Operation.ADDITION));
+		SYNERGY_BONUSES.put(EnumBloodTendency.TENEBRIS, makeSynergy(EnumBloodTendency.TENEBRIS,
+				Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.MULTIPLY_TOTAL));
+	}
+
+	private static SynergyBonus makeSynergy(EnumBloodTendency tendency, Attribute attribute,
+			double amount, AttributeModifier.Operation operation) {
+		UUID uuid = UUID.nameUUIDFromBytes(("hemomancy:synergy:" + tendency.name().toLowerCase()).getBytes());
+		return new SynergyBonus(attribute, uuid, "Rune Synergy " + tendency.name(), amount, operation);
+	}
+
+	// --- Capability lifecycle ---
 
 	@SubscribeEvent
 	public static void attachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
@@ -163,7 +207,97 @@ public class RuneEntityEventHandler {
 				attributeInstance.addTransientModifier(elytraModifier);
 			}
 		}
+
+		// Rune tendency synergy check (server-side, every 20 ticks)
+		if (!player.level().isClientSide && player.tickCount % 20 == 0) {
+			checkRuneSynergy(player);
+		}
 	}
+
+	// --- Combat event handlers for rune effects ---
+
+	@SubscribeEvent
+	public static void onLivingHurt(LivingHurtEvent event) {
+		// Player attacks another entity
+		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
+			if (event.getEntity() instanceof LivingEntity target) {
+				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+					for (int i = 1; i <= 4; i++) {
+						ItemStack stack = runes.getStackInSlot(i);
+						if (stack.getItem() instanceof ItemRune rune) {
+							rune.onPlayerAttack(player, target);
+						}
+					}
+				});
+			}
+		}
+
+		// Player is attacked by another entity
+		if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
+			if (event.getSource().getEntity() instanceof LivingEntity attacker) {
+				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+					for (int i = 1; i <= 4; i++) {
+						ItemStack stack = runes.getStackInSlot(i);
+						if (stack.getItem() instanceof ItemRune rune) {
+							rune.onPlayerDefend(player, attacker);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onEntityKilledByPlayer(LivingDeathEvent event) {
+		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
+			if (event.getEntity() instanceof LivingEntity killed) {
+				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+					for (int i = 1; i <= 4; i++) {
+						ItemStack stack = runes.getStackInSlot(i);
+						if (stack.getItem() instanceof ItemRune rune) {
+							rune.onPlayerKill(player, killed);
+						}
+					}
+				});
+			}
+		}
+	}
+
+	// --- Synergy logic ---
+
+	private static void checkRuneSynergy(Player player) {
+		player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
+			for (int i = 1; i <= 4; i++) {
+				ItemStack stack = runes.getStackInSlot(i);
+				if (stack.getItem() instanceof ItemRune rune) {
+					counts.merge(rune.getAssignedTendency(), 1, Integer::sum);
+				}
+			}
+
+			for (EnumBloodTendency tendency : EnumBloodTendency.values()) {
+				SynergyBonus bonus = SYNERGY_BONUSES.get(tendency);
+				if (bonus == null)
+					continue;
+
+				AttributeInstance attr = player.getAttribute(bonus.attribute());
+				if (attr == null)
+					continue;
+
+				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
+				boolean hasModifier = attr.getModifier(bonus.uuid()) != null;
+
+				if (hasSynergy && !hasModifier) {
+					attr.addPermanentModifier(new AttributeModifier(
+							bonus.uuid(), bonus.name(), bonus.amount(), bonus.operation()));
+				} else if (!hasSynergy && hasModifier) {
+					attr.removePermanentModifier(bonus.uuid());
+				}
+			}
+		});
+	}
+
+	// --- Block break (vein mining) ---
 
 	@SubscribeEvent
 	public static void onBlockBreak(BreakEvent event) {
@@ -181,6 +315,8 @@ public class RuneEntityEventHandler {
 			});
 		});
 	}
+
+	// --- Network sync ---
 
 	public static void syncSlot(Player player, byte slot, ItemStack stack, Collection<? extends Player> receivers) {
 
