@@ -1,8 +1,6 @@
 package com.vincenthuto.hemomancy.compat.jei;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +30,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * JEI recipe category for the Ghastly Alembic — fully programmatic rendering.
@@ -40,7 +37,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlembicRecipe> {
 
 	private static final int BG_W = 150;
-	private static final int BG_H = 80;
+	private static final int BG_H = 90;  // slightly taller to fit catalyst label
 
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
@@ -94,6 +91,13 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 		drawSlot(gfx, 20, 24);   // Input
 		drawSlot(gfx, 110, 24);  // Output (reddish tint)
 		gfx.fill(110, 24, 126, 40, 0x20FF4444);
+
+		// ── Optional catalyst slot (top-left) ──
+		if (recipe.requiresCatalyst()) {
+			drawSlot(gfx, 1, 1);
+			Font font = Minecraft.getInstance().font;
+			gfx.drawString(font, Component.literal("Catalyst"), 20, 3, 0xFF886644, false);
+		}
 
 		// ── Fire indicator (campfire catalyst) ──
 		drawSlot(gfx, 20, 50);   // Campfire hint slot
@@ -195,6 +199,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("removal")
 	public IDrawable getBackground() {
 		return background;
 	}
@@ -219,19 +224,22 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, GhastlyAlembicRecipe recipe, IFocusGroup focuses) {
 		// Input ingredient slot
-		List<List<ItemStack>> list = new ArrayList<>();
-		for (Ingredient ingr : recipe.getIngredients()) {
-			list.add(Arrays.asList(ingr.getItems()));
-		}
-		builder.addSlot(RecipeIngredientRole.INPUT, 21, 25).addIngredients(VanillaTypes.ITEM_STACK, list.get(0));
+		builder.addSlot(RecipeIngredientRole.INPUT, 21, 25)
+				.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getIngredient().getItems()));
 
-		// Campfire as catalyst hint — shows that fire below is needed
+		// Optional catalyst slot (top-left, slot position 2, 2 in JEI space)
+		if (recipe.requiresCatalyst()) {
+			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2)
+					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()));
+		}
+
+		// Campfire as heat hint — shows that fire below is needed
 		builder.addSlot(RecipeIngredientRole.CATALYST, 21, 51)
 				.addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.CAMPFIRE));
 
 		// Output slot
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 111, 25).addIngredient(VanillaTypes.ITEM_STACK,
-				recipe.getResultItem(null));
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 111, 25)
+				.addIngredient(VanillaTypes.ITEM_STACK, recipe.getResultItem(null));
 	}
 }
 

@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.GhastlyAlembicMenu;
+import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
@@ -30,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -42,9 +42,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -76,10 +74,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
 	// Slot indices
-	public static final int SLOT_INPUT = 0;
-	public static final int SLOT_FLASK = 1;
-	public static final int SLOT_RESULT = 2;
-	public static final int NUM_SLOTS = 3;
+	public static final int SLOT_INPUT    = 0;
+	public static final int SLOT_FLASK    = 1;
+	public static final int SLOT_RESULT   = 2;
+	public static final int SLOT_CATALYST = 3;
+	public static final int NUM_SLOTS     = 4;
 
 	// Container data indices
 	public static final int DATA_HEATED = 0;
@@ -90,9 +89,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public static final int BURN_TIME_STANDARD = 200;
 
 	// Hopper / sided access
-	private static final int[] SLOTS_FOR_UP = new int[]{SLOT_INPUT};
-	private static final int[] SLOTS_FOR_DOWN = new int[]{SLOT_RESULT};
-	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK};
+	private static final int[] SLOTS_FOR_UP    = new int[]{SLOT_INPUT};
+	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT};
+	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST};
 
 	// ---- Fields ----
 
@@ -102,7 +101,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	int cookingTotalTime;
 
 	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType = RecipeInit.ghastly_alembic_recipe_type.get();
 
 	LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this,
 			Direction.UP, Direction.DOWN, Direction.NORTH);
@@ -176,11 +174,23 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	// ---- Ticking ----
 
-	@SuppressWarnings("unchecked")
-	private static int getTotalCookTime(Level level, RecipeType<? extends AbstractCookingRecipe> type, Container container) {
+	private static int getTotalCookTime(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
-				.getRecipeFor((RecipeType<AbstractCookingRecipe>) type, container, level)
-				.map(AbstractCookingRecipe::getCookingTime).orElse(200);
+				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.stream()
+				.filter(r -> r.matches(te, level))
+				.mapToInt(GhastlyAlembicRecipe::getCookingTime)
+				.findFirst()
+				.orElse(200);
+	}
+
+	private static GhastlyAlembicRecipe findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
+		return level.getRecipeManager()
+				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.stream()
+				.filter(r -> r.matches(te, level))
+				.findFirst()
+				.orElse(null);
 	}
 
 	private static void createExperience(ServerLevel level, Vec3 pos, int count, float xpPerItem) {
@@ -192,7 +202,6 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		ExperienceOrb.award(level, pos, i);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void serverTick(Level level, BlockPos pos, BlockState state, GhastlyAlembicBlockEntity te) {
 		boolean wasHeated = te.heated;
 		te.heated = isHeatSource(level, pos);
@@ -203,15 +212,14 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 		if (vol.getBloodVolume() < vol.getMaxBloodVolume() - 99) {
 			if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
-				Recipe<?> recipe = level.getRecipeManager()
-						.getRecipeFor((RecipeType<AbstractCookingRecipe>) te.recipeType, te, level).orElse(null);
+				GhastlyAlembicRecipe recipe = findMatchingRecipe(level, te);
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
 					++te.cookingProgress;
 					if (te.cookingProgress >= te.cookingTotalTime) {
 						te.cookingProgress = 0;
-						te.cookingTotalTime = getTotalCookTime(level, te.recipeType, te);
+						te.cookingTotalTime = getTotalCookTime(level, te);
 						if (te.burn(level.registryAccess(), recipe, te.items, maxStack)) {
 							te.setRecipeUsed(recipe);
 							vol.fill(100);
@@ -248,11 +256,10 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	// ---- Recipe logic ----
 
-	@SuppressWarnings("unchecked")
-	private boolean canBurn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> inv, int maxStack) {
+	private boolean canBurn(RegistryAccess registryAccess, @Nullable GhastlyAlembicRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
 		if (inv.get(SLOT_INPUT).isEmpty() || recipe == null) return false;
 
-		ItemStack result = ((Recipe<WorldlyContainer>) recipe).assemble(this, registryAccess);
+		ItemStack result = recipe.assemble(this, registryAccess);
 		if (result.isEmpty()) return false;
 
 		ItemStack currentResult = inv.get(SLOT_RESULT);
@@ -262,12 +269,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return totalCount <= maxStack && totalCount <= currentResult.getMaxStackSize();
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean burn(RegistryAccess registryAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> inv, int maxStack) {
+	private boolean burn(RegistryAccess registryAccess, @Nullable GhastlyAlembicRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
 		if (recipe == null || !canBurn(registryAccess, recipe, inv, maxStack)) return false;
 
 		ItemStack input = inv.get(SLOT_INPUT);
-		ItemStack recipeResult = ((Recipe<WorldlyContainer>) recipe).assemble(this, registryAccess);
+		ItemStack recipeResult = recipe.assemble(this, registryAccess);
 		ItemStack flaskStack = inv.get(SLOT_FLASK);
 		ItemStack resultStack = inv.get(SLOT_RESULT);
 
@@ -313,7 +319,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		}
 		// Reset cooking progress when input changes
 		if (slot == SLOT_INPUT && !sameItem) {
-			this.cookingTotalTime = (this.level != null) ? getTotalCookTime(this.level, this.recipeType, this) : BURN_TIME_STANDARD;
+			this.cookingTotalTime = (this.level != null) ? getTotalCookTime(this.level, this) : BURN_TIME_STANDARD;
 			this.cookingProgress = 0;
 			this.setChanged();
 		}
@@ -392,7 +398,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
 			level.getRecipeManager().byKey(entry.getKey()).ifPresent(r -> {
 				list.add(r);
-				createExperience(level, pos, entry.getIntValue(), ((AbstractCookingRecipe) r).getExperience());
+				if (r instanceof GhastlyAlembicRecipe gar) {
+					createExperience(level, pos, entry.getIntValue(), gar.getExperience());
+				}
 			});
 		}
 		return list;
@@ -475,6 +483,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public boolean canPlaceItem(int slot, ItemStack stack) {
 		if (slot == SLOT_RESULT) return false;
 		if (slot == SLOT_FLASK) return stack.getItem() == HLItemInit.cured_clay_flask.get();
+		if (slot == SLOT_CATALYST) return true; // any item allowed as catalyst
 		return true; // SLOT_INPUT
 	}
 

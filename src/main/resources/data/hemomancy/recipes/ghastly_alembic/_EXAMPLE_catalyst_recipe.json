@@ -1,0 +1,14 @@
+{
+  "_comment": "Example recipe showing optional catalyst field. Remove this file or rename without leading underscore to use.",
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "minecraft:bone"
+  },
+  "catalyst": {
+    "item": "minecraft:nether_wart"
+  },
+  "result": "hemomancy:hematic_iron_powder",
+  "count": 2,
+  "experience": 1.0,
+  "cookingtime": 300
+}

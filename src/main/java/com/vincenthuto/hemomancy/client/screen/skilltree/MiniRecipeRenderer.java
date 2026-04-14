@@ -164,20 +164,34 @@ public final class MiniRecipeRenderer {
 
 	private static int drawGhastlyAlembic(GuiGraphics gfx, Font font, GhastlyAlembicRecipe recipe,
 									   int x, int y, int maxW, Theme theme) {
-		NonNullList<Ingredient> ingredients = recipe.getIngredients();
 		long tick = getAnimTick();
 
+		// Optional catalyst slot — top-left, small, with "+" label
+		int startX = x;
+		if (recipe.requiresCatalyst()) {
+			// Small catalyst label
+			gfx.drawString(font, "+", x, y, 0xFF886644, false);
+			int cslotX = x + 6;
+			drawSlot(gfx, cslotX, y, theme);
+			ItemStack[] cItems = recipe.getCatalyst().getItems();
+			if (cItems.length > 0) {
+				renderSlotItem(gfx, cItems[(int) ((tick / 30) % cItems.length)], cslotX + 1, y + 1);
+			}
+			startX = cslotX + SLOT_SIZE + 2;
+		}
+
 		// Input slot
-		drawSlot(gfx, x, y, theme);
-		if (!ingredients.isEmpty()) {
-			ItemStack[] items = ingredients.get(0).getItems();
+		drawSlot(gfx, startX, y, theme);
+		Ingredient ingredient = recipe.getIngredient();
+		if (ingredient != null) {
+			ItemStack[] items = ingredient.getItems();
 			if (items.length > 0) {
-				renderSlotItem(gfx, items[(int) ((tick / 30) % items.length)], x + 1, y + 1);
+				renderSlotItem(gfx, items[(int) ((tick / 30) % items.length)], startX + 1, y + 1);
 			}
 		}
 
 		// Fire hint (small flame)
-		int flameX = x + SLOT_SIZE + 3;
+		int flameX = startX + SLOT_SIZE + 3;
 		int flameY = y + 4;
 		drawFlameIcon(gfx, flameX, flameY);
 

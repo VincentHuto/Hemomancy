@@ -3,13 +3,12 @@ package com.vincenthuto.hemomancy.common.menu;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
+import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
@@ -20,9 +19,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -38,23 +35,23 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class GhastlyAlembicMenu extends AbstractContainerMenu {
 
 	public static final int INGREDIENT_SLOT = 0;
-	public static final int FLASK_SLOT = 1;
-	public static final int RESULT_SLOT = 2;
-	public static final int SLOT_COUNT = 3;
-	public static final int DATA_COUNT = 3;
+	public static final int FLASK_SLOT      = 1;
+	public static final int RESULT_SLOT     = 2;
+	public static final int CATALYST_SLOT   = 3;
+	public static final int SLOT_COUNT      = 4;
+	public static final int DATA_COUNT      = 3;
 
 	// Crafting area height — matches the screen's layout
 	public static final int CRAFT_AREA_HEIGHT = 80;
 
-	// Player inventory starts after the 3 container slots
-	private static final int INV_START = SLOT_COUNT;         // 3
-	private static final int INV_END = INV_START + 27;       // 30
-	private static final int HOTBAR_END = INV_END + 9;       // 39
+	// Player inventory starts after the 4 container slots
+	private static final int INV_START  = SLOT_COUNT;        // 4
+	private static final int INV_END    = INV_START + 27;    // 31
+	private static final int HOTBAR_END = INV_END + 9;       // 40
 
 	private final GhastlyAlembicBlockEntity container;
 	private final ContainerData data;
 	protected final Level level;
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType;
 	private final GhastlyAlembicBlockEntity te;
 
 	// ---- Constructors ----
@@ -84,7 +81,6 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 			final ContainerData containerData) {
 		super(ContainerInit.ghastly_alembic.get(), windowId);
 		this.te = container;
-		this.recipeType = RecipeInit.ghastly_alembic_recipe_type.get();
 		checkContainerSize(container, SLOT_COUNT);
 		checkContainerDataCount(containerData, DATA_COUNT);
 		this.container = container;
@@ -98,6 +94,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		this.addSlot(new GhastlyAlembicFlaskSlot(this, container, FLASK_SLOT, 155, 58));
 		// Result slot: right of crafting area
 		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
+		// Catalyst slot: top-left corner of the crafting area
+		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
 
 		// Player inventory (3 rows) — pushed down below crafting area
 		int invY = CRAFT_AREA_HEIGHT + 14;
@@ -140,11 +138,11 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 
 	// ---- Recipe helpers ----
 
-	@SuppressWarnings("unchecked")
 	protected boolean canSmelt(ItemStack stack) {
-		return this.level.getRecipeManager().getRecipeFor(
-				(RecipeType<AbstractCookingRecipe>) this.recipeType,
-				new SimpleContainer(stack), this.level).isPresent();
+		// Check if any ghastly alembic recipe accepts this item as its main ingredient
+		return GhastlyAlembicRecipe.getAllRecipes(this.level)
+				.stream()
+				.anyMatch(r -> r.getIngredient().test(stack));
 	}
 
 	public boolean isFlask(ItemStack stack) {
@@ -166,7 +164,7 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		if (index == RESULT_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
 			slot.onQuickCraft(slotStack, copy);
-		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT) {
+		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, false)) return ItemStack.EMPTY;
 		}
 		// Moving FROM player inventory to container
@@ -176,7 +174,10 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 			} else if (this.isFlask(slotStack)) {
 				if (!this.moveItemStackTo(slotStack, FLASK_SLOT, FLASK_SLOT + 1, false)) return ItemStack.EMPTY;
 			} else if (index >= INV_START && index < INV_END) {
-				if (!this.moveItemStackTo(slotStack, INV_END, HOTBAR_END, false)) return ItemStack.EMPTY;
+				// Try catalyst slot first, then hotbar
+				if (!this.moveItemStackTo(slotStack, CATALYST_SLOT, CATALYST_SLOT + 1, false)) {
+					if (!this.moveItemStackTo(slotStack, INV_END, HOTBAR_END, false)) return ItemStack.EMPTY;
+				}
 			} else if (index >= INV_END && index < HOTBAR_END) {
 				if (!this.moveItemStackTo(slotStack, INV_START, INV_END, false)) return ItemStack.EMPTY;
 			}
