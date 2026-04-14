@@ -38,6 +38,7 @@ import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.TickMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.UrchinMorphlingItem;
+import com.vincenthuto.hemomancy.common.item.rune.ItemMindSpike;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
 import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
 import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
@@ -580,7 +581,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
 			() -> new ItemSelfReflectionMirror(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> mind_spike = BASEITEMS.register("mind_spike",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+			() -> new ItemMindSpike(new Item.Properties().stacksTo(1)));
 	public static final RegistryObject<Item> rune_blank = BASEITEMS.register("rune_blank",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> runic_motif_paper = BASEITEMS.register("runic_motif_paper",

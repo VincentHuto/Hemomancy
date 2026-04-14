@@ -1,0 +1,25 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 100,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:polished_venous_stone",
+  "pattern": [
+    [" T ", "TST", " T "],
+    [" S ", "SPS", " S "],
+    [" T ", "TST", " T "]
+  ],
+  "key": {
+    "T": {
+      "block": "hemomancy:hematic_iron_block"
+    },
+    "S": {
+      "block": "hemomancy:polished_venous_stone"
+    },
+    "P": {
+      "block": "hemomancy:hematic_iron_pillar"
+    }
+  },
+  "result": {
+    "item": "hemomancy:mind_spike"
+  }
+}
