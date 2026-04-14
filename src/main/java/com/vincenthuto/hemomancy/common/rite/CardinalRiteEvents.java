@@ -1555,7 +1555,7 @@ public class CardinalRiteEvents {
 		List<ServerPlayer> nearbyPlayers = sLevel.getEntitiesOfClass(
 				ServerPlayer.class, area, p -> p != caster);
 
-		int affected = 0;
+		int[] affected = {0};
 		for (ServerPlayer target : nearbyPlayers) {
 			target.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
 				if (volume.isActive()) {
@@ -1578,13 +1578,13 @@ public class CardinalRiteEvents {
 							Component.literal("A wave of silver light burns through your veins!")
 									.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
 							false);
+					affected[0]++;
 				}
 			});
-			affected++;
 		}
 
-		String msg = affected > 0
-				? "Lethean judgment descends. " + affected + " hemomancer(s) have been purged."
+		String msg = affected[0] > 0
+				? "Lethean judgment descends. " + affected[0] + " hemomancer(s) have been purged."
 				: "Lethean judgment descends, but no blood-wielders were found nearby.";
 		caster.displayClientMessage(
 				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
