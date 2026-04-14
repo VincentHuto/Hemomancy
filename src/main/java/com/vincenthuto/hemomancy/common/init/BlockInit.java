@@ -449,7 +449,7 @@ public class BlockInit {
 
 	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
 		var b = block.getFirst();
-		if (b == BlockInit.bog_body.get()) {
+		if (b == BlockInit.mortal_display.get()) {
 			return Pair.of(block.getSecond(), new MortalDisplayBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.suspended_blood_crystal.get()) {
