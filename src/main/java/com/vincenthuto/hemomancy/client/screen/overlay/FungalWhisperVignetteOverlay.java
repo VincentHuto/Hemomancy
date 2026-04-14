@@ -103,10 +103,10 @@ public class FungalWhisperVignetteOverlay {
 			gfx.fill(x0, 0, x1, screenHeight, color);
 		}
 
-		// Right edge — banded uniform strips
+		// Right edge — banded uniform strips (last band clamped to screenWidth)
 		for (int b = 0; b < bands; b++) {
 			int x0 = screenWidth - edgeSize + b * bandWidth;
-			int x1 = screenWidth - edgeSize + (b + 1) * bandWidth;
+			int x1 = (b == bands - 1) ? screenWidth : screenWidth - edgeSize + (b + 1) * bandWidth;
 			float t = ((float) b + 0.5f) / bands;
 			int ba = (int) (a * t);
 			int color = (ba << 24) | (ri << 16) | (gi << 8) | bi;

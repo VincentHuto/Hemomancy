@@ -114,17 +114,22 @@ public class DialogueScreen extends Screen {
 		int panelX = PANEL_MARGIN;
 		int panelY = PANEL_MARGIN;
 		int panelH = this.height - PANEL_MARGIN * 2;
+		// Cap panel width so it never overflows on narrow/small-scale screens
+		int panelW = Math.min(PANEL_WIDTH, this.width - PANEL_MARGIN * 2);
 
 		// ── Organic vein background ──
-		renderVeinBackground(gfx, panelX, panelY, PANEL_WIDTH, panelH);
+		renderVeinBackground(gfx, panelX, panelY, panelW, panelH);
 
 		// ── Border ──
-		drawBorder(gfx, panelX, panelY, PANEL_WIDTH, panelH);
+		drawBorder(gfx, panelX, panelY, panelW, panelH);
 
 		Font font = this.font;
 		int contentX = panelX + TEXT_LEFT_PAD;
-		int contentW = PANEL_WIDTH - TEXT_LEFT_PAD * 2;
+		int contentW = panelW - TEXT_LEFT_PAD * 2;
 		int y = panelY + 10;
+
+		// Scissor the content region so text never overflows the panel
+		gfx.enableScissor(panelX, panelY, panelX + panelW, panelY + panelH);
 
 		// ── Speaker portrait placeholder (colored rectangle + name) ──
 		int portraitX = contentX;
@@ -176,6 +181,7 @@ public class DialogueScreen extends Screen {
 			}
 		}
 
+		gfx.disableScissor();
 		super.render(gfx, mouseX, mouseY, partialTick);
 	}
 
