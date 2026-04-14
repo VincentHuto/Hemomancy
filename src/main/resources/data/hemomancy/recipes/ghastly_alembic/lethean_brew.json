@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:lethean_extract"
+  },
+  "result": "hemomancy:lethean_brew",
+  "count": 1,
+  "experience": 1.0,
+  "cookingtime": 200
+}
