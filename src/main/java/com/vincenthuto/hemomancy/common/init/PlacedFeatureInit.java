@@ -56,6 +56,8 @@ public class PlacedFeatureInit {
 
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
 
+	public static final ResourceKey<PlacedFeature> EARTHEN_VEIN = createKey("earthen_vein");
+
 	public static final ResourceKey<PlacedFeature> TERMITE_MOUND = createKey("termite_mound");
 
 	// Conscious mass blob
@@ -131,6 +133,13 @@ public class PlacedFeatureInit {
 
 		register(context, PlacedFeatureInit.BOG_BODY, BOG_BODY, RarityFilter.onAverageOnceEvery(14),
 				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome());
+
+		// Earthen Vein — rare surface teleport points for blood magic users
+		final Holder<ConfiguredFeature<?, ?>> EARTHEN_VEIN = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.EARTHEN_VEIN);
+
+		register(context, PlacedFeatureInit.EARTHEN_VEIN, EARTHEN_VEIN, RarityFilter.onAverageOnceEvery(80),
+				InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome());
 
 		// Termite Mound — rare surface structure in savannahs
 		final Holder<ConfiguredFeature<?, ?>> TERMITE_MOUND = configuredFeatureGetter

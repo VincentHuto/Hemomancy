@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#hemomancy:earthen_vein_spawnlist",
+  "features": "hemomancy:earthen_vein",
+  "step": "vegetal_decoration"
+}
