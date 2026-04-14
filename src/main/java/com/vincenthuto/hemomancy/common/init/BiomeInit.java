@@ -11,7 +11,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.data.worldgen.Carvers;
 import net.minecraft.data.worldgen.placement.NetherPlacements;
-import net.minecraft.data.worldgen.placement.OrePlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -62,24 +61,43 @@ public class BiomeInit {
 
 	private static Biome fungalIsles(HolderGetter<PlacedFeature> placedFeatureGetter,
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
-		// Mob spawns
+		// Fungal Isles - barren, exposed, dangerous. Hostile landscape with sparse vegetation.
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
-		spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GHAST, 50, 4, 4));
+		// Dangerous hostile mobs - this is the treacherous biome
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityType.ZOMBIFIED_PIGLIN, 100, 4, 4));
-		spawnBuilder.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.STRIDER, 60, 1, 2));
+				new MobSpawnSettings.SpawnerData(EntityInit.abhorent_thought.get(), 10, 1, 2));
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.thirster.get(), 10, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.MONSTER,
+				new MobSpawnSettings.SpawnerData(EntityInit.lump_of_thought.get(), 5, 1, 1));
+		spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GHAST, 30, 1, 2));
+		// Some passive fauna
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.fungling.get(), 6, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.venous_strider.get(), 4, 1, 2));
 
-		// Biome features
+		// Biome features - sparse, barren with exposed ore
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
 		biomeBuilder.addCarver(GenerationStep.Carving.AIR, Carvers.NETHER_CAVE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, NetherPlacements.SPRING_OPEN);
-		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, OrePlacements.ORE_MAGMA);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, NetherPlacements.SPRING_CLOSED);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HYPHAE_TENDRIL);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HUGE_FUNGUS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_INFESTED_VENOUS_STONE_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_SPARSE);
+		// Sparse vegetation
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
 				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
+		// Ore generation
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_VIVIANITE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_SPORELITE);
 
 		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(2.0F).downfall(0.0F)
 				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(4159204).waterFogColor(329011)
@@ -95,38 +113,69 @@ public class BiomeInit {
 
 	public static Biome fungalGardens(HolderGetter<PlacedFeature> placedFeatureGetter,
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
-		// Mob spawns
+		// Fungal Gardens - lush, peaceful, verdant. The cultivated heart of the dimension.
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
-		spawnBuilder.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GHAST, 50, 4, 4));
+		// Peaceful creatures dominate
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.fungling.get(), 15, 3, 6));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.chitinite.get(), 10, 2, 5));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.venous_strider.get(), 8, 1, 3));
+		spawnBuilder.addSpawn(MobCategory.CREATURE,
+				new MobSpawnSettings.SpawnerData(EntityInit.crimson_doe.get(), 6, 2, 4));
+		// Light hostile presence
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
-				new MobSpawnSettings.SpawnerData(EntityType.ZOMBIFIED_PIGLIN, 100, 4, 4));
-		spawnBuilder.addSpawn(MobCategory.CREATURE, new MobSpawnSettings.SpawnerData(EntityType.STRIDER, 60, 1, 2));
+				new MobSpawnSettings.SpawnerData(EntityInit.fargone.get(), 4, 1, 2));
+		spawnBuilder.addSpawn(MobCategory.AMBIENT,
+				new MobSpawnSettings.SpawnerData(EntityType.BAT, 10, 4, 8));
 
-		// Biome features
+		// Biome features - lush vegetation, mushroom forests
 		BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatureGetter,
 				carverGetter);
 		biomeBuilder.addCarver(GenerationStep.Carving.AIR, Carvers.NETHER_CAVE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, NetherPlacements.SPRING_OPEN);
-		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, OrePlacements.ORE_MAGMA);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, NetherPlacements.SPRING_CLOSED);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HYPHAE_TENDRIL);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION, PlacedFeatureInit.HUGE_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_MYCELIUM_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_CONSCIOUS_MASS_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_SPARSE);
+		// Rich vegetation
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
+				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.LETHEAN_POPPIES);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.GHOST_PIPES);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.SARCODES);
+		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.RAFFLESIA);
+		// Ore generation
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_VIVIANITE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_SPORELITE);
 
 		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(2.0F).downfall(0.0F)
 				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(4159204).waterFogColor(329011)
 						.fogColor(0x601F18).skyColor(0xFF00FFFF)
+						.grassColorOverride(0x8B4513).foliageColorOverride(0x6B3A0F)
 						.ambientLoopSound(SoundEvents.AMBIENT_NETHER_WASTES_LOOP)
 						.ambientMoodSound(
 								new AmbientMoodSettings(SoundEvents.AMBIENT_SOUL_SAND_VALLEY_MOOD, 6000, 8, 2.0D))
 						.ambientAdditionsSound(
 								new AmbientAdditionsSettings(SoundEvents.AMBIENT_CRIMSON_FOREST_ADDITIONS, 0.0111D))
+						.ambientParticle(new net.minecraft.world.level.biome.AmbientParticleSettings(
+								net.minecraft.core.particles.ParticleTypes.CRIMSON_SPORE, 0.01F))
 						.build())
 				.mobSpawnSettings(spawnBuilder.build()).generationSettings(biomeBuilder.build()).build();
 	}
 
 	private static Biome sporecrownThicket(HolderGetter<PlacedFeature> placedFeatureGetter,
 			HolderGetter<ConfiguredWorldCarver<?>> carverGetter) {
-		// Mob spawns - dense and hostile
+		// Sporecrown Thicket - dense, overgrown, dangerous. The deepest fungal infection.
 		MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 		spawnBuilder.addSpawn(MobCategory.MONSTER,
 				new MobSpawnSettings.SpawnerData(EntityInit.erythromycelium_eruptus.get(), 15, 1, 3));
@@ -152,12 +201,18 @@ public class BiomeInit {
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_MYCELIUM_BLOB);
 		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
+				PlacedFeatureInit.PLACED_CONSCIOUS_MASS_BLOB);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_DECORATION,
 				PlacedFeatureInit.PLACED_CANOPY_MUSHROOMS_DENSE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION,
 				PlacedFeatureInit.SMALL_INFECTED_FUNGUS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.PATCH_HYPHAE);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.BLEEDING_HEARTS);
 		addFeature(biomeBuilder, GenerationStep.Decoration.VEGETAL_DECORATION, PlacedFeatureInit.STINK_HORNS);
+		// Ore generation
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_HEMATIC_IRON);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_VIVIANITE);
+		addFeature(biomeBuilder, GenerationStep.Decoration.UNDERGROUND_ORES, PlacedFeatureInit.ORE_SPORELITE);
 
 		return new Biome.BiomeBuilder().hasPrecipitation(false).temperature(1.2F).downfall(0.9F)
 				.specialEffects((new BiomeSpecialEffects.Builder()).waterColor(10980608).waterFogColor(10980608)

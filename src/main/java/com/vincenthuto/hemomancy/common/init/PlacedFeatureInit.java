@@ -19,11 +19,13 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 import net.minecraft.world.level.levelgen.placement.SurfaceWaterDepthFilter;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
 
 public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> HYPHAE_TENDRIL = createKey("hyphae_tendril");
@@ -55,6 +57,14 @@ public class PlacedFeatureInit {
 	public static final ResourceKey<PlacedFeature> BOG_BODY = createKey("bog_body");
 
 	public static final ResourceKey<PlacedFeature> TERMITE_MOUND = createKey("termite_mound");
+
+	// Conscious mass blob
+	public static final ResourceKey<PlacedFeature> PLACED_CONSCIOUS_MASS_BLOB = createKey("conscious_mass_blob");
+
+	// Fungal dimension ores
+	public static final ResourceKey<PlacedFeature> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
+	public static final ResourceKey<PlacedFeature> ORE_VIVIANITE = createKey("ore_vivianite");
+	public static final ResourceKey<PlacedFeature> ORE_SPORELITE = createKey("ore_sporelite");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
@@ -162,6 +172,35 @@ public class PlacedFeatureInit {
 				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CANOPY_MUSHROOMS_DENSE),
 						tfTreeCheckArea(PlacementUtils.countExtra(5, 0.1F, 1),
 								BlockInit.infected_fungus.get().defaultBlockState())));
+
+		// Conscious mass blob - surface decoration for fungal dimension
+		context.register(PLACED_CONSCIOUS_MASS_BLOB,
+				new PlacedFeature(configuredFeatureGetter.getOrThrow(ConfiguredFeatureInit.CONSCIOUS_MASS_BLOB),
+						ImmutableList.<PlacementModifier>builder().add(RarityFilter.onAverageOnceEvery(4),
+								InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())
+								.build()));
+
+		// Fungal dimension ores
+		final Holder<ConfiguredFeature<?, ?>> ORE_HEMATIC_IRON = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.ORE_HEMATIC_IRON);
+		register(context, PlacedFeatureInit.ORE_HEMATIC_IRON, ORE_HEMATIC_IRON, List.of(
+				CountPlacement.of(10), InSquarePlacement.spread(),
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(-32), VerticalAnchor.absolute(96)),
+				BiomeFilter.biome()));
+
+		final Holder<ConfiguredFeature<?, ?>> ORE_VIVIANITE = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.ORE_VIVIANITE);
+		register(context, PlacedFeatureInit.ORE_VIVIANITE, ORE_VIVIANITE, List.of(
+				CountPlacement.of(6), InSquarePlacement.spread(),
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(-48), VerticalAnchor.absolute(48)),
+				BiomeFilter.biome()));
+
+		final Holder<ConfiguredFeature<?, ?>> ORE_SPORELITE = configuredFeatureGetter
+				.getOrThrow(ConfiguredFeatureInit.ORE_SPORELITE);
+		register(context, PlacedFeatureInit.ORE_SPORELITE, ORE_SPORELITE, List.of(
+				CountPlacement.of(14), InSquarePlacement.spread(),
+				HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(128)),
+				BiomeFilter.biome()));
 
 	}
 

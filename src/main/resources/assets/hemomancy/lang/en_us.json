@@ -10,6 +10,9 @@
 	"block.hemomancy.chiseled_polished_venous_stone": "Chiseled Polished Venous Stone",
 	"block.hemomancy.conscious_mass": "Conscious Mass",
 	"block.hemomancy.cracked_polished_venous_stone_bricks": "Cracked Polished Venous Stone Bricks",
+	"block.hemomancy.hematic_iron_ore": "Hematic Iron Ore",
+	"block.hemomancy.vivianite_ore": "Vivianite Ore",
+	"block.hemomancy.sporelite_ore": "Sporelite Ore",
 	"block.hemomancy.fungal_implantation_pylon": "Sporic Implantation Pylon",
 	"block.hemomancy.crimson_flames": "Crimson Flames",
 	"block.hemomancy.dendritic_distributor": "Dendritic Distributor",
@@ -1102,5 +1105,9 @@
 
 	"subtitle.hemomancy.entity.abyssal_siphon.ambient": "Abyssal Siphon drones",
 	"subtitle.hemomancy.entity.abyssal_siphon.hurt": "Abyssal Siphon recoils",
-	"subtitle.hemomancy.entity.abyssal_siphon.death": "Abyssal Siphon dies"
+	"subtitle.hemomancy.entity.abyssal_siphon.death": "Abyssal Siphon dies",
+
+	"biome.hemomancy.fungal_gardens": "Fungal Gardens",
+	"biome.hemomancy.fungal_isles": "Fungal Isles",
+	"biome.hemomancy.sporecrown_thicket": "Sporecrown Thicket"
 }

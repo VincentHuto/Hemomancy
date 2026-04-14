@@ -172,6 +172,19 @@ public class BlockInit {
 	public static final RegistryObject<Block> conscious_mass = BASEBLOCKS.register("conscious_mass",
 			() -> new Block(BlockBehaviour.Properties.of().sound(SoundType.WART_BLOCK).strength(0.2F, 1.0F)));
 
+	// Fungal dimension ores
+	public static final RegistryObject<Block> hematic_iron_ore = BASEBLOCKS.register("hematic_iron_ore",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
+					.sound(SoundType.NETHER_ORE)));
+
+	public static final RegistryObject<Block> vivianite_ore = BASEBLOCKS.register("vivianite_ore",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
+					.sound(SoundType.NETHER_ORE)));
+
+	public static final RegistryObject<Block> sporelite_ore = BASEBLOCKS.register("sporelite_ore",
+			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
+					.sound(SoundType.NETHER_ORE)));
+
 	public static final RegistryObject<Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
 					.sound(SoundType.METAL)));

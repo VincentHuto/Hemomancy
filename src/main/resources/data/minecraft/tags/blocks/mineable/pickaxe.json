@@ -33,6 +33,9 @@
 	  "hemomancy:iron_brazier",
 	  "hemomancy:ghastly_alembic",
 	  "hemomancy:vial_centrifuge",
-	  "hemomancy:blood_crystal"
+	  "hemomancy:blood_crystal",
+	  "hemomancy:hematic_iron_ore",
+	  "hemomancy:vivianite_ore",
+	  "hemomancy:sporelite_ore"
   ]
 }
