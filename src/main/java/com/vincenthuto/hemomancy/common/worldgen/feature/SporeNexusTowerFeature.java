@@ -37,6 +37,8 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	private static BlockState SPORITE;
 	private static BlockState VENOUS_STONE;
 	private static BlockState CALCIFIED;
+	private static BlockState SHROOMLIGHT_STATE;
+	private static BlockState AIR_STATE;
 	private static boolean resolved = false;
 
 	private static void ensureResolved() {
@@ -47,6 +49,8 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 		SPORITE = BlockInit.sporite_crystal.get().defaultBlockState();
 		VENOUS_STONE = BlockInit.venous_stone.get().defaultBlockState();
 		CALCIFIED = BlockInit.calcified_hyphae.get().defaultBlockState();
+		SHROOMLIGHT_STATE = Blocks.SHROOMLIGHT.defaultBlockState();
+		AIR_STATE = Blocks.AIR.defaultBlockState();
 
 		BlockState capState = BlockInit.infected_cap.get().defaultBlockState();
 		if (capState.hasProperty(HugeMushroomBlock.UP)) {
@@ -68,13 +72,26 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 		BlockPos origin = ctx.origin();
 		RandomSource random = ctx.random();
 
-		BlockPos groundPos = findGround(level, origin);
+		// Single shared mutable pos – reused across all helper methods
+		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+
+		BlockPos groundPos = findGround(level, origin, mutable);
 		if (groundPos == null) {
 			return false;
 		}
 
-		if (!isValidPlacement(level, groundPos)) {
+		if (!isValidPlacement(level, groundPos, mutable)) {
 			return false;
+		}
+
+		// Cache cutoff info once instead of re-deriving every block
+		int writeRadiusCutoff = -1;
+		int centerCX = 0, centerCZ = 0;
+		if (level instanceof WorldGenRegion region) {
+			ChunkPos cp = region.getCenter();
+			centerCX = cp.x;
+			centerCZ = cp.z;
+			writeRadiusCutoff = region.writeRadiusCutoff;
 		}
 
 		int height = 30 + random.nextInt(21); // 30-50
@@ -82,20 +99,22 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 		int capRadius = 8 + random.nextInt(5); // 8-12
 
 		// Build the tower
-		buildTrunk(level, groundPos, height, baseRadius, random);
-		buildCap(level, groundPos, height, capRadius, random);
-		buildButtressRoots(level, groundPos, baseRadius, random);
-		addHangingTendrils(level, groundPos, height, capRadius, random);
-		addCrystalClusters(level, groundPos, height, baseRadius, random);
-		addInternalChamber(level, groundPos, height, random);
+		buildTrunk(level, groundPos, height, baseRadius, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
+		buildCap(level, groundPos, height, capRadius, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
+		buildButtressRoots(level, groundPos, baseRadius, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
+		addHangingTendrils(level, groundPos, height, capRadius, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
+		addCrystalClusters(level, groundPos, height, baseRadius, random, mutable, writeRadiusCutoff, centerCX, centerCZ);
+		addInternalChamber(level, groundPos, height, mutable, writeRadiusCutoff, centerCX, centerCZ);
 
 		return true;
 	}
 
-	private BlockPos findGround(WorldGenLevel level, BlockPos start) {
-		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
+	private BlockPos findGround(WorldGenLevel level, BlockPos start, BlockPos.MutableBlockPos mutable) {
+		mutable.set(start.getX(), start.getY(), start.getZ());
 		for (int dy = 0; dy < 20; dy++) {
-			BlockState below = level.getBlockState(mutable.below());
+			mutable.move(Direction.DOWN); // peek below
+			BlockState below = level.getBlockState(mutable);
+			mutable.move(Direction.UP);   // back to current
 			if (below.isFaceSturdy(level, mutable.below(), Direction.UP) && !below.liquid()) {
 				BlockState at = level.getBlockState(mutable);
 				if (at.isAir() || at.canBeReplaced()) {
@@ -107,39 +126,53 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 		return null;
 	}
 
-	private boolean isValidPlacement(WorldGenLevel level, BlockPos ground) {
+	private boolean isValidPlacement(WorldGenLevel level, BlockPos ground, BlockPos.MutableBlockPos mutable) {
 		int baseY = ground.getY();
-		for (int dx = -3; dx <= 3; dx++) {
-			for (int dz = -3; dz <= 3; dz++) {
-				BlockPos check = ground.offset(dx, -1, dz);
-				BlockState state = level.getBlockState(check);
-				if (!state.isFaceSturdy(level, check, Direction.UP) || state.liquid()) {
-					return false;
+		int failures = 0;
+		BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos(); // second mutable for findGround calls
+		for (int dx = -2; dx <= 2; dx++) {
+			for (int dz = -2; dz <= 2; dz++) {
+				mutable.set(ground.getX() + dx, ground.getY() - 1, ground.getZ() + dz);
+				BlockState state = level.getBlockState(mutable);
+				if (!state.isFaceSturdy(level, mutable, Direction.UP) || state.liquid()) {
+					failures++;
+					if (failures > 2) return false;
+					continue;
 				}
-				BlockPos surface = findGround(level, ground.offset(dx, 6, dz));
-				if (surface == null || Math.abs(surface.getY() - baseY) > 3) {
-					return false;
+				probe.set(ground.getX() + dx, ground.getY() + 6, ground.getZ() + dz);
+				BlockPos surface = findGround(level, probe, probe);
+				if (surface == null || Math.abs(surface.getY() - baseY) > 5) {
+					failures++;
+					if (failures > 2) return false;
 				}
 			}
 		}
 		return true;
 	}
 
+	/** Fast cutoff check using pre-cached values. Returns true if outside write radius. */
+	private static boolean outOfBounds(int blockX, int blockZ, int writeRadiusCutoff, int centerCX, int centerCZ) {
+		if (writeRadiusCutoff < 0) return false; // not a WorldGenRegion
+		int cx = SectionPos.blockToSectionCoord(blockX);
+		int cz = SectionPos.blockToSectionCoord(blockZ);
+		return Math.abs(centerCX - cx) > writeRadiusCutoff || Math.abs(centerCZ - cz) > writeRadiusCutoff;
+	}
+
 	/**
 	 * Build the main trunk/spire of the tower with a slight organic twist.
 	 */
-	private void buildTrunk(WorldGenLevel level, BlockPos base, int height, int baseRadius, RandomSource random) {
+	private void buildTrunk(WorldGenLevel level, BlockPos base, int height, int baseRadius, RandomSource random,
+							BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		// Twist parameters
 		float twistRate = 0.05f + random.nextFloat() * 0.05f;
 		float twistAmplitude = 1.0f + random.nextFloat() * 1.5f;
 
 		for (int y = 0; y < height; y++) {
 			float progress = (float) y / height;
-			// Radius tapers from baseRadius to 1-2 at top
 			float radius = baseRadius * (1.0f - progress * 0.75f);
 			radius = Math.max(1.0f, radius);
 
-			// Calculate organic twist offset
 			float twistX = Mth.sin(y * twistRate) * twistAmplitude * progress;
 			float twistZ = Mth.cos(y * twistRate * 1.3f) * twistAmplitude * progress;
 
@@ -147,36 +180,33 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 			for (int x = -intRadius; x <= intRadius; x++) {
 				for (int z = -intRadius; z <= intRadius; z++) {
 					float dist = Mth.sqrt(x * x + z * z);
-
-					// Add surface noise
 					float noise = (float) Math.sin(x * 0.8 + z * 1.2 + y * 0.4) * 0.4f;
 
 					if (dist <= radius + noise) {
-						int px = Mth.floor(x + twistX);
-						int pz = Mth.floor(z + twistZ);
-						BlockPos pos = base.offset(px, y, pz);
-						if (!respectsCutoff(level, pos)) continue;
+						int px = bx + Mth.floor(x + twistX);
+						int pz = bz + Mth.floor(z + twistZ);
+						if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 
+						mutable.set(px, by + y, pz);
 						BlockState block = chooseTrunkBlock(y, height, dist, radius, random);
-						placeIfReplaceable(level, pos, block);
+						placeIfReplaceable(level, mutable, block);
 					}
 				}
 			}
 		}
 
-		// Fill foundation
+		// Fill foundation – reuse mutable
 		for (int x = -baseRadius; x <= baseRadius; x++) {
 			for (int z = -baseRadius; z <= baseRadius; z++) {
 				float dist = Mth.sqrt(x * x + z * z);
 				if (dist <= baseRadius) {
-					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(
-							base.getX() + x, base.getY() - 1, base.getZ() + z);
+					int fx = bx + x, fz = bz + z;
+					if (outOfBounds(fx, fz, cutoff, ccx, ccz)) continue;
+					mutable.set(fx, by - 1, fz);
 					for (int depth = 0; depth < 5; depth++) {
 						BlockState existing = level.getBlockState(mutable);
 						if (existing.isAir() || existing.canBeReplaced()) {
-							if (respectsCutoff(level, mutable.immutable())) {
-								level.setBlock(mutable, VENOUS_STONE, 2);
-							}
+							level.setBlock(mutable, VENOUS_STONE, 2);
 						}
 						mutable.move(Direction.DOWN);
 					}
@@ -210,13 +240,14 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * Build the massive mushroom cap on top.
 	 */
-	private void buildCap(WorldGenLevel level, BlockPos base, int height, int capRadius, RandomSource random) {
+	private void buildCap(WorldGenLevel level, BlockPos base, int height, int capRadius, RandomSource random,
+						  BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		int capBase = height - 2;
 		int capHeight = 4 + random.nextInt(3); // 4-6 layers
 
 		for (int y = 0; y < capHeight; y++) {
 			float progress = (float) y / capHeight;
-			// Cap shape: wide at bottom, narrowing to top
 			float radius;
 			if (y == 0) {
 				radius = capRadius;
@@ -233,21 +264,20 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 					float noise = (float) Math.sin(x * 0.5 + z * 0.7) * 0.5f;
 
 					if (dist <= radius + noise) {
-						BlockPos pos = base.offset(x, capBase + y, z);
-						if (!respectsCutoff(level, pos)) continue;
+						int px = bx + x, pz = bz + z;
+						if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
+						mutable.set(px, by + capBase + y, pz);
 
-						// Outer edge gets the cap block, inner gets conscious_mass
 						if (dist > radius - 2) {
-							placeIfReplaceable(level, pos, CAP);
+							placeIfReplaceable(level, mutable, CAP);
 						} else if (y == 0) {
-							// Underside of cap
 							if (random.nextInt(4) == 0) {
-								placeIfReplaceable(level, pos, Blocks.SHROOMLIGHT.defaultBlockState());
+								placeIfReplaceable(level, mutable, SHROOMLIGHT_STATE);
 							} else {
-								placeIfReplaceable(level, pos, CONSCIOUS_MASS);
+								placeIfReplaceable(level, mutable, CONSCIOUS_MASS);
 							}
 						} else {
-							placeIfReplaceable(level, pos, CAP);
+							placeIfReplaceable(level, mutable, CAP);
 						}
 					}
 				}
@@ -258,13 +288,15 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * Add massive root buttresses extending from the base.
 	 */
-	private void buildButtressRoots(WorldGenLevel level, BlockPos base, int baseRadius, RandomSource random) {
+	private void buildButtressRoots(WorldGenLevel level, BlockPos base, int baseRadius, RandomSource random,
+									BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		int rootCount = 3 + random.nextInt(4); // 3-6 roots
 
 		for (int i = 0; i < rootCount; i++) {
 			float angle = (float) i / rootCount * Mth.TWO_PI + random.nextFloat() * 0.5f;
-			int rootLength = 6 + random.nextInt(8); // 6-13 blocks long
-			int rootHeight = 4 + random.nextInt(6); // 4-9 blocks tall
+			int rootLength = 6 + random.nextInt(8);
+			int rootHeight = 4 + random.nextInt(6);
 
 			for (int step = 0; step < rootLength; step++) {
 				float stepProgress = (float) step / rootLength;
@@ -272,17 +304,16 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 				int rz = Mth.floor(Mth.sin(angle) * (baseRadius + step));
 				int ry = Mth.floor(rootHeight * (1.0f - stepProgress));
 
-				// Build a column for this root segment
 				int width = Math.max(1, Mth.floor(2 * (1.0f - stepProgress)));
 				for (int dy = 0; dy <= ry; dy++) {
 					for (int dx = -width; dx <= width; dx++) {
 						for (int dz = -width; dz <= width; dz++) {
 							if (Mth.sqrt(dx * dx + dz * dz) <= width) {
-								BlockPos pos = base.offset(rx + dx, dy, rz + dz);
-								if (respectsCutoff(level, pos)) {
-									placeIfReplaceable(level, pos,
-											random.nextInt(3) == 0 ? CALCIFIED : STEM);
-								}
+								int px = bx + rx + dx, pz = bz + rz + dz;
+								if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
+								mutable.set(px, by + dy, pz);
+								placeIfReplaceable(level, mutable,
+										random.nextInt(3) == 0 ? CALCIFIED : STEM);
 							}
 						}
 					}
@@ -294,9 +325,11 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * Add hanging hyphae tendrils from the cap underside.
 	 */
-	private void addHangingTendrils(WorldGenLevel level, BlockPos base, int height, int capRadius, RandomSource random) {
+	private void addHangingTendrils(WorldGenLevel level, BlockPos base, int height, int capRadius, RandomSource random,
+									BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		int capBase = height - 2;
-		int tendrilCount = 10 + random.nextInt(15); // 10-24
+		int tendrilCount = 10 + random.nextInt(15);
 
 		for (int i = 0; i < tendrilCount; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
@@ -304,17 +337,19 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 			int tx = Mth.floor(Mth.cos(angle) * dist);
 			int tz = Mth.floor(Mth.sin(angle) * dist);
 
-			int tendrilLength = 3 + random.nextInt(10); // 3-12 blocks
-			for (int dy = 0; dy < tendrilLength; dy++) {
-				BlockPos pos = base.offset(tx, capBase - 1 - dy, tz);
-				if (!respectsCutoff(level, pos)) continue;
+			int px = bx + tx, pz = bz + tz;
+			if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
 
-				BlockState existing = level.getBlockState(pos);
+			int tendrilLength = 3 + random.nextInt(10);
+			for (int dy = 0; dy < tendrilLength; dy++) {
+				mutable.set(px, by + capBase - 1 - dy, pz);
+
+				BlockState existing = level.getBlockState(mutable);
 				if (existing.isAir()) {
 					if (dy == tendrilLength - 1 && random.nextInt(3) == 0) {
-						level.setBlock(pos, Blocks.SHROOMLIGHT.defaultBlockState(), 2);
+						level.setBlock(mutable, SHROOMLIGHT_STATE, 2);
 					} else {
-						level.setBlock(pos, HYPHAE, 2);
+						level.setBlock(mutable, HYPHAE, 2);
 					}
 				} else {
 					break;
@@ -326,8 +361,10 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * Add sporite crystal clusters along the trunk and at the base.
 	 */
-	private void addCrystalClusters(WorldGenLevel level, BlockPos base, int height, int baseRadius, RandomSource random) {
-		int clusterCount = 6 + random.nextInt(8); // 6-13 clusters
+	private void addCrystalClusters(WorldGenLevel level, BlockPos base, int height, int baseRadius, RandomSource random,
+									BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
+		int clusterCount = 6 + random.nextInt(8);
 
 		for (int i = 0; i < clusterCount; i++) {
 			float angle = random.nextFloat() * Mth.TWO_PI;
@@ -338,19 +375,18 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 			int cx = Mth.floor(Mth.cos(angle) * (radius + 1));
 			int cz = Mth.floor(Mth.sin(angle) * (radius + 1));
 
-			// Place a small cluster of sporite crystals
 			int clusterSize = 1 + random.nextInt(3);
 			for (int dx = -clusterSize; dx <= clusterSize; dx++) {
 				for (int dy = -clusterSize; dy <= clusterSize; dy++) {
 					for (int dz = -clusterSize; dz <= clusterSize; dz++) {
 						if (Mth.sqrt(dx * dx + dy * dy + dz * dz) <= clusterSize
 								&& random.nextInt(3) != 0) {
-							BlockPos pos = base.offset(cx + dx, clusterY + dy, cz + dz);
-							if (respectsCutoff(level, pos)) {
-								BlockState existing = level.getBlockState(pos);
-								if (existing.isAir()) {
-									level.setBlock(pos, SPORITE, 2);
-								}
+							int px = bx + cx + dx, pz = bz + cz + dz;
+							if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
+							mutable.set(px, by + clusterY + dy, pz);
+							BlockState existing = level.getBlockState(mutable);
+							if (existing.isAir()) {
+								level.setBlock(mutable, SPORITE, 2);
 							}
 						}
 					}
@@ -362,19 +398,21 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 	/**
 	 * Carve an internal chamber inside the trunk, about 1/3 of the way up.
 	 */
-	private void addInternalChamber(WorldGenLevel level, BlockPos base, int height, RandomSource random) {
+	private void addInternalChamber(WorldGenLevel level, BlockPos base, int height,
+									BlockPos.MutableBlockPos mutable, int cutoff, int ccx, int ccz) {
+		int bx = base.getX(), by = base.getY(), bz = base.getZ();
 		int chamberY = height / 3;
 		int chamberRadius = 2;
 
 		for (int x = -chamberRadius; x <= chamberRadius; x++) {
 			for (int z = -chamberRadius; z <= chamberRadius; z++) {
-				for (int y = 0; y < 4; y++) {
-					float dist = Mth.sqrt(x * x + z * z);
-					if (dist < chamberRadius) {
-						BlockPos pos = base.offset(x, chamberY + y, z);
-						if (respectsCutoff(level, pos)) {
-							level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-						}
+				float dist = Mth.sqrt(x * x + z * z);
+				if (dist < chamberRadius) {
+					int px = bx + x, pz = bz + z;
+					if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
+					for (int y = 0; y < 4; y++) {
+						mutable.set(px, by + chamberY + y, pz);
+						level.setBlock(mutable, AIR_STATE, 2);
 					}
 				}
 			}
@@ -383,30 +421,18 @@ public class SporeNexusTowerFeature extends Feature<NoneFeatureConfiguration> {
 		// Place a shroomlight ceiling
 		for (int x = -1; x <= 1; x++) {
 			for (int z = -1; z <= 1; z++) {
-				BlockPos pos = base.offset(x, chamberY + 4, z);
-				if (respectsCutoff(level, pos)) {
-					level.setBlock(pos, Blocks.SHROOMLIGHT.defaultBlockState(), 2);
-				}
+				int px = bx + x, pz = bz + z;
+				if (outOfBounds(px, pz, cutoff, ccx, ccz)) continue;
+				mutable.set(px, by + chamberY + 4, pz);
+				level.setBlock(mutable, SHROOMLIGHT_STATE, 2);
 			}
 		}
 	}
 
-	private void placeIfReplaceable(WorldGenLevel level, BlockPos pos, BlockState state) {
+	private static void placeIfReplaceable(WorldGenLevel level, BlockPos.MutableBlockPos pos, BlockState state) {
 		BlockState existing = level.getBlockState(pos);
 		if (existing.isAir() || existing.canBeReplaced()) {
 			level.setBlock(pos, state, 2);
 		}
-	}
-
-	private boolean respectsCutoff(WorldGenLevel level, BlockPos pos) {
-		if (level instanceof WorldGenRegion region) {
-			int i = SectionPos.blockToSectionCoord(pos.getX());
-			int j = SectionPos.blockToSectionCoord(pos.getZ());
-			ChunkPos chunkpos = region.getCenter();
-			int k = Math.abs(chunkpos.x - i);
-			int l = Math.abs(chunkpos.z - j);
-			return k <= region.writeRadiusCutoff && l <= region.writeRadiusCutoff;
-		}
-		return true;
 	}
 }
