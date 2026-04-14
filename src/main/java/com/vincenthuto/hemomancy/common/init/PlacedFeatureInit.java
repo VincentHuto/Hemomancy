@@ -63,8 +63,6 @@ public class PlacedFeatureInit {
 
 	// Fungal dimension ores
 	public static final ResourceKey<PlacedFeature> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
-	public static final ResourceKey<PlacedFeature> ORE_VIVIANITE = createKey("ore_vivianite");
-	public static final ResourceKey<PlacedFeature> ORE_SPORELITE = createKey("ore_sporelite");
 
 	public static void bootstrap(BootstapContext<PlacedFeature> context) {
 
@@ -186,20 +184,6 @@ public class PlacedFeatureInit {
 		register(context, PlacedFeatureInit.ORE_HEMATIC_IRON, ORE_HEMATIC_IRON, List.of(
 				CountPlacement.of(10), InSquarePlacement.spread(),
 				HeightRangePlacement.triangle(VerticalAnchor.absolute(-32), VerticalAnchor.absolute(96)),
-				BiomeFilter.biome()));
-
-		final Holder<ConfiguredFeature<?, ?>> ORE_VIVIANITE = configuredFeatureGetter
-				.getOrThrow(ConfiguredFeatureInit.ORE_VIVIANITE);
-		register(context, PlacedFeatureInit.ORE_VIVIANITE, ORE_VIVIANITE, List.of(
-				CountPlacement.of(6), InSquarePlacement.spread(),
-				HeightRangePlacement.triangle(VerticalAnchor.absolute(-48), VerticalAnchor.absolute(48)),
-				BiomeFilter.biome()));
-
-		final Holder<ConfiguredFeature<?, ?>> ORE_SPORELITE = configuredFeatureGetter
-				.getOrThrow(ConfiguredFeatureInit.ORE_SPORELITE);
-		register(context, PlacedFeatureInit.ORE_SPORELITE, ORE_SPORELITE, List.of(
-				CountPlacement.of(14), InSquarePlacement.spread(),
-				HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(128)),
 				BiomeFilter.biome()));
 
 	}

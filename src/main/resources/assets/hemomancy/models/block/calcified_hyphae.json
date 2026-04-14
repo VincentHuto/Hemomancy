@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "hemomancy:block/sporelite_ore"
+    "all": "hemomancy:block/calcified_hyphae"
   }
 }

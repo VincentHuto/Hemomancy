@@ -76,13 +76,17 @@ public class ConfiguredFeatureInit {
 
 	public static final ResourceKey<ConfiguredFeature<?, ?>> TERMITE_MOUND = createKey("termite_mound");
 
+	// Spore Nexus Tower - massive rare fungal spire for the fungal dimension
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SPORE_NEXUS_TOWER = createKey("spore_nexus_tower");
+
+	// Sporite Crystal patch feature
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
+
 	// Conscious mass blob (for fungal dimension surface decoration)
 	public static final ResourceKey<ConfiguredFeature<?, ?>> CONSCIOUS_MASS_BLOB = createKey("conscious_mass_blob");
 
 	// Fungal dimension ores
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_HEMATIC_IRON = createKey("ore_hematic_iron");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_VIVIANITE = createKey("ore_vivianite");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_SPORELITE = createKey("ore_sporelite");
 
 	public static ResourceKey<ConfiguredFeature<?, ?>> createKey(String name) {
 		return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Hemomancy.MOD_ID, name));
@@ -116,16 +120,6 @@ public class ConfiguredFeatureInit {
 				new ConfiguredFeature<>(Feature.ORE,
 						new OreConfiguration(venousStoneTest,
 								BlockInit.hematic_iron_ore.get().defaultBlockState(), 9)));
-
-		context.register(ORE_VIVIANITE,
-				new ConfiguredFeature<>(Feature.ORE,
-						new OreConfiguration(venousStoneTest,
-								BlockInit.vivianite_ore.get().defaultBlockState(), 7)));
-
-		context.register(ORE_SPORELITE,
-				new ConfiguredFeature<>(Feature.ORE,
-						new OreConfiguration(venousStoneTest,
-								BlockInit.sporelite_ore.get().defaultBlockState(), 12)));
 
 		register(context, PATCH_HYPHAE, Feature.SIMPLE_RANDOM_SELECTOR,
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(
@@ -238,6 +232,13 @@ public class ConfiguredFeatureInit {
 		register(context, BOG_BODY, BaseFeatureInit.BOG_BODY, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, TERMITE_MOUND, BaseFeatureInit.TERMITE_MOUND, NoneFeatureConfiguration.INSTANCE);
+
+		register(context, SPORE_NEXUS_TOWER, BaseFeatureInit.SPORE_NEXUS_TOWER, NoneFeatureConfiguration.INSTANCE);
+
+		register(context, SPORITE_CRYSTAL_CLUSTER, Feature.SIMPLE_RANDOM_SELECTOR,
+				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
+						FeatureUtils.simplePatchConfiguration(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(
+								BlockStateProvider.simple(BlockInit.sporite_crystal.get())))))));
 
 	}
 

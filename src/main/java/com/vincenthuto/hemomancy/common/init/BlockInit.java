@@ -177,13 +177,16 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
 					.sound(SoundType.NETHER_ORE)));
 
-	public static final RegistryObject<Block> vivianite_ore = BASEBLOCKS.register("vivianite_ore",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
-					.sound(SoundType.NETHER_ORE)));
+	// New fungal dimension blocks
+	public static final RegistryObject<Block> calcified_hyphae = BASEBLOCKS.register("calcified_hyphae",
+			() -> new Block(BlockBehaviour.Properties.of().strength(2.0F, 6.0F).sound(SoundType.BONE_BLOCK)));
 
-	public static final RegistryObject<Block> sporelite_ore = BASEBLOCKS.register("sporelite_ore",
-			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(3.0F, 3.0F)
-					.sound(SoundType.NETHER_ORE)));
+	public static final RegistryObject<Block> hemorrhagic_crust = BASEBLOCKS.register("hemorrhagic_crust",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 4.0F).sound(SoundType.NETHERRACK)));
+
+	public static final RegistryObject<Block> sporite_crystal = BASEBLOCKS.register("sporite_crystal",
+			() -> new Block(BlockBehaviour.Properties.of().strength(1.5F, 3.0F).sound(SoundType.AMETHYST)
+					.lightLevel((state) -> 10).noOcclusion()));
 
 	public static final RegistryObject<Block> hematic_iron_block = BASEBLOCKS.register("hematic_iron_block",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(5.0F, 6.0F)
