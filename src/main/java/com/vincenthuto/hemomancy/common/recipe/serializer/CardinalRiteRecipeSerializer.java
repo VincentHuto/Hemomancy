@@ -133,8 +133,9 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		MultiblockPattern mbPattern = new MultiblockPattern(bp, keyMap, pattern);
 		int requiredDegree = GsonHelper.getAsInt(pJson, "requiredDegree", -1);
 		boolean breakBlocksOnCreation = GsonHelper.getAsBoolean(pJson, "breakBlocksOnCreation", true);
+		boolean unstained = GsonHelper.getAsBoolean(pJson, "unstained", false);
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree, breakBlocksOnCreation);
+				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
 
 		return recipe;
 	}
@@ -176,9 +177,10 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		ItemStack result = pBuffer.readItem();
 		int requiredDegree = pBuffer.readInt();
 		boolean breakBlocksOnCreation = pBuffer.readBoolean();
+		boolean unstained = pBuffer.readBoolean();
 
 		CardinalRiteRecipe recipe = new CardinalRiteRecipe(pRecipeId, cost, riteType, mbPattern, result, riteName,
-				riteDescription, requiredDegree, breakBlocksOnCreation);
+				riteDescription, requiredDegree, breakBlocksOnCreation, unstained);
 
 		return recipe;
 	}
@@ -206,5 +208,6 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 		pBuffer.writeItem(pRecipe.getResult());
 		pBuffer.writeInt(pRecipe.getRequiredDegree());
 		pBuffer.writeBoolean(pRecipe.shouldBreakBlocksOnCreation());
+		pBuffer.writeBoolean(pRecipe.isUnstained());
 	}
 }

@@ -455,7 +455,12 @@ public class SkillTreeScreen extends Screen {
 		riteRecipes.clear();
 		ritesByTier.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			riteRecipes.addAll(CardinalRiteRecipe.getAllRecipes(minecraft.level));
+			// Only include blood-faction rites; unstained rites go to UnstainedProgressScreen
+			for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(minecraft.level)) {
+				if (!r.isUnstained()) {
+					riteRecipes.add(r);
+				}
+			}
 		}
 		// Group by rite type (tier)
 		for (CardinalRiteType type : CardinalRiteType.values()) {
@@ -485,7 +490,12 @@ public class SkillTreeScreen extends Screen {
 		craftingRecipes.clear();
 		craftingByTier.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			craftingRecipes.addAll(BloodStructureRecipe.getAllRecipes(minecraft.level));
+			// Only include blood-faction crafting; unstained crafting goes to UnstainedProgressScreen
+			for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(minecraft.level)) {
+				if (!r.isUnstained()) {
+					craftingRecipes.add(r);
+				}
+			}
 		}
 		// Initialise empty tier lists
 		for (String tierName : CRAFTING_TIER_NAMES) {
