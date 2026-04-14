@@ -35,7 +35,7 @@ public class MortalDisplayItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	@Override
 	public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
-			MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+							 MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 
 		if (this.model == null) {
 			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();

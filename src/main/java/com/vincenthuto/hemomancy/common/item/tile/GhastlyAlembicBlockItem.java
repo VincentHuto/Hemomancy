@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tile;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.GhastlyAlembicItemRenderer;
-
+import com.vincenthuto.hemomancy.client.render.item.tile.crafting.GhastlyAlembicItemRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;

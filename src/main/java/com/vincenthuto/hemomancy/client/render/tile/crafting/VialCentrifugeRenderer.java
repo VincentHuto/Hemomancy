@@ -12,6 +12,7 @@ import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -74,8 +75,8 @@ public class VialCentrifugeRenderer implements BlockEntityRenderer<VialCentrifug
 		// Render
 		MultiBufferSource.BufferSource irendertypebuffer$impl = MultiBufferSource
 				.immediate(Tesselator.getInstance().getBuilder());
-		VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(arms.renderType(texture));
-		arms.renderToBuffer(matrixStackIn, ivertexbuilder, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(texture));
+		arms.renderToBuffer(matrixStackIn, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F,
 				1.0F);
 		irendertypebuffer$impl.endBatch();
 		matrixStackIn.popPose();
