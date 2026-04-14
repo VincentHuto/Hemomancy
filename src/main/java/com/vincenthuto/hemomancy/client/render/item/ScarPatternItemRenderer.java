@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.item.tile;
+package com.vincenthuto.hemomancy.client.render.item;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tile;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.EarthenVeinItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.functional.EarthenVeinItemRenderer;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;

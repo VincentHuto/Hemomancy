@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.item.tile;
+package com.vincenthuto.hemomancy.client.render.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;

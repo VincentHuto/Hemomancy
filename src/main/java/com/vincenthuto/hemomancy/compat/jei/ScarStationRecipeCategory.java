@@ -29,7 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
 /**
- * JEI recipe category for the Runic Chisel Station — fully programmatic rendering.
+ * JEI recipe category for the Cerebral Scar Station — fully programmatic rendering.
  */
 public class ScarStationRecipeCategory implements IRecipeCategory<ScarRecipe> {
 

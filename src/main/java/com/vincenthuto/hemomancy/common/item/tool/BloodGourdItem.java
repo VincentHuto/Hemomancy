@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.item.tool;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.BloodGourdItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.BloodGourdItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;

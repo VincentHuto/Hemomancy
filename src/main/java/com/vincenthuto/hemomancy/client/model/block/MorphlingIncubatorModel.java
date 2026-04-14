@@ -41,23 +41,23 @@ public class MorphlingIncubatorModel extends Model {
         PartDefinition Base = morphling_incubator.addOrReplaceChild("Base", CubeListBuilder.create().texOffs(41, 0).addBox(-5.0F, -4.0F, -5.0F, 10.0F, 4.0F, 10.0F, new CubeDeformation(0.0F))
                 .texOffs(41, 15).addBox(5.0F, -3.0F, -4.0F, 4.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
                 .texOffs(25, 43).addBox(-9.0F, -3.0F, -4.0F, 4.0F, 3.0F, 8.0F, new CubeDeformation(0.0F))
-                .texOffs(13, 56).addBox(5.0F, -5.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(13, 61).addBox(-8.0F, -5.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+                .texOffs(13, 56).addBox(5.2F, -5.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(13, 61).addBox(-8.2F, -5.0F, -1.0F, 3.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition Tank = morphling_incubator.addOrReplaceChild("Tank", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, -16.0F, -5.0F, 10.0F, 16.0F, 10.0F, new CubeDeformation(0.0F))
-                .texOffs(50, 38).addBox(5.0F, -16.0F, -2.0F, 2.0F, 16.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(25, 55).addBox(-7.0F, -16.0F, -2.0F, 2.0F, 16.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 27).addBox(-6.0F, -19.0F, -6.0F, 12.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
-                .texOffs(49, 27).addBox(-3.0F, -23.0F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
-                .texOffs(13, 66).addBox(5.0F, -17.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(68, 58).addBox(-7.0F, -17.0F, -1.0F, 2.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, 0.0F));
+                .texOffs(50, 38).addBox(5.1F, -16.0F, -2.0F, 2.0F, 16.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(25, 55).addBox(-7.1F, -16.0F, -2.0F, 2.0F, 16.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 27).addBox(-6.0F, -18.9F, -6.0F, 12.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
+                .texOffs(49, 27).addBox(-3.0F, -22.9F, -3.0F, 6.0F, 4.0F, 6.0F, new CubeDeformation(0.0F))
+                .texOffs(13, 66).addBox(5.0F, -17.0F, -1.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(68, 58).addBox(-7.0F, -17.0F, -1.0F, 2.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -4.0F, 0.0F));
 
-        PartDefinition SideVials = morphling_incubator.addOrReplaceChild("SideVials", CubeListBuilder.create().texOffs(0, 56).addBox(7.0F, -15.0F, -2.0F, 2.0F, 9.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(38, 59).addBox(-9.0F, -15.0F, -2.0F, 2.0F, 9.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition SideVials = morphling_incubator.addOrReplaceChild("SideVials", CubeListBuilder.create().texOffs(0, 56).addBox(7.1F, -15.0F, -2.0F, 2.0F, 9.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(38, 59).addBox(-9.1F, -15.0F, -2.0F, 2.0F, 9.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition FloorVials = morphling_incubator.addOrReplaceChild("FloorVials", CubeListBuilder.create().texOffs(51, 59).addBox(3.0F, -5.0F, 5.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(63, 38).addBox(-7.0F, -5.0F, 5.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(63, 48).addBox(3.0F, -5.0F, -9.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+        PartDefinition FloorVials = morphling_incubator.addOrReplaceChild("FloorVials", CubeListBuilder.create().texOffs(51, 59).addBox(3.0F, -5.0F, 5.1F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(63, 38).addBox(-7.0F, -5.0F, 5.1F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
+                .texOffs(63, 48).addBox(3.0F, -5.0F, -9.1F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F))
                 .texOffs(66, 15).addBox(-7.0F, -5.0F, -9.0F, 4.0F, 5.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition Creature = morphling_incubator.addOrReplaceChild("Creature", CubeListBuilder.create().texOffs(0, 43).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F, new CubeDeformation(0.0F))

@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "hemomancy:entity/model_morphling_incubator"
+    "particle": "hemomancy:entity/morphling_incubator_model"
   }
 }

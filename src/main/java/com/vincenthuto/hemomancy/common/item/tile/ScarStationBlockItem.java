@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tile;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.ScarStationItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.crafting.ScarStationItemRenderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.scar.pattern;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.ScarPatternItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemRenderer;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 

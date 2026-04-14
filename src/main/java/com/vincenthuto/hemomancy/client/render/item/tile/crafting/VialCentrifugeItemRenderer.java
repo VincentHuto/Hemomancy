@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.render.item.tile;
+package com.vincenthuto.hemomancy.client.render.item.tile.crafting;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;

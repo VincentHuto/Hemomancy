@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tile;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.VisceralMirrorItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.functional.VisceralMirrorItemRenderer;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;

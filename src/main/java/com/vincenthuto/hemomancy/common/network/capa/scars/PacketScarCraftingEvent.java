@@ -15,7 +15,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 public class PacketScarCraftingEvent {
 
-	/** Minimum initiatory degree required to use the Runic Chisel Station. */
+	/** Minimum initiatory degree required to use the Cerebral Scar Station. */
 	private static final int REQUIRED_DEGREE = 4;
 
 	public PacketScarCraftingEvent() {

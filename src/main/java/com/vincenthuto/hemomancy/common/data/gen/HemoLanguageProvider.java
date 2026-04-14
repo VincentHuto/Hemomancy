@@ -28,7 +28,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 		// Jei
 		add("hemomancy.jei.memory_weaving", "Memory Weaving");
-		add("hemomancy.jei.scar_station", "Chisel Station");
+		add("hemomancy.jei.scar_station", "Scar Station");
 
 		// Banner
 		addArmBannerTranslation("chitinite");

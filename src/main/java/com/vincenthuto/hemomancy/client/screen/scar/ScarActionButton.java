@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 /**
- * Programmatically rendered action button for the Chisel Station GUI.
+ * Programmatically rendered action button for the Scar Station GUI.
  * Matches the Hemomancy blood theme with dark reddish-brown backgrounds,
  * pulsing blood-red borders, and themed hover/press states.
  */

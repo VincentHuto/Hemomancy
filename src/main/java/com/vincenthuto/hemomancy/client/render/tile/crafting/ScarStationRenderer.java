@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_chisel_station.png");
+			"textures/entity/model_scar_station.png");
 
 	private final ScarStationModel model;
 

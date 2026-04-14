@@ -69,7 +69,7 @@ public final class MaterialsData {
 				"Incubates morphling polyps into specialised morphlings.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.morphling_incubator.get())));
 
-		list.add(new MaterialEntry("scar_station", "Runic Chisel Station",
+		list.add(new MaterialEntry("scar_station", "Cerebral Scar Station",
 				"Carves Scar Patterns into blank scars.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.scar_station.get())));
 

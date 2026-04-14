@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tile;
 
 import java.util.function.Consumer;
 
-import com.vincenthuto.hemomancy.client.render.item.tile.SomaticLoomItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.tile.crafting.SomaticLoomItemRenderer;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;

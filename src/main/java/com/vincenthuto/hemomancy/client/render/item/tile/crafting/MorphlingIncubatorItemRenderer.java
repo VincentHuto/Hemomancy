@@ -1,11 +1,11 @@
-package com.vincenthuto.hemomancy.client.render.item.tile;
+package com.vincenthuto.hemomancy.client.render.item.tile.crafting;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.block.GhastlyAlembicModel;
+import com.vincenthuto.hemomancy.client.model.block.MorphlingIncubatorModel;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -20,18 +20,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class GhastlyAlembicItemRenderer extends BlockEntityWithoutLevelRenderer {
+public class MorphlingIncubatorItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
-			"textures/entity/model_ghastly_alembic.png");
+			"textures/entity/morphling_incubator_model.png");
 
-	private GhastlyAlembicModel model;
+	private MorphlingIncubatorModel model;
 
-	public GhastlyAlembicItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
+	public MorphlingIncubatorItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
 		if (modelSet != null) {
-			this.model = new GhastlyAlembicModel(
-					modelSet.bakeLayer(GhastlyAlembicModel.LAYER_LOCATION));
+			this.model = new MorphlingIncubatorModel(
+					modelSet.bakeLayer(MorphlingIncubatorModel.LAYER_LOCATION));
 		}
 	}
 
@@ -41,8 +41,8 @@ public class GhastlyAlembicItemRenderer extends BlockEntityWithoutLevelRenderer 
 
 		if (this.model == null) {
 			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
-			this.model = new GhastlyAlembicModel(
-					modelSet.bakeLayer(GhastlyAlembicModel.LAYER_LOCATION));
+			this.model = new MorphlingIncubatorModel(
+					modelSet.bakeLayer(MorphlingIncubatorModel.LAYER_LOCATION));
 		}
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -61,9 +61,7 @@ public class GhastlyAlembicItemRenderer extends BlockEntityWithoutLevelRenderer 
 			// ── GUI / inventory slot ──
 			poseStack.translate(0.5, 0.85, 0.5);
 			poseStack.scale(0.3f, 0.3f, 0.3f);
-			// Flip Y-down → Y-up (Blockbench convention)
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
-			// Isometric-ish viewing angle
 			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			// ── Item frame ──

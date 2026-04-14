@@ -194,7 +194,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 	@Override
 	protected void renderLabels(GuiGraphics graphics, int x, int y) {
 		// Title with blood-red color, centered with drop shadow
-		String titleText = "Chisel Station";
+		String titleText = "Scar Station";
 		graphics.drawString(font, titleText,
 				(this.imageWidth - font.width(titleText)) / 2, 4, 0xFFAA2222, true);
 
