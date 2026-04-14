@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.crafting.SomaticLoomBlockEntity;
 
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -33,8 +35,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class SomaticLoomBlock extends Block implements EntityBlock {
+public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
+	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
+	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+			new BlockPos(0, 1, 0)
+	};
+
 	private static final VoxelShape SHAPE_N = Stream
 			.of(Block.box(1.5, 5, 3.25, 2.5, 6, 12.75), Block.box(0.75, 0.1, 0.75, 3.25, 14.1, 3.25),
 					Block.box(2, 10, 2, 14, 14, 14), Block.box(0.5, 0, 0.5, 3.5, 2, 3.5),
@@ -62,7 +70,31 @@ public class SomaticLoomBlock extends Block implements EntityBlock {
 	public SomaticLoomBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+	}
 
+	@Override
+	public BlockPos[] getFillerOffsets() {
+		return FILLER_OFFSETS;
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+
+	@Override
+	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+		return true;
+	}
+
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
 	}
 
 	@Override
@@ -78,7 +110,13 @@ public class SomaticLoomBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		// Need 1 block above the base (Y+1) for the filler
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		}
+		return null; // Prevents placement if there's not enough room
 	}
 
 	@Nullable
@@ -121,12 +159,24 @@ public class SomaticLoomBlock extends Block implements EntityBlock {
 		return be != null && be.triggerEvent(id, param);
 	}
 
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+			@Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			if (level.getBlockEntity(pos) instanceof SomaticLoomBlockEntity te) {
 				te.dropContents();
+			}
+			if (!level.isClientSide) {
+				removeFillers(level, pos);
 			}
 		}
 		super.onRemove(state, level, pos, newState, isMoving);

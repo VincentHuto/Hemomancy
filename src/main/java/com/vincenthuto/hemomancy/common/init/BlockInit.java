@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MortalDisplayBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.SomaticLoomBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.SuspendedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.SuspendedCleansedBloodCrystalBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.SuspendedVivianiteBlockItem;
@@ -465,6 +466,10 @@ public class BlockInit {
 		if (b == BlockInit.runic_chisel_station.get()) {
 			return Pair.of(block.getSecond(),
 					new ChiselStationBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.somatic_loom.get()) {
+			return Pair.of(block.getSecond(),
+					new SomaticLoomBlockItem(b, new Item.Properties()));
 		}
 		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
 	}

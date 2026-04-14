@@ -18,6 +18,7 @@ import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.common.network.VanillaPacketDispatcher;
 
@@ -46,7 +47,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
+public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, IMultiBlockEntity {
 
 	// ========================== CONSTANTS ==========================
 
@@ -607,7 +608,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile {
 
 	@Override
 	public AABB getRenderBoundingBox() {
-		return new AABB(getBlockPos()).inflate(5.0, 5.0, 5.0);
+		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
 
 	@Override

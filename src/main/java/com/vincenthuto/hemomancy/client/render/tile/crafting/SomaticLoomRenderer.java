@@ -7,6 +7,8 @@ import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.client.model.block.SomaticLoomModel;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -17,11 +19,17 @@ import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 /**
  * Renders the Somatic Loom's visual effects: fractal tendency star, enzyme
@@ -34,8 +42,14 @@ import net.minecraft.world.item.ItemStack;
  */
 public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlockEntity> {
 
+	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/model_somatic_loom.png");
+
 	/** Fractal random — reseeded each tick for stable-per-tick crackle. */
 	private static final Random FRAC_RAND = new Random();
+
+	private final SomaticLoomModel model;
 
 	// ── Star geometry (block-local coordinates) ──
 	private static final float CX = 0.5f;
@@ -72,6 +86,7 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 	private static final double UNDULATE_SPEED2 = 0.1;
 
 	public SomaticLoomRenderer(BlockEntityRendererProvider.Context ctx) {
+		this.model = new SomaticLoomModel(ctx.bakeLayer(SomaticLoomModel.LAYER_LOCATION));
 	}
 
 	@Override
@@ -89,6 +104,9 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 		boolean showEffects = !te.contents.get(0).isEmpty();
+
+		// === Render the somatic loom entity model ===
+		renderLoomModel(stack, buffer, te, combinedLight, combinedOverlay);
 
 		// === Items (always rendered, depth writes first) ===
 		stack.pushPose();
@@ -546,5 +564,43 @@ public class SomaticLoomRenderer implements BlockEntityRenderer<SomaticLoomBlock
 		vc.vertex(mat, x2, y2, z2).color(r2, g2, b2, a2).endVertex();
 		vc.vertex(mat, x3, y3, z3).color(r3, g3, b3, a3).endVertex();
 		vc.vertex(mat, x4, y4, z4).color(r4, g4, b4, a4).endVertex();
+	}
+
+	// ═══════════════════════════════════════════════════════════════
+	//  Loom Model Rendering
+	// ═══════════════════════════════════════════════════════════════
+
+	/**
+	 * Renders the somatic loom entity model. The model is authored Y-down
+	 * (Blockbench convention) so we flip 180° on X. We rotate around Y to
+	 * match the block's FACING direction.
+	 */
+	private void renderLoomModel(PoseStack poseStack, MultiBufferSource bufferIn,
+								 SomaticLoomBlockEntity te, int combinedLightIn, int combinedOverlayIn) {
+		poseStack.pushPose();
+
+		// Centre on the block
+		poseStack.translate(0.5D, 1.5D, 0.5D);
+
+		// Flip model upside-down (Blockbench Y-down → world Y-up)
+		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
+
+		// Rotate the model based on the block's facing direction
+		Direction facing = te.getBlockState().getValue(FACING);
+		float yRot = switch (facing) {
+			case NORTH -> 180f;
+			case EAST -> 270f;
+			case SOUTH -> 0f;
+			case WEST -> 90f;
+			default -> 0f;
+		};
+
+		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+
+		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
+		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
+				1.0F, 1.0F, 1.0F, 1.0F);
+
+		poseStack.popPose();
 	}
 }

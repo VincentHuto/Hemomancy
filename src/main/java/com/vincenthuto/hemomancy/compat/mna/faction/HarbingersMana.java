@@ -31,19 +31,19 @@ public class HarbingersMana extends SimpleCastingResource {
 		}
 
 		public int getXPBarColor() {
-			return 0xFF802020;
+			return 0xFFFF2020;
 		}
 
 		public int getBarColor() {
-			return 0xFF601010;
+			return 0xFFFFF10;
 		}
 
 		public int getBarManaCostEstimateColor() {
-			return 0x80000000;
+			return 0xFFF00000;
 		}
 
 		public int getResourceNumericTextColor() {
-			return 0x80FFFFFF;
+			return 0x808030FF;
 		}
 
 		public int getBadgeSize() {
