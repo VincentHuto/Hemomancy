@@ -26,13 +26,18 @@ import net.minecraft.world.item.ItemStack;
  *   of damage dealt (leeches siphon life from wounds)
  * - Mature (3): Blood Transfusion — when health drops below 30%, the leeches
  *   automatically consume blood volume to rapidly heal the player
- * - Apex (4): Hemophilic Frenzy — bonus melee damage that scales inversely
- *   with current health (the hungrier the leeches, the more ferocious)
+ * - Apex (4): Sanguine Frenzy — bonus melee damage that scales inversely
+ *   with current health (the hungrier the leeches, the more ferocious);
+ *   additionally, attacking targets below 20% health triggers an
+ *   Exsanguinate execution — dealing 8 bonus damage, healing the player,
+ *   and recovering blood volume (vampiric finishing blow)
  */
 public class LeechesMorphlingItem extends MorphlingItem {
 
 	/** Cooldown in ticks between Blood Transfusion triggers (10 seconds). */
 	private static final int TRANSFUSION_COOLDOWN = 200;
+	/** Cooldown in ticks between Exsanguinate triggers (10 seconds). */
+	private static final int EXSANGUINATE_COOLDOWN = 200;
 
 	public LeechesMorphlingItem(Properties prop) {
 		super(prop);
@@ -93,13 +98,33 @@ public class LeechesMorphlingItem extends MorphlingItem {
 			}
 		}
 
-		// Apex (4): Hemophilic Frenzy — bonus damage that scales with missing health
-		// This is applied as a separate magic damage instance based on how hurt the player is
+		// Apex (4): Sanguine Frenzy — bonus damage scaling with missing health
+		// PLUS Exsanguinate: execute targets below 20% health
 		if (maturity >= 4 && !player.level().isClientSide) {
+			// Missing health damage scaling (kept from original)
 			float missingHealthPct = 1.0f - (player.getHealth() / player.getMaxHealth());
 			float bonusDamage = missingHealthPct * 6.0f; // Up to 6 bonus damage at 0% health
 			if (bonusDamage > 0.5f) {
 				target.hurt(player.damageSources().magic(), bonusDamage);
+			}
+
+			// Exsanguinate: execute weakened targets for bonus heal + blood volume
+			if (target.getHealth() <= target.getMaxHealth() * 0.2f) {
+				long lastExec = getLastAbilityTick(stack, "Exsanguinate");
+				long now = player.level().getGameTime();
+				if (now - lastExec >= EXSANGUINATE_COOLDOWN) {
+					setLastAbilityTick(stack, "Exsanguinate", now);
+					// Execute damage burst
+					target.hurt(player.damageSources().magic(), 8.0f);
+					// Heal player from the feeding frenzy
+					player.heal(4.0f);
+					// Recover blood volume
+					player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+						if (!volume.isActive()) return;
+						volume.fill(100.0);
+						BloodVolumeEvents.syncVolume((ServerPlayer) player, volume);
+					});
+				}
 			}
 		}
 	}
@@ -109,7 +134,7 @@ public class LeechesMorphlingItem extends MorphlingItem {
 		List<Component> list = new ArrayList<>();
 		list.add(MorphlingItem.maturityBonusLine("Life Steal (Heal from melee damage)", 2, currentMaturity));
 		list.add(MorphlingItem.maturityBonusLine("Blood Transfusion (Emergency heal using blood)", 3, currentMaturity));
-		list.add(MorphlingItem.maturityBonusLine("Hemophilic Frenzy (Bonus damage when hurt)", 4, currentMaturity));
+		list.add(MorphlingItem.maturityBonusLine("Sanguine Frenzy (Missing HP damage + execute low targets)", 4, currentMaturity));
 		return list;
 	}
 
