@@ -56,6 +56,10 @@ import net.minecraftforge.network.PacketDistributor;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class RuneEntityEventHandler {
 
+	/** Rune slots 1–4 hold regular (non-fungal) runes. */
+	private static final int RUNE_SLOT_MIN = 1;
+	private static final int RUNE_SLOT_MAX = 4;
+
 	// --- Synergy bonus definitions (one per tendency) ---
 
 	private record SynergyBonus(Attribute attribute, UUID uuid, String name, double amount,
@@ -222,7 +226,7 @@ public class RuneEntityEventHandler {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			if (event.getEntity() instanceof LivingEntity target) {
 				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-					for (int i = 1; i <= 4; i++) {
+					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
 						ItemStack stack = runes.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemRune rune) {
 							rune.onPlayerAttack(player, target);
@@ -236,7 +240,7 @@ public class RuneEntityEventHandler {
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
 			if (event.getSource().getEntity() instanceof LivingEntity attacker) {
 				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-					for (int i = 1; i <= 4; i++) {
+					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
 						ItemStack stack = runes.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemRune rune) {
 							rune.onPlayerDefend(player, attacker);
@@ -252,7 +256,7 @@ public class RuneEntityEventHandler {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			if (event.getEntity() instanceof LivingEntity killed) {
 				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
-					for (int i = 1; i <= 4; i++) {
+					for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
 						ItemStack stack = runes.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemRune rune) {
 							rune.onPlayerKill(player, killed);
@@ -268,7 +272,7 @@ public class RuneEntityEventHandler {
 	private static void checkRuneSynergy(Player player) {
 		player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
 			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-			for (int i = 1; i <= 4; i++) {
+			for (int i = RUNE_SLOT_MIN; i <= RUNE_SLOT_MAX; i++) {
 				ItemStack stack = runes.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemRune rune) {
 					counts.merge(rune.getAssignedTendency(), 1, Integer::sum);
