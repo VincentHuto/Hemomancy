@@ -92,9 +92,9 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 		drawSlot(gfx, 110, 24);  // Output (reddish tint)
 		gfx.fill(110, 24, 126, 40, 0x20FF4444);
 
-		// ── Optional catalyst slot (top-left) ──
-		if (recipe.requiresCatalyst()) {
-			drawSlot(gfx, 1, 1);
+		// ── Catalyst slot (top-left) — always rendered ──
+		drawSlot(gfx, 1, 1);
+		{
 			Font font = Minecraft.getInstance().font;
 			gfx.drawString(font, Component.literal("Catalyst"), 20, 3, 0xFF886644, false);
 		}
@@ -227,10 +227,12 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 		builder.addSlot(RecipeIngredientRole.INPUT, 21, 25)
 				.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getIngredient().getItems()));
 
-		// Optional catalyst slot (top-left, slot position 2, 2 in JEI space)
+		// Catalyst slot (top-left) — always present; populated only when recipe needs one
 		if (recipe.requiresCatalyst()) {
 			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2)
 					.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getCatalyst().getItems()));
+		} else {
+			builder.addSlot(RecipeIngredientRole.CATALYST, 2, 2);
 		}
 
 		// Campfire as heat hint — shows that fire below is needed

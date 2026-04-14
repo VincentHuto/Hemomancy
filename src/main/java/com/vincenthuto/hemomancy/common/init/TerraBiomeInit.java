@@ -9,8 +9,8 @@ import net.minecraft.world.level.biome.Biome;
 public class TerraBiomeInit {
 
 	
-	  public static final ResourceKey<Biome> HOT_RED = register("hot_red");
-	    public static final ResourceKey<Biome> COLD_BLUE = register("cold_blue");
+	//   public static final ResourceKey<Biome> HOT_RED = register("hot_red");
+	//     public static final ResourceKey<Biome> COLD_BLUE = register("cold_blue");
 
 	    private static ResourceKey<Biome> register(String name)
 	    {
