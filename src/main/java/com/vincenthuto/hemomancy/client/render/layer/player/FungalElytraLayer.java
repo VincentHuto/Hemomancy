@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public class FungalElytraLayer<T extends LivingEntity, M extends EntityModel<T>>
 			float headPitch) {
 
 		if (entity instanceof Player player) {
-			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 				if (inv.getStackInSlot(0).getItem() == ItemInit.noctifly_agaric.get()) {
 					matrixStackIn.pushPose();
 					matrixStackIn.translate(0.0D, 0.0D, 0.125D);

@@ -1,14 +1,14 @@
 package com.vincenthuto.hemomancy.common.menu;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.menu.slot.RuneArmorSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.RuneOffHandSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveRuneTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarArmorSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarOffHandSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -37,13 +37,13 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
 	public final static int GOURD_SLOT_INDEX = 6;
 	public final static int CHARM_SLOT_INDEX = 5;
-	public final static int JAR_SLOT_INDEX = 7; // Index in the rune capability handler for the Morphling jar slot
+	public final static int JAR_SLOT_INDEX = 7; // Index in the scar capability handler for the Morphling jar slot
 
 	private final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 2, 2);
 	private final ResultContainer craftResult = new ResultContainer();
 	private final Player player;
 
-	public IRunesItemHandler runes;
+	public IScarsItemHandler scars;
 
 	public CharmGourdMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
@@ -58,7 +58,7 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 		super(ContainerInit.gourd_charm_inventory.get(), windowId);
 		this.player = playerInventory.player;
 
-		this.runes = this.player.getCapability(RunesCapabilities.RUNES).orElseThrow(NullPointerException::new);
+		this.scars = this.player.getCapability(ScarsCapabilities.SCARS).orElseThrow(NullPointerException::new);
 
 		this.addSlot(new ResultSlot(playerInventory.player, this.craftMatrix, this.craftResult, 0, 154, 28 + 26));
 
@@ -70,16 +70,16 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 
 		for (int k = 0; k < 4; ++k) {
 			final EquipmentSlot EquipmentSlot = VALID_EQUIPMENT_SLOTS[k];
-			this.addSlot(new RuneArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
+			this.addSlot(new ScarArmorSlot(playerInventory, 36 + (3 - k), 8, 8 + k * 18, EquipmentSlot, this.player));
 		}
 
-//		this.addSlot(new SelectiveRuneTypeSlot(player, ItemFungalRune.class, runes, 0, 77, 8));
-//		this.addSlot(new RuneSlot(player, runes, 1, 77 + 1 * 18, 8));
-//		this.addSlot(new RuneSlot(player, runes, 2, 77 + 2 * 18, 8));
-//		this.addSlot(new RuneSlot(player, runes, 3, 77 + 3 * 18, 8));
-		this.addSlot(new SelectiveRuneTypeSlot(player, ItemMorphlingJar.class, runes, JAR_SLOT_INDEX, 77, 8));    // UI slot 9
-		this.addSlot(new SelectiveRuneTypeSlot(player, VasculariumCharmItem.class, runes, CHARM_SLOT_INDEX, 77, 26)); // UI slot 10
-		this.addSlot(new SelectiveRuneTypeSlot(player, BloodGourdItem.class, runes, GOURD_SLOT_INDEX, 77, 44));    // UI slot 11
+//		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, 0, 77, 8));
+//		this.addSlot(new ScarSlot(player, scars, 1, 77 + 1 * 18, 8));
+//		this.addSlot(new ScarSlot(player, scars, 2, 77 + 2 * 18, 8));
+//		this.addSlot(new ScarSlot(player, scars, 3, 77 + 3 * 18, 8));
+		this.addSlot(new SelectiveScarTypeSlot(player, ItemMorphlingJar.class, scars, JAR_SLOT_INDEX, 77, 8));    // UI slot 9
+		this.addSlot(new SelectiveScarTypeSlot(player, VasculariumCharmItem.class, scars, CHARM_SLOT_INDEX, 77, 26)); // UI slot 10
+		this.addSlot(new SelectiveScarTypeSlot(player, BloodGourdItem.class, scars, GOURD_SLOT_INDEX, 77, 44));    // UI slot 11
 
 		for (int l = 0; l < 3; ++l) {
 			for (int j1 = 0; j1 < 9; ++j1) {
@@ -91,7 +91,7 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
 		}
 
-		this.addSlot(new RuneOffHandSlot(playerInventory, 40, 96 - 19, 62));
+		this.addSlot(new ScarOffHandSlot(playerInventory, 40, 96 - 19, 62));
 	}
 
 	@Override
@@ -113,9 +113,9 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 		// 0        : result
 		// 1-4      : craft grid (2x2)
 		// 5-8      : armor (head, chest, legs, feet)
-		// 9        : jar slot   (rune cap slot 7)
-		// 10       : charm slot (rune cap slot 5)
-		// 11       : gourd slot (rune cap slot 6)
+		// 9        : jar slot   (scar cap slot 7)
+		// 10       : charm slot (scar cap slot 5)
+		// 11       : gourd slot (scar cap slot 6)
 		// 12-38    : player main inventory (27 slots)
 		// 39-47    : hotbar (9 slots)
 		// 48       : offhand
@@ -131,8 +131,8 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 		final int offhandSlot   = 48;
 
 		if (index == jarSlotUI || index == charmSlotUI || index == gourdSlotUI) {
-			// ── Moving FROM a rune slot → player inventory (explicit, avoids offhand) ──
-			// Handle rune SlotItemHandler slots explicitly to prevent items landing in offhand.
+			// ── Moving FROM a scar slot → player inventory (explicit, avoids offhand) ──
+			// Handle scar slotItemHandler slots explicitly to prevent items landing in offhand.
 			boolean placed = false;
 			// Try hotbar first (prefer hotbar for quick access)
 			for (int i = hotbarStart; i <= hotbarEnd; i++) {
@@ -161,7 +161,7 @@ public class CharmGourdMenu extends AbstractContainerMenu {
 			}
 			return originalStack;
 		} else if (index < containerEnd) {
-			// ── Moving FROM a non-rune container slot → player inventory (exclude offhand) ──
+			// ── Moving FROM a non-scar container slot → player inventory (exclude offhand) ──
 			if (!this.moveItemStackTo(stackInSlot, playerInvStart, hotbarEnd + 1, true)) {
 				return ItemStack.EMPTY;
 			}

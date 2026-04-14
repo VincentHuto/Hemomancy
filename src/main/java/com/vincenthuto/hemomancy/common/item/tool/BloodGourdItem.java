@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.tile.BloodGourdItemRenderer;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RuneType;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.EnumBloodGourdTiers;
@@ -33,10 +33,10 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import net.minecraft.core.Direction;
 
-public class BloodGourdItem extends Item implements IRune {
+public class BloodGourdItem extends Item implements IScar {
 
 	public static String TAG_STATE = "state";
 	EnumBloodGourdTiers tier;
@@ -72,8 +72,8 @@ public class BloodGourdItem extends Item implements IRune {
 	}
 
 	@Override
-	public RuneType getRuneType() {
-		return RuneType.GOURD;
+	public ScarType getScarType() {
+		return ScarType.GOURD;
 	}
 
 	@Override
@@ -155,14 +155,14 @@ public class BloodGourdItem extends Item implements IRune {
 
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		final IRune self = this;
+		final IScar self = this;
 		return new ICapabilityProvider() {
-			private final LazyOptional<IRune> opt = LazyOptional.of(() -> self);
+			private final LazyOptional<IScar> opt = LazyOptional.of(() -> self);
 
 			@Nonnull
 			@Override
 			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-				return RunesCapabilities.ITEM_RUNE.orEmpty(cap, opt);
+				return ScarsCapabilities.ITEM_SCAR.orEmpty(cap, opt);
 			}
 		};
 	}

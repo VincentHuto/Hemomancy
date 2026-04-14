@@ -38,15 +38,15 @@ import com.vincenthuto.hemomancy.common.item.morphlings.SerpentMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.SpiderMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.TickMorphlingItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.UrchinMorphlingItem;
-import com.vincenthuto.hemomancy.common.item.rune.ItemMindSpike;
-import com.vincenthuto.hemomancy.common.item.rune.ItemRune;
-import com.vincenthuto.hemomancy.common.item.rune.ItemRuneBinder;
-import com.vincenthuto.hemomancy.common.item.rune.ItemSelfReflectionMirror;
-import com.vincenthuto.hemomancy.common.item.rune.functional.NoctiflyAgaricItem;
-import com.vincenthuto.hemomancy.common.item.rune.functional.NoctiluminaDevoransItem;
-import com.vincenthuto.hemomancy.common.item.rune.functional.RespergillusItem;
-import com.vincenthuto.hemomancy.common.item.rune.functional.TalaromycesMinusItem;
-import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
+import com.vincenthuto.hemomancy.common.item.scar.ItemMindSpike;
+import com.vincenthuto.hemomancy.common.item.scar.ItemScar;
+import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
+import com.vincenthuto.hemomancy.common.item.scar.ItemSelfReflectionMirror;
+import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiflyAgaricItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiluminaDevoransItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.RespergillusItem;
+import com.vincenthuto.hemomancy.common.item.scar.functional.TalaromycesMinusItem;
+import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.tool.*;
 import com.vincenthuto.hemomancy.common.item.tool.living.BloodAbsorptionItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.BloodBoltItem;
@@ -577,22 +577,22 @@ public class ItemInit {
 	public static final RegistryObject<Item> unstained_shield = SPECIALITEMS.register("unstained_shield",
 			() -> new UnstainedShieldItem(new Item.Properties()));
 
-	// Runes
+	// Scars
 	public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
 			() -> new ItemSelfReflectionMirror(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 	public static final RegistryObject<Item> mind_spike = BASEITEMS.register("mind_spike",
 			() -> new ItemMindSpike(new Item.Properties().stacksTo(1)));
-	public static final RegistryObject<Item> rune_blank = BASEITEMS.register("rune_blank",
+	public static final RegistryObject<Item> scar_blank = BASEITEMS.register("scar_blank",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> runic_motif_paper = BASEITEMS.register("runic_motif_paper",
 			() -> new Item(new Item.Properties()));
-//	public static final RegistryObject<Item> rune_pattern = BASEITEMS.register("rune_pattern",
+//	public static final RegistryObject<Item> scar_pattern = BASEITEMS.register("scar_pattern",
 //			() -> new Item(new Item.Properties()));
 
-	public static final RegistryObject<Item> rune_binder = BASEITEMS.register("rune_binder",
-			() -> new ItemRuneBinder("rune_binder", 18, Rarity.UNCOMMON));
-	public static final RegistryObject<Item> rune_binder_upgraded = BASEITEMS.register("rune_binder_upgraded",
-			() -> new ItemRuneBinder("rune_binder_upgraded", 27, Rarity.RARE));
+	public static final RegistryObject<Item> scar_binder = BASEITEMS.register("scar_binder",
+			() -> new ItemScarBinder("scar_binder", 18, Rarity.UNCOMMON));
+	public static final RegistryObject<Item> scar_binder_upgraded = BASEITEMS.register("scar_binder_upgraded",
+			() -> new ItemScarBinder("scar_binder_upgraded", 27, Rarity.RARE));
 
 	// Functional Spores
 
@@ -610,248 +610,248 @@ public class ItemInit {
 
 	// Spores
 //	public static final RegistryObject<Item> incandescent_spores = BASEITEMS.register("incandescent_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1));
 //
 //	public static final RegistryObject<Item> fervent_spores = BASEITEMS.register("fervent_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1));
 //
 //	public static final RegistryObject<Item> neurotic_spores = BASEITEMS.register("neurotic_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1));
 //
 //	public static final RegistryObject<Item> ruinous_spores = BASEITEMS.register("ruinous_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1));
 //
 //	public static final RegistryObject<Item> umbral_spores = BASEITEMS.register("umbral_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1));
 //
 //	public static final RegistryObject<Item> frigid_spores = BASEITEMS.register("frigid_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1));
 //
 //	public static final RegistryObject<Item> vivacious_spores = BASEITEMS.register("vivacious_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1));
 //
 //	public static final RegistryObject<Item> ferric_spores = BASEITEMS.register("ferric_spores",
-//			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
+//			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1));
 
-	// Fungal Runes
+	// Fungal Scars
 
-	public static final RegistryObject<Item> rune_transcendence = BASEITEMS.register("rune_transcendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1, 1)
-					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_transcendence_kb", 0.1,
+	public static final RegistryObject<Item> scar_transcendence = BASEITEMS.register("scar_transcendence",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 1, 1)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_transcendence_kb", 0.1,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_transcendence = BASEITEMS.register(
-			"rune_pattern_transcendence",
-			() -> new ItemRunePattern(new Item.Properties(), rune_transcendence, "rune_transcendence"));
+	public static final RegistryObject<Item> scar_pattern_transcendence = BASEITEMS.register(
+			"scar_pattern_transcendence",
+			() -> new ItemScarPattern(new Item.Properties(), scar_transcendence, "scar_transcendence"));
 
-	public static final RegistryObject<Item> rune_sol = BASEITEMS.register("rune_sol",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1, 1)
+	public static final RegistryObject<Item> scar_sol = BASEITEMS.register("scar_sol",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 1, 1)
 					.withEffect(MobEffects.FIRE_RESISTANCE, 0));
 
-	public static final RegistryObject<Item> rune_pattern_sol = BASEITEMS.register("rune_pattern_sol",
-			() -> new ItemRunePattern(new Item.Properties(), rune_sol, "rune_sol"));
+	public static final RegistryObject<Item> scar_pattern_sol = BASEITEMS.register("scar_pattern_sol",
+			() -> new ItemScarPattern(new Item.Properties(), scar_sol, "scar_sol"));
 
-	public static final RegistryObject<Item> rune_heart = BASEITEMS.register("rune_heart",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
-					.withModifier(Attributes.MAX_HEALTH, "rune_heart_hp", 2.0,
+	public static final RegistryObject<Item> scar_heart = BASEITEMS.register("scar_heart",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 1, 1)
+					.withModifier(Attributes.MAX_HEALTH, "scar_heart_hp", 2.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_heart = BASEITEMS.register("rune_pattern_heart",
-			() -> new ItemRunePattern(new Item.Properties(), rune_heart, "rune_heart"));
+	public static final RegistryObject<Item> scar_pattern_heart = BASEITEMS.register("scar_pattern_heart",
+			() -> new ItemScarPattern(new Item.Properties(), scar_heart, "scar_heart"));
 
-	public static final RegistryObject<Item> rune_descendence = BASEITEMS.register("rune_descendence",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1, 1)
-					.withModifier(Attributes.ATTACK_DAMAGE, "rune_descendence_ad", 1.0,
+	public static final RegistryObject<Item> scar_descendence = BASEITEMS.register("scar_descendence",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 1, 1)
+					.withModifier(Attributes.ATTACK_DAMAGE, "scar_descendence_ad", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_descendence = BASEITEMS.register("rune_pattern_descendence",
-			() -> new ItemRunePattern(new Item.Properties(), rune_descendence, "rune_descendence"));
+	public static final RegistryObject<Item> scar_pattern_descendence = BASEITEMS.register("scar_pattern_descendence",
+			() -> new ItemScarPattern(new Item.Properties(), scar_descendence, "scar_descendence"));
 
-	public static final RegistryObject<Item> rune_moon = BASEITEMS.register("rune_moon",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1, 1)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_moon_ms", 0.05,
+	public static final RegistryObject<Item> scar_moon = BASEITEMS.register("scar_moon",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 1, 1)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_moon_ms", 0.05,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_moon = BASEITEMS.register("rune_pattern_moon",
-			() -> new ItemRunePattern(new Item.Properties(), rune_moon, "rune_moon"));
+	public static final RegistryObject<Item> scar_pattern_moon = BASEITEMS.register("scar_pattern_moon",
+			() -> new ItemScarPattern(new Item.Properties(), scar_moon, "scar_moon"));
 
-	public static final RegistryObject<Item> rune_eye = BASEITEMS.register("rune_eye",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
-					.withModifier(Attributes.LUCK, "rune_eye_luck", 1.0,
+	public static final RegistryObject<Item> scar_eye = BASEITEMS.register("scar_eye",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
+					.withModifier(Attributes.LUCK, "scar_eye_luck", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_eye = BASEITEMS.register("rune_pattern_eye",
-			() -> new ItemRunePattern(new Item.Properties(), rune_eye, "rune_eye"));
+	public static final RegistryObject<Item> scar_pattern_eye = BASEITEMS.register("scar_pattern_eye",
+			() -> new ItemScarPattern(new Item.Properties(), scar_eye, "scar_eye"));
 
-	public static final RegistryObject<Item> rune_feral = BASEITEMS.register("rune_feral",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
-					.withModifier(Attributes.ATTACK_SPEED, "rune_feral_as", 0.05,
+	public static final RegistryObject<Item> scar_feral = BASEITEMS.register("scar_feral",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 1, 1)
+					.withModifier(Attributes.ATTACK_SPEED, "scar_feral_as", 0.05,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_feral = BASEITEMS.register("rune_pattern_feral",
-			() -> new ItemRunePattern(new Item.Properties(), rune_feral, "rune_feral"));
+	public static final RegistryObject<Item> scar_pattern_feral = BASEITEMS.register("scar_pattern_feral",
+			() -> new ItemScarPattern(new Item.Properties(), scar_feral, "scar_feral"));
 
-	// Tier 1 Runes (fill remaining tendencies)
+	// Tier 1 Scars (fill remaining tendencies)
 
-	public static final RegistryObject<Item> rune_thorn = BASEITEMS.register("rune_thorn",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1, 1)
-					.withModifier(Attributes.ARMOR, "rune_thorn_armor", 1.0,
+	public static final RegistryObject<Item> scar_thorn = BASEITEMS.register("scar_thorn",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 1, 1)
+					.withModifier(Attributes.ARMOR, "scar_thorn_armor", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_thorn = BASEITEMS.register("rune_pattern_thorn",
-			() -> new ItemRunePattern(new Item.Properties(), rune_thorn, "rune_thorn"));
+	public static final RegistryObject<Item> scar_pattern_thorn = BASEITEMS.register("scar_pattern_thorn",
+			() -> new ItemScarPattern(new Item.Properties(), scar_thorn, "scar_thorn"));
 
-	public static final RegistryObject<Item> rune_shade = BASEITEMS.register("rune_shade",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1, 1)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_shade_ms", 0.05,
+	public static final RegistryObject<Item> scar_shade = BASEITEMS.register("scar_shade",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 1, 1)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_shade_ms", 0.05,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_shade = BASEITEMS.register("rune_pattern_shade",
-			() -> new ItemRunePattern(new Item.Properties(), rune_shade, "rune_shade"));
+	public static final RegistryObject<Item> scar_pattern_shade = BASEITEMS.register("scar_pattern_shade",
+			() -> new ItemScarPattern(new Item.Properties(), scar_shade, "scar_shade"));
 
-	// Tier 2 Runes (intermediate, one per tendency)
+	// Tier 2 Scars (intermediate, one per tendency)
 
-	public static final RegistryObject<Item> rune_pyre = BASEITEMS.register("rune_pyre",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2, 2)
+	public static final RegistryObject<Item> scar_pyre = BASEITEMS.register("scar_pyre",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 2, 2)
 					.withEffect(MobEffects.FIRE_RESISTANCE, 0)
-					.withModifier(Attributes.ATTACK_DAMAGE, "rune_pyre_ad", 1.0,
+					.withModifier(Attributes.ATTACK_DAMAGE, "scar_pyre_ad", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_pyre = BASEITEMS.register("rune_pattern_pyre",
-			() -> new ItemRunePattern(new Item.Properties(), rune_pyre, "rune_pyre"));
+	public static final RegistryObject<Item> scar_pattern_pyre = BASEITEMS.register("scar_pattern_pyre",
+			() -> new ItemScarPattern(new Item.Properties(), scar_pyre, "scar_pyre"));
 
-	public static final RegistryObject<Item> rune_marrow = BASEITEMS.register("rune_marrow",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2, 2)
-					.withModifier(Attributes.MAX_HEALTH, "rune_marrow_hp", 4.0,
+	public static final RegistryObject<Item> scar_marrow = BASEITEMS.register("scar_marrow",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 2, 2)
+					.withModifier(Attributes.MAX_HEALTH, "scar_marrow_hp", 4.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_marrow = BASEITEMS.register("rune_pattern_marrow",
-			() -> new ItemRunePattern(new Item.Properties(), rune_marrow, "rune_marrow"));
+	public static final RegistryObject<Item> scar_pattern_marrow = BASEITEMS.register("scar_pattern_marrow",
+			() -> new ItemScarPattern(new Item.Properties(), scar_marrow, "scar_marrow"));
 
-	public static final RegistryObject<Item> rune_blight = BASEITEMS.register("rune_blight",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 2, 2)
-					.withModifier(Attributes.ATTACK_DAMAGE, "rune_blight_ad", 2.0,
+	public static final RegistryObject<Item> scar_blight = BASEITEMS.register("scar_blight",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 2, 2)
+					.withModifier(Attributes.ATTACK_DAMAGE, "scar_blight_ad", 2.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_blight = BASEITEMS.register("rune_pattern_blight",
-			() -> new ItemRunePattern(new Item.Properties(), rune_blight, "rune_blight"));
+	public static final RegistryObject<Item> scar_pattern_blight = BASEITEMS.register("scar_pattern_blight",
+			() -> new ItemScarPattern(new Item.Properties(), scar_blight, "scar_blight"));
 
-	public static final RegistryObject<Item> rune_rime = BASEITEMS.register("rune_rime",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 2, 2)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_rime_ms", 0.10,
+	public static final RegistryObject<Item> scar_rime = BASEITEMS.register("scar_rime",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 2, 2)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_rime_ms", 0.10,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_rime = BASEITEMS.register("rune_pattern_rime",
-			() -> new ItemRunePattern(new Item.Properties(), rune_rime, "rune_rime"));
+	public static final RegistryObject<Item> scar_pattern_rime = BASEITEMS.register("scar_pattern_rime",
+			() -> new ItemScarPattern(new Item.Properties(), scar_rime, "scar_rime"));
 
-	public static final RegistryObject<Item> rune_flux = BASEITEMS.register("rune_flux",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 2, 2)
-					.withModifier(Attributes.ATTACK_SPEED, "rune_flux_as", 0.10,
+	public static final RegistryObject<Item> scar_flux = BASEITEMS.register("scar_flux",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 2, 2)
+					.withModifier(Attributes.ATTACK_SPEED, "scar_flux_as", 0.10,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_flux = BASEITEMS.register("rune_pattern_flux",
-			() -> new ItemRunePattern(new Item.Properties(), rune_flux, "rune_flux"));
+	public static final RegistryObject<Item> scar_pattern_flux = BASEITEMS.register("scar_pattern_flux",
+			() -> new ItemScarPattern(new Item.Properties(), scar_flux, "scar_flux"));
 
-	public static final RegistryObject<Item> rune_halo = BASEITEMS.register("rune_halo",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 2, 2)
-					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_halo_kb", 0.2,
+	public static final RegistryObject<Item> scar_halo = BASEITEMS.register("scar_halo",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 2, 2)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_halo_kb", 0.2,
 							AttributeModifier.Operation.ADDITION)
-					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_halo_at", 1.0,
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_halo_at", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_halo = BASEITEMS.register("rune_pattern_halo",
-			() -> new ItemRunePattern(new Item.Properties(), rune_halo, "rune_halo"));
+	public static final RegistryObject<Item> scar_pattern_halo = BASEITEMS.register("scar_pattern_halo",
+			() -> new ItemScarPattern(new Item.Properties(), scar_halo, "scar_halo"));
 
-	public static final RegistryObject<Item> rune_anvil = BASEITEMS.register("rune_anvil",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2, 2)
-					.withModifier(Attributes.ARMOR, "rune_anvil_armor", 2.0,
+	public static final RegistryObject<Item> scar_anvil = BASEITEMS.register("scar_anvil",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 2, 2)
+					.withModifier(Attributes.ARMOR, "scar_anvil_armor", 2.0,
 							AttributeModifier.Operation.ADDITION)
-					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_anvil_at", 1.0,
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_anvil_at", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_anvil = BASEITEMS.register("rune_pattern_anvil",
-			() -> new ItemRunePattern(new Item.Properties(), rune_anvil, "rune_anvil"));
+	public static final RegistryObject<Item> scar_pattern_anvil = BASEITEMS.register("scar_pattern_anvil",
+			() -> new ItemScarPattern(new Item.Properties(), scar_anvil, "scar_anvil"));
 
-	public static final RegistryObject<Item> rune_veil = BASEITEMS.register("rune_veil",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2, 2)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_veil_ms", 0.10,
+	public static final RegistryObject<Item> scar_veil = BASEITEMS.register("scar_veil",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 2, 2)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_veil_ms", 0.10,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_veil = BASEITEMS.register("rune_pattern_veil",
-			() -> new ItemRunePattern(new Item.Properties(), rune_veil, "rune_veil"));
+	public static final RegistryObject<Item> scar_pattern_veil = BASEITEMS.register("scar_pattern_veil",
+			() -> new ItemScarPattern(new Item.Properties(), scar_veil, "scar_veil"));
 
-	// Tier 3 Runes (advanced, one per tendency)
+	// Tier 3 Scars (advanced, one per tendency)
 
-	public static final RegistryObject<Item> rune_phoenix = BASEITEMS.register("rune_phoenix",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 3, 3)
+	public static final RegistryObject<Item> scar_phoenix = BASEITEMS.register("scar_phoenix",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FLAMMEUS, 3, 3)
 					.withEffect(MobEffects.FIRE_RESISTANCE, 0)
-					.withModifier(Attributes.ATTACK_DAMAGE, "rune_phoenix_ad", 2.0,
+					.withModifier(Attributes.ATTACK_DAMAGE, "scar_phoenix_ad", 2.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_phoenix = BASEITEMS.register("rune_pattern_phoenix",
-			() -> new ItemRunePattern(new Item.Properties(), rune_phoenix, "rune_phoenix"));
+	public static final RegistryObject<Item> scar_pattern_phoenix = BASEITEMS.register("scar_pattern_phoenix",
+			() -> new ItemScarPattern(new Item.Properties(), scar_phoenix, "scar_phoenix"));
 
-	public static final RegistryObject<Item> rune_ichor = BASEITEMS.register("rune_ichor",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 3, 3)
-					.withModifier(Attributes.MAX_HEALTH, "rune_ichor_hp", 6.0,
+	public static final RegistryObject<Item> scar_ichor = BASEITEMS.register("scar_ichor",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.ANIMUS, 3, 3)
+					.withModifier(Attributes.MAX_HEALTH, "scar_ichor_hp", 6.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_ichor = BASEITEMS.register("rune_pattern_ichor",
-			() -> new ItemRunePattern(new Item.Properties(), rune_ichor, "rune_ichor"));
+	public static final RegistryObject<Item> scar_pattern_ichor = BASEITEMS.register("scar_pattern_ichor",
+			() -> new ItemScarPattern(new Item.Properties(), scar_ichor, "scar_ichor"));
 
-	public static final RegistryObject<Item> rune_wither = BASEITEMS.register("rune_wither",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3, 3)
-					.withModifier(Attributes.ATTACK_DAMAGE, "rune_wither_ad", 3.0,
+	public static final RegistryObject<Item> scar_wither = BASEITEMS.register("scar_wither",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.MORTEM, 3, 3)
+					.withModifier(Attributes.ATTACK_DAMAGE, "scar_wither_ad", 3.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_wither = BASEITEMS.register("rune_pattern_wither",
-			() -> new ItemRunePattern(new Item.Properties(), rune_wither, "rune_wither"));
+	public static final RegistryObject<Item> scar_pattern_wither = BASEITEMS.register("scar_pattern_wither",
+			() -> new ItemScarPattern(new Item.Properties(), scar_wither, "scar_wither"));
 
-	public static final RegistryObject<Item> rune_glacier = BASEITEMS.register("rune_glacier",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3, 3)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_glacier_ms", 0.15,
+	public static final RegistryObject<Item> scar_glacier = BASEITEMS.register("scar_glacier",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.CONGEATIO, 3, 3)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_glacier_ms", 0.15,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_glacier = BASEITEMS.register("rune_pattern_glacier",
-			() -> new ItemRunePattern(new Item.Properties(), rune_glacier, "rune_glacier"));
+	public static final RegistryObject<Item> scar_pattern_glacier = BASEITEMS.register("scar_pattern_glacier",
+			() -> new ItemScarPattern(new Item.Properties(), scar_glacier, "scar_glacier"));
 
-	public static final RegistryObject<Item> rune_chimera = BASEITEMS.register("rune_chimera",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3, 3)
-					.withModifier(Attributes.ATTACK_SPEED, "rune_chimera_as", 0.15,
+	public static final RegistryObject<Item> scar_chimera = BASEITEMS.register("scar_chimera",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.DUCTILIS, 3, 3)
+					.withModifier(Attributes.ATTACK_SPEED, "scar_chimera_as", 0.15,
 							AttributeModifier.Operation.MULTIPLY_TOTAL)
-					.withModifier(Attributes.LUCK, "rune_chimera_luck", 1.0,
+					.withModifier(Attributes.LUCK, "scar_chimera_luck", 1.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_chimera = BASEITEMS.register("rune_pattern_chimera",
-			() -> new ItemRunePattern(new Item.Properties(), rune_chimera, "rune_chimera"));
+	public static final RegistryObject<Item> scar_pattern_chimera = BASEITEMS.register("scar_pattern_chimera",
+			() -> new ItemScarPattern(new Item.Properties(), scar_chimera, "scar_chimera"));
 
-	public static final RegistryObject<Item> rune_corona = BASEITEMS.register("rune_corona",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3, 3)
-					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "rune_corona_kb", 0.3,
+	public static final RegistryObject<Item> scar_corona = BASEITEMS.register("scar_corona",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.LUX, 3, 3)
+					.withModifier(Attributes.KNOCKBACK_RESISTANCE, "scar_corona_kb", 0.3,
 							AttributeModifier.Operation.ADDITION)
-					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_corona_at", 2.0,
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_corona_at", 2.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_corona = BASEITEMS.register("rune_pattern_corona",
-			() -> new ItemRunePattern(new Item.Properties(), rune_corona, "rune_corona"));
+	public static final RegistryObject<Item> scar_pattern_corona = BASEITEMS.register("scar_pattern_corona",
+			() -> new ItemScarPattern(new Item.Properties(), scar_corona, "scar_corona"));
 
-	public static final RegistryObject<Item> rune_crucible = BASEITEMS.register("rune_crucible",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 3, 3)
-					.withModifier(Attributes.ARMOR, "rune_crucible_armor", 3.0,
+	public static final RegistryObject<Item> scar_crucible = BASEITEMS.register("scar_crucible",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.FERRIC, 3, 3)
+					.withModifier(Attributes.ARMOR, "scar_crucible_armor", 3.0,
 							AttributeModifier.Operation.ADDITION)
-					.withModifier(Attributes.ARMOR_TOUGHNESS, "rune_crucible_at", 2.0,
+					.withModifier(Attributes.ARMOR_TOUGHNESS, "scar_crucible_at", 2.0,
 							AttributeModifier.Operation.ADDITION));
 
-	public static final RegistryObject<Item> rune_pattern_crucible = BASEITEMS.register("rune_pattern_crucible",
-			() -> new ItemRunePattern(new Item.Properties(), rune_crucible, "rune_crucible"));
+	public static final RegistryObject<Item> scar_pattern_crucible = BASEITEMS.register("scar_pattern_crucible",
+			() -> new ItemScarPattern(new Item.Properties(), scar_crucible, "scar_crucible"));
 
-	public static final RegistryObject<Item> rune_oblivion = BASEITEMS.register("rune_oblivion",
-			() -> new ItemRune(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 3, 3)
-					.withModifier(Attributes.MOVEMENT_SPEED, "rune_oblivion_ms", 0.15,
+	public static final RegistryObject<Item> scar_oblivion = BASEITEMS.register("scar_oblivion",
+			() -> new ItemScar(new Item.Properties().stacksTo(1), EnumBloodTendency.TENEBRIS, 3, 3)
+					.withModifier(Attributes.MOVEMENT_SPEED, "scar_oblivion_ms", 0.15,
 							AttributeModifier.Operation.MULTIPLY_TOTAL));
 
-	public static final RegistryObject<Item> rune_pattern_oblivion = BASEITEMS.register("rune_pattern_oblivion",
-			() -> new ItemRunePattern(new Item.Properties(), rune_oblivion, "rune_oblivion"));
+	public static final RegistryObject<Item> scar_pattern_oblivion = BASEITEMS.register("scar_pattern_oblivion",
+			() -> new ItemScarPattern(new Item.Properties(), scar_oblivion, "scar_oblivion"));
 
 	// Spawn Eggs
 	public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",

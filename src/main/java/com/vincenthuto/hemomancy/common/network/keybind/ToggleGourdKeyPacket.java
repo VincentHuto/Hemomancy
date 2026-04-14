@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.keybind;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
 import net.minecraft.nbt.CompoundTag;
@@ -32,8 +32,8 @@ public class ToggleGourdKeyPacket {
 			if (player == null)
 				return;
 
-			// Get the gourd from rune slot 6
-			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+			// Get the gourd from scar slot 6
+			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 				ItemStack stack = inv.getStackInSlot(6);
 				if (stack.getItem() instanceof BloodGourdItem) {
 					CompoundTag compound = stack.getOrCreateTag();

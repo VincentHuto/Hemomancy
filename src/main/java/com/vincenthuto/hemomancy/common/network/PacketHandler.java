@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodTendencyServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
-import com.vincenthuto.hemomancy.common.network.capa.PacketGourdRuneSync;
+import com.vincenthuto.hemomancy.common.network.capa.PacketGourdScarSync;
 import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
@@ -23,7 +23,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemClientPacket;
 import com.vincenthuto.hemomancy.common.network.capa.VascularSystemServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.*;
-import com.vincenthuto.hemomancy.common.network.capa.runes.*;
+import com.vincenthuto.hemomancy.common.network.capa.scars.*;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodCraftingKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.BloodFormationKeyPressPacket;
 import com.vincenthuto.hemomancy.common.network.keybind.ToggleGourdKeyPacket;
@@ -77,48 +77,48 @@ public class PacketHandler {
 	public static final SimpleChannel CHANNELPARTICLES = NetworkRegistry.newSimpleChannel(
 			Hemomancy.rloc("particlechannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
-	public static SimpleChannel CHANNELRUNES = NetworkRegistry.newSimpleChannel(Hemomancy.rloc("runechannel"),
+	public static SimpleChannel CHANNELSCARS = NetworkRegistry.newSimpleChannel(Hemomancy.rloc("scarchannel"),
 			() -> PROTOCOL_VERSION, s -> true, s -> true);
 	public static SimpleChannel CHANNELMORPHLINGJAR = NetworkRegistry.newSimpleChannel(
 			Hemomancy.rloc("morphlingjarchannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
-	public static SimpleChannel CHANNELRUNEBINDER = NetworkRegistry.newSimpleChannel(
-			Hemomancy.rloc("runebinderchannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
+	public static SimpleChannel CHANNELSCARBINDER = NetworkRegistry.newSimpleChannel(
+			Hemomancy.rloc("scarbinderchannel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals,
 			PROTOCOL_VERSION::equals);
 
 	public static void registerChannels() {
 
-		CHANNELRUNES.registerMessage(networkID++, CPacketFlight.class, CPacketFlight::encode,
+		CHANNELSCARS.registerMessage(networkID++, CPacketFlight.class, CPacketFlight::encode,
 	        CPacketFlight::decode, CPacketFlight::handle);
 
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenSporeInv.class, PacketOpenSporeInv::decode,
+		CHANNELSCARS.registerMessage(networkID++, PacketOpenSporeInv.class, PacketOpenSporeInv::decode,
 				PacketOpenSporeInv::new, PacketOpenSporeInv::handle);
 
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenRunesInv.class, PacketOpenRunesInv::decode,
-				PacketOpenRunesInv::new, PacketOpenRunesInv::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
+		CHANNELSCARS.registerMessage(networkID++, PacketOpenScarsInv.class, PacketOpenScarsInv::decode,
+				PacketOpenScarsInv::new, PacketOpenScarsInv::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketOpenNormalInv.class, PacketOpenNormalInv::decode,
 				PacketOpenNormalInv::new, PacketOpenNormalInv::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketRuneSync.class, PacketRuneSync::toBytes, PacketRuneSync::new,
-				PacketRuneSync::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketGourdRuneSync.class, PacketGourdRuneSync::toBytes,
-				PacketGourdRuneSync::new, PacketGourdRuneSync::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketScarSync.class, PacketScarSync::toBytes, PacketScarSync::new,
+				PacketScarSync::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketGourdScarSync.class, PacketGourdScarSync::toBytes,
+				PacketGourdScarSync::new, PacketGourdScarSync::handle);
 
-		CHANNELRUNES.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
+		CHANNELSCARS.registerMessage(networkID++, PacketCurvedHornAnimation.class, PacketCurvedHornAnimation::decode,
 				PacketCurvedHornAnimation::new, PacketCurvedHornAnimation::handle);
 
-		CHANNELRUNES.registerMessage(networkID++, ToggleGourdKeyPacket.class, ToggleGourdKeyPacket::encode,
+		CHANNELSCARS.registerMessage(networkID++, ToggleGourdKeyPacket.class, ToggleGourdKeyPacket::encode,
 				ToggleGourdKeyPacket::decode, ToggleGourdKeyPacket::handle);
 
-		CHANNELRUNES.registerMessage(networkID++, PacketUpdateChiselRunes.class, PacketUpdateChiselRunes::encode,
-				PacketUpdateChiselRunes::decode, PacketUpdateChiselRunes.Handler::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketChiselCraftingEvent.class, PacketChiselCraftingEvent::encode,
-				PacketChiselCraftingEvent::decode, PacketChiselCraftingEvent.Handler::handle);
-		CHANNELRUNES.registerMessage(networkID++, PacketLoadChiselPattern.class, PacketLoadChiselPattern::encode,
-				PacketLoadChiselPattern::decode, PacketLoadChiselPattern.Handler::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketUpdateScarPattern.class, PacketUpdateScarPattern::encode,
+				PacketUpdateScarPattern::decode, PacketUpdateScarPattern.Handler::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketScarCraftingEvent.class, PacketScarCraftingEvent::encode,
+				PacketScarCraftingEvent::decode, PacketScarCraftingEvent.Handler::handle);
+		CHANNELSCARS.registerMessage(networkID++, PacketLoadScarPattern.class, PacketLoadScarPattern::encode,
+				PacketLoadScarPattern::decode, PacketLoadScarPattern.Handler::handle);
 
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketOpenRuneBinder.class, PacketOpenRuneBinder::encode,
-				PacketOpenRuneBinder::decode, PacketOpenRuneBinder::handle);
-		CHANNELRUNEBINDER.registerMessage(networkID++, PacketToggleBinderMessage.class,
+		CHANNELSCARBINDER.registerMessage(networkID++, PacketOpenScarBinder.class, PacketOpenScarBinder::encode,
+				PacketOpenScarBinder::decode, PacketOpenScarBinder::handle);
+		CHANNELSCARBINDER.registerMessage(networkID++, PacketToggleBinderMessage.class,
 				PacketToggleBinderMessage::encode, PacketToggleBinderMessage::decode,
 				PacketToggleBinderMessage::handle);
 
@@ -348,7 +348,7 @@ public class PacketHandler {
 	}
 
 	public static void sendClientElytraPacket() {
-		CHANNELRUNES.send(PacketDistributor.SERVER.noArg(), new CPacketFlight());
+		CHANNELSCARS.send(PacketDistributor.SERVER.noArg(), new CPacketFlight());
 	}
 
 }

@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
@@ -50,7 +50,7 @@ public class RadialChooseManipScreen extends Screen {
 
 	private ItemStack vascCharmEquipped;
 	private BloodGourdItem gourdEquipped;
-	private IRunesItemHandler inv;
+	private IScarsItemHandler inv;
 
 	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
@@ -58,7 +58,7 @@ public class RadialChooseManipScreen extends Screen {
 
 	private final GenericRadialMenu menu;
 
-	public RadialChooseManipScreen(IRunesItemHandler invIn) {
+	public RadialChooseManipScreen(IScarsItemHandler invIn) {
 		super(Component.literal("RADIAL MENU"));
 		inv = invIn;
 		this.mc = Minecraft.getInstance();

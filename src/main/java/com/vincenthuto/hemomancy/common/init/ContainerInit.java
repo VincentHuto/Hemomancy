@@ -16,11 +16,11 @@ public class ContainerInit {
 	public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.MENU_TYPES,
 			Hemomancy.MOD_ID);
 
-	public static final RegistryObject<MenuType<ChiselStationMenu>> runic_chisel_station = CONTAINERS
-			.register("runic_chisel_station", () -> IForgeMenuType.create(ChiselStationMenu::new));
+	public static final RegistryObject<MenuType<ScarStationMenu>> scar_station = CONTAINERS
+			.register("scar_station", () -> IForgeMenuType.create(ScarStationMenu::new));
 
-	public static final RegistryObject<MenuType<RuneBinderInventoryMenu>> rune_binder = CONTAINERS
-			.register("rune_binder", () -> IForgeMenuType.create(RuneBinderInventoryMenu::new));
+	public static final RegistryObject<MenuType<ScarBinderInventoryMenu>> scar_binder = CONTAINERS
+			.register("scar_binder", () -> IForgeMenuType.create(ScarBinderInventoryMenu::new));
 
 
 	public static final RegistryObject<MenuType<VialCentrifugeMenu>> vial_centrifuge = CONTAINERS

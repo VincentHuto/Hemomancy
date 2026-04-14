@@ -64,7 +64,7 @@ public class SkillTreeScreen extends Screen {
 		SKILLS("Skills", 0xFFCC3333),
 		MANIPULATIONS("Manipulations", 0xFFCC8833),
 		CRAFTING("Crafting", 0xFFAA2222),
-		RUNES("Runes", 0xFF44AACC),
+		SCARS("Scars", 0xFF44AACC),
 		RITES("Rites", 0xFF8844CC),
 		MATERIALS("Materials", 0xFFCC6644);
 
@@ -151,16 +151,16 @@ public class SkillTreeScreen extends Screen {
 	private int craftingVisibleLayer = -1;  // -1 = show all layers
 	private int craftingMaxLayer = 0;
 
-	// ── Rune Chisel data ──
-	private final List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> chiselRecipes = new ArrayList<>();
+	// ── Cerebral Scarring data ──
+	private final List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> ScarRecipes = new ArrayList<>();
 	/** Chisel recipes grouped by tier for tier-based display. */
-	private final Map<String, List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe>> chiselByTier = new java.util.LinkedHashMap<>();
-	private static final String[] RUNE_TIER_NAMES = { "Tier 1", "Tier 2", "Tier 3" };
-	private static final int[] RUNE_TIER_THRESHOLDS = { 1, 2, 3 };
-	/** Minimum initiatory degree required to see each rune tier. */
-	private static final int[] RUNE_TIER_DEGREE_REQ = { 4, 4, 5 };
-	private String selectedRuneTier = null;
-	private int selectedRuneIndexInTier = 0;
+	private final Map<String, List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe>> chiselByTier = new java.util.LinkedHashMap<>();
+	private static final String[] SCAR_TIER_NAMES = { "Tier 1", "Tier 2", "Tier 3" };
+	private static final int[] SCAR_TIER_THRESHOLDS = { 1, 2, 3 };
+	/** Minimum initiatory degree required to see each scar tier. */
+	private static final int[] SCAR_TIER_DEGREE_REQ = { 4, 4, 5 };
+	private String selectedScarTier = null;
+	private int selectedScarIndexInTier = 0;
 
 	// Shared nav button dimensions
 	private static final int RITE_NAV_BTN_W = 24;
@@ -170,7 +170,7 @@ public class SkillTreeScreen extends Screen {
 	// ── Tier sidebar scroll offsets ──
 	private int riteSidebarScroll = 0;
 	private int craftingSidebarScroll = 0;
-	private int runeSidebarScroll = 0;
+	private int scarSidebarScroll = 0;
 
 	// ── Info panel scroll offsets ──
 	private int riteInfoScroll = 0;
@@ -261,7 +261,7 @@ public class SkillTreeScreen extends Screen {
 		cacheKnownManipulations();
 		cacheRiteRecipes();
 		cacheCraftingRecipes();
-		cacheChiselRecipes();
+		cacheScarRecipes();
 
 		// Cache the player's initiatory degree for rendering
 		if (Minecraft.getInstance().player != null) {
@@ -285,13 +285,13 @@ public class SkillTreeScreen extends Screen {
 			case SKILLS        -> skillView;
 			case MANIPULATIONS -> manipView;
 			case MATERIALS     -> materialView;
-			default            -> view; // RITES / CRAFTING / RUNES don't pan
+			default            -> view; // RITES / CRAFTING / SCARS don't pan
 		};
 	}
 
 	/** Save current view state and switch to a new tab's view. */
 	private void savePan() {
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.RUNES) return;
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.SCARS) return;
 		view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
 	}
 
@@ -522,32 +522,32 @@ public class SkillTreeScreen extends Screen {
 		}
 	}
 
-	private void cacheChiselRecipes() {
-		chiselRecipes.clear();
+	private void cacheScarRecipes() {
+		ScarRecipes.clear();
 		chiselByTier.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			chiselRecipes.addAll(com.vincenthuto.hemomancy.common.recipe.ChiselRecipe.getAllRecipes(minecraft.level));
+			ScarRecipes.addAll(com.vincenthuto.hemomancy.common.recipe.ScarRecipe.getAllRecipes(minecraft.level));
 		}
 		// Initialise empty tier lists
-		for (String tierName : RUNE_TIER_NAMES) {
+		for (String tierName : SCAR_TIER_NAMES) {
 			chiselByTier.put(tierName, new ArrayList<>());
 		}
 		// Sort recipes into tiers based on recipe tier value
-		for (com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe : chiselRecipes) {
-			for (int i = 0; i < RUNE_TIER_THRESHOLDS.length; i++) {
-				if (recipe.getTier() <= RUNE_TIER_THRESHOLDS[i]) {
-					chiselByTier.get(RUNE_TIER_NAMES[i]).add(recipe);
+		for (com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe : ScarRecipes) {
+			for (int i = 0; i < SCAR_TIER_THRESHOLDS.length; i++) {
+				if (recipe.getTier() <= SCAR_TIER_THRESHOLDS[i]) {
+					chiselByTier.get(SCAR_TIER_NAMES[i]).add(recipe);
 					break;
 				}
 			}
 		}
 		// Default selection: first accessible tier with recipes
-		selectedRuneTier = null;
-		selectedRuneIndexInTier = 0;
-		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
-			if (!chiselByTier.getOrDefault(RUNE_TIER_NAMES[i], List.of()).isEmpty()
-					&& playerDegree >= RUNE_TIER_DEGREE_REQ[i]) {
-				selectedRuneTier = RUNE_TIER_NAMES[i];
+		selectedScarTier = null;
+		selectedScarIndexInTier = 0;
+		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
+			if (!chiselByTier.getOrDefault(SCAR_TIER_NAMES[i], List.of()).isEmpty()
+					&& playerDegree >= SCAR_TIER_DEGREE_REQ[i]) {
+				selectedScarTier = SCAR_TIER_NAMES[i];
 				break;
 			}
 		}
@@ -582,7 +582,7 @@ public class SkillTreeScreen extends Screen {
 	public boolean mouseClicked(double mx, double my, int btn) {
 		if (btn == 0) {
 			// Check home button click first (not on browse tabs)
-			if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES && isOverHomeButton(mx, my)) {
+			if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.SCARS && isOverHomeButton(mx, my)) {
 				resetToHome();
 				return true;
 			}
@@ -652,28 +652,28 @@ public class SkillTreeScreen extends Screen {
 					}
 					return true;
 				}
-				if (activeTab == Tab.RUNES) {
+				if (activeTab == Tab.SCARS) {
 					// Check tier sidebar click
-					String clickedRuneTier = runeTierUnder(mx, my);
-					if (clickedRuneTier != null) {
-						int tierIdx = java.util.Arrays.asList(RUNE_TIER_NAMES).indexOf(clickedRuneTier);
-						if (tierIdx >= 0 && playerDegree >= RUNE_TIER_DEGREE_REQ[tierIdx]) {
+					String clickedScarTier = scarTierUnder(mx, my);
+					if (clickedScarTier != null) {
+						int tierIdx = java.util.Arrays.asList(SCAR_TIER_NAMES).indexOf(clickedScarTier);
+						if (tierIdx >= 0 && playerDegree >= SCAR_TIER_DEGREE_REQ[tierIdx]) {
 							// Toggle: collapse if already selected, otherwise open
-							if (clickedRuneTier.equals(selectedRuneTier)) {
-								selectedRuneTier = null;
-								runeSidebarScroll = 0;
+							if (clickedScarTier.equals(selectedScarTier)) {
+								selectedScarTier = null;
+								scarSidebarScroll = 0;
 							} else {
-								selectedRuneTier = clickedRuneTier;
-								selectedRuneIndexInTier = 0;
-								runeSidebarScroll = 0;
+								selectedScarTier = clickedScarTier;
+								selectedScarIndexInTier = 0;
+								scarSidebarScroll = 0;
 							}
 						}
 						return true;
 					}
 					// Check recipe list click
-					int clickedRuneIdx = runeRecipeUnder(mx, my);
-					if (clickedRuneIdx >= 0) {
-						selectedRuneIndexInTier = clickedRuneIdx;
+					int clickedScarIdx = scarRecipeUnder(mx, my);
+					if (clickedScarIdx >= 0) {
+						selectedScarIndexInTier = clickedScarIdx;
 						return true;
 					}
 					return true;
@@ -795,8 +795,8 @@ public class SkillTreeScreen extends Screen {
 			return true;
 		}
 
-		// Rites, Crafting & Runes tabs — scroll the tier sidebar or info panel
-		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.RUNES) {
+		// Rites, Crafting & Scars tabs — scroll the tier sidebar or info panel
+		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.SCARS) {
 			if (isOverTierSidebar(mx, my)) {
 				int scrollAmt = (int)(-delta * 14);
 				if (activeTab == Tab.RITES) {
@@ -806,8 +806,8 @@ public class SkillTreeScreen extends Screen {
 					craftingSidebarScroll = Math.max(0, craftingSidebarScroll + scrollAmt);
 					clampCraftingSidebarScroll();
 				} else {
-					runeSidebarScroll = Math.max(0, runeSidebarScroll + scrollAmt);
-					clampRuneSidebarScroll();
+					scarSidebarScroll = Math.max(0, scarSidebarScroll + scrollAmt);
+					clampscarSidebarScroll();
 				}
 			} else {
 				// Scroll the info panel (right side)
@@ -897,8 +897,8 @@ public class SkillTreeScreen extends Screen {
 			drawManipNodes(gfx);
 		} else if (activeTab == Tab.CRAFTING) {
 			drawCraftingContent(gfx, mouseX, mouseY, partial);
-		} else if (activeTab == Tab.RUNES) {
-			drawRunesContent(gfx, mouseX, mouseY, partial);
+		} else if (activeTab == Tab.SCARS) {
+			drawScarsContent(gfx, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.RITES) {
 			drawRiteContent(gfx, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.MATERIALS) {
@@ -921,7 +921,7 @@ public class SkillTreeScreen extends Screen {
 		drawTabs(gfx, mouseX, mouseY);
 
 		// ── 4b. Home button (top-left, outside scissor; not on browse tabs) ──
-		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES) {
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.SCARS) {
 			drawHomeButton(gfx, mouseX, mouseY);
 		}
 
@@ -944,7 +944,7 @@ public class SkillTreeScreen extends Screen {
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
 		}
 
-		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.RUNES) {
+		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.SCARS) {
 			// Hide zoom text when milestone drawer is open to avoid overlap
 			if (!(activeTab == Tab.SKILLS && milestoneDrawerOpen)) {
 				gfx.drawString(font,
@@ -2275,12 +2275,12 @@ public class SkillTreeScreen extends Screen {
 	// (Old nav buttons removed — now using tier sidebar)
 
 	// ────────────────────────────────────────────────────────────
-	//  Runes tab — chisel recipe display
+	//  Scars tab — scar recipe display
 	// ────────────────────────────────────────────────────────────
 
-	private void drawRunesContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		if (chiselRecipes.isEmpty()) {
-			gfx.drawCenteredString(font, "No Rune recipes found",
+	private void drawScarsContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
+		if (ScarRecipes.isEmpty()) {
+			gfx.drawCenteredString(font, "No Scar recipes found",
 					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
 			return;
 		}
@@ -2294,25 +2294,25 @@ public class SkillTreeScreen extends Screen {
 		gfx.pose().translate(0, 0, 400);
 
 		// ── Tier sidebar (left) ──
-		drawRunesTierSidebar(gfx, mouseX, mouseY);
+		drawScarsTierSidebar(gfx, mouseX, mouseY);
 
-		if (selectedRuneTier == null) {
+		if (selectedScarTier == null) {
 			gfx.drawCenteredString(font, "Select a tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
 		}
 
-		List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> tierRecipes =
-				chiselByTier.getOrDefault(selectedRuneTier, List.of());
+		List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> tierRecipes =
+				chiselByTier.getOrDefault(selectedScarTier, List.of());
 		if (tierRecipes.isEmpty()) {
 			gfx.drawCenteredString(font, "No recipes in this tier",
 					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
 			gfx.pose().popPose();
 			return;
 		}
-		if (selectedRuneIndexInTier >= tierRecipes.size()) selectedRuneIndexInTier = 0;
-		com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe = tierRecipes.get(selectedRuneIndexInTier);
+		if (selectedScarIndexInTier >= tierRecipes.size()) selectedScarIndexInTier = 0;
+		com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe = tierRecipes.get(selectedScarIndexInTier);
 
 		// Layout: left half = 8×8 pattern grid, right half = info panel
 		int patternAreaW = contentW / 2;
@@ -2320,22 +2320,22 @@ public class SkillTreeScreen extends Screen {
 		int infoX = contentX + patternAreaW + 10;
 		int infoW = contentW - patternAreaW - 20;
 
-		// ── 8×8 Rune pattern grid ──
-		drawRunePatternGrid(gfx, recipe, patternX + 10, guiTop + 30,
+		// ── 8×8 Scar Pattern grid ──
+		drawscarPatternGrid(gfx, recipe, patternX + 10, guiTop + 30,
 				patternAreaW - 20, guiHeight - 60);
 
 		// ── Info panel ──
-		drawRuneInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
+		drawScarInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
 
 		gfx.pose().popPose();
 	}
 
 	/**
-	 * Draws the 8×8 chisel pattern grid for a rune recipe.
+	 * Draws the 8×8 chisel pattern grid for a scar recipe.
 	 * Filled cells (value == 1) are drawn as solid colored squares;
 	 * empty cells are drawn as faint outlines.
 	 */
-	private void drawRunePatternGrid(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe,
+	private void drawscarPatternGrid(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe,
 									 int areaX, int areaY, int areaW, int areaH) {
 		byte[][] pattern = recipe.getPattern();
 		if (pattern == null) return;
@@ -2352,10 +2352,10 @@ public class SkillTreeScreen extends Screen {
 
 		// Grid background
 		gfx.fill(gridX - 2, gridY - 2, gridX + gridW + 2, gridY + gridH + 2, 0xFF0A0404);
-		gfx.fill(gridX - 1, gridY - 1, gridX + gridW + 1, gridY + gridH + 1, Tab.RUNES.color & 0x33FFFFFF);
+		gfx.fill(gridX - 1, gridY - 1, gridX + gridW + 1, gridY + gridH + 1, Tab.SCARS.color & 0x33FFFFFF);
 
 		// Draw cells
-		int filledColor = Tab.RUNES.color;
+		int filledColor = Tab.SCARS.color;
 		int emptyBg = 0xFF120808;
 		int emptyBorder = 0xFF221111;
 
@@ -2391,13 +2391,13 @@ public class SkillTreeScreen extends Screen {
 		}
 
 		// Label below the grid
-		gfx.drawCenteredString(font, "Rune Pattern (8×8)", gridX + gridW / 2, gridY + gridH + 6, 0xFF888888);
+		gfx.drawCenteredString(font, "Scar Pattern (8×8)", gridX + gridW / 2, gridY + gridH + 6, 0xFF888888);
 	}
 
 	/**
 	 * Draws the information panel for the selected chisel recipe.
 	 */
-	private void drawRuneInfoPanel(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe,
+	private void drawScarInfoPanel(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe,
 								   int panelX, int panelY, int panelW) {
 		int y = panelY;
 		int lineH = 12;
@@ -2408,7 +2408,7 @@ public class SkillTreeScreen extends Screen {
 		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
 		for (String titleLine : ScreenDrawUtils.wrapText(font, name, panelW)) {
 			gfx.drawString(font, Component.literal(titleLine)
-					.withStyle(s -> s.withColor(Tab.RUNES.color).withBold(true)), panelX, y, 0);
+					.withStyle(s -> s.withColor(Tab.SCARS.color).withBold(true)), panelX, y, 0);
 			y += lineH;
 		}
 		y += 4;
@@ -2419,12 +2419,12 @@ public class SkillTreeScreen extends Screen {
 
 		// ── Tier ──
 		gfx.drawString(font, Component.literal("Tier: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(String.valueOf(recipe.getTier())).withStyle(s -> s.withColor(Tab.RUNES.color))), panelX, y, 0);
+				.append(Component.literal(String.valueOf(recipe.getTier())).withStyle(s -> s.withColor(Tab.SCARS.color))), panelX, y, 0);
 		y += lineH + 4;
 
-		// ── Rune Type ──
+		// ── Scar type ──
 		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(recipe.getRuneType().name()).withStyle(s -> s.withColor(0xDDDDDD))), panelX, y, 0);
+				.append(Component.literal(recipe.getScarType().name()).withStyle(s -> s.withColor(0xDDDDDD))), panelX, y, 0);
 		y += lineH + 4;
 
 		// ── Ingredients ──
@@ -2488,10 +2488,10 @@ public class SkillTreeScreen extends Screen {
 
 		y += 8;
 
-		// ── Per-rune lore ──
+		// ── Per-scar lore ──
 		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
 		y += 6;
-		String loreText = RuneLoreData.getLore(chiselRecipeKey(recipe));
+		String loreText = ScarLoreData.getLore(ScarRecipeKey(recipe));
 		for (String loreLine : ScreenDrawUtils.wrapText(font, loreText, panelW)) {
 			gfx.drawString(font, Component.literal(loreLine)
 					.withStyle(s -> s.withColor(0xFF557788).withItalic(true)), panelX, y, 0);
@@ -2500,18 +2500,18 @@ public class SkillTreeScreen extends Screen {
 	}
 
 	/**
-	 * Draws the tier sidebar for Runes, showing all tiers as rows.
+	 * Draws the tier sidebar for scars, showing all tiers as rows.
 	 * Locked tiers are greyed/obfuscated. Recipes within selected tier are listed below.
 	 */
-	private void drawRunesTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
+	private void drawScarsTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
 		int sx = guiLeft + 4;
 		int sy = guiTop + 24;
 		int sw = TIER_SIDEBAR_W - 8;
 		int rowH = 22;
 
 		// Title (drawn above the scrollable area)
-		gfx.drawString(font, Component.literal("Rune Tiers")
-				.withStyle(s -> s.withColor(Tab.RUNES.color).withBold(true)), sx + 2, sy, 0);
+		gfx.drawString(font, Component.literal("Scar Tiers")
+				.withStyle(s -> s.withColor(Tab.SCARS.color).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
 		// Separator
@@ -2524,14 +2524,14 @@ public class SkillTreeScreen extends Screen {
 		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
 
 		// Apply scroll offset
-		sy -= runeSidebarScroll;
+		sy -= scarSidebarScroll;
 
 		// Tier rows
-		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
-			String tierName = RUNE_TIER_NAMES[i];
-			boolean locked = playerDegree < RUNE_TIER_DEGREE_REQ[i];
-			boolean selected = tierName.equals(selectedRuneTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
+			String tierName = SCAR_TIER_NAMES[i];
+			boolean locked = playerDegree < SCAR_TIER_DEGREE_REQ[i];
+			boolean selected = tierName.equals(selectedScarTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
 					chiselByTier.getOrDefault(tierName, List.of());
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
@@ -2543,7 +2543,7 @@ public class SkillTreeScreen extends Screen {
 			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
 
 			// Border
-			int bc = locked ? 0xFF333333 : (selected ? Tab.RUNES.color : 0xFF555555);
+			int bc = locked ? 0xFF333333 : (selected ? Tab.SCARS.color : 0xFF555555);
 			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
 			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
 			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
@@ -2563,8 +2563,8 @@ public class SkillTreeScreen extends Screen {
 			if (selected && !locked) {
 				sy += rowH + 2;
 				for (int j = 0; j < recipes.size(); j++) {
-					com.vincenthuto.hemomancy.common.recipe.ChiselRecipe r = recipes.get(j);
-					boolean recSel = (j == selectedRuneIndexInTier);
+					com.vincenthuto.hemomancy.common.recipe.ScarRecipe r = recipes.get(j);
+					boolean recSel = (j == selectedScarIndexInTier);
 					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
 							&& mouseY >= sy && mouseY <= sy + 16
 							&& mouseY >= clipTop && mouseY <= clipBottom;
@@ -2573,7 +2573,7 @@ public class SkillTreeScreen extends Screen {
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
 
 					if (recSel) {
-						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.RUNES.color);
+						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.SCARS.color);
 					}
 
 					String recPath = r.getId().getPath();
@@ -2590,20 +2590,20 @@ public class SkillTreeScreen extends Screen {
 		gfx.disableScissor();
 
 		// Draw scroll indicators if content overflows
-		int contentH = runeSidebarContentH();
+		int contentH = scarSidebarContentH();
 		int visibleH = tierSidebarVisibleH();
 		if (contentH > visibleH) {
-			if (runeSidebarScroll > 0) {
+			if (scarSidebarScroll > 0) {
 				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
 			}
-			if (runeSidebarScroll < contentH - visibleH) {
+			if (scarSidebarScroll < contentH - visibleH) {
 				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
 			}
 		}
 	}
 
-	/** Returns the tier name clicked in the runes sidebar, or null. */
-	private String runeTierUnder(double mx, double my) {
+	/** Returns the tier name clicked in the scars sidebar, or null. */
+	private String scarTierUnder(double mx, double my) {
 		int sx = guiLeft + 4;
 		int sy = guiTop + 24 + 14 + 4;
 		int sw = TIER_SIDEBAR_W - 8;
@@ -2614,12 +2614,12 @@ public class SkillTreeScreen extends Screen {
 		if (my < clipTop || my > clipBottom) return null;
 
 		// Apply scroll offset
-		sy -= runeSidebarScroll;
+		sy -= scarSidebarScroll;
 
-		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
-			String tierName = RUNE_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedRuneTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
+			String tierName = SCAR_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedScarTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
 					chiselByTier.getOrDefault(tierName, List.of());
 
 			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
@@ -2635,11 +2635,11 @@ public class SkillTreeScreen extends Screen {
 		return null;
 	}
 
-	/** Returns the recipe index clicked within the selected rune tier, or -1. */
-	private int runeRecipeUnder(double mx, double my) {
-		if (selectedRuneTier == null) return -1;
-		List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
-				chiselByTier.getOrDefault(selectedRuneTier, List.of());
+	/** Returns the recipe index clicked within the selected scar tier, or -1. */
+	private int scarRecipeUnder(double mx, double my) {
+		if (selectedScarTier == null) return -1;
+		List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
+				chiselByTier.getOrDefault(selectedScarTier, List.of());
 		if (recipes.isEmpty()) return -1;
 
 		int sx = guiLeft + 4;
@@ -2652,12 +2652,12 @@ public class SkillTreeScreen extends Screen {
 		if (my < clipTop || my > clipBottom) return -1;
 
 		// Apply scroll offset
-		sy -= runeSidebarScroll;
+		sy -= scarSidebarScroll;
 
-		for (int i = 0; i < RUNE_TIER_NAMES.length; i++) {
-			String tierName = RUNE_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedRuneTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> tierRecipes =
+		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
+			String tierName = SCAR_TIER_NAMES[i];
+			boolean selected = tierName.equals(selectedScarTier);
+			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> tierRecipes =
 					chiselByTier.getOrDefault(tierName, List.of());
 
 			sy += rowH + 2; // skip tier row
@@ -3468,7 +3468,7 @@ public class SkillTreeScreen extends Screen {
 			&& my >= drawerY && my <= drawerY + drawerH;
 	}
 
-	/** Returns true if the mouse is inside the tier sidebar region (Rites/Crafting/Runes). */
+	/** Returns true if the mouse is inside the tier sidebar region (Rites/Crafting/Scars). */
 	private boolean isOverTierSidebar(double mx, double my) {
 		return mx >= guiLeft && mx <= guiLeft + TIER_SIDEBAR_W
 			&& my >= guiTop && my <= guiTop + guiHeight;
@@ -3507,14 +3507,14 @@ public class SkillTreeScreen extends Screen {
 		return total;
 	}
 
-	/** Total content height for the Runes tier sidebar. */
-	private int runeSidebarContentH() {
+	/** Total content height for the Scars tier sidebar. */
+	private int scarSidebarContentH() {
 		int rowH = 22;
 		int total = 0;
-		for (String tierName : RUNE_TIER_NAMES) {
+		for (String tierName : SCAR_TIER_NAMES) {
 			total += rowH + 2;
-			if (tierName.equals(selectedRuneTier)) {
-				List<com.vincenthuto.hemomancy.common.recipe.ChiselRecipe> recipes =
+			if (tierName.equals(selectedScarTier)) {
+				List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
 						chiselByTier.getOrDefault(tierName, List.of());
 				total += rowH + 2 + recipes.size() * 18;
 			}
@@ -3532,13 +3532,13 @@ public class SkillTreeScreen extends Screen {
 		craftingSidebarScroll = Math.min(craftingSidebarScroll, maxScroll);
 	}
 
-	private void clampRuneSidebarScroll() {
-		int maxScroll = Math.max(0, runeSidebarContentH() - tierSidebarVisibleH());
-		runeSidebarScroll = Math.min(runeSidebarScroll, maxScroll);
+	private void clampscarSidebarScroll() {
+		int maxScroll = Math.max(0, scarSidebarContentH() - tierSidebarVisibleH());
+		scarSidebarScroll = Math.min(scarSidebarScroll, maxScroll);
 	}
 
-	/** Returns the trailing path segment of a chisel recipe's ResourceLocation (e.g. {@code "rune_heart"}). */
-	private static String chiselRecipeKey(com.vincenthuto.hemomancy.common.recipe.ChiselRecipe recipe) {
+	/** Returns the trailing path segment of a chisel recipe's ResourceLocation (e.g. {@code "scar_heart"}). */
+	private static String ScarRecipeKey(com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe) {
 		String path = recipe.getId().getPath();
 		return path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path;
 	}
@@ -3611,9 +3611,9 @@ public class SkillTreeScreen extends Screen {
 			case "skill_blood_flow"      -> "B";
 			case "skill_coagulation"     -> "G";
 			case "skill_sanguine_reach"  -> "R";
-			case "skill_rune_affinity"   -> "\u2721";
-			case "skill_rune_resonance"  -> "\u2721";
-			case "skill_rune_mastery"    -> "\u2721";
+			case "skill_scar_affinity"   -> "\u2721";
+			case "skill_scar_resonance"  -> "\u2721";
+			case "skill_scar_mastery"    -> "\u2721";
 			default                      -> "?";
 		};
 	}

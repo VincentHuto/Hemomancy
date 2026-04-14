@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "hemomancy:runic_chisel_station"
+          "name": "hemomancy:scar_station"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "hemomancy:blocks/runic_chisel_station"
+  "random_sequence": "hemomancy:blocks/scar_station"
 }

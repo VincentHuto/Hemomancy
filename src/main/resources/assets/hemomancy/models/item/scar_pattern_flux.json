@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/scar_pattern",
+    "layer1": "hemomancy:item/scars/scar_flux"
+  }
+}

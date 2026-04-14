@@ -101,7 +101,7 @@ public class BlockSerpentineIdol extends Block implements EntityBlock {
 		 * if (!player.isSneaking()) { if (stack.getItem() ==
 		 * ItemInit.sanguine_conduit.get()) { worldIn.destroyBlock(pos, false);
 		 * stack.shrink(1); worldIn.setBlockState(pos,
-		 * BlockInit.rune_mod_station.get().getDefaultState()); } }
+		 * BlockInit.scar_mod_station.get().getDefaultState()); } }
 		 */
 
 		return InteractionResult.SUCCESS;

@@ -69,16 +69,16 @@ public final class MaterialsData {
 				"Incubates morphling polyps into specialised morphlings.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.morphling_incubator.get())));
 
-		list.add(new MaterialEntry("runic_chisel_station", "Runic Chisel Station",
-				"Carves rune patterns into blank runes.",
-				"Functional Blocks", () -> new ItemStack(BlockInit.runic_chisel_station.get())));
+		list.add(new MaterialEntry("scar_station", "Runic Chisel Station",
+				"Carves Scar Patterns into blank scars.",
+				"Functional Blocks", () -> new ItemStack(BlockInit.scar_station.get())));
 
 		list.add(new MaterialEntry("scrying_podium", "Scrying Podium",
 				"Reveals hidden information about blood tendencies.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.scrying_podium.get())));
 
 		list.add(new MaterialEntry("fungal_podium", "Fungal Podium",
-				"Processes fungal spores for rune imprinting.",
+				"Processes fungal spores for scar imprinting.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.fungal_podium.get())));
 
 		list.add(new MaterialEntry("fungal_implantation_pylon", "Fungal Implantation Pylon",
@@ -226,124 +226,124 @@ public final class MaterialsData {
 				"Organic gourd cultivated to store blood naturally.",
 				"Containers", () -> new ItemStack(ItemInit.blood_gourd_white.get())));
 
-		// ── Runes & Patterns ──
-		list.add(new MaterialEntry("rune_blank", "Blank Rune",
-				"An uncarved rune tablet. Base material for all runic inscriptions. Requires Adept rank.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_blank.get())));
+		// ── Scars & Patterns ──
+		list.add(new MaterialEntry("scar_blank", "Blank Scar",
+				"An uncarved scar tablet. Base material for all scar inscriptions. Requires Adept rank.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_blank.get())));
 
-		list.add(new MaterialEntry("rune_binder", "Rune Binder",
-				"Leather-bound case that stores rune patterns and carved runes.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_binder.get())));
+		list.add(new MaterialEntry("scar_binder", "Scar Binder",
+				"Leather-bound case that stores Scar Patterns and carved scars.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder.get())));
 
-		list.add(new MaterialEntry("rune_binder_upgraded", "Rune Binder (Upgraded)",
-				"Expanded rune binder with additional storage capacity.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_binder_upgraded.get())));
+		list.add(new MaterialEntry("scar_binder_upgraded", "scar binder (Upgraded)",
+				"Expanded scar binder with additional storage capacity.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_binder_upgraded.get())));
 
-		list.add(new MaterialEntry("rune_transcendence", "Rune of Transcendence",
-				"Lux-aligned rune. Opens pathways to luminous perception.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_transcendence.get())));
+		list.add(new MaterialEntry("scar_transcendence", "Scar of Transcendence",
+				"Lux-aligned scar. Opens pathways to luminous perception.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_transcendence.get())));
 
-		list.add(new MaterialEntry("rune_sol", "Rune of Sol",
-				"Flammeus-aligned rune. Kindles the inner fire of conviction.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_sol.get())));
+		list.add(new MaterialEntry("scar_sol", "Scar of Sol",
+				"Flammeus-aligned scar. Kindles the inner fire of conviction.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_sol.get())));
 
-		list.add(new MaterialEntry("rune_heart", "Rune of the Heart",
-				"Animus-aligned rune. Strengthens the vital bond between body and will.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_heart.get())));
+		list.add(new MaterialEntry("scar_heart", "Scar of the Heart",
+				"Animus-aligned scar. Strengthens the vital bond between body and will.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_heart.get())));
 
-		list.add(new MaterialEntry("rune_descendence", "Rune of Descendence",
-				"Mortem-aligned rune. Carves a pathway toward the threshold of endings.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_descendence.get())));
+		list.add(new MaterialEntry("scar_descendence", "Scar of Descendence",
+				"Mortem-aligned scar. Carves a pathway toward the threshold of endings.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_descendence.get())));
 
-		list.add(new MaterialEntry("rune_moon", "Rune of the Moon",
-				"Congeatio-aligned rune. Chills the blood, clarifying dormant instincts.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_moon.get())));
+		list.add(new MaterialEntry("scar_moon", "Scar of the Moon",
+				"Congeatio-aligned scar. Chills the blood, clarifying dormant instincts.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_moon.get())));
 
-		list.add(new MaterialEntry("rune_eye", "Rune of the Eye",
-				"Ductilis-aligned rune. Sharpens the inner sight to perceive hidden connections.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_eye.get())));
+		list.add(new MaterialEntry("scar_eye", "Scar of the Eye",
+				"Ductilis-aligned scar. Sharpens the inner sight to perceive hidden connections.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_eye.get())));
 
-		list.add(new MaterialEntry("rune_feral", "Rune of the Feral",
-				"Ductilis-aligned rune. Awakens primal nervous pathways long dormant.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_feral.get())));
+		list.add(new MaterialEntry("scar_feral", "Scar of the Feral",
+				"Ductilis-aligned scar. Awakens primal nervous pathways long dormant.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_feral.get())));
 
-		// ── Tier 1 Runes (new) ──
+		// ── Tier 1 Scars (new) ──
 
-		list.add(new MaterialEntry("rune_thorn", "Rune of the Thorn",
-				"Ferric-aligned rune. Draws iron from the blood to harden resolve.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_thorn.get())));
+		list.add(new MaterialEntry("scar_thorn", "Scar of the Thorn",
+				"Ferric-aligned scar. Draws iron from the blood to harden resolve.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_thorn.get())));
 
-		list.add(new MaterialEntry("rune_shade", "Rune of the Shade",
-				"Tenebris-aligned rune. Cloaks the bearer in the penumbra between worlds.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_shade.get())));
+		list.add(new MaterialEntry("scar_shade", "Scar of the Shade",
+				"Tenebris-aligned scar. Cloaks the bearer in the penumbra between worlds.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_shade.get())));
 
-		// ── Tier 2 Runes ──
+		// ── Tier 2 Scars ──
 
-		list.add(new MaterialEntry("rune_pyre", "Rune of the Pyre",
-				"Flammeus-aligned rune. Stokes the cremation fire that purifies sanguine impurities.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_pyre.get())));
+		list.add(new MaterialEntry("scar_pyre", "Scar of the Pyre",
+				"Flammeus-aligned scar. Stokes the cremation fire that purifies sanguine impurities.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_pyre.get())));
 
-		list.add(new MaterialEntry("rune_marrow", "Rune of Marrow",
-				"Animus-aligned rune. Taps the deep marrow where new blood is forged.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_marrow.get())));
+		list.add(new MaterialEntry("scar_marrow", "Scar of Marrow",
+				"Animus-aligned scar. Taps the deep marrow where new blood is forged.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_marrow.get())));
 
-		list.add(new MaterialEntry("rune_blight", "Rune of Blight",
-				"Mortem-aligned rune. Channels the rot that consumes living tissue.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_blight.get())));
+		list.add(new MaterialEntry("scar_blight", "Scar of Blight",
+				"Mortem-aligned scar. Channels the rot that consumes living tissue.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_blight.get())));
 
-		list.add(new MaterialEntry("rune_rime", "Rune of Rime",
-				"Congeatio-aligned rune. Crystallizes the blood into protective frost lattices.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_rime.get())));
+		list.add(new MaterialEntry("scar_rime", "Scar of Rime",
+				"Congeatio-aligned scar. Crystallizes the blood into protective frost lattices.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_rime.get())));
 
-		list.add(new MaterialEntry("rune_flux", "Rune of Flux",
-				"Ductilis-aligned rune. Loosens the boundaries of form, permitting adaptation.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_flux.get())));
+		list.add(new MaterialEntry("scar_flux", "Scar of Flux",
+				"Ductilis-aligned scar. Loosens the boundaries of form, permitting adaptation.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_flux.get())));
 
-		list.add(new MaterialEntry("rune_halo", "Rune of the Halo",
-				"Lux-aligned rune. Projects an aureole of purified sanguine radiance.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_halo.get())));
+		list.add(new MaterialEntry("scar_halo", "Scar of the Halo",
+				"Lux-aligned scar. Projects an aureole of purified sanguine radiance.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_halo.get())));
 
-		list.add(new MaterialEntry("rune_anvil", "Rune of the Anvil",
-				"Ferric-aligned rune. Tempers the blood's iron into an unyielding lattice.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_anvil.get())));
+		list.add(new MaterialEntry("scar_anvil", "Scar of the Anvil",
+				"Ferric-aligned scar. Tempers the blood's iron into an unyielding lattice.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_anvil.get())));
 
-		list.add(new MaterialEntry("rune_veil", "Rune of the Veil",
-				"Tenebris-aligned rune. Parts the membrane between the seen and unseen.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_veil.get())));
+		list.add(new MaterialEntry("scar_veil", "Scar of the Veil",
+				"Tenebris-aligned scar. Parts the membrane between the seen and unseen.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_veil.get())));
 
-		// ── Tier 3 Runes ──
+		// ── Tier 3 Scars ──
 
-		list.add(new MaterialEntry("rune_phoenix", "Rune of the Phoenix",
-				"Flammeus-aligned rune. Inscribes the cycle of immolation and rebirth into the bloodline.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_phoenix.get())));
+		list.add(new MaterialEntry("scar_phoenix", "Scar of the Phoenix",
+				"Flammeus-aligned scar. Inscribes the cycle of immolation and rebirth into the bloodline.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_phoenix.get())));
 
-		list.add(new MaterialEntry("rune_ichor", "Rune of Ichor",
-				"Animus-aligned rune. Awakens the primordial ichor that flows beneath mortal blood.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_ichor.get())));
+		list.add(new MaterialEntry("scar_ichor", "Scar of Ichor",
+				"Animus-aligned scar. Awakens the primordial ichor that flows beneath mortal blood.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_ichor.get())));
 
-		list.add(new MaterialEntry("rune_wither", "Rune of Withering",
-				"Mortem-aligned rune. Accelerates entropy within the vital humours.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_wither.get())));
+		list.add(new MaterialEntry("scar_wither", "Scar of Withering",
+				"Mortem-aligned scar. Accelerates entropy within the vital humours.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_wither.get())));
 
-		list.add(new MaterialEntry("rune_glacier", "Rune of the Glacier",
-				"Congeatio-aligned rune. Invokes the stillness of primordial ice to arrest all change.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_glacier.get())));
+		list.add(new MaterialEntry("scar_glacier", "Scar of the Glacier",
+				"Congeatio-aligned scar. Invokes the stillness of primordial ice to arrest all change.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_glacier.get())));
 
-		list.add(new MaterialEntry("rune_chimera", "Rune of the Chimera",
-				"Ductilis-aligned rune. Grafts disparate essences into a single protean bloodline.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_chimera.get())));
+		list.add(new MaterialEntry("scar_chimera", "Scar of the Chimera",
+				"Ductilis-aligned scar. Grafts disparate essences into a single protean bloodline.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_chimera.get())));
 
-		list.add(new MaterialEntry("rune_corona", "Rune of the Corona",
-				"Lux-aligned rune. Crowns the bearer in blinding sanguine luminescence.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_corona.get())));
+		list.add(new MaterialEntry("scar_corona", "Scar of the Corona",
+				"Lux-aligned scar. Crowns the bearer in blinding sanguine luminescence.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_corona.get())));
 
-		list.add(new MaterialEntry("rune_crucible", "Rune of the Crucible",
-				"Ferric-aligned rune. Subjects the blood's metals to the ultimate forge-trial.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_crucible.get())));
+		list.add(new MaterialEntry("scar_crucible", "Scar of the Crucible",
+				"Ferric-aligned scar. Subjects the blood's metals to the ultimate forge-trial.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_crucible.get())));
 
-		list.add(new MaterialEntry("rune_oblivion", "Rune of Oblivion",
-				"Tenebris-aligned rune. Opens a void that consumes memory and substance alike.",
-				"Runes & Patterns", () -> new ItemStack(ItemInit.rune_oblivion.get())));
+		list.add(new MaterialEntry("scar_oblivion", "Scar of Oblivion",
+				"Tenebris-aligned scar. Opens a void that consumes memory and substance alike.",
+				"Scars & Patterns", () -> new ItemStack(ItemInit.scar_oblivion.get())));
 
 		return Collections.unmodifiableList(list);
 	}

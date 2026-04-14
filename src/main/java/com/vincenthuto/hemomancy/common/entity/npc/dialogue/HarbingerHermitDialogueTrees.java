@@ -168,38 +168,38 @@ public final class HarbingerHermitDialogueTrees {
 				.build();
 	}
 
-	/** Degree 4 — Adept. The hermit introduces rune crafting and its deeper meaning. */
+	/** Degree 4 — Adept. The hermit introduces Scar crafting and its deeper meaning. */
 	public static DialogueTree adept(int entityId) {
 		return DialogueTree.builder(SPEAKER, HERMIT_ICON, entityId)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.hermit.adept.line1",
 						"hemomancy.hermit.adept.line2"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_runes", "rune_intro", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("rune_intro", List.of(
-						"hemomancy.hermit.adept.rune_intro"
+				.addNode(new DialogueNode("scar_intro", List.of(
+						"hemomancy.hermit.adept.scar_intro"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_runes_work", "rune_lore", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.how_do_scars_work", "scar_lore", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("rune_lore", List.of(
-						"hemomancy.hermit.adept.rune_lore"
+				.addNode(new DialogueNode("scar_lore", List.of(
+						"hemomancy.hermit.adept.scar_lore"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.rune_crafting", "rune_crafting", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.scar_crafting", "scar_crafting", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
-				.addNode(new DialogueNode("rune_crafting", List.of(
-						"hemomancy.hermit.adept.rune_crafting"
+				.addNode(new DialogueNode("scar_crafting", List.of(
+						"hemomancy.hermit.adept.scar_crafting"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
 						"hemomancy.hermit.adept.hint"
 				), List.of(
-						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_runes", "rune_intro", null),
+						new DialogueOption("hemomancy.dialogue.hermit.option.tell_me_about_scars", "scar_intro", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.build();

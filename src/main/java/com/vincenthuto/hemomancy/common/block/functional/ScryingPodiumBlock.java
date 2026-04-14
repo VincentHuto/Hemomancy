@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenRunesInv;
+import com.vincenthuto.hemomancy.common.network.capa.scars.PacketOpenScarsInv;
 import com.vincenthuto.hemomancy.common.tile.functional.ScryingPodiumBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -116,7 +116,7 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenRunesInv());
+				PacketHandler.CHANNELSCARS.sendToServer(new PacketOpenScarsInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {
@@ -127,8 +127,8 @@ public class ScryingPodiumBlock extends BaseEntityBlock {
 				worldIn.setBlockAndUpdate(pos, BlockInit.unstained_podium.get().defaultBlockState());
 			}
 		}
-//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
-//			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
+//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
+//			((BlockEntityScarModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
 //
 //		}
 		return InteractionResult.SUCCESS;

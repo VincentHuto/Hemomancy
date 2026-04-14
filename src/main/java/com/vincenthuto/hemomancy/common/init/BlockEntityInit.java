@@ -14,9 +14,9 @@ public class BlockEntityInit {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
 			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<BlockEntityType<ChiselStationBlockEntity>> runic_chisel_station = TILES
-			.register("runic_chisel_station", () -> BlockEntityType.Builder
-					.of(ChiselStationBlockEntity::new, BlockInit.runic_chisel_station.get()).build(null));
+	public static final RegistryObject<BlockEntityType<ScarStationBlockEntity>> scar_station = TILES
+			.register("scar_station", () -> BlockEntityType.Builder
+					.of(ScarStationBlockEntity::new, BlockInit.scar_station.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<SemiSentientConstructBlockEntity>> semi_sentient_construct = TILES
 			.register("semi_sentient_construct", () -> BlockEntityType.Builder

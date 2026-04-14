@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.TeleportToVeinPacket;
@@ -48,7 +48,7 @@ public class RadialChooseVeinScreen extends Screen {
 		}
 	}
 
-	private IRunesItemHandler inv;
+	private IScarsItemHandler inv;
 	private Minecraft mc;
 	private boolean needsRecheckStacks = true;
 	private final List<BlitRadialMenuItem> cachedMenuItems = Lists.newArrayList();

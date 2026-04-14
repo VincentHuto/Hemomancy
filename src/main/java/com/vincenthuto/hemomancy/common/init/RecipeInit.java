@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
@@ -12,7 +12,7 @@ import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.ChiselRecipeSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.GhastlyAlembicSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
@@ -34,8 +34,8 @@ public class RecipeInit {
 
 	// Types
 
-	public static final RegistryObject<RecipeType<ChiselRecipe>> chisel_recipe = RECIPE_TYPES.register("chisel_recipe",
-			() -> RecipeType.simple(Hemomancy.rloc("chisel_recipe")));
+	public static final RegistryObject<RecipeType<ScarRecipe>> chisel_recipe = RECIPE_TYPES.register("scar_recipe",
+			() -> RecipeType.simple(Hemomancy.rloc("scar_recipe")));
 
 	public static final RegistryObject<RecipeType<GhastlyAlembicRecipe>> ghastly_alembic_recipe_type = RECIPE_TYPES
 			.register("ghastly_alembic_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("ghastly_alembic")));
@@ -72,7 +72,7 @@ public class RecipeInit {
 			.register("blood_structure_recipe", BloodStructureRecipeSerializer::new);
 
 	public static final RegistryObject<RecipeSerializer<?>> chisel_recipe_serializer = SERIALIZERS
-			.register("chisel_recipe", ChiselRecipeSerializer::new);
+			.register("scar_recipe", ScarRecipeSerializer::new);
 
 	public static final RegistryObject<RecipeSerializer<?>> cardinal_rite_recipe_serializer = SERIALIZERS
 			.register("cardinal_rite_recipe", CardinalRiteRecipeSerializer::new);

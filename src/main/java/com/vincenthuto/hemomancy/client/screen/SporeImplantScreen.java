@@ -4,8 +4,8 @@ import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.menu.SporeImplantMenu;
-import com.vincenthuto.hemomancy.common.menu.slot.RuneSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveRuneTypeSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -32,7 +32,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	private static final int TENDRIL_COUNT = 18;
 	private static final int SPORE_COUNT = 40;
 
-	// Upper fungal area height (where rune slots sit)
+	// Upper fungal area height (where scar slots sit)
 	private static final int FUNGAL_AREA_HEIGHT = 78;
 
 	private float[][] tendrilParams;
@@ -103,7 +103,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		int gw = this.imageWidth;
 		int gh = this.imageHeight;
 
-		// ───── Fungal background for the upper rune area ─────
+		// ───── Fungal background for the upper scar area ─────
 		renderFungalBackground(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
 		drawGradientBorder(gfx, gx, gy, gw, FUNGAL_AREA_HEIGHT);
 
@@ -124,7 +124,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		}
 
 		// ───── Pulsing glow ring around center fungal slot ─────
-		renderFungalSlotGlow(gfx, gx, gy);
+//		renderFungalSlotGlow(gfx, gx, gy);
 
 		// ───── Outer border around the entire GUI ─────
 		drawGradientBorder(gfx, gx, gy, gw, gh);
@@ -142,7 +142,8 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	// ───── Fungal-themed animated background ─────
 
 	private void renderFungalBackground(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
-		gfx.enableScissor(gx, gy, gx + gw, gy + gh);
+		// NOTE: Avoid scissor here. A mismatched scissor space (GUI coords vs window coords)
+		// can clip vanilla slot/item rendering and hover tooltips after renderBg.
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
@@ -189,7 +190,6 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		}
 
 		RenderSystem.disableBlend();
-		gfx.disableScissor();
 	}
 
 	private void drawFungalTendril(GuiGraphics gfx, int index, float time,
@@ -278,7 +278,7 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 	// ───── Pulsing glow around the central fungal slot ─────
 
 	private void renderFungalSlotGlow(GuiGraphics gfx, int gx, int gy) {
-		// Center fungal rune slot is at (80, 35) in GUI coords
+		// Center fungal scar slot is at (80, 35) in GUI coords
 		int cx = gx + 80 + 8; // center of the 16px slot
 		int cy = gy + 35 + 8;
 		float time = System.nanoTime() / 1_000_000_000f;
@@ -373,12 +373,12 @@ public class SporeImplantScreen extends AbstractContainerScreen<SporeImplantMenu
 		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 
-		// Special amber tint for the central fungal rune slot
-		if (slot instanceof SelectiveRuneTypeSlot) {
+		// Special amber tint for the central fungal scar slot
+		if (slot instanceof SelectiveScarTypeSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x25CC6600);
 		}
-		// Subtle warm tint for the surrounding rune slots
-		else if (slot instanceof RuneSlot) {
+		// Subtle warm tint for the surrounding scar slots
+		else if (slot instanceof ScarSlot) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15AA4400);
 		}
 	}

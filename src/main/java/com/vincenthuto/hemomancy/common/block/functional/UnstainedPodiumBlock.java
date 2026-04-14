@@ -111,7 +111,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 			if (stack.getItem() == ItemInit.sanguine_conduit.get()) {
 			//	worldIn.destroyBlock(pos, false);
 				stack.shrink(1);
-			//	worldIn.setBlockAndUpdate(pos, BlockInit.rune_mod_station.get().defaultBlockState());
+			//	worldIn.setBlockAndUpdate(pos, BlockInit.scar_mod_station.get().defaultBlockState());
 			}
 
 			if (stack.getItem() == ItemInit.scrying_dish.get()) {

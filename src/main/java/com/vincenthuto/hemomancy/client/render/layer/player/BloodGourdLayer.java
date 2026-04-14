@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
 
@@ -59,7 +59,7 @@ public class BloodGourdLayer<T extends LivingEntity, M extends HumanoidModel<T>>
 	public void render(PoseStack matrixStack, MultiBufferSource buffer, int lightness, T ent, float limbSwing,
 			float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		if (ent instanceof Player player) {
-			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 				var stack = inv.getStackInSlot(6);
 				if (stack.getItem() instanceof BloodGourdItem gourd) {
 					this.translateToBody(matrixStack);

@@ -25,7 +25,7 @@ public class SkillPointInit {
 			skill_feeding_frenzy, skill_hemostasis, skill_sanguine_surge, skill_crimson_mastery,
 			skill_vital_link, skill_iron_will, skill_blood_flow, skill_coagulation, skill_sanguine_reach,
 			skill_manip_slots,
-			skill_rune_affinity, skill_rune_resonance, skill_rune_mastery;
+			skill_scar_affinity, skill_scar_resonance, skill_scar_mastery;
 
 	// ── Milestone tracking ──
 	/** Set of milestones that have already been completed and rewarded. */
@@ -104,19 +104,19 @@ public class SkillPointInit {
 						.setSkillPointCost(2).setRequiredDegree(1)
 						.setIconItem(() -> new ItemStack(ItemInit.scrying_dish.get())));
 
-		// ── Rune branch (Tier 4 — Adept gated) ──
-		skill_rune_affinity = registerSkill(BASE,
-				new SkillPoint(15, "skill_rune_affinity", 400, 3, EnumSkillStates.LOCKED, skill_crimson_mastery)
+		// ── Scar branch (Tier 4 — Adept gated) ──
+		skill_scar_affinity = registerSkill(BASE,
+				new SkillPoint(15, "skill_scar_affinity", 400, 3, EnumSkillStates.LOCKED, skill_crimson_mastery)
 						.setSkillPointCost(3).setRequiredDegree(4)
-						.setIconItem(() -> new ItemStack(ItemInit.rune_blank.get())));
-		skill_rune_resonance = registerSkill(BASE,
-				new SkillPoint(16, "skill_rune_resonance", 500, 3, EnumSkillStates.LOCKED, skill_rune_affinity)
+						.setIconItem(() -> new ItemStack(ItemInit.scar_blank.get())));
+		skill_scar_resonance = registerSkill(BASE,
+				new SkillPoint(16, "skill_scar_resonance", 500, 3, EnumSkillStates.LOCKED, skill_scar_affinity)
 						.setSkillPointCost(3).setRequiredDegree(4)
-						.setIconItem(() -> new ItemStack(ItemInit.rune_heart.get())));
-		skill_rune_mastery = registerSkill(BASE,
-				new SkillPoint(17, "skill_rune_mastery", 600, 3, EnumSkillStates.LOCKED, skill_rune_resonance)
+						.setIconItem(() -> new ItemStack(ItemInit.scar_heart.get())));
+		skill_scar_mastery = registerSkill(BASE,
+				new SkillPoint(17, "skill_scar_mastery", 600, 3, EnumSkillStates.LOCKED, skill_scar_resonance)
 						.setSkillPointCost(4).setRequiredDegree(5)
-						.setIconItem(() -> new ItemStack(ItemInit.rune_transcendence.get())));
+						.setIconItem(() -> new ItemStack(ItemInit.scar_transcendence.get())));
 
 		registerSkillBranch(BASE);
 	}

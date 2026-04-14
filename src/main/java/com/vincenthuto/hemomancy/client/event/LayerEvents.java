@@ -65,7 +65,7 @@ import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.EquippedMorphlingLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.FungalElytraLayer;
-import com.vincenthuto.hemomancy.client.render.layer.player.RenderRunesLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.RenderScarsLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
@@ -108,7 +108,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(SuspendedBloodCrystalModel.LAYER_LOCATION, SuspendedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(SuspendedCleansedBloodCrystalModel.LAYER_LOCATION, SuspendedCleansedBloodCrystalModel::createBodyLayer);
 		event.registerLayerDefinition(MnemonicReliquaryModel.LAYER_LOCATION, MnemonicReliquaryModel::createBodyLayer);
-		event.registerLayerDefinition(ChiselStationModel.LAYER_LOCATION, ChiselStationModel::createBodyLayer);
+		event.registerLayerDefinition(ScarStationModel.LAYER_LOCATION, ScarStationModel::createBodyLayer);
 		event.registerLayerDefinition(SomaticLoomModel.LAYER_LOCATION, SomaticLoomModel::createBodyLayer);
 		event.registerLayerDefinition(GhastlyAlembicModel.LAYER_LOCATION, GhastlyAlembicModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
@@ -221,7 +221,7 @@ public class LayerEvents {
 //			renderer.addLayer(new BloodGourdLayer(renderer));
 //			renderer.addLayer(new BloodAvatarLayer(renderer));
 //			renderer.addLayer(new CellHandLayer(renderer));
-//			renderer.addLayer(new RenderRunesLayer(renderer));
+//			renderer.addLayer(new RenderScarsLayer(renderer));
 //			renderer.addLayer(new VascCharmLayer<>(renderer));
 
 		}
@@ -234,7 +234,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new BloodGourdLayer<>(livingRenderer));
 			livingRenderer.addLayer(new BloodAvatarLayer(livingRenderer));
 			livingRenderer.addLayer(new CellHandLayer(livingRenderer));
-			livingRenderer.addLayer(new RenderRunesLayer(livingRenderer));
+			livingRenderer.addLayer(new RenderScarsLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));

@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.RecipeLookup.FoundRecip
 import com.vincenthuto.hemomancy.client.screen.skilltree.RecipeLookup.RecipeKind;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -100,7 +100,7 @@ public final class MiniRecipeRenderer {
 			case GHASTLY_ALEMBIC      -> drawGhastlyAlembic(gfx, font, (GhastlyAlembicRecipe) found.recipe(), x, y, maxW, theme);
 			case MEMORY_WEAVING   -> drawMemoryWeaving(gfx, font, (MemoryWeavingRecipe) found.recipe(), x, y, maxW, theme);
 			case BLOOD_STRUCTURE  -> drawBloodStructure(gfx, font, (BloodStructureRecipe) found.recipe(), x, y, maxW, theme);
-			case CHISEL           -> drawChisel(gfx, font, (ChiselRecipe) found.recipe(), x, y, maxW, theme);
+			case CHISEL           -> drawChisel(gfx, font, (ScarRecipe) found.recipe(), x, y, maxW, theme);
 			case INCUBATOR        -> drawIncubator(gfx, font, (IncubatorRecipe) found.recipe(), x, y, maxW, theme);
 		};
 	}
@@ -334,7 +334,7 @@ public final class MiniRecipeRenderer {
 		return SLOT_SIZE + 3 + SLOT_SIZE + 2;
 	}
 
-	private static int drawChisel(GuiGraphics gfx, Font font, ChiselRecipe recipe,
+	private static int drawChisel(GuiGraphics gfx, Font font, ScarRecipe recipe,
 								   int x, int y, int maxW, Theme theme) {
 		long tick = getAnimTick();
 

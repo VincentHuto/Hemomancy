@@ -6,9 +6,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarViewerScreen;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RuneType;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
@@ -40,14 +40,14 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ItemMorphlingJar extends Item implements IRune {
+public class ItemMorphlingJar extends Item implements IScar {
 
 	@SuppressWarnings("rawtypes")
 	class MorphlingJarCaps implements ICapabilitySerializable {
 		private final ItemStack itemStack;
 		private final MorphlingJarItemHandler inventory;
 		private final LazyOptional<IItemHandler> optional;
-		private final LazyOptional<IRune> runeOptional = LazyOptional.of(() -> ItemMorphlingJar.this);
+		private final LazyOptional<IScar> scarOptional = LazyOptional.of(() -> ItemMorphlingJar.this);
 
 		public MorphlingJarCaps(ItemStack stack, int size, CompoundTag nbtIn) {
 			itemStack = stack;
@@ -65,8 +65,8 @@ public class ItemMorphlingJar extends Item implements IRune {
 		public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
 			if (cap == ForgeCapabilities.ITEM_HANDLER)
 				return optional.cast();
-			if (cap == RunesCapabilities.ITEM_RUNE)
-				return runeOptional.cast();
+			if (cap == ScarsCapabilities.ITEM_SCAR)
+				return scarOptional.cast();
 			return LazyOptional.empty();
 		}
 
@@ -89,8 +89,8 @@ public class ItemMorphlingJar extends Item implements IRune {
 	}
 
 	@Override
-	public RuneType getRuneType() {
-		return RuneType.JAR;
+	public ScarType getScarType() {
+		return ScarType.JAR;
 	}
 
 	@OnlyIn(Dist.CLIENT)

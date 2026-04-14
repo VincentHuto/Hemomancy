@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hemomancy:item/scars/scar_blank",
+    "layer1": "hemomancy:item/scars/scar_heart"
+  }
+}

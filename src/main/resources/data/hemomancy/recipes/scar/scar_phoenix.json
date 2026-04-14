@@ -1,0 +1,95 @@
+{
+	"type": "hemomancy:scar_recipe",
+	"tier": 3,
+	"scartype": "SCAR",
+	"ingredient1": {
+		"item": "hemomancy:scar_blank"
+	},
+	"ingredient2": {
+		"item": "minecraft:fire_charge"
+	},
+	"pattern": [
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			0
+		],
+		[
+			1,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			1
+		],
+		[
+			1,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			1
+		],
+		[
+			0,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			0
+		],
+		[
+			1,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0
+		]
+	],
+	"result": "hemomancy:scar_phoenix",
+	"count": 1
+}

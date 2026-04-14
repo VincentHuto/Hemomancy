@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 8,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Runic Chisel Station",
-  "subtitle": "Carve patterns",
-  "text": "The Runic Chisel Station is used to shape materials into patterns and components for Hemomancy crafting. Use it when recipes call for chiseled variants or rune-related parts.",
-  "icon": "hemomancy:runic_chisel_station"
-}

@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.screen.overlay;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
@@ -47,7 +47,7 @@ public class BloodVolumeOverlay {
 
 		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(bloodCap -> {
 			if (bloodCap == null || !bloodCap.isActive()) return;
-			player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
 

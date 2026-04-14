@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
@@ -36,7 +36,7 @@ public class PacketUpdateLivingStaffMorph {
 					return;
 				}
 
-				// ── Locate the morphling jar (inventory, offhand, or rune slot 7) ───────
+				// ── Locate the morphling jar (inventory, offhand, or scar slot 7) ───────
 				ItemStack jarStack = findJar(player);
 				if (jarStack.isEmpty())
 					return;
@@ -70,14 +70,14 @@ public class PacketUpdateLivingStaffMorph {
 			ctx.get().setPacketHandled(true);
 		}
 
-		/** Finds the jar in hand, offhand, rune slot 7, or anywhere in inventory. */
+		/** Finds the jar in hand, offhand, scar slot 7, or anywhere in inventory. */
 		private static ItemStack findJar(Player player) {
 			// Main / offhand
 			ItemStack jar = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 			if (!jar.isEmpty())
 				return jar;
-			// Rune equip slot 7
-			return player.getCapability(RunesCapabilities.RUNES).map(r -> r.getStackInSlot(7))
+			// Scar equip slot 7
+			return player.getCapability(ScarsCapabilities.SCARS).map(r -> r.getStackInSlot(7))
 					.filter(s -> s.getItem() instanceof ItemMorphlingJar).orElse(ItemStack.EMPTY);
 		}
 	}

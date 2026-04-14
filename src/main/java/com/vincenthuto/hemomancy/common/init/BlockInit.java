@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
-import com.vincenthuto.hemomancy.common.block.crafting.BlockChiselStation;
+import com.vincenthuto.hemomancy.common.block.crafting.BlockScarStation;
 import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.VialCentrifugeBlock;
@@ -16,7 +16,7 @@ import com.vincenthuto.hemomancy.common.block.functional.*;
 import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
-import com.vincenthuto.hemomancy.common.item.tile.ChiselStationBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.ScarStationBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
@@ -330,8 +330,8 @@ public class BlockInit {
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
 
 	// Tiles
-	public static final RegistryObject<Block> runic_chisel_station = MODELEDBLOCKS.register("runic_chisel_station",
-			() -> new BlockChiselStation(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+	public static final RegistryObject<Block> scar_station = MODELEDBLOCKS.register("scar_station",
+			() -> new BlockScarStation(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE).noOcclusion()));
 
 	public static final RegistryObject<Block> morphling_incubator = MODELEDBLOCKS.register("morphling_incubator",
@@ -448,58 +448,45 @@ public class BlockInit {
 	}
 
 	public static Pair<ResourceLocation, BlockItem> createItemBlock(Pair<Block, ResourceLocation> block) {
-		Block b = block.getFirst();
-		if (b == BlockInit.fungal_implantation_pylon.get()) {
-			return Pair.of(block.getSecond(),
-					new FungalImplantationPylonBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.vial_centrifuge.get()) {
-			return Pair.of(block.getSecond(),
-					new VialCentrifugeBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.earthen_vein.get()) {
-			return Pair.of(block.getSecond(),
-					new EarthenVeinBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.mortal_display.get()) {
-			return Pair.of(block.getSecond(),
-					new MortalDisplayBlockItem(b, new Item.Properties()));
-		}
-		if (b == BlockInit.suspended_vivianite.get()) {
-			return Pair.of(block.getSecond(),
-					new SuspendedVivianiteBlockItem(b, new Item.Properties()));
+		var b = block.getFirst();
+		if (b == BlockInit.bog_body.get()) {
+			return Pair.of(block.getSecond(), new MortalDisplayBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.suspended_blood_crystal.get()) {
-			return Pair.of(block.getSecond(),
-					new SuspendedBloodCrystalBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new SuspendedBloodCrystalBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.suspended_cleansed_blood_crystal.get()) {
-			return Pair.of(block.getSecond(),
-					new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new SuspendedCleansedBloodCrystalBlockItem(b, new Item.Properties()));
 		}
-		if (b == BlockInit.mnemonic_reliquary.get()) {
-			return Pair.of(block.getSecond(),
-					new MnemonicReliquaryBlockItem(b, new Item.Properties()));
+		if (b == BlockInit.suspended_vivianite.get()) {
+			return Pair.of(block.getSecond(), new SuspendedVivianiteBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.visceral_mirror.get()) {
-			return Pair.of(block.getSecond(),
-					new VisceralMirrorBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new VisceralMirrorBlockItem(b, new Item.Properties()));
 		}
-		if (b == BlockInit.runic_chisel_station.get()) {
-			return Pair.of(block.getSecond(),
-					new ChiselStationBlockItem(b, new Item.Properties()));
+		if (b == BlockInit.fungal_implantation_pylon.get()) {
+			return Pair.of(block.getSecond(), new FungalImplantationPylonBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.mnemonic_reliquary.get()) {
+			return Pair.of(block.getSecond(), new MnemonicReliquaryBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.earthen_vein.get()) {
+			return Pair.of(block.getSecond(), new EarthenVeinBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.vial_centrifuge.get()) {
+			return Pair.of(block.getSecond(), new VialCentrifugeBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.ghastly_alembic.get()) {
-			return Pair.of(block.getSecond(),
-					new GhastlyAlembicBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new GhastlyAlembicBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.scar_station.get()) {
+			return Pair.of(block.getSecond(), new ScarStationBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.morphling_incubator.get()) {
-			return Pair.of(block.getSecond(),
-					new MorphlingIncubatorBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new MorphlingIncubatorBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.somatic_loom.get()) {
-			return Pair.of(block.getSecond(),
-					new SomaticLoomBlockItem(b, new Item.Properties()));
+			return Pair.of(block.getSecond(), new SomaticLoomBlockItem(b, new Item.Properties()));
 		}
 		return Pair.of(block.getSecond(), new BlockItem(b, new Item.Properties()));
 	}

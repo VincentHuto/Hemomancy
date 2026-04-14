@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.menu;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
-import com.vincenthuto.hemomancy.common.item.rune.ItemFungalRune;
-import com.vincenthuto.hemomancy.common.menu.slot.RuneSlot;
-import com.vincenthuto.hemomancy.common.menu.slot.SelectiveRuneTypeSlot;
+import com.vincenthuto.hemomancy.common.item.scar.ItemFungalScar;
+import com.vincenthuto.hemomancy.common.menu.slot.ScarSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.SelectiveScarTypeSlot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +20,7 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 
 	private final Player player;
 
-	public IRunesItemHandler runes;
+	public IScarsItemHandler scars;
 
 	public SporeImplantMenu(final int windowId, final Inventory playerInventory) {
 		this(windowId, playerInventory.player.level(), playerInventory.player.blockPosition(), playerInventory,
@@ -35,16 +35,16 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		super(ContainerInit.fungal_implantation.get(), windowId);
 		this.player = playerInventory.player;
 
-		this.runes = this.player.getCapability(RunesCapabilities.RUNES).orElseThrow(NullPointerException::new);
+		this.scars = this.player.getCapability(ScarsCapabilities.SCARS).orElseThrow(NullPointerException::new);
 
-		// Slot layout (rune/fungus slots only):
-		// 0        : fungal rune slot (rune cap slot 0) — center
-		// 1-4      : rune slots       (rune cap slots 1-4) — surrounding
-		this.addSlot(new SelectiveRuneTypeSlot(player, ItemFungalRune.class, runes, 0, 80, 35));
-		this.addSlot(new RuneSlot(player, runes, 1, 80, 13));
-		this.addSlot(new RuneSlot(player, runes, 2, 58, 35));
-		this.addSlot(new RuneSlot(player, runes, 3, 102, 35));
-		this.addSlot(new RuneSlot(player, runes, 4, 80, 57));
+		// Slot layout (scar/fungus slots only):
+		// 0        : fungal scar slot (scar cap slot 0) — center
+		// 1-4      : scar slots       (scar cap slots 1-4) — surrounding
+		this.addSlot(new SelectiveScarTypeSlot(player, ItemFungalScar.class, scars, 0, 80, 35));
+		this.addSlot(new ScarSlot(player, scars, 1, 80, 13));
+		this.addSlot(new ScarSlot(player, scars, 2, 58, 35));
+		this.addSlot(new ScarSlot(player, scars, 3, 102, 35));
+		this.addSlot(new ScarSlot(player, scars, 4, 80, 57));
 
 		// Player inventory (27 slots)
 		for (int l = 0; l < 3; ++l) {
@@ -70,20 +70,20 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 		ItemStack originalStack = stackInSlot.copy();
 
 		// Slot layout:
-		// 0        : fungal rune slot (rune cap slot 0)
-		// 1-4      : rune slots       (rune cap slots 1-4)
+		// 0        : fungal scar slot (scar cap slot 0)
+		// 1-4      : scar slots       (scar cap slots 1-4)
 		// 5-31     : player main inventory (27 slots)
 		// 32-40    : hotbar (9 slots)
 		final int fungalSlotUI   = 0;
-		final int runeSlotStart  = 1;
-		final int runeSlotEnd    = 4;   // inclusive
+		final int ScarSlotStart  = 1;
+		final int ScarSlotEnd    = 4;   // inclusive
 		final int containerEnd   = 5;   // first player-inv slot
 		final int playerInvStart = 5;
 		final int hotbarStart    = 32;
 		final int hotbarEnd      = 40;  // inclusive
 
 		if (index < containerEnd) {
-			// Moving FROM a rune slot → player inventory
+			// Moving FROM a scar slot → player inventory
 			// Use explicit slot manipulation so that slot.set(ItemStack.EMPTY)
 			// fires onUnequipped while the slot still has its item.
 			boolean placed = false;
@@ -114,11 +114,11 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 			}
 			return originalStack;
 		} else {
-			// Moving FROM player inventory / hotbar → rune slots
+			// Moving FROM player inventory / hotbar → scar slots
 			boolean moved = false;
 
-			// Fungal rune → fungal slot
-			if (!moved && stackInSlot.getItem() instanceof ItemFungalRune) {
+			// Fungal scar → fungal slot
+			if (!moved && stackInSlot.getItem() instanceof ItemFungalScar) {
 				Slot fungalSlot = this.slots.get(fungalSlotUI);
 				if (!fungalSlot.hasItem() && fungalSlot.mayPlace(stackInSlot)) {
 					fungalSlot.set(stackInSlot.split(1));
@@ -126,12 +126,12 @@ public class SporeImplantMenu extends AbstractContainerMenu {
 				}
 			}
 
-			// Other runes → rune slots 1-4
+			// other scars → scar slots 1-4
 			if (!moved) {
-				for (int i = runeSlotStart; i <= runeSlotEnd && !moved; i++) {
-					Slot runeSlot = this.slots.get(i);
-					if (!runeSlot.hasItem() && runeSlot.mayPlace(stackInSlot)) {
-						runeSlot.set(stackInSlot.split(1));
+				for (int i = ScarSlotStart; i <= ScarSlotEnd && !moved; i++) {
+					Slot ScarSlot = this.slots.get(i);
+					if (!ScarSlot.hasItem() && ScarSlot.mayPlace(stackInSlot)) {
+						ScarSlot.set(stackInSlot.split(1));
 						moved = true;
 					}
 				}

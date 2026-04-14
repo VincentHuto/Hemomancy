@@ -1,0 +1,95 @@
+{
+	"type": "hemomancy:scar_recipe",
+	"tier": 2,
+	"scartype": "SCAR",
+	"ingredient1": {
+		"item": "hemomancy:scar_blank"
+	},
+	"ingredient2": {
+		"item": "minecraft:ender_pearl"
+	},
+	"pattern": [
+		[
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1
+		],
+		[
+			0,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			0
+		],
+		[
+			0,
+			1,
+			0,
+			1,
+			1,
+			0,
+			1,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			1,
+			0,
+			0,
+			1,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		]
+	],
+	"result": "hemomancy:scar_veil",
+	"count": 1
+}

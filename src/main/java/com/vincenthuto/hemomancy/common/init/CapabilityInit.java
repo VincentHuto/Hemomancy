@@ -8,8 +8,8 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrga
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRunesItemHandler;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
@@ -28,8 +28,8 @@ public class CapabilityInit {
 		event.register(IBloodVolume.class);
 		event.register(IKnownManipulations.class);
 		event.register(IEarthenVeinLoc.class);
-		event.register(IRune.class);
-		event.register(IRunesItemHandler.class);
+		event.register(IScar.class);
+		event.register(IScarsItemHandler.class);
 		event.register(IEquippedMorphling.class);
 		event.register(IInitiatoryDegree.class);
 		event.register(IUnstainedProgress.class);

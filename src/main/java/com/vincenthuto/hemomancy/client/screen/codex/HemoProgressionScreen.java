@@ -158,7 +158,7 @@ public class HemoProgressionScreen extends AbstractProgressionCodexScreen {
 //		ENTRIES.add(new BookEntry("natural_quartz3", 0, "", BlockInit.befouling_ash_trail.get().asItem(), 3, 3)
 //				.setObjectSupplier(MinorEntryObject::new));
 //
-//		ENTRIES.add(new BookEntry("natural_quartz4", 0, "", BlockInit.runic_chisel_station.get().asItem(), -2, 3)
+//		ENTRIES.add(new BookEntry("natural_quartz4", 0, "", BlockInit.scar_station.get().asItem(), -2, 3)
 //				.setObjectSupplier(MinorEntryObject::new));
 //
 //		//Chapter 2

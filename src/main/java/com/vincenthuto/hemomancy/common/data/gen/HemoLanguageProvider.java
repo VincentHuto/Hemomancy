@@ -28,7 +28,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 
 		// Jei
 		add("hemomancy.jei.memory_weaving", "Memory Weaving");
-		add("hemomancy.jei.chisel_station", "Chisel Station");
+		add("hemomancy.jei.scar_station", "Chisel Station");
 
 		// Banner
 		addArmBannerTranslation("chitinite");
@@ -128,7 +128,7 @@ public class HemoLanguageProvider extends LanguageProvider {
 		add("key.hemomancy.morphjarpickup.desc", "Toggle Morphling Jar P``````````````ickup");
 		add("key.hemomancy.openjar.desc", "Open Morphling Jar");
 		add("key.hemomancy.quickusemanip.desc", "Use Quick Manipulation");
-		add("key.hemomancy.runebinderpickup.desc", "Toggle Rune Binder Pickup");
+		add("key.hemomancy.scarbinderpickup.desc", "Toggle Scar Binder Pickup");
 		add("key.hemomancy.contusemanip.desc", "Use Continous Manipulation");
 		add("key.hemomancy.cyclemanip.desc", "Cycle Known Manipulations");
 

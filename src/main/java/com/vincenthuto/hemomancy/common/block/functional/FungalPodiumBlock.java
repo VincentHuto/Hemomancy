@@ -130,8 +130,8 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 //				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
 //			}
 		}
-//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
-//			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
+//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
+//			((BlockEntityScarModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
 //
 //		}
 		return InteractionResult.SUCCESS;

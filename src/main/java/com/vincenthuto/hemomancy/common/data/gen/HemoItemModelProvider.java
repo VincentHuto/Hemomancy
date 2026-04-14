@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
-import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
+import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
@@ -52,13 +52,13 @@ public class HemoItemModelProvider extends ItemModelProvider {
 			registerBlockModel(b.get());
 		}
 		for (RegistryObject<Item> item : ItemInit.BASEITEMS.getEntries()) {
-			if (item.get() instanceof ItemRunePattern patternItem) {
+			if (item.get() instanceof ItemScarPattern patternItem) {
 				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
-				String runePath = ForgeRegistries.ITEMS.getKey(patternItem.getRune().get()).getPath();
+				String scarPath = ForgeRegistries.ITEMS.getKey(patternItem.getSCAR().get()).getPath();
 				getBuilder(itemPath)
 						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
-						.texture("layer0", modLoc("item/rune_pattern"))
-						.texture("layer1", modLoc("item/" + runePath));
+						.texture("layer0", modLoc("item/scar_pattern"))
+						.texture("layer1", modLoc("item/" + scarPath));
 			} else if (item.get() instanceof BloodMemoryItem) {
 				String itemPath = ForgeRegistries.ITEMS.getKey(item.get()).getPath();
 				getBuilder(itemPath)

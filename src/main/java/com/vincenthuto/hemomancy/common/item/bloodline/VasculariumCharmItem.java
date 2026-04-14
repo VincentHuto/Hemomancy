@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.rune.IRune;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RuneType;
+import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 
 import net.minecraft.ChatFormatting;
@@ -41,9 +41,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 
-public class VasculariumCharmItem extends Item implements IRune {
+public class VasculariumCharmItem extends Item implements IScar {
 
 	public static enum Commands {
 		FOLLOW, INTERACT, MOVE, STAY, DIAGNOSTICS, EAT, ATTACK;
@@ -75,9 +75,9 @@ public class VasculariumCharmItem extends Item implements IRune {
 	}
 
 	@Override
-	public RuneType getRuneType() {
+	public ScarType getScarType() {
 		// TODO Auto-generated method stub
-		return RuneType.VASC;
+		return ScarType.VASC;
 	}
 
 	@Override
@@ -135,14 +135,14 @@ public class VasculariumCharmItem extends Item implements IRune {
 
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		final IRune self = this;
+		final IScar self = this;
 		return new ICapabilityProvider() {
-			private final LazyOptional<IRune> opt = LazyOptional.of(() -> self);
+			private final LazyOptional<IScar> opt = LazyOptional.of(() -> self);
 
 			@Nonnull
 			@Override
 			public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-				return RunesCapabilities.ITEM_RUNE.orEmpty(cap, opt);
+				return ScarsCapabilities.ITEM_SCAR.orEmpty(cap, opt);
 			}
 		};
 	}

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -127,13 +127,13 @@ public class MortalDisplayBlock extends Block implements EntityBlock {
 				}
 			}
 
-			// Equip the Charm of Vascularium into the player's VASC rune slot
+			// Equip the Charm of Vascularium into the player's VASC scar slot
 			if (!worldIn.isClientSide) {
-				player.getCapability(RunesCapabilities.RUNES).ifPresent(runes -> {
+				player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
 					ItemStack charm = new ItemStack(ItemInit.charm_of_vascularium.get());
-					int vascSlot = 5; // RuneType.VASC slot
-					if (runes.getStackInSlot(vascSlot).isEmpty()) {
-						runes.setStackInSlot(vascSlot, charm);
+					int vascSlot = 5; // ScarType.VASC slot
+					if (scars.getStackInSlot(vascSlot).isEmpty()) {
+						scars.setStackInSlot(vascSlot, charm);
 						player.displayClientMessage(
 								Component.translatable("hemomancy.mortal_display.charm_equipped")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),

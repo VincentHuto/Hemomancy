@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 8,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "cerebral scarring Station",
+  "subtitle": "Carve patterns",
+  "text": "The cerebral scarring Station is used to shape materials into patterns and components for Hemomancy crafting. Use it when recipes call for scarringed variants or scar-related parts.",
+  "icon": "hemomancy:cerebral_scarring_station"
+}

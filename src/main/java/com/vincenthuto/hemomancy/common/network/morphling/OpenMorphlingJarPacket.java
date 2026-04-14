@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.menu.MorphlingJarMenu;
 
@@ -34,10 +34,10 @@ public class OpenMorphlingJarPacket {
 			ServerPlayer player = ctx.get().getSender();
 			if (player == null) return;
 
-			// Find jar in inventory first, then check rune slot 7
+			// Find jar in inventory first, then check scar slot 7
 			ItemStack jarStack = Hemomancy.findItemInPlayerInv(player, ItemMorphlingJar.class);
 			if (jarStack.isEmpty()) {
-				jarStack = player.getCapability(RunesCapabilities.RUNES)
+				jarStack = player.getCapability(ScarsCapabilities.SCARS)
 						.map(r -> r.getStackInSlot(7))
 						.filter(s -> s.getItem() instanceof ItemMorphlingJar)
 						.orElse(ItemStack.EMPTY);

@@ -24,7 +24,7 @@ import net.minecraft.world.phys.Vec3;
 /**
  * A friendly spell component that applies the Blood Rush effect (+move speed,
  * +attack speed) to the target via the MnA spell system. Composable with MnA
- * shapes — cast on allies at range with projectile shape, create a sigil/rune
+ * shapes — cast on allies at range with projectile shape, create a sigil/scar_pattern
  * that buffs anyone who steps on it, or combine with zone shape to create a
  * "blood rally point" area buff.
  */

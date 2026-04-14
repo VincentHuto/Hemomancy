@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
-import com.vincenthuto.hemomancy.common.recipe.ChiselRecipe;
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
@@ -97,7 +97,7 @@ public final class RecipeLookup {
 		}
 
 		// Chisel recipes
-		for (ChiselRecipe r : rm.getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
+		for (ScarRecipe r : rm.getAllRecipesFor(RecipeInit.chisel_recipe.get())) {
 			ItemStack result = r.getResultItem();
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.CHISEL));

@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.client.event;
 
 import com.vincenthuto.hemomancy.client.render.entity.projectile.*;
 import com.vincenthuto.hemomancy.client.render.entity.summon.*;
-import com.vincenthuto.hemomancy.client.render.item.RunePatternBakedModel;
+import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
-import com.vincenthuto.hemomancy.client.render.tile.crafting.ChiselStationRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.crafting.ScarStationRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.GhastlyAlembicRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.SomaticLoomRenderer;
@@ -66,18 +66,18 @@ import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.UnstainedGaugeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.FungalWhisperVignetteOverlay;
-import com.vincenthuto.hemomancy.client.screen.rune.ChiselStationScreen;
-import com.vincenthuto.hemomancy.client.screen.rune.RuneBinderScreen;
+import com.vincenthuto.hemomancy.client.screen.scar.ScarStationScreen;
+import com.vincenthuto.hemomancy.client.screen.scar.ScarBinderScreen;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.RenderBloodLaserEvent;
-import com.vincenthuto.hemomancy.client.render.item.RunePatternItemColor;
+import com.vincenthuto.hemomancy.client.render.item.ScarPatternItemColor;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
-import com.vincenthuto.hemomancy.common.item.rune.pattern.ItemRunePattern;
+import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.ChangeSelectedManipPacket;
 import com.vincenthuto.hemomancy.common.network.capa.manips.UseManipKeyPacket;
@@ -180,7 +180,7 @@ public class ClientEvents {
 			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (toggleGourd.consumeClick()) {
-			PacketHandler.CHANNELRUNES.sendToServer(new ToggleGourdKeyPacket());
+			PacketHandler.CHANNELSCARS.sendToServer(new ToggleGourdKeyPacket());
 		}
 		if (openMorphlingJarViewer.consumeClick()) {
 			if (Screen.hasShiftDown()) {
@@ -220,7 +220,7 @@ public class ClientEvents {
 
 				while (openVascCharmMenu.consumeClick()) {
 					if (mc.screen == null) {
-						mc.player.getCapability(RunesCapabilities.RUNES).ifPresent(inv -> {
+						mc.player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 							if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
 								mc.setScreen(new RadialChooseManipScreen(inv));
 							}
@@ -409,7 +409,7 @@ public class ClientEvents {
 			UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
 			FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
 			// Tiles
-			BlockEntityRenderers.register(BlockEntityInit.runic_chisel_station.get(), ChiselStationRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
@@ -441,8 +441,8 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 			MenuScreens.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
-			MenuScreens.register(ContainerInit.runic_chisel_station.get(), ChiselStationScreen::new);
-			MenuScreens.register(ContainerInit.rune_binder.get(), RuneBinderScreen::new);
+			MenuScreens.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
+			MenuScreens.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
 			MenuScreens.register(ContainerInit.tendency_view.get(), TendencyViewScreen::new);
 			MenuScreens.register(ContainerInit.morphling_incubator.get(), MorphlingIncubatorScreen::new);
@@ -467,10 +467,10 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-			RunePatternItemColor runePatternColor = new RunePatternItemColor();
+			ScarPatternItemColor scarPatternColor = new ScarPatternItemColor();
 			ItemInit.BASEITEMS.getEntries().stream()
-				.filter(entry -> entry.get() instanceof ItemRunePattern)
-				.forEach(entry -> event.register(runePatternColor, entry.get()));
+				.filter(entry -> entry.get() instanceof ItemScarPattern)
+				.forEach(entry -> event.register(scarPatternColor, entry.get()));
 		}
 
 		public static BakedModel bloodAbsorptionModel, bloodProjectionModel;
@@ -490,13 +490,13 @@ public class ClientEvents {
 
 		@SubscribeEvent
 		public static void onModifyBakingResult(ModelEvent.ModifyBakingResult evt) {
-			// Wrap all rune pattern item models so the overlay layer is shrunk down
+			// Wrap all Scar Pattern item models so the overlay layer is shrunk down
 			for (RegistryObject<Item> entry : ItemInit.BASEITEMS.getEntries()) {
-				if (entry.get() instanceof ItemRunePattern) {
+				if (entry.get() instanceof ItemScarPattern) {
 					ModelResourceLocation modelLoc = new ModelResourceLocation(ForgeRegistries.ITEMS.getKey(entry.get()), "inventory");
 					BakedModel existing = evt.getModels().get(modelLoc);
 					if (existing != null) {
-						evt.getModels().put(modelLoc, new RunePatternBakedModel(existing));
+						evt.getModels().put(modelLoc, new ScarPatternBakedModel(existing));
 					}
 				}
 			}

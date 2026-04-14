@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.network.capa.runes.PacketOpenSporeInv;
+import com.vincenthuto.hemomancy.common.network.capa.scars.PacketOpenSporeInv;
 import com.vincenthuto.hemomancy.common.tile.functional.FungalImplantationPylonBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -142,7 +142,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELRUNES.sendToServer(new PacketOpenSporeInv());
+				PacketHandler.CHANNELSCARS.sendToServer(new PacketOpenSporeInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {
@@ -153,8 +153,8 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 				worldIn.setBlockAndUpdate(pos, BlockInit.fungal_podium.get().defaultBlockState());
 			}
 		}
-//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityRuneModStation) {
-//			((BlockEntityRuneModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
+//		if (worldIn.getBlockEntity(pos) instanceof BlockEntityScarModStation) {
+//			((BlockEntityScarModStation) worldIn.getBlockEntity(pos)).onActivated(player, player.getMainHandItem());
 //
 //		}
 		return InteractionResult.SUCCESS;

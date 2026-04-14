@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " IL",
+    " LI",
+    "L  "
+  ],
+  "key": {
+    "I": {
+      "item": "hemomancy:hematic_iron_scrap"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "hemomancy:scar_binder"
+  }
+}

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu;
 
-import com.vincenthuto.hemomancy.common.capability.player.rune.RunesCapabilities;
+import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.ItemMorphlingJar;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
@@ -21,7 +21,7 @@ import net.minecraftforge.items.IItemHandler;
 public class MorphlingJarMenu extends AbstractContainerMenu {
 
 	public int slotcount = 0;
-	/** Inventory slot index, or -106 for offhand, or -200 for rune-equip slot. */
+	/** Inventory slot index, or -106 for offhand, or -200 for scar-equip slot. */
 	private int slotID;
 	public String itemKey = "";
 	private Inventory playerInv;
@@ -166,9 +166,9 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player playerIn) {
-		// Equipped in rune slot
+		// Equipped in scar slot
 		if (slotID == -200) {
-			return playerIn.getCapability(RunesCapabilities.RUNES)
+			return playerIn.getCapability(ScarsCapabilities.SCARS)
 					.map(r -> r.getStackInSlot(7).getItem() instanceof ItemMorphlingJar)
 					.orElse(false);
 		}
@@ -213,12 +213,12 @@ public class MorphlingJarMenu extends AbstractContainerMenu {
 			slotID = -106;
 			return playerEntity.getOffhandItem();
 		}
-		// 3. Rune-equip slot (slot 7 in the RUNES capability)
-		ItemStack runeSlotJar = playerEntity.getCapability(RunesCapabilities.RUNES)
+		// 3. scar-equip slot (slot 7 in the SCARS capability)
+		ItemStack ScarSlotJar = playerEntity.getCapability(ScarsCapabilities.SCARS)
 				.map(r -> r.getStackInSlot(7)).orElse(ItemStack.EMPTY);
-		if (runeSlotJar.getItem() instanceof ItemMorphlingJar) {
+		if (ScarSlotJar.getItem() instanceof ItemMorphlingJar) {
 			slotID = -200;
-			return runeSlotJar;
+			return ScarSlotJar;
 		}
 		// 4. Anywhere in inventory
 		Inventory inv = playerEntity.getInventory();
