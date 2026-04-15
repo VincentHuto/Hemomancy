@@ -12,10 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -74,12 +71,16 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 HarbingerVicarEntity::hasClarityUnlocked));
     }
 
-    /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
-    private static boolean hasClarityUnlocked(Player player) {
-        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
-                .map(IUnstainedProgress::hasClarityUnlocked)
-                .orElse(false);
+    private static boolean hasClarityUnlocked(LivingEntity entity) {
+        if(entity instanceof Player player) {
+            return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+                    .map(IUnstainedProgress::hasClarityUnlocked)
+                    .orElse(false);
+        }
+        return false;
     }
+
+
 
     /** Returns true if the given player has begun purification but not yet entered Clarity. */
     private static boolean isPurifying(Player player) {

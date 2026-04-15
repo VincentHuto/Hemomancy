@@ -50,6 +50,7 @@ public class ScarStationRenderer implements BlockEntityRenderer<ScarStationBlock
 		// ── Render items on the station ──
 		Minecraft.getInstance().textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
 		Minecraft mc = Minecraft.getInstance();
+		matrixStackIn.translate(0, 0.5, 0);
 
 		// Chisel
 		matrixStackIn.pushPose();

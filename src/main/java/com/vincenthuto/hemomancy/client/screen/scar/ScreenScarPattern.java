@@ -26,7 +26,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ScreenScarPattern extends Screen {
 	final ResourceLocation texture = new ResourceLocation(Hemomancy.MOD_ID, "textures/gui/scar_pattern.png");
 	private static final ResourceLocation GUI_Chisel = new ResourceLocation(
-			Hemomancy.MOD_ID + ":textures/gui/chisel_station.png");
+			Hemomancy.MOD_ID + ":textures/gui/scar_station.png");
 	int guiWidth = 175;
 	int guiHeight = 228;
 	int left, top;

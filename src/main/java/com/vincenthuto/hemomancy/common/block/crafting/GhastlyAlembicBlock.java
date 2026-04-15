@@ -54,7 +54,7 @@ public class GhastlyAlembicBlock extends BaseEntityBlock implements EntityBlock,
 
 	/** Filler offset: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0)
+			//new BlockPos(0, 1, 0)
 	};
 
 	public GhastlyAlembicBlock(BlockBehaviour.Properties props) {

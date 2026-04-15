@@ -46,7 +46,7 @@ public class ScarStationModel extends Model {
                 .texOffs(43, 20).addBox(-11.0F, 0.0F, -8.0F, 5.0F, 12.0F, 16.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 69).addBox(-6.0F, 3.0F, -1.0F, 12.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition Backboard = ChiselStation.addOrReplaceChild("Backboard", CubeListBuilder.create().texOffs(0, 49).addBox(-11.0F, -20.0F, -8.0F, 22.0F, 17.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition Backboard = ChiselStation.addOrReplaceChild("Backboard", CubeListBuilder.create().texOffs(1, 49).addBox(-10.0F, -20.0F, -8.0F, 20.0F, 17.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition ToolRack = ChiselStation.addOrReplaceChild("ToolRack", CubeListBuilder.create().texOffs(49, 67).addBox(-8.0F, -5.0F, -9.0F, 16.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(59, 83).addBox(6.0F, -11.0F, -9.0F, 1.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
@@ -65,17 +65,20 @@ public class ScarStationModel extends Model {
         PartDefinition DeskSurface = ChiselStation.addOrReplaceChild("DeskSurface", CubeListBuilder.create().texOffs(49, 56).addBox(-5.0F, -4.0F, -4.0F, 11.0F, 1.0F, 9.0F, new CubeDeformation(0.0F))
                 .texOffs(13, 75).addBox(8.0F, -7.0F, -2.0F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F))
                 .texOffs(77, 13).addBox(7.0F, -6.0F, 2.0F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(69, 82).addBox(-8.0F, -8.0F, -3.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
-                .texOffs(78, 87).addBox(-7.5F, -9.0F, -2.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
+                .texOffs(69, 82).addBox(6.0F, -8.0F, -3.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F))
+                .texOffs(78, 87).addBox(6.5F, -9.0F, -2.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(78, 87).addBox(-8.5F, -7.0F, 1.5F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(78, 87).addBox(8.0F, -7.0F, 3.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(50, 83).addBox(-9.0F, -6.0F, 1.0F, 2.0F, 3.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(77, 0).addBox(-11.0F, -7.0F, -2.0F, 3.0F, 4.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition ChiselTool = DeskSurface.addOrReplaceChild("ChiselTool", CubeListBuilder.create().texOffs(77, 8).addBox(-2.0F, -1.0F, -1.0F, 5.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(1.0F, -4.0F, -1.0F));
+        PartDefinition desk_scroll_r1 = DeskSurface.addOrReplaceChild("desk_scroll_r1", CubeListBuilder.create().texOffs(50, 56).addBox(-4.0F, -4.0F, -4.0F, 10.0F, 1.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.5F, -4.0F, -3.0F, -0.7418F, 0.0F, 0.0F));
+
+        PartDefinition ChiselTool = DeskSurface.addOrReplaceChild("ChiselTool", CubeListBuilder.create(), PartPose.offset(1.0F, -4.0F, -1.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
+
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
