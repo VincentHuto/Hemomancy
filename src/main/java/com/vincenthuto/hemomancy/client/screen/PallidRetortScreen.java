@@ -15,13 +15,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
 /**
- * Ghastly Alembic screen — fully programmatic, no texture files.
- * Renders a lethe distillery UI with vein background, lethe tank,
- * progress arrow, heat indicator, and item slots.
+ * Pallid Retort screen — fully programmatic, no texture files.
+ * Renders a lethe distillery UI with a diamond/blue crystalline background,
+ * lethe tank, progress arrow, heat indicator, and item slots.
  */
 public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu> {
 
-	// ── Colors (matching the Hemomancy style) ──
+	// ── Colors (pale blue / silver Unstained theme) ──
 	private static final int SLOT_BG = 0xFF101418;
 	private static final int SLOT_BORDER_DARK = 0xFF0A0F12;
 	private static final int SLOT_BORDER_LIGHT = 0xFF3A454C;
@@ -29,10 +29,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	private static final int BORDER_INNER = 0xFF172028;
 
 	private static final int CRAFT_AREA_HEIGHT = 80;
-	private static final int VEIN_COUNT = 16;
 
 	final PallidRetortBlockEntity te;
-	private float[][] veinParams;
 
 	// Lethe bar screen-space bounds for hover detection
 	private int letheBarX1, letheBarY1, letheBarX2, letheBarY2;
@@ -49,21 +47,6 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	protected void init() {
 		super.init();
 		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
-
-		// Seed vein parameters for the animated background
-		Random rand = new Random(31415L);
-		veinParams = new float[VEIN_COUNT][9];
-		for (int i = 0; i < VEIN_COUNT; i++) {
-			veinParams[i][0] = rand.nextFloat();
-			veinParams[i][1] = rand.nextFloat();
-			veinParams[i][2] = (float) (rand.nextFloat() * Math.PI * 2);
-			veinParams[i][3] = 0.3f + rand.nextFloat() * 0.7f;
-			veinParams[i][4] = 8f + rand.nextFloat() * 14f;
-			veinParams[i][5] = 0.04f + rand.nextFloat() * 0.08f;
-			veinParams[i][6] = 50 + rand.nextInt(100);
-			veinParams[i][7] = 1 + rand.nextInt(2);
-			veinParams[i][8] = rand.nextFloat();
-		}
 	}
 
 	// ───── Main render ─────
@@ -91,11 +74,11 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int gw = this.imageWidth;
 		int gh = this.imageHeight;
 
-		// ── Venous background for upper crafting area ──
-		renderVeinBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
+		// ── Diamond/blue crystalline background for upper crafting area ──
+		renderDiamondBackground(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 		drawBorder(gfx, gx, gy, gw, CRAFT_AREA_HEIGHT);
 
-		// ── Red gradient panel behind inventory section ──
+		// ── Blue/silver gradient panel behind inventory section ──
 		int invTop = gy + CRAFT_AREA_HEIGHT;
 		int invH = gh - CRAFT_AREA_HEIGHT;
 		renderRedGradientBackground(gfx, gx, invTop, gw, invH);
@@ -132,11 +115,11 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		if (this.menu.isHeated()) {
 			gfx.drawString(font, Component.literal("Refining"), 36, 56, 0xFFC8D8E8, false);
 		} else {
-			gfx.drawString(font, Component.literal("No Heat"), 40, 56, 0xFF554444, false);
+			gfx.drawString(font, Component.literal("No Heat"), 40, 56, 0xFF8899AA, false);
 		}
 	}
 
-	// ───── Red gradient inventory background ─────
+	// ───── Blue/silver gradient inventory background ─────
 
 	private void renderRedGradientBackground(GuiGraphics gfx, int x, int y, int w, int h) {
 		for (int row = 0; row < h; row++) {
@@ -242,10 +225,10 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		double progress = this.menu.getBurnProgress() / 24.0;
 		int filledW = (int) (arrowFullW * progress);
 
-		// Background track (dark)
-		gfx.fill(arrowX, arrowY, arrowX + arrowFullW, arrowY + arrowH, 0x40200808);
+		// Background track (dark blue-grey)
+		gfx.fill(arrowX, arrowY, arrowX + arrowFullW, arrowY + arrowH, 0x40081020);
 		// Inner track line
-		gfx.fill(arrowX, arrowY + 3, arrowX + arrowFullW, arrowY + 5, 0x30400808);
+		gfx.fill(arrowX, arrowY + 3, arrowX + arrowFullW, arrowY + 5, 0x30102840);
 
 		// Arrow head outline (always visible) — points RIGHT (narrows to tip)
 		int headBaseX = arrowX + arrowFullW;  // where the shaft ends
@@ -253,16 +236,16 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int headLen = 5;
 		for (int i = 0; i < headLen; i++) {
 			int spread = headLen - 1 - i; // wide at left, narrow at right (tip)
-			gfx.fill(headBaseX + i, midY - spread, headBaseX + i + 1, midY + spread + 1, 0x30600808);
+			gfx.fill(headBaseX + i, midY - spread, headBaseX + i + 1, midY + spread + 1, 0x30204060);
 		}
 
 		if (filledW > 0) {
-			// Filled portion — pulsing crimson
+			// Filled portion — pulsing pale blue
 			for (int col = 0; col < filledW; col++) {
 				float pulse = 0.7f + 0.3f * Mth.sin(time * 4f + col * 0.15f);
-				int r = (int) (180 * pulse);
-				int g = (int) (20 * pulse);
-				int b = (int) (15 * pulse);
+				int r = (int) (60  * pulse);
+				int g = (int) (140 * pulse);
+				int b = (int) (220 * pulse);
 				int a = (int) (200 * pulse);
 				int color = (a << 24) | (r << 16) | (g << 8) | b;
 				gfx.fill(arrowX + col, arrowY + 1, arrowX + col + 1, arrowY + arrowH - 1, color);
@@ -271,7 +254,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 			// Bright leading edge
 			float edgePulse = 0.5f + 0.5f * Mth.sin(time * 6f);
 			int edgeAlpha = (int) (180 * edgePulse);
-			int edgeColor = (edgeAlpha << 24) | (0xFF << 16) | (0x40 << 8) | 0x20;
+			int edgeColor = (edgeAlpha << 24) | (0xC8 << 16) | (0xF0 << 8) | 0xFF;
 			gfx.fill(arrowX + filledW - 1, arrowY, arrowX + filledW, arrowY + arrowH, edgeColor);
 
 			// Filled arrow head — points RIGHT
@@ -280,7 +263,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 				int headAlpha = (int) (200 * headProgress);
 				for (int i = 0; i < headLen; i++) {
 					int spread = headLen - 1 - i;
-					int hColor = (headAlpha << 24) | (0xCC << 16) | (0x20 << 8) | 0x10;
+					int hColor = (headAlpha << 24) | (0x80 << 16) | (0xC0 << 8) | 0xFF;
 					gfx.fill(headBaseX + i, midY - spread, headBaseX + i + 1, midY + spread + 1, hColor);
 				}
 			}
@@ -380,100 +363,100 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
 	}
 
-	// ───── Procedural animated vein background ─────
+	// ───── Diamond / blue crystalline background ─────
 
-	private void renderVeinBackground(GuiGraphics graphics, int gx, int gy, int gw, int gh) {
-		graphics.enableScissor(gx, gy, gx + gw, gy + gh);
+	/**
+	 * Renders a repeating diamond lattice with a pale silver-blue palette,
+	 * replacing the red vein background used by the Ghastly Alembic.
+	 */
+	private void renderDiamondBackground(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
+		gfx.enableScissor(gx, gy, gx + gw, gy + gh);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		// Layer 1: solid near-black base
-		graphics.fill(gx, gy, gx + gw, gy + gh, 0xFF0A0204);
+		// Layer 1: deep navy base
+		gfx.fill(gx, gy, gx + gw, gy + gh, 0xFF080E16);
 
-		// Layer 2: subtle dark-red radial glow in the center
+		// Layer 2: subtle radial blue glow from center
+		float time = System.nanoTime() / 1_000_000_000f;
 		int cx = gx + gw / 2;
 		int cy = gy + gh / 2;
 		int glowRadius = Math.max(gw, gh) / 2;
-		for (int ring = glowRadius; ring > 0; ring -= 4) {
+		float glow = 0.6f + 0.4f * Mth.sin(time * 0.7f);
+		for (int ring = glowRadius; ring > 0; ring -= 3) {
 			float t = (float) ring / glowRadius;
-			int alpha = (int) (30 * (1f - t));
-			int red = (int) (35 * (1f - t));
-			int color = (alpha << 24) | (red << 16);
-			graphics.fill(cx - ring, cy - ring, cx + ring, cy + ring, color);
+			int alpha = (int) (28 * (1f - t) * glow);
+			int blue  = (int) (50 * (1f - t) * glow);
+			int green = (int) (20 * (1f - t) * glow);
+			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring,
+					(alpha << 24) | (green << 8) | blue);
 		}
 
-		// Layer 3: animated vein tendrils
-		float time = System.nanoTime() / 1_000_000_000f;
-		if (veinParams != null) {
-			for (int i = 0; i < VEIN_COUNT; i++) {
-				drawVeinTendril(graphics, i, time, gx, gy, gw, gh);
+		// Layer 3: repeating diamond lattice
+		// Each diamond cell is CELL×CELL; the lattice is offset on alternate rows.
+		final int CELL = 14; // pixels between diamond centres
+		float animShift = (time * 4f) % CELL; // slow horizontal drift
+
+		for (int row = -1; row * CELL < gh + CELL; row++) {
+			int yCenter = gy + (int) (row * CELL + animShift % CELL);
+			int xOff = (row % 2 == 0) ? 0 : CELL / 2;
+
+			for (int col = -1; col * CELL < gw + CELL; col++) {
+				int xCenter = gx + col * CELL + xOff + (int) animShift;
+
+				// Diamond = rotated square; draw as a cross of pixels
+				float pulseLine = 0.5f + 0.5f * Mth.sin(time * 1.2f + row * 0.4f + col * 0.3f);
+				int la = (int) (55 * pulseLine);
+				int lr = (int) (100 * pulseLine);
+				int lg = (int) (140 * pulseLine);
+				int lb = (int) (200 * pulseLine);
+				int lineColor = (la << 24) | (lr << 16) | (lg << 8) | lb;
+
+				// Half-size of the diamond (distance from centre to vertex)
+				int half = CELL / 2 - 1;
+				for (int d = -half; d <= half; d++) {
+					int span = half - Math.abs(d);
+					// Horizontal arm of the diamond outline
+					int px = xCenter + d;
+					if (px >= gx && px < gx + gw) {
+						int py1 = yCenter - span;
+						int py2 = yCenter + span;
+						if (py1 >= gy && py1 < gy + gh)
+							gfx.fill(px, py1, px + 1, py1 + 1, lineColor);
+						if (py2 != py1 && py2 >= gy && py2 < gy + gh)
+							gfx.fill(px, py2, px + 1, py2 + 1, lineColor);
+					}
+				}
+
+				// Bright vertex dots at the four cardinal points
+				float dotPulse = 0.4f + 0.6f * Mth.sin(time * 2f + col * 0.7f + row * 0.5f);
+				int da = (int) (120 * dotPulse);
+				int dotColor = (da << 24) | (0xC8 << 16) | (0xE8 << 8) | 0xFF;
+				int[][] verts = {
+						{xCenter, yCenter - half},
+						{xCenter, yCenter + half},
+						{xCenter - half, yCenter},
+						{xCenter + half, yCenter}
+				};
+				for (int[] v : verts) {
+					if (v[0] >= gx && v[0] < gx + gw && v[1] >= gy && v[1] < gy + gh) {
+						gfx.fill(v[0], v[1], v[0] + 1, v[1] + 1, dotColor);
+					}
+				}
 			}
 		}
 
-		// Layer 4: noise speckles
-		Random speckRand = new Random(54321L);
-		for (int s = 0; s < 60; s++) {
+		// Layer 4: pale speckles / frost dust
+		Random speckRand = new Random(11234L);
+		for (int s = 0; s < 40; s++) {
 			int sx = gx + speckRand.nextInt(gw);
 			int sy = gy + speckRand.nextInt(gh);
-			int sr = 10 + speckRand.nextInt(20);
-			int sg = speckRand.nextInt(6);
-			int sa = 15 + speckRand.nextInt(20);
-			graphics.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sr << 16) | (sg << 8));
+			int sa = 12 + speckRand.nextInt(18);
+			int sc = speckRand.nextInt(30);
+			gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sc << 16) | (sc << 8) | (sc + 60));
 		}
 
 		RenderSystem.disableBlend();
-		graphics.disableScissor();
-	}
-
-	private void drawVeinTendril(GuiGraphics graphics, int index, float time,
-			int gx, int gy, int gw, int gh) {
-		float[] p = veinParams[index];
-		float startX = gx + p[0] * gw;
-		float startY = gy + p[1] * gh;
-		float baseAngle = p[2];
-		float speed = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int length = (int) p[6];
-		int thickness = (int) p[7];
-		float brightness = p[8];
-
-		float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.3f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-
-		float timeOffset = time * speed * 2.0f;
-
-		int baseRed = (int) (40 + 50 * brightness);
-		int baseGreen = (int) (2 + 8 * brightness);
-		int baseBlue = (int) (5 + 5 * brightness);
-
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + index);
-			float displacement = squiggle + microSquiggle;
-
-			float px = startX + step * cosA * 1.5f - displacement * sinA;
-			float py = startY + step * sinA * 1.5f + displacement * cosA;
-
-			int ix = (int) px;
-			int iy = (int) py;
-
-			if (ix + thickness < gx || ix >= gx + gw || iy + thickness < gy || iy >= gy + gh) continue;
-
-			float tipFade = 1f;
-			if (step < 10) tipFade = step / 10f;
-			else if (step > length - 10) tipFade = (length - step) / 10f;
-
-			float pulse = 0.7f + 0.3f * Mth.sin(time * 1.5f + index * 0.5f + step * 0.02f);
-
-			int a = (int) (Mth.clamp(tipFade * pulse * 180, 20, 200));
-			int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
-
-			graphics.fill(ix, iy, ix + thickness, iy + thickness,
-					(a << 24) | (r << 16) | (g << 8) | b);
-		}
+		gfx.disableScissor();
 	}
 }

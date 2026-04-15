@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
+import com.vincenthuto.hemomancy.common.menu.slot.PallidRetortFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
@@ -93,7 +93,7 @@ public class PallidRetortMenu extends AbstractContainerMenu {
 		// Input slot: left-center of crafting area
 		this.addSlot(new Slot(container, INGREDIENT_SLOT, 44, 32));
 		// Flask slot: underneath the blood volume bar (extraction zone)
-		this.addSlot(new GhastlyAlembicFlaskSlot(this, container, FLASK_SLOT, 155, 58));
+		this.addSlot(new PallidRetortFlaskSlot(this, container, FLASK_SLOT, 155, 58));
 		// Result slot: right of crafting area
 		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
 		// Catalyst slot: top-left corner of the crafting area
