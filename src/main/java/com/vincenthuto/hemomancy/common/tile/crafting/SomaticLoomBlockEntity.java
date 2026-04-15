@@ -88,7 +88,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	private int craftingTotalTime = 0;
 	private int craftingPhase = 0;
 	private UUID craftingPlayerUUID = null;
-	private float bloodCostPerTick = 0;
+	private double bloodCostPerTick = 0;
 	private int distanceGraceTicks = 0;
 
 	// ========================== CONSTRUCTOR ==========================
@@ -359,7 +359,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 	public boolean startRitual(Player player) {
 		if (isCrafting() || curRecipe == null || contents.get(0).isEmpty()) return false;
 
-		float totalBloodCost = curRecipe.getBloodCost();
+		double totalBloodCost = curRecipe.getBloodCost();
 		if (volume.getBloodVolume() < totalBloodCost) {
 			msg(player, "Not enough blood. Need " + (int) totalBloodCost + ".",
 					ChatFormatting.DARK_RED, true);
@@ -524,7 +524,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		}
 
 		if (curRecipe != null) {
-			float cost = curRecipe.getBloodCost();
+			double cost = curRecipe.getBloodCost();
 			if (volume.getBloodVolume() < cost) {
 				msg(player, "Recipe ready but needs " + (int) cost + " blood.",
 						ChatFormatting.DARK_RED, true);
@@ -635,7 +635,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		tag.putInt(TAG_CRAFT_PROGRESS, craftingProgress);
 		tag.putInt(TAG_CRAFT_TOTAL, craftingTotalTime);
 		tag.putInt(TAG_CRAFT_PHASE, craftingPhase);
-		tag.putFloat(TAG_BLOOD_COST_PER_TICK, bloodCostPerTick);
+		tag.putDouble(TAG_BLOOD_COST_PER_TICK, bloodCostPerTick);
 		if (craftingPlayerUUID != null) {
 			tag.putUUID(TAG_CRAFTING_PLAYER, craftingPlayerUUID);
 		}
@@ -651,11 +651,11 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		this.contents = NonNullList.withSize(2, ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(tag, this.contents);
 		recipePath = tag.getString(TAG_RECIPE);
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
 		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
 		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
-		bloodCostPerTick = tag.getFloat(TAG_BLOOD_COST_PER_TICK);
+		bloodCostPerTick = tag.getDouble(TAG_BLOOD_COST_PER_TICK);
 		if (tag.hasUUID(TAG_CRAFTING_PLAYER)) {
 			craftingPlayerUUID = tag.getUUID(TAG_CRAFTING_PLAYER);
 		}
@@ -692,7 +692,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		super.handleUpdateTag(tag);
 		if (tag == null) return;
 		recipePath = tag.getString(TAG_RECIPE);
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
 		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);
 		craftingPhase = tag.getInt(TAG_CRAFT_PHASE);
@@ -706,7 +706,7 @@ public class SomaticLoomBlockEntity extends BlockEntity implements IBloodTile, I
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() == null) return;
 		CompoundTag tag = pkt.getTag();
-		volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+		volume.setBloodVolume(tag.getDouble(TAG_BLOOD_LEVEL));
 		recipePath = tag.getString(TAG_RECIPE);
 		craftingProgress = tag.getInt(TAG_CRAFT_PROGRESS);
 		craftingTotalTime = tag.getInt(TAG_CRAFT_TOTAL);

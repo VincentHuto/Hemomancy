@@ -61,7 +61,7 @@ public class BloodTitheHandler {
 					IBloodVolume blood = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
 					if (blood != null && blood.isActive()) {
 						float reduction = (float) (currentCost * HemoMnAConfig.BLOOD_TITHE_MANA_REDUCTION.get());
-						float bloodCost = (float) (reduction * HemoMnAConfig.BLOOD_TITHE_BLOOD_PER_MANA.get());
+						double bloodCost = reduction * HemoMnAConfig.BLOOD_TITHE_BLOOD_PER_MANA.get();
 
 						// Only reduce if the player has enough blood to pay
 						if (!blood.wouldOverstrain(bloodCost)) {
@@ -112,7 +112,7 @@ public class BloodTitheHandler {
 					// therefore original = reducedCost / (1 - ratio)
 					float estimatedOriginal = originalManaCost / (1.0F - reductionRatio);
 					float manaSaved = estimatedOriginal * reductionRatio;
-					float bloodCost = (float) (manaSaved * HemoMnAConfig.BLOOD_TITHE_BLOOD_PER_MANA.get());
+					double bloodCost = manaSaved * HemoMnAConfig.BLOOD_TITHE_BLOOD_PER_MANA.get();
 
 					if (!blood.wouldOverstrain(bloodCost)) {
 						blood.drain(bloodCost);

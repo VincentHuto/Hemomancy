@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
+import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.GhastlyAlembicMenu;
 import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
@@ -78,7 +79,8 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	public static final int SLOT_FLASK    = 1;
 	public static final int SLOT_RESULT   = 2;
 	public static final int SLOT_CATALYST = 3;
-	public static final int NUM_SLOTS     = 4;
+	public static final int SLOT_FLASK_OUTPUT = 4;
+	public static final int NUM_SLOTS     = 5;
 
 	// Container data indices
 	public static final int DATA_HEATED = 0;
@@ -90,7 +92,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	// Hopper / sided access
 	private static final int[] SLOTS_FOR_UP    = new int[]{SLOT_INPUT};
-	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT};
+	private static final int[] SLOTS_FOR_DOWN  = new int[]{SLOT_RESULT, SLOT_FLASK_OUTPUT};
 	private static final int[] SLOTS_FOR_SIDES = new int[]{SLOT_FLASK, SLOT_CATALYST};
 
 	// ---- Fields ----
@@ -249,6 +251,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		// Drain stored blood into flasks (independent of cooking)
 		tryDrainBloodIntoFlask(te);
 
+		// Fill blood from bloody flasks (independent of cooking)
+		tryFillBloodFromFlask(te);
+
 		if (dirty) {
 			setChanged(level, pos, state);
 		}
@@ -347,6 +352,39 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 			flaskStack.shrink(1);
 			resultStack.grow(1);
 			vol.drain(100);
+			te.sendUpdates();
+		}
+	}
+
+	/**
+	 * Called from serverTick — consumes bloody flasks in the flask slot to fill
+	 * the blood reservoir, outputting empty clay flasks to the flask output slot.
+	 */
+	private static void tryFillBloodFromFlask(GhastlyAlembicBlockEntity te) {
+		ItemStack flaskStack = te.items.get(SLOT_FLASK);
+		if (flaskStack.isEmpty()) return;
+		if (!(flaskStack.getItem() instanceof BloodyFlaskItem flask)) return;
+
+		IBloodVolume vol = te.resolveVolume();
+		if (vol == null || vol.isFull()) return;
+
+		double amount = flask.getAmount();
+		if (vol.getBloodVolume() + amount > vol.getMaxBloodVolume()) return;
+
+		// Check if we can output the empty flask
+		ItemStack outputStack = te.items.get(SLOT_FLASK_OUTPUT);
+		if (outputStack.isEmpty()
+				|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
+						&& outputStack.getCount() < outputStack.getMaxStackSize())) {
+			// Consume the bloody flask
+			flaskStack.shrink(1);
+			vol.addBloodVolume(amount);
+			// Output empty flask
+			if (outputStack.isEmpty()) {
+				te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
+			} else {
+				outputStack.grow(1);
+			}
 			te.sendUpdates();
 		}
 	}
@@ -482,7 +520,11 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 	@Override
 	public boolean canPlaceItem(int slot, ItemStack stack) {
 		if (slot == SLOT_RESULT) return false;
-		if (slot == SLOT_FLASK) return stack.getItem() == HLItemInit.cured_clay_flask.get();
+		if (slot == SLOT_FLASK_OUTPUT) return false;
+		if (slot == SLOT_FLASK) {
+			return stack.getItem() == HLItemInit.cured_clay_flask.get()
+					|| stack.getItem() instanceof BloodyFlaskItem;
+		}
 		if (slot == SLOT_CATALYST) return true; // any item allowed as catalyst
 		return true; // SLOT_INPUT
 	}
@@ -494,7 +536,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
-		return slot == SLOT_RESULT;
+		return slot == SLOT_RESULT || slot == SLOT_FLASK_OUTPUT;
 	}
 
 	// ---- Capabilities ----

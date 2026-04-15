@@ -1,0 +1,13 @@
+{
+  "type": "hemomancy:ghastly_alembic",
+  "ingredient": {
+    "item": "hemomancy:lethean_dew"
+  },
+  "catalyst": {
+    "item": "hemomancy:ghost_pipe"
+  },
+  "result": "hemomancy:hemolytic_solution",
+  "count": 2,
+  "experience": 0.75,
+  "cookingtime": 200
+}

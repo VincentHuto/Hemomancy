@@ -21,6 +21,7 @@ import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -61,7 +62,8 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 	public static final int SLOT_CATALYST_END = 4;
 	public static final int SLOT_OUTPUT = 5;
 	public static final int SLOT_BLOOD = 6;
-	public static final int INVENTORY_SIZE = 7;
+	public static final int SLOT_FLASK_OUTPUT = 7;
+	public static final int INVENTORY_SIZE = 8;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 
@@ -173,11 +175,23 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		if (vol == null || vol.isFull()) return;
 
 		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-			float amount = flask.getAmount();
+			double amount = flask.getAmount();
 			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
-				vol.addBloodVolume(amount);
-				bloodStack.shrink(1);
-				sendUpdates();
+				// Check if we can output the empty flask
+				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
+				if (outputStack.isEmpty()
+						|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
+								&& outputStack.getCount() < outputStack.getMaxStackSize())) {
+					vol.addBloodVolume(amount);
+					bloodStack.shrink(1);
+					// Output empty flask
+					if (outputStack.isEmpty()) {
+						inventory.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
+					} else {
+						outputStack.grow(1);
+					}
+					sendUpdates();
+				}
 			}
 		} else if (bloodStack.getItem() instanceof BloodGourdItem) {
 			IBloodVolume gourdVolume = bloodStack.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);

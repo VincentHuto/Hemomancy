@@ -1,5 +1,14 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AcolyteDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -15,11 +24,13 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
- * A humble parishioner of the Unstained Church, wandering the interior in
- * quiet contemplation. Acolytes are peaceful NPCs with no dialogue;
- * they simply populate the church to give it life.
+ * A humble parishioner of the Unstained Church. Acolytes offer stage-aware
+ * dialogue with lore, guidance, and repeatable task suggestions for players
+ * on the Unstained path. They differ from Zealots (who recruit) by providing
+ * ongoing mentorship and deeper lore as the player progresses.
  * <p>
  * Between three and five acolytes spawn per church structure.
  */
@@ -69,7 +80,46 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        // Acolytes are silent parishioners — no dialogue
-        return InteractionResult.PASS;
+        if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
+            DialogueTree tree = selectDialogue(serverPlayer);
+
+            PacketHandler.CHANNELBLOODVOLUME.send(
+                    PacketDistributor.PLAYER.with(() -> serverPlayer),
+                    new OpenDialoguePacket(tree));
+        }
+        return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    /**
+     * Selects the appropriate dialogue tree based on the player's current
+     * Unstained progression state. Returns increasingly detailed lore and
+     * task suggestions as the player advances.
+     */
+    private DialogueTree selectDialogue(ServerPlayer player) {
+        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).map(progress -> {
+            if (!progress.hasBegunPurification()) {
+                return AcolyteDialogueTrees.notOnPath(this.getId());
+            }
+
+            // Enlightened — full path completed
+            if (progress.isEnlightened()) {
+                return AcolyteDialogueTrees.enlightenedStage(this.getId());
+            }
+
+            // Clarity phase — purified and clarity unlocked
+            if (progress.hasClarityUnlocked()) {
+                return AcolyteDialogueTrees.clarityPhase(this.getId());
+            }
+
+            // Purity stage progression
+            EnumPurityStage stage = EnumPurityStage.byPurity(progress.getPurity());
+            return switch (stage) {
+                case PURIFIED -> AcolyteDialogueTrees.purifiedStage(this.getId());
+                case ABSOLVED -> AcolyteDialogueTrees.absolvedStage(this.getId());
+                case CLEANSING -> AcolyteDialogueTrees.cleansingStage(this.getId());
+                case TAINTED -> AcolyteDialogueTrees.taintedStage(this.getId());
+                default -> AcolyteDialogueTrees.corruptedStage(this.getId());
+            };
+        }).orElse(AcolyteDialogueTrees.notOnPath(this.getId()));
     }
 }

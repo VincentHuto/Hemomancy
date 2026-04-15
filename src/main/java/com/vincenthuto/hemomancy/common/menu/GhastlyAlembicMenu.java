@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.menu;
 import java.util.Objects;
 
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
+import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
 import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
@@ -38,7 +39,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	public static final int FLASK_SLOT      = 1;
 	public static final int RESULT_SLOT     = 2;
 	public static final int CATALYST_SLOT   = 3;
-	public static final int SLOT_COUNT      = 4;
+	public static final int FLASK_OUTPUT_SLOT = 4;
+	public static final int SLOT_COUNT      = 5;
 	public static final int DATA_COUNT      = 3;
 
 	// Crafting area height — matches the screen's layout
@@ -96,6 +98,8 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, RESULT_SLOT, 134, 32));
 		// Catalyst slot: top-left corner of the crafting area
 		this.addSlot(new Slot(container, CATALYST_SLOT, 8, 8));
+		// Flask output slot: to the left of the flask slot (empty flasks from consumed bloody flasks)
+		this.addSlot(new FurnaceResultSlot(playerInventory.player, container, FLASK_OUTPUT_SLOT, 134, 58));
 
 		// Player inventory (3 rows) — pushed down below crafting area
 		int invY = CRAFT_AREA_HEIGHT + 14;
@@ -146,7 +150,7 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 	}
 
 	public boolean isFlask(ItemStack stack) {
-		return stack.getItem() == HLItemInit.cured_clay_flask.get();
+		return stack.getItem() == HLItemInit.cured_clay_flask.get() || stack.getItem() instanceof BloodyFlaskItem;
 	}
 
 	// ---- Shift-click logic ----
@@ -161,7 +165,7 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 		copy = slotStack.copy();
 
 		// Moving FROM container slots to player inventory
-		if (index == RESULT_SLOT) {
+		if (index == RESULT_SLOT || index == FLASK_OUTPUT_SLOT) {
 			if (!this.moveItemStackTo(slotStack, INV_START, HOTBAR_END, true)) return ItemStack.EMPTY;
 			slot.onQuickCraft(slotStack, copy);
 		} else if (index == INGREDIENT_SLOT || index == FLASK_SLOT || index == CATALYST_SLOT) {

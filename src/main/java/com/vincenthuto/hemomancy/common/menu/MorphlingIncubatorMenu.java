@@ -35,7 +35,8 @@ public class MorphlingIncubatorMenu extends AbstractContainerMenu {
 	public static final int CATALYST_SLOT_4 = 4;
 	public static final int OUTPUT_SLOT = 5;       // Result output
 	public static final int BLOOD_SLOT = 6;        // Blood flask / gourd slot
-	public static final int SLOT_COUNT = 7;
+	public static final int FLASK_OUTPUT_SLOT = 7;  // Empty flask output
+	public static final int SLOT_COUNT = 8;
 	public static final int DATA_COUNT = 3;        // progress, totalTime, mode
 
 	private static MorphlingIncubatorBlockEntity getBlockEntity(final Inventory playerInv, final FriendlyByteBuf data) {
@@ -86,6 +87,14 @@ public class MorphlingIncubatorMenu extends AbstractContainerMenu {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return stack.getItem() instanceof BloodyFlaskItem || stack.getItem() instanceof BloodGourdItem;
+			}
+		});
+
+		// Flask output slot (empty flasks from consumed bloody flasks)
+		this.addSlot(new Slot(te, FLASK_OUTPUT_SLOT, 26, 74) {
+			@Override
+			public boolean mayPlace(ItemStack stack) {
+				return false;
 			}
 		});
 

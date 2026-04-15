@@ -34,7 +34,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}
 
-	protected float bloodCost;
+	protected double bloodCost;
 	protected ItemStack heldItem = null;
 	protected Block hitBlock = null;
 
@@ -44,12 +44,12 @@ public class BloodStructureRecipe extends CustomRecipe {
 
 	protected boolean unstained;
 
-	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
+	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result) {
 		this(pId, bloodCost, pattern, heldItem, hitBlock, result, false);
 	}
 
-	public BloodStructureRecipe(ResourceLocation pId, float bloodCost, MultiblockPattern pattern, ItemStack heldItem,
+	public BloodStructureRecipe(ResourceLocation pId, double bloodCost, MultiblockPattern pattern, ItemStack heldItem,
 			Block hitBlock, ItemStack result, boolean unstained) {
 		super(pId, CraftingBookCategory.MISC);
 		this.bloodCost = bloodCost;
@@ -70,7 +70,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return false;
 	}
 
-	public float getBloodCost() {
+	public double getBloodCost() {
 		return bloodCost;
 	}
 
@@ -119,7 +119,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 		return false;
 	}
 
-	public void setBloodCost(float bloodCost) {
+	public void setBloodCost(double bloodCost) {
 		this.bloodCost = bloodCost;
 	}
 

@@ -2,8 +2,8 @@ package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 public class BloodVolume implements IBloodVolume {
 	private boolean active = false;
-	private double bloodVolume = 0.0F;
-	private double maxBloodVolume = 5000.0F;
+	private double bloodVolume = 0.0;
+	private double maxBloodVolume = 5000.0;
 	private Bloodline bloodLine = Bloodline.NOBLOODLINE;
 
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
@@ -91,7 +91,7 @@ public class BloodVolume implements IBloodVolume {
 
 	@Override
 	public boolean isEmpty() {
-		return bloodVolume > 0;
+		return bloodVolume <= 0;
 	}
 
 	@Override

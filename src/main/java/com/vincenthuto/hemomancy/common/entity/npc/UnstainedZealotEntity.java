@@ -77,32 +77,26 @@ public class UnstainedZealotEntity extends PathfinderMob {
             int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
             IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
 
-            // Gracefully check for the UnstainedProgress capability which may not be
-            // present if its PR has not been merged yet.
+            // Read Unstained progress directly now that the capability is always present
             boolean hasBegunPurification = false;
-            try {
-                Class<?> providerClass = Class.forName(
-                        "com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider");
-                Object capa = providerClass.getField("UNSTAINED_CAPA").get(null);
-                @SuppressWarnings("unchecked")
-                net.minecraftforge.common.capabilities.Capability<Object> unstainedCapa =
-                        (net.minecraftforge.common.capabilities.Capability<Object>) capa;
-                hasBegunPurification = player.getCapability(unstainedCapa)
-                        .map(obj -> {
-                            try {
-                                return (Boolean) obj.getClass().getMethod("hasBegunPurification").invoke(obj);
-                            } catch (NoSuchMethodException | IllegalAccessException
-                                    | java.lang.reflect.InvocationTargetException ex) {
-                                return false;
-                            }
-                        }).orElse(false);
-            } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                // Capability not yet registered — skip this check branch
+            float purity = 0f;
+            boolean clarityUnlocked = false;
+            boolean enlightened = false;
+
+            var unstainedOpt = player.getCapability(
+                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider.UNSTAINED_CAPA)
+                    .resolve();
+            if (unstainedOpt.isPresent()) {
+                var progress = unstainedOpt.get();
+                hasBegunPurification = progress.hasBegunPurification();
+                purity = progress.getPurity();
+                clarityUnlocked = progress.hasClarityUnlocked();
+                enlightened = progress.isEnlightened();
             }
 
             DialogueTree tree;
             if (hasBegunPurification) {
-                tree = ZealotDialogueTrees.alreadyOnPath(this.getId());
+                tree = ZealotDialogueTrees.alreadyOnPath(this.getId(), purity, clarityUnlocked, enlightened);
             } else if (volume == null || !volume.isActive()) {
                 tree = ZealotDialogueTrees.noBlood(this.getId());
             } else if (degree >= EnumInitiatoryDegree.VOTARY.getNumber()) {
