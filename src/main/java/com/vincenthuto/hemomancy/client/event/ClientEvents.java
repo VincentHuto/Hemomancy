@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.client.render.item.ScarPatternBakedModel;
 import com.vincenthuto.hemomancy.client.render.tile.*;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.ScarStationRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.GhastlyAlembicRenderer;
+import com.vincenthuto.hemomancy.client.render.tile.crafting.PallidRetortRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.MorphlingIncubatorRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.SomaticLoomRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.crafting.VialCentrifugeRenderer;
@@ -424,6 +425,7 @@ public class ClientEvents {
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.pallid_retort.get(), PallidRetortRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.morphling_incubator.get(), MorphlingIncubatorRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.unstained_podium.get(), UnstainedPodiumRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.scrying_podium.get(), ScryingPodiumRenderer::new);
@@ -454,6 +456,7 @@ public class ClientEvents {
 			MenuScreens.register(ContainerInit.living_syringe.get(), LivingSyringeScreen::new);
 			MenuScreens.register(ContainerInit.living_staff.get(), LivingStaffScreen::new);
 			MenuScreens.register(ContainerInit.ghastly_alembic.get(), GhastlyAlembicScreen::new);
+			MenuScreens.register(ContainerInit.pallid_retort.get(), PallidRetortScreen::new);
 			MenuScreens.register(ContainerInit.scar_station.get(), ScarStationScreen::new);
 			MenuScreens.register(ContainerInit.scar_binder.get(), ScarBinderScreen::new);
 			MenuScreens.register(ContainerInit.vascular_view.get(), VascularViewScreen::new);
