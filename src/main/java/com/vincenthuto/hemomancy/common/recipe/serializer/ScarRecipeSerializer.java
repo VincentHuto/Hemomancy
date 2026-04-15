@@ -22,7 +22,17 @@ public class ScarRecipeSerializer implements RecipeSerializer<ScarRecipe> {
 	public static HashMap<ResourceLocation, ScarRecipe> ALL_RECIPES = new HashMap<ResourceLocation, ScarRecipe>();
 
 	public static ScarRecipe getRecipe(String path) {
-		return ALL_RECIPES.get(new ResourceLocation("hemomancy:chisel/" + path));
+		// Current recipe IDs live under "hemomancy:scar/<path>".
+		ScarRecipe recipe = ALL_RECIPES.get(new ResourceLocation("hemomancy:scar/" + path));
+		if (recipe != null) {
+			return recipe;
+		}
+		// Legacy fallbacks kept for migrated worlds / old naming.
+		recipe = ALL_RECIPES.get(new ResourceLocation("hemomancy:chisel/" + path));
+		if (recipe != null) {
+			return recipe;
+		}
+		return ALL_RECIPES.get(new ResourceLocation("hemomancy:rune/" + path));
 	}
 
 	@Override
