@@ -176,13 +176,14 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 
 		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
 			double amount = flask.getAmount();
-			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
+			double available = vol.getMaxBloodVolume() - vol.getBloodVolume();
+			if (available > 0) {
 				// Check if we can output the empty flask
 				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
 				if (outputStack.isEmpty()
 						|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
 								&& outputStack.getCount() < outputStack.getMaxStackSize())) {
-					vol.addBloodVolume(amount);
+					vol.addBloodVolume(Math.min(amount, available));
 					bloodStack.shrink(1);
 					// Output empty flask
 					if (outputStack.isEmpty()) {
