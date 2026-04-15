@@ -79,7 +79,7 @@ public class ScarStationItemRenderer extends BlockEntityWithoutLevelRenderer {
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}
 
-		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
+		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 

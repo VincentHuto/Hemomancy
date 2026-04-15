@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:harbinger_outpost",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1847293056,
+    "spacing": 32,
+    "separation": 4,
+    "type": "minecraft:random_spread"
+  }
+}

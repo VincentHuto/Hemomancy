@@ -303,6 +303,10 @@ public class BlockInit {
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.sarcodes,
 					BlockBehaviour.Properties.of().noCollission()));
 
+	public static final RegistryObject<Block> potted_lethean_poppy = POTTEDBLOCKS.register("potted_lethean_poppy",
+			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.lethean_poppy,
+					BlockBehaviour.Properties.of().noCollission()));
+
 	// Gourd
 	public static final RegistryObject<Block> gourd = MODELEDBLOCKS.register("gourd",
 			() -> new GourdBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY)
@@ -516,32 +520,6 @@ public class BlockInit {
 		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 
-//	@SubscribeEvent
-//	public static void registerBlocks(FMLClientSetupEvent event) {
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.smouldering_ash_trail.get(), RenderType.cutoutMipped());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.befouling_ash_trail.get(), RenderType.cutoutMipped());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_smouldering_ash_trail.get(), RenderType.cutoutMipped());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.active_befouling_ash_trail.get(), RenderType.cutoutMipped());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.earthen_vein.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.bleeding_heart.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_bleeding_heart.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_infected_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_stinkhorn_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.potted_puffball_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.iron_brazier.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.infected_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.stinkhorn_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_podium.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.hyphae.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.puffball_fungus.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.fungal_implantation_pylon.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.gourd_stem.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.attached_gourd_stem.get(), RenderType.cutout());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.engram_block.get(), RenderType.translucent());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.bog_body.get(), RenderType.translucent());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_vivianite.get(), RenderType.translucent());
-//		ItemBlockRenderTypes.setRenderLayer(BlockInit.suspended_blood_crystal.get(), RenderType.translucent());
-//	}
 
 	@SubscribeEvent
 	public static void registerBlocks(FMLCommonSetupEvent event) {
@@ -558,6 +536,8 @@ public class BlockInit {
 					BlockInit.potted_ghost_pipe);
 			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.sarcodes.getId(),
 					BlockInit.potted_sarcodes);
+			((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(BlockInit.lethean_poppy.getId(),
+					BlockInit.potted_lethean_poppy);
 		});
 	}
 

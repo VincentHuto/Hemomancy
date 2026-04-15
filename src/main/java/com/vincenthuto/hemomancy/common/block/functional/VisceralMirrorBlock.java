@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
@@ -51,9 +52,14 @@ import net.minecraftforge.network.PacketDistributor;
  * the player can browse all organs, view their status, and initiate or cancel
  * extraction rituals with a visual progress bar.</p>
  */
-public class VisceralMirrorBlock extends Block implements EntityBlock {
+public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+
+	/** Filler offsets: 1×3×1 — two filler blocks directly above the base. */
+	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+			new BlockPos(0, 1, 0)
+	};
 
 	// A tall mirror-like shape (2 blocks tall appearance in 1 block)
 	private static final VoxelShape SHAPE = Shapes.or(
@@ -74,6 +80,11 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 	}
 
 	@Override
+	public BlockPos[] getFillerOffsets() {
+		return FILLER_OFFSETS;
+	}
+
+	@Override
 	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
@@ -85,7 +96,31 @@ public class VisceralMirrorBlock extends Block implements EntityBlock {
 
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		}
+		return null;
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+			@Nullable net.minecraft.world.entity.LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			if (!level.isClientSide) {
+				removeFillers(level, pos);
+			}
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
 	@Nullable
