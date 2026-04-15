@@ -334,6 +334,7 @@ public class BiomeInit {
 	}
 
 
+	@SubscribeEvent
 	public static void commonSetup(final FMLCommonSetupEvent event) {
 
 		event.enqueueWork(() -> {
