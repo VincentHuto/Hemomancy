@@ -4,7 +4,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
-import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicerDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -45,11 +45,11 @@ import net.minecraftforge.network.PacketDistributor;
  *       is offered to an enemy of the Covenant.</li>
  * </ul>
  */
-public class HarbingerVicerEntity extends PathfinderMob {
+public class HarbingerVicarEntity extends PathfinderMob {
 
     public final AnimationState idleAnimationState = new AnimationState();
 
-    public HarbingerVicerEntity(EntityType<? extends HarbingerVicerEntity> type, Level worldIn) {
+    public HarbingerVicarEntity(EntityType<? extends HarbingerVicarEntity> type, Level worldIn) {
         super(type, worldIn);
         this.setInvulnerable(true);
     }
@@ -71,7 +71,7 @@ public class HarbingerVicerEntity extends PathfinderMob {
         // Attack clarity-bearing players on sight
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(
                 this, Player.class, 10, true, false,
-                HarbingerVicerEntity::hasClarityUnlocked));
+                HarbingerVicarEntity::hasClarityUnlocked));
     }
 
     /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
@@ -128,9 +128,9 @@ public class HarbingerVicerEntity extends PathfinderMob {
 
             if (isPurifying(player)) {
                 // Purifying players receive a stern Harbinger warning
-                tree = HarbingerVicerDialogueTrees.purifying(this.getId());
+                tree = HarbingerVicarDialogueTrees.purifying(this.getId());
             } else {
-                tree = HarbingerVicerDialogueTrees.forDegree(degree, this.getId());
+                tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId());
             }
 
             PacketHandler.CHANNELBLOODVOLUME.send(
@@ -140,4 +140,3 @@ public class HarbingerVicerEntity extends PathfinderMob {
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 }
-

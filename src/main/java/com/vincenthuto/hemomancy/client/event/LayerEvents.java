@@ -39,7 +39,7 @@ import com.vincenthuto.hemomancy.client.model.entity.summon.MorphlingPolypModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.ThirsterModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerAlchemistModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerHermitModel;
-import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerVicerModel;
+import com.vincenthuto.hemomancy.client.model.entity.npc.HarbingerVicarModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedAcolyteModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedGuardianModel;
 import com.vincenthuto.hemomancy.client.model.entity.npc.UnstainedZealotModel;
@@ -161,7 +161,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(UnstainedAcolyteModel.LAYER_LOCATION, UnstainedAcolyteModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerHermitModel.LAYER_LOCATION, HarbingerHermitModel::createBodyLayer);
 		event.registerLayerDefinition(HarbingerAlchemistModel.LAYER_LOCATION, HarbingerAlchemistModel::createBodyLayer);
-		event.registerLayerDefinition(HarbingerVicerModel.LAYER_LOCATION, HarbingerVicerModel::createBodyLayer);
+		event.registerLayerDefinition(HarbingerVicarModel.LAYER_LOCATION, HarbingerVicarModel::createBodyLayer);
 		event.registerLayerDefinition(DessicantModel.LAYER_LOCATION, DessicantModel::createBodyLayer);
 		event.registerLayerDefinition(CruorFiendModel.LAYER_LOCATION, CruorFiendModel::createBodyLayer);
 		event.registerLayerDefinition(VoidDrinkerModel.LAYER_LOCATION, VoidDrinkerModel::createBodyLayer);

@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.model.entity.npc;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicarEntity;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -14,14 +14,14 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 /**
- * Humanoid model for the Harbinger Vicer — a dignified, ceremonially robed
+ * Humanoid model for the Harbinger Vicar — a dignified, ceremonially robed
  * figure whose sweeping vestments reflect ecclesiastical authority. Upright
  * posture and layered robes convey doctrinal gravitas.
  */
-public class HarbingerVicerModel<T extends HarbingerVicerEntity> extends HumanoidModel<T> {
+public class HarbingerVicarModel<T extends HarbingerVicarEntity> extends HumanoidModel<T> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Hemomancy.rloc("harbinger_vicer"), "main");
+            Hemomancy.rloc("harbinger_vicar"), "main");
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
@@ -69,7 +69,7 @@ public class HarbingerVicerModel<T extends HarbingerVicerEntity> extends Humanoi
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
-    public HarbingerVicerModel(ModelPart root) {
+    public HarbingerVicarModel(ModelPart root) {
         super(root);
     }
 }

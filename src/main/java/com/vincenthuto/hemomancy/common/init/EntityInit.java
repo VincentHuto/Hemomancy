@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
-import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicerEntity;
+import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicarEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedAcolyteEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedGuardianEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.UnstainedZealotEntity;
@@ -89,11 +89,11 @@ public class EntityInit {
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_alchemist").toString()));
 
-    public static final RegistryObject<EntityType<HarbingerVicerEntity>> harbinger_vicer = ENTITY_TYPES.register(
-            "harbinger_vicer",
-            () -> EntityType.Builder.of(HarbingerVicerEntity::new, MobCategory.CREATURE)
+    public static final RegistryObject<EntityType<HarbingerVicarEntity>> harbinger_vicar = ENTITY_TYPES.register(
+            "harbinger_vicar",
+            () -> EntityType.Builder.of(HarbingerVicarEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
-                    .build(Hemomancy.rloc("harbinger_vicer").toString()));
+                    .build(Hemomancy.rloc("harbinger_vicar").toString()));
 
     public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -401,7 +401,7 @@ public class EntityInit {
         event.put(EntityInit.spectral_companion.get(), SpectralCompanionEntity.setAttributes().build());
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
-        event.put(EntityInit.harbinger_vicer.get(), HarbingerVicerEntity.setAttributes().build());
+        event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
         event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
