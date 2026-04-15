@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.config.HyphaeConfig;
 import com.vincenthuto.hemomancy.common.worldgen.config.SmallInfectedMushroomConfig;
 import com.vincenthuto.hemomancy.common.worldgen.feature.BogBodyFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.EarthenVeinFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.BrownCanopyMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.CheckAbovePatchFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeTendrilFeature;
@@ -51,6 +52,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> BOG_BODY = register("bog_body",
 			new BogBodyFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> EARTHEN_VEIN = register("earthen_vein",
+			new EarthenVeinFeature(NoneFeatureConfiguration.CODEC));
 
 	public static final Feature<NoneFeatureConfiguration> TERMITE_MOUND = register("termite_mound",
 			new TermiteMoundFeature(NoneFeatureConfiguration.CODEC));
