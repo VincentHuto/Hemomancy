@@ -268,7 +268,7 @@ public final class MiniRecipeRenderer {
 		renderSlotItem(gfx, recipe.getResultItem(registryAccess()), outX + 1, y + 1);
 
 		// Blood cost
-		float bloodCost = recipe.getBloodCost();
+		double bloodCost = recipe.getBloodCost();
 		if (bloodCost > 0) {
 			gfx.drawString(font, String.format("%.0f Blood", bloodCost),
 					x, y + SLOT_SIZE + 2, theme.costColor(), false);
@@ -325,7 +325,7 @@ public final class MiniRecipeRenderer {
 		}
 
 		// Blood cost
-		float cost = recipe.getBloodCost();
+		double cost = recipe.getBloodCost();
 		if (cost > 0) {
 			gfx.drawString(font, String.format("%.0f Blood", cost),
 					outX + SLOT_SIZE + 3, row2Y + 5, theme.costColor(), false);

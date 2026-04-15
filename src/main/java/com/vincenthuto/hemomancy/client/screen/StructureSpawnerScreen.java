@@ -235,7 +235,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 	}
 
 	private static int getRequiredDegreeForStructure(BloodStructureRecipe recipe) {
-		float cost = recipe.getBloodCost();
+		double cost = recipe.getBloodCost();
 		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
 			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
 				return CRAFTING_TIER_DEGREE_REQ[i];

@@ -44,7 +44,7 @@ public class BloodCraftingKeyPressPacket {
 
 	/** Returns the minimum initiatory degree required for a blood structure recipe based on its blood cost. */
 	private static int getRequiredDegreeForRecipe(BloodStructureRecipe recipe) {
-		float cost = recipe.getBloodCost();
+		double cost = recipe.getBloodCost();
 		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
 			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
 				return CRAFTING_TIER_DEGREE_REQ[i];
@@ -55,7 +55,7 @@ public class BloodCraftingKeyPressPacket {
 
 	/** Returns the tier name for a blood structure recipe based on its blood cost. */
 	private static String getTierNameForRecipe(BloodStructureRecipe recipe) {
-		float cost = recipe.getBloodCost();
+		double cost = recipe.getBloodCost();
 		for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
 			if (cost <= CRAFTING_TIER_THRESHOLDS[i]) {
 				return CRAFTING_TIER_NAMES[i];

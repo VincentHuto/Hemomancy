@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 public class MemoryWeavingRecipe extends CustomRecipe {
 
 	/** Blood cost multiplier per required tendency. */
-	private static final float BLOOD_COST_PER_TENDENCY = 50f;
+	private static final double BLOOD_COST_PER_TENDENCY = 50.0;
 	/** Base crafting time in ticks before tendency scaling. */
 	private static final int BASE_CRAFT_TIME_TICKS = 100;
 	/** Additional ticks per required tendency. */
@@ -151,7 +151,7 @@ public class MemoryWeavingRecipe extends CustomRecipe {
 	/**
 	 * Blood cost for the ritual, derived from number of required tendencies.
 	 */
-	public float getBloodCost() {
+	public double getBloodCost() {
 		return getRequiredTendencyCount() * BLOOD_COST_PER_TENDENCY;
 	}
 

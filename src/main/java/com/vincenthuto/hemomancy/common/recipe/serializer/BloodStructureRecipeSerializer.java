@@ -137,7 +137,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 	@Override
 	public BloodStructureRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
 		// Deserialization
-		float cost = GsonHelper.getAsFloat(pJson, "bloodCost");
+		double cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		ItemStack heldItem = getItemFromJson(GsonHelper.getAsString(pJson, "heldItem"));
 		Block hitBlock = blockFromString(GsonHelper.getAsString(pJson, "hitBlock"));
 		String[][] pattern = patternFromJson(GsonHelper.getAsJsonArray(pJson, "pattern"));
@@ -154,7 +154,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	@Override
 	public BloodStructureRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-		float cost = pBuffer.readFloat();
+		double cost = pBuffer.readDouble();
 		ItemStack heldItem = pBuffer.readItem();
 		Block hitBlock = Block.byItem(pBuffer.readItem().getItem());
 		// Pattern reading
@@ -194,7 +194,7 @@ public class BloodStructureRecipeSerializer implements RecipeSerializer<BloodStr
 
 	@Override
 	public void toNetwork(FriendlyByteBuf pBuffer, BloodStructureRecipe pRecipe) {
-		pBuffer.writeFloat(pRecipe.getBloodCost());
+		pBuffer.writeDouble(pRecipe.getBloodCost());
 		pBuffer.writeItem(pRecipe.getHeldItem());
 		pBuffer.writeItem(new ItemStack(pRecipe.getHitBlock().asItem()));
 		// Pattern writing
