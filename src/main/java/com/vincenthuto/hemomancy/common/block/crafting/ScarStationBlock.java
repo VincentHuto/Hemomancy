@@ -36,9 +36,10 @@ import net.minecraftforge.network.NetworkHooks;
 public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
-	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
+	/** Filler offsets: 1×3×1 — two filler blocks directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0)
+			new BlockPos(0, 1, 0),
+			new BlockPos(0, 2, 0)
 	};
 
 	/** Full-block collision shape for the base block. */

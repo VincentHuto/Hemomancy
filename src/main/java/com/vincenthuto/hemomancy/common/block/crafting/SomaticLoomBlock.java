@@ -40,7 +40,7 @@ public class SomaticLoomBlock extends Block implements EntityBlock, IMultiBlock 
 
 	/** Filler offsets: 1×2×1 — one filler block directly above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0)
+			new BlockPos(0, 1, 0),new BlockPos(0, 2, 0)
 	};
 
 	private static final VoxelShape SHAPE_N = Shapes.block();
