@@ -175,7 +175,7 @@ public class MorphlingIncubatorBlockEntity extends BaseContainerBlockEntity impl
 		if (vol == null || vol.isFull()) return;
 
 		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
-			float amount = flask.getAmount();
+			double amount = flask.getAmount();
 			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
 				// Check if we can output the empty flask
 				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);

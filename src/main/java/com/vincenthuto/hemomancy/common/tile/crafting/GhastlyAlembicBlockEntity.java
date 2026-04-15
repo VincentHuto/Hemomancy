@@ -368,7 +368,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		IBloodVolume vol = te.resolveVolume();
 		if (vol == null || vol.isFull()) return;
 
-		float amount = flask.getAmount();
+		double amount = flask.getAmount();
 		if (vol.getBloodVolume() + amount > vol.getMaxBloodVolume()) return;
 
 		// Check if we can output the empty flask

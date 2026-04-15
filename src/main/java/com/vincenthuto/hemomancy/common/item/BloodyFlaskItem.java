@@ -22,9 +22,9 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class BloodyFlaskItem extends Item {
 
-	float amount;
+	double amount;
 
-	public BloodyFlaskItem(Properties prop, float amount) {
+	public BloodyFlaskItem(Properties prop, double amount) {
 		super(prop.stacksTo(16));
 		this.amount = amount;
 	}
@@ -35,7 +35,7 @@ public class BloodyFlaskItem extends Item {
 		tooltip.add(Component.literal("Used to Quickly Gain " + amount + "ml of Blood"));
 	}
 
-	public float getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
