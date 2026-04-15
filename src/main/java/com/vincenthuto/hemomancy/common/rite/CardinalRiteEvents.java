@@ -436,6 +436,7 @@ public class CardinalRiteEvents {
 	private static final String SILVER_VEIL_RITE = "cardinal_rite/silver_veil";
 	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
 	private static final String LETHEAN_JUDGMENT_RITE = "cardinal_rite/lethean_judgment";
+	private static final String SILVER_DAWN_RITE = "cardinal_rite/silver_dawn";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -703,6 +704,11 @@ public class CardinalRiteEvents {
 		// Rite of Lethean Judgment: disrupt nearby hemomancers
 		if (LETHEAN_JUDGMENT_RITE.equals(ritePath)) {
 			completeLetheanJudgment(sLevel, caster, center);
+		}
+
+		// Rite of the Silver Dawn: create a persistent cleansed zone
+		if (SILVER_DAWN_RITE.equals(ritePath)) {
+			completeSilverDawn(sLevel, caster, center);
 		}
 
 		// Play completion sound

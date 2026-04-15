@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.effect.VerminousAuraEffect;
 import com.vincenthuto.hemomancy.common.effect.NeuralOverloadEffect;
 import com.vincenthuto.hemomancy.common.effect.ArcaneResonanceEffect;
 import com.vincenthuto.hemomancy.common.effect.SanguineClarityEffect;
+import com.vincenthuto.hemomancy.common.effect.VerdigrisAuraEffect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -185,6 +186,9 @@ public class EffectInit {
 							4.0D, AttributeModifier.Operation.ADDITION)
 					.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "E5F7A9B1-3C2D-5E4F-0A6B-7D9C1F3E5B8A",
 							0.2D, AttributeModifier.Operation.ADDITION));
+
+	public static final RegistryObject<MobEffect> verdigris_aura = EFFECTS.register("verdigris_aura",
+			() -> new VerdigrisAuraEffect(MobEffectCategory.BENEFICIAL, 0x4A8B6F));
 
 	// MnA Cross-Mod Combo Effects
 	public static final RegistryObject<MobEffect> arcane_resonance = EFFECTS.register("arcane_resonance",

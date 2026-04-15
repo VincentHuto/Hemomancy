@@ -54,8 +54,102 @@ public final class ZealotDialogueTrees {
 				.build();
 	}
 
-	/** Player is already on the purification path. */
+	/** Player is already on the purification path — stage-aware guidance. */
 	public static DialogueTree alreadyOnPath(int entityId) {
+		return alreadyOnPath(entityId, 0f, false, false);
+	}
+
+	/** Player is already on the purification path — stage-aware guidance based on progress. */
+	public static DialogueTree alreadyOnPath(int entityId, float purity, boolean clarityUnlocked, boolean enlightened) {
+		if (enlightened) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+					.theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.zealot.enlightened.line1",
+							"hemomancy.zealot.enlightened.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.build();
+		}
+
+		if (clarityUnlocked) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+					.theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.zealot.clarity_phase.line1",
+							"hemomancy.zealot.clarity_phase.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_verdigris", "verdigris_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("verdigris_info", List.of(
+							"hemomancy.zealot.verdigris_info.line1",
+							"hemomancy.zealot.verdigris_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.build();
+		}
+
+		if (purity >= 75f) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+					.theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.zealot.absolved.line1",
+							"hemomancy.zealot.absolved.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_clarity_rite", "clarity_rite_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("clarity_rite_info", List.of(
+							"hemomancy.zealot.clarity_rite_info.line1",
+							"hemomancy.zealot.clarity_rite_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.build();
+		}
+
+		if (purity >= 50f) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+					.theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.zealot.cleansing.line1",
+							"hemomancy.zealot.cleansing.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_altar", "altar_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("altar_info", List.of(
+							"hemomancy.zealot.altar_info.line1",
+							"hemomancy.zealot.altar_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.build();
+		}
+
+		if (purity >= 25f) {
+			return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+					.theme(DialogueTheme.UNSTAINED)
+					.addNode(new DialogueNode("root", List.of(
+							"hemomancy.zealot.tainted.line1",
+							"hemomancy.zealot.tainted.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.about_silver_ward", "silver_ward_info", null),
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.addNode(new DialogueNode("silver_ward_info", List.of(
+							"hemomancy.zealot.silver_ward_info.line1",
+							"hemomancy.zealot.silver_ward_info.line2"
+					), List.of(
+							new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+					)))
+					.build();
+		}
+
+		// Default: still at Corrupted level
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
 				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
