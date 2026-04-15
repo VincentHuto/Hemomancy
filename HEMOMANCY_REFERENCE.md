@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-14
+> **Last Updated:** 2026-04-15
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -827,7 +827,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_stand.png) ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
 | **ghastly_alembic** | `GhastlyAlembicBlockEntity` | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** — an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top → input, bottom → result, sides → flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware). |
 | **Cerebral Scarring Station** | `ScarStationBlockEntity` | Crafts scars from patterns and blanks |
-| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Has 7 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd (slot 6). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). |
+| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). |
 | **Fungal Podium** | `FungalPodiumBlockEntity` | Fungal-related interaction station |
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
 | **Dendritic Distributor** | `DendriticDistributorBlockEntity` | Opens the Skill Tree / Manipulation Tree screen |
@@ -1536,6 +1536,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Recently implemented: 5 new spell components (Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith, Blood-to-Mana), Blood Tithe handler, Spell ↔ Manipulation combo system, full cross-mod config. Still planned: spell shapes, rituals, faction enhancements, construct system, wand core, manaweaving recipes, runeforging enchantments.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
+- **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **New Monster Mobs (WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). Spawn rules are registered but specific spawn biomes, AI, drops, and loot tables are still being designed/implemented.
 - **New NPC Entities (WIP)** — Unstained Guardian, Unstained Acolyte, Harbinger Hermit, and Spectral Companion entities are registered but their AI, dialogue, and drop content is still being developed.
 - **New Manipulation Expansions** — 8 new manipulations added covering new tendencies: Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
