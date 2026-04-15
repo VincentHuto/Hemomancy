@@ -15,6 +15,7 @@ public class TestSurfaceRuleData
     private static final SurfaceRules.RuleSource ERYTHROCYTIC_MYCELIUM = makeStateRule(BlockInit.erythrocytic_mycelium.get());
     private static final SurfaceRules.RuleSource ERYTHROCYTIC_DIRT = makeStateRule(BlockInit.erythrocytic_dirt.get());
     private static final SurfaceRules.RuleSource VENOUS_STONE = makeStateRule(BlockInit.venous_stone.get());
+    private static final SurfaceRules.RuleSource hemorrhagic_crust = makeStateRule(BlockInit.hemorrhagic_crust.get());
 
     public static SurfaceRules.RuleSource makeRules()
     {
@@ -27,7 +28,9 @@ public class TestSurfaceRuleData
                     SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR,
                         SurfaceRules.ifTrue(isAtOrAboveWaterLevel, ERYTHROCYTIC_MYCELIUM)),
                     SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, ERYTHROCYTIC_DIRT),
-                    SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, VENOUS_STONE)
+                    SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, VENOUS_STONE),
+                        SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, hemorrhagic_crust)
+
                 )
             ),
 
