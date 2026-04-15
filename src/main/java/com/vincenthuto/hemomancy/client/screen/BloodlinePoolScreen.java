@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
@@ -30,7 +31,7 @@ import java.util.Random;
 public class BloodlinePoolScreen extends Screen {
 
 	private static final int GUI_WIDTH = 220;
-	private static final int GUI_HEIGHT = 270;
+	private static final int GUI_HEIGHT = 320;
 	private static final int VEIN_COUNT = 28;
 
 	private float[][] veinParams;
@@ -43,6 +44,8 @@ public class BloodlinePoolScreen extends Screen {
 	private Checkbox autoDrawCheckbox;
 	private EditBox autoDrawThresholdField;
 	private Button applySettingsButton;
+	private EditBox messageField;
+	private Button sendMessageButton;
 
 	// Cached capability data
 	private boolean trickleEnabled;
@@ -168,6 +171,23 @@ public class BloodlinePoolScreen extends Screen {
 					new PacketUpdatePoolSettings(trickle, rate, autoDraw, threshold));
 		}).bounds(widgetX, y, widgetW, 20).build();
 		addRenderableWidget(applySettingsButton);
+
+		y += 34;
+
+		// ── Bloodline Message Section ──
+		messageField = new EditBox(this.font, widgetX, y, widgetW - 58, 18, Component.literal("Message"));
+		messageField.setMaxLength(256);
+		messageField.setHint(Component.literal("Send to bloodline...").withStyle(s -> s.withColor(0xFF664444)));
+		addRenderableWidget(messageField);
+
+		sendMessageButton = Button.builder(Component.literal("Send"), btn -> {
+			String msg = messageField.getValue().trim();
+			if (!msg.isEmpty()) {
+				PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketBloodlineMessage(msg));
+				messageField.setValue("");
+			}
+		}).bounds(widgetX + widgetW - 54, y, 54, 18).build();
+		addRenderableWidget(sendMessageButton);
 	}
 
 	@Override
@@ -262,6 +282,10 @@ public class BloodlinePoolScreen extends Screen {
 			// Auto-draw threshold label
 			graphics.drawString(this.font, "Threshold %:", guiLeft + 12,
 					autoDrawThresholdField.getY() + 4, 0xFFCC6666, true);
+
+			// Bloodline message label
+			graphics.drawString(this.font, "Bloodline Message:", guiLeft + 12,
+					messageField.getY() - 11, 0xFFCC6666, true);
 		});
 
 		// Render widgets on top

@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncUnstainedProgress;
+import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleBinderMessage;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
@@ -221,6 +222,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketRequestPoolData.class, networkID++)
 				.decoder(PacketRequestPoolData::decode).encoder(PacketRequestPoolData::encode)
 				.consumerNetworkThread(PacketRequestPoolData::handle).add();
+
+		// Bloodline whisper message packet (client → server, broadcast to bloodline)
+		CHANNELBLOODVOLUME.messageBuilder(PacketBloodlineMessage.class, networkID++)
+				.decoder(PacketBloodlineMessage::decode).encoder(PacketBloodlineMessage::encode)
+				.consumerNetworkThread(PacketBloodlineMessage::handle).add();
 
 		// Cardinal rite sync packet
 		CHANNELBLOODVOLUME.messageBuilder(PacketSyncActiveRites.class, networkID++)
