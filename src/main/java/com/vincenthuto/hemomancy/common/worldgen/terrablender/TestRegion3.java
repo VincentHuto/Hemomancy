@@ -26,12 +26,10 @@ public class TestRegion3 extends Region
     public void addBiomes(Registry<Biome> registry, Consumer<Pair<Climate.ParameterPoint, ResourceKey<Biome>>> mapper)
     {
         this.addModifiedVanillaOverworldBiomes(mapper, builder -> {
-            // Simple example:
-            // Replace the Vanilla desert with our hot_red biome
-//            builder.replaceBiome(Biomes.JUNGLE, BiomeInit.FUNGAL_GARDENS);
-//            builder.replaceBiome(Biomes.MUSHROOM_FIELDS, BiomeInit.FUNGAL_GARDENS);
-//            builder.replaceBiome(Biomes.MANGROVE_SWAMP, BiomeInit.FUNGAL_GARDENS);
-//            builder.replaceBiome(Biomes.SWAMP, BiomeInit.FUNGAL_GARDENS);
+            builder.replaceBiome(Biomes.JUNGLE, BiomeInit.FUNGAL_GARDENS);
+            builder.replaceBiome(Biomes.MUSHROOM_FIELDS, BiomeInit.FUNGAL_GARDENS);
+            builder.replaceBiome(Biomes.MANGROVE_SWAMP, BiomeInit.FUNGAL_GARDENS);
+            builder.replaceBiome(Biomes.SWAMP, BiomeInit.FUNGAL_GARDENS);
         });
     }
 }
