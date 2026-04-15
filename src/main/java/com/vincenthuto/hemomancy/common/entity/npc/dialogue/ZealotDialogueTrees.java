@@ -33,8 +33,17 @@ public final class ZealotDialogueTrees {
 						"hemomancy.zealot.plea.line3",
 						"hemomancy.zealot.plea.line4"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.how_craft_hemolytic", "craft_hemolytic", null),
 						new DialogueOption("hemomancy.dialogue.zealot.option.accept_purification", null, "zealot_accept_purification"),
 						new DialogueOption("hemomancy.dialogue.zealot.option.accept_church", null, "zealot_accept_church"),
+						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("craft_hemolytic", List.of(
+						"hemomancy.zealot.craft_hemolytic.line1",
+						"hemomancy.zealot.craft_hemolytic.line2",
+						"hemomancy.zealot.craft_hemolytic.line3"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.zealot.option.accept_purification", null, "zealot_accept_purification"),
 						new DialogueOption("hemomancy.dialogue.zealot.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("reject", List.of(
