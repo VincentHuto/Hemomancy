@@ -81,11 +81,11 @@ public class UseManipKeyPacket {
 								if (!mainStack.isEmpty()) {
 									if (mainStack.getItem() instanceof IDispellable dispel) {
 										mainStack.shrink(1);
-										float bloodCost = dispel.getBaseCost();
-										float bloodRefund = Math
+										double bloodCost = dispel.getBaseCost();
+										double bloodRefund = Math
 												.abs(mainStack.getMaxDamage() - 1000 - mainStack.getDamageValue());
 										if (bloodRefund > bloodCost * 0.9) {
-											bloodRefund = bloodCost * 0.9f;
+											bloodRefund = bloodCost * 0.9;
 										}
 										volume.fill(bloodRefund);
 										mainStack.shrink(1);

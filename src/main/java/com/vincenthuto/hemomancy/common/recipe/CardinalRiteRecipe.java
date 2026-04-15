@@ -28,7 +28,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 				.filter(t -> t.getId().equals(loc)).findFirst().orElse(null);
 	}
 
-	protected float bloodCost;
+	protected double bloodCost;
 	protected CardinalRiteType riteType;
 	protected MultiblockPattern pattern;
 	protected ItemStack result;
@@ -38,24 +38,24 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	protected boolean breakBlocksOnCreation;
 	protected boolean unstained;
 
-	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription) {
 		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, -1, true, false);
 	}
 
-	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree) {
 		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, true, false);
 	}
 
-	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation) {
 		this(pId, bloodCost, riteType, pattern, result, riteName, riteDescription, requiredDegree, breakBlocksOnCreation, false);
 	}
 
-	public CardinalRiteRecipe(ResourceLocation pId, float bloodCost, CardinalRiteType riteType,
+	public CardinalRiteRecipe(ResourceLocation pId, double bloodCost, CardinalRiteType riteType,
 			MultiblockPattern pattern, ItemStack result, String riteName, String riteDescription,
 			int requiredDegree, boolean breakBlocksOnCreation, boolean unstained) {
 		super(pId, CraftingBookCategory.MISC);
@@ -80,7 +80,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		return false;
 	}
 
-	public float getBloodCost() {
+	public double getBloodCost() {
 		return bloodCost;
 	}
 
@@ -128,7 +128,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 		return this.riteType == checkRecipe.riteType && this.riteName.equals(checkRecipe.riteName);
 	}
 
-	public void setBloodCost(float bloodCost) {
+	public void setBloodCost(double bloodCost) {
 		this.bloodCost = bloodCost;
 	}
 

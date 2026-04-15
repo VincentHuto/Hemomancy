@@ -117,7 +117,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 	@Override
 	public CardinalRiteRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
 		// Deserialization
-		float cost = GsonHelper.getAsFloat(pJson, "bloodCost");
+		double cost = GsonHelper.getAsFloat(pJson, "bloodCost");
 		String riteTypeName = GsonHelper.getAsString(pJson, "riteType");
 		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
 		String riteName = GsonHelper.getAsString(pJson, "riteName", "");
@@ -142,7 +142,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	@Override
 	public CardinalRiteRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-		float cost = pBuffer.readFloat();
+		double cost = pBuffer.readDouble();
 		String riteTypeName = pBuffer.readUtf();
 		CardinalRiteType riteType = CardinalRiteType.byName(riteTypeName);
 		String riteName = pBuffer.readUtf();
@@ -187,7 +187,7 @@ public class CardinalRiteRecipeSerializer implements RecipeSerializer<CardinalRi
 
 	@Override
 	public void toNetwork(FriendlyByteBuf pBuffer, CardinalRiteRecipe pRecipe) {
-		pBuffer.writeFloat(pRecipe.getBloodCost());
+		pBuffer.writeDouble(pRecipe.getBloodCost());
 		pBuffer.writeUtf(pRecipe.getRiteType().getSerializedName());
 		pBuffer.writeUtf(pRecipe.getRiteName());
 		pBuffer.writeUtf(pRecipe.getRiteDescription());

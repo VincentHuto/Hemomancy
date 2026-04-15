@@ -168,6 +168,10 @@ public class GhastlyAlembicScreen extends AbstractContainerScreen<GhastlyAlembic
 		if (slotIndex == GhastlyAlembicMenu.FLASK_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20AA0000);
 		}
+		// Special tint for flask output slot
+		if (slotIndex == GhastlyAlembicMenu.FLASK_OUTPUT_SLOT) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FF4444);
+		}
 		// Tint for input slot (slight highlight)
 		if (slotIndex == GhastlyAlembicMenu.INGREDIENT_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15FFAA88);

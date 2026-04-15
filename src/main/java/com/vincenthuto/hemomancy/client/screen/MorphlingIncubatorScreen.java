@@ -166,6 +166,10 @@ public class MorphlingIncubatorScreen extends AbstractContainerScreen<MorphlingI
 		if (slotIndex == MorphlingIncubatorMenu.BLOOD_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20AA0000);
 		}
+		// Special tint for flask output slot
+		if (slotIndex == MorphlingIncubatorMenu.FLASK_OUTPUT_SLOT) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FF4444);
+		}
 		// Special tint for center slot
 		if (slotIndex == MorphlingIncubatorMenu.CENTER_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x208B008B);
