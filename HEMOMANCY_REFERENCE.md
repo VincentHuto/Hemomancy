@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-14
+> **Last Updated:** 2026-04-15
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -133,6 +133,66 @@ Managed by `CardinalRiteEvents`:
 3. Each tick: particles spawn, boundary checked, sacrifices processed
 4. On completion: degree awarded, Unstained progress reset (if any), chat message sent
 
+### 3.4 Harbinger NPC Dialogue System
+
+Three Harbinger NPC types provide lore and gameplay hints through the `DialogueTree` framework. All dialogue trees are fully implemented and degree-gated.
+
+**Harbinger Hermit** (`HarbingerHermitDialogueTrees`) — one-of-a-kind NPC found at the starting Blood Temple. Acts as the player's first guide.
+
+| Degree State | Content |
+|---|---|
+| No blood (pre-initiation) | Offers lore about the Mortal Display, explains his duty as eternal keeper, presents the option to claim the heart and begin hemomancy |
+| Degree 0 (uninitiated) | Congratulates the player, offers guidance about the Rite of Sanguine Initiation, drops the Rite Hint item on farewell (triggering `hermit_farewell_die` → kills the hermit) |
+| Degree 1 Neophyte | Acknowledges first step; hints toward Votary Rite and manipulation lore |
+| Degree 2 Votary | Guidance on blood tendencies and the Somatic Loom; hints toward Scarlet Sanctum |
+| Degree 3 Initiate | Points toward Sanguine Brotherhood rite |
+| Degree 4 Adept | **Scar lore branch** — explains scars as literal mind-maps of new venous/neural pathways, Cerebral Scarring Station usage; hints toward Crimson Lodge |
+| Degree 5 Illuminatus | Reveals Bloodline Covenant system; hints toward Bloodline Covenant rite |
+| Degree 6 Sanctified | Final hint — points toward the Rite of the Hematic Order |
+| Degree 7 Archon | Kneels before the player: "Archon of the Hematic Order. You are the blood incarnate." |
+
+**Harbinger Alchemist** (`HarbingerAlchemistDialogueTrees`) — found at Harbinger Outposts. Focuses on machines and crafting systems; dismisses purifying players coldly.
+
+| Degree | Content |
+|---|---|
+| Uninitiated | Politely refuses: machines require initiation |
+| Neophyte | Introduces the Ghastly Alembic; overview of the Outpost machine chain |
+| Votary | Explains the Vial Centrifuge and blood tendency separation |
+| Initiate | Reveals the Somatic Loom and explains memory weaving |
+| Adept | Introduces the Cerebral Scarring Station (surgical instrument) and Chisel Station (rune encoding) |
+| Illuminatus | Reveals blood crafting (blood key + 3D block pattern) and Morphling Incubator lore |
+| Sanctified | Describes the "final synthesis" — all machines as one unified process |
+| Archon | Defers to the player's mastery; "I have nothing left to teach" |
+| Purifying | Cold dismissal: "I have no time to teach someone who won't make use of my knowledge" |
+| Clarity | Ignores the player entirely |
+
+**Harbinger Vicar** (`HarbingerVicarDialogueTrees`) — found at Harbinger Outposts. Keeper of faction history and doctrine; delivers gravitas and hidden truths at high degrees.
+
+| Degree | Lore Branch |
+|---|---|
+| Uninitiated | Who the Harbingers are; purpose of the Outpost |
+| Neophyte | The Hematic Covenant as a body of rites/wisdom; Votary degree hints |
+| Votary | Seven blood tendencies (Fungal, Umbral, Incandescent, Ferric, Vivacious, Ruinous, Neurotic) and their role |
+| Initiate | History of the **Scarlet Sanctum**, founded by Archon Erythravane in the Second Age |
+| Adept | History of the **Sanguine Brotherhood** — shared blood pools born from war necessity |
+| Illuminatus | The **Crimson Lodge**: documented the link between hemomancy and the mycelial network; kept secret to be "arrived at independently" |
+| Sanctified | The **Hematic Order** as a state of being, not a rank; the blood "becomes indistinguishable from the blood of the world" |
+| Archon | Hidden lore: *"The Hematic Order never had seven degrees. There have always been eight. The eighth degree is silence."* |
+| Purifying | Stern warning; grieves the loss of blood power; urges return before path completes |
+
+### 3.5 Fungal Whisper Events
+
+At higher degrees (4–7), the ancient fungal consciousness begins intruding into the player's mind. These are delivered via the `FungalWhisperDialogueTrees` + `FungalWhisperEvents` system — pop-up dialogues from the anonymous `???` speaker with the FUNGAL dialogue theme.
+
+| Degree | Tone | Key Revelations |
+|---|---|---|
+| 4 Adept | Subliminal / barely perceptible | Itching blood, earthy smell, world-filaments flashing briefly — seeds of doubt only |
+| 5 Illuminatus | Clearer intrusions | *"The blood you command... it was not always blood."* Hints of spores, hyphae beneath the surface; the crimson tide was a forest once |
+| 6 Sanctified | Direct fungal revelations | *"The first Archons did not discover hemomancy. They were infected by it."* Erythromycelium as original organism; hemomancers as fruiting bodies of one mycelial web |
+| 7 Archon | Full truth | *"You have reached the apex of what the infection permits."* The Hematic Order as a reproductive strategy; each degree a stage of sporulation; *"There is no Hematic Order. There never was."* |
+
+Each degree has 3 variant whispers (indices 0–2) for variety. Some variants include branching "What was that?" / "Who are you?" follow-up nodes. A `whisper_truth_acknowledged` event fires when the Archon-tier truth is accepted.
+
 ---
 
 ## 4. The Unstained Path (Anti-Hemomancy)
@@ -157,12 +217,44 @@ The **Lethean Poppies** that grow across the world are said to bloom wherever Ou
 
 **The Lethe Icon** is an exceedingly rare relic depicting Our Lady, said to have been carved by the first Unstained from pale silver found at the bottom of a forgotten river. Those who possess it are considered to be under her direct protection.
 
-### 4.2 Entry Requirements
+### 4.2 Unstained NPC Dialogue System
+
+Two Unstained NPC types guide the player through the purification journey. All dialogue trees are fully implemented.
+
+**Unstained Zealot** (`ZealotDialogueTrees`) — recruiter; the NPC who first offers the path.
+
+| Player State | Dialogue Branch |
+|---|---|
+| No blood at all | Dismisses gently: "You bear no mark of the crimson arts." |
+| Degree < 2 (too early) | "Return when the Covenant has shown you its true face." |
+| Degree 0 with blood (uninitiated) | "The silver bells toll only for those who have tasted the crimson." |
+| Active blood, Votary+ (plea) | Full plea: explains the hemolytic rites, offers craft-hemolytic info branch, `zealot_accept_purification` / `zealot_accept_church` / `zealot_reject_help` outcomes |
+| Already on purification path — Corrupted | "Continue your work at the podium, and the stain shall lift." |
+| Purity 25–49 (Tainted) | Silver Ward info branch |
+| Purity 50–74 (Cleansing) | Altar of Cleansing info branch |
+| Purity 75–99 (Absolved) | Clarity Rite info branch |
+| Clarity unlocked | Verdigris info branch |
+| Enlightened | Final reverence: the journey complete |
+
+**Unstained Acolyte** (`AcolyteDialogueTrees`) — found at Unstained temples; provides stage-aware guidance and tasks.
+
+| Stage | Dialogue Content |
+|---|---|
+| Not on path | Gentle introduction to the Unstained way; "Who are you?" branch |
+| Corrupted (0–24) | Explains how to purify; gives task: gather Ghost Pipe (`acolyte_task_gather_ghost_pipe`) |
+| Tainted (25–49) | **Our Lady of Lethe lore** (3 lines about the Lady's nature); tasks: wreath offering / hemolytic offering |
+| Cleansing (50–74) | **Silver Veil lore** (inner layer of purity shielding the soul); task: consecration |
+| Absolved (75–99) | Explains the Clarity path (3-line clarity branch) |
+| Purified (100, pre-Clarity) | Explains how to unlock Clarity |
+| Clarity phase | Verdigris lore; task: chalice offering (`acolyte_task_chalice`) |
+| Enlightened | Ultimate reverence: "The Lady weeps for joy." |
+
+### 4.3 Entry Requirements
 
 - Player must have reached at least **Degree 2 (Votary)** before an Unstained Zealot will offer the choice
 - The Zealot directs the player to bring **Hemolytic Solution** ![Hemolytic Solution](src/main/resources/assets/hemomancy/textures/item/hemolytic_solution.png) to an **Unstained Podium** block
 
-### 4.3 Phase 1: Purity (0–100)
+### 4.4 Phase 1: Purity (0–100)
 
 Initiated by using Hemolytic Solution at the Unstained Podium:
 - Sets `begunPurification = true`, grants 5.0 starting purity
@@ -221,7 +313,7 @@ As purity rises, blood magic becomes increasingly penalized:
 
 *Kill rewards are not gated by Hemolysis — any player on the Unstained path earns purity from kills. XP and sleep rewards require the Hemolysis effect. Abstinence timer resets whenever a blood manipulation is used.*
 
-### 4.4 Phase 2: Clarity (0–100)
+### 4.5 Phase 2: Clarity (0–100)
 
 Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper** at the Unstained Podium:
 - Sets `clarityUnlocked = true`
@@ -238,7 +330,7 @@ Unlocked after reaching Purified (purity = 100) and using **Consecrated Copper**
 - **Verdigris Aura** (anti-blood field) scales linearly: `clarity / 100`
 - Reaching 100 clarity = **Enlightenment**, the final state
 
-### 4.5 HUD
+### 4.6 HUD
 
 Unstained players see a dedicated gauge overlay (top-right corner) with:
 - Silver **Purity** bar
@@ -827,7 +919,7 @@ Special artifact helmet (`MarrowCrownArmorItem`), uses `MARROW_CROWN` tier.
 | **Vial Centrifuge** | `VialCentrifugeBlockEntity` | Spins down Bloody Vials into enzymes and Hematic Iron Powder. Reworked with new 3D stand model (`CentrifugeStandModel`), custom block entity renderer (`VialCentrifugeRenderer`), and `VialCentrifugeBlockItem` with custom item renderer. ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_stand.png) ![](src/main/resources/assets/hemomancy/textures/entity/model_centrifuge_arms.png) |
 | **ghastly_alembic** | `GhastlyAlembicBlockEntity` | Squeezes items to extract blood (requires fire below). Has 4 slots: Input (slot 0), Flask (slot 1, fills Cured Clay Flasks into Bloody Flasks), Result (slot 2), and **Catalyst (slot 3)** — an optional catalyst ingredient that modifies or enhances the recipe output. Hopper access: top → input, bottom → result, sides → flask + catalyst. Renders via custom `GhastlyAlembicRenderer` (3D entity model `GhastlyAlembicModel`, facing-aware). |
 | **Cerebral Scarring Station** | `ScarStationBlockEntity` | Crafts scars from patterns and blanks |
-| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Has 7 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd (slot 6). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). |
+| **Morphling Incubator** | `MorphlingIncubatorBlockEntity` | Grows Morphling Polyps into specific morphling types with enzymes. Has 8 slots: Center/polyp (slot 0), 4 enzyme/catalyst slots (1–4), Output (slot 5), Blood Flask/Gourd input (slot 6), and Empty Flask output (slot 7). Craft time: 200 ticks base; enzyme feeding: 100 + 60 per item. Blood cost: 0.5/tick. Bloody Flask transfer is clamped to available player blood capacity (prevents overfill blocking). Uses `IncubatorRecipe` system with 13 recipes (one per morphling type). JEI-integrated. Renders via custom `MorphlingIncubatorRenderer` (3D entity model). |
 | **Fungal Podium** | `FungalPodiumBlockEntity` | Fungal-related interaction station |
 | **Fungal Implantation Pylon** | `FungalImplantationPylonBlockEntity` | Sporic implantation station ![](src/main/resources/assets/hemomancy/textures/entity/fungal_implantation_pylon/fungal_implantation_pylon.png) |
 | **Dendritic Distributor** | `DendriticDistributorBlockEntity` | Opens the Skill Tree / Manipulation Tree screen |
@@ -1014,7 +1106,7 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 | **Sanguine Dominion** | 3500 | Greater | Claims the surrounding land as a Blood Domain — reduced manip cost, bleeding curse on enemies, empowered blood blocks |
 | **Eternal Covenant** | 4000 | Greater | Permanently expands the caster's maximum blood volume (one-time only) |
 | **Lethe's Shadow** | 5000 | Grand | Strips Unstained purification from a nearby player — a blasphemous assault on Our Lady's path |
-| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness, receiving cryptic lore about hemomancy's origins |
+| **Ancestral Communion** | 5000 | Grand | Opens a channel to the ancient fungal consciousness. Triggers `AncestralCommunionDialogueTrees` — 5 dialogue variants (Origin, The Schism, The Infection, The Harbingers, The True Name) that reveal the fungal origins of hemomancy. Fires `communion_lore_*` events on completion. |
 
 ### 18.3 Plant & Fungi Recipes
 
@@ -1113,7 +1205,9 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | **Unstained Zealot** | ![](src/main/resources/assets/hemomancy/textures/entity/unstained_zealot/unstained_zealot.png) | Creature | NPC that guides Unstained path entry |
 | **Unstained Guardian** | | Creature | NPC that guards Unstained sacred sites |
 | **Unstained Acolyte** | | Creature | NPC acolyte of the Unstained faction |
-| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; part of the dialogue system (`HarbingerHermitDialogueTrees`) |
+| **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0–7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell. Invulnerable until player chooses "Farewell" option. |
+| **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
+| **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
 | **Spectral Companion** | | Misc | Spectral ally entity |
 | **Sanguilith** | | Misc (MnA) | Large (1.5×3.25), blood-themed summoned monster (requires MnA). Summoned via `ComponentSummonSanguilith` spell. Ownable, duration-limited, targets nearby hostiles with swinging melee attacks. Max 4 nearby. Registered in `MnAPluginEntityInit`. Has custom `SanguilithModel` and `SanguilithRenderer`. |
 
@@ -1536,9 +1630,12 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **MnA Compatibility Expansion** — Extensive brainstorming for new cross-mod features documented in `MNA_COMPATIBILITY_BRAINSTORM.md`. Recently implemented: 5 new spell components (Blood Loss, Blood Rush, Hemolysis, Summon Sanguilith, Blood-to-Mana), Blood Tithe handler, Spell ↔ Manipulation combo system, full cross-mod config. Still planned: spell shapes, rituals, faction enhancements, construct system, wand core, manaweaving recipes, runeforging enchantments.
 - **GhastlyAlembic Custom Renderer** — `GhastlyAlembicRenderer` now renders the block as a full 3D entity model (`GhastlyAlembicModel`) with facing-aware rotation. Previously was a static block.
 - **MorphlingIncubator Custom Renderer** — `MorphlingIncubatorRenderer` now renders the incubator as a full 3D entity model with custom animation.
+- **Morphling Incubator Blood Flask Transfer Fix** — Bloody Flask absorption now clamps to available player blood capacity instead of requiring full flask fit. Empty flasks are routed to the dedicated incubator flask output slot.
 - **New Monster Mobs (WIP)** — 10 new monster entity types are registered (Dessicant, Cruor Fiend, Void Drinker, Frozen Clot, Abyssal Siphon, Synapse Hound, Myelin Borer) and 3 creature/ambient types (Crimson Doe, Hemojelly, Venous Strider). Spawn rules are registered but specific spawn biomes, AI, drops, and loot tables are still being designed/implemented.
-- **New NPC Entities (WIP)** — Unstained Guardian, Unstained Acolyte, Harbinger Hermit, and Spectral Companion entities are registered but their AI, dialogue, and drop content is still being developed.
-- **New Manipulation Expansions** — 8 new manipulations added covering new tendencies: Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
+- **New NPC Entities Dialogue** — ~~Dialogue still being developed.~~ **RESOLVED:** Full dialogue trees are now implemented for all 5 NPC types: **Unstained Zealot**, **Unstained Acolyte**, **Harbinger Hermit**, **Harbinger Alchemist**, and **Harbinger Vicar**. All trees are degree/purity-stage gated. `DialogueEventHandler` handles gameplay consequences (rite hint drops, death of Hermit, chat messages). AI/animation/drops for Unstained Guardian and Spectral Companion remain WIP.
+- **Fungal Whisper System** — `FungalWhisperDialogueTrees` and `FungalWhisperEvents` deliver degree-gated (4–7) intrusive fungal consciousness whispers. 12 variants across 4 tiers progressively reveal that hemomancy is a fungal infection masquerading as blood magic. High-degree players receive whispers on random intervals.
+- **Ancestral Communion Dialogue** — `AncestralCommunionDialogueTrees` provides 5 unique lore-revelation dialogues for the Grand Rite of Ancestral Communion (degree 7). Variants: The Origin, The Schism, The Infection, The Harbingers, The True Name.
+- **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 
@@ -1549,7 +1646,7 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of Le
 - **Altar of Cleansing** — functional block that grants a one-time +25 purity boost when Tears of Lethe are offered. Also accepts Lethean Poppy Wreaths (repeatable +5 purity) and Silver Chalices (+5 clarity). Will eventually be placed in every Unstained temple structure.
 - **Unstained Temple Structure Expansion** — the Unstained temple structure should be expanded to include an Altar of Cleansing, Lethe Lanterns, Cleansed Stone blocks, and more atmospheric elements befitting a shrine to Our Lady.
 - **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
-- **Unstained Dialogue Expansion** — Zealot dialogues should reference Our Lady of Lethe more directly, with lore about the River Lethe, the meaning of forgetting, and the significance of the poppies.
+- **Unstained Dialogue Expansion** — ~~Zealot dialogues should reference Our Lady of Lethe more directly.~~ **RESOLVED:** Both Unstained Zealot and Unstained Acolyte have full purity-stage-aware dialogue trees. The Acolyte provides Our Lady of Lethe lore, Silver Veil lore, and Clarity guidance at appropriate stages.
 - **Lethean Crafting Recipes** — implemented recipes:
   - ✅ Tears of Lethe = Lethean Extract + Silver Chalice (crafting)
   - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
@@ -1711,7 +1808,7 @@ Notable packets:
 - `PacketSyncDegree` / `PacketSyncUnstainedProgress` — Path progression sync
 - `SyncTrackingAvatarPacket` — Blood Avatar visual state sync to all nearby players
 - `TeleportToVeinPacket` — Venous Travel teleportation
-- `OpenDialoguePacket` / `DialogueOptionPacket` — Unstained Zealot conversation system
+- `OpenDialoguePacket` / `DialogueOptionPacket` — Full NPC dialogue system (Harbinger Hermit, Alchemist, Vicar, Unstained Zealot, Acolyte, Fungal Whisper, Ancestral Communion)
 - `PlaceStructurePacket` — Debug structure spawner
 
 ---
