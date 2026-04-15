@@ -21,6 +21,7 @@ public final class ZealotDialogueTrees {
 	/** Player has active blood at VOTARY+ degree — the full plea with choices. */
 	public static DialogueTree pleaDialogue(int entityId) {
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("greeting", List.of(
 						"hemomancy.zealot.plea.line1",
 						"hemomancy.zealot.plea.line2"
@@ -47,6 +48,7 @@ public final class ZealotDialogueTrees {
 	/** Player is already on the purification path. */
 	public static DialogueTree alreadyOnPath(int entityId) {
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.already_on_path"
 				), List.of(
@@ -58,6 +60,7 @@ public final class ZealotDialogueTrees {
 	/** Player has no blood magic active. */
 	public static DialogueTree noBlood(int entityId) {
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.no_blood"
 				), List.of(
@@ -69,6 +72,7 @@ public final class ZealotDialogueTrees {
 	/** Player is initiated but not yet VOTARY. */
 	public static DialogueTree tooEarly(int entityId) {
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.too_early"
 				), List.of(
@@ -80,6 +84,7 @@ public final class ZealotDialogueTrees {
 	/** Player is uninitiated (degree 0) with active blood. */
 	public static DialogueTree uninitiated(int entityId) {
 		return DialogueTree.builder(SPEAKER, ZEALOT_ICON, entityId)
+				.theme(DialogueTheme.UNSTAINED)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.zealot.uninitiated"
 				), List.of(

@@ -48,6 +48,7 @@ public final class FungalWhisperDialogueTrees {
 	private static DialogueTree adeptWhisper(int variant) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.adept.v0.line1"
 					), List.of(
@@ -55,6 +56,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			case 1 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.adept.v1.line1"
 					), List.of(
@@ -68,6 +70,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			default -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.adept.v2.line1"
 					), List.of(
@@ -82,6 +85,7 @@ public final class FungalWhisperDialogueTrees {
 	private static DialogueTree illuminatusWhisper(int variant) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.illuminatus.v0.line1",
 							"hemomancy.whisper.illuminatus.v0.line2"
@@ -96,6 +100,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			case 1 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.illuminatus.v1.line1",
 							"hemomancy.whisper.illuminatus.v1.line2"
@@ -104,6 +109,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			default -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.illuminatus.v2.line1"
 					), List.of(
@@ -124,6 +130,7 @@ public final class FungalWhisperDialogueTrees {
 	private static DialogueTree sanctifiedWhisper(int variant) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.sanctified.v0.line1",
 							"hemomancy.whisper.sanctified.v0.line2"
@@ -138,6 +145,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			case 1 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.sanctified.v1.line1",
 							"hemomancy.whisper.sanctified.v1.line2"
@@ -152,6 +160,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			default -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.sanctified.v2.line1",
 							"hemomancy.whisper.sanctified.v2.line2"
@@ -167,6 +176,7 @@ public final class FungalWhisperDialogueTrees {
 	private static DialogueTree archonWhisper(int variant) {
 		return switch (variant) {
 			case 0 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.archon.v0.line1",
 							"hemomancy.whisper.archon.v0.line2"
@@ -181,6 +191,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			case 1 -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.archon.v1.line1",
 							"hemomancy.whisper.archon.v1.line2",
@@ -190,6 +201,7 @@ public final class FungalWhisperDialogueTrees {
 					)))
 					.build();
 			default -> DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+					.theme(DialogueTheme.FUNGAL)
 					.addNode(new DialogueNode("root", List.of(
 							"hemomancy.whisper.archon.v2.line1",
 							"hemomancy.whisper.archon.v2.line2"

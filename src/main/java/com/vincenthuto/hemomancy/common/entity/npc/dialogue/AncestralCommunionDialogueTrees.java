@@ -43,6 +43,7 @@ public final class AncestralCommunionDialogueTrees {
 
 	private static DialogueTree communionVariant0() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v0.line1",
 						"hemomancy.communion.v0.line2",
@@ -64,6 +65,7 @@ public final class AncestralCommunionDialogueTrees {
 
 	private static DialogueTree communionVariant1() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v1.line1",
 						"hemomancy.communion.v1.line2"
@@ -85,6 +87,7 @@ public final class AncestralCommunionDialogueTrees {
 
 	private static DialogueTree communionVariant2() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v2.line1",
 						"hemomancy.communion.v2.line2"
@@ -111,6 +114,7 @@ public final class AncestralCommunionDialogueTrees {
 
 	private static DialogueTree communionVariant3() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v3.line1",
 						"hemomancy.communion.v3.line2",
@@ -132,6 +136,7 @@ public final class AncestralCommunionDialogueTrees {
 
 	private static DialogueTree communionVariant4() {
 		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
 				.addNode(new DialogueNode("root", List.of(
 						"hemomancy.communion.v4.line1",
 						"hemomancy.communion.v4.line2"
