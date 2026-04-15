@@ -14,13 +14,15 @@ import net.minecraft.resources.ResourceLocation;
  * @param startNodeId  The id of the first {@link DialogueNode} to display.
  * @param nodes        All nodes in the tree, keyed by their id.
  * @param entityId     The numeric entity id of the speaking entity (for display purposes).
+ * @param theme        Visual theme for the dialogue screen (colour palette and background style).
  */
 public record DialogueTree(
 		String speakerName,
 		ResourceLocation speakerIcon,
 		String startNodeId,
 		Map<String, DialogueNode> nodes,
-		int entityId
+		int entityId,
+		DialogueTheme theme
 ) {
 
 	public DialogueNode getStartNode() {
@@ -38,6 +40,7 @@ public record DialogueTree(
 		buf.writeInt(nodes.size());
 		for (DialogueNode node : nodes.values()) node.toNetwork(buf);
 		buf.writeInt(entityId);
+		buf.writeInt(theme.ordinal());
 	}
 
 	public static DialogueTree fromNetwork(FriendlyByteBuf buf) {
@@ -51,7 +54,8 @@ public record DialogueTree(
 			nodes.put(node.id(), node);
 		}
 		int entityId = buf.readInt();
-		return new DialogueTree(name, icon, start, nodes, entityId);
+		DialogueTheme theme = DialogueTheme.fromOrdinal(buf.readInt());
+		return new DialogueTree(name, icon, start, nodes, entityId, theme);
 	}
 
 	// ── Builder ──
@@ -64,6 +68,7 @@ public record DialogueTree(
 		private final String speakerName;
 		private final ResourceLocation speakerIcon;
 		private final int entityId;
+		private DialogueTheme theme = DialogueTheme.BLOOD;
 		private String startNodeId;
 		private final Map<String, DialogueNode> nodes = new LinkedHashMap<>();
 
@@ -71,6 +76,11 @@ public record DialogueTree(
 			this.speakerName = speakerName;
 			this.speakerIcon = speakerIcon;
 			this.entityId = entityId;
+		}
+
+		public Builder theme(DialogueTheme theme) {
+			this.theme = theme;
+			return this;
 		}
 
 		public Builder startNode(String id) {
@@ -85,7 +95,7 @@ public record DialogueTree(
 		}
 
 		public DialogueTree build() {
-			return new DialogueTree(speakerName, speakerIcon, startNodeId, nodes, entityId);
+			return new DialogueTree(speakerName, speakerIcon, startNodeId, nodes, entityId, theme);
 		}
 	}
 }
