@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.item.scar.ItemMindSpike;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScar;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.scar.ItemSelfReflectionMirror;
+import com.vincenthuto.hemomancy.common.item.cosmetic.SanguineBlobItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiflyAgaricItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.NoctiluminaDevoransItem;
 import com.vincenthuto.hemomancy.common.item.scar.functional.RespergillusItem;
@@ -158,6 +159,8 @@ public class ItemInit {
 	// Base Items
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> sanguine_blob = BASEITEMS.register("sanguine_blob",
+			() -> new SanguineBlobItem(new Item.Properties()));
 	public static final RegistryObject<Item> rite_hint = BASEITEMS.register("rite_hint",
 			() -> new RiteHintItem(new Item.Properties().fireResistant()));
 	public static final RegistryObject<Item> foul_paste = BASEITEMS.register("foul_paste",

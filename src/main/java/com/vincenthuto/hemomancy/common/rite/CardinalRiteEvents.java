@@ -778,6 +778,18 @@ public class CardinalRiteEvents {
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 		}
+
+		if ("cardinal_rite/initiate_rite".equals(ritePath)) {
+			ItemStack blob = new ItemStack(ItemInit.sanguine_blob.get());
+			if (!caster.getInventory().add(blob)) {
+				sLevel.addFreshEntity(new ItemEntity(sLevel,
+						center.getX() + 0.5, center.getY() + 1.5, center.getZ() + 0.5, blob));
+			}
+			caster.displayClientMessage(
+					Component.translatable("hemomancy.rite.initiate_rite.blob_granted")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+		}
 	}
 
 	// ══════════════════════════════════════════════════════════════════════
