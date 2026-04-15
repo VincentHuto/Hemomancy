@@ -159,7 +159,7 @@ public class ItemInit {
 	public static final RegistryObject<Item> sanguine_formation = BASEITEMS.register("sanguine_formation",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> rite_hint = BASEITEMS.register("rite_hint",
-			() -> new RiteHintItem(new Item.Properties()));
+			() -> new RiteHintItem(new Item.Properties().fireResistant()));
 	public static final RegistryObject<Item> foul_paste = BASEITEMS.register("foul_paste",
 			() -> new FoulPasteItem(new Item.Properties()));
 	public static final RegistryObject<Item> smouldering_ash = SPECIALITEMS.register("smouldering_ash",
