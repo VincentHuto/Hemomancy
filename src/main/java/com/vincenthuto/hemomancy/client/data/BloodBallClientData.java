@@ -10,13 +10,23 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Client-side state for the Sanguine Blob cosmetic.
- * Tracks the position, velocity, jiggle phase, and drop state of the floating blood orb.
+ * Tracks the position, velocity, jiggle phase, drop state, squish animation, and swing
+ * stretch of the floating blood orb.
  * Ticked every client tick from {@link com.vincenthuto.hemomancy.client.event.ClientEvents}.
  */
 public class BloodBallClientData {
 
 	/** How many ticks the ball fades for after being dropped. */
 	public static final int MAX_FADE_TICKS = 60;
+
+	/** Duration in ticks of the squish-on-impact animation. */
+	public static final int MAX_SQUISH_TICKS = 25;
+
+	/**
+	 * How many ticks after drop before the simulated ground-impact squish fires.
+	 * At 0.04 blocks/tick² gravity this is roughly when the ball has fallen ~1.5 blocks.
+	 */
+	private static final int SQUISH_DELAY_TICKS = 20;
 
 	/** Lerp factor used to smoothly drag the ball toward the look-target each tick. */
 	private static final double FOLLOW_LERP = 0.25;
@@ -34,6 +44,15 @@ public class BloodBallClientData {
 	private static boolean dropped = false;
 	private static int fadeTicks = 0;
 	private static float jigglePhase = 0f;
+
+	/** Per-tick displacement of the ball while following the player (drives stretch). */
+	private static Vec3 swingDelta = Vec3.ZERO;
+
+	/** Remaining ticks in the squish-on-impact animation (0 = not squishing). */
+	private static int squishTicks = 0;
+
+	/** Ensures the squish fires exactly once per drop. */
+	private static boolean squishTriggered = false;
 
 	// ─────────────────────────────────────────────────────────────────────
 	//  Public query
@@ -82,6 +101,22 @@ public class BloodBallClientData {
 		return jigglePhase;
 	}
 
+	/**
+	 * Per-tick world-space displacement of the ball while following the player.
+	 * Its length (blocks/tick) drives the stretch-while-swinging effect.
+	 */
+	public static Vec3 getSwingDelta() {
+		return swingDelta;
+	}
+
+	/**
+	 * Remaining ticks in the squish-on-impact animation, counting down from
+	 * {@link #MAX_SQUISH_TICKS} to 0.  Zero means the ball is not squishing.
+	 */
+	public static int getSquishTicks() {
+		return squishTicks;
+	}
+
 	// ─────────────────────────────────────────────────────────────────────
 	//  Tick
 	// ─────────────────────────────────────────────────────────────────────
@@ -94,6 +129,15 @@ public class BloodBallClientData {
 		jigglePhase += 0.08f;
 
 		if (dropped) {
+			// Trigger the squish animation once, after the simulated ground-impact delay
+			if (!squishTriggered && fadeTicks == MAX_FADE_TICKS - SQUISH_DELAY_TICKS) {
+				squishTicks = MAX_SQUISH_TICKS;
+				squishTriggered = true;
+			}
+			if (squishTicks > 0) {
+				squishTicks--;
+			}
+
 			// Apply gravity and step position
 			velocity = velocity.add(0, -GRAVITY, 0);
 			prevPosition = position != null ? position : Vec3.ZERO;
@@ -102,6 +146,7 @@ public class BloodBallClientData {
 			if (fadeTicks <= 0) {
 				reset();
 			}
+			swingDelta = Vec3.ZERO;
 			return;
 		}
 
@@ -118,9 +163,11 @@ public class BloodBallClientData {
 		if (position == null) {
 			position = target;
 			prevPosition = target;
+			swingDelta = Vec3.ZERO;
 		} else {
 			prevPosition = position;
 			position = position.lerp(target, FOLLOW_LERP);
+			swingDelta = position.subtract(prevPosition);
 		}
 	}
 
@@ -150,5 +197,8 @@ public class BloodBallClientData {
 		velocity = Vec3.ZERO;
 		dropped = false;
 		fadeTicks = 0;
+		swingDelta = Vec3.ZERO;
+		squishTicks = 0;
+		squishTriggered = false;
 	}
 }
