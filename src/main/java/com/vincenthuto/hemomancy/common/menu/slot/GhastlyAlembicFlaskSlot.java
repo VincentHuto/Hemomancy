@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
+import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.GhastlyAlembicMenu;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
@@ -9,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class GhastlyAlembicFlaskSlot extends Slot {
 
-	public static boolean isBucket(ItemStack p_39530_) {
-		return p_39530_.is(HLItemInit.cured_clay_flask.get());
+	public static boolean isFlask(ItemStack stack) {
+		return stack.is(HLItemInit.cured_clay_flask.get()) || stack.getItem() instanceof BloodyFlaskItem;
 	}
 
 	public GhastlyAlembicFlaskSlot(GhastlyAlembicMenu p_39520_, Container p_39521_, int p_39522_, int p_39523_,
@@ -25,6 +26,6 @@ public class GhastlyAlembicFlaskSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(ItemStack p_39526_) {
-		return isBucket(p_39526_);
+		return isFlask(p_39526_);
 	}
 }

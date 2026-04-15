@@ -30,7 +30,8 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	public static final int OUTPUT_START = 10;
 	public static final int OUTPUT_END = 17;
 	public static final int AUX_OUTPUT_SLOT = 18;
-	public static final int SLOT_COUNT = 19;
+	public static final int FLASK_OUTPUT_SLOT = 19;
+	public static final int SLOT_COUNT = 20;
 	public static final int DATA_COUNT = 3;
 
 	private static final int INV_START = SLOT_COUNT;
@@ -95,6 +96,9 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 
 		// Aux output (below output grid, within craft area)
 		addSlot(new OutputSlot(te, AUX_OUTPUT_SLOT, 137, 88));
+
+		// Flask output (next to blood input slot — empty flasks from consumed bloody flasks)
+		addSlot(new OutputSlot(te, FLASK_OUTPUT_SLOT, 26, 90));
 
 		// INVENTORY
 		for (int y = 0; y < 3; y++) {

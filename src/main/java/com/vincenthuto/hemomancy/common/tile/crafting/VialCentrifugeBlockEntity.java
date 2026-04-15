@@ -17,6 +17,9 @@ import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
 
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
+import com.vincenthuto.hutoslib.common.registry.HLItemInit;
+
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -40,8 +43,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		implements StackedContentsCompatible, IBloodTile {
 
-	public NonNullList<ItemStack> inventory = NonNullList.withSize(19, ItemStack.EMPTY);
-	IBloodVolume volume = getCapability(BloodVolumeProvider.VOLUME_CAPA).orElseThrow(IllegalStateException::new);
+	public static final int SLOT_INPUT = 0;
+	public static final int SLOT_BLOOD = 1;
+	public static final int SLOT_FLASK_OUTPUT = 19;
+	public static final int INVENTORY_SIZE = 20;
+
+	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	public static final int SPIN_TOTAL_TIME = 200;
 	int spinningProgress;
 	int spinningTotalTime;
@@ -100,6 +107,13 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		super(BlockEntityInit.vial_centrifuge.get(), pos, state);
 	}
 
+	// ---- Lazy capability access ----
+
+	@Nullable
+	private IBloodVolume resolveVolume() {
+		return getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+	}
+
 	static final String TAG_BLOOD_LEVEL = "bloodLevel";
 
 	public static void clientTick(Level level, BlockPos worldPosition, BlockState state,
@@ -107,6 +121,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState p_155016_, VialCentrifugeBlockEntity te) {
+		// Process blood flask in the blood slot
+		te.processBloodSlot();
+
 		if (te.spinningProgress > 0) {
 			te.spinningProgress--;
 			te.sendUpdates();
@@ -165,6 +182,38 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 
 	public List<ItemStack> getOutputSlots() {
 		return inventory.subList(10, 18);
+	}
+
+	// ---- Blood slot processing ----
+
+	private void processBloodSlot() {
+		ItemStack bloodStack = inventory.get(SLOT_BLOOD);
+		if (bloodStack.isEmpty()) return;
+
+		IBloodVolume vol = resolveVolume();
+		if (vol == null || vol.isFull()) return;
+
+		if (bloodStack.getItem() instanceof BloodyFlaskItem flask) {
+			float amount = flask.getAmount();
+			if (vol.getBloodVolume() + amount <= vol.getMaxBloodVolume()) {
+				// Check if we can output the empty flask
+				ItemStack outputStack = inventory.get(SLOT_FLASK_OUTPUT);
+				if (outputStack.isEmpty()
+						|| (outputStack.getItem() == HLItemInit.cured_clay_flask.get()
+								&& outputStack.getCount() < outputStack.getMaxStackSize())) {
+					// Consume the bloody flask
+					bloodStack.shrink(1);
+					vol.addBloodVolume(amount);
+					// Output empty flask
+					if (outputStack.isEmpty()) {
+						inventory.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
+					} else {
+						outputStack.grow(1);
+					}
+					sendUpdates();
+				}
+			}
+		}
 	}
 
 	public boolean isCentrifugeEmpty() {
@@ -278,11 +327,14 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public IBloodVolume getBloodCapability() {
-		return volume;
+		IBloodVolume vol = resolveVolume();
+		if (vol == null) throw new IllegalStateException("Blood capability not available yet");
+		return vol;
 	}
 
 	public double getBloodVolume() {
-		return volume.getBloodVolume();
+		IBloodVolume vol = resolveVolume();
+		return vol != null ? vol.getBloodVolume() : 0;
 	}
 
 	// CONTAINER
@@ -302,7 +354,8 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	public double getMaxBloodVolume() {
-		return volume.getMaxBloodVolume();
+		IBloodVolume vol = resolveVolume();
+		return vol != null ? vol.getMaxBloodVolume() : 0;
 	}
 
 	@Override
@@ -316,7 +369,10 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		tag.putInt("SpinTime", this.spinningProgress);
 		tag.putInt("SpinTimeTotal", this.spinningTotalTime);
 		ContainerHelper.saveAllItems(tag, this.inventory);
-		tag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			tag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
+		}
 		return tag;
 	}
 
@@ -324,7 +380,10 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
 		if (tag != null) {
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			IBloodVolume vol = resolveVolume();
+			if (vol != null) {
+				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			}
 		}
 	}
 
@@ -345,8 +404,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		this.spinningTotalTime = pTag.getInt("SpinTimeTotal");
 		this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pTag, this.inventory);
-		if (pTag != null) {
-			volume.setBloodVolume(pTag.getFloat(TAG_BLOOD_LEVEL));
+		IBloodVolume vol = resolveVolume();
+		if (vol != null && pTag != null) {
+			vol.setBloodVolume(pTag.getFloat(TAG_BLOOD_LEVEL));
 		}
 	}
 
@@ -355,15 +415,21 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() != null) {
 			CompoundTag tag = pkt.getTag();
-			volume.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			IBloodVolume vol = resolveVolume();
+			if (vol != null) {
+				vol.setBloodVolume(tag.getFloat(TAG_BLOOD_LEVEL));
+			}
 		}
 
 	}
 
 	@Override
 	public void onLoad() {
-		volume.setActive(true);
-		volume.setMaxBloodVolume(2000f);
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			vol.setActive(true);
+			vol.setMaxBloodVolume(2000f);
+		}
 	}
 
 	@Override
@@ -383,8 +449,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		pTag.putInt("SpinTime", this.spinningProgress);
 		pTag.putInt("SpinTimeTotal", this.spinningTotalTime);
 		ContainerHelper.saveAllItems(pTag, this.inventory);
-		if (pTag != null) {
-			pTag.putDouble(TAG_BLOOD_LEVEL, volume.getBloodVolume());
+		IBloodVolume vol = resolveVolume();
+		if (vol != null) {
+			pTag.putDouble(TAG_BLOOD_LEVEL, vol.getBloodVolume());
 		}
 	}
 
@@ -405,14 +472,6 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		if (pStack.getCount() > this.getMaxStackSize()) {
 			pStack.setCount(this.getMaxStackSize());
 		}
-		if (pSlot == 1 && volume.getBloodVolume() <= 1900f) {
-			if (this.inventory.get(1).getItem() instanceof BloodyFlaskItem flask) {
-				this.inventory.get(1).shrink(1);
-				volume.fill(flask.getAmount());
-				sendUpdates();
-			}
-		}
-
 	}
 
 	@Override

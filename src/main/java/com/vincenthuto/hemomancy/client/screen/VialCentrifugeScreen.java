@@ -206,6 +206,10 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		if (slotIndex == VialCentrifugeMenu.AUX_OUTPUT_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FFAA44);
 		}
+		// Flask output slot (dark red, like blood slot)
+		if (slotIndex == VialCentrifugeMenu.FLASK_OUTPUT_SLOT) {
+			gfx.fill(sx, sy, sx + 16, sy + 16, 0x20FF4444);
+		}
 		// Input slot (slight highlight)
 		if (slotIndex == VialCentrifugeMenu.INPUT_SLOT) {
 			gfx.fill(sx, sy, sx + 16, sy + 16, 0x15FFAA88);
