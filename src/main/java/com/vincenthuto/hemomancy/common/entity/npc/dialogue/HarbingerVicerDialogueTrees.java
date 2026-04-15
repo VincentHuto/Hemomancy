@@ -39,6 +39,34 @@ public final class HarbingerVicerDialogueTrees {
 		};
 	}
 
+	/**
+	 * Dialogue for a player who has begun purification — straying from the blood
+	 * path. The Vicar delivers a stern warning and laments the loss of their power.
+	 */
+	public static DialogueTree purifying(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICER_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.vicer.purifying.line1",
+						"hemomancy.vicer.purifying.line2",
+						"hemomancy.vicer.purifying.line3"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicer.option.purifying.i_know", "power_warning", null),
+						new DialogueOption("hemomancy.dialogue.vicer.option.purifying.i_chose_this", "chosen_path", null),
+						new DialogueOption("hemomancy.dialogue.vicer.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("power_warning", List.of(
+						"hemomancy.vicer.purifying.power_warning"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicer.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("chosen_path", List.of(
+						"hemomancy.vicer.purifying.chosen_path"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicer.option.leave", null, null)
+				)))
+				.build();
+	}
+
 	/** Degree 0 — uninitiated. The vicer acknowledges the newcomer with measured curiosity. */
 	public static DialogueTree uninitiated(int entityId) {
 		return DialogueTree.builder(SPEAKER, VICER_ICON, entityId)

@@ -951,6 +951,14 @@
 	"hemomancy.dialogue.vicer.option.tell_me_about_crimson_lodge": "Tell me about the Crimson Lodge.",
 	"hemomancy.dialogue.vicer.option.tell_me_about_hematic_order": "Tell me about the Hematic Order.",
 	"hemomancy.dialogue.vicer.option.tell_me_the_final_truth": "Is there something the Order has never said aloud?",
+	"hemomancy.dialogue.vicer.option.purifying.i_know": "I know what I am doing.",
+	"hemomancy.dialogue.vicer.option.purifying.i_chose_this": "I chose this path freely.",
+
+	"hemomancy.vicer.purifying.line1": "§7[The Vicar's serene composure fractures for a moment — a flicker of something between grief and contempt crosses their face]",
+	"hemomancy.vicer.purifying.line2": "I can feel it on you. The taint of the Unstained path — the slow starvation of your blood. You are purifying yourself, peeling away the very power that the Covenant granted you. Every rite you have performed, every degree you have earned... you are letting it dissolve.",
+	"hemomancy.vicer.purifying.line3": "Do you understand what you are throwing away? The blood does not forgive recantation. The further you walk that path, the weaker the Covenant's gifts become within you. Your power is §cslipping§r — and it will not wait for you to change your mind.",
+	"hemomancy.vicer.purifying.power_warning": "Yes — you know. And yet you continue. The blood is patient, but it is not merciful. Each day you spend on that path, your hemomantic strength fades further. The manipulations dull. The tendencies quiet. The Covenant watches and does not reach out twice to those who turn from it. §oCome back while you still can.",
+	"hemomancy.vicer.purifying.chosen_path": "§7[The Vicar closes their eyes for a long moment]§r You chose this. Then hear me clearly: the Covenant will not mourn you. The blood you are surrendering will find another vessel — one worthy of it. What you are choosing to become will have no place here when it is complete. Leave this Outpost before the path carries you somewhere we cannot follow.",
 
 	"hemomancy.mortal_display.charm_equipped": "A living adornment has latched itself around your neck, marking you as destined for the path of the harbinger.",
 	"hemomancy.rite.sanguine_initiation.conduit_granted": "A sanguine conduit materializes — a living instrument attuned to your blood. Use it to monitor your progress.",
