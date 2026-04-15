@@ -1117,5 +1117,9 @@
 	"biome.hemomancy.fungal_isles": "Fungal Isles",
 	"biome.hemomancy.sporecrown_thicket": "Sporecrown Thicket",
 	"biome.hemomancy.mycelial_depths": "Mycelial Depths",
-	"biome.hemomancy.hemorrhagic_plateau": "Hemorrhagic Plateau"
+	"biome.hemomancy.hemorrhagic_plateau": "Hemorrhagic Plateau",
+
+	"item.hemomancy.sanguine_blob": "Sanguine Blob",
+	"key.hemomancy.bloodballdrop.desc": "Drop Blood Ball",
+	"hemomancy.rite.initiate_rite.blob_granted": "A sanguine orb coalesces in your hand — yours to command."
 }

@@ -11,10 +11,12 @@ import com.vincenthuto.hemomancy.client.render.tile.crafting.SomaticLoomRenderer
 import com.vincenthuto.hemomancy.client.render.tile.crafting.VialCentrifugeRenderer;
 import com.vincenthuto.hemomancy.client.render.tile.functional.*;
 import com.vincenthuto.hemomancy.client.render.world.CardinalRiteBoundaryRenderer;
+import com.vincenthuto.hemomancy.client.render.world.BloodBallRenderer;
 import com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer;
 import com.vincenthuto.hemomancy.client.render.world.GourdVineRenderer;
 import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
+import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.screen.*;
 import org.lwjgl.glfw.GLFW;
 
@@ -153,6 +155,8 @@ public class ClientEvents {
 			"key.hemomancy.category");
 	public static final KeyMapping openMorphlingJarViewer = new KeyMapping("key.hemomancy.openmorphlingjar.desc",
 			GLFW.GLFW_KEY_B, "key.hemomancy.category");
+	public static final KeyMapping bloodBallDrop = new KeyMapping("key.hemomancy.bloodballdrop.desc", GLFW.GLFW_KEY_V,
+			"key.hemomancy.category");
 
 	private static boolean menuKey = false;
 
@@ -162,6 +166,7 @@ public class ClientEvents {
 		if (event.phase == TickEvent.Phase.END) {
 			ManipCooldownOverlay.tick();
 			ActiveBloodCraftClientData.tick();
+			BloodBallClientData.tick();
 			if (FungalWhisperVignetteOverlay.instance != null) {
 				FungalWhisperVignetteOverlay.instance.tick();
 			}
@@ -181,6 +186,9 @@ public class ClientEvents {
 		}
 		if (toggleGourd.consumeClick()) {
 			PacketHandler.CHANNELSCARS.sendToServer(new ToggleGourdKeyPacket());
+		}
+		if (bloodBallDrop.consumeClick()) {
+			BloodBallClientData.drop();
 		}
 		if (openMorphlingJarViewer.consumeClick()) {
 			if (Screen.hasShiftDown()) {
@@ -258,6 +266,7 @@ public class ClientEvents {
 			GourdVineRenderer.render(event.getPoseStack(), event.getPartialTick());
 			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
 			QliphothBloomRenderer.render(event.getPoseStack(), event.getPartialTick());
+			BloodBallRenderer.render(event.getPoseStack(), event.getPartialTick());
 		}
 	}
 
@@ -462,6 +471,7 @@ public class ClientEvents {
 			event.register(ClientEvents.openVascCharmMenu);
 			event.register(ClientEvents.toggleGourd);
 			event.register(ClientEvents.openMorphlingJarViewer);
+			event.register(ClientEvents.bloodBallDrop);
 
 		}
 
