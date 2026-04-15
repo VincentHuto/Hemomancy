@@ -1,0 +1,243 @@
+package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
+
+import java.util.List;
+
+import com.vincenthuto.hemomancy.Hemomancy;
+
+import net.minecraft.resources.ResourceLocation;
+
+/**
+ * Static factory that produces {@link DialogueTree} variants for the Harbinger
+ * Alchemist entity. Dialogue focuses on the machines, crafting stations, and
+ * functional systems available to Harbinger members, with knowledge gated by
+ * the player's current initiatory degree.
+ */
+public final class HarbingerAlchemistDialogueTrees {
+
+	private static final ResourceLocation ALCHEMIST_ICON = new ResourceLocation(Hemomancy.MOD_ID,
+			"textures/entity/harbinger_alchemist/harbinger_alchemist.png");
+	private static final String SPEAKER = "entity.hemomancy.harbinger_alchemist";
+
+	private HarbingerAlchemistDialogueTrees() {}
+
+	/**
+	 * Returns the appropriate dialogue tree for the player's progression state.
+	 *
+	 * @param degree   The player's current initiatory degree number (0–7).
+	 * @param entityId The entity id of the alchemist being spoken to.
+	 */
+	public static DialogueTree forDegree(int degree, int entityId) {
+		return switch (degree) {
+			case 0 -> uninitiated(entityId);
+			case 1 -> neophyte(entityId);
+			case 2 -> votary(entityId);
+			case 3 -> initiate(entityId);
+			case 4 -> adept(entityId);
+			case 5 -> illuminatus(entityId);
+			case 6 -> sanctified(entityId);
+			default -> archon(entityId); // degree 7+
+		};
+	}
+
+	/**
+	 * Dialogue for a player who has begun purification — abandoning the blood path.
+	 * The Alchemist dismisses them: no time for someone who won't use the knowledge.
+	 */
+	public static DialogueTree purifying(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.purifying.line1",
+						"hemomancy.alchemist.purifying.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.purifying.i_can_explain", "explain", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("explain", List.of(
+						"hemomancy.alchemist.purifying.explain"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Dialogue for a player who has attained Clarity — fully committed to the Unstained
+	 * path. The Alchemist gives them the cold shoulder: no engagement, no teaching.
+	 */
+	public static DialogueTree clarity(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.clarity.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 0 — uninitiated. The alchemist politely explains that machines require initiation. */
+	public static DialogueTree uninitiated(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.uninitiated.line1",
+						"hemomancy.alchemist.uninitiated.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.what_machines", "machines_locked", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("machines_locked", List.of(
+						"hemomancy.alchemist.uninitiated.machines_locked"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 1 — Neophyte. Introduces the Ghastly Alembic and basic blood processing. */
+	public static DialogueTree neophyte(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.neophyte.line1",
+						"hemomancy.alchemist.neophyte.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_machines", "machines_overview", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("alembic_lore", List.of(
+						"hemomancy.alchemist.neophyte.alembic_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("machines_overview", List.of(
+						"hemomancy.alchemist.machines_overview"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 2 — Votary. Explains the Vial Centrifuge and blood tendency separation. */
+	public static DialogueTree votary(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.votary.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("centrifuge_lore", List.of(
+						"hemomancy.alchemist.votary.centrifuge_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("alembic_lore", List.of(
+						"hemomancy.alchemist.neophyte.alembic_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 3 — Initiate. Reveals the Somatic Loom and memory weaving. */
+	public static DialogueTree initiate(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.initiate.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_loom", "loom_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("loom_lore", List.of(
+						"hemomancy.alchemist.initiate.loom_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.what_is_memory_weaving", "memory_weaving", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("memory_weaving", List.of(
+						"hemomancy.alchemist.initiate.memory_weaving"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 4 — Adept. Introduces the Cerebral Scarring Station and the Chisel Station. */
+	public static DialogueTree adept(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.adept.line1",
+						"hemomancy.alchemist.adept.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_scar_station", "scar_station_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station", "chisel_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("scar_station_lore", List.of(
+						"hemomancy.alchemist.adept.scar_station_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_chisel_station", "chisel_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("chisel_lore", List.of(
+						"hemomancy.alchemist.adept.chisel_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 5 — Illuminatus. Speaks of advanced blood crafting and cardinal rite machines. */
+	public static DialogueTree illuminatus(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.illuminatus.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting", "blood_crafting_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_crafting_lore", List.of(
+						"hemomancy.alchemist.illuminatus.blood_crafting_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("incubator_lore", List.of(
+						"hemomancy.alchemist.illuminatus.incubator_lore"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 6 — Sanctified. The alchemist speaks of the pinnacle of Harbinger engineering. */
+	public static DialogueTree sanctified(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.sanctified.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.what_remains", "final_machines", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("final_machines", List.of(
+						"hemomancy.alchemist.sanctified.final_machines"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/** Degree 7 — Archon. The alchemist defers to the player's mastery. */
+	public static DialogueTree archon(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.archon.line1",
+						"hemomancy.alchemist.archon.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+}
