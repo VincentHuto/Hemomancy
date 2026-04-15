@@ -12,9 +12,9 @@ public class TestSurfaceRuleData
 {
     private static final SurfaceRules.RuleSource DIRT = makeStateRule(Blocks.DIRT);
     private static final SurfaceRules.RuleSource GRASS_BLOCK = makeStateRule(Blocks.GRASS_BLOCK);
-    private static final SurfaceRules.RuleSource erythrocytic_mycelium = makeStateRule(BlockInit.erythrocytic_mycelium.get());
-    private static final SurfaceRules.RuleSource erythrocytic_dirt = makeStateRule(BlockInit.erythrocytic_dirt.get());
-    private static final SurfaceRules.RuleSource venous_stone = makeStateRule(BlockInit.venous_stone.get());
+    private static final SurfaceRules.RuleSource ERYTHROCYTIC_MYCELIUM = makeStateRule(BlockInit.erythrocytic_mycelium.get());
+    private static final SurfaceRules.RuleSource ERYTHROCYTIC_DIRT = makeStateRule(BlockInit.erythrocytic_dirt.get());
+    private static final SurfaceRules.RuleSource VENOUS_STONE = makeStateRule(BlockInit.venous_stone.get());
 
     public static SurfaceRules.RuleSource makeRules()
     {
@@ -25,9 +25,9 @@ public class TestSurfaceRuleData
             SurfaceRules.ifTrue(SurfaceRules.isBiome(BiomeInit.FUNGAL_GARDENS),
                 SurfaceRules.sequence(
                     SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR,
-                        SurfaceRules.ifTrue(isAtOrAboveWaterLevel, erythrocytic_mycelium)),
-                    SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, erythrocytic_dirt),
-                    SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, venous_stone)
+                        SurfaceRules.ifTrue(isAtOrAboveWaterLevel, ERYTHROCYTIC_MYCELIUM)),
+                    SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, ERYTHROCYTIC_DIRT),
+                    SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, VENOUS_STONE)
                 )
             ),
 
