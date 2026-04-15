@@ -1599,4 +1599,77 @@ public class CardinalRiteEvents {
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 				100, LETHEAN_JUDGMENT_RADIUS * 0.5, 2.0, LETHEAN_JUDGMENT_RADIUS * 0.5, 0.01);
 	}
+
+	// ════════════════════════════════════════════════════════════
+	//  SILVER DAWN — Persistent Cleansed Zone
+	// ════════════════════════════════════════════════════════════
+
+	/** Radius of the Silver Dawn cleansing zone in blocks. */
+	private static final int SILVER_DAWN_RADIUS = 8;
+
+	/**
+	 * Rite of the Silver Dawn: converts blood-faction blocks in a radius
+	 * around the altar into their cleansed equivalents and grants a
+	 * long-duration Verdigris Aura to the caster.
+	 */
+	private static void completeSilverDawn(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		// Require clarity to perform this rite
+		boolean hasClarityUnlocked = caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+				.map(p -> p.hasClarityUnlocked()).orElse(false);
+		if (!hasClarityUnlocked) {
+			caster.displayClientMessage(
+					Component.literal("You must have unlocked Clarity to perform the Rite of the Silver Dawn.")
+							.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Convert blood-faction blocks in radius
+		int converted = 0;
+		Map<Block, Block> conversions = Map.of(
+				BlockInit.venous_stone.get(), BlockInit.cleansed_stone.get(),
+				BlockInit.sanguine_glass.get(), BlockInit.cleansed_sanguine_glass.get(),
+				BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get(),
+				BlockInit.hematic_iron_block.get(), BlockInit.pale_silver_block.get()
+		);
+
+		for (int x = -SILVER_DAWN_RADIUS; x <= SILVER_DAWN_RADIUS; x++) {
+			for (int y = -SILVER_DAWN_RADIUS / 2; y <= SILVER_DAWN_RADIUS / 2; y++) {
+				for (int z = -SILVER_DAWN_RADIUS; z <= SILVER_DAWN_RADIUS; z++) {
+					BlockPos pos = center.offset(x, y, z);
+					Block block = sLevel.getBlockState(pos).getBlock();
+					Block replacement = conversions.get(block);
+					if (replacement != null) {
+						sLevel.setBlock(pos, replacement.defaultBlockState(), 3);
+						converted++;
+					}
+				}
+			}
+		}
+
+		// Grant extended Verdigris Aura (amplifier 2, 10 minutes)
+		caster.addEffect(new MobEffectInstance(
+				EffectInit.verdigris_aura.get(), 12000, 2, false, true, true));
+
+		// Grant purity/clarity boost
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+			progress.addClarity(5.0f);
+			UnstainedProgressEvents.syncProgress(caster, progress);
+		});
+
+		String msg = converted > 0
+				? "Silver dawn breaks. " + converted + " block(s) have been cleansed."
+				: "Silver dawn breaks, but no blood-stained blocks were found nearby.";
+		caster.displayClientMessage(
+				Component.literal(msg).withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+
+		// Visual burst
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				150, SILVER_DAWN_RADIUS * 0.5, 3.0, SILVER_DAWN_RADIUS * 0.5, 0.02);
+		sLevel.sendParticles(ParticleTypes.SCRAPE,
+				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
+				80, SILVER_DAWN_RADIUS * 0.4, 1.5, SILVER_DAWN_RADIUS * 0.4, 0.01);
+	}
 }
