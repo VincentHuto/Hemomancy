@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.entity.npc;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerAlchemistDialogueTrees;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -30,6 +32,15 @@ import net.minecraftforge.network.PacketDistributor;
  * <p>
  * Dialogue is gated by the player's initiatory degree so that more advanced
  * machine knowledge is revealed as the player progresses.
+ * <p>
+ * Special behaviour based on the player's Unstained path progress:
+ * <ul>
+ *   <li>If the player has begun purification, the Alchemist dismisses them —
+ *       they have no patience for someone abandoning blood mastery.</li>
+ *   <li>If the player has attained Clarity (entered Phase 2 of the Unstained
+ *       path), the Alchemist ignores them entirely with a cold-shoulder response
+ *       and no further engagement.</li>
+ * </ul>
  */
 public class HarbingerAlchemistEntity extends PathfinderMob {
 
@@ -77,13 +88,37 @@ public class HarbingerAlchemistEntity extends PathfinderMob {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
-            int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
-            DialogueTree tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
+            DialogueTree tree;
+
+            if (hasClarityUnlocked(player)) {
+                // Clarity-bearing players are ignored — cold shoulder, no engagement
+                tree = HarbingerAlchemistDialogueTrees.clarity(this.getId());
+            } else if (isPurifying(player)) {
+                // Purifying players are dismissed — the Alchemist has no time for them
+                tree = HarbingerAlchemistDialogueTrees.purifying(this.getId());
+            } else {
+                int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+                tree = HarbingerAlchemistDialogueTrees.forDegree(degree, this.getId());
+            }
 
             PacketHandler.CHANNELBLOODVOLUME.send(
                     PacketDistributor.PLAYER.with(() -> serverPlayer),
                     new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    /** Returns true if the given player has unlocked the Clarity phase (Unstained Phase 2). */
+    private static boolean hasClarityUnlocked(Player player) {
+        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+                .map(IUnstainedProgress::hasClarityUnlocked)
+                .orElse(false);
+    }
+
+    /** Returns true if the given player has begun purification but not yet entered Clarity. */
+    private static boolean isPurifying(Player player) {
+        return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+                .map(IUnstainedProgress::hasBegunPurification)
+                .orElse(false);
     }
 }

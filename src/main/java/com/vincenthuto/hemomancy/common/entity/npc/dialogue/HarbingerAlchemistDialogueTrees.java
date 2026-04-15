@@ -39,6 +39,41 @@ public final class HarbingerAlchemistDialogueTrees {
 		};
 	}
 
+	/**
+	 * Dialogue for a player who has begun purification — abandoning the blood path.
+	 * The Alchemist dismisses them: no time for someone who won't use the knowledge.
+	 */
+	public static DialogueTree purifying(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.purifying.line1",
+						"hemomancy.alchemist.purifying.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.purifying.i_can_explain", "explain", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("explain", List.of(
+						"hemomancy.alchemist.purifying.explain"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Dialogue for a player who has attained Clarity — fully committed to the Unstained
+	 * path. The Alchemist gives them the cold shoulder: no engagement, no teaching.
+	 */
+	public static DialogueTree clarity(int entityId) {
+		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.alchemist.clarity.line1"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.build();
+	}
+
 	/** Degree 0 — uninitiated. The alchemist politely explains that machines require initiation. */
 	public static DialogueTree uninitiated(int entityId) {
 		return DialogueTree.builder(SPEAKER, ALCHEMIST_ICON, entityId)
