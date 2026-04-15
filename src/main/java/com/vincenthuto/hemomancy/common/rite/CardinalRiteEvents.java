@@ -1606,6 +1606,30 @@ public class CardinalRiteEvents {
 
 	/** Radius of the Silver Dawn cleansing zone in blocks. */
 	private static final int SILVER_DAWN_RADIUS = 8;
+	/** Duration of the Verdigris Aura granted by Silver Dawn (10 minutes). */
+	private static final int SILVER_DAWN_AURA_DURATION = 12000;
+	/** Amplifier of the Verdigris Aura granted by Silver Dawn. */
+	private static final int SILVER_DAWN_AURA_AMPLIFIER = 2;
+
+	/**
+	 * Lazy block-conversion map for Silver Dawn / Consecration.
+	 * Maps blood-faction blocks to their cleansed equivalents.
+	 * Unstained rites have zero blood cost by design — they draw
+	 * from purity and clarity, not from the hemomancer's reservoir.
+	 */
+	private static Map<Block, Block> SILVER_DAWN_CONVERSIONS;
+
+	private static Map<Block, Block> getSilverDawnConversions() {
+		if (SILVER_DAWN_CONVERSIONS == null) {
+			SILVER_DAWN_CONVERSIONS = Map.of(
+					BlockInit.venous_stone.get(), BlockInit.cleansed_stone.get(),
+					BlockInit.sanguine_glass.get(), BlockInit.cleansed_sanguine_glass.get(),
+					BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get(),
+					BlockInit.hematic_iron_block.get(), BlockInit.pale_silver_block.get()
+			);
+		}
+		return SILVER_DAWN_CONVERSIONS;
+	}
 
 	/**
 	 * Rite of the Silver Dawn: converts blood-faction blocks in a radius
@@ -1626,12 +1650,7 @@ public class CardinalRiteEvents {
 
 		// Convert blood-faction blocks in radius
 		int converted = 0;
-		Map<Block, Block> conversions = Map.of(
-				BlockInit.venous_stone.get(), BlockInit.cleansed_stone.get(),
-				BlockInit.sanguine_glass.get(), BlockInit.cleansed_sanguine_glass.get(),
-				BlockInit.infested_venous_stone.get(), BlockInit.cleansed_stone.get(),
-				BlockInit.hematic_iron_block.get(), BlockInit.pale_silver_block.get()
-		);
+		Map<Block, Block> conversions = getSilverDawnConversions();
 
 		for (int x = -SILVER_DAWN_RADIUS; x <= SILVER_DAWN_RADIUS; x++) {
 			for (int y = -SILVER_DAWN_RADIUS / 2; y <= SILVER_DAWN_RADIUS / 2; y++) {
@@ -1647,9 +1666,9 @@ public class CardinalRiteEvents {
 			}
 		}
 
-		// Grant extended Verdigris Aura (amplifier 2, 10 minutes)
+		// Grant extended Verdigris Aura
 		caster.addEffect(new MobEffectInstance(
-				EffectInit.verdigris_aura.get(), 12000, 2, false, true, true));
+				EffectInit.verdigris_aura.get(), SILVER_DAWN_AURA_DURATION, SILVER_DAWN_AURA_AMPLIFIER, false, true, true));
 
 		// Grant purity/clarity boost
 		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
