@@ -14,7 +14,9 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
+import com.vincenthuto.hemomancy.common.item.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
@@ -171,6 +173,22 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 							inventory.get(18).grow(1);
 						}
 					}
+				} else if (vialStack.getItem() instanceof ConsecratedSyringeItem) {
+					EnumSaintType saint = ConsecratedSyringeItem.getSaintType(vialStack);
+					if (saint != null) {
+						ItemStack resultStack = getResultFromSyringe(saint);
+						if (!resultStack.isEmpty()) {
+							ItemStack outputSlot = inventory.get(inOutMap.get(i + 2));
+							if (outputSlot.isEmpty()) {
+								inventory.set(i + 2, ItemStack.EMPTY);
+								inventory.set(inOutMap.get(i + 2), resultStack);
+							} else if (outputSlot.getItem() == resultStack.getItem()
+									&& outputSlot.getCount() + resultStack.getCount() <= outputSlot.getMaxStackSize()) {
+								outputSlot.grow(resultStack.getCount());
+								inventory.set(i + 2, ItemStack.EMPTY);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -279,6 +297,21 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		}
 		return ItemStack.EMPTY;
 
+	}
+
+	private ItemStack getResultFromSyringe(EnumSaintType saint) {
+		switch (saint) {
+		case HEMORATH:
+			return new ItemStack(ItemInit.hallowed_residuum_hemorath.get());
+		case SERAPHAE:
+			return new ItemStack(ItemInit.hallowed_residuum_seraphae.get());
+		case PUTRICIEL:
+			return new ItemStack(ItemInit.hallowed_residuum_putriciel.get());
+		case VELORUM:
+			return new ItemStack(ItemInit.hallowed_residuum_velorum.get());
+		default:
+			return ItemStack.EMPTY;
+		}
 	}
 
 	public boolean attemptStartup() {

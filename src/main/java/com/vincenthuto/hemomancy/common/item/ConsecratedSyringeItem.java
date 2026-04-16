@@ -2,7 +2,10 @@ package com.vincenthuto.hemomancy.common.item;
 
 import java.util.List;
 
+import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
+
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,11 +13,24 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * Consecrated Syringe — the ritual instrument used to petition a Preserved Corpus
- * for Hallowed Residuum. Not drawn, but petitioned; the outcome is never guaranteed.
- * Used by right-clicking on a Saint Sarcophagus while holding a filled Blood Vial.
+ * Consecrated Syringe — produced by offering a filled Blood Vial to a Saint Sarcophagus.
+ * Carries the saint type in NBT. Process it in a Vial Centrifuge to extract Hallowed Residuum.
  */
 public class ConsecratedSyringeItem extends Item {
+
+	public static final String TAG_SAINT_TYPE = "saint_type";
+
+	public static EnumSaintType getSaintType(ItemStack stack) {
+		CompoundTag tag = stack.getTag();
+		if (tag != null && tag.contains(TAG_SAINT_TYPE)) {
+			try {
+				return EnumSaintType.valueOf(tag.getString(TAG_SAINT_TYPE));
+			} catch (IllegalArgumentException e) {
+				return null;
+			}
+		}
+		return null;
+	}
 
 	public ConsecratedSyringeItem(Properties properties) {
 		super(properties);
@@ -23,9 +39,15 @@ public class ConsecratedSyringeItem extends Item {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("A syringe blessed by forgotten rites.")
-				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
-		tooltip.add(Component.literal("Use with a Blood Vial on a Saint's Sarcophagus.")
+		EnumSaintType saint = getSaintType(stack);
+		if (saint != null) {
+			tooltip.add(Component.literal("Consecrated by Saint " + saint.getDisplayName() + ".")
+					.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+		} else {
+			tooltip.add(Component.literal("A syringe blessed by forgotten rites.")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+		tooltip.add(Component.literal("Process in a Vial Centrifuge to extract Hallowed Residuum.")
 				.withStyle(ChatFormatting.DARK_PURPLE));
 	}
 }
