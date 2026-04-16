@@ -1235,5 +1235,18 @@
 	"hemomancy.manipulation.endless_hour": "Endless Hour",
 
 	"key.hemomancy.bloodballdrop.desc": "Drop Blood Ball",
-	"hemomancy.rite.initiate_rite.blob_granted": "A sanguine orb coalesces in your hand — yours to command."
+	"hemomancy.rite.initiate_rite.blob_granted": "A sanguine orb coalesces in your hand — yours to command.",
+
+	"entity.hemomancy.hollow_vessel": "Hollow Vessel",
+	"entity.hemomancy.hematic_construct": "Hematic Construct",
+
+	"effect.hemomancy.hemophagy": "Hemophagy",
+	"effect.hemomancy.hematic_strain": "Hematic Strain",
+
+	"block.hemomancy.blood_basin": "Blood Basin",
+	"block.hemomancy.offering_gate": "Offering Gate",
+	"block.hemomancy.blood_pylon": "Blood Pylon",
+	"block.hemomancy.blood_trial_altar": "Blood Trial Altar",
+
+	"message.hemomancy.hematic_backlash": "The offering was rejected. Hematic Backlash!"
 }

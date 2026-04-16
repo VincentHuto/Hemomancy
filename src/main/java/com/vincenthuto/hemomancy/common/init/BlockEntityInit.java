@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.tile.*;
 
 import com.vincenthuto.hemomancy.common.tile.crafting.*;
 import com.vincenthuto.hemomancy.common.tile.functional.*;
+import com.vincenthuto.hemomancy.common.tile.puzzle.*;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -114,4 +115,17 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<SaintSarcophagusBlockEntity>> saint_sarcophagus = TILES
 			.register("saint_sarcophagus", () -> BlockEntityType.Builder
 					.of(SaintSarcophagusBlockEntity::new, BlockInit.saint_sarcophagus.get()).build(null));
+
+	// Puzzle block entities — Hemorath encounter
+	public static final RegistryObject<BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES
+			.register("blood_basin", () -> BlockEntityType.Builder
+					.of(BloodBasinBlockEntity::new, BlockInit.blood_basin.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<BloodPylonBlockEntity>> blood_pylon = TILES
+			.register("blood_pylon", () -> BlockEntityType.Builder
+					.of(BloodPylonBlockEntity::new, BlockInit.blood_pylon.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<BloodTrialAltarBlockEntity>> blood_trial_altar = TILES
+			.register("blood_trial_altar", () -> BlockEntityType.Builder
+					.of(BloodTrialAltarBlockEntity::new, BlockInit.blood_trial_altar.get()).build(null));
 }

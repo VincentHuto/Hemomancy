@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.HematicConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicarEntity;
@@ -95,6 +96,13 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerVicarEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_vicar").toString()));
+
+    // Boss room: Hematic Construct (inner trial minion)
+    public static final RegistryObject<EntityType<HematicConstructEntity>> hematic_construct = ENTITY_TYPES.register(
+            "hematic_construct",
+            () -> EntityType.Builder.of(HematicConstructEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .build(Hemomancy.rloc("hematic_construct").toString()));
 
     // Boss: Hollow Vessel (Saint Hemorath)
     public static final RegistryObject<EntityType<HollowVesselEntity>> hollow_vessel = ENTITY_TYPES.register(
@@ -383,6 +391,7 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
+        event.put(EntityInit.hematic_construct.get(), HematicConstructEntity.setAttributes().build());
         event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_pillar.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_wall.get(), BloodConstructEntity.setAttributes().build());

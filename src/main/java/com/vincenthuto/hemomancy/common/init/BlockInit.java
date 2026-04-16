@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import com.mojang.datafixers.util.Pair;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
+import com.vincenthuto.hemomancy.common.block.puzzle.*;
 import com.vincenthuto.hemomancy.common.block.crafting.ScarStationBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.PallidRetortBlock;
@@ -433,6 +434,23 @@ public class BlockInit {
 	public static final RegistryObject<Block> visceral_mirror = MODELEDBLOCKS.register("visceral_mirror",
 			() -> new VisceralMirrorBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.noOcclusion().strength(2.0F, 8.0F).sound(SoundType.GLASS)));
+
+	// Puzzle / boss-room blocks — Hemorath encounter
+	public static final RegistryObject<Block> blood_basin = MODELEDBLOCKS.register("blood_basin",
+			() -> new BloodBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 6.0F).sound(SoundType.STONE)));
+
+	public static final RegistryObject<Block> offering_gate = SPECIALBLOCKS.register("offering_gate",
+			() -> new OfferingGateBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
+
+	public static final RegistryObject<Block> blood_pylon = MODELEDBLOCKS.register("blood_pylon",
+			() -> new BloodPylonBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(2.0F, 6.0F).sound(SoundType.STONE)));
+
+	public static final RegistryObject<Block> blood_trial_altar = MODELEDBLOCKS.register("blood_trial_altar",
+			() -> new BloodTrialAltarBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
 
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
