@@ -50,6 +50,10 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 	private final boolean pallid;
 	private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 
+	private String getOverlayTexturePath() {
+		return pallid ? "textures/gui/pallid_retort_gui_overlay.png" : "textures/gui/ghastly_alembic_gui_overlay.png";
+	}
+
 	public DistillationRecipeCategory(IGuiHelper guiHelper, boolean pallid) {
 		this.pallid = pallid;
 		background = guiHelper.createBlankDrawable(BG_W, BG_H);
@@ -59,9 +63,7 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 			@Override
 			public IDrawableAnimated load(Integer cookTime) {
 				return guiHelper.drawableBuilder(
-						new ResourceLocation(Hemomancy.MOD_ID,
-								pallid ? "textures/gui/pallid_retort_gui_overlay.png"
-										: "textures/gui/ghastly_alembic_gui_overlay.png"),
+						new ResourceLocation(Hemomancy.MOD_ID, getOverlayTexturePath()),
 						143 + 16, 14, 24, 17
 				).buildAnimated(cookTime, IDrawableAnimated.StartDirection.LEFT, false);
 			}
@@ -82,10 +84,10 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 		for (int ring = 40; ring > 0; ring -= 4) {
 			float t = ring / 40f;
 			int alpha = (int) (20 * (1f - t));
-			int c1 = (int) ((pallid ? 20 : 30) * (1f - t));
-			int c2 = (int) ((pallid ? 24 : 0) * (1f - t));
-			int c3 = (int) ((pallid ? 32 : 0) * (1f - t));
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (c1 << 16) | (c2 << 8) | c3);
+			int red = (int) ((pallid ? 20 : 30) * (1f - t));
+			int green = (int) ((pallid ? 24 : 0) * (1f - t));
+			int blue = (int) ((pallid ? 32 : 0) * (1f - t));
+			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring, (alpha << 24) | (red << 16) | (green << 8) | blue);
 		}
 
 		// ── Border ──
