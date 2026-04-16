@@ -280,6 +280,22 @@ public class ItemInit {
 			() -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
 	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
 			() -> new RecycledEnzymeItem());
+	public static final RegistryObject<Item> saint_enzyme = BASEITEMS.register("saint_enzyme",
+			() -> new EnzymeItem(EnumBloodTendency.LUX, 20));
+
+	// Hallowed Residuum — Saint-Enzymes (hybridized, extracted from Preserved Corpus)
+	public static final RegistryObject<Item> hallowed_residuum_hemorath = BASEITEMS.register("hallowed_residuum_hemorath",
+			() -> new HallowedResiduumItem(com.vincenthuto.hemomancy.common.saint.EnumSaintType.HEMORATH, 20));
+	public static final RegistryObject<Item> hallowed_residuum_seraphae = BASEITEMS.register("hallowed_residuum_seraphae",
+			() -> new HallowedResiduumItem(com.vincenthuto.hemomancy.common.saint.EnumSaintType.SERAPHAE, 20));
+	public static final RegistryObject<Item> hallowed_residuum_putriciel = BASEITEMS.register("hallowed_residuum_putriciel",
+			() -> new HallowedResiduumItem(com.vincenthuto.hemomancy.common.saint.EnumSaintType.PUTRICIEL, 20));
+	public static final RegistryObject<Item> hallowed_residuum_velorum = BASEITEMS.register("hallowed_residuum_velorum",
+			() -> new HallowedResiduumItem(com.vincenthuto.hemomancy.common.saint.EnumSaintType.VELORUM, 20));
+
+	// Consecrated Syringe — extraction tool for Saint Sarcophagus
+	public static final RegistryObject<Item> consecrated_syringe = SPECIALITEMS.register("consecrated_syringe",
+			() -> new ConsecratedSyringeItem(new Item.Properties().stacksTo(1)));
 
 	// Blood Tendency Gauge
 	public static final RegistryObject<Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",

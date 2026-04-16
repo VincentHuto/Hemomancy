@@ -110,4 +110,8 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<MnemonicReliquaryBlockEntity>> mnemonic_reliquary = TILES
 			.register("mnemonic_reliquary", () -> BlockEntityType.Builder
 					.of(MnemonicReliquaryBlockEntity::new, BlockInit.mnemonic_reliquary.get()).build(null));
+
+	public static final RegistryObject<BlockEntityType<SaintSarcophagusBlockEntity>> saint_sarcophagus = TILES
+			.register("saint_sarcophagus", () -> BlockEntityType.Builder
+					.of(SaintSarcophagusBlockEntity::new, BlockInit.saint_sarcophagus.get()).build(null));
 }

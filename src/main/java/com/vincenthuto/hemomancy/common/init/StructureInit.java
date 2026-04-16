@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.MausoleumStructure;
 import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -33,6 +34,9 @@ public class StructureInit {
 
 	public static final RegistryObject<StructureType<HarbingerOutpostStructure>> harbinger_outpost = STRUCTURES
 			.register("harbinger_outpost", () -> explicitStructureTypeTyping(HarbingerOutpostStructure.CODEC));
+
+	public static final RegistryObject<StructureType<MausoleumStructure>> mausoleum = STRUCTURES
+			.register("mausoleum", () -> explicitStructureTypeTyping(MausoleumStructure.CODEC));
 
 	private static <T extends Structure> StructureType<T> explicitStructureTypeTyping(Codec<T> structureCodec) {
 		return () -> structureCodec;

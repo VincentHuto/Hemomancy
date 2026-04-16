@@ -191,6 +191,10 @@ public class EffectInit {
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, "D1E2F3A4-B5C6-7D8E-9F0A-1B2C3D4E5F6A",
                             -0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
+    // Saintly Enzyme System — Marked by Canon (persistent debuff from failed extraction)
+    public static final RegistryObject<MobEffect> marked_by_canon = EFFECTS.register("marked_by_canon",
+            () -> new MarkedByCanonEffect(MobEffectCategory.HARMFUL, 0x8B0000));
+
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
 
