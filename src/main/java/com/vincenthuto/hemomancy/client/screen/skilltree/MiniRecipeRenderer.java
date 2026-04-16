@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTende
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import net.minecraft.client.Minecraft;
@@ -97,7 +97,7 @@ public final class MiniRecipeRenderer {
 
 		return 11 + switch (found.kind()) {
 			case VANILLA_CRAFTING -> drawVanillaCrafting(gfx, font, (CraftingRecipe) found.recipe(), x, y, maxW, theme);
-			case GHASTLY_ALEMBIC      -> drawGhastlyAlembic(gfx, font, (GhastlyAlembicRecipe) found.recipe(), x, y, maxW, theme);
+			case GHASTLY_ALEMBIC      -> drawGhastlyAlembic(gfx, font, (DistillationRecipe) found.recipe(), x, y, maxW, theme);
 			case MEMORY_WEAVING   -> drawMemoryWeaving(gfx, font, (MemoryWeavingRecipe) found.recipe(), x, y, maxW, theme);
 			case BLOOD_STRUCTURE  -> drawBloodStructure(gfx, font, (BloodStructureRecipe) found.recipe(), x, y, maxW, theme);
 			case CHISEL           -> drawChisel(gfx, font, (ScarRecipe) found.recipe(), x, y, maxW, theme);
@@ -162,7 +162,7 @@ public final class MiniRecipeRenderer {
 		return gridH * slotS + 2;
 	}
 
-	private static int drawGhastlyAlembic(GuiGraphics gfx, Font font, GhastlyAlembicRecipe recipe,
+	private static int drawGhastlyAlembic(GuiGraphics gfx, Font font, DistillationRecipe recipe,
 									   int x, int y, int maxW, Theme theme) {
 		long tick = getAnimTick();
 

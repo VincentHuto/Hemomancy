@@ -1049,7 +1049,7 @@ All applicable flowers have **potted** variants.
 | Recipe Type | Serializer | Station | Purpose |
 |-------------|-----------|---------|---------|
 | `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
-| `ghastly_alembic_recipe_type` | `GhastlyAlembicSerializer` | Ghastly Alembic | Squeezes items for blood/extracts. Has 4 slots: input, flask (auto-fills Cured Clay Flasks), result, and catalyst (modifies output) |
+| `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation recipes. `pallid: true` targets Pallid Retort; omitted/false targets Ghastly Alembic. |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
 | `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts. 13 recipes for all morphling types (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin). JEI-integrated via `IncubatorRecipeCategory`. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |

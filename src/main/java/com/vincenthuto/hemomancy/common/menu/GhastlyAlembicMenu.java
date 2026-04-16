@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.vincenthuto.hemomancy.common.init.ContainerInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.slot.GhastlyAlembicFlaskSlot;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.crafting.GhastlyAlembicBlockEntity;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
@@ -144,9 +144,9 @@ public class GhastlyAlembicMenu extends AbstractContainerMenu {
 
 	protected boolean canSmelt(ItemStack stack) {
 		// Check if any ghastly alembic recipe accepts this item as its main ingredient
-		return GhastlyAlembicRecipe.getAllRecipes(this.level)
+		return DistillationRecipe.getAllRecipes(this.level)
 				.stream()
-				.anyMatch(r -> r.getIngredient().test(stack));
+				.anyMatch(r -> !r.isPallid() && r.getIngredient().test(stack));
 	}
 
 	public boolean isFlask(ItemStack stack) {

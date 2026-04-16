@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.GhastlyAlembicMenu;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
@@ -178,19 +178,19 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	private static int getTotalCookTime(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> r.matches(te, level))
-				.mapToInt(GhastlyAlembicRecipe::getCookingTime)
+				.filter(r -> !r.isPallid() && r.matches(te, level))
+				.mapToInt(DistillationRecipe::getCookingTime)
 				.findFirst()
 				.orElse(200);
 	}
 
-	private static GhastlyAlembicRecipe findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
+	private static DistillationRecipe findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> r.matches(te, level))
+				.filter(r -> !r.isPallid() && r.matches(te, level))
 				.findFirst()
 				.orElse(null);
 	}
@@ -214,7 +214,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 		if (vol.getBloodVolume() < vol.getMaxBloodVolume() - 99) {
 			if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
-				GhastlyAlembicRecipe recipe = findMatchingRecipe(level, te);
+				DistillationRecipe recipe = findMatchingRecipe(level, te);
 				int maxStack = te.getMaxStackSize();
 
 				if (te.canBurn(level.registryAccess(), recipe, te.items, maxStack)) {
@@ -261,7 +261,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	// ---- Recipe logic ----
 
-	private boolean canBurn(RegistryAccess registryAccess, @Nullable GhastlyAlembicRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
+	private boolean canBurn(RegistryAccess registryAccess, @Nullable DistillationRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
 		if (inv.get(SLOT_INPUT).isEmpty() || recipe == null) return false;
 
 		ItemStack result = recipe.assemble(this, registryAccess);
@@ -274,7 +274,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		return totalCount <= maxStack && totalCount <= currentResult.getMaxStackSize();
 	}
 
-	private boolean burn(RegistryAccess registryAccess, @Nullable GhastlyAlembicRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
+	private boolean burn(RegistryAccess registryAccess, @Nullable DistillationRecipe recipe, NonNullList<ItemStack> inv, int maxStack) {
 		if (recipe == null || !canBurn(registryAccess, recipe, inv, maxStack)) return false;
 
 		ItemStack input = inv.get(SLOT_INPUT);
@@ -436,7 +436,7 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 		for (Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
 			level.getRecipeManager().byKey(entry.getKey()).ifPresent(r -> {
 				list.add(r);
-				if (r instanceof GhastlyAlembicRecipe gar) {
+				if (r instanceof DistillationRecipe gar) {
 					createExperience(level, pos, entry.getIntValue(), gar.getExperience());
 				}
 			});

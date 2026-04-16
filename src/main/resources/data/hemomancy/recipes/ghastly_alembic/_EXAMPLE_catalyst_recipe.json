@@ -1,6 +1,6 @@
 {
   "_comment": "Example recipe showing optional catalyst field. Remove this file or rename without leading underscore to use.",
-  "type": "hemomancy:ghastly_alembic",
+  "type": "hemomancy:distillation_recipe",
   "ingredient": {
     "item": "minecraft:bone"
   },
