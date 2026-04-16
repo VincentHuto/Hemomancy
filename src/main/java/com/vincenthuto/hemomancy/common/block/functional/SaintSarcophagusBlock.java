@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
+import com.vincenthuto.hemomancy.common.item.ConsecratedSyringeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.saint.EnumCorpusState;
@@ -157,9 +158,15 @@ public class SaintSarcophagusBlock extends Block implements EntityBlock {
 			return InteractionResult.CONSUME;
 		}
 
-		// Blood Vial interaction: attempt extraction
+		// Blood Vial interaction: consecrate the vial into a Syringe
 		if (stack.getItem() instanceof BloodVialItem && stack.hasTag()
 				&& stack.getOrCreateTag().getBoolean(BloodVialItem.TAG_STATE)) {
+			consecrateVial(worldIn, pos, player, handIn, stack);
+			return InteractionResult.CONSUME;
+		}
+
+		// Consecrated Syringe interaction: attempt extraction
+		if (stack.getItem() instanceof ConsecratedSyringeItem) {
 			attemptExtraction(worldIn, pos, player, handIn, stack, sarcophagus);
 			return InteractionResult.CONSUME;
 		}
@@ -185,12 +192,39 @@ public class SaintSarcophagusBlock extends Block implements EntityBlock {
 	}
 
 	/**
+	 * Consecration step — the player offers a filled Blood Vial to the Preserved Corpus.
+	 * The corpus sanctifies the vial, producing a Consecrated Syringe ready for extraction.
+	 * The Blood Vial is consumed in the process.
+	 */
+	private void consecrateVial(Level worldIn, BlockPos pos, Player player, InteractionHand hand,
+			ItemStack vialStack) {
+		// Consume the blood vial
+		vialStack.shrink(1);
+		if (vialStack.isEmpty()) {
+			player.setItemInHand(hand, ItemStack.EMPTY);
+		}
+
+		// Give the player a Consecrated Syringe
+		ItemStack syringe = new ItemStack(ItemInit.consecrated_syringe.get());
+		if (!player.getInventory().add(syringe)) {
+			player.drop(syringe, false);
+		}
+
+		player.displayClientMessage(
+				Component.literal("The corpus sanctifies the offering. You hold a Consecrated Syringe.")
+						.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+				false);
+		worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);
+		spawnAmbienceParticles(worldIn, pos);
+	}
+
+	/**
 	 * Core extraction mechanic. The chance of the sarcophagus rejecting the user
 	 * is based on their current Blood Tendency and whether or not it aligns with
 	 * the saint they are trying to extract from.
 	 */
 	private void attemptExtraction(Level worldIn, BlockPos pos, Player player, InteractionHand hand,
-			ItemStack vialStack, SaintSarcophagusBlockEntity sarcophagus) {
+			ItemStack handStack, SaintSarcophagusBlockEntity sarcophagus) {
 		EnumSaintType saint = sarcophagus.getSaintType();
 
 		// Transition to RESPONSIVE on first interaction
@@ -226,9 +260,9 @@ public class SaintSarcophagusBlock extends Block implements EntityBlock {
 			successChance *= Math.max(0.10f, 0.50f - (amplifier * 0.10f));
 		}
 
-		// Consume the blood vial
-		vialStack.shrink(1);
-		if (vialStack.isEmpty()) {
+		// Consume the Consecrated Syringe
+		handStack.shrink(1);
+		if (handStack.isEmpty()) {
 			player.setItemInHand(hand, ItemStack.EMPTY);
 		}
 
