@@ -41,6 +41,10 @@ import com.vincenthuto.hemomancy.common.manipulation.mortem.VitalReservoirManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.BloodEclipseManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.UmbralStepManip;
 import com.vincenthuto.hemomancy.common.manipulation.tenebris.VoidShroudManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.CrimsonTitheManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.UnclosingEyeManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.BloomOfRotManip;
+import com.vincenthuto.hemomancy.common.manipulation.saint.EndlessHourManip;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -243,6 +247,28 @@ public class ManipulationInit {
 			() -> new ExsanguinateManip("exsanguinate", 300, 10, 0, EnumManipulationType.QUICK,
 					EnumManipulationRank.MEDIOCRITAS, EnumBloodTendency.MORTEM, EnumVeinSections.RIGHTARM)
 					.setCooldownTicks(50));
+
+	// ── SAINT — Canon Memories (imprinted from Sainted Mausoleums) ──
+
+	public static final RegistryObject<BloodManipulation> crimson_tithe = MANIPS.register("crimson_tithe",
+			() -> new CrimsonTitheManip("crimson_tithe", 400, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.HEART)
+					.setCooldownTicks(100));
+
+	public static final RegistryObject<BloodManipulation> unclosing_eye = MANIPS.register("unclosing_eye",
+			() -> new UnclosingEyeManip("unclosing_eye", 350, 20, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.LUX, EnumVeinSections.HEAD)
+					.setCooldownTicks(120));
+
+	public static final RegistryObject<BloodManipulation> bloom_of_rot = MANIPS.register("bloom_of_rot",
+			() -> new BloomOfRotManip("bloom_of_rot", 500, 25, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.MORTEM, EnumVeinSections.BODY)
+					.setCooldownTicks(80));
+
+	public static final RegistryObject<BloodManipulation> endless_hour = MANIPS.register("endless_hour",
+			() -> new EndlessHourManip("endless_hour", 600, 30, 0, EnumManipulationType.QUICK,
+					EnumManipulationRank.SUMMA, EnumBloodTendency.CONGEATIO, EnumVeinSections.BODY)
+					.setCooldownTicks(200));
 
 	public static List<BloodManipulation> getAllEntries() {
 		List<BloodManipulation> entries = new ArrayList<>();

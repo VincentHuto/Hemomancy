@@ -1218,6 +1218,22 @@
 	"item.hemomancy.sanguine_blob": "Sanguine Blob",
 	"message.hemomancy.saint_sarcophagus.success": "The Saint's remains yield an enzyme.",
 	"message.hemomancy.saint_sarcophagus.fail": "The mausoleum stirs. A Harbinger Saint awakens.",
+
+	"item.hemomancy.hallowed_residuum_hemorath": "Hallowed Residuum of Hemorath",
+	"item.hemomancy.hallowed_residuum_seraphae": "Hallowed Residuum of Seraphae",
+	"item.hemomancy.hallowed_residuum_putriciel": "Hallowed Residuum of Putriciel",
+	"item.hemomancy.hallowed_residuum_velorum": "Hallowed Residuum of Velorum",
+	"item.hemomancy.consecrated_syringe": "Consecrated Syringe",
+
+	"effect.hemomancy.marked_by_canon": "Marked by Canon",
+
+	"entity.hemomancy.harbinger_saint": "Harbinger Saint",
+
+	"hemomancy.manipulation.crimson_tithe": "Crimson Tithe",
+	"hemomancy.manipulation.unclosing_eye": "Unclosing Eye",
+	"hemomancy.manipulation.bloom_of_rot": "Bloom of Rot",
+	"hemomancy.manipulation.endless_hour": "Endless Hour",
+
 	"key.hemomancy.bloodballdrop.desc": "Drop Blood Ball",
 	"hemomancy.rite.initiate_rite.blob_granted": "A sanguine orb coalesces in your hand — yours to command."
 }
