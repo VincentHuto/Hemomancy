@@ -30,6 +30,7 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 
 public class HarbingerOutpostStructure extends Structure {
+	private static final int MAX_SPAWN_ATTEMPTS = 32;
 
 	public static final Codec<HarbingerOutpostStructure> CODEC = RecordCodecBuilder
 			.<HarbingerOutpostStructure>mapCodec(instance -> instance.group(HarbingerOutpostStructure.settingsCodec(instance),
@@ -123,7 +124,7 @@ public class HarbingerOutpostStructure extends Structure {
 	private <T extends Entity> void spawnOnFloor(WorldGenLevel level, RandomSource random,
 			EntityType<T> type, int originX, int originZ, int floorY, int maxY, int spread) {
 
-		for (int attempt = 0; attempt < 32; attempt++) {
+		for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; attempt++) {
 			int dx = (attempt < 4) ? 0 : random.nextInt(spread * 2 + 1) - spread;
 			int dz = (attempt < 4) ? 0 : random.nextInt(spread * 2 + 1) - spread;
 			int startY = floorY + (attempt % 4);
