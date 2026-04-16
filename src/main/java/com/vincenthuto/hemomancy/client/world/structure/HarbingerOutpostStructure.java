@@ -30,7 +30,10 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 
 public class HarbingerOutpostStructure extends Structure {
-	private static final int MAX_SPAWN_ATTEMPTS = 32;
+	private static final int MAX_PLACEMENT_ATTEMPTS = 32;
+	private static final int INITIAL_CENTERED_ATTEMPTS = 4;
+	private static final int VICAR_SPAWN_SPREAD = 3;
+	private static final int ALCHEMIST_SPAWN_SPREAD = 2;
 
 	public static final Codec<HarbingerOutpostStructure> CODEC = RecordCodecBuilder
 			.<HarbingerOutpostStructure>mapCodec(instance -> instance.group(HarbingerOutpostStructure.settingsCodec(instance),
@@ -111,23 +114,23 @@ public class HarbingerOutpostStructure extends Structure {
 		int maxY = (fullBox.minY() + fullBox.maxY()) / 2;
 
 		spawnOnFloor(level, random, EntityInit.harbinger_vicar.get(),
-				centerX, centerZ, floorY, maxY, 3);
+				centerX, centerZ, floorY, maxY, VICAR_SPAWN_SPREAD);
 
 		int halfWidth = (fullBox.maxX() - fullBox.minX()) / 4;
 		int halfDepth = (fullBox.maxZ() - fullBox.minZ()) / 4;
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX - halfWidth, centerZ - halfDepth, floorY, maxY, 2);
+				centerX - halfWidth, centerZ - halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
 		spawnOnFloor(level, random, EntityInit.harbinger_alchemist.get(),
-				centerX + halfWidth, centerZ + halfDepth, floorY, maxY, 2);
+				centerX + halfWidth, centerZ + halfDepth, floorY, maxY, ALCHEMIST_SPAWN_SPREAD);
 	}
 
 	private <T extends Entity> void spawnOnFloor(WorldGenLevel level, RandomSource random,
 			EntityType<T> type, int originX, int originZ, int floorY, int maxY, int spread) {
 
-		for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; attempt++) {
-			int dx = (attempt < 4) ? 0 : random.nextInt(spread * 2 + 1) - spread;
-			int dz = (attempt < 4) ? 0 : random.nextInt(spread * 2 + 1) - spread;
-			int startY = floorY + (attempt % 4);
+		for (int attempt = 0; attempt < MAX_PLACEMENT_ATTEMPTS; attempt++) {
+			int dx = (attempt < INITIAL_CENTERED_ATTEMPTS) ? 0 : random.nextInt(spread * 2 + 1) - spread;
+			int dz = (attempt < INITIAL_CENTERED_ATTEMPTS) ? 0 : random.nextInt(spread * 2 + 1) - spread;
+			int startY = floorY + (attempt % INITIAL_CENTERED_ATTEMPTS);
 
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(
 					originX + dx, startY, originZ + dz);
