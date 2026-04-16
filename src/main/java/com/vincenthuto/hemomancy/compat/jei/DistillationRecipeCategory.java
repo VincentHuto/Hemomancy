@@ -41,9 +41,12 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 
 	private static final int BORDER_OUTER = 0xFF330808;
 	private static final int BORDER_INNER = 0xFF220606;
-	private static final int SLOT_BG = 0xFF1A0808;
-	private static final int SLOT_BORDER_DARK = 0xFF0D0303;
-	private static final int SLOT_BORDER_LIGHT = 0xFF3A1212;
+	private static final int SLOT_BG_GHASTLY = 0xFF1A0808;
+	private static final int SLOT_BORDER_DARK_GHASTLY = 0xFF0D0303;
+	private static final int SLOT_BORDER_LIGHT_GHASTLY = 0xFF3A1212;
+	private static final int SLOT_BG_PALLID = 0xFF101418;
+	private static final int SLOT_BORDER_DARK_PALLID = 0xFF0A0F12;
+	private static final int SLOT_BORDER_LIGHT_PALLID = 0xFF3A454C;
 
 	private final IDrawable background;
 	private final IDrawable icon;
@@ -179,10 +182,13 @@ public class DistillationRecipeCategory implements IRecipeCategory<DistillationR
 	}
 
 	private void drawSlot(GuiGraphics gfx, int sx, int sy) {
-		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, SLOT_BORDER_DARK);
-		gfx.fill(sx, sy, sx + 16, sy + 16, SLOT_BG);
-		gfx.fill(sx + 16, sy, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
-		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
+		int slotBorderDark = pallid ? SLOT_BORDER_DARK_PALLID : SLOT_BORDER_DARK_GHASTLY;
+		int slotBg = pallid ? SLOT_BG_PALLID : SLOT_BG_GHASTLY;
+		int slotBorderLight = pallid ? SLOT_BORDER_LIGHT_PALLID : SLOT_BORDER_LIGHT_GHASTLY;
+		gfx.fill(sx - 1, sy - 1, sx + 17, sy + 17, slotBorderDark);
+		gfx.fill(sx, sy, sx + 16, sy + 16, slotBg);
+		gfx.fill(sx + 16, sy, sx + 17, sy + 17, slotBorderLight);
+		gfx.fill(sx, sy + 16, sx + 17, sy + 17, slotBorderLight);
 	}
 
 	protected void drawCookTime(DistillationRecipe recipe, GuiGraphics graphics, int y) {
