@@ -1257,7 +1257,7 @@
 	"message.hemomancy.blood_pylon.inspect": "A Blood Pylon — it siphons vitality from those who linger nearby.",
 	"message.hemomancy.blood_pylon.draining": "The pylon draws your blood...",
 
-	"message.hemomancy.saint_sarcophagus.dormant_hint": "Offer a filled Blood Vial to rouse the corpus.",
-	"message.hemomancy.saint_sarcophagus.responsive_hint": "The corpus stirs. Continue offering filled Blood Vials; then process the Consecrated Syringe in a Vial Centrifuge.",
+	"message.hemomancy.saint_sarcophagus.dormant_hint": "Hold an empty Blood Vial and draw blood from the corpus.",
+	"message.hemomancy.saint_sarcophagus.responsive_hint": "The corpus stirs. Continue drawing blood with empty Blood Vials; then process the Consecrated Syringe in a Vial Centrifuge.",
 	"message.hemomancy.saint_sarcophagus.awakened_hint": "The corpus is incensed. Strike it to begin the trial."
 }
