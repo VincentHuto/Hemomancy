@@ -280,6 +280,8 @@ public class ItemInit {
 			() -> new EnzymeItem(EnumBloodTendency.TENEBRIS, 10));
 	public static final RegistryObject<Item> recycled_enzyme = BASEITEMS.register("recycled_enzyme",
 			() -> new RecycledEnzymeItem());
+	public static final RegistryObject<Item> saint_enzyme = BASEITEMS.register("saint_enzyme",
+			() -> new EnzymeItem(EnumBloodTendency.LUX, 20));
 
 	// Blood Tendency Gauge
 	public static final RegistryObject<Item> blood_tendency_gauge = BASEITEMS.register("blood_tendency_gauge",
