@@ -293,6 +293,7 @@ public class BloodManipulation  {
 				if (volume.getBloodVolume() > effectiveCost) {
 					if (tendency.getAlignmentByTendency(tend) >= alignLevel) {
 						volume.drain(effectiveCost);
+						volume.addBloodSpend(effectiveCost);
 						PacketHandler.CHANNELBLOODVOLUME.send(
 								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 								new BloodVolumeServerPacket(volume));

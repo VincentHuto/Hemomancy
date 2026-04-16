@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,10 @@ public final class HarbingerSaintEncounterHooks {
 	}
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer) {
+		// Reset blood debt at encounter start so pre-fight damage doesn't carry over.
+		sourcePlayer.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.ifPresent(v -> v.resetBloodDebt());
+
 		// Intentional reuse: there is no dedicated Harbinger Saint entity type yet, so
 		// the encounter hook upgrades a Harbinger Vicar into a named boss-style spawn.
 		var boss = EntityInit.harbinger_vicar.get().create(level);

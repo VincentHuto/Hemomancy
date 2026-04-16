@@ -212,6 +212,7 @@ public class BloodVolumeEvents {
 				double drainAmount = event.getAmount() * HemoServerConfig.BLOOD_DRAIN_PER_DAMAGE.get()
 						* SkillPointHelper.getHemostasisMultiplier();
 				volume.drain(drainAmount);
+				volume.addDamage(event.getAmount());
 				syncVolume((ServerPlayer) player, volume);
 
 				// Warn the player when blood is critically low
