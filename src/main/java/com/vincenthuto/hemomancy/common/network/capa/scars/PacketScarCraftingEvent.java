@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.network.capa.scars;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
-import com.vincenthuto.hemomancy.common.menu.ScarStationMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 
 import net.minecraft.ChatFormatting;

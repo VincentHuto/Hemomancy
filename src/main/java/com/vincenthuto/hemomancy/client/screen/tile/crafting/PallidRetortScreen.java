@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.menu.PallidRetortMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
 
 import net.minecraft.client.gui.GuiGraphics;

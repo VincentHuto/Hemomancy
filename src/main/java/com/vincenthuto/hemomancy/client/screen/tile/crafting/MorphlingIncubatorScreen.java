@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.MorphlingIncubatorBlockEntity;
 
 import net.minecraft.client.gui.GuiGraphics;

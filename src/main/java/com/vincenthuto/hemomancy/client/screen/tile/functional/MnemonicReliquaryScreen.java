@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulatio
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.menu.MnemonicReliquaryMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.EquipManipulationPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;

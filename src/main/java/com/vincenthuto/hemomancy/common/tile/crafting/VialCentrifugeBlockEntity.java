@@ -14,7 +14,7 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;

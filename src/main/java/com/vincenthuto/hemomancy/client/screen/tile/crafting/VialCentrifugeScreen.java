@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.StartCentrifugeButtonPacket;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;

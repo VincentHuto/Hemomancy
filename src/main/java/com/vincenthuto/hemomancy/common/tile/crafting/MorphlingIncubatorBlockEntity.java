@@ -17,7 +17,7 @@ import com.vincenthuto.hemomancy.common.item.RecycledEnzymeItem;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
-import com.vincenthuto.hemomancy.common.menu.MorphlingIncubatorMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.MorphlingIncubatorMenu;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
 import com.vincenthuto.hemomancy.common.tile.IBloodTile;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;

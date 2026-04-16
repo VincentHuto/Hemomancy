@@ -62,7 +62,7 @@ import com.vincenthuto.hemomancy.common.item.tool.living.LivingStaffItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.LivingSyringeItem;
 import com.vincenthuto.hemomancy.common.item.tool.living.SanguisLanceaItem;
 import com.vincenthuto.hemomancy.common.item.tool.unstained.UnstainedWarhammerItem;
-import com.vincenthuto.hemomancy.common.util.HemoItemProperties;
+import com.vincenthuto.hemomancy.common.item.HemoItemProperties;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
 import com.vincenthuto.hutoslib.common.item.ItemKnapper;
 

@@ -2,8 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.scars;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.menu.FungalImplantMenuProvider;
-import com.vincenthuto.hemomancy.common.menu.ScarMenuProvider;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;

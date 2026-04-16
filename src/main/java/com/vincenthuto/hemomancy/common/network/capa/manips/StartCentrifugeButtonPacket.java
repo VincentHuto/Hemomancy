@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.manips;
 
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.menu.VialCentrifugeMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.VialCentrifugeMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.VialCentrifugeBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;

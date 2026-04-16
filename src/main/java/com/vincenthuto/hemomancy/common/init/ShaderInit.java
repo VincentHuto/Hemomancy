@@ -5,8 +5,8 @@ import java.io.IOException;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.render.tile.RadiantPortalRendertype;
-import com.vincenthuto.hemomancy.client.screen.codex.ExtendedShaderInstance;
-import com.vincenthuto.hemomancy.client.screen.codex.ShaderHolder;
+import com.vincenthuto.hemomancy.client.render.shader.ExtendedShaderInstance;
+import com.vincenthuto.hemomancy.client.render.shader.ShaderHolder;
 
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.resources.ResourceProvider;

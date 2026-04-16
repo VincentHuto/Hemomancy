@@ -11,7 +11,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.item.scar.ItemScarBinder;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
-import com.vincenthuto.hemomancy.common.menu.ScarStationMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.scars.PacketScarCraftingEvent;
 import com.vincenthuto.hemomancy.common.network.capa.scars.PacketUpdateScarPattern;

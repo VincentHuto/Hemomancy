@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.menu.slot;
 
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
-import com.vincenthuto.hemomancy.common.menu.GhastlyAlembicMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.crafting.GhastlyAlembicMenu;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import net.minecraft.world.Container;

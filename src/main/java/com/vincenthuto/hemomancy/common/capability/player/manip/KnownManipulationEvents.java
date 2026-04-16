@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSyste
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
-import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
+import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;

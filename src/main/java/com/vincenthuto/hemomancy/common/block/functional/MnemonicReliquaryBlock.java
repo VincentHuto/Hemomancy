@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.menu.MnemonicReliquaryMenu;
+import com.vincenthuto.hemomancy.common.menu.tile.functional.MnemonicReliquaryMenu;
 import com.vincenthuto.hemomancy.common.tile.functional.MnemonicReliquaryBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

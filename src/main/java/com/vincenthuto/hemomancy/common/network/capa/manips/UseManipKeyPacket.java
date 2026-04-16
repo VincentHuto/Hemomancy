@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
-import java.util.function.Supplier;
-
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -9,15 +7,16 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ManipulationInit;
 import com.vincenthuto.hemomancy.common.item.tool.living.IDispellable;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
-import com.vincenthuto.hemomancy.common.manipulation.quick.ConjurationManip;
-import com.vincenthuto.hemomancy.common.manipulation.quick.SummonThrallManip;
-
+import com.vincenthuto.hemomancy.common.manipulation.animus.SummonThrallManip;
+import com.vincenthuto.hemomancy.common.manipulation.ferric.ConjurationManip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 /**
  * Unified packet for casting any blood manipulation regardless of type.

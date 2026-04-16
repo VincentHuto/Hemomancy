@@ -1,17 +1,10 @@
 package com.vincenthuto.hemomancy.common.item;
 
-import java.util.List;
-
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.screen.codex.HemoProgressionScreen;
-import com.vincenthuto.hutoslib.HutosLib;
 import com.vincenthuto.hutoslib.client.screen.guide.HLGuiGuideTitlePage;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookPlaceboReloadListener;
-import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreeCodeModel;
-import com.vincenthuto.hutoslib.common.data.skilltree.SkillTreePlaceboReloadListener;
 import com.vincenthuto.hutoslib.common.item.ItemGuideBook;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,17 +16,19 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
+
 public class BloodyBookItem extends ItemGuideBook {
 
-	public BloodyBookItem(Properties prop, ResourceLocation loc) {
-		super(prop, loc);
-	}
+    public BloodyBookItem(Properties prop, ResourceLocation loc) {
+        super(prop, loc);
+    }
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
-	}
+    @Override
+    public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        tooltip.add(Component.literal(ChatFormatting.GOLD + "A guide to your blood and its power."));
+    }
 
 //	@Override
 //	public boolean hurtEnemy(ItemStack stack, LivingEntity entity, @Nonnull LivingEntity attacker) {
@@ -78,31 +73,21 @@ public class BloodyBookItem extends ItemGuideBook {
 //		return super.hurtEnemy(stack, entity, attacker);
 //	}
 
-	@Override
-	public Rarity getRarity(ItemStack par1ItemStack) {
-		return Rarity.UNCOMMON;
-	}
+    @Override
+    public Rarity getRarity(ItemStack par1ItemStack) {
+        return Rarity.UNCOMMON;
+    }
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
-		BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
-		BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("sanctumsanguinium"));
-		SkillTreePlaceboReloadListener testt = SkillTreePlaceboReloadListener.INSTANCE;
-		SkillTreeCodeModel tt = testt.getTreeByTitle(Hemomancy.rloc("hemotree"));
-	
-		if (test != null) {
-			if (lvl.isClientSide) {
-				if (p_41433_.isShiftKeyDown()) {
-					HemoProgressionScreen.openCodexViaItem(tt);
-				} else {
-					if (book != null) {
-						HLGuiGuideTitlePage.openScreenViaItem(book);
-					}
-				}
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level lvl, Player p_41433_, InteractionHand p_41434_) {
+        BookPlaceboReloadListener test = BookPlaceboReloadListener.INSTANCE;
+        BookCodeModel book = test.getBookByTitle(Hemomancy.rloc("sanctumsanguinium"));
 
-			}
-		}
-		return super.use(lvl, p_41433_, p_41434_);
-	}
+        if (lvl.isClientSide) {
+            HLGuiGuideTitlePage.openScreenViaItem(book);
+        }
+
+        return super.use(lvl, p_41433_, p_41434_);
+    }
 
 }

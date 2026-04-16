@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.data.book.BloodStructurePageTemplate;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.init.*;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
-import com.vincenthuto.hemomancy.common.util.EngramTextureCache;
+import com.vincenthuto.hemomancy.common.block.EngramTextureCache;
 import com.vincenthuto.hemomancy.compat.curios.CuriosPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPlugin;
 import com.vincenthuto.hemomancy.compat.mna.MnAPluginClientEvents;
@@ -30,13 +30,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -200,27 +195,6 @@ public class Hemomancy {
         return new ResourceLocation(MOD_ID, path);
     }
 
-    /**
-     * Registers a brewing recipe: Awkward Potion + plant item → mod potion.
-     */
-    private static void registerPlantBrewingRecipe(Item plantItem,
-                                                   net.minecraft.world.item.alchemy.Potion resultPotion) {
-        BrewingRecipeRegistry.addRecipe(
-                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
-                Ingredient.of(plantItem),
-                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
-    }
-
-    /**
-     * Registers a brewing recipe: Awkward Potion + mob drop → mod potion.
-     */
-    private static void registerDropBrewingRecipe(Item dropItem,
-                                                  net.minecraft.world.item.alchemy.Potion resultPotion) {
-        BrewingRecipeRegistry.addRecipe(
-                Ingredient.of(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD)),
-                Ingredient.of(dropItem),
-                PotionUtils.setPotion(new ItemStack(Items.POTION), resultPotion));
-    }
 
     public void buildContents(BuildCreativeModeTabContentsEvent populator) {
         if (populator.getTabKey() == hemomancytab.getKey()) {
@@ -256,45 +230,12 @@ public class Hemomancy {
         event.enqueueWork(() -> {
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
-
-            // Blood-Faction Plant Brewing Recipes
-            // Only blood-aligned plants brew into hemomancy potions.
-            // Unstained plants (puffball, lethean poppy, ghost pipe)
-            // deliberately do NOT brew blood-positive effects.
-            registerPlantBrewingRecipe(BlockInit.bleeding_heart.get().asItem(),
-                    EffectInit.potion_of_sanguine_siphon.get());
-            registerPlantBrewingRecipe(BlockInit.infected_fungus.get().asItem(),
-                    EffectInit.potion_of_mycorrhizal_mending.get());
-            registerPlantBrewingRecipe(BlockInit.stinkhorn_fungus.get().asItem(),
-                    EffectInit.potion_of_blood_binding.get());
-            registerPlantBrewingRecipe(BlockInit.rafflesia.get().asItem(),
-                    EffectInit.potion_of_hemolysis.get());
-            registerPlantBrewingRecipe(BlockInit.sarcodes.get().asItem(),
-                    EffectInit.potion_of_blood_rush.get());
-
-            // Mob Drop Brewing Recipes
-            // Hostile mob drops brew into existing hemomancy potions as alternative catalysts.
-            registerDropBrewingRecipe(ItemInit.desiccated_membrane.get(),
-                    EffectInit.potion_of_blood_loss.get());
-            registerDropBrewingRecipe(ItemInit.molten_clot.get(),
-                    EffectInit.potion_of_blood_rush.get());
-            registerDropBrewingRecipe(ItemInit.void_ichor.get(),
-                    EffectInit.potion_of_echoic_perception.get());
-            registerDropBrewingRecipe(ItemInit.frozen_cruor.get(),
-                    EffectInit.potion_of_chitinous_bulwark.get());
-            registerDropBrewingRecipe(ItemInit.abyssal_ichor.get(),
-                    EffectInit.potion_of_luminous_dissipation.get());
-            registerDropBrewingRecipe(ItemInit.nerve_bundle.get(),
-                    EffectInit.potion_of_serpentine_guile.get());
-
         });
-
         HemoEntityPredicates.init();
         SkillPointInit.init();
         ManipulationTreeInit.init();
         initUnstainedStageIcons();
         PacketHandler.registerChannels();
-
     }
 
     /**
@@ -306,7 +247,6 @@ public class Hemomancy {
         EnumPurityStage.CLEANSING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_extract.get()));
         EnumPurityStage.ABSOLVED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tears_of_lethe.get()));
         EnumPurityStage.PURIFIED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethe_icon.get()));
-
         EnumClarityStage.AWAKENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.cleansed_blood_crystal_shard.get()));
         EnumClarityStage.DISCERNING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.silver_chalice.get()));
         EnumClarityStage.VIGILANT.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pale_silver_ingot.get()));
