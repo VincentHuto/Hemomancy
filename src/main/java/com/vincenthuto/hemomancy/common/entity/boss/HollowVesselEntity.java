@@ -77,7 +77,7 @@ public class HollowVesselEntity extends Monster {
 	private final ServerBossEvent bossEvent = new ServerBossEvent(
 			Component.translatable("entity.hemomancy.hollow_vessel"),
 			BossEvent.BossBarColor.RED,
-			BossEvent.BossBarOverlay.PROGRESS);
+			BossEvent.BossBarOverlay.NOTCHED_10);
 
 	public HollowVesselEntity(EntityType<? extends HollowVesselEntity> type, Level level) {
 		super(type, level);
@@ -159,6 +159,18 @@ public class HollowVesselEntity extends Monster {
 				}
 			}
 			bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+
+			// Ambient soul-drain particles every 10 ticks — the vessel seeps residual life
+			if (this.tickCount % 10 == 0 && this.level() instanceof ServerLevel server) {
+				server.sendParticles(ParticleTypes.SOUL,
+						this.getX(), this.getY() + 1.0, this.getZ(),
+						2, 0.4, 0.5, 0.4, 0.01);
+				if (isInPhase2()) {
+					server.sendParticles(ParticleTypes.DAMAGE_INDICATOR,
+							this.getX(), this.getY() + 0.5, this.getZ(),
+							1, 0.3, 0.2, 0.3, 0.02);
+				}
+			}
 		}
 	}
 
@@ -169,7 +181,14 @@ public class HollowVesselEntity extends Monster {
 			server.sendParticles(ParticleTypes.LARGE_SMOKE,
 					this.getX(), this.getY() + 1.0, this.getZ(),
 					50, 1.0, 1.0, 1.0, 0.1);
+			server.sendParticles(ParticleTypes.SOUL,
+					this.getX(), this.getY() + 1.0, this.getZ(),
+					30, 0.8, 0.8, 0.8, 0.04);
 		}
+		// Boss bar signals the phase shift — turns purple and renames
+		bossEvent.setColor(BossEvent.BossBarColor.PURPLE);
+		bossEvent.setName(Component.literal("Saint Hemorath - The Vessel Empties")
+				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.BOLD));
 		if (this.getTarget() instanceof Player player) {
 			player.displayClientMessage(
 					Component.literal("The Hollow Vessel empties further...")
@@ -199,6 +218,11 @@ public class HollowVesselEntity extends Monster {
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
 		bossEvent.addPlayer(player);
+		// Announce the encounter to the player who enters sight range
+		player.displayClientMessage(
+				Component.literal("The Hollow Vessel stirs. Blood will be spent.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
 	}
 
 	@Override
