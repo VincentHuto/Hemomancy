@@ -1,10 +1,11 @@
 {
-  "type": "hemomancy:ghastly_alembic",
+  "type": "hemomancy:distillation_recipe",
   "ingredient": {
     "item": "hemomancy:ghost_pipe"
   },
   "result": "hemomancy:lethean_extract",
   "count": 1,
   "experience": 0.5,
-  "cookingtime": 150
+  "cookingtime": 150,
+  "pallid": true
 }

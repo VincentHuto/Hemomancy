@@ -48,8 +48,9 @@ public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembic
 
 		float experience = GsonHelper.getAsFloat(object, "experience", 0.0F);
 		int cookingTime = GsonHelper.getAsInt(object, "cookingtime", 100);
+		boolean pallid = GsonHelper.getAsBoolean(object, "pallid", false);
 
-		return new GhastlyAlembicRecipe(location, group, ingredient, catalyst, result, experience, cookingTime);
+		return new GhastlyAlembicRecipe(location, group, ingredient, catalyst, pallid, result, experience, cookingTime);
 	}
 
 	@Override
@@ -58,10 +59,11 @@ public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembic
 		Ingredient ingredient = Ingredient.fromNetwork(buffer);
 		boolean hasCatalyst = buffer.readBoolean();
 		Ingredient catalyst = hasCatalyst ? Ingredient.fromNetwork(buffer) : Ingredient.EMPTY;
+		boolean pallid = buffer.readBoolean();
 		ItemStack result = buffer.readItem();
 		float xp = buffer.readFloat();
 		int time = buffer.readInt();
-		return new GhastlyAlembicRecipe(recipeId, group, ingredient, catalyst, result, xp, time);
+		return new GhastlyAlembicRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
 	}
 
 	@Override
@@ -71,6 +73,7 @@ public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembic
 		boolean hasCatalyst = recipe.requiresCatalyst();
 		buffer.writeBoolean(hasCatalyst);
 		if (hasCatalyst) recipe.getCatalyst().toNetwork(buffer);
+		buffer.writeBoolean(recipe.isPallid());
 		buffer.writeItem(recipe.getResultItem(null));
 		buffer.writeFloat(recipe.getExperience());
 		buffer.writeInt(recipe.getCookingTime());

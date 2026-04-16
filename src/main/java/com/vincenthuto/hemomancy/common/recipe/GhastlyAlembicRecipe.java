@@ -30,16 +30,18 @@ public class GhastlyAlembicRecipe implements Recipe<Container> {
 	private final Ingredient ingredient;
 	/** Optional catalyst — {@link Ingredient#EMPTY} means the recipe works without one. */
 	private final Ingredient catalyst;
+	private final boolean pallid;
 	private final ItemStack result;
 	private final float experience;
 	private final int cookingTime;
 
 	public GhastlyAlembicRecipe(ResourceLocation id, String group, Ingredient ingredient,
-			Ingredient catalyst, ItemStack result, float experience, int cookingTime) {
+			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime) {
 		this.id = id;
 		this.group = group;
 		this.ingredient = ingredient;
 		this.catalyst = catalyst;
+		this.pallid = pallid;
 		this.result = result;
 		this.experience = experience;
 		this.cookingTime = cookingTime;
@@ -54,6 +56,9 @@ public class GhastlyAlembicRecipe implements Recipe<Container> {
 
 	/** True when this recipe requires a specific catalyst item. */
 	public boolean requiresCatalyst() { return !catalyst.isEmpty(); }
+
+	/** True when this recipe is for the Pallid Retort; false means Ghastly Alembic. */
+	public boolean isPallid() { return pallid; }
 
 	public float getExperience() { return experience; }
 	public int getCookingTime() { return cookingTime; }
@@ -112,17 +117,17 @@ public class GhastlyAlembicRecipe implements Recipe<Container> {
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return RecipeInit.ghastly_alembic_serializer.get();
+		return RecipeInit.distillation_recipe_serializer.get();
 	}
 
 	@Override
 	public RecipeType<?> getType() {
-		return RecipeInit.ghastly_alembic_recipe_type.get();
+		return RecipeInit.distillation_recipe_type.get();
 	}
 
 	// ---- Helpers ----
 
 	public static List<GhastlyAlembicRecipe> getAllRecipes(Level world) {
-		return world.getRecipeManager().getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get());
+		return world.getRecipeManager().getAllRecipesFor(RecipeInit.distillation_recipe_type.get());
 	}
 }

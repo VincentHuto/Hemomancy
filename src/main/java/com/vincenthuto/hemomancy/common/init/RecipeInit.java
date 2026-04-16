@@ -37,8 +37,8 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeType<ScarRecipe>> chisel_recipe = RECIPE_TYPES.register("scar_recipe",
 			() -> RecipeType.simple(Hemomancy.rloc("scar_recipe")));
 
-	public static final RegistryObject<RecipeType<GhastlyAlembicRecipe>> ghastly_alembic_recipe_type = RECIPE_TYPES
-			.register("ghastly_alembic_recipe_type", () -> RecipeType.simple(Hemomancy.rloc("ghastly_alembic")));
+	public static final RegistryObject<RecipeType<GhastlyAlembicRecipe>> distillation_recipe_type = RECIPE_TYPES
+			.register("distillation_recipe", () -> RecipeType.simple(Hemomancy.rloc("distillation_recipe")));
 
 	public static final RegistryObject<RecipeType<MemoryWeavingRecipe>> memory_weaving_type = RECIPE_TYPES
 			.register("memory_weaving_type", () -> RecipeType.simple(Hemomancy.rloc("memory_weaving")));
@@ -53,7 +53,7 @@ public class RecipeInit {
 			.register("incubator", () -> RecipeType.simple(Hemomancy.rloc("incubator")));
 
 	// Serialize
-	public static final RegistryObject<RecipeSerializer<?>> ghastly_alembic_serializer = SERIALIZERS.register("ghastly_alembic",
+	public static final RegistryObject<RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
 			GhastlyAlembicSerializer::new);
 
 	public static final RegistryObject<RecipeSerializer<?>> morphling_jar_upgrade_serializer = SERIALIZERS

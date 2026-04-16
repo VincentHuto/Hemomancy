@@ -1,5 +1,5 @@
 {
-  "type": "hemomancy:ghastly_alembic",
+  "type": "hemomancy:distillation_recipe",
   "ingredient": {
     "item": "hemomancy:molten_clot"
   },

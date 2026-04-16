@@ -212,7 +212,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 
 	@Override
 	public RecipeType<GhastlyAlembicRecipe> getRecipeType() {
-		return JEIPlugin.ghastly_alembic_recipe_type;
+		return JEIPlugin.distillation_recipe_type;
 	}
 
 	@Nonnull

@@ -146,7 +146,7 @@ public class PallidRetortMenu extends AbstractContainerMenu {
 		// Check if any ghastly alembic recipe accepts this item as its main ingredient
 		return GhastlyAlembicRecipe.getAllRecipes(this.level)
 				.stream()
-				.anyMatch(r -> r.getIngredient().test(stack));
+				.anyMatch(r -> r.isPallid() && r.getIngredient().test(stack));
 	}
 
 	public boolean isFlask(ItemStack stack) {

@@ -178,9 +178,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	private static int getTotalCookTime(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> r.matches(te, level))
+				.filter(r -> !r.isPallid() && r.matches(te, level))
 				.mapToInt(GhastlyAlembicRecipe::getCookingTime)
 				.findFirst()
 				.orElse(200);
@@ -188,9 +188,9 @@ public class GhastlyAlembicBlockEntity extends BaseContainerBlockEntity
 
 	private static GhastlyAlembicRecipe findMatchingRecipe(Level level, GhastlyAlembicBlockEntity te) {
 		return level.getRecipeManager()
-				.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())
+				.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())
 				.stream()
-				.filter(r -> r.matches(te, level))
+				.filter(r -> !r.isPallid() && r.matches(te, level))
 				.findFirst()
 				.orElse(null);
 	}

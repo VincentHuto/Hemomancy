@@ -73,7 +73,7 @@ public final class RecipeLookup {
 		var ra = level.registryAccess();
 
 		// Ghastly Alembic recipes
-		for (GhastlyAlembicRecipe r : rm.getAllRecipesFor(RecipeInit.ghastly_alembic_recipe_type.get())) {
+		for (GhastlyAlembicRecipe r : rm.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())) {
 			ItemStack result = r.getResultItem(ra);
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.GHASTLY_ALEMBIC));

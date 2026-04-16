@@ -27,8 +27,8 @@ import net.minecraft.world.item.ItemStack;
 public class JEIPlugin implements IModPlugin {
 
 	private static final ResourceLocation ID = Hemomancy.rloc("main");
-	public static final RecipeType<GhastlyAlembicRecipe> ghastly_alembic_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
-			"ghastly_alembic_recipe_type", GhastlyAlembicRecipe.class);
+	public static final RecipeType<GhastlyAlembicRecipe> distillation_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
+			"distillation_recipe", GhastlyAlembicRecipe.class);
 	public static final RecipeType<MemoryWeavingRecipe> memory_weaving_type = RecipeType.create(Hemomancy.MOD_ID,
 			"memory_weaving", MemoryWeavingRecipe.class);
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
@@ -56,7 +56,8 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
-		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), ghastly_alembic_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.ghastly_alembic.get()), distillation_recipe_type);
+		registry.addRecipeCatalyst(new ItemStack(BlockInit.pallid_retort.get()), distillation_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.somatic_loom.get()), memory_weaving_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.hematic_iron_block.get()), blood_structure_recipe_type);
 		registry.addRecipeCatalyst(new ItemStack(BlockInit.scar_station.get()), scar_station_recipe_type);
@@ -66,7 +67,7 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
-		registry.addRecipes(ghastly_alembic_recipe_type, GhastlyAlembicRecipe.getAllRecipes(world));
+		registry.addRecipes(distillation_recipe_type, GhastlyAlembicRecipe.getAllRecipes(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));
