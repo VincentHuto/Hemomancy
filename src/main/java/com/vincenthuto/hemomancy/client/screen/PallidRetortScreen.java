@@ -29,8 +29,10 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	private static final int BORDER_INNER = 0xFF172028;
 
 	private static final int CRAFT_AREA_HEIGHT = 80;
+	private static final int RHOMBUS_COUNT     = 10;
 
 	final PallidRetortBlockEntity te;
+	private float[][] rhombusParams;
 
 	// Lethe bar screen-space bounds for hover detection
 	private int letheBarX1, letheBarY1, letheBarX2, letheBarY2;
@@ -47,6 +49,20 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	protected void init() {
 		super.init();
 		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+
+		// Seed rhombus parameters — same logic as UnstainedProgressScreen
+		Random rand = new Random(99887L);
+		rhombusParams = new float[RHOMBUS_COUNT][8];
+		for (int i = 0; i < RHOMBUS_COUNT; i++) {
+			rhombusParams[i][0] = rand.nextFloat();                             // startX ratio
+			rhombusParams[i][1] = rand.nextFloat();                             // startY ratio
+			rhombusParams[i][2] = 12 + rand.nextInt(24);                        // half-size
+			rhombusParams[i][3] = (rand.nextFloat() - 0.5f) * 10f;             // velX (pixels/sec)
+			rhombusParams[i][4] = (rand.nextFloat() - 0.5f) * 8f;              // velY (pixels/sec)
+			rhombusParams[i][5] = rand.nextFloat() * (float) (Math.PI * 2);    // phase offset
+			rhombusParams[i][6] = 0.5f + rand.nextFloat() * 0.5f;              // brightness
+			rhombusParams[i][7] = (rand.nextFloat() - 0.5f) * 1.2f;            // rotation speed (rad/sec)
+		}
 	}
 
 	// ───── Main render ─────
@@ -363,100 +379,125 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		gfx.fill(x + w - 2, y + 1, x + w - 1, y + h - 1, BORDER_INNER);
 	}
 
-	// ───── Diamond / blue crystalline background ─────
+	// ───── Diamond / blue background (matches UnstainedProgressScreen) ─────
 
 	/**
-	 * Renders a repeating diamond lattice with a pale silver-blue palette,
-	 * replacing the red vein background used by the Ghastly Alembic.
+	 * Dark blue base with a radial glow, floating rotating hollow rhombuses,
+	 * and subtle blue speckles — identical to the UnstainedProgressScreen background.
 	 */
 	private void renderDiamondBackground(GuiGraphics gfx, int gx, int gy, int gw, int gh) {
 		gfx.enableScissor(gx, gy, gx + gw, gy + gh);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
-		// Layer 1: deep navy base
-		gfx.fill(gx, gy, gx + gw, gy + gh, 0xFF080E16);
+		// Layer 1: rich dark blue base
+		gfx.fill(gx, gy, gx + gw, gy + gh, 0xFF060A1E);
 
-		// Layer 2: subtle radial blue glow from center
-		float time = System.nanoTime() / 1_000_000_000f;
-		int cx = gx + gw / 2;
-		int cy = gy + gh / 2;
+		// Layer 2: dark-blue → blue-white radial gradient from the centre (subtle)
+		int centerX = gx + gw / 2;
+		int centerY = gy + gh / 2;
 		int glowRadius = Math.max(gw, gh) / 2;
-		float glow = 0.6f + 0.4f * Mth.sin(time * 0.7f);
-		for (int ring = glowRadius; ring > 0; ring -= 3) {
-			float t = (float) ring / glowRadius;
-			int alpha = (int) (28 * (1f - t) * glow);
-			int blue  = (int) (50 * (1f - t) * glow);
-			int green = (int) (20 * (1f - t) * glow);
-			gfx.fill(cx - ring, cy - ring, cx + ring, cy + ring,
-					(alpha << 24) | (green << 8) | blue);
+		for (int ring = glowRadius; ring > 0; ring -= 4) {
+			float t = (float) ring / glowRadius;           // 1.0 at edge, 0.0 at centre
+			float intensity = (1f - t) * (1f - t);         // quadratic falloff
+			int alpha = (int) (50 * intensity);
+			int r     = (int) (200 * intensity);
+			int g     = (int) (210 * intensity);
+			int b     = (int) (255 * intensity);
+			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
+			gfx.fill(centerX - ring, centerY - ring, centerX + ring, centerY + ring, color);
 		}
 
-		// Layer 3: repeating diamond lattice
-		// Each diamond cell is CELL×CELL; the lattice is offset on alternate rows.
-		final int CELL = 14; // pixels between diamond centres
-		float animShift = (time * 4f) % CELL; // slow horizontal drift
-
-		for (int row = -1; row * CELL < gh + CELL; row++) {
-			int yCenter = gy + (int) (row * CELL + animShift % CELL);
-			int xOff = (row % 2 == 0) ? 0 : CELL / 2;
-
-			for (int col = -1; col * CELL < gw + CELL; col++) {
-				int xCenter = gx + col * CELL + xOff + (int) animShift;
-
-				// Diamond = rotated square; draw as a cross of pixels
-				float pulseLine = 0.5f + 0.5f * Mth.sin(time * 1.2f + row * 0.4f + col * 0.3f);
-				int la = (int) (55 * pulseLine);
-				int lr = (int) (100 * pulseLine);
-				int lg = (int) (140 * pulseLine);
-				int lb = (int) (200 * pulseLine);
-				int lineColor = (la << 24) | (lr << 16) | (lg << 8) | lb;
-
-				// Half-size of the diamond (distance from centre to vertex)
-				int half = CELL / 2 - 1;
-				for (int d = -half; d <= half; d++) {
-					int span = half - Math.abs(d);
-					// Horizontal arm of the diamond outline
-					int px = xCenter + d;
-					if (px >= gx && px < gx + gw) {
-						int py1 = yCenter - span;
-						int py2 = yCenter + span;
-						if (py1 >= gy && py1 < gy + gh)
-							gfx.fill(px, py1, px + 1, py1 + 1, lineColor);
-						if (py2 != py1 && py2 >= gy && py2 < gy + gh)
-							gfx.fill(px, py2, px + 1, py2 + 1, lineColor);
-					}
-				}
-
-				// Bright vertex dots at the four cardinal points
-				float dotPulse = 0.4f + 0.6f * Mth.sin(time * 2f + col * 0.7f + row * 0.5f);
-				int da = (int) (120 * dotPulse);
-				int dotColor = (da << 24) | (0xC8 << 16) | (0xE8 << 8) | 0xFF;
-				int[][] verts = {
-						{xCenter, yCenter - half},
-						{xCenter, yCenter + half},
-						{xCenter - half, yCenter},
-						{xCenter + half, yCenter}
-				};
-				for (int[] v : verts) {
-					if (v[0] >= gx && v[0] < gx + gw && v[1] >= gy && v[1] < gy + gh) {
-						gfx.fill(v[0], v[1], v[0] + 1, v[1] + 1, dotColor);
-					}
-				}
+		// Layer 3: floating hollow rhombuses
+		float time = System.nanoTime() / 1_000_000_000f;
+		if (rhombusParams != null) {
+			for (int i = 0; i < RHOMBUS_COUNT; i++) {
+				drawFloatingRhombus(gfx, i, time, gx, gy, gw, gh);
 			}
 		}
 
-		// Layer 4: pale speckles / frost dust
-		Random speckRand = new Random(11234L);
-		for (int s = 0; s < 40; s++) {
-			int sx = gx + speckRand.nextInt(gw);
-			int sy = gy + speckRand.nextInt(gh);
-			int sa = 12 + speckRand.nextInt(18);
-			int sc = speckRand.nextInt(30);
-			gfx.fill(sx, sy, sx + 1, sy + 1, (sa << 24) | (sc << 16) | (sc << 8) | (sc + 60));
+		// Layer 4: subtle blue-tinted speckles
+		Random speckRand = new Random(54321L);
+		for (int s = 0; s < 120; s++) {
+			int spx = gx + speckRand.nextInt(gw);
+			int spy = gy + speckRand.nextInt(gh);
+			int sb  = 10 + speckRand.nextInt(20);
+			int sg  = speckRand.nextInt(8);
+			int sa  = 15 + speckRand.nextInt(25);
+			gfx.fill(spx, spy, spx + 1, spy + 1, (sa << 24) | (sg << 8) | sb);
 		}
 
 		RenderSystem.disableBlend();
 		gfx.disableScissor();
+	}
+
+	/** Draws one floating hollow rhombus particle that drifts, wraps, and rotates. */
+	private void drawFloatingRhombus(GuiGraphics gfx, int index, float time,
+									 int gx, int gy, int gw, int gh) {
+		float[] p = rhombusParams[index];
+		float startXRatio = p[0];
+		float startYRatio = p[1];
+		int   halfSize    = (int) p[2];
+		float velX        = p[3];
+		float velY        = p[4];
+		float phase       = p[5];
+		float brightness  = p[6];
+		float rotSpeed    = p[7];
+
+		float rawX = startXRatio * gw + velX * time;
+		float rawY = startYRatio * gh + velY * time;
+		rawX += 5f * Mth.sin(time * 0.4f + phase);
+		rawY += 4f * Mth.cos(time * 0.35f + phase * 1.3f);
+
+		int cx = gx + ((int) rawX % gw + gw) % gw;
+		int cy = gy + ((int) rawY % gh + gh) % gh;
+
+		float angle = phase + rotSpeed * time;
+
+		float pulse = 0.6f + 0.4f * Mth.sin(time * 0.7f + phase);
+		int baseAlpha = (int) (50 + 80 * brightness * pulse);
+
+		int r = (int) Mth.clamp(180 + 75 * brightness, 0, 255);
+		int g = (int) Mth.clamp(180 + 75 * brightness, 0, 255);
+		int b = (int) Mth.clamp(200 + 55 * brightness, 0, 255);
+		int color = (baseAlpha << 24) | (r << 16) | (g << 8) | b;
+
+		int thickness = 3 + halfSize / 6;
+		drawRotatedHollowRhombus(gfx, cx, cy, halfSize, thickness, angle, color);
+	}
+
+	/**
+	 * Draws a hollow diamond/rhombus ring rotated by the given angle.
+	 * Tests each pixel against the rotated diamond distance function (|u|+|v|).
+	 */
+	private void drawRotatedHollowRhombus(GuiGraphics gfx, int cx, int cy,
+										  int halfSize, int thickness, float angle, int color) {
+		float cosA = Mth.cos(angle);
+		float sinA = Mth.sin(angle);
+		int innerSize = halfSize - thickness;
+		int bound = halfSize + 1;
+
+		for (int dy = -bound; dy <= bound; dy++) {
+			int spanStart = Integer.MIN_VALUE;
+
+			for (int dx = -bound; dx <= bound; dx++) {
+				float u = dx * cosA + dy * sinA;
+				float v = -dx * sinA + dy * cosA;
+				float dist = Math.abs(u) + Math.abs(v);
+				boolean inRing = dist <= halfSize && (innerSize <= 0 || dist >= innerSize);
+
+				if (inRing) {
+					if (spanStart == Integer.MIN_VALUE) spanStart = dx;
+				} else {
+					if (spanStart != Integer.MIN_VALUE) {
+						gfx.fill(cx + spanStart, cy + dy, cx + dx, cy + dy + 1, color);
+						spanStart = Integer.MIN_VALUE;
+					}
+				}
+			}
+			if (spanStart != Integer.MIN_VALUE) {
+				gfx.fill(cx + spanStart, cy + dy, cx + bound + 1, cy + dy + 1, color);
+			}
+		}
 	}
 }
