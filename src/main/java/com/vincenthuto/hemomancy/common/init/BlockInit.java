@@ -375,9 +375,6 @@ public class BlockInit {
 	public static final RegistryObject<Block> fungal_podium = MODELEDBLOCKS.register("fungal_podium",
 			() -> new FungalPodiumBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.5F, 6.0F).sound(SoundType.STONE)));
-	public static final RegistryObject<Block> saint_sarcophagus = MODELEDBLOCKS.register("saint_sarcophagus",
-			() -> new SaintSarcophagusBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
 
 	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS
 			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of()
