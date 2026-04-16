@@ -115,6 +115,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(ScarStationModel.LAYER_LOCATION, ScarStationModel::createBodyLayer);
 		event.registerLayerDefinition(SomaticLoomModel.LAYER_LOCATION, SomaticLoomModel::createBodyLayer);
 		event.registerLayerDefinition(GhastlyAlembicModel.LAYER_LOCATION, GhastlyAlembicModel::createBodyLayer);
+		event.registerLayerDefinition(PallidRetortModel.LAYER_LOCATION, PallidRetortModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingIncubatorModel.LAYER_LOCATION, MorphlingIncubatorModel::createBodyLayer);
 		event.registerLayerDefinition(BarbedShieldModel.barbed_shield, BarbedShieldModel::createLayers);
 		event.registerLayerDefinition(ChitiniteShieldModel.chitinite_shield, ChitiniteShieldModel::createBodyLayer);

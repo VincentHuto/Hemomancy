@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.client.screen.scar.ScreenScarBinderViewer;
+import com.vincenthuto.hemomancy.client.screen.tile.crafting.scar.ScreenScarBinderViewer;
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.itemhandler.ScarBinderItemHandler;
 import com.vincenthuto.hemomancy.common.menu.ScarBinderInventoryMenu;

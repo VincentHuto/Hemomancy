@@ -1,0 +1,14 @@
+{
+  "type": "hemomancy:distillation_recipe",
+  "ingredient": {
+    "item": "minecraft:copper_ingot"
+  },
+  "catalyst": {
+    "item": "hemomancy:hemolytic_solution"
+  },
+  "result": "hemomancy:consecrated_copper_ingot",
+  "count": 2,
+  "experience": 0.75,
+  "cookingtime": 200,
+  "pallid": true
+}

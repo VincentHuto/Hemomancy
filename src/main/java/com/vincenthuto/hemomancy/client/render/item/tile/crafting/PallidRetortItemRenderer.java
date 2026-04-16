@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.GhastlyAlembicModel;
+import com.vincenthuto.hemomancy.client.model.tile.crafting.PallidRetortModel;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -25,13 +25,13 @@ public class PallidRetortItemRenderer extends BlockEntityWithoutLevelRenderer {
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_pallid_retort.png");
 
-	private GhastlyAlembicModel model;
+	private PallidRetortModel model;
 
 	public PallidRetortItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
 		if (modelSet != null) {
-			this.model = new GhastlyAlembicModel(
-					modelSet.bakeLayer(GhastlyAlembicModel.LAYER_LOCATION));
+			this.model = new PallidRetortModel(
+					modelSet.bakeLayer(PallidRetortModel.LAYER_LOCATION));
 		}
 	}
 
@@ -41,8 +41,8 @@ public class PallidRetortItemRenderer extends BlockEntityWithoutLevelRenderer {
 
 		if (this.model == null) {
 			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
-			this.model = new GhastlyAlembicModel(
-					modelSet.bakeLayer(GhastlyAlembicModel.LAYER_LOCATION));
+			this.model = new PallidRetortModel(
+					modelSet.bakeLayer(PallidRetortModel.LAYER_LOCATION));
 		}
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

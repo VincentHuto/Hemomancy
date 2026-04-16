@@ -2,9 +2,9 @@ package com.vincenthuto.hemomancy.common.init;
 
 import com.mojang.serialization.Codec;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.world.structure.BloodTempleStructure;
-import com.vincenthuto.hemomancy.client.world.structure.HarbingerOutpostStructure;
-import com.vincenthuto.hemomancy.client.world.structure.UnstainedChurchStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.BloodTempleStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.HarbingerOutpostStructure;
+import com.vincenthuto.hemomancy.common.worldgen.structure.UnstainedChurchStructure;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.data.book;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.vincenthuto.hemomancy.client.screen.guide.HemoBloodStructureGuidePage;
+import com.vincenthuto.hemomancy.client.screen.item.guide.HemoBloodStructureGuidePage;
 import com.vincenthuto.hutoslib.client.HLLocHelper;
 import com.vincenthuto.hutoslib.common.data.book.BookCodeModel;
 import com.vincenthuto.hutoslib.common.data.book.BookDataTemplate;

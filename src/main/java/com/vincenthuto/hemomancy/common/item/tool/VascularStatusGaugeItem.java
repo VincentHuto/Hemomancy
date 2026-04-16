@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.tool;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.client.screen.VascularStatusScreen;
+import com.vincenthuto.hemomancy.client.screen.item.VascularStatusScreen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

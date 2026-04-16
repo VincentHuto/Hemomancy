@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 
 import net.minecraft.client.Minecraft;
@@ -63,7 +64,7 @@ public class OpenVisceralMirrorPacket {
 	public static void handle(OpenVisceralMirrorPacket msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			if (Minecraft.getInstance().player != null) {
-				com.vincenthuto.hemomancy.client.screen.VisceralMirrorScreen.open(
+				VisceralMirrorScreen.open(
 						msg.pos, msg.organLevels, msg.hasEcho,
 						msg.bloodVolume, msg.maxBloodVolume, msg.degree);
 			}

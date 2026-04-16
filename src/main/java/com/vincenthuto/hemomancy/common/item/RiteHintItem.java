@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.client.screen.item.RiteHintScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -86,7 +87,7 @@ public class RiteHintItem extends Item {
 	 */
 	@net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
 	private static void openRiteHintScreen(ResourceLocation riteId) {
-		com.vincenthuto.hemomancy.client.screen.RiteHintScreen.open(riteId);
+		RiteHintScreen.open(riteId);
 	}
 
 	@Override

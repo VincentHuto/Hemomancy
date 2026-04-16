@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.item.bloodline;
 
 import java.util.List;
 
-import com.vincenthuto.hemomancy.client.screen.BloodlinePoolScreen;
+import com.vincenthuto.hemomancy.client.screen.item.BloodlinePoolScreen;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

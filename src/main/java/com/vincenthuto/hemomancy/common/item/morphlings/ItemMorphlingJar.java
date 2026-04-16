@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.client.screen.living.MorphlingJarViewerScreen;
+import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarType;
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;

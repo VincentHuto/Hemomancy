@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.crafting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.crafting.GhastlyAlembicModel;
+import com.vincenthuto.hemomancy.client.model.tile.crafting.PallidRetortModel;
 import com.vincenthuto.hemomancy.common.tile.crafting.PallidRetortBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -23,10 +23,10 @@ public class PallidRetortRenderer implements BlockEntityRenderer<PallidRetortBlo
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_pallid_retort.png");
 
-	private final GhastlyAlembicModel model;
+	private final PallidRetortModel model;
 
 	public PallidRetortRenderer(BlockEntityRendererProvider.Context context) {
-		this.model = new GhastlyAlembicModel(context.bakeLayer(GhastlyAlembicModel.LAYER_LOCATION));
+		this.model = new PallidRetortModel(context.bakeLayer(PallidRetortModel.LAYER_LOCATION));
 	}
 
 	@Override
