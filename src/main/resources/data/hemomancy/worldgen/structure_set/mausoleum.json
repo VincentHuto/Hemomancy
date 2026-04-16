@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "hemomancy:mausoleum",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1883471661,
+    "spacing": 32,
+    "separation": 4,
+    "type": "minecraft:random_spread"
+  }
+}
