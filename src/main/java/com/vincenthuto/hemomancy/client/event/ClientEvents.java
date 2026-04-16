@@ -54,6 +54,8 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.monster.LumpOfThoughtR
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ThirsterRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerAlchemistRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerHermitRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.HollowVesselRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.monster.HematicConstructRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerVicarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.UnstainedAcolyteRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.UnstainedGuardianRenderer;
@@ -408,6 +410,8 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_hermit.get(), HarbingerHermitRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
+			event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
+			event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
 			event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
 			event.registerEntityRenderer(EntityInit.dark_arrow.get(), BloodShotRenderer::new);
 			event.registerEntityRenderer(EntityInit.dessicant.get(), DessicantRenderer::new);

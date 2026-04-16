@@ -8,7 +8,9 @@ import com.vincenthuto.hemomancy.common.entity.mob.animal.VenousStriderEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
+import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
+import com.vincenthuto.hemomancy.common.entity.mob.monster.HematicConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerAlchemistEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerVicarEntity;
@@ -94,6 +96,22 @@ public class EntityInit {
             () -> EntityType.Builder.of(HarbingerVicarEntity::new, MobCategory.CREATURE)
                     .sized(0.6F, 1.95F)
                     .build(Hemomancy.rloc("harbinger_vicar").toString()));
+
+    // Boss room: Hematic Construct (inner trial minion)
+    public static final RegistryObject<EntityType<HematicConstructEntity>> hematic_construct = ENTITY_TYPES.register(
+            "hematic_construct",
+            () -> EntityType.Builder.of(HematicConstructEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .build(Hemomancy.rloc("hematic_construct").toString()));
+
+    // Boss: Hollow Vessel (Saint Hemorath)
+    public static final RegistryObject<EntityType<HollowVesselEntity>> hollow_vessel = ENTITY_TYPES.register(
+            "hollow_vessel",
+            () -> EntityType.Builder.of(HollowVesselEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 2.2F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("hollow_vessel").toString()));
 
     public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -373,6 +391,7 @@ public class EntityInit {
 
     @SubscribeEvent
     public static void onAttributeCreate(EntityAttributeCreationEvent event) {
+        event.put(EntityInit.hematic_construct.get(), HematicConstructEntity.setAttributes().build());
         event.put(EntityInit.blood_cloud.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_pillar.get(), BloodConstructEntity.setAttributes().build());
         event.put(EntityInit.iron_wall.get(), BloodConstructEntity.setAttributes().build());
@@ -402,6 +421,7 @@ public class EntityInit {
         event.put(EntityInit.harbinger_hermit.get(), HarbingerHermitEntity.setAttributes().build());
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
+        event.put(EntityInit.hollow_vessel.get(), HollowVesselEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
         event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());

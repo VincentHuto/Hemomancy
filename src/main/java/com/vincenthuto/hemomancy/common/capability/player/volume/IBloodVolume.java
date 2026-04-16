@@ -44,6 +44,18 @@ public interface IBloodVolume {
 
 	public boolean wouldOverstrain(double points);
 
+	// ── Blood Debt Tracking (Hemorath Encounter) ──
+
+	public void addDamage(double amount);
+
+	public void addBloodSpend(double amount);
+
+	public double consumeDebt();
+
+	public double getBloodDebt();
+
+	public void resetBloodDebt();
+
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
 
 	public boolean isTrickleEnabled();

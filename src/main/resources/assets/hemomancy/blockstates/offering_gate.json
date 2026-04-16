@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "open=false": { "model": "hemomancy:block/offering_gate_closed" },
+    "open=true":  { "model": "hemomancy:block/offering_gate_open"   }
+  }
+}

@@ -6,6 +6,9 @@ public class BloodVolume implements IBloodVolume {
 	private double maxBloodVolume = 5000.0;
 	private Bloodline bloodLine = Bloodline.NOBLOODLINE;
 
+	// ── Blood Debt Tracking (Hemorath Encounter) ──
+	private double bloodDebt = 0.0;
+
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
 	private boolean trickleEnabled = false;
 	private double trickleRate = 0.5;
@@ -146,6 +149,35 @@ public class BloodVolume implements IBloodVolume {
 	@Override
 	public boolean wouldOverstrain(double points) {
 		return bloodVolume - points < 0;
+	}
+
+	// ── Blood Debt Tracking ──
+
+	@Override
+	public void addDamage(double amount) {
+		this.bloodDebt += amount;
+	}
+
+	@Override
+	public void addBloodSpend(double amount) {
+		this.bloodDebt += amount;
+	}
+
+	@Override
+	public double consumeDebt() {
+		double debt = this.bloodDebt;
+		this.bloodDebt = 0.0;
+		return debt;
+	}
+
+	@Override
+	public double getBloodDebt() {
+		return this.bloodDebt;
+	}
+
+	@Override
+	public void resetBloodDebt() {
+		this.bloodDebt = 0.0;
 	}
 
 	// ── Bloodline Pool Donation & Auto-Draw ──

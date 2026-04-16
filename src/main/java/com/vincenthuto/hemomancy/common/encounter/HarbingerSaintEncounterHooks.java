@@ -1,5 +1,7 @@
 package com.vincenthuto.hemomancy.common.encounter;
 
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -14,17 +16,19 @@ public final class HarbingerSaintEncounterHooks {
 	}
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer) {
-		// Intentional reuse: there is no dedicated Harbinger Saint entity type yet, so
-		// the encounter hook upgrades a Harbinger Vicar into a named boss-style spawn.
-		var boss = EntityInit.harbinger_vicar.get().create(level);
+		// Reset blood debt at encounter start so pre-fight damage doesn't carry over.
+		sourcePlayer.getCapability(BloodVolumeProvider.VOLUME_CAPA)
+				.ifPresent(v -> v.resetBloodDebt());
+
+		HollowVesselEntity boss = EntityInit.hollow_vessel.get().create(level);
 		if (boss == null) return false;
 
-		boss.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, level.random.nextFloat() * 360.0F, 0.0F);
+		boss.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+				level.random.nextFloat() * 360.0F, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null, null);
 		boss.setPersistenceRequired();
-		boss.setCustomName(Component.translatable("entity.hemomancy.harbinger_saint"));
+		boss.setCustomName(Component.translatable("entity.hemomancy.hollow_vessel"));
 		boss.setCustomNameVisible(true);
-		boss.setInvulnerable(false);
 		if (sourcePlayer instanceof ServerPlayer serverPlayer) {
 			boss.setTarget(serverPlayer);
 		}
