@@ -1,0 +1,6 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "hemomancy:entity/model_pallid_retort"
+  }
+}

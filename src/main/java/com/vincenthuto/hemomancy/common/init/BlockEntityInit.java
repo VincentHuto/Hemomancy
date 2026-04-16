@@ -75,6 +75,9 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<GhastlyAlembicBlockEntity>> ghastly_alembic = TILES.register(
 			"ghastly_alembic",
 			() -> BlockEntityType.Builder.of(GhastlyAlembicBlockEntity::new, BlockInit.ghastly_alembic.get()).build(null));
+	public static final RegistryObject<BlockEntityType<PallidRetortBlockEntity>> pallid_retort = TILES.register(
+			"pallid_retort",
+			() -> BlockEntityType.Builder.of(PallidRetortBlockEntity::new, BlockInit.pallid_retort.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<VialCentrifugeBlockEntity>> vial_centrifuge = TILES
 			.register("vial_centrifuge", () -> BlockEntityType.Builder

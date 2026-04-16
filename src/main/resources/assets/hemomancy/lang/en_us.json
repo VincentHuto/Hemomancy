@@ -37,6 +37,7 @@
 	"block.hemomancy.infested_venous_stone": "Infested Venous Stone",
 	"block.hemomancy.iron_brazier": "Iron Brazier",
 	"block.hemomancy.ghastly_alembic": "Ghastly Alembic",
+	"block.hemomancy.pallid_retort": "Pallid Retort",
 	"block.hemomancy.lethean_poppy": "Lethean Poppy",
 	"block.hemomancy.mnemonic_reliquary": "Mnemonic Reliquary",
 	"block.hemomancy.morphling_incubator": "Morphling Incubator",
@@ -561,6 +562,7 @@
 	"advancements.hemomancy.bleeding_a_stone.description": "Craft a Ghastly Alembic — if you can squeeze blood from this, you can squeeze blood from anything",
 
 	"container.hemomancy.ghastly_alembic": "Ghastly Alembic",
+	"container.hemomancy.pallid_retort": "Pallid Retort",
 	"container.hemomancy.mnemonic_reliquary": "Mnemonic Reliquary",
 	"gui.hemomancy.ghastly_alembic.requires_fire": "Requires fire below",
 

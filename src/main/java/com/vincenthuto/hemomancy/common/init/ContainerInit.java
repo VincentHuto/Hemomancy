@@ -28,6 +28,8 @@ public class ContainerInit {
 
 	public static final RegistryObject<MenuType<GhastlyAlembicMenu>> ghastly_alembic = CONTAINERS.register("ghastly_alembic",
 			() -> IForgeMenuType.create(GhastlyAlembicMenu::new));
+	public static final RegistryObject<MenuType<PallidRetortMenu>> pallid_retort = CONTAINERS.register("pallid_retort",
+			() -> IForgeMenuType.create(PallidRetortMenu::new));
 
 	public static final RegistryObject<MenuType<MorphlingJarMenu>> morphling_jar = CONTAINERS.register("morphling_jar",
 			() -> IForgeMenuType.create(MorphlingJarMenu::new));

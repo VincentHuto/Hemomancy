@@ -10,6 +10,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.block.*;
 import com.vincenthuto.hemomancy.common.block.crafting.ScarStationBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.GhastlyAlembicBlock;
+import com.vincenthuto.hemomancy.common.block.crafting.PallidRetortBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.SomaticLoomBlock;
 import com.vincenthuto.hemomancy.common.block.crafting.VialCentrifugeBlock;
 import com.vincenthuto.hemomancy.common.block.functional.*;
@@ -18,6 +19,7 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
 import com.vincenthuto.hemomancy.common.item.tile.ScarStationBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.PallidRetortBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
@@ -398,6 +400,9 @@ public class BlockInit {
 	public static final RegistryObject<Block> ghastly_alembic = MODELEDBLOCKS.register("ghastly_alembic",
 			() -> new GhastlyAlembicBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
 					.sound(SoundType.METAL)));
+	public static final RegistryObject<Block> pallid_retort = MODELEDBLOCKS.register("pallid_retort",
+			() -> new PallidRetortBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)
+					.sound(SoundType.METAL)));
 
 	public static final RegistryObject<Block> vial_centrifuge = MODELEDBLOCKS.register("vial_centrifuge",
 			() -> new VialCentrifugeBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -482,6 +487,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.ghastly_alembic.get()) {
 			return Pair.of(block.getSecond(), new GhastlyAlembicBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.pallid_retort.get()) {
+			return Pair.of(block.getSecond(), new PallidRetortBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.scar_station.get()) {
 			return Pair.of(block.getSecond(), new ScarStationBlockItem(b, new Item.Properties()));
