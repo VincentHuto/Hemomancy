@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "minecraft:block/crying_obsidian"
+    "end": "hemomancy:block/polished_venous_stone_bricks",
+    "side": "hemomancy:block/chiseled_polished_venous_stone"
   }
 }

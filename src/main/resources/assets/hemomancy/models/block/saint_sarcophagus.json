@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "hemomancy:block/polished_venous_stone_bricks"
+    "top": "hemomancy:block/bold_chiseled_hematic_iron_block",
+    "side": "hemomancy:block/chiseled_hematic_iron_block",
+    "bottom": "hemomancy:block/polished_venous_stone_bricks"
   }
 }

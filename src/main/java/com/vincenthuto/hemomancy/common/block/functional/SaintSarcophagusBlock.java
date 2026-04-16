@@ -40,9 +40,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Saint Sarcophagus — the centerpiece of a Sainted Mausoleum.
- * Contains a Preserved Corpus. Players offer a filled Blood Vial to receive a
- * Consecrated Syringe tagged with the saint's type. The syringe is then processed
- * in a Vial Centrifuge to extract Hallowed Residuum.
+ * Contains a Preserved Corpus. Players draw blood from the corpus using an empty
+ * Blood Vial to receive a Consecrated Syringe tagged with the saint's type.
+ * The syringe is then processed in a Vial Centrifuge to extract Hallowed Residuum.
  *
  * Corpus states:
  * - DORMANT: approachable, unstable
@@ -142,12 +142,21 @@ ItemStack stack = player.getItemInHand(handIn);
 // Empty-hand interaction: inspect the sarcophagus
 if (stack.isEmpty()) {
 showSarcophagusInfo(player, sarcophagus);
+// In DORMANT state, add an atmospheric pulse so the block feels alive
+if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
+worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_CLICKING, SoundSource.BLOCKS, 0.4f, 0.6f);
+if (worldIn instanceof ServerLevel serverLevel) {
+serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
+pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
+6, 0.3, 0.3, 0.3, 0.01);
+}
+}
 return InteractionResult.CONSUME;
 }
 
-// Blood Vial interaction: consecrate the vial into a Syringe
-if (stack.getItem() instanceof BloodVialItem && stack.hasTag()
-&& stack.getOrCreateTag().getBoolean(BloodVialItem.TAG_STATE)) {
+// Blood Vial interaction: draw blood from the corpus into an empty vial
+if (stack.getItem() instanceof BloodVialItem
+&& (!stack.hasTag() || !stack.getOrCreateTag().getBoolean(BloodVialItem.TAG_STATE))) {
 consecrateVial(worldIn, pos, player, handIn, stack, sarcophagus);
 return InteractionResult.CONSUME;
 }
@@ -157,12 +166,13 @@ return InteractionResult.PASS;
 
 private void showSarcophagusInfo(Player player, SaintSarcophagusBlockEntity sarcophagus) {
 EnumSaintType saint = sarcophagus.getSaintType();
+EnumCorpusState state = sarcophagus.getCorpusState();
 player.displayClientMessage(
 Component.literal("A sarcophagus of Saint " + saint.getDisplayName() + ".")
 .withStyle(ChatFormatting.GOLD),
 false);
 player.displayClientMessage(
-Component.literal("State: " + sarcophagus.getCorpusState().getDisplayName())
+Component.literal("State: " + state.getDisplayName())
 .withStyle(ChatFormatting.GRAY),
 false);
 player.displayClientMessage(
@@ -170,13 +180,29 @@ Component.literal("Aligned tendencies: " + saint.getPrimaryTendency().name()
 + " + " + saint.getSecondaryTendency().name())
 .withStyle(ChatFormatting.DARK_PURPLE),
 false);
+
+// State-dependent guidance
+switch (state) {
+case DORMANT -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.dormant_hint")
+.withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC),
+false);
+case RESPONSIVE -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.responsive_hint")
+.withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC),
+false);
+case AWAKENED -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.awakened_hint")
+.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+false);
+}
 }
 
 /**
- * Consecration step — the player offers a filled Blood Vial to the Preserved Corpus.
- * The corpus sanctifies the vial into a Consecrated Syringe tagged with the saint's type.
- * Process the syringe in a Vial Centrifuge to extract Hallowed Residuum.
- * The Blood Vial is consumed in the process.
+ * Consecration step — the player draws blood from the Preserved Corpus using an empty Blood Vial.
+ * The corpus fills the vial with its sanctified blood, yielding a Consecrated Syringe tagged
+ * with the saint's type. Process the syringe in a Vial Centrifuge to extract Hallowed Residuum.
+ * The empty Blood Vial is consumed in the process.
  */
 private void consecrateVial(Level worldIn, BlockPos pos, Player player, InteractionHand hand,
 ItemStack vialStack, SaintSarcophagusBlockEntity sarcophagus) {
@@ -185,7 +211,7 @@ if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
 sarcophagus.setCorpusState(EnumCorpusState.RESPONSIVE);
 }
 
-// Consume the blood vial
+// Consume the empty blood vial
 vialStack.shrink(1);
 if (vialStack.isEmpty()) {
 player.setItemInHand(hand, ItemStack.EMPTY);
@@ -203,7 +229,7 @@ player.drop(syringe, false);
 sarcophagus.setCooldownTicks(100);
 
 player.displayClientMessage(
-Component.literal("The corpus sanctifies the offering. Process the Consecrated Syringe in a Vial Centrifuge.")
+Component.literal("The corpus yields its blood. Process the Consecrated Syringe in a Vial Centrifuge.")
 .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 false);
 worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 1.2f);

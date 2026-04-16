@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.tile.puzzle;
 import com.vincenthuto.hemomancy.common.block.puzzle.OfferingGateBlock;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,13 +34,30 @@ public class BloodBasinBlockEntity extends BlockEntity {
 
     public void interact(Player player, Level level, BlockPos pos) {
         double drain = player.getMaxHealth() * DRAIN_FRACTION;
-        if (player.getHealth() <= drain + 1.0f) return;
+        if (player.getHealth() <= drain + 1.0f) {
+            if (player instanceof ServerPlayer sp) {
+                sp.displayClientMessage(
+                    Component.translatable("message.hemomancy.blood_basin.insufficient_blood")
+                        .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+                    true);
+            }
+            return;
+        }
 
         player.hurt(level.damageSources().magic(), (float) drain);
         fillAmount += drain;
         setChanged();
 
         level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 1.0f, 0.8f);
+
+        if (player instanceof ServerPlayer sp) {
+            int pct = (int) Math.min(100, (fillAmount * 100.0) / CAPACITY);
+            sp.displayClientMessage(
+                Component.translatable("message.hemomancy.blood_basin.offered", pct)
+                    .withStyle(ChatFormatting.DARK_RED),
+                true);
+        }
+
         checkCompletion(level, pos, player);
     }
 
@@ -59,6 +77,11 @@ public class BloodBasinBlockEntity extends BlockEntity {
         if (basins.stream().allMatch(b -> b.fillAmount >= CAPACITY)) {
             openGates(level, pos);
             level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0f, 0.7f);
+            if (player instanceof ServerPlayer sp) {
+                sp.sendSystemMessage(
+                    Component.translatable("message.hemomancy.blood_basin.gates_open")
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+            }
         }
     }
 
