@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "minecraft:block/nether_bricks"
+    "end": "hemomancy:block/hematic_iron_pillar_top",
+    "side": "hemomancy:block/hematic_iron_pillar"
   }
 }
