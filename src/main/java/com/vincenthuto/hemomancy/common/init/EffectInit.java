@@ -195,6 +195,10 @@ public class EffectInit {
     public static final RegistryObject<MobEffect> marked_by_canon = EFFECTS.register("marked_by_canon",
             () -> new MarkedByCanonEffect(MobEffectCategory.HARMFUL, 0x8B0000));
 
+    // Hollow Vessel — Hemophagy (healing reduction from Empty Pulse)
+    public static final RegistryObject<MobEffect> hemophagy = EFFECTS.register("hemophagy",
+            () -> new HemophagyEffect(MobEffectCategory.HARMFUL, 0x4B0000));
+
     @SubscribeEvent
     public static void setupPotionRecipes(final FMLCommonSetupEvent event) {
 
