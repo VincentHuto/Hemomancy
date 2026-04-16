@@ -1248,5 +1248,16 @@
 	"block.hemomancy.blood_pylon": "Blood Pylon",
 	"block.hemomancy.blood_trial_altar": "Blood Trial Altar",
 
-	"message.hemomancy.hematic_backlash": "The offering was rejected. Hematic Backlash!"
+	"message.hemomancy.hematic_backlash": "The offering was rejected. Hematic Backlash!",
+
+	"message.hemomancy.blood_basin.offered": "Blood accepted. Basin filled: %s%%",
+	"message.hemomancy.blood_basin.insufficient_blood": "You do not have enough blood to offer.",
+	"message.hemomancy.blood_basin.gates_open": "The basins are sated. The way opens.",
+
+	"message.hemomancy.blood_pylon.inspect": "A Blood Pylon — it siphons vitality from those who linger nearby.",
+	"message.hemomancy.blood_pylon.draining": "The pylon draws your blood...",
+
+	"message.hemomancy.saint_sarcophagus.dormant_hint": "Offer a filled Blood Vial to rouse the corpus.",
+	"message.hemomancy.saint_sarcophagus.responsive_hint": "The corpus stirs. Continue offering filled Blood Vials; then process the Consecrated Syringe in a Vial Centrifuge.",
+	"message.hemomancy.saint_sarcophagus.awakened_hint": "The corpus is incensed. Strike it to begin the trial."
 }

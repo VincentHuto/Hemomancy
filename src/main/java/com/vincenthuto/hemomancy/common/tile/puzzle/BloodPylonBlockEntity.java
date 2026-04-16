@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.tile.puzzle;
 
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,6 +33,12 @@ public class BloodPylonBlockEntity extends BlockEntity {
         for (Player player : players) {
             if (player.getHealth() > 2.0f) {
                 player.hurt(level.damageSources().magic(), DRAIN_AMOUNT);
+                if (player instanceof ServerPlayer sp) {
+                    sp.displayClientMessage(
+                        Component.translatable("message.hemomancy.blood_pylon.draining")
+                            .withStyle(ChatFormatting.DARK_RED),
+                        true);
+                }
             }
         }
     }

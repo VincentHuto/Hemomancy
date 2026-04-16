@@ -142,6 +142,15 @@ ItemStack stack = player.getItemInHand(handIn);
 // Empty-hand interaction: inspect the sarcophagus
 if (stack.isEmpty()) {
 showSarcophagusInfo(player, sarcophagus);
+// In DORMANT state, add an atmospheric pulse so the block feels alive
+if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
+worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_CLICKING, SoundSource.BLOCKS, 0.4f, 0.6f);
+if (worldIn instanceof ServerLevel serverLevel) {
+serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
+pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
+6, 0.3, 0.3, 0.3, 0.01);
+}
+}
 return InteractionResult.CONSUME;
 }
 
@@ -157,12 +166,13 @@ return InteractionResult.PASS;
 
 private void showSarcophagusInfo(Player player, SaintSarcophagusBlockEntity sarcophagus) {
 EnumSaintType saint = sarcophagus.getSaintType();
+EnumCorpusState state = sarcophagus.getCorpusState();
 player.displayClientMessage(
 Component.literal("A sarcophagus of Saint " + saint.getDisplayName() + ".")
 .withStyle(ChatFormatting.GOLD),
 false);
 player.displayClientMessage(
-Component.literal("State: " + sarcophagus.getCorpusState().getDisplayName())
+Component.literal("State: " + state.getDisplayName())
 .withStyle(ChatFormatting.GRAY),
 false);
 player.displayClientMessage(
@@ -170,6 +180,22 @@ Component.literal("Aligned tendencies: " + saint.getPrimaryTendency().name()
 + " + " + saint.getSecondaryTendency().name())
 .withStyle(ChatFormatting.DARK_PURPLE),
 false);
+
+// State-dependent guidance
+switch (state) {
+case DORMANT -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.dormant_hint")
+.withStyle(ChatFormatting.YELLOW, ChatFormatting.ITALIC),
+false);
+case RESPONSIVE -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.responsive_hint")
+.withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC),
+false);
+case AWAKENED -> player.displayClientMessage(
+Component.translatable("message.hemomancy.saint_sarcophagus.awakened_hint")
+.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+false);
+}
 }
 
 /**
