@@ -39,15 +39,17 @@ public class SaintSarcophagusBlock extends Block {
 		if (success) {
 			awardSaintEnzyme(player);
 			level.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.1F);
-			player.displayClientMessage(Component.literal("The Saint's remains yield an enzyme."), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.saint_sarcophagus.success"), false);
 		} else {
 			if (level instanceof ServerLevel serverLevel) {
 				HarbingerSaintEncounterHooks.spawnSaintBoss(serverLevel, pos, player);
 			}
 			level.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 0.7F, 1.2F);
-			player.displayClientMessage(Component.literal("The mausoleum stirs. A Harbinger Saint awakens."), false);
+			player.displayClientMessage(Component.translatable("message.hemomancy.saint_sarcophagus.fail"), false);
 		}
 
+		// Single-use by design: once a Saint encounter resolves, this sarcophagus is
+		// consumed to prevent repeat enzyme farming from one structure spawn.
 		level.removeBlock(pos, false);
 		return InteractionResult.CONSUME;
 	}
@@ -71,4 +73,3 @@ public class SaintSarcophagusBlock extends Block {
 		}
 	}
 }
-

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hemomancy:item/recycled_enzyme"
+    "layer0": "hemomancy:item/saint_enzyme"
   }
 }

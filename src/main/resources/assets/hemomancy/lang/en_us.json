@@ -923,6 +923,7 @@
 	"hemomancy.dialogue.alchemist.option.what_remains": "What remains to be learned at this stage?",
 
 	"entity.hemomancy.harbinger_vicar": "Harbinger Vicar",
+	"entity.hemomancy.harbinger_saint": "Harbinger Saint",
 	"hemomancy.vicar.uninitiated.line1": "§7[A dignified figure in sweeping ceremonial vestments regards you with serene patience, hands folded within wide sleeves]",
 	"hemomancy.vicar.uninitiated.line2": "A wanderer who has not yet walked the path of blood. I am the Harbinger Vicar — keeper of doctrine, history, and the sacred truths of the Covenant. Even the uninitiated deserve to know where they stand.",
 	"hemomancy.vicar.uninitiated.harbinger_lore": "The Harbingers are not a faction of violence — we are a faction of revelation. We believe that blood is the fundamental language of existence, and that those who learn to speak it fluently ascend beyond the limits of ordinary life. The Covenant is the body of knowledge that makes such ascension possible.",
@@ -1215,6 +1216,8 @@
 	"biome.hemomancy.hemorrhagic_plateau": "Hemorrhagic Plateau",
 
 	"item.hemomancy.sanguine_blob": "Sanguine Blob",
+	"message.hemomancy.saint_sarcophagus.success": "The Saint's remains yield an enzyme.",
+	"message.hemomancy.saint_sarcophagus.fail": "The mausoleum stirs. A Harbinger Saint awakens.",
 	"key.hemomancy.bloodballdrop.desc": "Drop Blood Ball",
 	"hemomancy.rite.initiate_rite.blob_granted": "A sanguine orb coalesces in your hand — yours to command."
 }

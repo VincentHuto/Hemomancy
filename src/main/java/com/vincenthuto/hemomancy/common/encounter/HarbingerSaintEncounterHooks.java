@@ -14,13 +14,15 @@ public final class HarbingerSaintEncounterHooks {
 	}
 
 	public static boolean spawnSaintBoss(ServerLevel level, BlockPos pos, Player sourcePlayer) {
+		// Intentional reuse: there is no dedicated Harbinger Saint entity type yet, so
+		// the encounter hook upgrades a Harbinger Vicar into a named boss-style spawn.
 		var boss = EntityInit.harbinger_vicar.get().create(level);
 		if (boss == null) return false;
 
 		boss.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, level.random.nextFloat() * 360.0F, 0.0F);
 		boss.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.TRIGGERED, null, null);
 		boss.setPersistenceRequired();
-		boss.setCustomName(Component.literal("Harbinger Saint"));
+		boss.setCustomName(Component.translatable("entity.hemomancy.harbinger_saint"));
 		boss.setCustomNameVisible(true);
 		boss.setInvulnerable(false);
 		if (sourcePlayer instanceof ServerPlayer serverPlayer) {
