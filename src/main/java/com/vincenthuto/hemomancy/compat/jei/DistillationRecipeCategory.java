@@ -9,7 +9,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -34,7 +34,7 @@ import net.minecraft.world.item.Items;
 /**
  * JEI recipe category for the Ghastly Alembic — fully programmatic rendering.
  */
-public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlembicRecipe> {
+public class DistillationRecipeCategory implements IRecipeCategory<DistillationRecipe> {
 
 	private static final int BG_W = 150;
 	private static final int BG_H = 90;  // slightly taller to fit catalyst label
@@ -49,7 +49,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 	private final IDrawable icon;
 	private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 
-	public GhastlyAlembicRecipeCategory(IGuiHelper guiHelper) {
+	public DistillationRecipeCategory(IGuiHelper guiHelper) {
 		background = guiHelper.createBlankDrawable(BG_W, BG_H);
 		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BlockInit.ghastly_alembic.get()));
 		this.cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<>() {
@@ -64,7 +64,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 	}
 
 	@Override
-	public void draw(GhastlyAlembicRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx, double mouseX,
+	public void draw(DistillationRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics gfx, double mouseX,
 			double mouseY) {
 
 		float time = System.nanoTime() / 1_000_000_000f;
@@ -174,7 +174,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 		gfx.fill(sx, sy + 16, sx + 17, sy + 17, SLOT_BORDER_LIGHT);
 	}
 
-	protected void drawCookTime(GhastlyAlembicRecipe recipe, GuiGraphics graphics, int y) {
+	protected void drawCookTime(DistillationRecipe recipe, GuiGraphics graphics, int y) {
 		int cookTime = recipe.getCookingTime();
 		if (cookTime > 0) {
 			int cookTimeSeconds = cookTime / 20;
@@ -186,7 +186,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 		}
 	}
 
-	protected void drawExperience(GhastlyAlembicRecipe recipe, GuiGraphics graphics, int y) {
+	protected void drawExperience(DistillationRecipe recipe, GuiGraphics graphics, int y) {
 		float experience = recipe.getExperience();
 		if (experience > 0) {
 			MutableComponent experienceString = Component.translatable("gui.jei.category.smelting.experience",
@@ -211,7 +211,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 	}
 
 	@Override
-	public RecipeType<GhastlyAlembicRecipe> getRecipeType() {
+	public RecipeType<DistillationRecipe> getRecipeType() {
 		return JEIPlugin.distillation_recipe_type;
 	}
 
@@ -222,7 +222,7 @@ public class GhastlyAlembicRecipeCategory implements IRecipeCategory<GhastlyAlem
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, GhastlyAlembicRecipe recipe, IFocusGroup focuses) {
+	public void setRecipe(IRecipeLayoutBuilder builder, DistillationRecipe recipe, IFocusGroup focuses) {
 		// Input ingredient slot
 		builder.addSlot(RecipeIngredientRole.INPUT, 21, 25)
 				.addIngredients(VanillaTypes.ITEM_STACK, Arrays.asList(recipe.getIngredient().getItems()));

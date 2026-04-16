@@ -10,7 +10,7 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import net.minecraft.client.Minecraft;
@@ -73,7 +73,7 @@ public final class RecipeLookup {
 		var ra = level.registryAccess();
 
 		// Ghastly Alembic recipes
-		for (GhastlyAlembicRecipe r : rm.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())) {
+		for (DistillationRecipe r : rm.getAllRecipesFor(RecipeInit.distillation_recipe_type.get())) {
 			ItemStack result = r.getResultItem(ra);
 			if (result != null && !result.isEmpty()) {
 				CACHE.putIfAbsent(result.getItem(), new FoundRecipe(r, RecipeKind.GHASTLY_ALEMBIC));

@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.recipe.serializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -13,10 +13,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembicRecipe> {
+public class DistillationRecipeSerializer implements RecipeSerializer<DistillationRecipe> {
 
 	@Override
-	public GhastlyAlembicRecipe fromJson(ResourceLocation location, JsonObject object) {
+	public DistillationRecipe fromJson(ResourceLocation location, JsonObject object) {
 		String group = GsonHelper.getAsString(object, "group", "");
 
 		// ---- ingredient ----
@@ -50,11 +50,11 @@ public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembic
 		int cookingTime = GsonHelper.getAsInt(object, "cookingtime", 100);
 		boolean pallid = GsonHelper.getAsBoolean(object, "pallid", false);
 
-		return new GhastlyAlembicRecipe(location, group, ingredient, catalyst, pallid, result, experience, cookingTime);
+		return new DistillationRecipe(location, group, ingredient, catalyst, pallid, result, experience, cookingTime);
 	}
 
 	@Override
-	public GhastlyAlembicRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+	public DistillationRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
 		String group = buffer.readUtf();
 		Ingredient ingredient = Ingredient.fromNetwork(buffer);
 		boolean hasCatalyst = buffer.readBoolean();
@@ -63,11 +63,11 @@ public class GhastlyAlembicSerializer implements RecipeSerializer<GhastlyAlembic
 		ItemStack result = buffer.readItem();
 		float xp = buffer.readFloat();
 		int time = buffer.readInt();
-		return new GhastlyAlembicRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
+		return new DistillationRecipe(recipeId, group, ingredient, catalyst, pallid, result, xp, time);
 	}
 
 	@Override
-	public void toNetwork(FriendlyByteBuf buffer, GhastlyAlembicRecipe recipe) {
+	public void toNetwork(FriendlyByteBuf buffer, DistillationRecipe recipe) {
 		buffer.writeUtf(recipe.getGroup());
 		recipe.getIngredient().toNetwork(buffer);
 		boolean hasCatalyst = recipe.requiresCatalyst();

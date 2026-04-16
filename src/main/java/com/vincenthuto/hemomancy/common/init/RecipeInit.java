@@ -8,13 +8,13 @@ import com.vincenthuto.hemomancy.common.recipe.CopyBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CopyMorphlingJarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.FillBloodGourdRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 import com.vincenthuto.hemomancy.common.recipe.serializer.BloodStructureRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.CardinalRiteRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.ScarRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.IncubatorRecipeSerializer;
-import com.vincenthuto.hemomancy.common.recipe.serializer.GhastlyAlembicSerializer;
+import com.vincenthuto.hemomancy.common.recipe.serializer.DistillationRecipeSerializer;
 import com.vincenthuto.hemomancy.common.recipe.serializer.MemoryWeavingRecipeSerializer;
 
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -37,7 +37,7 @@ public class RecipeInit {
 	public static final RegistryObject<RecipeType<ScarRecipe>> chisel_recipe = RECIPE_TYPES.register("scar_recipe",
 			() -> RecipeType.simple(Hemomancy.rloc("scar_recipe")));
 
-	public static final RegistryObject<RecipeType<GhastlyAlembicRecipe>> distillation_recipe_type = RECIPE_TYPES
+	public static final RegistryObject<RecipeType<DistillationRecipe>> distillation_recipe_type = RECIPE_TYPES
 			.register("distillation_recipe", () -> RecipeType.simple(Hemomancy.rloc("distillation_recipe")));
 
 	public static final RegistryObject<RecipeType<MemoryWeavingRecipe>> memory_weaving_type = RECIPE_TYPES
@@ -54,7 +54,7 @@ public class RecipeInit {
 
 	// Serialize
 	public static final RegistryObject<RecipeSerializer<?>> distillation_recipe_serializer = SERIALIZERS.register("distillation_recipe",
-			GhastlyAlembicSerializer::new);
+			DistillationRecipeSerializer::new);
 
 	public static final RegistryObject<RecipeSerializer<?>> morphling_jar_upgrade_serializer = SERIALIZERS
 			.register("morphling_jar_upgrade", CopyMorphlingJarRecipe.Serializer::new);

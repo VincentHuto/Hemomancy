@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hemomancy.common.recipe.IncubatorRecipe;
-import com.vincenthuto.hemomancy.common.recipe.GhastlyAlembicRecipe;
+import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
 import com.vincenthuto.hemomancy.common.recipe.MemoryWeavingRecipe;
 
 import mezz.jei.api.IModPlugin;
@@ -27,8 +27,8 @@ import net.minecraft.world.item.ItemStack;
 public class JEIPlugin implements IModPlugin {
 
 	private static final ResourceLocation ID = Hemomancy.rloc("main");
-	public static final RecipeType<GhastlyAlembicRecipe> distillation_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
-			"distillation_recipe", GhastlyAlembicRecipe.class);
+	public static final RecipeType<DistillationRecipe> distillation_recipe_type = RecipeType.create(Hemomancy.MOD_ID,
+			"distillation_recipe", DistillationRecipe.class);
 	public static final RecipeType<MemoryWeavingRecipe> memory_weaving_type = RecipeType.create(Hemomancy.MOD_ID,
 			"memory_weaving", MemoryWeavingRecipe.class);
 	public static final RecipeType<BloodStructureRecipe> blood_structure_recipe_type = RecipeType
@@ -46,7 +46,7 @@ public class JEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
-		registry.addRecipeCategories(new GhastlyAlembicRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+		registry.addRecipeCategories(new DistillationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new MemoryWeavingRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new BloodStructureRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
 		registry.addRecipeCategories(new ScarStationRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -67,7 +67,7 @@ public class JEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(@Nonnull IRecipeRegistration registry) {
 		ClientLevel world = Objects.requireNonNull(Minecraft.getInstance().level);
-		registry.addRecipes(distillation_recipe_type, GhastlyAlembicRecipe.getAllRecipes(world));
+		registry.addRecipes(distillation_recipe_type, DistillationRecipe.getAllRecipes(world));
 		registry.addRecipes(memory_weaving_type, MemoryWeavingRecipe.getAllRecipes(world));
 		registry.addRecipes(blood_structure_recipe_type, BloodStructureRecipe.getAllRecipes(world));
 		registry.addRecipes(scar_station_recipe_type, ScarRecipe.getAllRecipes(world));

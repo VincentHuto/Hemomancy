@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level;
  *   <li>Slot 3 — catalyst (optional — {@link Ingredient#EMPTY} means no catalyst needed)</li>
  * </ul>
  */
-public class GhastlyAlembicRecipe implements Recipe<Container> {
+public class DistillationRecipe implements Recipe<Container> {
 
 	private final ResourceLocation id;
 	private final String group;
@@ -35,7 +35,7 @@ public class GhastlyAlembicRecipe implements Recipe<Container> {
 	private final float experience;
 	private final int cookingTime;
 
-	public GhastlyAlembicRecipe(ResourceLocation id, String group, Ingredient ingredient,
+	public DistillationRecipe(ResourceLocation id, String group, Ingredient ingredient,
 			Ingredient catalyst, boolean pallid, ItemStack result, float experience, int cookingTime) {
 		this.id = id;
 		this.group = group;
@@ -127,7 +127,7 @@ public class GhastlyAlembicRecipe implements Recipe<Container> {
 
 	// ---- Helpers ----
 
-	public static List<GhastlyAlembicRecipe> getAllRecipes(Level world) {
+	public static List<DistillationRecipe> getAllRecipes(Level world) {
 		return world.getRecipeManager().getAllRecipesFor(RecipeInit.distillation_recipe_type.get());
 	}
 }
