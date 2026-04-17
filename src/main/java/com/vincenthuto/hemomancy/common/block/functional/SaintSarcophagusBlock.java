@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import javax.annotation.Nullable;
+
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
@@ -18,6 +21,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -27,6 +31,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -36,6 +41,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -49,14 +55,58 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * - RESPONSIVE: reacts to player interaction
  * - AWAKENED: player has offended it, combat triggered
  */
-public class SaintSarcophagusBlock extends Block implements EntityBlock {
+public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiBlock {
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 
+/**
+ * Filler offsets for a 2x3x2 multiblock structure.
+ * The main block is at (0,0,0). Fillers cover:
+ * - one block on each axis to form a 2-wide, 3-tall, 2-deep structure.
+ */
+private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+		new BlockPos(1, 0, 0),
+		new BlockPos(0, 0, 1),
+		new BlockPos(1, 0, 1),
+		new BlockPos(0, 1, 0),
+		new BlockPos(1, 1, 0),
+		new BlockPos(0, 1, 1),
+		new BlockPos(1, 1, 1),
+		new BlockPos(0, 2, 0),
+		new BlockPos(1, 2, 0),
+		new BlockPos(0, 2, 1),
+		new BlockPos(1, 2, 1),
+};
+
 public SaintSarcophagusBlock(Properties properties) {
 super(properties);
 this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+}
+
+@Override
+public BlockPos[] getFillerOffsets() {
+	return FILLER_OFFSETS;
+}
+
+@Override
+public RenderShape getRenderShape(BlockState state) {
+	return RenderShape.ENTITYBLOCK_ANIMATED;
+}
+
+@Override
+public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+	return Shapes.empty();
+}
+
+@Override
+public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+	return true;
+}
+
+@Override
+public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+	return 1.0F;
 }
 
 @Override
@@ -71,7 +121,12 @@ return SHAPE;
 
 @Override
 public BlockState getStateForPlacement(BlockPlaceContext context) {
-return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+BlockPos pos = context.getClickedPos();
+Level level = (Level) context.getLevel();
+if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+	return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+}
+return null;
 }
 
 @Override
@@ -87,6 +142,25 @@ return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 @Override
 public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 return new SaintSarcophagusBlockEntity(pos, state);
+}
+
+@Override
+public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+		@Nullable LivingEntity placer, ItemStack stack) {
+	super.setPlacedBy(level, pos, state, placer, stack);
+	if (!level.isClientSide) {
+		placeFillers(level, pos, state);
+	}
+}
+
+@Override
+public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+	if (!state.is(newState.getBlock())) {
+		if (!level.isClientSide) {
+			removeFillers(level, pos);
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
+	}
 }
 
 @Override
