@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.block.vein.IEarthenVeinLoc;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.lethe.ILetheVolume;
+import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
@@ -27,7 +27,7 @@ public class CapabilityInit {
 		event.register(IBloodTendency.class);
 		event.register(IVascularSystem.class);
 		event.register(IBloodVolume.class);
-		event.register(ILetheVolume.class);
+		event.register(IWhiteHumorVolume.class);
 		event.register(IKnownManipulations.class);
 		event.register(IEarthenVeinLoc.class);
 		event.register(IScar.class);

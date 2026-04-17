@@ -261,12 +261,12 @@ public class ItemInit {
     public static final RegistryObject<Item> bloodline_pool_monitor = BASEITEMS.register("bloodline_pool_monitor",
             () -> new BloodlinePoolMonitorItem(new Item.Properties().stacksTo(1)));
 
-    // Unstained — Our Lady of Lethe materials
+    // Unstained — Our Lady of Still Waters materials
     public static final RegistryObject<Item> lethean_dew = BASEITEMS.register("lethean_dew",
             () -> new LetheanDewItem(new Item.Properties()));
     public static final RegistryObject<Item> lethean_brew = BASEITEMS.register("lethean_brew",
             () -> new LetheanBrewItem(new Item.Properties()));
-    public static final RegistryObject<Item> tears_of_lethe = BASEITEMS.register("tears_of_lethe",
+    public static final RegistryObject<Item> tears_of_silthmere = BASEITEMS.register("tears_of_silthmere",
             () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> lethean_poppy_wreath = BASEITEMS.register("lethean_poppy_wreath",
             () -> new Item(new Item.Properties().stacksTo(16)));
@@ -274,11 +274,11 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> tome_of_the_unstained = BASEITEMS.register("tome_of_the_unstained",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<Item> lethe_icon = BASEITEMS.register("lethe_icon",
+    public static final RegistryObject<Item> pallid_icon = BASEITEMS.register("pallid_icon",
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
             () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> lethean_extract = BASEITEMS.register("lethean_extract",
+    public static final RegistryObject<Item> pale_distillate = BASEITEMS.register("pale_distillate",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
     // Hematic Memories

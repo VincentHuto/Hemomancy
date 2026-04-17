@@ -1,12 +1,12 @@
-package com.vincenthuto.hemomancy.common.capability.player.lethe;
+package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 
-public class LetheVolume implements ILetheVolume {
+public class WhiteHumorVolume implements IWhiteHumorVolume {
 	private boolean active = false;
-	private double letheVolume = 0.0;
-	private double maxLetheVolume = 5000.0;
-	private Bloodline letheLine = Bloodline.NOBLOODLINE;
+	private double whiteHumorVolume = 0.0;
+	private double maxWhiteHumorVolume = 5000.0;
+	private Bloodline whiteHumorLine = Bloodline.NOBLOODLINE;
 
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
 	private boolean trickleEnabled = false;
@@ -18,28 +18,28 @@ public class LetheVolume implements ILetheVolume {
 	 * only use if you want to explicitly bypass max volume limits
 	 */
 	@Override
-	public void addLetheVolume(double points) {
-		this.letheVolume += points;
+	public void addWhiteHumorVolume(double points) {
+		this.whiteHumorVolume += points;
 	}
 
 	@Override
-	public void addMaxLetheVolume(double points) {
-		this.maxLetheVolume += points;
+	public void addMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume += points;
 	}
 
 	@Override
 	public boolean drain(double points) {
 		if (!wouldOverstrain(points)) {
-			letheVolume -= points;
+			whiteHumorVolume -= points;
 			return true;
 		} else {
-			letheVolume = 0;
+			whiteHumorVolume = 0;
 			return false;
 		}
 	}
 
 	@Override
-	public boolean drainFromSource(ILetheVolume src, double points) {
+	public boolean drainFromSource(IWhiteHumorVolume src, double points) {
 		if (src.fill(points) ) {
 			drain(points);
 			return true;
@@ -51,18 +51,18 @@ public class LetheVolume implements ILetheVolume {
 	@Override
 	public boolean fill(double points) {
 		if (!wouldOverflow(points)) {
-			letheVolume += points;
+			whiteHumorVolume += points;
 			return true;
 		} else {
-			letheVolume = maxLetheVolume;
+			whiteHumorVolume = maxWhiteHumorVolume;
 			return false;
 		}
 
 	}
 
 	@Override
-	public boolean fillFromSource(ILetheVolume src, double points) {
-		if (src.drain(points) && src.getLetheVolume() > points) {
+	public boolean fillFromSource(IWhiteHumorVolume src, double points) {
+		if (src.drain(points) && src.getWhiteHumorVolume() > points) {
 			fill(points);
 			return true;
 		} else {
@@ -71,19 +71,19 @@ public class LetheVolume implements ILetheVolume {
 	}
 
 	@Override
-	public Bloodline getLetheLine() {
-		return letheLine;
+	public Bloodline getWhiteHumorLine() {
+		return whiteHumorLine;
 	}
 
 	@Override
-	public double getLetheVolume() {
-		return this.letheVolume;
+	public double getWhiteHumorVolume() {
+		return this.whiteHumorVolume;
 	}
 
 	@Override
-	public double getMaxLetheVolume() {
+	public double getMaxWhiteHumorVolume() {
 
-		return this.maxLetheVolume;
+		return this.maxWhiteHumorVolume;
 	}
 
 	@Override
@@ -93,12 +93,12 @@ public class LetheVolume implements ILetheVolume {
 
 	@Override
 	public boolean isEmpty() {
-		return letheVolume <= 0;
+		return whiteHumorVolume <= 0;
 	}
 
 	@Override
 	public boolean isFull() {
-		return letheVolume >= maxLetheVolume;
+		return whiteHumorVolume >= maxWhiteHumorVolume;
 	}
 
 	@Override
@@ -107,32 +107,32 @@ public class LetheVolume implements ILetheVolume {
 	}
 
 	@Override
-	public void setLetheLine(Bloodline letheLine) {
-		this.letheLine = letheLine;
+	public void setWhiteHumorLine(Bloodline whiteHumorLine) {
+		this.whiteHumorLine = whiteHumorLine;
 	}
 
 	@Override
-	public void setLetheVolume(double points) {
-		this.letheVolume = points;
+	public void setWhiteHumorVolume(double points) {
+		this.whiteHumorVolume = points;
 	}
 
 	@Override
-	public void setMaxLetheVolume(double points) {
-		this.maxLetheVolume = points;
+	public void setMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume = points;
 	}
 
 	/***
 	 * only use if you want to explicitly bypass min volume limits
 	 */
 	@Override
-	public void subtractLetheVolume(double points) {
-		this.letheVolume -= points;
+	public void subtractWhiteHumorVolume(double points) {
+		this.whiteHumorVolume -= points;
 
 	}
 
 	@Override
-	public void subtractMaxLetheVolume(double points) {
-		this.maxLetheVolume -= points;
+	public void subtractMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume -= points;
 	}
 
 	@Override
@@ -142,12 +142,12 @@ public class LetheVolume implements ILetheVolume {
 
 	@Override
 	public boolean wouldOverflow(double points) {
-		return letheVolume + points > maxLetheVolume;
+		return whiteHumorVolume + points > maxWhiteHumorVolume;
 	}
 
 	@Override
 	public boolean wouldOverstrain(double points) {
-		return letheVolume - points < 0;
+		return whiteHumorVolume - points < 0;
 	}
 
 	// ── Bloodline Pool Donation & Auto-Draw ──

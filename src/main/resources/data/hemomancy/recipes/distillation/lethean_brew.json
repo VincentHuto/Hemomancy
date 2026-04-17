@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:distillation_recipe",
   "ingredient": {
-    "item": "hemomancy:lethean_extract"
+    "item": "hemomancy:pale_distillate"
   },
   "result": "hemomancy:lethean_brew",
   "count": 1,

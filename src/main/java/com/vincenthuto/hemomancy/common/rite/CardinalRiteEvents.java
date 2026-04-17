@@ -420,7 +420,7 @@ public class CardinalRiteEvents {
 	private static final String ANCESTRAL_COMMUNION_RITE = "cardinal_rite/ancestral_communion";
 	private static final String EXSANGUINATION_RITE = "cardinal_rite/exsanguination";
 	private static final String HEMATIC_UNBINDING_RITE = "cardinal_rite/hematic_unbinding";
-	private static final String LETHES_SHADOW_RITE = "cardinal_rite/lethes_shadow";
+	private static final String PALLID_SHADOW_RITE = "cardinal_rite/pallid_shadow";
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
@@ -664,9 +664,9 @@ public class CardinalRiteEvents {
 			completeHematicUnbinding(sLevel, caster);
 		}
 
-		// Rite of the Lethe's Shadow: strip Unstained progress from a nearby player
-		if (LETHES_SHADOW_RITE.equals(ritePath)) {
-			completeLethesShadow(sLevel, caster, center);
+		// Rite of the Pallid Shadow: strip Unstained progress from a nearby player
+		if (PALLID_SHADOW_RITE.equals(ritePath)) {
+			completePallidShadow(sLevel, caster, center);
 		}
 
 		// Bloom of the Qliphoth: summon a persistent bloom tree that buffs nearby players
@@ -1169,12 +1169,12 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Rite of the Lethe's Shadow (Cross-tier, Grand):
+	 * Rite of the Pallid Shadow (Cross-tier, Grand):
 	 * Targets the nearest non-caster player within the rite circle and strips
 	 * their Unstained purification progress. A direct hematic assault against
-	 * followers of Our Lady of Lethe.
+	 * followers of Our Lady of Still Waters.
 	 */
-	private static void completeLethesShadow(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+	private static void completePallidShadow(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		int halfSize = (9 - 1) / 2; // Grand rite 9x9 structure
 		AABB bounds = new AABB(center).inflate(halfSize + 1);
 
@@ -1222,7 +1222,7 @@ public class CardinalRiteEvents {
 							false);
 				}
 				caster.displayClientMessage(
-						Component.literal("The Lethe's Shadow consumes " + victim.getName().getString()
+						Component.literal("The Pallid Shadow consumes " + victim.getName().getString()
 								+ "'s purity. Their purification is undone.")
 								.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 						false);
@@ -1485,7 +1485,7 @@ public class CardinalRiteEvents {
 		});
 
 		caster.displayClientMessage(
-				Component.literal("The waters of Lethe wash over you. The Unstained path has begun.")
+				Component.literal("The still waters wash over you. The Unstained path has begun.")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
 				false);
 		sLevel.sendParticles(ParticleTypes.END_ROD,
