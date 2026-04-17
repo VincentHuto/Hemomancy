@@ -105,9 +105,12 @@ public class SeraphaeFragmentEntity extends Monster {
 			for (Player player : server.getEntitiesOfClass(Player.class,
 					this.getBoundingBox().inflate(4.0))) {
 				// light knockback / disruption
-				Vec3 push = player.position().subtract(this.position()).normalize().scale(0.15);
-				player.push(push.x, 0.05, push.z);
-				player.hurtMarked = true;
+				Vec3 diff = player.position().subtract(this.position());
+				if (diff.lengthSqr() > 0.001) {
+					Vec3 push = diff.normalize().scale(0.15);
+					player.push(push.x, 0.05, push.z);
+					player.hurtMarked = true;
+				}
 			}
 			// Ambient particles
 			server.sendParticles(ParticleTypes.END_ROD,

@@ -84,6 +84,8 @@ public class SeraphaeEntity extends Monster {
 	/** Number of fragments spawned per FRACTURING cycle. */
 	private static final int MIN_FRAGMENTS = 3;
 	private static final int MAX_FRAGMENTS = 6;
+	/** Maximum fragments when escalation is active. */
+	private static final int MAX_ESCALATED_FRAGMENTS = 8;
 
 	/** Number of containment anchors placed on encounter start. */
 	private static final int ANCHOR_COUNT = 4;
@@ -96,6 +98,8 @@ public class SeraphaeEntity extends Monster {
 	// ── escalation thresholds ─────────────────────────────────────────
 	/** Below this integrity, spawn rate & hazards increase. */
 	private static final float ESCALATION_THRESHOLD = 25.0F;
+	/** Chance per player per tick-scan of receiving wisp damage in DISPERSED state. */
+	private static final float DISPERSED_DAMAGE_CHANCE = 0.3F;
 
 	// ── animation states ──────────────────────────────────────────────
 	public final AnimationState idleAnimationState = new AnimationState();
@@ -124,7 +128,7 @@ public class SeraphaeEntity extends Monster {
 
 	public static AttributeSupplier.Builder setAttributes() {
 		return Monster.createMonsterAttributes()
-				.add(Attributes.MAX_HEALTH, 500.0D) // effectively unkillable
+				.add(Attributes.MAX_HEALTH, 500.0D) // damage is cosmetic only - win condition is integrity-based
 				.add(Attributes.MOVEMENT_SPEED, 0.22D)
 				.add(Attributes.ATTACK_DAMAGE, 4.0D)
 				.add(Attributes.FOLLOW_RANGE, 48.0D)
@@ -273,7 +277,7 @@ public class SeraphaeEntity extends Monster {
 		int count = MIN_FRAGMENTS + server.random.nextInt(MAX_FRAGMENTS - MIN_FRAGMENTS + 1);
 		// Escalation: more fragments when integrity is low
 		if (getContainmentIntegrity() < ESCALATION_THRESHOLD) {
-			count = Math.min(count + 2, MAX_FRAGMENTS + 2);
+			count = Math.min(count + 2, MAX_ESCALATED_FRAGMENTS);
 		}
 		spawnFragments(server, count);
 
@@ -344,7 +348,7 @@ public class SeraphaeEntity extends Monster {
 			for (Player player : server.getEntitiesOfClass(Player.class,
 					this.getBoundingBox().inflate(ARENA_RADIUS))) {
 				// Random wisp damage from the dispersed radiance
-				if (server.random.nextFloat() < 0.3F) {
+				if (server.random.nextFloat() < DISPERSED_DAMAGE_CHANCE) {
 					player.hurt(this.damageSources().magic(), 1.5F);
 					server.sendParticles(ParticleTypes.END_ROD,
 							player.getX(), player.getY() + 1.0, player.getZ(),
