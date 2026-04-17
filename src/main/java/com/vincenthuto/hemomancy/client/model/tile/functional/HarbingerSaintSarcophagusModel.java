@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 
-public class HarbingerSaintSarcophagus extends Model {
+public class HarbingerSaintSarcophagusModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             Hemomancy.rloc("modelharbingersaintsarcophagus"), "main");
     private final ModelPart sarcophagus_base;
@@ -22,7 +22,7 @@ public class HarbingerSaintSarcophagus extends Model {
     private final ModelPart braziers;
     private final ModelPart tendrils;
 
-    public HarbingerSaintSarcophagus(ModelPart root) {
+    public HarbingerSaintSarcophagusModel(ModelPart root) {
         super(RenderType::entityTranslucent);
         this.sarcophagus_base = root.getChild("sarcophagus_base");
         this.corpse = this.sarcophagus_base.getChild("corpse");
