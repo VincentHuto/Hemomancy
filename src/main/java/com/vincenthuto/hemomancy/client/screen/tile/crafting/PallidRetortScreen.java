@@ -75,8 +75,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 
 		// Lethe bar hover tooltip
 		if (mouseX >= letheBarX1 && mouseX < letheBarX2 && mouseY >= letheBarY1 && mouseY < letheBarY2) {
-			double vol = te.getLetheVolume();
-			double maxVol = te.getMaxLetheVolume();
+			double vol = te.getSilthmereVolume();
+			double maxVol = te.getMaxSilthmereVolume();
 			graphics.renderTooltip(font, List.of(
 					Component.literal(String.format("\u00A77Lethe: \u00A7f%.0f \u00A77/ \u00A7f%.0f", vol, maxVol))
 			), java.util.Optional.empty(), mouseX, mouseY);
@@ -301,8 +301,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		letheBarX2 = barX + barW + 2;
 		letheBarY2 = barY + barH + 2;
 
-		double vol = te.getLetheVolume();
-		double maxVol = te.getMaxLetheVolume();
+		double vol = te.getSilthmereVolume();
+		double maxVol = te.getMaxSilthmereVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
 		float time = System.nanoTime() / 1_000_000_000f;

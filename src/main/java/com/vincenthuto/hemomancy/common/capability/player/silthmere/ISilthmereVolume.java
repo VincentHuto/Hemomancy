@@ -1,26 +1,26 @@
-package com.vincenthuto.hemomancy.common.capability.player.lethe;
+package com.vincenthuto.hemomancy.common.capability.player.silthmere;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 
-public interface ILetheVolume {
+public interface ISilthmereVolume {
 
-	public void addLetheVolume(double points);
+	public void addSilthmereVolume(double points);
 
-	public void addMaxLetheVolume(double points);
+	public void addMaxSilthmereVolume(double points);
 
 	public boolean drain(double points);
 
-	public boolean drainFromSource(ILetheVolume src, double points);
+	public boolean drainFromSource(ISilthmereVolume src, double points);
 
 	public boolean fill(double points);
 
-	public boolean fillFromSource(ILetheVolume src, double points);
+	public boolean fillFromSource(ISilthmereVolume src, double points);
 
-	public Bloodline getLetheLine();
+	public Bloodline getSilthmereLine();
 
-	public double getLetheVolume();
+	public double getSilthmereVolume();
 
-	public double getMaxLetheVolume();
+	public double getMaxSilthmereVolume();
 
 	public boolean isActive();
 
@@ -30,15 +30,15 @@ public interface ILetheVolume {
 
 	public void setActive(boolean set);
 
-	public void setLetheLine(Bloodline bloodLine);
+	public void setSilthmereLine(Bloodline bloodLine);
 
-	public void setLetheVolume(double points);
+	public void setSilthmereVolume(double points);
 
-	public void setMaxLetheVolume(double points);
+	public void setMaxSilthmereVolume(double points);
 
-	public void subtractLetheVolume(double points);
+	public void subtractSilthmereVolume(double points);
 
-	public void subtractMaxLetheVolume(double points);
+	public void subtractMaxSilthmereVolume(double points);
 
 	public void toggleActive();
 

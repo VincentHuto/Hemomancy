@@ -1,12 +1,12 @@
-package com.vincenthuto.hemomancy.common.capability.player.lethe;
+package com.vincenthuto.hemomancy.common.capability.player.silthmere;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 
-public class LetheVolume implements ILetheVolume {
+public class SilthmereVolume implements ISilthmereVolume {
 	private boolean active = false;
-	private double letheVolume = 0.0;
-	private double maxLetheVolume = 5000.0;
-	private Bloodline letheLine = Bloodline.NOBLOODLINE;
+	private double silthmereVolume = 0.0;
+	private double maxSilthmereVolume = 5000.0;
+	private Bloodline silthmereLine = Bloodline.NOBLOODLINE;
 
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
 	private boolean trickleEnabled = false;
@@ -18,28 +18,28 @@ public class LetheVolume implements ILetheVolume {
 	 * only use if you want to explicitly bypass max volume limits
 	 */
 	@Override
-	public void addLetheVolume(double points) {
-		this.letheVolume += points;
+	public void addSilthmereVolume(double points) {
+		this.silthmereVolume += points;
 	}
 
 	@Override
-	public void addMaxLetheVolume(double points) {
-		this.maxLetheVolume += points;
+	public void addMaxSilthmereVolume(double points) {
+		this.maxSilthmereVolume += points;
 	}
 
 	@Override
 	public boolean drain(double points) {
 		if (!wouldOverstrain(points)) {
-			letheVolume -= points;
+			silthmereVolume -= points;
 			return true;
 		} else {
-			letheVolume = 0;
+			silthmereVolume = 0;
 			return false;
 		}
 	}
 
 	@Override
-	public boolean drainFromSource(ILetheVolume src, double points) {
+	public boolean drainFromSource(ISilthmereVolume src, double points) {
 		if (src.fill(points) ) {
 			drain(points);
 			return true;
@@ -51,18 +51,18 @@ public class LetheVolume implements ILetheVolume {
 	@Override
 	public boolean fill(double points) {
 		if (!wouldOverflow(points)) {
-			letheVolume += points;
+			silthmereVolume += points;
 			return true;
 		} else {
-			letheVolume = maxLetheVolume;
+			silthmereVolume = maxSilthmereVolume;
 			return false;
 		}
 
 	}
 
 	@Override
-	public boolean fillFromSource(ILetheVolume src, double points) {
-		if (src.drain(points) && src.getLetheVolume() > points) {
+	public boolean fillFromSource(ISilthmereVolume src, double points) {
+		if (src.drain(points) && src.getSilthmereVolume() > points) {
 			fill(points);
 			return true;
 		} else {
@@ -71,19 +71,19 @@ public class LetheVolume implements ILetheVolume {
 	}
 
 	@Override
-	public Bloodline getLetheLine() {
-		return letheLine;
+	public Bloodline getSilthmereLine() {
+		return silthmereLine;
 	}
 
 	@Override
-	public double getLetheVolume() {
-		return this.letheVolume;
+	public double getSilthmereVolume() {
+		return this.silthmereVolume;
 	}
 
 	@Override
-	public double getMaxLetheVolume() {
+	public double getMaxSilthmereVolume() {
 
-		return this.maxLetheVolume;
+		return this.maxSilthmereVolume;
 	}
 
 	@Override
@@ -93,12 +93,12 @@ public class LetheVolume implements ILetheVolume {
 
 	@Override
 	public boolean isEmpty() {
-		return letheVolume <= 0;
+		return silthmereVolume <= 0;
 	}
 
 	@Override
 	public boolean isFull() {
-		return letheVolume >= maxLetheVolume;
+		return silthmereVolume >= maxSilthmereVolume;
 	}
 
 	@Override
@@ -107,32 +107,32 @@ public class LetheVolume implements ILetheVolume {
 	}
 
 	@Override
-	public void setLetheLine(Bloodline letheLine) {
-		this.letheLine = letheLine;
+	public void setSilthmereLine(Bloodline silthmereLine) {
+		this.silthmereLine = silthmereLine;
 	}
 
 	@Override
-	public void setLetheVolume(double points) {
-		this.letheVolume = points;
+	public void setSilthmereVolume(double points) {
+		this.silthmereVolume = points;
 	}
 
 	@Override
-	public void setMaxLetheVolume(double points) {
-		this.maxLetheVolume = points;
+	public void setMaxSilthmereVolume(double points) {
+		this.maxSilthmereVolume = points;
 	}
 
 	/***
 	 * only use if you want to explicitly bypass min volume limits
 	 */
 	@Override
-	public void subtractLetheVolume(double points) {
-		this.letheVolume -= points;
+	public void subtractSilthmereVolume(double points) {
+		this.silthmereVolume -= points;
 
 	}
 
 	@Override
-	public void subtractMaxLetheVolume(double points) {
-		this.maxLetheVolume -= points;
+	public void subtractMaxSilthmereVolume(double points) {
+		this.maxSilthmereVolume -= points;
 	}
 
 	@Override
@@ -142,12 +142,12 @@ public class LetheVolume implements ILetheVolume {
 
 	@Override
 	public boolean wouldOverflow(double points) {
-		return letheVolume + points > maxLetheVolume;
+		return silthmereVolume + points > maxSilthmereVolume;
 	}
 
 	@Override
 	public boolean wouldOverstrain(double points) {
-		return letheVolume - points < 0;
+		return silthmereVolume - points < 0;
 	}
 
 	// ── Bloodline Pool Donation & Auto-Draw ──

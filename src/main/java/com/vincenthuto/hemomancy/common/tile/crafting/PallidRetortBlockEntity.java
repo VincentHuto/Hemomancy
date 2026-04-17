@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
-import com.vincenthuto.hemomancy.common.capability.player.lethe.ILetheVolume;
-import com.vincenthuto.hemomancy.common.capability.player.lethe.LetheVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.silthmere.ISilthmereVolume;
+import com.vincenthuto.hemomancy.common.capability.player.silthmere.SilthmereVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -15,7 +15,7 @@ import com.vincenthuto.hemomancy.common.init.RecipeInit;
 import com.vincenthuto.hemomancy.common.item.BloodyFlaskItem;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.PallidRetortMenu;
 import com.vincenthuto.hemomancy.common.recipe.DistillationRecipe;
-import com.vincenthuto.hemomancy.common.tile.ILetheTile;
+import com.vincenthuto.hemomancy.common.tile.ISilthmereTile;
 import com.vincenthuto.hutoslib.common.registry.HLItemInit;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
@@ -70,7 +70,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
  * lit soul campfire, lava, magma, or crimson flames.
  */
 public class PallidRetortBlockEntity extends BaseContainerBlockEntity
-		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, ILetheTile {
+		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, ISilthmereTile {
 
 	static final String TAG_LETHE_LEVEL = "letheLevel";
 
@@ -170,8 +170,8 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 	// ---- Capability (lazy) ----
 
 	@Nullable
-	private ILetheVolume resolveVolume() {
-		return getCapability(LetheVolumeProvider.LETHE_VOLUME_CAPA).orElse(null);
+	private ISilthmereVolume resolveVolume() {
+		return getCapability(SilthmereVolumeProvider.SILTHMERE_VOLUME_CAPA).orElse(null);
 	}
 
 	// ---- Ticking ----
@@ -209,10 +209,10 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		te.heated = isHeatSource(level, pos);
 		boolean dirty = false;
 
-		ILetheVolume vol = te.resolveVolume();
+		ISilthmereVolume vol = te.resolveVolume();
 		if (vol == null) return;
 
-		if (vol.getLetheVolume() < vol.getMaxLetheVolume() - 99) {
+		if (vol.getSilthmereVolume() < vol.getMaxSilthmereVolume() - 99) {
 			if (te.heated && !te.items.get(SLOT_INPUT).isEmpty()) {
 				DistillationRecipe recipe = findMatchingRecipe(level, te);
 				int maxStack = te.getMaxStackSize();
@@ -338,8 +338,8 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		ItemStack flaskStack = te.items.get(SLOT_FLASK);
 		if (flaskStack.isEmpty() || flaskStack.getItem() != HLItemInit.cured_clay_flask.get()) return;
 
-		ILetheVolume vol = te.resolveVolume();
-		if (vol == null || vol.getLetheVolume() < 100) return;
+		ISilthmereVolume vol = te.resolveVolume();
+		if (vol == null || vol.getSilthmereVolume() < 100) return;
 
 		ItemStack resultStack = te.items.get(SLOT_RESULT);
 		if (resultStack.isEmpty()) {
@@ -365,11 +365,11 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		if (flaskStack.isEmpty()) return;
 		if (!(flaskStack.getItem() instanceof BloodyFlaskItem flask)) return;
 
-		ILetheVolume vol = te.resolveVolume();
+		ISilthmereVolume vol = te.resolveVolume();
 		if (vol == null || vol.isFull()) return;
 
 		double amount = flask.getAmount();
-		if (vol.getLetheVolume() + amount > vol.getMaxLetheVolume()) return;
+		if (vol.getSilthmereVolume() + amount > vol.getMaxSilthmereVolume()) return;
 
 		// Check if we can output the empty flask
 		ItemStack outputStack = te.items.get(SLOT_FLASK_OUTPUT);
@@ -378,7 +378,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 						&& outputStack.getCount() < outputStack.getMaxStackSize())) {
 			// Consume the bloody flask
 			flaskStack.shrink(1);
-			vol.addLetheVolume(amount);
+			vol.addSilthmereVolume(amount);
 			// Output empty flask
 			if (outputStack.isEmpty()) {
 				te.items.set(SLOT_FLASK_OUTPUT, new ItemStack(HLItemInit.cured_clay_flask.get()));
@@ -403,20 +403,20 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 
 	// ---- Blood helpers ----
 
-	public ILetheVolume getLetheCapability() {
-		ILetheVolume vol = resolveVolume();
+	public ISilthmereVolume getSilthmereCapability() {
+		ISilthmereVolume vol = resolveVolume();
 		if (vol == null) throw new IllegalStateException("Lethe capability not available yet");
 		return vol;
 	}
 
-	public double getLetheVolume() {
-		ILetheVolume vol = resolveVolume();
-		return vol != null ? vol.getLetheVolume() : 0;
+	public double getSilthmereVolume() {
+		ISilthmereVolume vol = resolveVolume();
+		return vol != null ? vol.getSilthmereVolume() : 0;
 	}
 
-	public double getMaxLetheVolume() {
-		ILetheVolume vol = resolveVolume();
-		return vol != null ? vol.getMaxLetheVolume() : 0;
+	public double getMaxSilthmereVolume() {
+		ISilthmereVolume vol = resolveVolume();
+		return vol != null ? vol.getMaxSilthmereVolume() : 0;
 	}
 
 	public boolean isHeated() {
@@ -571,10 +571,10 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 
 	@Override
 	public void onLoad() {
-		ILetheVolume vol = resolveVolume();
+		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
 			vol.setActive(true);
-			vol.setMaxLetheVolume(2000f);
+			vol.setMaxSilthmereVolume(2000f);
 		}
 	}
 
@@ -590,9 +590,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		for (String s : recipesTag.getAllKeys()) {
 			this.recipesUsed.put(new ResourceLocation(s), recipesTag.getInt(s));
 		}
-		ILetheVolume vol = resolveVolume();
+		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			vol.setLetheVolume(tag.getFloat(TAG_LETHE_LEVEL));
+			vol.setSilthmereVolume(tag.getFloat(TAG_LETHE_LEVEL));
 		}
 	}
 
@@ -606,9 +606,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
 		tag.put("RecipesUsed", recipesTag);
-		ILetheVolume vol = resolveVolume();
+		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			tag.putDouble(TAG_LETHE_LEVEL, vol.getLetheVolume());
+			tag.putDouble(TAG_LETHE_LEVEL, vol.getSilthmereVolume());
 		}
 	}
 
@@ -629,9 +629,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		CompoundTag recipesTag = new CompoundTag();
 		this.recipesUsed.forEach((key, val) -> recipesTag.putInt(key.toString(), val));
 		tag.put("RecipesUsed", recipesTag);
-		ILetheVolume vol = resolveVolume();
+		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			tag.putDouble(TAG_LETHE_LEVEL, vol.getLetheVolume());
+			tag.putDouble(TAG_LETHE_LEVEL, vol.getSilthmereVolume());
 		}
 		return tag;
 	}
@@ -640,9 +640,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 	public void handleUpdateTag(CompoundTag tag) {
 		super.handleUpdateTag(tag);
 		if (tag != null) {
-			ILetheVolume vol = resolveVolume();
+			ISilthmereVolume vol = resolveVolume();
 			if (vol != null) {
-				vol.setLetheVolume(tag.getFloat(TAG_LETHE_LEVEL));
+				vol.setSilthmereVolume(tag.getFloat(TAG_LETHE_LEVEL));
 			}
 		}
 	}
@@ -651,9 +651,9 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
 		super.onDataPacket(net, pkt);
 		if (pkt.getTag() != null) {
-			ILetheVolume vol = resolveVolume();
+			ISilthmereVolume vol = resolveVolume();
 			if (vol != null) {
-				vol.setLetheVolume(pkt.getTag().getFloat(TAG_LETHE_LEVEL));
+				vol.setSilthmereVolume(pkt.getTag().getFloat(TAG_LETHE_LEVEL));
 			}
 		}
 	}
