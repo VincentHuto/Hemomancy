@@ -68,6 +68,15 @@ public class MorphlingIncubatorModel extends Model {
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
+
+    /**
+     * Animates the Creature part with a gentle bobbing motion.
+     * @param ageInTicks game time + partial ticks
+     */
+    public void setupAnim(float ageInTicks) {
+        this.Creature.y = -11.0F + (float) Math.sin(ageInTicks * 0.1) * 1.5F;
+    }
+
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         morphling_incubator.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);

@@ -56,7 +56,11 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 	public void render(MorphlingIncubatorBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
 
-		renderIncubatorModel(ms, bufferIn, te, combinedLightIn);
+		renderFluidLevel(ms, bufferIn, te);
+		if (bufferIn instanceof MultiBufferSource.BufferSource source) {
+			source.endBatch(RenderTypeInit.FLASK_FLUID);
+		}
+		renderIncubatorModel(ms, bufferIn, te, combinedLightIn, partialTicks);
 
 		float currentTime = te.getLevel().getGameTime() + partialTicks;
 
@@ -344,7 +348,7 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 	 * (Blockbench convention) and rotates to match the block's FACING direction.
 	 */
 	private void renderIncubatorModel(PoseStack poseStack, MultiBufferSource bufferIn,
-			MorphlingIncubatorBlockEntity te, int combinedLightIn) {
+			MorphlingIncubatorBlockEntity te, int combinedLightIn, float partialTicks) {
 		poseStack.pushPose();
 
 		poseStack.translate(0.5D, 1.5D, 0.5D);
@@ -360,10 +364,81 @@ public class MorphlingIncubatorRenderer implements BlockEntityRenderer<Morphling
 		};
 		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
+		float ageInTicks = te.getLevel().getGameTime() + partialTicks;
+		model.setupAnim(ageInTicks);
+
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
 				1.0F, 1.0F, 1.0F, 1.0F);
 
 		poseStack.popPose();
+	}
+
+	/**
+	 * Renders a translucent red fluid box inside the Tank glass,
+	 * whose height is proportional to the blood fill percentage.
+	 */
+	private void renderFluidLevel(PoseStack poseStack, MultiBufferSource bufferIn,
+			MorphlingIncubatorBlockEntity te) {
+		double current = te.getBloodVolume();
+		double max = te.getMaxBloodVolume();
+		if (max <= 0 || current <= 0) return;
+
+		float fillPct = (float) Math.min(current / max, 1.0);
+
+		// Tank box: 10x16x10 centred, inset slightly so fluid sits inside glass
+		float halfW = 4.5f / 16f;
+		float halfD = 4.5f / 16f;
+		float tankBottomY = 4f / 16f;
+		float tankHeight = 15f / 16f;
+		float fluidHeight = tankHeight * fillPct;
+
+		poseStack.pushPose();
+		poseStack.translate(0.5f, tankBottomY, 0.5f);
+
+		// Blood colour: dark red, semi-transparent
+		int r = 153, g = 13, b = 13, a = 191;
+
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.FLASK_FLUID);
+		Matrix4f mat = poseStack.last().pose();
+
+		renderColorBox(vc, mat, -halfW, 0, -halfD, halfW, fluidHeight, halfD, r, g, b, a);
+
+		poseStack.popPose();
+	}
+
+	private static void renderColorBox(VertexConsumer vc, Matrix4f mat,
+			float x0, float y0, float z0, float x1, float y1, float z1,
+			int r, int g, int b, int a) {
+		// Top
+		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		// Bottom
+		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
+		// North (z0)
+		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
+		// South (z1)
+		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+		// West (x0)
+		vc.vertex(mat, x0, y1, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y0, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x0, y1, z1).color(r, g, b, a).endVertex();
+		// East (x1)
+		vc.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z1).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y0, z0).color(r, g, b, a).endVertex();
+		vc.vertex(mat, x1, y1, z0).color(r, g, b, a).endVertex();
 	}
 }

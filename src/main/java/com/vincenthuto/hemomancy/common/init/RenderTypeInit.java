@@ -148,6 +148,18 @@ public class RenderTypeInit extends RenderType {
 					.setLightmapState(NO_LIGHTMAP)
 					.createCompositeState(false));
 
+	// Flask fluid level — flat colour, depth-tested against world but rendered before glass
+	public static final RenderType FLASK_FLUID = create("FlaskFluid",
+			DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true,
+			RenderType.CompositeState.builder()
+					.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setDepthTestState(LEQUAL_DEPTH_TEST)
+					.setWriteMaskState(COLOR_DEPTH_WRITE)
+					.setCullState(NO_CULL)
+					.setLightmapState(NO_LIGHTMAP)
+					.createCompositeState(false));
+
 	public static final RenderType ENTITY_BEAM_RENDER_TYPE = create("beam",
 			DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true,
 			RenderType.CompositeState.builder().setShaderState(ShaderStateShard.RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
