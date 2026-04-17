@@ -72,7 +72,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, ISilthmereTile {
 
-	static final String TAG_LETHE_LEVEL = "letheLevel";
+	static final String TAG_SILTHMERE_LEVEL = "silthmereLevel";
 
 	// Slot indices
 	public static final int SLOT_INPUT    = 0;
@@ -405,7 +405,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 
 	public ISilthmereVolume getSilthmereCapability() {
 		ISilthmereVolume vol = resolveVolume();
-		if (vol == null) throw new IllegalStateException("Lethe capability not available yet");
+		if (vol == null) throw new IllegalStateException("Silthmere capability not available yet");
 		return vol;
 	}
 
@@ -592,7 +592,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		}
 		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			vol.setSilthmereVolume(tag.getFloat(TAG_LETHE_LEVEL));
+			vol.setSilthmereVolume(tag.getFloat(TAG_SILTHMERE_LEVEL));
 		}
 	}
 
@@ -608,7 +608,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		tag.put("RecipesUsed", recipesTag);
 		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			tag.putDouble(TAG_LETHE_LEVEL, vol.getSilthmereVolume());
+			tag.putDouble(TAG_SILTHMERE_LEVEL, vol.getSilthmereVolume());
 		}
 	}
 
@@ -631,7 +631,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		tag.put("RecipesUsed", recipesTag);
 		ISilthmereVolume vol = resolveVolume();
 		if (vol != null) {
-			tag.putDouble(TAG_LETHE_LEVEL, vol.getSilthmereVolume());
+			tag.putDouble(TAG_SILTHMERE_LEVEL, vol.getSilthmereVolume());
 		}
 		return tag;
 	}
@@ -642,7 +642,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		if (tag != null) {
 			ISilthmereVolume vol = resolveVolume();
 			if (vol != null) {
-				vol.setSilthmereVolume(tag.getFloat(TAG_LETHE_LEVEL));
+				vol.setSilthmereVolume(tag.getFloat(TAG_SILTHMERE_LEVEL));
 			}
 		}
 	}
@@ -653,7 +653,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 		if (pkt.getTag() != null) {
 			ISilthmereVolume vol = resolveVolume();
 			if (vol != null) {
-				vol.setSilthmereVolume(pkt.getTag().getFloat(TAG_LETHE_LEVEL));
+				vol.setSilthmereVolume(pkt.getTag().getFloat(TAG_SILTHMERE_LEVEL));
 			}
 		}
 	}
