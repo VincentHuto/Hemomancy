@@ -1,26 +1,26 @@
-package com.vincenthuto.hemomancy.common.capability.player.silthmere;
+package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 
-public interface ISilthmereVolume {
+public interface IWhiteHumorVolume {
 
-	public void addSilthmereVolume(double points);
+	public void addWhiteHumorVolume(double points);
 
-	public void addMaxSilthmereVolume(double points);
+	public void addMaxWhiteHumorVolume(double points);
 
 	public boolean drain(double points);
 
-	public boolean drainFromSource(ISilthmereVolume src, double points);
+	public boolean drainFromSource(IWhiteHumorVolume src, double points);
 
 	public boolean fill(double points);
 
-	public boolean fillFromSource(ISilthmereVolume src, double points);
+	public boolean fillFromSource(IWhiteHumorVolume src, double points);
 
-	public Bloodline getSilthmereLine();
+	public Bloodline getWhiteHumorLine();
 
-	public double getSilthmereVolume();
+	public double getWhiteHumorVolume();
 
-	public double getMaxSilthmereVolume();
+	public double getMaxWhiteHumorVolume();
 
 	public boolean isActive();
 
@@ -30,15 +30,15 @@ public interface ISilthmereVolume {
 
 	public void setActive(boolean set);
 
-	public void setSilthmereLine(Bloodline bloodLine);
+	public void setWhiteHumorLine(Bloodline bloodLine);
 
-	public void setSilthmereVolume(double points);
+	public void setWhiteHumorVolume(double points);
 
-	public void setMaxSilthmereVolume(double points);
+	public void setMaxWhiteHumorVolume(double points);
 
-	public void subtractSilthmereVolume(double points);
+	public void subtractWhiteHumorVolume(double points);
 
-	public void subtractMaxSilthmereVolume(double points);
+	public void subtractMaxWhiteHumorVolume(double points);
 
 	public void toggleActive();
 

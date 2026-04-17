@@ -1,7 +1,7 @@
-package com.vincenthuto.hemomancy.common.capability.player.silthmere;
+package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.common.tile.ISilthmereTile;
+import com.vincenthuto.hemomancy.common.tile.IWhiteHumorTile;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -9,11 +9,11 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class SilthmereVolumeEvents {
+public class WhiteHumorVolumeEvents {
 @SubscribeEvent
 public static void attachCapabilitiesTile(final AttachCapabilitiesEvent<BlockEntity> event) {
-if (event.getObject() instanceof ISilthmereTile) {
-event.addCapability(Hemomancy.rloc("silthmerevolume"), new SilthmereVolumeProvider());
+if (event.getObject() instanceof IWhiteHumorTile) {
+event.addCapability(Hemomancy.rloc("whitehumorvolume"), new WhiteHumorVolumeProvider());
 }
 }
 }

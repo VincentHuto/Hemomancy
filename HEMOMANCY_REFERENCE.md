@@ -206,7 +206,7 @@ The Unstained revere a mysterious figure known only as **Our Lady of Still Water
 - A **tall woman** with **white hair** that cascades like flowing water
 - Clad in **white robes** that shimmer faintly with silver thread
 - Eyes of **liquid silver** that see through all deception and corruption
-- Skin of **pale blue**, as though touched by the still waters of Silthmere
+- Skin of **pale blue**, as though touched by the still waters
 
 Her origins are unknown — some Unstained texts suggest she is a being from before the fungal infection that birthed hemomancy, a guardian spirit of purity who was driven into hiding when blood magic first took root. Others believe she is a manifestation of the world's immune response to the alien fungus, a living antibody in humanoid form.
 
@@ -762,7 +762,7 @@ One for each tendency:
 | Tome of the Unstained | A book of Unstained scripture describing Our Lady of Still Waters and the path of purification |
 | Icon of Our Lady | A rare relic depicting Our Lady of Still Waters — carved from pale silver, grants her protection |
 | ![](src/main/resources/assets/hemomancy/textures/item/pale_silver_ingot.png) Pale Silver Ingot | A refined metal sacred to the Unstained, used in crafting Unstained equipment |
-| Lethean Extract | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
+| The Pale Distillate | Concentrated essence from Lethean Poppies, a crafting ingredient for Unstained recipes |
 
 ### 13.7 Food Items
 
@@ -1013,7 +1013,7 @@ A full block family with variants:
 - Stinkhorn Fungus (Confusion effect — ghastly_alembic → Foul Paste, brews Potion of Blood Binding)
 - Puffball Fungus (Saturation effect, **Unstained** — ghastly_alembic → Spore Sac, incubator catalyst for Fungal Morphling)
 - Lethean Poppy (Regeneration effect, random ticks, **Unstained** — ghastly_alembic → Lethean Dew, crafts Lethean Poppy Wreath)
-- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — ghastly_alembic → Lethean Extract)
+- Ghost Pipe (myco-heterotrophic, Night Vision effect, **Unstained** — ghastly_alembic → The Pale Distillate)
 - Sarcodes (myco-heterotrophic, Regeneration effect — ghastly_alembic → Dicentra Sap, brews Potion of Blood Rush)
 - Rafflesia (parasitic, Confusion effect — ghastly_alembic → Spore Sac, brews Potion of Hemolysis)
 
@@ -1118,7 +1118,7 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 |-------|--------|-------|-----------|
 | Infected Fungus | Foul Paste | 2 | 100 |
 | Stinkhorn Fungus | Foul Paste | 2 | 100 |
-| Ghost Pipe | Lethean Extract | 1 | 150 |
+| Ghost Pipe | The Pale Distillate | 1 | 150 |
 | Sarcodes | Dicentra Sap | 2 | 120 |
 | Rafflesia | Spore Sac | 2 | 120 |
 | Puffball Fungus | Spore Sac | 2 | 120 |
@@ -1129,9 +1129,9 @@ Plants and fungi found in hemomancy biomes serve as ingredients across multiple 
 | Recipe | Type | Ingredients | Output |
 |--------|------|-------------|--------|
 | Lethean Poppy Wreath | Shapeless | 4× Lethean Poppy + String | 1 |
-| Lethean Extract | Shapeless | Lethean Dew + Consecrated Copper Ingot | 1 |
-| Tears of Lethe | Shapeless | Lethean Extract + Silver Chalice | 1 |
-| Pale Silver Ingot | Shapeless | Iron Ingot + Lethean Extract | 1 |
+| The Pale Distillate | Shapeless | Lethean Dew + Consecrated Copper Ingot | 1 |
+| Tears of Lethe | Shapeless | The Pale Distillate + Silver Chalice | 1 |
+| Pale Silver Ingot | Shapeless | Iron Ingot + The Pale Distillate | 1 |
 | Spore Sac | Shapeless | Puffball Fungus + Hyphae | 2 |
 | Foul Paste (fungi) | Shapeless | Infected Fungus + Stinkhorn Fungus + Bone Meal | 3 |
 
@@ -1648,11 +1648,11 @@ The Unstained faction is being expanded with deeper lore around **Our Lady of St
 - **Our Lady of Lethe NPC / Apparition** — a potential future entity: a spectral manifestation of Our Lady that appears briefly at the altar during the blessing, or as a rare encounter near Lethean Poppy fields. Description: tall woman, white hair, white robes, silver eyes, pale blue skin.
 - **Unstained Dialogue Expansion** — ~~Zealot dialogues should reference Our Lady of Still Waters more directly.~~ **RESOLVED:** Both Unstained Zealot and Unstained Acolyte have full purity-stage-aware dialogue trees. The Acolyte provides Our Lady of Still Waters lore, Silver Veil lore, and Clarity guidance at appropriate stages.
 - **Lethean Crafting Recipes** — implemented recipes:
-  - ✅ Tears of Lethe = Lethean Extract + Silver Chalice (crafting)
+  - ✅ Tears of Lethe = The Pale Distillate + Silver Chalice (crafting)
   - ✅ Lethean Poppy Wreath = 4× Lethean Poppy + String (crafting)
-  - ✅ Lethean Extract = Lethean Dew + Consecrated Copper Ingot (crafting)
-  - ✅ Pale Silver Ingot = Iron Ingot + Lethean Extract (crafting)
-  - Lethe Lantern = Pale Silver Ingot + Lethean Extract + Glowstone (crafting) — planned
+  - ✅ The Pale Distillate = Lethean Dew + Consecrated Copper Ingot (crafting)
+  - ✅ Pale Silver Ingot = Iron Ingot + The Pale Distillate (crafting)
+  - Lethe Lantern = Pale Silver Ingot + The Pale Distillate + Glowstone (crafting) — planned
   - Cleansed Stone = Stone + Hemolytic Solution (crafting) — planned
 - **Unstained Advancement/Achievement Tree** — a dedicated Unstained branch of the advancement tree tracking:
   - Begin the Unstained path

@@ -244,7 +244,7 @@ public class Hemomancy {
     private void initUnstainedStageIcons() {
         EnumPurityStage.CORRUPTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.blood_stained_stone.get()));
         EnumPurityStage.TAINTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_poppy_wreath.get()));
-        EnumPurityStage.CLEANSING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_extract.get()));
+        EnumPurityStage.CLEANSING.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pale_distillate.get()));
         EnumPurityStage.ABSOLVED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tears_of_silthmere.get()));
         EnumPurityStage.PURIFIED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pallid_icon.get()));
         EnumClarityStage.AWAKENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.cleansed_blood_crystal_shard.get()));

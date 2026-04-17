@@ -1,12 +1,12 @@
-package com.vincenthuto.hemomancy.common.capability.player.silthmere;
+package com.vincenthuto.hemomancy.common.capability.player.white_humor;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 
-public class SilthmereVolume implements ISilthmereVolume {
+public class WhiteHumorVolume implements IWhiteHumorVolume {
 	private boolean active = false;
-	private double silthmereVolume = 0.0;
-	private double maxSilthmereVolume = 5000.0;
-	private Bloodline silthmereLine = Bloodline.NOBLOODLINE;
+	private double whiteHumorVolume = 0.0;
+	private double maxWhiteHumorVolume = 5000.0;
+	private Bloodline whiteHumorLine = Bloodline.NOBLOODLINE;
 
 	// ── Bloodline Pool Donation & Auto-Draw Settings ──
 	private boolean trickleEnabled = false;
@@ -18,28 +18,28 @@ public class SilthmereVolume implements ISilthmereVolume {
 	 * only use if you want to explicitly bypass max volume limits
 	 */
 	@Override
-	public void addSilthmereVolume(double points) {
-		this.silthmereVolume += points;
+	public void addWhiteHumorVolume(double points) {
+		this.whiteHumorVolume += points;
 	}
 
 	@Override
-	public void addMaxSilthmereVolume(double points) {
-		this.maxSilthmereVolume += points;
+	public void addMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume += points;
 	}
 
 	@Override
 	public boolean drain(double points) {
 		if (!wouldOverstrain(points)) {
-			silthmereVolume -= points;
+			whiteHumorVolume -= points;
 			return true;
 		} else {
-			silthmereVolume = 0;
+			whiteHumorVolume = 0;
 			return false;
 		}
 	}
 
 	@Override
-	public boolean drainFromSource(ISilthmereVolume src, double points) {
+	public boolean drainFromSource(IWhiteHumorVolume src, double points) {
 		if (src.fill(points) ) {
 			drain(points);
 			return true;
@@ -51,18 +51,18 @@ public class SilthmereVolume implements ISilthmereVolume {
 	@Override
 	public boolean fill(double points) {
 		if (!wouldOverflow(points)) {
-			silthmereVolume += points;
+			whiteHumorVolume += points;
 			return true;
 		} else {
-			silthmereVolume = maxSilthmereVolume;
+			whiteHumorVolume = maxWhiteHumorVolume;
 			return false;
 		}
 
 	}
 
 	@Override
-	public boolean fillFromSource(ISilthmereVolume src, double points) {
-		if (src.drain(points) && src.getSilthmereVolume() > points) {
+	public boolean fillFromSource(IWhiteHumorVolume src, double points) {
+		if (src.drain(points) && src.getWhiteHumorVolume() > points) {
 			fill(points);
 			return true;
 		} else {
@@ -71,19 +71,19 @@ public class SilthmereVolume implements ISilthmereVolume {
 	}
 
 	@Override
-	public Bloodline getSilthmereLine() {
-		return silthmereLine;
+	public Bloodline getWhiteHumorLine() {
+		return whiteHumorLine;
 	}
 
 	@Override
-	public double getSilthmereVolume() {
-		return this.silthmereVolume;
+	public double getWhiteHumorVolume() {
+		return this.whiteHumorVolume;
 	}
 
 	@Override
-	public double getMaxSilthmereVolume() {
+	public double getMaxWhiteHumorVolume() {
 
-		return this.maxSilthmereVolume;
+		return this.maxWhiteHumorVolume;
 	}
 
 	@Override
@@ -93,12 +93,12 @@ public class SilthmereVolume implements ISilthmereVolume {
 
 	@Override
 	public boolean isEmpty() {
-		return silthmereVolume <= 0;
+		return whiteHumorVolume <= 0;
 	}
 
 	@Override
 	public boolean isFull() {
-		return silthmereVolume >= maxSilthmereVolume;
+		return whiteHumorVolume >= maxWhiteHumorVolume;
 	}
 
 	@Override
@@ -107,32 +107,32 @@ public class SilthmereVolume implements ISilthmereVolume {
 	}
 
 	@Override
-	public void setSilthmereLine(Bloodline silthmereLine) {
-		this.silthmereLine = silthmereLine;
+	public void setWhiteHumorLine(Bloodline whiteHumorLine) {
+		this.whiteHumorLine = whiteHumorLine;
 	}
 
 	@Override
-	public void setSilthmereVolume(double points) {
-		this.silthmereVolume = points;
+	public void setWhiteHumorVolume(double points) {
+		this.whiteHumorVolume = points;
 	}
 
 	@Override
-	public void setMaxSilthmereVolume(double points) {
-		this.maxSilthmereVolume = points;
+	public void setMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume = points;
 	}
 
 	/***
 	 * only use if you want to explicitly bypass min volume limits
 	 */
 	@Override
-	public void subtractSilthmereVolume(double points) {
-		this.silthmereVolume -= points;
+	public void subtractWhiteHumorVolume(double points) {
+		this.whiteHumorVolume -= points;
 
 	}
 
 	@Override
-	public void subtractMaxSilthmereVolume(double points) {
-		this.maxSilthmereVolume -= points;
+	public void subtractMaxWhiteHumorVolume(double points) {
+		this.maxWhiteHumorVolume -= points;
 	}
 
 	@Override
@@ -142,12 +142,12 @@ public class SilthmereVolume implements ISilthmereVolume {
 
 	@Override
 	public boolean wouldOverflow(double points) {
-		return silthmereVolume + points > maxSilthmereVolume;
+		return whiteHumorVolume + points > maxWhiteHumorVolume;
 	}
 
 	@Override
 	public boolean wouldOverstrain(double points) {
-		return silthmereVolume - points < 0;
+		return whiteHumorVolume - points < 0;
 	}
 
 	// ── Bloodline Pool Donation & Auto-Draw ──

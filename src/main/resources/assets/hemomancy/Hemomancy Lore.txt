@@ -300,7 +300,7 @@ Hemolytic plating
 
 
 Lethean Brew
-    A cursed clay jar filled with liquid from the still waters of Silthmere, found in the nether, which allows the forgetting of memories
+    A cursed clay jar filled with liquid from the still waters, found in the nether, which allows the forgetting of memories
 
 
 Morphling polyp and fungal

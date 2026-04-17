@@ -3,7 +3,7 @@
   "ingredients": [
     { "item": "hemomancy:pale_silver_ingot" },
     { "item": "minecraft:book" },
-    { "item": "hemomancy:lethean_extract" }
+    { "item": "hemomancy:pale_distillate" }
   ],
   "result": {
     "item": "hemomancy:tome_of_the_unstained",

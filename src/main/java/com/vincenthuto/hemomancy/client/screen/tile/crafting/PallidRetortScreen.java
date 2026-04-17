@@ -16,8 +16,8 @@ import net.minecraft.world.inventory.Slot;
 
 /**
  * Pallid Retort screen — fully programmatic, no texture files.
- * Renders a silthmere distillery UI with a diamond/blue crystalline background,
- * silthmere tank, progress arrow, heat indicator, and item slots.
+ * Renders a white humor distillery UI with a diamond/blue crystalline background,
+ * white humor tank, progress arrow, heat indicator, and item slots.
  */
 public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu> {
 
@@ -34,8 +34,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 	final PallidRetortBlockEntity te;
 	private float[][] rhombusParams;
 
-	// Silthmere bar screen-space bounds for hover detection
-	private int silthmereBarX1, silthmereBarY1, silthmereBarX2, silthmereBarY2;
+	// White Humor bar screen-space bounds for hover detection
+	private int whiteHumorBarX1, whiteHumorBarY1, whiteHumorBarX2, whiteHumorBarY2;
 
 	public PallidRetortScreen(PallidRetortMenu menu, Inventory inv, Component title) {
 		super(menu, inv, title);
@@ -73,12 +73,12 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		this.renderTooltip(graphics, mouseX, mouseY);
 
-		// Silthmere bar hover tooltip
-		if (mouseX >= silthmereBarX1 && mouseX < silthmereBarX2 && mouseY >= silthmereBarY1 && mouseY < silthmereBarY2) {
-			double vol = te.getSilthmereVolume();
-			double maxVol = te.getMaxSilthmereVolume();
+		// White Humor bar hover tooltip
+		if (mouseX >= whiteHumorBarX1 && mouseX < whiteHumorBarX2 && mouseY >= whiteHumorBarY1 && mouseY < whiteHumorBarY2) {
+			double vol = te.getWhiteHumorVolume();
+			double maxVol = te.getMaxWhiteHumorVolume();
 			graphics.renderTooltip(font, List.of(
-					Component.literal(String.format("\u00A77Silthmere: \u00A7f%.0f \u00A77/ \u00A7f%.0f", vol, maxVol))
+					Component.literal(String.format("\u00A77White Humor: \u00A7f%.0f \u00A77/ \u00A7f%.0f", vol, maxVol))
 			), java.util.Optional.empty(), mouseX, mouseY);
 		}
 	}
@@ -116,8 +116,8 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		// ── Progress arrow from input → output ──
 		renderProgressArrow(gfx, gx, gy);
 
-		// ── Silthmere volume bar ──
-		renderSilthmereBar(gfx, gx, gy);
+		// ── White Humor volume bar ──
+		renderWhiteHumorBar(gfx, gx, gy);
 	}
 
 	@Override
@@ -286,9 +286,9 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		}
 	}
 
-	// ───── Silthmere volume bar ─────
+	// ───── White Humor volume bar ─────
 
-	private void renderSilthmereBar(GuiGraphics gfx, int gx, int gy) {
+	private void renderWhiteHumorBar(GuiGraphics gfx, int gx, int gy) {
 		// Vertical vial on the right side of crafting area (above the flask slot)
 		int barW = 10;
 		int barH = 38;
@@ -296,13 +296,13 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 		int barY = gy + 16;
 
 		// Store bounds for hover tooltip
-		silthmereBarX1 = barX - 2;
-		silthmereBarY1 = barY - 2;
-		silthmereBarX2 = barX + barW + 2;
-		silthmereBarY2 = barY + barH + 2;
+		whiteHumorBarX1 = barX - 2;
+		whiteHumorBarY1 = barY - 2;
+		whiteHumorBarX2 = barX + barW + 2;
+		whiteHumorBarY2 = barY + barH + 2;
 
-		double vol = te.getSilthmereVolume();
-		double maxVol = te.getMaxSilthmereVolume();
+		double vol = te.getWhiteHumorVolume();
+		double maxVol = te.getMaxWhiteHumorVolume();
 		double ratio = maxVol > 0 ? Mth.clamp(vol / maxVol, 0, 1) : 0;
 
 		float time = System.nanoTime() / 1_000_000_000f;
@@ -343,7 +343,7 @@ public class PallidRetortScreen extends AbstractContainerScreen<PallidRetortMenu
 						(hAlpha << 24) | (0xFF << 16) | (0xFF << 8) | 0xFF);
 			}
 
-			// Animated bubbles rising through the silthmere
+			// Animated bubbles rising through the white humor
 			Random bubbleRand = new Random(7777L);
 			for (int bi = 0; bi < 4; bi++) {
 				float bSpeed = 0.4f + bubbleRand.nextFloat() * 0.6f;

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
  * "Materials &amp; Processes" tabs.
  * <p>
  * Blood-faction entries appear in the {@link SkillTreeScreen};
- * Unstained/Silthmere entries appear in the {@link UnstainedProgressScreen}.
+ * Unstained/White Humor entries appear in the {@link UnstainedProgressScreen}.
  */
 public final class MaterialsData {
 
@@ -349,7 +349,7 @@ public final class MaterialsData {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Unstained / Silthmere faction — UnstainedProgressScreen
+	//  Unstained / White Humor faction — UnstainedProgressScreen
 	// ────────────────────────────────────────────────────────────
 
 	private static List<MaterialEntry> unstainedEntries;
@@ -404,7 +404,7 @@ public final class MaterialsData {
 
 		// ── Plants ──
 		list.add(new MaterialEntry("lethean_poppy", "Lethean Poppy",
-				"Sacred flower of Silthmere. Source of lethean extract and poppy wreaths.",
+				"Sacred flower of the Pale Lady. Source of pale distillate and poppy wreaths.",
 				"Plants", () -> new ItemStack(BlockInit.lethean_poppy.get())));
 
 		// ── Materials ──
@@ -424,9 +424,9 @@ public final class MaterialsData {
 				"Purified silver free of sanguine taint. Base material for Unstained equipment.",
 				"Materials", () -> new ItemStack(ItemInit.pale_silver_ingot.get())));
 
-		list.add(new MaterialEntry("lethean_extract", "Lethean Extract",
+		list.add(new MaterialEntry("pale_distillate", "The Pale Distillate",
 				"Concentrated essence distilled from lethean poppies.",
-				"Materials", () -> new ItemStack(ItemInit.lethean_extract.get())));
+				"Materials", () -> new ItemStack(ItemInit.pale_distillate.get())));
 
 		list.add(new MaterialEntry("cleansed_blood_crystal_shard", "Cleansed Blood Crystal Shard",
 				"A purified blood crystal shard radiating calm energy.",

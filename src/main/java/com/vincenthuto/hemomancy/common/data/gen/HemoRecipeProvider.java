@@ -171,17 +171,17 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.requires(Items.STRING)
 				.unlockedBy("has_lethean_poppy", has(BlockInit.lethean_poppy.get())).save(consumer);
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.lethean_extract.get(), 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.pale_distillate.get(), 1)
 				.requires(ItemInit.lethean_dew.get()).requires(ItemInit.consecrated_copper_ingot.get())
 				.unlockedBy("has_lethean_dew", has(ItemInit.lethean_dew.get())).save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.tears_of_silthmere.get(), 1)
-				.requires(ItemInit.lethean_extract.get()).requires(ItemInit.silver_chalice.get())
-				.unlockedBy("has_lethean_extract", has(ItemInit.lethean_extract.get())).save(consumer);
+				.requires(ItemInit.pale_distillate.get()).requires(ItemInit.silver_chalice.get())
+				.unlockedBy("has_pale_distillate", has(ItemInit.pale_distillate.get())).save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.pale_silver_ingot.get(), 1)
-				.requires(Items.IRON_INGOT).requires(ItemInit.lethean_extract.get())
-				.unlockedBy("has_lethean_extract", has(ItemInit.lethean_extract.get())).save(consumer);
+				.requires(Items.IRON_INGOT).requires(ItemInit.pale_distillate.get())
+				.unlockedBy("has_pale_distillate", has(ItemInit.pale_distillate.get())).save(consumer);
 
 		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.spore_sac.get(), 2)
 				.requires(BlockInit.puffball_fungus.get()).requires(BlockInit.hyphae.get())

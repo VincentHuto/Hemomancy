@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "hemomancy:lethean_extract" },
+    { "item": "hemomancy:pale_distillate" },
     { "item": "hemomancy:silver_chalice" }
   ],
   "result": {

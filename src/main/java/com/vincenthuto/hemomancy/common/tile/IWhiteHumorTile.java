@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile;
 
-public interface ISilthmereTile {
+public interface IWhiteHumorTile {
 
 public void sendUpdates();
 

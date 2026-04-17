@@ -278,7 +278,7 @@ public class ItemInit {
             () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> pale_silver_ingot = BASEITEMS.register("pale_silver_ingot",
             () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> lethean_extract = BASEITEMS.register("lethean_extract",
+    public static final RegistryObject<Item> pale_distillate = BASEITEMS.register("pale_distillate",
             () -> new Item(new Item.Properties().stacksTo(16)));
 
     // Hematic Memories
