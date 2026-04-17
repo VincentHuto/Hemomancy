@@ -55,6 +55,9 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.monster.ThirsterRender
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerAlchemistRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerHermitRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.boss.HollowVesselRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.ContainmentAnchorRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeFragmentRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.boss.seraphae.SeraphaeRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.HematicConstructRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.HarbingerVicarRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.npc.UnstainedAcolyteRenderer;
@@ -411,6 +414,9 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistRenderer::new);
 			event.registerEntityRenderer(EntityInit.harbinger_vicar.get(), HarbingerVicarRenderer::new);
 			event.registerEntityRenderer(EntityInit.hollow_vessel.get(), HollowVesselRenderer::new);
+			event.registerEntityRenderer(EntityInit.seraphae.get(), SeraphaeRenderer::new);
+			event.registerEntityRenderer(EntityInit.seraphae_fragment.get(), SeraphaeFragmentRenderer::new);
+			event.registerEntityRenderer(EntityInit.containment_anchor.get(), ContainmentAnchorRenderer::new);
 			event.registerEntityRenderer(EntityInit.hematic_construct.get(), HematicConstructRenderer::new);
 			event.registerEntityRenderer(EntityInit.spectral_companion.get(), SpectralCompanionRenderer::new);
 			event.registerEntityRenderer(EntityInit.dark_arrow.get(), BloodShotRenderer::new);
