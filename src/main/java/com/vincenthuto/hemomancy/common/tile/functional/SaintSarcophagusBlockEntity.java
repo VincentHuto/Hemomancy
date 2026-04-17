@@ -3,17 +3,19 @@ package com.vincenthuto.hemomancy.common.tile.functional;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.saint.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
+import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 /**
  * Block entity for the Saint Sarcophagus — tracks the Preserved Corpus state,
  * which saint resides within, and how many times extraction has been attempted.
  */
-public class SaintSarcophagusBlockEntity extends BlockEntity {
+public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBlockEntity {
 
 	private EnumSaintType saintType = EnumSaintType.HEMORATH;
 	private EnumCorpusState corpusState = EnumCorpusState.DORMANT;
@@ -73,6 +75,11 @@ public class SaintSarcophagusBlockEntity extends BlockEntity {
 			cooldownTicks--;
 			setChanged();
 		}
+	}
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		return IMultiBlockEntity.computeMultiBlockAABB(this);
 	}
 
 	@Override

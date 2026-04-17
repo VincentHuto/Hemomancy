@@ -22,6 +22,7 @@ import com.vincenthuto.hemomancy.common.item.tile.ScarStationBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.PallidRetortBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.SaintSarcophagusBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
@@ -517,6 +518,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.morphling_incubator.get()) {
 			return Pair.of(block.getSecond(), new MorphlingIncubatorBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.saint_sarcophagus.get()) {
+			return Pair.of(block.getSecond(), new SaintSarcophagusBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.somatic_loom.get()) {
 			return Pair.of(block.getSecond(), new SomaticLoomBlockItem(b, new Item.Properties()));
