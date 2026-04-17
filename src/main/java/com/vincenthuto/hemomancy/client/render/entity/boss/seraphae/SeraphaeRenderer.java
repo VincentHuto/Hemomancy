@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.client.render.entity.boss.seraphae;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.boss.seraphae.SeraphaeModel;
+import com.vincenthuto.hemomancy.client.render.layer.mob.SeraphaeWingGlowLayer;
 import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
 import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeState;
 
@@ -22,6 +23,7 @@ public class SeraphaeRenderer extends MobRenderer<SeraphaeEntity, SeraphaeModel<
 
 	public SeraphaeRenderer(Context context) {
 		super(context, new SeraphaeModel<>(context.bakeLayer(SeraphaeModel.LAYER_LOCATION)), 0.9F);
+		this.addLayer(new SeraphaeWingGlowLayer<>(this));
 	}
 
 	@Override
