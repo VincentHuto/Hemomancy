@@ -116,6 +116,8 @@ public class BloodBasinBlockEntity extends BlockEntity {
                 level.setBlock(p, bs.setValue(OfferingGateBlock.OPEN, true), 3);
             }
         }
+        // End the trial now that all basins are filled and the gate is open
+        BloodTrialAltarBlockEntity.deactivateNearby(level, basinPos, SCAN_RADIUS);
     }
 
     @Override

@@ -1,12 +1,20 @@
 package com.vincenthuto.hemomancy.common.block.puzzle;
 
+import com.vincenthuto.hemomancy.common.tile.puzzle.BloodTrialAltarBlockEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,5 +41,48 @@ public class OfferingGateBlock extends Block {
     @Override
     public boolean useShapeForLightOcclusion(BlockState state) {
         return !state.getValue(OPEN);
+    }
+
+    private static final int SCAN_RADIUS = 15;
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        // If the gate is already open, nothing to do
+        if (state.getValue(OPEN)) return InteractionResult.PASS;
+
+        // Find a nearby BloodTrialAltarBlockEntity and activate it
+        for (BlockPos p : BlockPos.betweenClosed(
+                pos.offset(-SCAN_RADIUS, -SCAN_RADIUS, -SCAN_RADIUS),
+                pos.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
+            if (level.getBlockEntity(p) instanceof BloodTrialAltarBlockEntity altar) {
+                if (altar.isCompleted()) {
+                    // Trial already done — no message needed
+                    return InteractionResult.PASS;
+                }
+                if (!altar.isActive()) {
+                    altar.activate();
+                    player.displayClientMessage(
+                            Component.translatable("message.hemomancy.offering_gate.trial_started")
+                                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+                            false);
+                } else {
+                    player.displayClientMessage(
+                            Component.translatable("message.hemomancy.offering_gate.trial_active")
+                                    .withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+                            true);
+                }
+                return InteractionResult.CONSUME;
+            }
+        }
+
+        // No altar found — gate is just locked
+        player.displayClientMessage(
+                Component.literal("The gate won't budge.")
+                        .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+                true);
+        return InteractionResult.CONSUME;
     }
 }

@@ -5,8 +5,10 @@ import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -25,12 +27,45 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
     private static final int MAX_CONSTRUCTS = 6;
 
     private int tickCounter = 0;
+    private boolean active = false;
+    private boolean completed = false;
 
     public BloodTrialAltarBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityInit.blood_trial_altar.get(), pos, state);
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void activate() {
+        if (!active && !completed) {
+            active = true;
+            tickCounter = 0;
+            setChanged();
+        }
+    }
+
+    public void deactivate() {
+        active = false;
+        completed = true;
+        // Kill all remaining constructs spawned by this trial
+        if (level != null && !level.isClientSide) {
+            AABB range = new AABB(worldPosition).inflate(TRIAL_RADIUS);
+            for (HematicConstructEntity construct : level.getEntitiesOfClass(HematicConstructEntity.class, range)) {
+                construct.discard();
+            }
+        }
+        setChanged();
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, BloodTrialAltarBlockEntity te) {
+        if (!te.active || te.completed) return;
+
         te.tickCounter++;
         if (te.tickCounter % 20 != 0) return;
 
@@ -41,6 +76,9 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
         for (Player player : players) {
             player.addEffect(new MobEffectInstance(
                     EffectInit.hematic_strain.get(), STRAIN_DURATION, 0, false, true));
+            // Prevent players from mining through mausoleum walls during the trial
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.DIG_SLOWDOWN, STRAIN_DURATION, 3, false, false));
         }
 
         if (te.tickCounter % WAVE_INTERVAL == 0 && level instanceof ServerLevel serverLevel) {
@@ -67,6 +105,33 @@ public class BloodTrialAltarBlockEntity extends BlockEntity {
                 construct.setTarget(players.get(level.random.nextInt(players.size())));
             }
             level.addFreshEntity(construct);
+        }
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putBoolean("Active", active);
+        tag.putBoolean("Completed", completed);
+        tag.putInt("TickCounter", tickCounter);
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        active = tag.getBoolean("Active");
+        completed = tag.getBoolean("Completed");
+        tickCounter = tag.getInt("TickCounter");
+    }
+
+    /** Find and deactivate any nearby trial altar within the given radius. */
+    public static void deactivateNearby(Level level, BlockPos center, int radius) {
+        for (BlockPos p : BlockPos.betweenClosed(
+                center.offset(-radius, -radius, -radius),
+                center.offset(radius, radius, radius))) {
+            if (level.getBlockEntity(p) instanceof BloodTrialAltarBlockEntity altar && altar.isActive()) {
+                altar.deactivate();
+            }
         }
     }
 }

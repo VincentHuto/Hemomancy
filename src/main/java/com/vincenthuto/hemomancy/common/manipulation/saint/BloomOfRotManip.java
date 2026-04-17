@@ -61,7 +61,7 @@ public class BloomOfRotManip extends BloodManipulation {
 						.withStyle(net.minecraft.ChatFormatting.DARK_GREEN, net.minecraft.ChatFormatting.ITALIC),
 				true);
 
-		world.playSound(null, player.blockPosition(), SoundEvents.SCULK_SPREAD, SoundSource.PLAYERS, 1.0f, 0.7f);
+		world.playSound(null, player.blockPosition(), SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.PLAYERS, 1.0f, 0.7f);
 
 		// Spawn fungal particles in a wide radius
 		if (world instanceof ServerLevel sLevel) {

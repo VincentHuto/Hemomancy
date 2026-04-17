@@ -144,7 +144,7 @@ if (stack.isEmpty()) {
 showSarcophagusInfo(player, sarcophagus);
 // In DORMANT state, add an atmospheric pulse so the block feels alive
 if (sarcophagus.getCorpusState() == EnumCorpusState.DORMANT) {
-worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_CLICKING, SoundSource.BLOCKS, 0.4f, 0.6f);
+worldIn.playSound(null, pos, SoundEvents.SCULK_SENSOR_PLACE, SoundSource.BLOCKS, 0.4f, 0.6f);
 if (worldIn instanceof ServerLevel serverLevel) {
 serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME,
 pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,

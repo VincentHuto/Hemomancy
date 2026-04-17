@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.puzzle;
 
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,7 @@ import java.util.List;
 public class BloodPylonBlockEntity extends BlockEntity {
 
     private static final double DRAIN_RADIUS = 4.0;
-    private static final float DRAIN_AMOUNT = 1.0f;
+    private static final double DRAIN_AMOUNT = 50.0;
 
     private int tickCounter = 0;
 
@@ -24,22 +25,39 @@ public class BloodPylonBlockEntity extends BlockEntity {
         super(BlockEntityInit.blood_pylon.get(), pos, state);
     }
 
+    private static final int ALTAR_SCAN_RADIUS = 15;
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, BloodPylonBlockEntity te) {
         te.tickCounter++;
         if (te.tickCounter % 20 != 0) return;
 
+        // Only drain while a nearby trial altar is active
+        if (!isTrialActive(level, pos)) return;
+
         AABB range = new AABB(pos).inflate(DRAIN_RADIUS);
         List<Player> players = level.getEntitiesOfClass(Player.class, range);
         for (Player player : players) {
-            if (player.getHealth() > 2.0f) {
-                player.hurt(level.damageSources().magic(), DRAIN_AMOUNT);
-                if (player instanceof ServerPlayer sp) {
-                    sp.displayClientMessage(
-                        Component.translatable("message.hemomancy.blood_pylon.draining")
-                            .withStyle(ChatFormatting.DARK_RED),
-                        true);
+            player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+                if (!volume.isEmpty() && volume.drain(DRAIN_AMOUNT)) {
+                    if (player instanceof ServerPlayer sp) {
+                        sp.displayClientMessage(
+                            Component.translatable("message.hemomancy.blood_pylon.draining")
+                                .withStyle(ChatFormatting.DARK_RED),
+                            true);
+                    }
                 }
+            });
+        }
+    }
+
+    private static boolean isTrialActive(Level level, BlockPos center) {
+        for (BlockPos p : BlockPos.betweenClosed(
+                center.offset(-ALTAR_SCAN_RADIUS, -ALTAR_SCAN_RADIUS, -ALTAR_SCAN_RADIUS),
+                center.offset(ALTAR_SCAN_RADIUS, ALTAR_SCAN_RADIUS, ALTAR_SCAN_RADIUS))) {
+            if (level.getBlockEntity(p) instanceof BloodTrialAltarBlockEntity altar && altar.isActive()) {
+                return true;
             }
         }
+        return false;
     }
 }
