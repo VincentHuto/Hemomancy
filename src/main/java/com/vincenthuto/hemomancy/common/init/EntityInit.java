@@ -9,6 +9,9 @@ import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.arthropod.*;
 import com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.seraphae.ContainmentAnchorEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeEntity;
+import com.vincenthuto.hemomancy.common.entity.boss.seraphae.SeraphaeFragmentEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.*;
 import com.vincenthuto.hemomancy.common.entity.mob.monster.HematicConstructEntity;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerAlchemistEntity;
@@ -112,6 +115,31 @@ public class EntityInit {
                     .clientTrackingRange(10)
                     .fireImmune()
                     .build(Hemomancy.rloc("hollow_vessel").toString()));
+
+    // Boss: Seraphae (The Bound Radiance)
+    public static final RegistryObject<EntityType<SeraphaeEntity>> seraphae = ENTITY_TYPES.register(
+            "seraphae",
+            () -> EntityType.Builder.of(SeraphaeEntity::new, MobCategory.MONSTER)
+                    .sized(0.9F, 2.4F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build(Hemomancy.rloc("seraphae").toString()));
+
+    // Seraphae fragment (spawned during fracturing)
+    public static final RegistryObject<EntityType<SeraphaeFragmentEntity>> seraphae_fragment = ENTITY_TYPES.register(
+            "seraphae_fragment",
+            () -> EntityType.Builder.of(SeraphaeFragmentEntity::new, MobCategory.MONSTER)
+                    .sized(0.5F, 0.8F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("seraphae_fragment").toString()));
+
+    // Containment Anchor (arena element for Seraphae fight)
+    public static final RegistryObject<EntityType<ContainmentAnchorEntity>> containment_anchor = ENTITY_TYPES.register(
+            "containment_anchor",
+            () -> EntityType.Builder.of(ContainmentAnchorEntity::new, MobCategory.MISC)
+                    .sized(0.8F, 1.2F)
+                    .clientTrackingRange(8)
+                    .build(Hemomancy.rloc("containment_anchor").toString()));
 
     public static final RegistryObject<EntityType<LeechEntity>> leech = ENTITY_TYPES.register("leech",
             () -> EntityType.Builder.of(LeechEntity::new, MobCategory.CREATURE).sized(0.4F, 0.1F)
@@ -422,6 +450,8 @@ public class EntityInit {
         event.put(EntityInit.harbinger_alchemist.get(), HarbingerAlchemistEntity.setAttributes().build());
         event.put(EntityInit.harbinger_vicar.get(), HarbingerVicarEntity.setAttributes().build());
         event.put(EntityInit.hollow_vessel.get(), HollowVesselEntity.setAttributes().build());
+        event.put(EntityInit.seraphae.get(), SeraphaeEntity.setAttributes().build());
+        event.put(EntityInit.seraphae_fragment.get(), SeraphaeFragmentEntity.setAttributes().build());
         event.put(EntityInit.dessicant.get(), DessicantEntity.setAttributes().build());
         event.put(EntityInit.cruor_fiend.get(), CruorFiendEntity.setAttributes().build());
         event.put(EntityInit.void_drinker.get(), VoidDrinkerEntity.setAttributes().build());
