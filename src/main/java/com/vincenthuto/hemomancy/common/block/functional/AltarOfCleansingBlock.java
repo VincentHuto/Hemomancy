@@ -1,5 +1,8 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import javax.annotation.Nullable;
+
+import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
@@ -16,6 +19,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,6 +38,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -41,10 +47,15 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * using Tears of Silthmere, they receive a large one-time purity boost and
  * advancement progress. The altar can only be used once per player.
  */
-public class AltarOfCleansingBlock extends Block implements EntityBlock {
+public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 12, 15);
+	private static final VoxelShape SHAPE = Shapes.block();
+
+	/** Filler offset: 1×2×1 — one filler block directly above the base. */
+	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
+			new BlockPos(0, 1, 0)
+	};
 
 	/** One-time purity boost granted by the altar. */
 	private static final float ALTAR_PURITY_BOOST = 25.0f;
@@ -52,6 +63,16 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 	public AltarOfCleansingBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH));
+	}
+
+	@Override
+	public BlockPos[] getFillerOffsets() {
+		return FILLER_OFFSETS;
+	}
+
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	@Override
@@ -65,8 +86,47 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 	}
 
 	@Override
+	public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+		return Shapes.empty();
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+		return true;
+	}
+
+	@Override
+	public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+		return 1.0F;
+	}
+
+	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		BlockPos pos = context.getClickedPos();
+		Level level = (Level) context.getLevel();
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+		}
+		return null;
+	}
+
+	@Override
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+			@Nullable LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(level, pos, state, placer, stack);
+		if (!level.isClientSide) {
+			placeFillers(level, pos, state);
+		}
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			if (!level.isClientSide) {
+				removeFillers(level, pos);
+			}
+		}
+		super.onRemove(state, level, pos, newState, isMoving);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import com.vincenthuto.hemomancy.common.block.idol.BlockHumaneIdol;
 import com.vincenthuto.hemomancy.common.block.idol.BlockSerpentineIdol;
 import com.vincenthuto.hemomancy.common.block.plant.*;
 import com.vincenthuto.hemomancy.common.item.tile.ScarStationBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.AltarOfCleansingBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.PallidRetortBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
@@ -356,7 +357,7 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> altar_of_cleansing = MODELEDBLOCKS.register("altar_of_cleansing",
 			() -> new AltarOfCleansingBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
-					.strength(2.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 7)));
+					.strength(2.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 7).noOcclusion()));
 
 	public static final RegistryObject<Block> cleansed_stone = BASEBLOCKS.register("cleansed_stone",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
@@ -518,6 +519,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.morphling_incubator.get()) {
 			return Pair.of(block.getSecond(), new MorphlingIncubatorBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.altar_of_cleansing.get()) {
+			return Pair.of(block.getSecond(), new AltarOfCleansingBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.saint_sarcophagus.get()) {
 			return Pair.of(block.getSecond(), new SaintSarcophagusBlockItem(b, new Item.Properties()));
