@@ -1,13 +1,13 @@
 {
   "display": {
     "icon": {
-      "item": "hemomancy:lethe_icon"
+      "item": "hemomancy:pallid_icon"
     },
     "title": {
-      "translate": "advancements.hemomancy.our_lady_of_lethe.title"
+      "translate": "advancements.hemomancy.our_lady_of_still_waters.title"
     },
     "description": {
-      "translate": "advancements.hemomancy.our_lady_of_lethe.description"
+      "translate": "advancements.hemomancy.our_lady_of_still_waters.description"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -21,7 +21,7 @@
         "items": [
           {
             "items": [
-              "hemomancy:lethe_icon"
+              "hemomancy:pallid_icon"
             ]
           }
         ]

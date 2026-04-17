@@ -74,7 +74,7 @@
       "block": "hemomancy:cleansed_stone"
     },
     "L": {
-      "block": "hemomancy:lethe_lantern"
+      "block": "hemomancy:pallid_lantern"
     },
     "C": {
       "block": "hemomancy:suspended_cleansed_blood_crystal"
@@ -84,7 +84,7 @@
     }
   },
   "result": {
-    "item": "hemomancy:lethe_icon"
+    "item": "hemomancy:pallid_icon"
   },
   "unstained": true
 }

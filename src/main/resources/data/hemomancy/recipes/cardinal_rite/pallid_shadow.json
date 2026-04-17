@@ -2,8 +2,8 @@
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 5000,
   "riteType": "grand",
-  "riteName": "Rite of the Lethe's Shadow",
-  "riteDescription": "A blasphemous rite that corrupts the waters of Lethe itself, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady — and an unforgivable act of hematic aggression.",
+  "riteName": "Rite of the Pallid Shadow",
+  "riteDescription": "A blasphemous rite that corrupts the still waters, stripping the Unstained purification from a nearby player. A direct assault on those who walk the path of Our Lady — and an unforgivable act of hematic aggression.",
   "pattern": [
     ["HGHGHGHGH", "G       G", "H       H", "G       G", "H   E   H", "G       G", "H       H", "G       G", "HGHGHGHGH"],
     ["         ", " GGGGGGG ", " G     G ", " G     G ", " G  E  G ", " G     G ", " G     G ", " GGGGGGG ", "         "],
