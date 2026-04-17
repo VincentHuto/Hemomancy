@@ -1239,6 +1239,9 @@
 
 	"entity.hemomancy.hollow_vessel": "Hollow Vessel",
 	"entity.hemomancy.hematic_construct": "Hematic Construct",
+	"entity.hemomancy.seraphae": "Saint Seraphae",
+	"entity.hemomancy.seraphae_fragment": "Radiant Fragment",
+	"entity.hemomancy.containment_anchor": "Containment Anchor",
 
 	"effect.hemomancy.hemophagy": "Hemophagy",
 	"effect.hemomancy.hematic_strain": "Hematic Strain",
