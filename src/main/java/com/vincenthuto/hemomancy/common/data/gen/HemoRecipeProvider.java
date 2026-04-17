@@ -175,7 +175,7 @@ public class HemoRecipeProvider extends RecipeProvider {
 				.requires(ItemInit.lethean_dew.get()).requires(ItemInit.consecrated_copper_ingot.get())
 				.unlockedBy("has_lethean_dew", has(ItemInit.lethean_dew.get())).save(consumer);
 
-		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.tears_of_lethe.get(), 1)
+		ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ItemInit.tears_of_silthmere.get(), 1)
 				.requires(ItemInit.lethean_extract.get()).requires(ItemInit.silver_chalice.get())
 				.unlockedBy("has_lethean_extract", has(ItemInit.lethean_extract.get())).save(consumer);
 

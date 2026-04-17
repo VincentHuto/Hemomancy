@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
  * "Materials &amp; Processes" tabs.
  * <p>
  * Blood-faction entries appear in the {@link SkillTreeScreen};
- * Unstained/Lethe entries appear in the {@link UnstainedProgressScreen}.
+ * Unstained/Silthmere entries appear in the {@link UnstainedProgressScreen}.
  */
 public final class MaterialsData {
 
@@ -349,7 +349,7 @@ public final class MaterialsData {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Unstained / Lethe faction — UnstainedProgressScreen
+	//  Unstained / Silthmere faction — UnstainedProgressScreen
 	// ────────────────────────────────────────────────────────────
 
 	private static List<MaterialEntry> unstainedEntries;
@@ -366,7 +366,7 @@ public final class MaterialsData {
 
 		// ── Functional Blocks ──
 		list.add(new MaterialEntry("altar_of_cleansing", "Altar of Cleansing",
-				"Sacred altar devoted to Our Lady of Lethe. Grants purity boosts through offerings.",
+				"Sacred altar devoted to Our Lady of Still Waters. Grants purity boosts through offerings.",
 				"Functional Blocks", () -> new ItemStack(BlockInit.altar_of_cleansing.get())));
 
 		list.add(new MaterialEntry("unstained_podium", "Unstained Podium",
@@ -386,9 +386,9 @@ public final class MaterialsData {
 				"Stone purified of all sanguine taint. Foundation for Unstained structures.",
 				"Building Blocks", () -> new ItemStack(BlockInit.cleansed_stone.get())));
 
-		list.add(new MaterialEntry("lethe_lantern", "Lethe Lantern",
-				"A soft-glowing lantern consecrated in the name of Lethe.",
-				"Building Blocks", () -> new ItemStack(BlockInit.lethe_lantern.get())));
+		list.add(new MaterialEntry("pallid_lantern", "Pallid Lantern",
+				"A soft-glowing lantern consecrated in the name of the Pallid Matron.",
+				"Building Blocks", () -> new ItemStack(BlockInit.pallid_lantern.get())));
 
 		list.add(new MaterialEntry("cleansed_sanguine_glass", "Cleansed Sanguine Glass",
 				"Purified glass that blocks blood resonance.",
@@ -404,13 +404,13 @@ public final class MaterialsData {
 
 		// ── Plants ──
 		list.add(new MaterialEntry("lethean_poppy", "Lethean Poppy",
-				"Sacred flower of Lethe. Source of lethean extract and poppy wreaths.",
+				"Sacred flower of Silthmere. Source of lethean extract and poppy wreaths.",
 				"Plants", () -> new ItemStack(BlockInit.lethean_poppy.get())));
 
 		// ── Materials ──
-		list.add(new MaterialEntry("tears_of_lethe", "Tears of Lethe",
+		list.add(new MaterialEntry("tears_of_silthmere", "Tears of Silthmere",
 				"Rare tears shed in devotion. Grants a powerful one-time purity boost at the Altar.",
-				"Materials", () -> new ItemStack(ItemInit.tears_of_lethe.get())));
+				"Materials", () -> new ItemStack(ItemInit.tears_of_silthmere.get())));
 
 		list.add(new MaterialEntry("lethean_poppy_wreath", "Lethean Poppy Wreath",
 				"Woven from lethean poppies. Offer at the Altar for +5 purity.",
@@ -436,9 +436,9 @@ public final class MaterialsData {
 				"Sacred text containing the teachings of the Unstained path.",
 				"Materials", () -> new ItemStack(ItemInit.tome_of_the_unstained.get())));
 
-		list.add(new MaterialEntry("lethe_icon", "Lethe Icon",
-				"Holy icon depicting Our Lady of Lethe.",
-				"Materials", () -> new ItemStack(ItemInit.lethe_icon.get())));
+		list.add(new MaterialEntry("pallid_icon", "Pallid Icon",
+				"Holy icon depicting Our Lady of Still Waters.",
+				"Materials", () -> new ItemStack(ItemInit.pallid_icon.get())));
 
 		list.add(new MaterialEntry("consecrated_copper_ingot", "Consecrated Copper Ingot",
 				"Copper blessed through Unstained rites.",
@@ -483,7 +483,7 @@ public final class MaterialsData {
 				"Equipment", () -> new ItemStack(ItemInit.unstained_warhammer.get())));
 
 		list.add(new MaterialEntry("unstained_shield", "Unstained Shield",
-				"Shield blessed by Lethe. Wards off blood magic attacks.",
+				"Shield blessed by the Pallid Matron. Wards off blood magic attacks.",
 				"Equipment", () -> new ItemStack(ItemInit.unstained_shield.get())));
 
 		list.add(new MaterialEntry("self_reflection_mirror", "Self-Reflection Mirror",

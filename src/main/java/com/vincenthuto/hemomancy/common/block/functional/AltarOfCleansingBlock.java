@@ -37,8 +37,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Altar of Cleansing — a sacred altar found in Unstained temples, blessed by
- * Our Lady of Lethe. When a player on the Unstained path interacts with it
- * using Tears of Lethe, they receive a large one-time purity boost and
+ * Our Lady of Still Waters. When a player on the Unstained path interacts with it
+ * using Tears of Silthmere, they receive a large one-time purity boost and
  * advancement progress. The altar can only be used once per player.
  */
 public class AltarOfCleansingBlock extends Block implements EntityBlock {
@@ -109,14 +109,14 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 				return;
 			}
 
-			if (stack.getItem() == ItemInit.tears_of_lethe.get()) {
-				handleTearsOfLethe(worldIn, pos, player, stack, unstained);
+			if (stack.getItem() == ItemInit.tears_of_silthmere.get()) {
+				handleTearsOfSilthmere(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.lethean_poppy_wreath.get()) {
 				handlePoppyWreath(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.silver_chalice.get()) {
 				handleSilverChalice(worldIn, pos, player, stack, unstained);
-			} else if (stack.getItem() == ItemInit.lethe_icon.get()) {
-				handleLetheIcon(worldIn, pos, player, stack, unstained);
+			} else if (stack.getItem() == ItemInit.pallid_icon.get()) {
+				handlePallidIcon(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.lethean_brew.get()) {
 				handleLetheanBrew(worldIn, pos, player, stack, unstained);
 			} else {
@@ -129,7 +129,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 		return InteractionResult.SUCCESS;
 	}
 
-	private void handleTearsOfLethe(Level worldIn, BlockPos pos, Player player, ItemStack stack,
+	private void handleTearsOfSilthmere(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
 		if (unstained.hasUsedAltarOfCleansing()) {
 			player.displayClientMessage(
@@ -191,7 +191,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 		}
 	}
 
-	private void handleLetheIcon(Level worldIn, BlockPos pos, Player player, ItemStack stack,
+	private void handlePallidIcon(Level worldIn, BlockPos pos, Player player, ItemStack stack,
 			IUnstainedProgress unstained) {
 		// One-time rare offering: grants +10 clarity (requires clarity unlocked)
 		if (!unstained.hasClarityUnlocked()) {
@@ -200,7 +200,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock {
 			return;
 		}
 		// Check one-time use via player persistent data
-		String tag = "hemomancy:lethe_icon_offered";
+		String tag = "hemomancy:pallid_icon_offered";
 		if (player.getPersistentData().getBoolean(tag)) {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.altar.icon_already_offered"), false);

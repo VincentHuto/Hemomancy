@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.Mod;
  * <h3>Purity Stage Rewards</h3>
  * <ul>
  *   <li><b>TAINTED (25):</b> Silver Ward auto-applied while enabled (amplifier 0)</li>
- *   <li><b>CLEANSING (50):</b> Silver Ward amplifier 1 + night vision near Lethe Lanterns</li>
+ *   <li><b>CLEANSING (50):</b> Silver Ward amplifier 1 + night vision near Pallid Lanterns</li>
  *   <li><b>ABSOLVED (75):</b> Silver Ward amplifier 2 + bonus damage to hemomancy mobs</li>
  *   <li><b>PURIFIED (100):</b> Silver Ward amplifier 3 (full protection)</li>
  * </ul>

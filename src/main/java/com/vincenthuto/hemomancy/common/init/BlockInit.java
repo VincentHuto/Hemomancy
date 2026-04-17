@@ -365,7 +365,7 @@ public class BlockInit {
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 6.0F).sound(SoundType.METAL)));
 
-	public static final RegistryObject<Block> lethe_lantern = BASEBLOCKS.register("lethe_lantern",
+	public static final RegistryObject<Block> pallid_lantern = BASEBLOCKS.register("pallid_lantern",
 			() -> new Block(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(1.0F, 3.0F).sound(SoundType.LANTERN).lightLevel(s -> 12)));
 
