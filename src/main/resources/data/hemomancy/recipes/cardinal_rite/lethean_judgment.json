@@ -110,7 +110,7 @@
       "block": "hemomancy:cleansed_stone"
     },
     "L": {
-      "block": "hemomancy:lethe_lantern"
+      "block": "hemomancy:pallid_lantern"
     },
     "C": {
       "block": "hemomancy:suspended_cleansed_blood_crystal"
@@ -120,7 +120,7 @@
     }
   },
   "result": {
-    "item": "hemomancy:tears_of_lethe"
+    "item": "hemomancy:tears_of_silthmere"
   },
   "unstained": true
 }
