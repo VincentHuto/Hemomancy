@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -22,6 +23,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -40,7 +42,9 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 public class BloodCraftingKeyPressPacket {
-	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
+	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
+	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
+	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 
 	// ── Tier degree requirements (must match SkillTreeScreen constants) ──
 	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
@@ -326,7 +330,7 @@ public class BloodCraftingKeyPressPacket {
 				BlockPos centerPos = match.getBlock(centerWidth, centerHeight, centerDepth).getPos();
 
 				// Bloom of the Qliphoth requires a planted Qliphoth Seed catalyst at center
-				if (BLOOM_OF_QLIPHOTH_RITE.equals(recipe.getId().getPath())) {
+				if (BLOOM_OF_QLIPHOTH_RITE_ID.equals(recipe.getId())) {
 					if (!consumeCenterCatalyst(sLevel, centerPos, ItemInit.qliphoth_seed.get())) {
 						player.displayClientMessage(
 								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed at its center.")
@@ -362,7 +366,7 @@ public class BloodCraftingKeyPressPacket {
 	}
 
 	private static boolean consumeCenterCatalyst(ServerLevel level, BlockPos centerPos, Item requiredItem) {
-		AABB centerBox = new AABB(centerPos).inflate(0.65, 1.0, 0.65);
+		AABB centerBox = new AABB(centerPos).inflate(CATALYST_SEARCH_RADIUS_XZ, CATALYST_SEARCH_RADIUS_Y, CATALYST_SEARCH_RADIUS_XZ);
 		List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, centerBox,
 				e -> e.isAlive() && e.getItem().is(requiredItem));
 		if (entities.isEmpty()) {
