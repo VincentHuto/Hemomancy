@@ -1152,6 +1152,8 @@
   "tooltip.hemomancy.marrow_crown_bonus": "Artifact: +10% melee damage when blood > 50%",
   "hemomancy.blood_moon.start": "§4§lA Blood Moon rises... Thirsters and Fargones stir in the darkness.",
   "hemomancy.blood_moon.end": "§7§oThe Blood Moon wanes. The darkness retreats.",
+  "hemomancy.rite.sanguine_eclipse.desc": "A forbidden rite that tears the veil between night and will, forcing a Blood Moon to rise.",
+  "hemomancy.rite.founding_sanctum.desc": "A grand consecration that binds a Sanguine Quintessence to the earth, creating a Harbinger Sanctum that empowers all Harbingers within.",
   "subtitle.hemomancy.entity.abhorent_thought.ambient": "Abhorent Thought whispers",
   "subtitle.hemomancy.entity.abhorent_thought.hurt": "Abhorent Thought shrieks",
   "subtitle.hemomancy.entity.abhorent_thought.death": "Abhorent Thought dissolves",

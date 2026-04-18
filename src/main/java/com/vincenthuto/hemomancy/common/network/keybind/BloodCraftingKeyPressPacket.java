@@ -43,6 +43,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class BloodCraftingKeyPressPacket {
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
+	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 
@@ -334,6 +335,17 @@ public class BloodCraftingKeyPressPacket {
 					if (!consumeCenterCatalyst(sLevel, centerPos, ItemInit.qliphoth_seed.get())) {
 						player.displayClientMessage(
 								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed at its center.")
+										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+								false);
+						return;
+					}
+				}
+
+				// Founding Sanctum requires a Sanguine Quintessence catalyst at center
+				if (FOUNDING_SANCTUM_RITE_ID.equals(recipe.getId())) {
+					if (!consumeCenterCatalyst(sLevel, centerPos, ItemInit.sanguine_quintessence.get())) {
+						player.displayClientMessage(
+								Component.literal("The Founding Sanctum demands a Sanguine Quintessence placed at its heart.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return;
