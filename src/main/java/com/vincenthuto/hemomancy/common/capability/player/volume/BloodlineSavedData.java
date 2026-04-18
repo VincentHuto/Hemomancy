@@ -143,4 +143,31 @@ public class BloodlineSavedData extends SavedData {
 		return bloodlines;
 	}
 
+	/**
+	 * Recruit an NPC Harbinger into a bloodline. The NPC's entity UUID is added
+	 * to the bloodline's NPC member list, increasing shared pool capacity
+	 * without requiring a real player.
+	 *
+	 * @return the updated Bloodline, or null if the bloodline was not found.
+	 */
+	public Bloodline addNpcMember(UUID bloodlineUUID, UUID npcUUID) {
+		Bloodline line = bloodlines.get(bloodlineUUID);
+		if (line != null) {
+			line.addNpcMember(npcUUID);
+			setDirty();
+		}
+		return line;
+	}
+
+	/**
+	 * Remove a recruited NPC Harbinger from a bloodline.
+	 */
+	public void removeNpcMember(UUID bloodlineUUID, UUID npcUUID) {
+		Bloodline line = bloodlines.get(bloodlineUUID);
+		if (line != null) {
+			line.removeNpcMember(npcUUID);
+			setDirty();
+		}
+	}
+
 }

@@ -1,14 +1,20 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.RiteHintItem;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.common.network.HLPacketHandler;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Listens for {@link DialogueEvent}s fired by dialogue option selection and
@@ -102,6 +109,9 @@ public class DialogueEventHandler {
 								.withStyle(ChatFormatting.DARK_RED),
 						false);
 			}
+			case "recruit_harbinger" -> {
+				handleRecruitHarbinger(player, event.getEntityId());
+			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper — no gameplay effect, just acknowledged
 			}
@@ -116,5 +126,82 @@ public class DialogueEventHandler {
 				Hemomancy.LOGGER.debug("Unhandled dialogue event: {}", event.getEventId());
 			}
 		}
+	}
+
+	/**
+	 * Recruits a Harbinger NPC into the player's bloodline. The NPC's entity
+	 * UUID is added as a phantom member — it counts toward the shared blood
+	 * pool capacity without needing to be an online player. This allows
+	 * single-player users to grow their pool without multiplayer partners.
+	 */
+	private static void handleRecruitHarbinger(ServerPlayer player, int entityId) {
+		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			Bloodline bloodline = volume.getBloodLine();
+
+			// Must have a bloodline first (signed the ledger)
+			if (!bloodline.isValid()) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
+								.withStyle(ChatFormatting.RED),
+						false);
+				return;
+			}
+
+			Entity entity = player.level().getEntity(entityId);
+			if (entity == null) {
+				return;
+			}
+
+			// Check if this NPC is already recruited
+			if (bloodline.hasNpcMember(entity.getUUID())) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.already_member")
+								.withStyle(ChatFormatting.GRAY),
+						false);
+				return;
+			}
+
+			// Add the NPC to the bloodline in world-level saved data
+			ServerLevel overworld = player.server.overworld();
+			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+			Bloodline updatedLine = savedData.addNpcMember(
+					bloodline.getBloodlineUUID(), entity.getUUID());
+
+			if (updatedLine != null) {
+				// Update the player's local bloodline reference
+				volume.setBloodLine(updatedLine);
+
+				// Sync updated bloodline state to client
+				PacketHandler.CHANNELBLOODVOLUME.send(
+						PacketDistributor.PLAYER.with(() -> player),
+						new BloodVolumeServerPacket(volume));
+
+				// Success feedback
+				String npcName = entity.getName().getString();
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.success", npcName)
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.pool_increased",
+								(int) updatedLine.getMaxBloodVolume(),
+								updatedLine.getNpcMemberCount())
+								.withStyle(ChatFormatting.DARK_RED),
+						false);
+
+				// Blood particles from the NPC as a visual oath
+				Vec3 npcPos = entity.position();
+				Vec3 playerPos = player.position();
+				for (int i = 0; i < 6; i++) {
+					Vec3 particlePos = npcPos.add(
+							entity.level().random.nextDouble() - 0.5,
+							entity.level().random.nextDouble() * 1.5 + 0.5,
+							entity.level().random.nextDouble() - 0.5);
+					HLPacketHandler.sendLightningSpawn(particlePos, playerPos.add(0, 1, 0),
+							64.0f, entity.level().dimension(),
+							ParticleColor.BLOOD, 2, 12, 4, 0.6f);
+				}
+			}
+		});
 	}
 }

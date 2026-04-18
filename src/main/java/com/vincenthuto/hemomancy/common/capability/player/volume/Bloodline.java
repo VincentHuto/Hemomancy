@@ -32,6 +32,16 @@ public class Bloodline {
 					if (nbt.contains("sharedBloodVolume")) {
 						line.setBloodVolume(nbt.getFloat("sharedBloodVolume"));
 					}
+					// Deserialize recruited NPC members
+					if (nbt.contains("npcMembers")) {
+						ListTag npcTag = nbt.getList("npcMembers", 10);
+						for (int i = 0; i < npcTag.size(); i++) {
+							if (npcTag.get(i) instanceof CompoundTag comp) {
+								line.npcMemberUUIDs.add(comp.getUUID("npc" + i));
+							}
+						}
+						line.recalculateMaxVolume();
+					}
 					return line;
 				}
 			}
@@ -44,6 +54,15 @@ public class Bloodline {
 	UUID leaderUUID, bloodlineUUID;
 
 	List<UUID> playerUUIDS = new ArrayList<>();
+
+	/**
+	 * UUIDs of recruited NPC Harbingers that have pledged their blood to this
+	 * bloodline. NPC members count toward the shared blood pool capacity
+	 * ({@link #BLOOD_VOLUME_PER_MEMBER} per NPC) but never appear as online
+	 * players. This allows single-player users to grow their pool without
+	 * needing real multiplayer partners.
+	 */
+	List<UUID> npcMemberUUIDs = new ArrayList<>();
 
 	public Bloodline() {
 		this.name = "No Bloodline";
@@ -63,7 +82,7 @@ public class Bloodline {
 			playerUUIDS.add(leaderUUID);
 		}
 		this.playerUUIDS = playerUUIDS;
-		this.maxBloodVolume = this.playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
+		this.maxBloodVolume = getTotalMemberCount() * BLOOD_VOLUME_PER_MEMBER;
 	}
 
 	public boolean isValid() {
@@ -77,7 +96,7 @@ public class Bloodline {
 	public boolean addMember(UUID playerUUID) {
 		if (!playerUUIDS.contains(playerUUID)) {
 			playerUUIDS.add(playerUUID);
-			this.maxBloodVolume = playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
+			recalculateMaxVolume();
 			return true;
 		}
 		return false;
@@ -85,10 +104,69 @@ public class Bloodline {
 
 	public boolean removeMember(UUID playerUUID) {
 		if (playerUUIDS.remove(playerUUID)) {
-			this.maxBloodVolume = playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER;
+			recalculateMaxVolume();
 			return true;
 		}
 		return false;
+	}
+
+	// ── NPC Harbinger Recruitment ──
+
+	/**
+	 * Adds a recruited NPC Harbinger to this bloodline. The NPC's entity UUID
+	 * is stored so that the same NPC cannot be recruited twice. Each NPC
+	 * increases the shared pool capacity by {@link #BLOOD_VOLUME_PER_MEMBER}.
+	 *
+	 * @return {@code true} if the NPC was added, {@code false} if already a member.
+	 */
+	public boolean addNpcMember(UUID npcUUID) {
+		if (!npcMemberUUIDs.contains(npcUUID)) {
+			npcMemberUUIDs.add(npcUUID);
+			recalculateMaxVolume();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Removes a recruited NPC Harbinger from this bloodline.
+	 *
+	 * @return {@code true} if the NPC was removed.
+	 */
+	public boolean removeNpcMember(UUID npcUUID) {
+		if (npcMemberUUIDs.remove(npcUUID)) {
+			recalculateMaxVolume();
+			return true;
+		}
+		return false;
+	}
+
+	/** Returns {@code true} if the given NPC entity UUID is already recruited. */
+	public boolean hasNpcMember(UUID npcUUID) {
+		return npcMemberUUIDs.contains(npcUUID);
+	}
+
+	/** Returns the number of recruited NPC Harbingers. */
+	public int getNpcMemberCount() {
+		return npcMemberUUIDs.size();
+	}
+
+	/** Returns the list of recruited NPC UUIDs. */
+	public List<UUID> getNpcMemberUUIDs() {
+		return npcMemberUUIDs;
+	}
+
+	/**
+	 * Total member count including both real players and recruited NPC
+	 * Harbingers. Used to calculate the shared blood pool capacity.
+	 */
+	public int getTotalMemberCount() {
+		return playerUUIDS.size() + npcMemberUUIDs.size();
+	}
+
+	/** Recalculates max blood volume based on total member count. */
+	private void recalculateMaxVolume() {
+		this.maxBloodVolume = getTotalMemberCount() * BLOOD_VOLUME_PER_MEMBER;
 	}
 
 	public boolean contributeBlood(float amount) {
@@ -167,6 +245,16 @@ public class Bloodline {
 			}
 		}
 		tag.put("players", playerList);
+		// Serialize recruited NPC members
+		if (!npcMemberUUIDs.isEmpty()) {
+			ListTag npcList = new ListTag();
+			for (int i = 0; i < npcMemberUUIDs.size(); i++) {
+				CompoundTag npc = new CompoundTag();
+				npc.putUUID("npc" + i, npcMemberUUIDs.get(i));
+				npcList.add(npc);
+			}
+			tag.put("npcMembers", npcList);
+		}
 		return tag;
 	}
 

@@ -195,6 +195,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_crimson_lodge", "lodge_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("lodge_lore", List.of(
@@ -207,6 +208,13 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.vicar.consider",
+						"hemomancy.dialogue.recruit.vicar.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
 				.build();
 	}
 
@@ -218,6 +226,7 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_about_hematic_order", "hematic_order_lore", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.what_degree_next", "degree_hint", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hematic_order_lore", List.of(
@@ -230,6 +239,13 @@ public final class HarbingerVicarDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.vicar.consider",
+						"hemomancy.dialogue.recruit.vicar.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
+				)))
 				.build();
 	}
 
@@ -241,12 +257,20 @@ public final class HarbingerVicarDialogueTrees {
 						"hemomancy.vicar.archon.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.tell_me_the_final_truth", "final_truth", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("final_truth", List.of(
 						"hemomancy.vicar.archon.final_truth"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("recruit_offer", List.of(
+						"hemomancy.dialogue.recruit.vicar.consider",
+						"hemomancy.dialogue.recruit.vicar.accept"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
+						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
 				.build();
 	}

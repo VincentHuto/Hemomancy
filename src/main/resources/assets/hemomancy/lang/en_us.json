@@ -1390,5 +1390,21 @@
 	"hemomancy.monolith.guidance.adept": "Adept, the Brotherhood recognises your blood. Seek the Sainted Mausoleums and draw from the preserved corpus within. The enzymes of Saints hold the key to the next rite.",
 	"hemomancy.monolith.guidance.illuminatus": "Illuminatus, the Crimson Lodge has opened its gates. Delve deeper into the crimson fungal depths and commune with the Dendritic Distributors. The mycelial network whispers of dormant power.",
 	"hemomancy.monolith.guidance.sanctified": "Sanctified of the Covenant, few have walked this far. Seek the living constructs — fuse organ and engram upon the Somatic Loom. Shape flesh as others shape stone.",
-	"hemomancy.monolith.guidance.archon": "Archon, you stand at the apex. The Order has no more to teach — only to witness. The blood remembers what words cannot. Forge your legacy in the crimson tide."
+	"hemomancy.monolith.guidance.archon": "Archon, you stand at the apex. The Order has no more to teach — only to witness. The blood remembers what words cannot. Forge your legacy in the crimson tide.",
+
+	"hemomancy.dialogue.recruit.option.pledge_blood": "Pledge your blood to my cause.",
+	"hemomancy.dialogue.recruit.option.confirm": "Welcome to the bloodline.",
+	"hemomancy.dialogue.recruit.option.not_yet": "Perhaps another time.",
+
+	"hemomancy.dialogue.recruit.vicar.consider": "You ask me to bind my blood to yours? An Illuminatus of the Crimson Lodge commands respect... and obedience.",
+	"hemomancy.dialogue.recruit.vicar.accept": "Very well. My blood is your blood. The Covenant strengthens when its servants unite under a single will.",
+	"hemomancy.dialogue.recruit.alchemist.consider": "Pledge my blood? An unusual request. But the Lodge teaches us that shared knowledge flows best through shared veins.",
+	"hemomancy.dialogue.recruit.alchemist.accept": "I accept. My expertise is now bound to your pool. Use it wisely — every drop I contribute carries the weight of the Order's craft.",
+	"hemomancy.dialogue.recruit.hermit.consider": "You wish to bind a hermit's blood to your line? I have lived apart for so long... but the crimson tide calls, even to one such as I.",
+	"hemomancy.dialogue.recruit.hermit.accept": "So be it. My blood joins yours. Even in solitude, I will feed the pool. The earth beneath me runs thick with old power.",
+
+	"hemomancy.dialogue.recruit.no_bloodline": "You must first found a bloodline by signing an Unsigned Ledger before you can recruit others.",
+	"hemomancy.dialogue.recruit.already_member": "This Harbinger has already pledged their blood to your cause.",
+	"hemomancy.dialogue.recruit.success": "%s has pledged their blood to your bloodline. Their vitality strengthens the shared pool.",
+	"hemomancy.dialogue.recruit.pool_increased": "Shared blood pool capacity: %d (Recruited Harbingers: %d)"
 }
