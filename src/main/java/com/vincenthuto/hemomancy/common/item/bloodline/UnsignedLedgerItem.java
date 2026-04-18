@@ -121,7 +121,7 @@ public class UnsignedLedgerItem extends Item {
 					}
 
 					if (savedLine.hasMember(playerIn.getUUID())) {
-						// Already a member — client opens GUI, nothing to do server-side
+						// Already a member — GUI opened on client side, no server action needed
 					} else {
 						// New player joins the bloodline
 						ServerLevel overworld = ((ServerLevel) worldIn).getServer().overworld();
