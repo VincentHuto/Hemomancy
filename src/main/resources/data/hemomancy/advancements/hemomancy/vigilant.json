@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:cleansed_stone"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.vigilant.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.vigilant.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/discerning",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

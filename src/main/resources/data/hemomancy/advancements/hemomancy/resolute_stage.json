@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:pallid_lantern"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.resolute_stage.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.resolute_stage.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/vigilant",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

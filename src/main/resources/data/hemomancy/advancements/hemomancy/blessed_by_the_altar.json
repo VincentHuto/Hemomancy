@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:tears_of_silthmere"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.blessed_by_the_altar.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.blessed_by_the_altar.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/lady_of_forgotten_waters",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

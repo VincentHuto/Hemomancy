@@ -28,7 +28,6 @@ public class HarbingersMana extends SimpleCastingResource {
     public static class HarbingersManaGui implements ICastingResourceGuiProvider {
 
         public ResourceLocation getTexture() {
-            // TODO: this texture is not being loaded, and the default MnA texture is being used instead.
             return HarbingerEventHandler.HARBINGERS_HUD_TEXTURE;
         }
 

@@ -15,7 +15,7 @@ import net.minecraftforge.network.NetworkEvent;
  */
 public class PacketToggleUnstainedBonus {
 
-    /** 0 = Silver Ward, 1 = Verdigris Aura */
+    /** 0 = Verdigris Aura (purity path), 1 = Silver Ward (clarity path) */
     private final int bonusId;
 
     public PacketToggleUnstainedBonus(int bonusId) {
@@ -37,8 +37,8 @@ public class PacketToggleUnstainedBonus {
 
             player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
                 switch (msg.bonusId) {
-                    case 0 -> progress.setSilverWardEnabled(!progress.isSilverWardEnabled());
-                    case 1 -> progress.setVerdigrisAuraEnabled(!progress.isVerdigrisAuraEnabled());
+                    case 0 -> progress.setVerdigrisAuraEnabled(!progress.isVerdigrisAuraEnabled());
+                    case 1 -> progress.setSilverWardEnabled(!progress.isSilverWardEnabled());
                     default -> { return; }
                 }
                 UnstainedProgressEvents.syncProgress(player, progress);

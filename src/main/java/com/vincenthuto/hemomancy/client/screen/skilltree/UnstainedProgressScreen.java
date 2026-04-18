@@ -1089,15 +1089,15 @@ public class UnstainedProgressScreen extends Screen {
 
 	/** Returns the total number of visible bonus buttons (based on progress). */
 	private int bonusButtonCount() {
-		int count = 1; // Silver Ward is always shown once purification has begun
-		if (clarityUnlocked) count++; // Verdigris Aura
+		int count = 1; // Verdigris Aura is always shown once purification has begun
+		if (clarityUnlocked) count++; // Silver Ward
 		return count;
 	}
 
 	/**
 	 * Hit-test: returns the bonus button index (0-based) at the given mouse position,
 	 * or -1 if no button is under the cursor.
-	 * 0 = Silver Ward, 1 = Verdigris Aura.
+	 * 0 = Verdigris Aura, 1 = Silver Ward.
 	 * Only returns indices for unlocked bonuses.
 	 */
 	private int getBonusButtonAt(double mx, double my) {
@@ -1118,15 +1118,15 @@ public class UnstainedProgressScreen extends Screen {
 		int px = bonusPanelX();
 		int py = bonusPanelStartY();
 
-		// Silver Ward button (always visible once purification begun)
-		drawBonusButton(gfx, px, py, "W", silverWardEnabled,
+		// Verdigris Aura button (always visible once purification begun — purity path)
+		drawBonusButton(gfx, px, py, "A", verdigrisAuraEnabled,
 				purity > 0, PURITY_COLOR, PURITY_GLOW,
 				getBonusButtonAt(mouseX, mouseY) == 0);
 
-		// Verdigris Aura button (only if clarity unlocked)
+		// Silver Ward button (only if clarity unlocked — clarity path)
 		if (clarityUnlocked) {
 			int y2 = py + BONUS_BTN_SIZE + BONUS_BTN_GAP;
-			drawBonusButton(gfx, px, y2, "A", verdigrisAuraEnabled,
+			drawBonusButton(gfx, px, y2, "W", silverWardEnabled,
 					true, CLARITY_COLOR, CLARITY_GLOW,
 					getBonusButtonAt(mouseX, mouseY) == 1);
 		}
@@ -1208,47 +1208,47 @@ public class UnstainedProgressScreen extends Screen {
 		List<Component> tip = new ArrayList<>();
 
 		if (hovered == 0) {
-			// Silver Ward tooltip
+			// Verdigris Aura tooltip (purity path — always first button)
 			boolean unlocked = purity > 0;
-			tip.add(Component.literal("Silver Ward")
-					.withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
+			tip.add(Component.literal("Verdigris Aura")
+					.withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
 			if (!unlocked) {
 				tip.add(Component.literal("Locked — increase Purity to unlock.")
 						.withStyle(s -> s.withColor(0x606870).withItalic(true)));
 			} else {
-				tip.add(Component.literal("Passive resistance to blood magic effects.")
-						.withStyle(s -> s.withColor(0x8898B0)));
-				tip.add(Component.literal("Grants +4 Armor and +0.2 Knockback Resistance")
-						.withStyle(s -> s.withColor(0x8898B0)));
-				tip.add(Component.literal("while the Silver Ward effect is active.")
-						.withStyle(s -> s.withColor(0x8898B0)));
+				tip.add(Component.literal("A copper-based anti-blood field that")
+						.withStyle(s -> s.withColor(0x70A898)));
+				tip.add(Component.literal("weakens nearby blood magic entities and effects.")
+						.withStyle(s -> s.withColor(0x70A898)));
 				tip.add(Component.literal(""));
-			tip.add(Component.literal("Scales with Purity (purity ÷ 100).")
+				tip.add(Component.literal("Scales with Purity (purity ÷ 100).")
+						.withStyle(s -> s.withColor(0x508878).withItalic(true)));
+				tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
+						.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
+				tip.add(Component.literal(""));
+				String state = verdigrisAuraEnabled ? "✔ Enabled" : "✖ Disabled";
+				int stateCol = verdigrisAuraEnabled ? 0x60CC60 : 0xCC6060;
+				tip.add(Component.literal(state + " — click to toggle")
+						.withStyle(s -> s.withColor(stateCol)));
+			}
+		} else if (hovered == 1) {
+			// Silver Ward tooltip (clarity path — second button)
+			tip.add(Component.literal("Silver Ward")
+					.withStyle(s -> s.withColor(0xB0C0E0).withBold(true)));
+			tip.add(Component.literal("Passive resistance to blood magic effects.")
+					.withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.literal("Grants +4 Armor and +0.2 Knockback Resistance")
+					.withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.literal("while the Silver Ward effect is active.")
+					.withStyle(s -> s.withColor(0x8898B0)));
+			tip.add(Component.literal(""));
+			tip.add(Component.literal("Scales with Clarity (clarity ÷ 100).")
 					.withStyle(s -> s.withColor(0x607090).withItalic(true)));
 			tip.add(Component.literal(String.format("Current: %.0f%%", silverWardStrength * 100))
 					.withStyle(s -> s.withColor(0x60A0CC).withItalic(true)));
 			tip.add(Component.literal(""));
 			String state = silverWardEnabled ? "✔ Enabled" : "✖ Disabled";
-				int stateCol = silverWardEnabled ? 0x60CC60 : 0xCC6060;
-				tip.add(Component.literal(state + " — click to toggle")
-						.withStyle(s -> s.withColor(stateCol)));
-			}
-		} else if (hovered == 1) {
-			// Verdigris Aura tooltip
-			tip.add(Component.literal("Verdigris Aura")
-					.withStyle(s -> s.withColor(0x80D0C0).withBold(true)));
-			tip.add(Component.literal("A copper-based anti-blood field that")
-					.withStyle(s -> s.withColor(0x70A898)));
-			tip.add(Component.literal("weakens nearby blood magic entities and effects.")
-					.withStyle(s -> s.withColor(0x70A898)));
-			tip.add(Component.literal(""));
-		tip.add(Component.literal("Scales with Clarity (clarity ÷ 100).")
-				.withStyle(s -> s.withColor(0x508878).withItalic(true)));
-		tip.add(Component.literal(String.format("Current: %.0f%%", verdigrisAura * 100))
-				.withStyle(s -> s.withColor(0x50B0A0).withItalic(true)));
-		tip.add(Component.literal(""));
-		String state = verdigrisAuraEnabled ? "✔ Enabled" : "✖ Disabled";
-			int stateCol = verdigrisAuraEnabled ? 0x60CC60 : 0xCC6060;
+			int stateCol = silverWardEnabled ? 0x60CC60 : 0xCC6060;
 			tip.add(Component.literal(state + " — click to toggle")
 					.withStyle(s -> s.withColor(stateCol)));
 		}

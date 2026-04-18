@@ -1,0 +1,97 @@
+package com.vincenthuto.hemomancy.common.item.tool.unstained;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+/**
+ * Absolution Dagger — a light, fast Unstained weapon.
+ * <p>
+ * The blade is coated in a hyper coagulant that seems to halt any blood from
+ * being spilled, making it the perfect tool for those who walk the path of
+ * purification yet still need to defend themselves.
+ * <p>
+ * On hit: applies Weakness I for 2 seconds, briefly suppressing blood-magic output.
+ * At CLEANSING+ purity: every 10th hit strips one random beneficial effect from
+ * the target (a small cleanse).
+ */
+public class AbsolutionDaggerItem extends SwordItem {
+
+	private static final String TAG_HIT_COUNT = "absolution_hit_count";
+
+	/** Duration of Weakness in ticks (2 seconds). */
+	private static final int WEAKNESS_DURATION = 40;
+
+	/** How many hits before the CLEANSING+ cleanse triggers. */
+	private static final int CLEANSE_HIT_THRESHOLD = 10;
+
+	public AbsolutionDaggerItem(Tier tier, int attackDamageIn, float attackSpeedIn, Properties properties) {
+		super(tier, attackDamageIn, attackSpeedIn, properties);
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		tooltip.add(Component.literal(
+				"Coated in a hyper coagulant that seems to halt any blood from being spilled.")
+				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		tooltip.add(Component.literal("On hit: Weakness I (2s)")
+				.withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.literal("CLEANSING+: Every 10th hit strips a random beneficial effect.")
+				.withStyle(ChatFormatting.AQUA));
+	}
+
+	@Override
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		if (!attacker.level().isClientSide && attacker instanceof Player player) {
+			// Always apply Weakness I for 2 seconds
+			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, false, true, true));
+
+			// At CLEANSING+ purity: every 10th hit strips a random positive effect
+			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+				if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
+						>= EnumPurityStage.CLEANSING.getLevel()) {
+					CompoundTag tag = stack.getOrCreateTag();
+					int hits = tag.getInt(TAG_HIT_COUNT) + 1;
+					if (hits >= CLEANSE_HIT_THRESHOLD) {
+						hits = 0;
+						List<MobEffectInstance> beneficial = target.getActiveEffects().stream()
+								.filter(e -> e.getEffect().isBeneficial())
+								.collect(Collectors.toList());
+						if (!beneficial.isEmpty()) {
+							MobEffectInstance toRemove = beneficial.get(
+									player.getRandom().nextInt(beneficial.size()));
+							target.removeEffect(toRemove.getEffect());
+							player.displayClientMessage(
+									Component.literal("The coagulant purges a corruption from your foe.")
+											.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+									true);
+						}
+					}
+					tag.putInt(TAG_HIT_COUNT, hits);
+				}
+			});
+		}
+		return super.hurtEnemy(stack, target, attacker);
+	}
+
+	@Override
+	public Component getName(ItemStack stack) {
+		return Component.translatable(this.getDescriptionId(stack)).withStyle(ChatFormatting.WHITE);
+	}
+}

@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:pallid_icon"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.clarity_awakened.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.clarity_awakened.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/purified",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

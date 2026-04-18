@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:pale_silver_ingot"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.absolved.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.absolved.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/cleansing",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

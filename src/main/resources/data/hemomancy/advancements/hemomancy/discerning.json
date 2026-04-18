@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:silver_chalice"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.discerning.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.discerning.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/clarity_awakened",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}
