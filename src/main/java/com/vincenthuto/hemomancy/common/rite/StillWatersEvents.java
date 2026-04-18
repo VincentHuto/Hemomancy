@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -47,7 +48,7 @@ public class StillWatersEvents {
 		if (player.level().isClientSide) return;
 
 		// Only reduce magic-type damage
-		if (!event.getSource().isMagic()) return;
+		if (!event.getSource().is(DamageTypes.MAGIC)) return;
 
 		ServerLevel sLevel = (ServerLevel) player.level();
 		ServerLevel overworld = sLevel.getServer().overworld();

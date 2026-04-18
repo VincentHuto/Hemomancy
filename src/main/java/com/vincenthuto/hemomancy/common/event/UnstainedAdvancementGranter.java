@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.event;
 
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,14 +50,14 @@ public final class UnstainedAdvancementGranter {
 	 * @param id     The ResourceLocation of the advancement to grant.
 	 */
 	public static void grantIfNotDone(ServerPlayer player, ResourceLocation id) {
-		AdvancementHolder holder = player.server.getAdvancements().get(id);
-		if (holder == null) return;
+		Advancement advancement = player.server.getAdvancements().getAdvancement(id);
+		if (advancement == null) return;
 
-		AdvancementProgress progress = player.getAdvancements().getOrStartProgress(holder);
+		AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
 		if (progress.isDone()) return;
 
 		for (String criterion : progress.getRemainingCriteria()) {
-			player.getAdvancements().award(holder, criterion);
+			player.getAdvancements().award(advancement, criterion);
 		}
 	}
 }

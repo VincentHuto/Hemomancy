@@ -8,12 +8,11 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -31,16 +30,16 @@ import net.minecraftforge.common.ForgeMod;
  * At ABSOLVED+ purity: killing a mob grants +0.5 purity.
  * This is handled by {@link SilthmereGlaiveEvents}.
  */
-public class SilthmereGlaiveItem extends DiggerItem {
+public class SilthmereGlaiveItem extends SwordItem {
 
 	/** UUID for the reach attribute modifier — must be unique across the mod. */
-	public static final UUID REACH_UUID = UUID.fromString("9a8cc52e-47d0-4b6c-8c3e-4f4e4a7d9c01");
+	private static final UUID REACH_UUID = UUID.fromString("9a8cc52e-47d0-4b6c-8c3e-4f4e4a7d9c01");
 
-	/** Extra attack range granted by this weapon (in blocks). */
+	/** Extra entity reach granted by this weapon (in blocks). */
 	public static final double REACH_BONUS = 1.5;
 
-	public SilthmereGlaiveItem(float attackDamage, float attackSpeed, Tier tier, Properties properties) {
-		super(attackDamage, attackSpeed, tier, BlockTags.MINEABLE_WITH_SHOVEL, properties);
+	public SilthmereGlaiveItem(int attackDamage, float attackSpeed, Tier tier, Properties properties) {
+		super(tier, attackDamage, attackSpeed, properties);
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class SilthmereGlaiveItem extends DiggerItem {
 			ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 			builder.putAll(super.getDefaultAttributeModifiers(slot));
 			builder.put(
-					ForgeMod.ATTACK_RANGE.get(),
+					ForgeMod.ENTITY_REACH.get(),
 					new AttributeModifier(REACH_UUID, "Glaive reach bonus",
 							REACH_BONUS, AttributeModifier.Operation.ADDITION));
 			return builder.build();

@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.common.init.EffectInit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
@@ -110,7 +111,7 @@ public class LetheCovenantEvents {
 	public static void onLivingHurt(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (player.level().isClientSide) return;
-		if (!event.getSource().isMagic()) return;
+		if (!event.getSource().is(DamageTypes.MAGIC)) return;
 
 		// Only protect players who have Silver Ward active
 		if (!player.hasEffect(EffectInit.silver_ward.get())) return;

@@ -554,7 +554,7 @@ public class ItemInit {
             () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
                     new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
-            () -> new SilthmereGlaiveItem(4f, -2.8f, EnumModToolTiers.UNSTAINED,
+            () -> new SilthmereGlaiveItem(4, -2.8f, EnumModToolTiers.UNSTAINED,
                     new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> pale_silver_pickaxe = HANDHELDITEMS.register("pale_silver_pickaxe",
             () -> new PaleSilverPickaxeItem(EnumModToolTiers.UNSTAINED, 1, -2.8f,
