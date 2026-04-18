@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:suspended_cleansed_blood_crystal"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.purified.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.purified.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/absolved",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

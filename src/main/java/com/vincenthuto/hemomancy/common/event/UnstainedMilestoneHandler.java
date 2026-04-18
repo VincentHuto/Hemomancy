@@ -8,8 +8,6 @@ import com.vincenthuto.hemomancy.common.effect.SilverWardEffect;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,7 +57,8 @@ public class UnstainedMilestoneHandler {
 
 	/**
 	 * Periodically applies Silver Ward and Verdigris Aura effects based on
-	 * the player's current purity/clarity stage and toggle state.
+	 * the player's current purity/clarity stage and toggle state, and grants
+	 * stage-based advancements whenever a new threshold is crossed.
 	 */
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -76,6 +75,14 @@ public class UnstainedMilestoneHandler {
 			EnumClarityStage clarityStage = progress.hasClarityUnlocked()
 					? EnumClarityStage.byClarity(progress.getClarity())
 					: EnumClarityStage.AWAKENED;
+
+			// ── Grant purity stage advancements ──
+			checkPurityStageAdvancements(serverPlayer, purityStage);
+
+			// ── Grant clarity stage advancements ──
+			if (progress.hasClarityUnlocked()) {
+				checkClarityStageAdvancements(serverPlayer, clarityStage);
+			}
 
 			// ── Silver Ward: unlocked at TAINTED (25+), amplifier scales with stage ──
 			if (progress.isSilverWardEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
@@ -111,6 +118,51 @@ public class UnstainedMilestoneHandler {
 				});
 			}
 		});
+	}
+
+	// ════════════════════════════════════════════════════════════
+	//  Advancement Granting — Purity & Clarity Stage Thresholds
+	// ════════════════════════════════════════════════════════════
+
+	/**
+	 * Grants purity-stage advancements for any stage the player has already
+	 * reached. Safe to call on every tick check because
+	 * {@link UnstainedAdvancementGranter#grantIfNotDone} is a no-op once done.
+	 */
+	private static void checkPurityStageAdvancements(ServerPlayer player, EnumPurityStage stage) {
+		if (stage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_TAINTED);
+		}
+		if (stage.getLevel() >= EnumPurityStage.CLEANSING.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_CLEANSING);
+		}
+		if (stage.getLevel() >= EnumPurityStage.ABSOLVED.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_ABSOLVED);
+		}
+		if (stage.getLevel() >= EnumPurityStage.PURIFIED.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_PURIFIED);
+		}
+	}
+
+	/**
+	 * Grants clarity-stage advancements for any stage the player has reached.
+	 * Called only after {@code hasClarityUnlocked()} returns {@code true}.
+	 */
+	private static void checkClarityStageAdvancements(ServerPlayer player, EnumClarityStage stage) {
+		// Always grant clarity_awakened once clarity is unlocked (regardless of stage)
+		UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED);
+		if (stage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_DISCERNING);
+		}
+		if (stage.getLevel() >= EnumClarityStage.VIGILANT.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_VIGILANT);
+		}
+		if (stage.getLevel() >= EnumClarityStage.RESOLUTE.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_RESOLUTE_STAGE);
+		}
+		if (stage.getLevel() >= EnumClarityStage.ENLIGHTENED.getLevel()) {
+			UnstainedAdvancementGranter.grantIfNotDone(player, UnstainedAdvancementGranter.ADV_ENLIGHTENED_SEEKER);
+		}
 	}
 
 	// ════════════════════════════════════════════════════════════

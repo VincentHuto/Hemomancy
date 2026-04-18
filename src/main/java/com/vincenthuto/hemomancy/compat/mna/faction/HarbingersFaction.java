@@ -63,7 +63,16 @@ public class HarbingersFaction extends BaseFaction {
 
     @Override
     public Component getOcculusTaskPrompt(int i) {
-        return Component.translatable("fnc:rituals/pact");
+        return switch (i) {
+            case 0  -> Component.translatable("hemomancy.occulus.task.neophyte");
+            case 1  -> Component.translatable("hemomancy.occulus.task.votary");
+            case 2  -> Component.translatable("hemomancy.occulus.task.initiate");
+            case 3  -> Component.translatable("hemomancy.occulus.task.adept");
+            case 4  -> Component.translatable("hemomancy.occulus.task.illuminatus");
+            case 5  -> Component.translatable("hemomancy.occulus.task.sanctified");
+            case 6  -> Component.translatable("hemomancy.occulus.task.archon");
+            default -> Component.translatable("hemomancy.occulus.task.archon");
+        };
     }
 
     @Override

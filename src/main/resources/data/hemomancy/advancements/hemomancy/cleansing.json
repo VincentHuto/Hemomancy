@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:lethean_poppy_wreath"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.cleansing.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.cleansing.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/tainted",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

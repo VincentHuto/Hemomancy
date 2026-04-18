@@ -1560,6 +1560,9 @@ public class CardinalRiteEvents {
 			sLevel.sendParticles(ParticleTypes.END_ROD,
 					caster.getX(), caster.getY() + 1.0, caster.getZ(),
 					80, 1.5, 2.0, 1.5, 0.03);
+
+			com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
+					caster, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_CLARITY_AWAKENED);
 		});
 	}
 

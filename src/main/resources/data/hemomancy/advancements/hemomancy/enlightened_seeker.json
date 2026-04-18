@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:pallid_icon"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.enlightened_seeker.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.enlightened_seeker.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/resolute_stage",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

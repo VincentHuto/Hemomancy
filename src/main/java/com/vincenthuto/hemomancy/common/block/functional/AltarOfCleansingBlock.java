@@ -211,6 +211,8 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 		if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
 			UnstainedProgressEvents.syncProgress(serverPlayer, unstained);
+			com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.grantIfNotDone(
+					serverPlayer, com.vincenthuto.hemomancy.common.event.UnstainedAdvancementGranter.ADV_BLESSED_BY_ALTAR);
 		}
 	}
 

@@ -21,7 +21,7 @@ public class HarbingerEventHandler {
 
     public static final ResourceLocation FACTION_HARBINGERS_ID = Hemomancy.rloc("harbingers_faction");
     public static final ResourceLocation HARBINGERS_MANA = Hemomancy.rloc("harbingers_mana");
-    public static final ResourceLocation HARBINGERS_HUD_TEXTURE = Hemomancy.rloc("textures/mna/resource_bars.png");
+    public static final ResourceLocation HARBINGERS_HUD_TEXTURE = Hemomancy.rloc("textures/mna/harbingers_resource_bars.png");
 
 
 

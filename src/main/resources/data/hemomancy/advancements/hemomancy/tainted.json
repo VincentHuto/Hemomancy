@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:hemolytic_solution"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.tainted.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.tainted.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "hemomancy:hemomancy/path_of_purity",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}
