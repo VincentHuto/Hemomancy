@@ -27,5 +27,6 @@
   },
   "result": {
     "item": "hemomancy:consecrated_copper_ingot"
-  }
+  },
+  "unstained": true
 }

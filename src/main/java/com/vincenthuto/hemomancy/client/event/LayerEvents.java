@@ -245,7 +245,7 @@ public class LayerEvents {
 //			renderer.addLayer(new CellHandLayer(renderer));
 //			renderer.addLayer(new RenderScarsLayer(renderer));
 //			renderer.addLayer(new VascCharmLayer<>(renderer));
-
+			renderer.addLayer(new HemolymphopodaHeadpieceLayer(renderer));
 		}
 	}
 
