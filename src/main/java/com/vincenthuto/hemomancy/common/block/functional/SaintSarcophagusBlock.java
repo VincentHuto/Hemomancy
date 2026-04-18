@@ -242,14 +242,19 @@ public void onRemove(BlockState state, Level level, BlockPos pos, BlockState new
 @Override
 public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 BlockEntityType<T> type) {
-if (!level.isClientSide) {
+if (level.isClientSide) {
+return (lvl, pos, st, be) -> {
+if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
+SaintSarcophagusBlockEntity.clientTick(lvl, pos, st, sarcophagus);
+}
+};
+} else {
 return (lvl, pos, st, be) -> {
 if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
 sarcophagus.tick();
 }
 };
 }
-return null;
 }
 
 @Override
@@ -262,6 +267,28 @@ return InteractionResult.sidedSuccess(true);
 BlockEntity be = worldIn.getBlockEntity(pos);
 if (!(be instanceof SaintSarcophagusBlockEntity sarcophagus)) {
 return InteractionResult.PASS;
+}
+
+// Shift+right-click on an open sarcophagus closes the lid again
+if (sarcophagus.isOpen() && player.isShiftKeyDown()) {
+sarcophagus.setOpen(false);
+player.displayClientMessage(
+Component.literal("You heave the lid back into place.")
+.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+false);
+worldIn.playSound(null, pos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0f, 0.5f);
+return InteractionResult.CONSUME;
+}
+
+// If the lid has not been slid off yet, open it on the first interaction
+if (!sarcophagus.isOpen()) {
+sarcophagus.setOpen(true);
+player.displayClientMessage(
+Component.literal("You slide the lid off to the side with a loud thud and marvel the corpse infront of you.")
+.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+false);
+worldIn.playSound(null, pos, SoundEvents.STONE_PLACE, SoundSource.BLOCKS, 1.0f, 0.4f);
+return InteractionResult.CONSUME;
 }
 
 // If the corpus is AWAKENED, trigger combat encounter and consume block

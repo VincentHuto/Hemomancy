@@ -51,6 +51,8 @@ public class SaintSarcophagusRenderer implements BlockEntityRenderer<SaintSarcop
 		};
 		ms.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
+		model.setLidAngle(te.getLidAngle(partialTicks));
+
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
 		model.renderToBuffer(ms, vertexConsumer, combinedLightIn, OverlayTexture.NO_OVERLAY,
 				1.0F, 1.0F, 1.0F, 1.0F);

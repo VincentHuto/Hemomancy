@@ -7,6 +7,11 @@ import com.vincenthuto.hemomancy.common.tile.IMultiBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -21,9 +26,26 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	private EnumCorpusState corpusState = EnumCorpusState.DORMANT;
 	private int extractionAttempts = 0;
 	private int cooldownTicks = 0;
+	private boolean isOpen = false;
+
+	// Client-side animation
+	public float lidAngle = 0.0F;
+	public float prevLidAngle = 0.0F;
 
 	public SaintSarcophagusBlockEntity(BlockPos pos, BlockState state) {
 		super(BlockEntityInit.saint_sarcophagus.get(), pos, state);
+	}
+
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	public void setOpen(boolean open) {
+		this.isOpen = open;
+		setChanged();
+		if (level != null && !level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		}
 	}
 
 	public EnumSaintType getSaintType() {
@@ -70,6 +92,19 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		return cooldownTicks > 0;
 	}
 
+	public float getLidAngle(float partialTick) {
+		return Mth.lerp(partialTick, prevLidAngle, lidAngle);
+	}
+
+	public static void clientTick(Level level, BlockPos pos, BlockState state, SaintSarcophagusBlockEntity be) {
+		be.prevLidAngle = be.lidAngle;
+		if (be.isOpen && be.lidAngle < 1.0F) {
+			be.lidAngle = Math.min(1.0F, be.lidAngle + 0.05F);
+		} else if (!be.isOpen && be.lidAngle > 0.0F) {
+			be.lidAngle = Math.max(0.0F, be.lidAngle - 0.05F);
+		}
+	}
+
 	public void tick() {
 		if (cooldownTicks > 0) {
 			cooldownTicks--;
@@ -83,12 +118,27 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	}
 
 	@Override
+	public CompoundTag getUpdateTag() {
+		CompoundTag tag = super.getUpdateTag();
+		tag.putBoolean("IsOpen", isOpen);
+		tag.putString("SaintType", saintType.name());
+		tag.putString("CorpusState", corpusState.name());
+		return tag;
+	}
+
+	@Override
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	@Override
 	protected void saveAdditional(CompoundTag tag) {
 		super.saveAdditional(tag);
 		tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		tag.putInt("ExtractionAttempts", extractionAttempts);
 		tag.putInt("CooldownTicks", cooldownTicks);
+		tag.putBoolean("IsOpen", isOpen);
 	}
 
 	@Override
@@ -110,5 +160,6 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		}
 		extractionAttempts = tag.getInt("ExtractionAttempts");
 		cooldownTicks = tag.getInt("CooldownTicks");
+		isOpen = tag.getBoolean("IsOpen");
 	}
 }

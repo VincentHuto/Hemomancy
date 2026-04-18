@@ -79,6 +79,11 @@ public class HarbingerSaintSarcophagusModel extends Model {
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
 
+    public void setLidAngle(float angle) {
+        // angle: 0 = closed, 1 = fully open (37.5 degrees on x axis)
+        sarcophagus_lid.xRot = (float) Math.toRadians(37.5f * angle);
+    }
+
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         sarcophagus_base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
