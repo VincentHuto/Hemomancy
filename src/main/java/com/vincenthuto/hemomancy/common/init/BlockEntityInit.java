@@ -116,6 +116,10 @@ public class BlockEntityInit {
 			.register("saint_sarcophagus", () -> BlockEntityType.Builder
 					.of(SaintSarcophagusBlockEntity::new, BlockInit.saint_sarcophagus.get()).build(null));
 
+	public static final RegistryObject<BlockEntityType<SanguineMonolithBlockEntity>> sanguine_monolith = TILES
+			.register("sanguine_monolith", () -> BlockEntityType.Builder
+					.of(SanguineMonolithBlockEntity::new, BlockInit.sanguine_monolith.get()).build(null));
+
 	// Puzzle block entities — Hemorath encounter
 	public static final RegistryObject<BlockEntityType<BloodBasinBlockEntity>> blood_basin = TILES
 			.register("blood_basin", () -> BlockEntityType.Builder

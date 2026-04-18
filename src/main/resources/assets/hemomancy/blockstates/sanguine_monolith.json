@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "hemomancy:block/sanguine_monolith", "y": 180 },
+    "facing=south": { "model": "hemomancy:block/sanguine_monolith" },
+    "facing=west": { "model": "hemomancy:block/sanguine_monolith", "y": 270 },
+    "facing=east": { "model": "hemomancy:block/sanguine_monolith", "y": 90 }
+  }
+}

@@ -424,6 +424,7 @@ public class CardinalRiteEvents {
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
+	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
 	// ── Gourd upgrade rite paths ──
 	private static final String PALLID_VESSEL_RITE = "cardinal_rite/pallid_vessel_rite";
@@ -454,6 +455,8 @@ public class CardinalRiteEvents {
 	private static final int QLIPHOTH_BLOOM_CHUNK_RADIUS = 3;
 	/** Chunk radius for the Sanguine Fervor spawn-boost zone. */
 	private static final int SANGUINE_FERVOR_CHUNK_RADIUS = 3;
+	/** Chunk radius for the Crimson Lodge buff zone. */
+	private static final int CRIMSON_LODGE_CHUNK_RADIUS = 5;
 	/** Duration in ticks for the Sanguine Fervor spawn-boost effect (5 minutes). */
 	private static final long SANGUINE_FERVOR_DURATION_TICKS = 6000L;
 	/** Blood cost per member for Scarlet Summons (from bloodline pool). */
@@ -686,6 +689,11 @@ public class CardinalRiteEvents {
 		// Rite of Sanguine Fervor: boost mob spawn rates in a 3-chunk radius for 5 minutes
 		if (SANGUINE_FERVOR_RITE.equals(ritePath)) {
 			completeSanguineFervor(sLevel, caster, center);
+		}
+
+		// Rite of the Crimson Lodge: establish a lodge zone with strength and blood virility
+		if (ILLUMINATUS_RITE.equals(ritePath)) {
+			completeCrimsonLodge(sLevel, caster, center);
 		}
 
 		// ── Unstained rites ──
@@ -1074,6 +1082,43 @@ public class CardinalRiteEvents {
 		caster.displayClientMessage(
 				Component.literal("A Blood Domain has been established! " + blockRadius
 						+ " blocks in every direction now bow to your crimson will.")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Rite of the Crimson Lodge (Degree 5, Greater):
+	 * Establishes a persistent Crimson Lodge centered on the rite location.
+	 * Within the lodge: players gain Strength I and enhanced blood
+	 * regeneration. The structure blocks are preserved (breakBlocksOnCreation
+	 * is false in the recipe). Recruited NPC Harbingers may be summoned
+	 * anywhere within the lodge radius via the ancestral ledger.
+	 */
+	private static void completeCrimsonLodge(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		CrimsonLodgeSavedData data = CrimsonLodgeSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+
+		// Check for overlap with existing lodges
+		CrimsonLodgeSavedData.LodgeEntry overlapping = data.getOverlappingLodge(
+				center, dimension, CRIMSON_LODGE_CHUNK_RADIUS);
+		if (overlapping != null) {
+			caster.displayClientMessage(
+					Component.literal("A Crimson Lodge already exists within " + CRIMSON_LODGE_CHUNK_RADIUS
+							+ " chunks of here. Only one lodge may exist per region.")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		CrimsonLodgeSavedData.LodgeEntry entry = new CrimsonLodgeSavedData.LodgeEntry(
+				caster.getUUID(), center, dimension, CRIMSON_LODGE_CHUNK_RADIUS, sLevel.getGameTime(), center);
+		data.addLodge(entry);
+
+		int blockRadius = CRIMSON_LODGE_CHUNK_RADIUS * 16;
+		caster.displayClientMessage(
+				Component.literal("The Crimson Lodge has been consecrated! Strength and blood virility flow within "
+						+ blockRadius + " blocks.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
 	}

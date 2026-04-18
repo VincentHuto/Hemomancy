@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.vincenthuto.hemomancy.client.screen.item.LedgerScreen;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
@@ -100,8 +101,16 @@ public class UnsignedLedgerItem extends Item {
 					SkillPointGainEvents.onBloodlineJoined((ServerPlayer) playerIn);
 				}
 			} else {
-				// Second use: another player signs to join the bloodline
-				if (!worldIn.isClientSide) {
+				// Signed ledger: open the ledger GUI for lodge actions,
+				// or if another player uses it, they join the bloodline.
+				if (worldIn.isClientSide) {
+					// Check if the player is already in this bloodline — if so, open the GUI
+					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
+					if (savedLine.isValid() && savedLine.hasMember(playerIn.getUUID())) {
+						LedgerScreen.openScreen();
+					}
+					// If not a member yet, the server side handles joining below
+				} else {
 					Bloodline savedLine = Bloodline.deserialize(compound.getCompound(TAG_BLOODLINE));
 					if (!savedLine.isValid()) {
 						playerIn.displayClientMessage(
@@ -112,9 +121,9 @@ public class UnsignedLedgerItem extends Item {
 					}
 
 					if (savedLine.hasMember(playerIn.getUUID())) {
-						playerIn.displayClientMessage(Component.literal("Already in this bloodline"), true);
+						// Already a member — GUI opened on client side, no server action needed
 					} else {
-						// Add to global saved data
+						// New player joins the bloodline
 						ServerLevel overworld = ((ServerLevel) worldIn).getServer().overworld();
 						BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 						Bloodline globalLine = savedData.addMember(savedLine.getBloodlineUUID(),
