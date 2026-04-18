@@ -38,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Sanguine Monolith — a craftable guidance block available to players who have
- * reached at least the 4th initiatory degree (Adept). Inspired by the Seele
+ * reached at least the 4th initiatory degree (Adept). Inspired by the SEELE
  * Monoliths from Neon Genesis Evangelion, it is a tall, dark, rectangular slab
  * that can be "conversed" with to receive hints about what to do next based on
  * the player's current advancement and progression level.
