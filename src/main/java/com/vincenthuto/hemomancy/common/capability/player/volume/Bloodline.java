@@ -13,6 +13,7 @@ public class Bloodline {
 
 	public static final UUID INVALID_UUID = new UUID(0, 0);
 	public static final float BLOOD_VOLUME_PER_MEMBER = 5000f;
+	public static final float NPC_BLOOD_VOLUME_PER_MEMBER = 1000f;
 
 	public static Bloodline NOBLOODLINE = new Bloodline();
 
@@ -82,7 +83,8 @@ public class Bloodline {
 			playerUUIDS.add(leaderUUID);
 		}
 		this.playerUUIDS = playerUUIDS;
-		this.maxBloodVolume = getTotalMemberCount() * BLOOD_VOLUME_PER_MEMBER;
+		this.maxBloodVolume = this.playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER
+				+ npcMemberUUIDs.size() * NPC_BLOOD_VOLUME_PER_MEMBER;
 	}
 
 	public boolean isValid() {
@@ -115,7 +117,7 @@ public class Bloodline {
 	/**
 	 * Adds a recruited NPC Harbinger to this bloodline. The NPC's entity UUID
 	 * is stored so that the same NPC cannot be recruited twice. Each NPC
-	 * increases the shared pool capacity by {@link #BLOOD_VOLUME_PER_MEMBER}.
+	 * increases the shared pool capacity by {@link #NPC_BLOOD_VOLUME_PER_MEMBER}.
 	 *
 	 * @return {@code true} if the NPC was added, {@code false} if already a member.
 	 */
@@ -164,9 +166,10 @@ public class Bloodline {
 		return playerUUIDS.size() + npcMemberUUIDs.size();
 	}
 
-	/** Recalculates max blood volume based on total member count. */
+	/** Recalculates max blood volume based on player and NPC member counts. */
 	private void recalculateMaxVolume() {
-		this.maxBloodVolume = getTotalMemberCount() * BLOOD_VOLUME_PER_MEMBER;
+		this.maxBloodVolume = playerUUIDS.size() * BLOOD_VOLUME_PER_MEMBER
+				+ npcMemberUUIDs.size() * NPC_BLOOD_VOLUME_PER_MEMBER;
 	}
 
 	public boolean contributeBlood(float amount) {

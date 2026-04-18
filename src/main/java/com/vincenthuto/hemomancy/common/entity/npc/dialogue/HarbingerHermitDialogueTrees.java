@@ -212,20 +212,12 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.illuminatus.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
 						"hemomancy.hermit.illuminatus.hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.hermit.consider",
-						"hemomancy.dialogue.recruit.hermit.accept"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
-						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
 				.build();
 	}
@@ -237,20 +229,12 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.sanctified.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.what_next", "hint", null),
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("hint", List.of(
 						"hemomancy.hermit.sanctified.hint"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.hermit.consider",
-						"hemomancy.dialogue.recruit.hermit.accept"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
-						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
 				.build();
 	}
@@ -263,15 +247,7 @@ public final class HarbingerHermitDialogueTrees {
 						"hemomancy.hermit.archon.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.hermit.option.share_wisdom", null, "hermit_archon_wisdom"),
-						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
 						new DialogueOption("hemomancy.dialogue.hermit.option.leave", null, null)
-				)))
-				.addNode(new DialogueNode("recruit_offer", List.of(
-						"hemomancy.dialogue.recruit.hermit.consider",
-						"hemomancy.dialogue.recruit.hermit.accept"
-				), List.of(
-						new DialogueOption("hemomancy.dialogue.recruit.option.confirm", null, "recruit_harbinger"),
-						new DialogueOption("hemomancy.dialogue.recruit.option.not_yet", null, null)
 				)))
 				.build();
 	}
