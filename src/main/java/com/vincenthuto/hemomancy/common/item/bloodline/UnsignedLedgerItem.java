@@ -26,7 +26,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -221,16 +220,8 @@ public class UnsignedLedgerItem extends Item {
 				continue;
 			}
 
-			if (existing != null) {
-				// Teleport existing entity to player
-				existing.teleportTo(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
-						player.getY(),
-						player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
-				summoned++;
-			} else {
-				// Entity not loaded — spawn a transient copy near the player.
-				// Determine type based on available registered entity types.
-				spawnRecruitedNpc(sLevel, player, npcUUID);
+			// Teleport or spawn the NPC near the player
+			if (teleportOrSpawnNpc(sLevel, player, npcUUID)) {
 				summoned++;
 			}
 		}
@@ -251,38 +242,40 @@ public class UnsignedLedgerItem extends Item {
 	}
 
 	/**
-	 * Spawns a recruited NPC Harbinger near the player. Tries each Harbinger
-	 * entity type and checks if an existing entity in the world matches the
-	 * UUID. If no match is found in the world, spawns a Harbinger Vicar as a
-	 * default representative of the recruited NPC.
+	 * Teleports an NPC Harbinger to the player's location, searching all
+	 * loaded dimensions. If no entity with the given UUID is loaded anywhere,
+	 * spawns a new Harbinger entity near the player.
+	 *
+	 * @return {@code true} if an NPC was teleported or spawned
 	 */
-	private static void spawnRecruitedNpc(ServerLevel level, ServerPlayer player, UUID npcUUID) {
-		// Search all loaded entities in any dimension for a match first
+	private static boolean teleportOrSpawnNpc(ServerLevel level, ServerPlayer player, UUID npcUUID) {
+		double targetX = player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0;
+		double targetY = player.getY();
+		double targetZ = player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0;
+
+		// Search all loaded dimensions for the entity
 		for (ServerLevel dim : level.getServer().getAllLevels()) {
 			Entity found = dim.getEntity(npcUUID);
-			if (found instanceof Mob mob) {
-				mob.teleportTo(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
-						player.getY(),
-						player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
-				return;
+			if (found != null) {
+				found.teleportTo(targetX, targetY, targetZ);
+				return true;
 			}
 		}
 
 		// Not found — spawn a new Harbinger entity near the player
-		// Cycle through known entity types to spawn the appropriate NPC
 		EntityType<?>[] harbingerTypes = {
 			EntityInit.harbinger_vicar.get(),
 			EntityInit.harbinger_alchemist.get()
 		};
-		EntityType<?> type = harbingerTypes[Math.abs(npcUUID.hashCode()) % harbingerTypes.length];
+		EntityType<?> type = harbingerTypes[(npcUUID.hashCode() & Integer.MAX_VALUE) % harbingerTypes.length];
 
 		Entity spawned = type.create(level);
 		if (spawned != null) {
 			spawned.setUUID(npcUUID);
-			spawned.setPos(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
-					player.getY(),
-					player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
+			spawned.setPos(targetX, targetY, targetZ);
 			level.addFreshEntity(spawned);
+			return true;
 		}
+		return false;
 	}
 }
