@@ -21,15 +21,12 @@ import net.minecraftforge.common.util.Lazy;
 public class HemolymphopodaHeadpieceLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
-	private static final Lazy<HemolymphopodaModel<LivingEntity>> CACHED_MODEL = Lazy.of(
+	private static final Lazy<HemolymphopodaModel<?>> CACHED_MODEL = Lazy.of(
 			() -> new HemolymphopodaModel<>(
 					Minecraft.getInstance().getEntityModels().bakeLayer(HemolymphopodaModel.LAYER_LOCATION)));
-	private final HemolymphopodaModel<T> model;
 
-	@SuppressWarnings("unchecked")
 	public HemolymphopodaHeadpieceLayer(LivingEntityRenderer<T, M> renderer) {
 		super(renderer);
-		this.model = (HemolymphopodaModel<T>) CACHED_MODEL.get();
 	}
 
 	@Override
@@ -44,7 +41,7 @@ public class HemolymphopodaHeadpieceLayer<T extends LivingEntity, M extends Huma
 		poseStack.translate(0.0F, -0.22F, 0.0F);
 		poseStack.scale(0.08F, -0.08F, -0.08F);
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
-		model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+		CACHED_MODEL.get().renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 		poseStack.popPose();
 	}
 }
