@@ -1387,10 +1387,25 @@
 	"message.hemomancy.offering_gate.trial_active": "The trial is underway. Fill the basins.",
 
 	"hemomancy.monolith.unworthy": "The monolith is silent. Its surface is cold and unyielding — you have not yet proven yourself worthy.",
+
 	"hemomancy.monolith.guidance.adept": "Adept, the Brotherhood recognises your blood. Seek the Sainted Mausoleums and draw from the preserved corpus within. The enzymes of Saints hold the key to the next rite.",
+	"hemomancy.monolith.guidance.adept.line1": "Adept, the Brotherhood recognises your blood.",
+	"hemomancy.monolith.guidance.adept.line2": "Seek the Sainted Mausoleums and draw from the preserved corpus within. The enzymes of Saints hold the key to the next rite.",
+
 	"hemomancy.monolith.guidance.illuminatus": "Illuminatus, the Crimson Lodge has opened its gates. Delve deeper into the crimson fungal depths and commune with the Dendritic Distributors. The mycelial network whispers of dormant power.",
+	"hemomancy.monolith.guidance.illuminatus.line1": "Illuminatus, the Crimson Lodge has opened its gates.",
+	"hemomancy.monolith.guidance.illuminatus.line2": "Delve deeper into the crimson fungal depths and commune with the Dendritic Distributors. The mycelial network whispers of dormant power.",
+
 	"hemomancy.monolith.guidance.sanctified": "Sanctified of the Covenant, few have walked this far. Seek the living constructs — fuse organ and engram upon the Somatic Loom. Shape flesh as others shape stone.",
+	"hemomancy.monolith.guidance.sanctified.line1": "Sanctified of the Covenant, few have walked this far.",
+	"hemomancy.monolith.guidance.sanctified.line2": "Seek the living constructs — fuse organ and engram upon the Somatic Loom. Shape flesh as others shape stone.",
+
 	"hemomancy.monolith.guidance.archon": "Archon, you stand at the apex. The Order has no more to teach — only to witness. The blood remembers what words cannot. Forge your legacy in the crimson tide.",
+	"hemomancy.monolith.guidance.archon.line1": "Archon, you stand at the apex. The Order has no more to teach — only to witness.",
+	"hemomancy.monolith.guidance.archon.line2": "The blood remembers what words cannot. Forge your legacy in the crimson tide.",
+
+	"hemomancy.dialogue.monolith.option.leave": "[Depart]",
+	"hemomancy.dialogue.monolith.option.understood": "[Understood.]",
 
 	"hemomancy.dialogue.recruit.option.pledge_blood": "Pledge your blood to my cause.",
 	"hemomancy.dialogue.recruit.option.confirm": "Welcome to the bloodline.",

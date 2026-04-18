@@ -3,17 +3,21 @@ package com.vincenthuto.hemomancy.common.block.functional;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
-import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -173,25 +177,20 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		if (worldIn.isClientSide) {
 			return InteractionResult.SUCCESS;
 		}
+		if (!(player instanceof ServerPlayer serverPlayer)) {
+			return InteractionResult.SUCCESS;
+		}
 
 		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
 			int degreeNumber = degree.getDegreeNumber();
 
-			if (degreeNumber < MIN_DEGREE) {
-				player.displayClientMessage(
-						Component.translatable("hemomancy.monolith.unworthy"), false);
-				return;
-			}
+			DialogueTree tree = degreeNumber < MIN_DEGREE
+					? SanguineMonolithDialogueTrees.unworthy()
+					: SanguineMonolithDialogueTrees.forDegree(degreeNumber);
 
-			EnumInitiatoryDegree current = degree.getDegree();
-			if (current == null) {
-				return;
-			}
-
-			// Deliver guidance based on current degree
-			String key = "hemomancy.monolith.guidance." + current.name().toLowerCase();
-			player.displayClientMessage(
-					Component.translatable(key), false);
+			PacketHandler.CHANNELBLOODVOLUME.send(
+					PacketDistributor.PLAYER.with(() -> serverPlayer),
+					new OpenDialoguePacket(tree));
 		});
 
 		return InteractionResult.SUCCESS;
