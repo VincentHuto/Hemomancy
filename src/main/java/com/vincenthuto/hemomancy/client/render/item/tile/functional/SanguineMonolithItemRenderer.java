@@ -52,31 +52,32 @@ public class SanguineMonolithItemRenderer extends BlockEntityWithoutLevelRendere
 			Lighting.setupForEntityInInventory();
 			poseStack.mulPose(new Quaternion(Vector3.YP, 90, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.ZP, 30, true).toMoj());
-			poseStack.translate(-0.5, -0.2, 0);
+			poseStack.translate(-0.5, -0.15, 0);
 		}
 
 		poseStack.pushPose();
 
 		if (isGui) {
-			poseStack.translate(0.5, 0.85, 0.5);
-			poseStack.scale(0.2f, 0.2f, 0.2f);
+			poseStack.translate(0.5, 0.7, 0.5);
+			poseStack.scale(0.25f, 0.25f, 0.25f);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			poseStack.translate(0.5, 0.5, 0.5);
-			poseStack.scale(0.15f, 0.15f, 0.15f);
+			poseStack.scale(0.2f, 0.2f, 0.2f);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		} else {
-			poseStack.translate(0.5, 0.7, 0.5);
-			poseStack.scale(0.15f, 0.15f, 0.15f);
+			poseStack.translate(0.5, 0.6, 0.5);
+			poseStack.scale(0.2f, 0.2f, 0.2f);
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			poseStack.mulPose(new Quaternion(Vector3.YP, 180, true).toMoj());
 		}
 
 		VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucentCull(TEXTURE));
+		// Render in black tint to match the placed block
 		model.renderToBuffer(poseStack, vertexConsumer, combinedLight,
-				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, 0.05F, 0.02F, 0.02F, 1F);
 
 		poseStack.popPose();
 

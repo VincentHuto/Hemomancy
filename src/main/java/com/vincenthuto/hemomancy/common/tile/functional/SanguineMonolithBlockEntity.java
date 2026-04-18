@@ -14,7 +14,7 @@ import net.minecraft.world.phys.AABB;
 
 /**
  * Block entity for the Sanguine Monolith. Tracks ambient state and
- * provides a render bounding box that covers the full 1×3×1 structure.
+ * provides a render bounding box that covers the full 1×2×1 structure.
  */
 public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBlockEntity {
 

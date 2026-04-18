@@ -50,12 +50,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private static final VoxelShape SHAPE = Block.box(2, 0, 5, 14, 16, 11);
+	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
 
-	/** Filler offsets: 1×3×1 — two filler blocks above the base. */
+	/** Filler offsets: 1×2×1 — one filler block above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-			new BlockPos(0, 1, 0),
-			new BlockPos(0, 2, 0)
+			new BlockPos(0, 1, 0)
 	};
 
 	/** Minimum initiatory degree required to commune with the monolith. */
@@ -105,7 +104,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos pos = context.getClickedPos();
 		Level level = (Level) context.getLevel();
-		if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
+		if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
 			return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 		}
 		return null;

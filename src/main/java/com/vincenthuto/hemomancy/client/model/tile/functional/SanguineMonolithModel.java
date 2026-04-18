@@ -11,45 +11,29 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.RenderType;
 
 /**
- * Model for the Sanguine Monolith — a tall, dark, rectangular slab inspired by
- * the SEELE monoliths from Neon Genesis Evangelion. The monolith is a narrow,
- * imposing pillar with a slight inset glyph panel on the front face.
+ * Model for the Sanguine Monolith — a 1-block-wide, 0.5-block-deep, 2-block-tall
+ * black slab. The bottom third of the monolith has an animated red vein pattern
+ * rendered as an overlay in the renderer.
  */
 public class SanguineMonolithModel extends Model {
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
 			Hemomancy.rloc("modelsanguinemonolith"), "main");
 
 	private final ModelPart slab;
-	private final ModelPart glyph_panel;
-	private final ModelPart base;
 
 	public SanguineMonolithModel(ModelPart root) {
 		super(RenderType::entityTranslucent);
 		this.slab = root.getChild("slab");
-		this.glyph_panel = root.getChild("glyph_panel");
-		this.base = root.getChild("base");
 	}
 
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		// Main slab body: 12 wide, 44 tall, 4 deep (narrow, imposing pillar)
+		// Main slab body: 16 wide (1 block), 32 tall (2 blocks), 8 deep (0.5 block)
 		partdefinition.addOrReplaceChild("slab", CubeListBuilder.create()
 						.texOffs(0, 0)
-						.addBox(-6.0F, -44.0F, -2.0F, 12.0F, 44.0F, 4.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-
-		// Glyph panel: slightly recessed front face detail
-		partdefinition.addOrReplaceChild("glyph_panel", CubeListBuilder.create()
-						.texOffs(32, 0)
-						.addBox(-4.0F, -38.0F, -2.5F, 8.0F, 32.0F, 1.0F, new CubeDeformation(0.0F)),
-				PartPose.offset(0.0F, 24.0F, 0.0F));
-
-		// Base plinth: slightly wider than the slab
-		partdefinition.addOrReplaceChild("base", CubeListBuilder.create()
-						.texOffs(0, 48)
-						.addBox(-7.0F, -1.0F, -3.0F, 14.0F, 1.0F, 6.0F, new CubeDeformation(0.0F)),
+						.addBox(-8.0F, -32.0F, -4.0F, 16.0F, 32.0F, 8.0F, new CubeDeformation(0.0F)),
 				PartPose.offset(0.0F, 24.0F, 0.0F));
 
 		return LayerDefinition.create(meshdefinition, 64, 64);
@@ -59,7 +43,5 @@ public class SanguineMonolithModel extends Model {
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay,
 			float red, float green, float blue, float alpha) {
 		slab.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		glyph_panel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-		base.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 }
