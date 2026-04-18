@@ -472,6 +472,8 @@ public class ClientEvents {
 					com.vincenthuto.hemomancy.client.render.tile.functional.SaintSarcophagusRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.altar_of_cleansing.get(),
 					com.vincenthuto.hemomancy.client.render.tile.functional.AltarOfCleansingRenderer::new);
+			BlockEntityRenderers.register(BlockEntityInit.sanguine_monolith.get(),
+					com.vincenthuto.hemomancy.client.render.tile.functional.SanguineMonolithRenderer::new);
 			MenuScreens.register(ContainerInit.gourd_charm_inventory.get(), CharmGourdScreen::new);
 			MenuScreens.register(ContainerInit.fungal_implantation.get(), SporeImplantScreen::new);
 			MenuScreens.register(ContainerInit.vial_centrifuge.get(), VialCentrifugeScreen::new);

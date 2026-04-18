@@ -24,6 +24,7 @@ import com.vincenthuto.hemomancy.common.item.tile.GhastlyAlembicBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.PallidRetortBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MorphlingIncubatorBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.SaintSarcophagusBlockItem;
+import com.vincenthuto.hemomancy.common.item.tile.SanguineMonolithBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.EarthenVeinBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.FungalImplantationPylonBlockItem;
 import com.vincenthuto.hemomancy.common.item.tile.MnemonicReliquaryBlockItem;
@@ -382,6 +383,10 @@ public class BlockInit {
 			() -> new SaintSarcophagusBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
 					.strength(3.0F, 8.0F).sound(SoundType.STONE)));
 
+	public static final RegistryObject<Block> sanguine_monolith = MODELEDBLOCKS.register("sanguine_monolith",
+			() -> new SanguineMonolithBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops()
+					.strength(3.0F, 8.0F).sound(SoundType.STONE).lightLevel(s -> 5).noOcclusion()));
+
 	public static final RegistryObject<Block> fungal_implantation_pylon = MODELEDBLOCKS
 			.register("fungal_implantation_pylon", () -> new FungalImplantationPylonBlock(BlockBehaviour.Properties.of()
 					.requiresCorrectToolForDrops().strength(1.5F, 6.0F).sound(SoundType.STONE)));
@@ -525,6 +530,9 @@ public class BlockInit {
 		}
 		if (b == BlockInit.saint_sarcophagus.get()) {
 			return Pair.of(block.getSecond(), new SaintSarcophagusBlockItem(b, new Item.Properties()));
+		}
+		if (b == BlockInit.sanguine_monolith.get()) {
+			return Pair.of(block.getSecond(), new SanguineMonolithBlockItem(b, new Item.Properties()));
 		}
 		if (b == BlockInit.somatic_loom.get()) {
 			return Pair.of(block.getSecond(), new SomaticLoomBlockItem(b, new Item.Properties()));

@@ -60,6 +60,7 @@
 	"block.hemomancy.vivianite_pane": "Vivianite Pane",
 	"block.hemomancy.scrying_podium": "Scrying Podium",
 	"block.hemomancy.saint_sarcophagus": "Saint Sarcophagus",
+	"block.hemomancy.sanguine_monolith": "Sanguine Monolith",
 	"block.hemomancy.semi_sentient_construct": "Semi Sentient Construct",
 	"block.hemomancy.serpentine_idol": "Serpentine Idol",
 	"block.hemomancy.smouldering_ash_trail": "Smouldering Ash ",
@@ -1383,5 +1384,11 @@
 	"message.hemomancy.saint_sarcophagus.awakened_hint": "The corpus is incensed. Strike it to begin the trial.",
 
 	"message.hemomancy.offering_gate.trial_started": "The gate seals shut. Blood must be offered.",
-	"message.hemomancy.offering_gate.trial_active": "The trial is underway. Fill the basins."
+	"message.hemomancy.offering_gate.trial_active": "The trial is underway. Fill the basins.",
+
+	"hemomancy.monolith.unworthy": "The monolith is silent. Its surface is cold and unyielding — you have not yet proven yourself worthy.",
+	"hemomancy.monolith.guidance.adept": "Adept, the Brotherhood recognises your blood. Seek the Sainted Mausoleums and draw from the preserved corpus within. The enzymes of Saints hold the key to the next rite.",
+	"hemomancy.monolith.guidance.illuminatus": "Illuminatus, the Crimson Lodge has opened its gates. Delve deeper into the crimson fungal depths and commune with the Dendritic Distributors. The mycelial network whispers of dormant power.",
+	"hemomancy.monolith.guidance.sanctified": "Sanctified of the Covenant, few have walked this far. Seek the living constructs — fuse organ and engram upon the Somatic Loom. Shape flesh as others shape stone.",
+	"hemomancy.monolith.guidance.archon": "Archon, you stand at the apex. The Order has no more to teach — only to witness. The blood remembers what words cannot. Forge your legacy in the crimson tide."
 }
