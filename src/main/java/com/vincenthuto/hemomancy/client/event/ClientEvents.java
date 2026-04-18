@@ -74,6 +74,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.animal.CrimsonDoeRende
 import com.vincenthuto.hemomancy.client.render.entity.mob.aquatic.HemojellyRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.VenousStriderRenderer;
 import com.vincenthuto.hemomancy.client.render.item.MorphlingPolypItemRenderer;
+import com.vincenthuto.hemomancy.client.render.item.QliphothSeedItemRenderer;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingStaffScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.LivingSyringeScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
@@ -381,6 +382,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.blood_shot.get(), BloodShotRenderer::new);
 			event.registerEntityRenderer(EntityInit.blood_bullet.get(), BloodBulletRenderer::new);
 			event.registerEntityRenderer(EntityInit.morphling_polyp_item.get(), MorphlingPolypItemRenderer::new);
+			event.registerEntityRenderer(EntityInit.qliphoth_seed_item.get(), QliphothSeedItemRenderer::new);
 			event.registerEntityRenderer(EntityInit.iron_pillar.get(), IronPillarRenderer::new);
 			event.registerEntityRenderer(EntityInit.iron_spike.get(), IronSpikeRenderer::new);
 			event.registerEntityRenderer(EntityInit.iron_wall.get(), IronWallRenderer::new);

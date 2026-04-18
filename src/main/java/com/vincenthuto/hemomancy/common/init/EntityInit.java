@@ -23,6 +23,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.UnstainedZealotEntity;
 import com.vincenthuto.hemomancy.common.entity.summon.*;
 import com.vincenthuto.hemomancy.common.entity.item.EntityFlyingCharm;
 import com.vincenthuto.hemomancy.common.entity.item.EntityMorphlingPolypItem;
+import com.vincenthuto.hemomancy.common.entity.item.EntityQliphothSeedItem;
 import com.vincenthuto.hemomancy.common.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -332,6 +333,11 @@ public class EntityInit {
             .register("morphling_polyp_item", () -> EntityType.Builder
                     .<EntityMorphlingPolypItem>of(EntityMorphlingPolypItem::new, MobCategory.MISC).sized(0.25F, 0.25F)
                     .build(Hemomancy.rloc("morphling_polyp_item").toString()));
+
+    public static final RegistryObject<EntityType<EntityQliphothSeedItem>> qliphoth_seed_item = ENTITY_TYPES
+            .register("qliphoth_seed_item", () -> EntityType.Builder
+                    .<EntityQliphothSeedItem>of(EntityQliphothSeedItem::new, MobCategory.MISC).sized(0.25F, 0.25F)
+                    .build(Hemomancy.rloc("qliphoth_seed_item").toString()));
 
     public static final RegistryObject<EntityType<BloodBoltEntity>> blood_bolt = ENTITY_TYPES.register("blood_bolt",
             () -> EntityType.Builder.<BloodBoltEntity>of(BloodBoltEntity::new, MobCategory.MISC).sized(0.5F, 0.5F)
