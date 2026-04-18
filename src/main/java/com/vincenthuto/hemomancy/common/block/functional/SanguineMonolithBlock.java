@@ -6,13 +6,18 @@ import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Sanguine Monolith — a craftable guidance block available to players who have
- * reached at least the 4th initiatory degree (Adept). Inspired by the SEELE
+ * reached at least the 5th initiatory degree (Illuminatus). Inspired by the SEELE
  * Monoliths from Neon Genesis Evangelion, it is a tall, dark, rectangular slab
  * that can be "conversed" with to receive hints about what to do next based on
  * the player's current advancement and progression level.
@@ -55,6 +60,16 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
+	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
+	private static final int INK_PARTICLE_COUNT = 36;
+	private static final int SMOKE_PARTICLE_COUNT = 14;
+	private static final double SHATTER_PARTICLE_OFFSET_XZ = 0.5;
+	private static final double SHATTER_PARTICLE_OFFSET_Y = 0.8;
+	private static final double INK_SPREAD_XZ = 0.45;
+	private static final double INK_SPREAD_Y = 0.6;
+	private static final double SMOKE_SPREAD = 0.4;
+	private static final double INK_SPEED = 0.02;
+	private static final double SMOKE_SPEED = 0.01;
 
 	/** Filler offsets: 1×2×1 — one filler block above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -62,7 +77,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	};
 
 	/** Minimum initiatory degree required to commune with the monolith. */
-	private static final int MIN_DEGREE = 4;
+	private static final int MIN_DEGREE = 5;
 
 	public SanguineMonolithBlock(Properties properties) {
 		super(properties);
@@ -187,6 +202,15 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
 			int degreeNumber = degree.getDegreeNumber();
+			if (degreeNumber >= 7 && worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity monolith) {
+				int interactions = monolith.incrementArchonInteractions();
+				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
+					explodeIntoBlackShards(worldIn, pos);
+					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
+					worldIn.destroyBlock(pos, false);
+					return;
+				}
+			}
 
 			DialogueTree tree = degreeNumber < MIN_DEGREE
 					? SanguineMonolithDialogueTrees.unworthy()
@@ -198,5 +222,18 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		});
 
 		return InteractionResult.SUCCESS;
+	}
+
+	private static void explodeIntoBlackShards(Level level, BlockPos pos) {
+		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
+		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
+		if (level instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.SQUID_INK,
+					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
+					INK_PARTICLE_COUNT, INK_SPREAD_XZ, INK_SPREAD_Y, INK_SPREAD_XZ, INK_SPEED);
+			serverLevel.sendParticles(ParticleTypes.SMOKE,
+					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
+					SMOKE_PARTICLE_COUNT, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPEED);
+		}
 	}
 }

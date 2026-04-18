@@ -26,6 +26,8 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 
 	/** Ticks since the monolith was placed; used for ambient glow animation. */
 	private int tickCount = 0;
+	/** Number of tier-7+ interactions, used for instability/explosion behavior. */
+	private int archonInteractions = 0;
 
 	/**
 	 * World game-time when this monolith was first placed, or {@code -1} if
@@ -44,6 +46,13 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 
 	public int getTickCount() {
 		return tickCount;
+	}
+
+	/** Increments and returns the count of archon-tier interactions. */
+	public int incrementArchonInteractions() {
+		archonInteractions++;
+		setChanged();
+		return archonInteractions;
 	}
 
 	/** Called server-side immediately after placement to record the rise start time. */
@@ -103,6 +112,7 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 	public CompoundTag getUpdateTag() {
 		CompoundTag tag = super.getUpdateTag();
 		tag.putInt("TickCount", tickCount);
+		tag.putInt("ArchonInteractions", archonInteractions);
 		if (placedGameTime >= 0) tag.putLong("PlacedGameTime", placedGameTime);
 		return tag;
 	}
@@ -116,6 +126,7 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 	protected void saveAdditional(CompoundTag tag) {
 		super.saveAdditional(tag);
 		tag.putInt("TickCount", tickCount);
+		tag.putInt("ArchonInteractions", archonInteractions);
 		if (placedGameTime >= 0) tag.putLong("PlacedGameTime", placedGameTime);
 	}
 
@@ -123,6 +134,7 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 	public void load(CompoundTag tag) {
 		super.load(tag);
 		tickCount = tag.getInt("TickCount");
+		archonInteractions = tag.getInt("ArchonInteractions");
 		placedGameTime = tag.contains("PlacedGameTime") ? tag.getLong("PlacedGameTime") : -1L;
 	}
 }
