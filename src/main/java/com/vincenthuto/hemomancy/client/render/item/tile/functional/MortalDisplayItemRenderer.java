@@ -51,7 +51,7 @@ public class MortalDisplayItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 
 		poseStack.pushPose();
-		poseStack.translate(0.5, 1.2, 0.5);
+		poseStack.translate(0.5, 1, 0.5);
 		poseStack.scale(0.5f, 0.5f, 0.5f);
 		poseStack.mulPose(new Quaternion(Vector3.XN, 180, true).toMoj());
 		poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());

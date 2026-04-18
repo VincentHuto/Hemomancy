@@ -3,13 +3,19 @@ package com.vincenthuto.hemomancy.common.block.functional;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.encounter.HarbingerSaintEncounterHooks;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.ConsecratedSyringeItem;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.saint.EnumCorpusState;
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 import com.vincenthuto.hemomancy.common.tile.functional.SaintSarcophagusBlockEntity;
+import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
+import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -17,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -43,6 +50,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Saint Sarcophagus — the centerpiece of a Sainted Mausoleum.
@@ -59,6 +67,8 @@ public class SaintSarcophagusBlock extends Block implements EntityBlock, IMultiB
 
 public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
+/** Blood cost per offering (drained from player's blood volume). */
+private static final double BLOOD_COST_PER_OFFERING = 100.0;
 
 /**
  * Base filler offsets defined for SOUTH facing.
@@ -252,9 +262,87 @@ SaintSarcophagusBlockEntity.clientTick(lvl, pos, st, sarcophagus);
 return (lvl, pos, st, be) -> {
 if (be instanceof SaintSarcophagusBlockEntity sarcophagus) {
 sarcophagus.tick();
+// Spawn continuous flame & glow particles when consecrated
+if (sarcophagus.isConsecrated() && lvl instanceof ServerLevel serverLevel) {
+	Direction facing = st.getValue(FACING);
+	spawnBrazierFlames(serverLevel, pos, facing);
+}
 }
 };
 }
+}
+
+/**
+ * Brazier positions in facing-relative terms.
+ * fwdDist:  distance along the FACING direction (positive = toward bowl).
+ * sideDist: distance along facing.getClockWise() (positive = right when looking from the bowl).
+ * y:        height offset from block origin.
+ *
+ * World position = blockPos + 0.5 + fwd * fwdDist + right * sideDist
+ */
+private static final double[] BRAZIER_FWD  = { -1.28,  0.91, -1.28,  0.91 };
+private static final double[] BRAZIER_SIDE = {  0.69,  0.69, -0.71, -0.71 };
+private static final double[] BRAZIER_Y    = {  1.45,  1.17,  1.45,  1.17 };
+
+/** Resolves a brazier world-position array (4 × [x,y,z]) for the given facing direction. */
+private static double[][] getBrazierPositions(Direction facing) {
+	Direction right = facing.getClockWise();
+	double[][] out = new double[4][3];
+	for (int i = 0; i < 4; i++) {
+		out[i][0] = 0.5 + facing.getStepX() * BRAZIER_FWD[i] + right.getStepX() * BRAZIER_SIDE[i];
+		out[i][1] = BRAZIER_Y[i];
+		out[i][2] = 0.5 + facing.getStepZ() * BRAZIER_FWD[i] + right.getStepZ() * BRAZIER_SIDE[i];
+	}
+	return out;
+}
+
+/**
+ * Returns the bowl world-relative offset for any facing direction.
+ * The bowl is always on the FACING side (the front face) of the sarcophagus.
+ */
+private static double[] getBowlOffset(Direction facing) {
+	return new double[]{
+		0.5 + facing.getStepX() * 1.04,
+		0.6,
+		0.5 + facing.getStepZ() * 1.04
+	};
+}
+
+/** Spawns flame and blood glow particles on each brazier and the offering bowl. */
+private static void spawnConsecrationParticles(Level level, BlockPos pos, Direction facing) {
+	if (!(level instanceof ServerLevel serverLevel)) return;
+	double bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
+	for (double[] r : getBrazierPositions(facing)) {
+		serverLevel.sendParticles(ParticleTypes.FLAME,
+			bx + r[0], by + r[1], bz + r[2], 5, 0.10, 0.10, 0.10, 0.02);
+		serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+			bx + r[0], by + r[1] + 0.1, bz + r[2], 4, 0.08, 0.08, 0.08, 0.0);
+	}
+	double[] bowl = getBowlOffset(facing);
+	serverLevel.sendParticles(ParticleTypes.FLAME,
+		bx + bowl[0], by + bowl[1], bz + bowl[2], 5, 0.05, 0.05, 0.05, 0.02);
+	serverLevel.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+		bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 4, 0.05, 0.05, 0.05, 0.0);
+}
+
+/** Spawns ambient flame & blood glow on each brazier and the bowl (called every tick when consecrated). */
+private static void spawnBrazierFlames(ServerLevel level, BlockPos pos, Direction facing) {
+	double bx = pos.getX(), by = pos.getY(), bz = pos.getZ();
+	for (double[] r : getBrazierPositions(facing)) {
+		level.sendParticles(ParticleTypes.FLAME,
+			bx + r[0], by + r[1], bz + r[2], 1, 0.02, 0.04, 0.02, 0.0);
+		if (level.random.nextInt(4) == 0) {
+			level.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+				bx + r[0], by + r[1] + 0.15, bz + r[2], 1, 0.05, 0.05, 0.05, 0.0);
+		}
+	}
+	double[] bowl = getBowlOffset(facing);
+	level.sendParticles(ParticleTypes.FLAME,
+		bx + bowl[0], by + bowl[1], bz + bowl[2], 1, 0.02, 0.04, 0.02, 0.0);
+	if (level.random.nextInt(4) == 0) {
+		level.sendParticles(GlowParticleFactory.createData(new ParticleColor(200, 0, 0)),
+			bx + bowl[0], by + bowl[1] + 0.1, bz + bowl[2], 1, 0.03, 0.03, 0.03, 0.0);
+	}
 }
 
 @Override
@@ -268,6 +356,70 @@ BlockEntity be = worldIn.getBlockEntity(pos);
 if (!(be instanceof SaintSarcophagusBlockEntity sarcophagus)) {
 return InteractionResult.PASS;
 }
+
+// ── Consecration gate ─────────────────────────────────────────────────────
+// The sarcophagus demands a blood offering poured into the bowl on its
+// northern face before the lid will yield. Blood is drawn from the player.
+	if (!sarcophagus.isConsecrated()) {
+		Direction hitFace = result.getDirection();
+		// The bowl is on the front face — the same direction the block faces
+		Direction bowlFace = state.getValue(FACING);
+
+		if (hitFace == bowlFace) {
+		// Attempt to drain blood from the player
+		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA).orElse(null);
+		if (volume == null || volume.getBloodVolume() < BLOOD_COST_PER_OFFERING) {
+			player.displayClientMessage(
+				Component.literal("You lack sufficient blood to offer.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				true);
+			worldIn.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.5f, 0.6f);
+			return InteractionResult.CONSUME;
+		}
+
+		// Drain blood and record offering
+		volume.drain(BLOOD_COST_PER_OFFERING);
+		if (player instanceof ServerPlayer serverPlayer) {
+			PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> serverPlayer),
+				new BloodVolumeServerPacket(volume));
+		}
+		sarcophagus.addOffering();
+
+		int vol = sarcophagus.getOfferingBloodVolume();
+		int threshold = SaintSarcophagusBlockEntity.OFFERING_THRESHOLD;
+
+		if (vol >= threshold) {
+			// Threshold reached — the sarcophagus accepts the reverence
+			sarcophagus.setConsecrated(true);
+			Direction facing = state.getValue(FACING);
+			worldIn.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 1.0f, 1.4f);
+			spawnConsecrationParticles(worldIn, pos, facing);
+			player.displayClientMessage(
+				Component.literal("The bowl drinks deep. A heavy click echoes from within the stone.")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+		} else {
+			int remaining = threshold - vol;
+			worldIn.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.6f, 0.8f);
+			player.displayClientMessage(
+				Component.literal("The bowl accepts your blood... " + remaining + " more offering"
+					+ (remaining == 1 ? "" : "s") + " required.")
+					.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
+				false);
+		}
+		return InteractionResult.CONSUME;
+	}
+
+	// Non-north face — the lid refuses
+	player.displayClientMessage(
+		Component.literal("The lid refuses to budge without proper reverence.")
+			.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC),
+		true);
+	worldIn.playSound(null, pos, SoundEvents.STONE_PRESSURE_PLATE_CLICK_OFF, SoundSource.BLOCKS, 0.6f, 0.5f);
+	return InteractionResult.CONSUME;
+}
+// ─────────────────────────────────────────────────────────────────────────
 
 // Shift+right-click on an open sarcophagus closes the lid again
 if (sarcophagus.isOpen() && player.isShiftKeyDown()) {

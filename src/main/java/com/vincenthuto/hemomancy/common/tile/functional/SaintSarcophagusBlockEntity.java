@@ -22,11 +22,15 @@ import net.minecraft.world.phys.AABB;
  */
 public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBlockEntity {
 
+	public static final int OFFERING_THRESHOLD = 3;
+
 	private EnumSaintType saintType = EnumSaintType.HEMORATH;
 	private EnumCorpusState corpusState = EnumCorpusState.DORMANT;
 	private int extractionAttempts = 0;
 	private int cooldownTicks = 0;
 	private boolean isOpen = false;
+	private boolean isConsecrated = false;
+	private int offeringBloodVolume = 0;
 
 	// Client-side animation
 	public float lidAngle = 0.0F;
@@ -92,6 +96,27 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		return cooldownTicks > 0;
 	}
 
+	public boolean isConsecrated() {
+		return isConsecrated;
+	}
+
+	public void setConsecrated(boolean consecrated) {
+		this.isConsecrated = consecrated;
+		setChanged();
+		if (level != null && !level.isClientSide) {
+			level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+		}
+	}
+
+	public int getOfferingBloodVolume() {
+		return offeringBloodVolume;
+	}
+
+	public void addOffering() {
+		this.offeringBloodVolume++;
+		setChanged();
+	}
+
 	public float getLidAngle(float partialTick) {
 		return Mth.lerp(partialTick, prevLidAngle, lidAngle);
 	}
@@ -121,6 +146,7 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 	public CompoundTag getUpdateTag() {
 		CompoundTag tag = super.getUpdateTag();
 		tag.putBoolean("IsOpen", isOpen);
+		tag.putBoolean("IsConsecrated", isConsecrated);
 		tag.putString("SaintType", saintType.name());
 		tag.putString("CorpusState", corpusState.name());
 		return tag;
@@ -139,6 +165,8 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		tag.putInt("ExtractionAttempts", extractionAttempts);
 		tag.putInt("CooldownTicks", cooldownTicks);
 		tag.putBoolean("IsOpen", isOpen);
+		tag.putBoolean("IsConsecrated", isConsecrated);
+		tag.putInt("OfferingBloodVolume", offeringBloodVolume);
 	}
 
 	@Override
@@ -161,5 +189,7 @@ public class SaintSarcophagusBlockEntity extends BlockEntity implements IMultiBl
 		extractionAttempts = tag.getInt("ExtractionAttempts");
 		cooldownTicks = tag.getInt("CooldownTicks");
 		isOpen = tag.getBoolean("IsOpen");
+		isConsecrated = tag.getBoolean("IsConsecrated");
+		offeringBloodVolume = tag.getInt("OfferingBloodVolume");
 	}
 }

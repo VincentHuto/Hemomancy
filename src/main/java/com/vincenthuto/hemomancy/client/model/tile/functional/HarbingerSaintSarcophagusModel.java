@@ -59,7 +59,7 @@ public class HarbingerSaintSarcophagusModel extends Model {
                 .texOffs(113, 123).addBox(-6.1464F, -1.925F, -4.0331F, 3.0F, 2.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.6397F, -4.3775F, -0.209F, 0.0F, -1.5708F, 0.0F));
 
         PartDefinition offeringbowl = sarcophagus_base.addOrReplaceChild("offeringbowl", CubeListBuilder.create().texOffs(19, 131).addBox(-1.6464F, -6.0F, -1.4831F, 3.0F, 6.0F, 3.0F, new CubeDeformation(0.0F))
-                .texOffs(82, 101).addBox(-5.1464F, -8.0F, -3.7331F, 8.0F, 2.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-19.2353F, 9.0475F, -0.134F));
+                .texOffs(82, 101).addBox(-5.2464F, -8.0F, -4.0081F, 8.0F, 2.0F, 8.0F, new CubeDeformation(0.0F)), PartPose.offset(-19.2353F, 9.0475F, -0.134F));
 
         PartDefinition sarcophagus_lid = sarcophagus_base.addOrReplaceChild("sarcophagus_lid", CubeListBuilder.create().texOffs(0, 57).addBox(-30.1464F, -15.4423F, -11.2619F, 30.0F, 2.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offset(15.2647F, 5.9898F, 2.1448F));
 
@@ -78,6 +78,7 @@ public class HarbingerSaintSarcophagusModel extends Model {
 
         return LayerDefinition.create(meshdefinition, 256, 256);
     }
+
 
     public void setLidAngle(float angle) {
         // angle: 0 = closed, 1 = fully open (37.5 degrees on x axis)
