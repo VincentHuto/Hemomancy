@@ -272,7 +272,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
 		float cz = +0.252f;
-		float tiltDeg = 22f; // outward tilt for flanking eyes
+		float tiltDeg = -22f; // outward tilt for flanking eyes
 
 		// Each eye pulses at a slightly different phase so they feel independent
 		float pulseC = 0.75f + 0.25f * Mth.sin(time * 0.05f);
@@ -384,7 +384,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		Matrix4f mat = ms.last().pose();
 
 		float cz = -0.252f; // back face (+z = front, -z = back in Pass-2 space)
-		float cy = 1.0f;    // vertical centre of the 2-block face
+		float cy = 1.25f;    // vertical centre of the 2-block face
 		float R  = 0.400f;
 
 		// 8 octagon vertices, starting from N and going clockwise
