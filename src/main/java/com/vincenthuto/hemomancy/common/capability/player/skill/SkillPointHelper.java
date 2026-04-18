@@ -156,4 +156,34 @@ public final class SkillPointHelper {
 		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
 		return 1.0 + sp.getCurrentLevel() * 0.15;
 	}
+
+	// ──────────────── Scar Affinity ────────────────
+	// Increases scar effect potency (synergy bonus amounts). Each level adds +10%.
+
+	/** Multiplier applied to scar synergy attribute bonuses. e.g. 1.2 = +20% potency */
+	public static double getScarAffinityMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_scar_affinity;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return 1.0 + sp.getCurrentLevel() * 0.10;
+	}
+
+	// ──────────────── Scar Resonance ────────────────
+	// Adds extra equippable scar slots. Each level adds +1 slot (base 4, max 7).
+
+	/** Number of bonus scar slots granted by Scar Resonance. */
+	public static int getScarResonanceSlots() {
+		SkillPoint sp = SkillPointInit.skill_scar_resonance;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 0;
+		return sp.getCurrentLevel();
+	}
+
+	// ──────────────── Scar Mastery ────────────────
+	// Increases duration of finite effects applied via scar abilities. Each level adds +20%.
+
+	/** Duration multiplier for scar-triggered status effects. e.g. 1.4 = +40% longer */
+	public static double getScarMasteryDurationMultiplier() {
+		SkillPoint sp = SkillPointInit.skill_scar_mastery;
+		if (sp == null || sp.getState() != EnumSkillStates.UNLOCKED) return 1.0;
+		return 1.0 + sp.getCurrentLevel() * 0.20;
+	}
 }

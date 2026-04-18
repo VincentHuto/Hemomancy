@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
@@ -31,7 +32,7 @@ import java.util.List;
  * (roughly a 1-in-7 chance each night). While active it:
  * <ul>
  *   <li>Spawns Thirsters and Fargones near players in the Overworld</li>
- *   <li>Grants players Strength II and Night Vision as ambient effects</li>
+ *   <li>Grants Harbingers (degree &gt; 0) Strength II + Night Vision; non-Harbingers receive Weakness I</li>
  *   <li>Reduces blood-manipulation cost by 25% (handled in
  *       {@link com.vincenthuto.hemomancy.common.manipulation.BloodManipulation})</li>
  * </ul>
@@ -125,8 +126,7 @@ public class BloodMoonEvents {
 		// Apply ambient player effects every EFFECT_INTERVAL_TICKS
 		if (gameTime % EFFECT_INTERVAL_TICKS == 0) {
 			for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
-				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
-				//player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+				applyBloodMoonEffects(player);
 			}
 		}
 
@@ -213,6 +213,22 @@ public class BloodMoonEvents {
 	// ---------------------------------------------------------------------------
 	// Helpers
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Applies Blood Moon effects based on whether the player is an initiated
+	 * Harbinger (degree > 0) or not.
+	 * Harbingers: Strength II + Night Vision (the moon favours the blood-bound).
+	 * Non-Harbingers: Weakness I (the blood tide unsettles the uninitiated).
+	 */
+	private static void applyBloodMoonEffects(ServerPlayer player) {
+		boolean isHarbinger = InitiatoryDegreeProvider.getPlayerDegreeNumber(player) > 0;
+		if (isHarbinger) {
+			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
+			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+		} else {
+			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
+		}
+	}
 
 	private static void broadcastToPlayers(ServerLevel sLevel, Component message) {
 		for (ServerPlayer player : sLevel.getPlayers(ServerPlayer::isAlive)) {

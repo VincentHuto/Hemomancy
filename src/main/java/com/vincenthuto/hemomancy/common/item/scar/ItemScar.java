@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScar;
@@ -159,23 +160,25 @@ public class ItemScar extends Item implements IScar {
 	}
 
 	protected void applyTierThreeTickEffect(LivingEntity entity) {
+		double masteryMult = (entity instanceof Player) ? SkillPointHelper.getScarMasteryDurationMultiplier() : 1.0;
 		switch (assignedTendency) {
 		case CONGEATIO:
 			if (entity.tickCount % 40 == 0) {
+				int dur = (int)(60 * masteryMult);
 				AABB area = entity.getBoundingBox().inflate(5.0);
 				entity.level().getEntitiesOfClass(Monster.class, area)
 						.forEach(mob -> mob.addEffect(
-								new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0)));
+								new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, dur, 0)));
 			}
 			break;
 		case TENEBRIS:
 			if (entity.level().getBrightness(LightLayer.BLOCK, entity.blockPosition()) < 4) {
-				entity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 40, 0, true, false));
+				entity.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, (int)(40 * masteryMult), 0, true, false));
 			}
 			break;
 		case ANIMUS:
 			if (entity.getHealth() < entity.getMaxHealth() * 0.5f && entity.tickCount % 60 == 0) {
-				entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 80, 0, true, false));
+				entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, (int)(80 * masteryMult), 0, true, false));
 			}
 			break;
 		default:
@@ -188,10 +191,11 @@ public class ItemScar extends Item implements IScar {
 	 */
 	public void onPlayerAttack(Player player, LivingEntity target) {
 		if (assignedTendency == EnumBloodTendency.MORTEM) {
+			double masteryMult = SkillPointHelper.getScarMasteryDurationMultiplier();
 			if (tier >= 3) {
-				target.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 1));
+				target.addEffect(new MobEffectInstance(MobEffects.WITHER, (int)(80 * masteryMult), 1));
 			} else if (tier >= 2) {
-				target.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0));
+				target.addEffect(new MobEffectInstance(MobEffects.POISON, (int)(60 * masteryMult), 0));
 			}
 		}
 	}
