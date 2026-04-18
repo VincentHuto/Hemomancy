@@ -1,0 +1,31 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "riteName": "Rite of Silthmere's Remembrance",
+  "riteDescription": "A rite performed in memory of Silthmere, who walked the path of purification to its very end. All Unstained souls within 32 blocks are blessed at once — each gains 5 purity and has their Silver Ward refreshed. A single moment of grace, freely given.",
+  "pattern": [
+    ["SLSLSLS"],
+    ["L     L"],
+    ["S     S"],
+    ["L  P  L"],
+    ["S     S"],
+    ["L     L"],
+    ["SLSLSLS"]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "hemomancy:pallid_lantern"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:pale_silver_ingot"
+  },
+  "unstained": true
+}

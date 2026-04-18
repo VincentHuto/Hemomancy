@@ -437,6 +437,10 @@ public class CardinalRiteEvents {
 	private static final String CLARITY_ASCENSION_RITE = "cardinal_rite/clarity_ascension";
 	private static final String LETHEAN_JUDGMENT_RITE = "cardinal_rite/lethean_judgment";
 	private static final String SILVER_DAWN_RITE = "cardinal_rite/silver_dawn";
+	private static final String STILL_WATERS_RITE = "cardinal_rite/still_waters";
+	private static final String PALE_CONSECRATION_RITE = "cardinal_rite/pale_consecration";
+	private static final String SILTHMERES_REMEMBRANCE_RITE = "cardinal_rite/silthmeres_remembrance";
+	private static final String LETHE_COVENANT_RITE = "cardinal_rite/lethe_covenant";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -709,6 +713,26 @@ public class CardinalRiteEvents {
 		// Rite of the Silver Dawn: create a persistent cleansed zone
 		if (SILVER_DAWN_RITE.equals(ritePath)) {
 			completeSilverDawn(sLevel, caster, center);
+		}
+
+		// Rite of Still Waters: create a 5-minute zone of reduced magic damage
+		if (STILL_WATERS_RITE.equals(ritePath)) {
+			completeStillWaters(sLevel, caster, center);
+		}
+
+		// Rite of Pale Consecration: consecrate the ground, damaging hostile mobs
+		if (PALE_CONSECRATION_RITE.equals(ritePath)) {
+			completePaleConsecration(sLevel, caster, center);
+		}
+
+		// Rite of Silthmere's Remembrance: burst purity + Silver Ward for nearby Unstained players
+		if (SILTHMERES_REMEMBRANCE_RITE.equals(ritePath)) {
+			completeSilthmereRemembrance(sLevel, caster, center);
+		}
+
+		// Rite of the Lethe Covenant: establish a grand Unstained domain
+		if (LETHE_COVENANT_RITE.equals(ritePath)) {
+			completeLetheCovenantRite(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1706,4 +1730,175 @@ public class CardinalRiteEvents {
 				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
 				80, SILVER_DAWN_RADIUS * 0.4, 1.5, SILVER_DAWN_RADIUS * 0.4, 0.01);
 	}
+
+	// ════════════════════════════════════════════════════════════
+	//  STILL WATERS — 5-minute zone of reduced magic damage
+	// ════════════════════════════════════════════════════════════
+
+	/** Radius of the Still Waters zone in blocks. */
+	private static final int STILL_WATERS_RADIUS = 16;
+	/** Duration of the Still Waters zone in ticks (5 minutes). */
+	private static final long STILL_WATERS_DURATION_TICKS = 6000L;
+
+	/**
+	 * Rite of Still Waters (Minor, 0 blood):
+	 * Creates a 5-minute zone around the altar within which all magic damage
+	 * is reduced by 30%, countering Sanguine Dominion bleeds and other threats.
+	 */
+	private static void completeStillWaters(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		StillWatersSavedData data = StillWatersSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + STILL_WATERS_DURATION_TICKS;
+
+		StillWatersSavedData.StillWatersEntry entry = new StillWatersSavedData.StillWatersEntry(
+				caster.getUUID(), center, dimension, STILL_WATERS_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		long durationMinutes = STILL_WATERS_DURATION_TICKS / 1200;
+		caster.displayClientMessage(
+				Component.literal("The waters grow still. Magic damage is reduced by 30% within "
+						+ STILL_WATERS_RADIUS + " blocks for " + durationMinutes + " minutes.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+				false);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				60, STILL_WATERS_RADIUS * 0.3, 1.5, STILL_WATERS_RADIUS * 0.3, 0.005);
+	}
+
+	// ════════════════════════════════════════════════════════════
+	//  PALE CONSECRATION — 10-minute zone of hostile mob denial
+	// ════════════════════════════════════════════════════════════
+
+	/** Radius of the Pale Consecration zone in blocks. */
+	private static final int PALE_CONSECRATION_RADIUS = 8;
+	/** Duration of the Pale Consecration zone in ticks (10 minutes). */
+	private static final long PALE_CONSECRATION_DURATION_TICKS = 12000L;
+
+	/**
+	 * Rite of Pale Consecration (Lesser, 0 blood):
+	 * Consecrates the ground within a radius. Hostile mobs inside take periodic
+	 * damage and Slowness I. Lasts 10 minutes.
+	 */
+	private static void completePaleConsecration(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		PaleConsecrationSavedData data = PaleConsecrationSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + PALE_CONSECRATION_DURATION_TICKS;
+
+		PaleConsecrationSavedData.ConsecrationEntry entry = new PaleConsecrationSavedData.ConsecrationEntry(
+				caster.getUUID(), center, dimension, PALE_CONSECRATION_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		long durationMinutes = PALE_CONSECRATION_DURATION_TICKS / 1200;
+		caster.displayClientMessage(
+				Component.literal("The ground is consecrated. Hostile creatures will be seared within "
+						+ PALE_CONSECRATION_RADIUS + " blocks for " + durationMinutes + " minutes.")
+						.withStyle(ChatFormatting.WHITE, ChatFormatting.BOLD),
+				false);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				80, PALE_CONSECRATION_RADIUS * 0.4, 1.5, PALE_CONSECRATION_RADIUS * 0.4, 0.01);
+		sLevel.sendParticles(ParticleTypes.SCRAPE,
+				center.getX() + 0.5, center.getY() + 0.5, center.getZ() + 0.5,
+				40, PALE_CONSECRATION_RADIUS * 0.3, 0.5, PALE_CONSECRATION_RADIUS * 0.3, 0.005);
+	}
+
+	// ════════════════════════════════════════════════════════════
+	//  SILTHMERE'S REMEMBRANCE — one-time burst purity + Silver Ward
+	// ════════════════════════════════════════════════════════════
+
+	/** Radius within which Unstained players receive the Remembrance burst. */
+	private static final int REMEMBRANCE_RADIUS = 32;
+	/** Purity granted per Unstained player by the burst. */
+	private static final float REMEMBRANCE_PURITY = 5.0f;
+	/** Silver Ward refresh duration in ticks (15 minutes). */
+	private static final int REMEMBRANCE_SILVER_WARD_DURATION = 18000;
+
+	/**
+	 * Rite of Silthmere's Remembrance (Greater, 0 blood):
+	 * A one-time burst. All Unstained players within 32 blocks immediately gain
+	 * +5 purity and have their Silver Ward refreshed or applied (amplifier 1).
+	 */
+	private static void completeSilthmereRemembrance(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		AABB area = new AABB(center).inflate(REMEMBRANCE_RADIUS);
+		List<ServerPlayer> nearby = sLevel.getEntitiesOfClass(
+				ServerPlayer.class, area, p -> true);
+
+		int[] affected = {0};
+		for (ServerPlayer target : nearby) {
+			target.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+				if (!progress.hasBegunPurification()) return;
+
+				progress.addPurity(REMEMBRANCE_PURITY);
+				UnstainedProgressEvents.syncProgress(target, progress);
+
+				target.addEffect(new MobEffectInstance(
+						EffectInit.silver_ward.get(), REMEMBRANCE_SILVER_WARD_DURATION, 1,
+						false, true, true));
+
+				target.displayClientMessage(
+						Component.literal("Silthmere's memory washes over you. Purity blooms within.")
+								.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+						false);
+				affected[0]++;
+			});
+		}
+
+		String msg = affected[0] > 0
+				? "Silthmere remembers. " + affected[0] + " Unstained soul(s) have been blessed."
+				: "Silthmere's remembrance echoes, but no Unstained walk near enough to hear it.";
+		caster.displayClientMessage(
+				Component.literal(msg).withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+				false);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				120, REMEMBRANCE_RADIUS * 0.3, 3.0, REMEMBRANCE_RADIUS * 0.3, 0.02);
+	}
+
+	// ════════════════════════════════════════════════════════════
+	//  LETHE COVENANT — grand 30-minute Unstained domain
+	// ════════════════════════════════════════════════════════════
+
+	/** Chunk radius of the Lethe Covenant domain. */
+	private static final int LETHE_COVENANT_CHUNK_RADIUS = 5;
+	/** Duration of the Lethe Covenant domain in ticks (30 minutes). */
+	private static final long LETHE_COVENANT_DURATION_TICKS = 36000L;
+
+	/**
+	 * Rite of the Lethe Covenant (Grand, 0 blood):
+	 * Establishes a grand Unstained domain for 30 minutes within a 5-chunk radius.
+	 * The domain suppresses mob spawns, shields Silver Ward players from bleed,
+	 * and slowly grows the purity of Unstained players inside it.
+	 */
+	private static void completeLetheCovenantRite(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		LetheCovenantSavedData data = LetheCovenantSavedData.get(overworld);
+		String dimension = sLevel.dimension().location().toString();
+		long expiryTick = sLevel.getGameTime() + LETHE_COVENANT_DURATION_TICKS;
+
+		LetheCovenantSavedData.CovenantEntry entry = new LetheCovenantSavedData.CovenantEntry(
+				caster.getUUID(), center, dimension, LETHE_COVENANT_CHUNK_RADIUS, expiryTick);
+		data.addEntry(entry);
+
+		int blockRadius = LETHE_COVENANT_CHUNK_RADIUS * 16;
+		long durationMinutes = LETHE_COVENANT_DURATION_TICKS / 1200;
+		caster.displayClientMessage(
+				Component.literal("The Lethe Covenant is sealed! A domain of stillness spreads "
+						+ blockRadius + " blocks in every direction for " + durationMinutes + " minutes.")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD),
+				false);
+		caster.displayClientMessage(
+				Component.literal("Spawns are halved. Bleed cannot touch those warded in silver. Purity grows.")
+						.withStyle(ChatFormatting.WHITE, ChatFormatting.ITALIC),
+				false);
+
+		sLevel.sendParticles(ParticleTypes.END_ROD,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				200, blockRadius * 0.2, 4.0, blockRadius * 0.2, 0.02);
+	}
+
 }

@@ -23,6 +23,9 @@ import com.vincenthuto.hemomancy.common.item.scar.functional.TalaromycesMinusIte
 import com.vincenthuto.hemomancy.common.item.scar.pattern.ItemScarPattern;
 import com.vincenthuto.hemomancy.common.item.tool.*;
 import com.vincenthuto.hemomancy.common.item.tool.living.*;
+import com.vincenthuto.hemomancy.common.item.tool.unstained.AbsolutionDaggerItem;
+import com.vincenthuto.hemomancy.common.item.tool.unstained.PaleSilverPickaxeItem;
+import com.vincenthuto.hemomancy.common.item.tool.unstained.SilthmereGlaiveItem;
 import com.vincenthuto.hemomancy.common.item.tool.unstained.UnstainedWarhammerItem;
 import com.vincenthuto.hemomancy.common.saint.EnumSaintType;
 import com.vincenthuto.hutoslib.common.item.ItemArmBanner;
@@ -547,6 +550,15 @@ public class ItemInit {
                     new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> unstained_shield = SPECIALITEMS.register("unstained_shield",
             () -> new UnstainedShieldItem(new Item.Properties()));
+    public static final RegistryObject<Item> absolution_dagger = HANDHELDITEMS.register("absolution_dagger",
+            () -> new AbsolutionDaggerItem(EnumModToolTiers.UNSTAINED, -4, -1.8f,
+                    new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> silthmere_glaive = HANDHELDITEMS.register("silthmere_glaive",
+            () -> new SilthmereGlaiveItem(4f, -2.8f, EnumModToolTiers.UNSTAINED,
+                    new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> pale_silver_pickaxe = HANDHELDITEMS.register("pale_silver_pickaxe",
+            () -> new PaleSilverPickaxeItem(EnumModToolTiers.UNSTAINED, 1, -2.8f,
+                    new Item.Properties().stacksTo(1)));
 
     // Scars
     public static final RegistryObject<Item> self_reflection_mirror = BASEITEMS.register("self_reflection_mirror",
