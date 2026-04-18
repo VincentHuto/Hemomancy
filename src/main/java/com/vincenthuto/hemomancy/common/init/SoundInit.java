@@ -215,6 +215,14 @@ public class SoundInit {
 	public static final RegistryObject<SoundEvent> ENTITY_FROZEN_CLOT_DEATH = registerSoundEvent(
 			"entity.frozen_clot.death");
 
+	// Tooth Pecks (fungus-mimic spider-tooth creature)
+	public static final RegistryObject<SoundEvent> ENTITY_TOOTH_PECKS_AMBIENT = registerSoundEvent(
+			"entity.tooth_pecks.ambient");
+	public static final RegistryObject<SoundEvent> ENTITY_TOOTH_PECKS_HURT = registerSoundEvent(
+			"entity.tooth_pecks.hurt");
+	public static final RegistryObject<SoundEvent> ENTITY_TOOTH_PECKS_DEATH = registerSoundEvent(
+			"entity.tooth_pecks.death");
+
 	// Abyssal Siphon (deep dark blood horror)
 	public static final RegistryObject<SoundEvent> ENTITY_ABYSSAL_SIPHON_AMBIENT = registerSoundEvent(
 			"entity.abyssal_siphon.ambient");

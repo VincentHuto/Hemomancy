@@ -4,6 +4,7 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.CrimsonDoeEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.FunglingEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.LeechEntity;
+import com.vincenthuto.hemomancy.common.entity.mob.animal.ToothPecksEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.animal.VenousStriderEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.BarbedUrchinEntity;
 import com.vincenthuto.hemomancy.common.entity.mob.aquatic.HemojellyEntity;
@@ -202,6 +203,10 @@ public class EntityInit {
     public static final RegistryObject<EntityType<FunglingEntity>> fungling = ENTITY_TYPES.register("fungling",
             () -> EntityType.Builder.of(FunglingEntity::new, MobCategory.CREATURE).sized(1F, 1F)
                     .build(Hemomancy.rloc("fungling").toString()));
+
+    public static final RegistryObject<EntityType<ToothPecksEntity>> tooth_pecks = ENTITY_TYPES.register("tooth_pecks",
+            () -> EntityType.Builder.of(ToothPecksEntity::new, MobCategory.MONSTER).sized(0.6F, 0.45F)
+                    .build(Hemomancy.rloc("tooth_pecks").toString()));
 
     public static final RegistryObject<EntityType<HemolymphopodaEntity>> hemolymphopoda = ENTITY_TYPES.register(
             "hemolymphopoda",
@@ -468,6 +473,7 @@ public class EntityInit {
         event.put(EntityInit.crimson_doe.get(), CrimsonDoeEntity.setAttributes().build());
         event.put(EntityInit.hemojelly.get(), HemojellyEntity.setAttributes().build());
         event.put(EntityInit.venous_strider.get(), VenousStriderEntity.setAttributes().build());
+        event.put(EntityInit.tooth_pecks.get(), ToothPecksEntity.setAttributes().build());
 
     }
 

@@ -1,772 +1,770 @@
 {
-	"entity.abhorent_thought.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abhorent_thought.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abhorent_thought/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.abhorent_thought.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abhorent_thought.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abhorent_thought/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.abhorent_thought.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abhorent_thought.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abhorent_thought/death",
-				"stream": true
-			}
-		]
-	},
-	"entity.crimson_doe.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.crimson_doe.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/crimson_doe/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.crimson_doe.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.crimson_doe.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/crimson_doe/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.crimson_doe.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.crimson_doe.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/crimson_doe/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.venous_strider.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.venous_strider.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/venous_strider/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.venous_strider.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.venous_strider.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/venous_strider/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.venous_strider.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.venous_strider.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/venous_strider/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.leech.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.leech.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/leech/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.leech.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.leech.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/leech/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.leech.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.leech.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/leech/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.fungling.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fungling.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fungling/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.fungling.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fungling.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fungling/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.fungling.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fungling.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fungling/death",
-				"stream": true
-			}
-		]
-	},
-	"entity.hemojelly.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemojelly.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemojelly/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.hemojelly.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemojelly.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemojelly/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.hemojelly.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemojelly.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemojelly/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.barbed_urchin.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/barbed_urchin/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.barbed_urchin.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/barbed_urchin/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.barbed_urchin.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.barbed_urchin.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/barbed_urchin/death",
-				"stream": true
-			}
-		]
-	},
-	"entity.chitinite.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chitinite.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chitinite/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.chitinite.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chitinite.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chitinite/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.chitinite.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chitinite.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chitinite/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.fervent_chitinite.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fervent_chitinite/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.fervent_chitinite.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fervent_chitinite/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.fervent_chitinite.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fervent_chitinite.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fervent_chitinite/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.chthonian.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.chthonian.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.chthonian.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.chthonian_queen.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian_queen/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.chthonian_queen.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian_queen/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.chthonian_queen.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.chthonian_queen.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/chthonian_queen/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.hemolymphopoda.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemolymphopoda/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.hemolymphopoda.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemolymphopoda/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.hemolymphopoda.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.hemolymphopoda.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/hemolymphopoda/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.myelin_borer.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.myelin_borer.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/myelin_borer/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.myelin_borer.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.myelin_borer.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/myelin_borer/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.myelin_borer.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.myelin_borer.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/myelin_borer/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.fargone.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fargone.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fargone/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.fargone.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fargone.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fargone/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.fargone.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.fargone.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/fargone/death",
-				"stream": true
-			}
-		]
-	},
-	"entity.thirster.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.thirster.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/thirster/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.thirster.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.thirster.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/thirster/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.thirster.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.thirster.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/thirster/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.lump_of_thought.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/lump_of_thought/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.lump_of_thought.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/lump_of_thought/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.lump_of_thought.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.lump_of_thought.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/lump_of_thought/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.erythromycelium_eruptus.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/erythromycelium_eruptus/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.erythromycelium_eruptus.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/erythromycelium_eruptus/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.erythromycelium_eruptus.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/erythromycelium_eruptus/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.blood_drunk_puppeteer.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/blood_drunk_puppeteer/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.blood_drunk_puppeteer.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/blood_drunk_puppeteer/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.blood_drunk_puppeteer.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/blood_drunk_puppeteer/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.enthralled_doll.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/enthralled_doll/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.enthralled_doll.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/enthralled_doll/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.enthralled_doll.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.enthralled_doll.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/enthralled_doll/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.cruor_fiend.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/cruor_fiend/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.cruor_fiend.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/cruor_fiend/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.cruor_fiend.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.cruor_fiend.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/cruor_fiend/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.void_drinker.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.void_drinker.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/void_drinker/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.void_drinker.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.void_drinker.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/void_drinker/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.void_drinker.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.void_drinker.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/void_drinker/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.dessicant.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.dessicant.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/dessicant/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.dessicant.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.dessicant.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/dessicant/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.dessicant.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.dessicant.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/dessicant/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.synapse_hound.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.synapse_hound.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/synapse_hound/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.synapse_hound.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.synapse_hound.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/synapse_hound/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.synapse_hound.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.synapse_hound.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/synapse_hound/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.frozen_clot.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.frozen_clot.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/frozen_clot/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.frozen_clot.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.frozen_clot.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/frozen_clot/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.frozen_clot.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.frozen_clot.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/frozen_clot/death",
-				"stream": true
-			}
-		]
-	},
-
-	"entity.abyssal_siphon.ambient": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.ambient",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abyssal_siphon/ambient",
-				"stream": true
-			}
-		]
-	},
-	"entity.abyssal_siphon.hurt": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.hurt",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abyssal_siphon/hurt",
-				"stream": true
-			}
-		]
-	},
-	"entity.abyssal_siphon.death": {
-		"category": "entity",
-		"subtitle": "subtitle.hemomancy.entity.abyssal_siphon.death",
-		"sounds": [
-			{
-				"name": "hemomancy:entity/abyssal_siphon/death",
-				"stream": true
-			}
-		]
-	}
+  "entity.abhorent_thought.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.abhorent_thought.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.abhorent_thought.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abhorent_thought.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abhorent_thought/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.crimson_doe.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.crimson_doe.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/crimson_doe/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.crimson_doe.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.crimson_doe.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/crimson_doe/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.crimson_doe.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.crimson_doe.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/crimson_doe/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.venous_strider.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.venous_strider.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/venous_strider/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.venous_strider.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.venous_strider.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/venous_strider/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.venous_strider.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.venous_strider.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/venous_strider/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.leech.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.leech.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/leech/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.leech.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.leech.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/leech/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.leech.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.leech.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/leech/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fungling.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fungling.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fungling/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fungling.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fungling.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fungling/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fungling.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fungling.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fungling/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemojelly.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemojelly.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemojelly.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemojelly.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemojelly.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemojelly.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemojelly/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.barbed_urchin.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.barbed_urchin.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.barbed_urchin.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.barbed_urchin.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.barbed_urchin.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.barbed_urchin.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/barbed_urchin/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chitinite.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chitinite.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chitinite/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chitinite.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chitinite.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chitinite/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chitinite.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chitinite.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chitinite/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fervent_chitinite.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fervent_chitinite.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fervent_chitinite/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fervent_chitinite.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fervent_chitinite.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fervent_chitinite/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fervent_chitinite.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fervent_chitinite.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fervent_chitinite/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian_queen.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian_queen.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian_queen/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian_queen.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian_queen.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian_queen/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.chthonian_queen.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.chthonian_queen.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/chthonian_queen/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemolymphopoda.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemolymphopoda.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemolymphopoda/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemolymphopoda.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemolymphopoda.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemolymphopoda/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.hemolymphopoda.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.hemolymphopoda.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/hemolymphopoda/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.myelin_borer.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.myelin_borer.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/myelin_borer/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.myelin_borer.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.myelin_borer.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/myelin_borer/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.myelin_borer.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.myelin_borer.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/myelin_borer/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fargone.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fargone.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fargone/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fargone.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fargone.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fargone/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.fargone.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.fargone.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/fargone/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.thirster.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.thirster.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/thirster/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.thirster.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.thirster.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/thirster/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.thirster.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.thirster.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/thirster/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.lump_of_thought.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.lump_of_thought.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/lump_of_thought/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.lump_of_thought.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.lump_of_thought.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/lump_of_thought/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.lump_of_thought.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.lump_of_thought.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/lump_of_thought/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.erythromycelium_eruptus.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/erythromycelium_eruptus/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.erythromycelium_eruptus.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/erythromycelium_eruptus/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.erythromycelium_eruptus.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.erythromycelium_eruptus.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/erythromycelium_eruptus/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.blood_drunk_puppeteer.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/blood_drunk_puppeteer/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.blood_drunk_puppeteer.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/blood_drunk_puppeteer/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.blood_drunk_puppeteer.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.blood_drunk_puppeteer.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/blood_drunk_puppeteer/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.enthralled_doll.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.enthralled_doll.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/enthralled_doll/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.enthralled_doll.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.enthralled_doll.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/enthralled_doll/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.enthralled_doll.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.enthralled_doll.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/enthralled_doll/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cruor_fiend.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/cruor_fiend/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cruor_fiend.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/cruor_fiend/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.cruor_fiend.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.cruor_fiend.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/cruor_fiend/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.void_drinker.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.void_drinker.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/void_drinker/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.void_drinker.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.void_drinker.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/void_drinker/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.void_drinker.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.void_drinker.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/void_drinker/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.dessicant.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.dessicant.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/dessicant/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.dessicant.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.dessicant.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/dessicant/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.dessicant.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.dessicant.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/dessicant/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.synapse_hound.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.synapse_hound.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/synapse_hound/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.synapse_hound.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.synapse_hound.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/synapse_hound/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.synapse_hound.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.synapse_hound.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/synapse_hound/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.frozen_clot.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.frozen_clot.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/frozen_clot/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.frozen_clot.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.frozen_clot.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/frozen_clot/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.frozen_clot.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.frozen_clot.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/frozen_clot/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.abyssal_siphon.ambient": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.ambient",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abyssal_siphon/ambient",
+        "stream": true
+      }
+    ]
+  },
+  "entity.abyssal_siphon.hurt": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.hurt",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abyssal_siphon/hurt",
+        "stream": true
+      }
+    ]
+  },
+  "entity.abyssal_siphon.death": {
+    "category": "entity",
+    "subtitle": "subtitle.hemomancy.entity.abyssal_siphon.death",
+    "sounds": [
+      {
+        "name": "hemomancy:entity/abyssal_siphon/death",
+        "stream": true
+      }
+    ]
+  },
+  "entity.tooth_pecks.ambient": {
+    "sounds": [
+      "hemomancy:entity/tooth_pecks/ambient"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.tooth_pecks.ambient"
+  },
+  "entity.tooth_pecks.hurt": {
+    "sounds": [
+      "hemomancy:entity/tooth_pecks/hurt"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.tooth_pecks.hurt"
+  },
+  "entity.tooth_pecks.death": {
+    "sounds": [
+      "hemomancy:entity/tooth_pecks/death"
+    ],
+    "subtitle": "subtitle.hemomancy.entity.tooth_pecks.death"
+  }
 }
