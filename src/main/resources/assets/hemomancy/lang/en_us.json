@@ -1404,5 +1404,11 @@
 	"hemomancy.dialogue.recruit.no_bloodline": "You must first found a bloodline by signing an Unsigned Ledger before you can recruit others.",
 	"hemomancy.dialogue.recruit.already_member": "This Harbinger has already pledged their blood to your cause.",
 	"hemomancy.dialogue.recruit.success": "%s has pledged their blood to your bloodline. Their vitality strengthens the shared pool.",
-	"hemomancy.dialogue.recruit.pool_increased": "Shared blood pool capacity: %d (Recruited Harbingers: %d)"
+	"hemomancy.dialogue.recruit.pool_increased": "Shared blood pool capacity: %d (Recruited Harbingers: %d)",
+
+	"hemomancy.ledger.summon.no_bloodline": "You have no bloodline — sign the ledger first.",
+	"hemomancy.ledger.summon.no_npcs": "No Harbingers have been recruited to your bloodline yet.",
+	"hemomancy.ledger.summon.not_in_lodge": "You must be within a consecrated Crimson Lodge to summon your recruits.",
+	"hemomancy.ledger.summon.success": "%d recruited Harbinger(s) have been summoned to your side.",
+	"hemomancy.ledger.summon.already_near": "All recruited Harbingers are already nearby."
 }

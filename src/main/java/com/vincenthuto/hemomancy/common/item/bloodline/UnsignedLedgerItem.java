@@ -9,8 +9,10 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
+import com.vincenthuto.hemomancy.common.rite.CrimsonLodgeEvents;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -18,9 +20,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -67,6 +73,14 @@ public class UnsignedLedgerItem extends Item {
 			CompoundTag compound = stack.getOrCreateTag();
 			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
+
+			// Sneak-right-click on a signed ledger: summon recruited NPCs within Lodge radius
+			if (playerIn.isShiftKeyDown() && compound.getBoolean(TAG_STATE)) {
+				if (!worldIn.isClientSide) {
+					handleNpcSummon((ServerPlayer) playerIn, volume);
+				}
+				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+			}
 
 			if (!compound.getBoolean(TAG_STATE)) {
 				// First use: leader signs the ledger, creating a new bloodline
@@ -160,5 +174,115 @@ public class UnsignedLedgerItem extends Item {
 
 		}
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+	}
+
+	/**
+	 * Summons all recruited NPC Harbingers to the player's position. Only
+	 * works when the player is within a consecrated Crimson Lodge radius.
+	 * NPCs already nearby (within 16 blocks) are not re-summoned. NPCs
+	 * that are loaded in the world are teleported; for NPCs not currently
+	 * loaded, a new entity is spawned at the player's location.
+	 */
+	private static void handleNpcSummon(ServerPlayer player, IBloodVolume volume) {
+		Bloodline bloodline = volume.getBloodLine();
+
+		if (!bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.summon.no_bloodline")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		if (bloodline.getNpcMemberCount() == 0) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.summon.no_npcs")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Must be within a Crimson Lodge radius
+		if (!CrimsonLodgeEvents.isInCrimsonLodge(player)) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.summon.not_in_lodge")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		ServerLevel sLevel = (ServerLevel) player.level();
+		int summoned = 0;
+
+		for (UUID npcUUID : bloodline.getNpcMemberUUIDs()) {
+			// Check if the entity is already nearby — don't re-summon
+			Entity existing = sLevel.getEntity(npcUUID);
+			if (existing != null && existing.distanceTo(player) < 16.0) {
+				continue;
+			}
+
+			if (existing != null) {
+				// Teleport existing entity to player
+				existing.teleportTo(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
+						player.getY(),
+						player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
+				summoned++;
+			} else {
+				// Entity not loaded — spawn a transient copy near the player.
+				// Determine type based on available registered entity types.
+				spawnRecruitedNpc(sLevel, player, npcUUID);
+				summoned++;
+			}
+		}
+
+		if (summoned > 0) {
+			sLevel.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+					SoundSource.PLAYERS, 1.0f, 0.7f);
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.summon.success", summoned)
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					false);
+		} else {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.summon.already_near")
+							.withStyle(ChatFormatting.GRAY),
+					false);
+		}
+	}
+
+	/**
+	 * Spawns a recruited NPC Harbinger near the player. Tries each Harbinger
+	 * entity type and checks if an existing entity in the world matches the
+	 * UUID. If no match is found in the world, spawns a Harbinger Vicar as a
+	 * default representative of the recruited NPC.
+	 */
+	private static void spawnRecruitedNpc(ServerLevel level, ServerPlayer player, UUID npcUUID) {
+		// Search all loaded entities in any dimension for a match first
+		for (ServerLevel dim : level.getServer().getAllLevels()) {
+			Entity found = dim.getEntity(npcUUID);
+			if (found instanceof Mob mob) {
+				mob.teleportTo(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
+						player.getY(),
+						player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
+				return;
+			}
+		}
+
+		// Not found — spawn a new Harbinger entity near the player
+		// Cycle through known entity types to spawn the appropriate NPC
+		EntityType<?>[] harbingerTypes = {
+			EntityInit.harbinger_vicar.get(),
+			EntityInit.harbinger_alchemist.get()
+		};
+		EntityType<?> type = harbingerTypes[Math.abs(npcUUID.hashCode()) % harbingerTypes.length];
+
+		Entity spawned = type.create(level);
+		if (spawned != null) {
+			spawned.setUUID(npcUUID);
+			spawned.setPos(player.getX() + (player.getRandom().nextDouble() - 0.5) * 3.0,
+					player.getY(),
+					player.getZ() + (player.getRandom().nextDouble() - 0.5) * 3.0);
+			level.addFreshEntity(spawned);
+		}
 	}
 }
