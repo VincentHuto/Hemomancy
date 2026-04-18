@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 3,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Scrying Podium",
-  "subtitle": "Access hidden slots",
-  "text": "Right-click a Scrying Podium to view Hemomancy’s extra equipment slots. This is where you equip Charms (like the Charm of Vascularium) and manage Blood Gourds. It also acts as a hub for interacting with your blood systems.",
-  "icon": "hemomancy:scrying_podium"
-}

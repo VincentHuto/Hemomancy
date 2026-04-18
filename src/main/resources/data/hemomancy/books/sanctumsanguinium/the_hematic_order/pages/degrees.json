@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Degrees of Initiation",
+  "subtitle": "The path within the Order",
+  "text": "Most Harbingers — most outposts, most individual groups — only ever reach Illuminatus, the fifth degree. To the average practitioner, this is the summit. The existence of Degrees 6 and 7 is known only to those who reach them. The existence of an eighth has no formal name among those who know of it. They call it, simply, the Silence. The Hematic Order itself, the Vicar says, is not a rank. It is a state of being — one where the blood becomes indistinguishable from the blood of the world.",
+  "icon": "hemomancy:liber_sanguinum"
+}

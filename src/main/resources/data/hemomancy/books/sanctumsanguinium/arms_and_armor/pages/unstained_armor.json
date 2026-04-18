@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 5,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Unstained Armor",
-  "subtitle": "Purity through rejection",
-  "text": "Unstained Armor represents the opposite path: anti-blood zealotry. Crafted from Consecrated Copper and Hemolytic Plating, it resists the infection's influence and provides protection against blood-based attacks. Wearing a full set marks you as an enemy of the Scarlet tradition. Expect hostility from Harbinger-aligned creatures.",
-  "icon": "hemomancy:hemolytic_plating"
-}

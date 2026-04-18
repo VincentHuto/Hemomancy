@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 6,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Vial Centrifuge",
-  "subtitle": "Separate the good from the gore",
-  "text": "Spin down filled blood vials in the Vial Centrifuge to extract enzymes and hematic residue. The type of blood you supply influences what you can extract, so consider hunting creatures aligned with the tendency you’re aiming for.",
-  "icon": "hemomancy:vial_centrifuge"
-}

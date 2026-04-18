@@ -1,9 +1,9 @@
 {
   "type": "hutoslib:chapter",
-  "ordinality": 0,
+  "ordinality": 5,
   "texture": "hemomancy:textures/gui/guide/page.png",
-  "color": "1,0,0",
-  "title": "The World",
-  "subtitle": "Where it all began",
+  "color": "0.3,0,0",
+  "title": "Cosmic Forces",
+  "subtitle": "Powers beyond faction",
   "icon": "hemomancy:sanguine_formation"
 }

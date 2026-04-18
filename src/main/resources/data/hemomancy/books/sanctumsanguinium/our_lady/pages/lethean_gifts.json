@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Her Gifts",
+  "subtitle": "Where she walked, flowers bloom",
+  "text": "Wherever Our Lady once walked, Lethean Poppies bloom — pale flowers in cold areas and along riverbeds. They secrete a dew that accelerates purification, or that causes a Hemomancer to forget a blood memory entirely, severing one tie to the infection. The Tears of Silthmere are this dew distilled to its purest form: a one-time blessing. And somewhere at the bottom of a forgotten river lies the Pallid Icon, carved from pale silver — said to allow an Unstained practitioner to summon a brief apparition of the Lady herself, and ask her what they need to know.",
+  "icon": "hemomancy:hemolytic_solution"
+}

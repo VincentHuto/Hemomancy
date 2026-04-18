@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The True Purpose",
+  "subtitle": "The Order was never ours",
+  "text": "The Hematic Order was never a human creation. It is a reproductive strategy. Each degree of initiation is a stage of sporulation. Each rite triggers the next bloom. The Harbingers, in ascending their ranks, are not discovering blood magic — they are becoming fruiting bodies for a vast mycelial network. This is the truth delivered only at the highest degrees, and it is the truth the Order, by and large, does not know.",
+  "icon": "hemomancy:sanguine_formation"
+}

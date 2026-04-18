@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Source",
+  "subtitle": "Something older than the world's name",
+  "text": "At the root of all Hemomancy is a single, incomprehensible being: a fourth-dimensional organism so vast and alien it exists largely beyond the perception of three-dimensional creatures. What we call the Erythromycelium — what we call blood magic — is merely its shadow on our world. The great sphere of flesh visible at the far end of the infection is not the whole creature. It is a sliver of something infinitely larger, poking through our reality the way a sphere pokes through a flat plane.",
+  "icon": "hemomancy:sanguine_formation"
+}

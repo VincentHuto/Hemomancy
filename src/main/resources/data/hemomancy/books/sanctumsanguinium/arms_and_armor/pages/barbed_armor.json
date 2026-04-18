@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 2,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Barbed Armor",
-  "subtitle": "Iron shells of the deep",
-  "text": "Barbed Armor is crafted from Chitinous Husks and Hematic Iron Scraps. It offers strong protection and comes with a matching Barbed Shield. The material is harvested from Chitinites and Chthonians, iron-shelled insects that merge naturally with blood. The armor's barbed surface punishes attackers on contact.",
-  "icon": "hemomancy:chitinous_husk"
-}

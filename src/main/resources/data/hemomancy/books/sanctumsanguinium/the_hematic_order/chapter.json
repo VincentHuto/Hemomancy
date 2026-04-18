@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.6,0,0",
+  "title": "The Hematic Order",
+  "subtitle": "A found family in blood",
+  "icon": "hemomancy:morphling_jar"
+}

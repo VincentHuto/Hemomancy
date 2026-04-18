@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 7,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Ranks & Types",
-  "subtitle": "How manipulations behave",
-  "text": "Manipulations come in different Types: Quick (instant), Charged (hold to empower), Passive (always-on), and Continuous (sustained). They also have Ranks representing mastery: Humilis, Mediocritas, Summa, Magister, Perfectus. Higher ranks usually cost more blood and require stronger tendency alignment.",
-  "icon": "hemomancy:hematic_memory"
-}

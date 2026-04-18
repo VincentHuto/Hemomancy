@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 0,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Arms & Armor",
-  "subtitle": "Forged in blood",
-  "text": "Hemomancy provides several tiers of equipment, each with distinct crafting methods and strengths. Early on you will forge Hematic Iron gear from blood-infused iron. As you progress, you will encounter Barbed and Chitinite armor harvested from the creatures of the infection, and eventually the fearsome Blood Lust set. Each tier reflects a deeper understanding of blood.",
-  "icon": "hemomancy:hematic_iron_sword"
-}

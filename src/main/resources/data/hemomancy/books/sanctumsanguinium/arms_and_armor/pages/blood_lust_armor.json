@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 4,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Blood Lust Armor",
-  "subtitle": "Wear the hunger",
-  "text": "The Blood Lust set is advanced Hemomancy armor that enhances blood manipulation while worn. It features interchangeable mask variants: a Tengu mask, a Horned mask, and a Smiling mask, each with its own aesthetic. Crafting requires rare components obtained from deep in the infection's influence.",
-  "icon": "hemomancy:blood_lust_chestplate"
-}

@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 0,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Vascularity",
-  "subtitle": "The web beneath the skin",
-  "text": "Vascularity tracks the health of the veins running through your body: head, torso, arms, and legs. Each section can be strained by casting manipulations bound to it, and damaged veins reduce your effectiveness. Veins heal passively over time, but pushing too hard without rest will leave you weakened when you need your blood the most.",
-  "icon": "hemomancy:blood_stained_stone"
-}

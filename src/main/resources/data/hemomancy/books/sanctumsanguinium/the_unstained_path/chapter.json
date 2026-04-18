@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:chapter",
+  "ordinality": 3,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "color": "0.5,0,0",
+  "title": "The Unstained",
+  "subtitle": "Those who choose to forget",
+  "icon": "hemomancy:hemolytic_solution"
+}

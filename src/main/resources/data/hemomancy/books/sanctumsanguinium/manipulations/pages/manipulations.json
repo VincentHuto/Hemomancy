@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 0,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Manipulations",
-  "subtitle": "Directing the flow",
-  "text": "Blood Manipulations are abilities fueled by your Blood Volume and shaped by your Tendency. Each manipulation is bound to a Vein Section (head, body, arms, or legs) and has a rank: Humilis, Mediocritas, or Summa. To learn a manipulation, you must first acquire its Hematic Memory and recall it using the Somatic Loom.",
-  "icon": "hemomancy:blood_stained_stone"
-}

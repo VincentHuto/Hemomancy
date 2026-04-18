@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 2,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Somatic Loom",
-  "subtitle": "Weave your memories",
-  "text": "The Somatic Loom is a blood structure that forces your mind to remember manipulations your blood has forgotten. Supply it with blood, a blank Hematic Memory, the required enzymes, and a catalyst. The result is a fully formed Blood Memory that teaches you a specific manipulation when consumed.",
-  "icon": "hemomancy:somatic_loom"
-}

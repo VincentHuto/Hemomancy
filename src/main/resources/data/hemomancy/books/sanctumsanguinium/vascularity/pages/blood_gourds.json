@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 2,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Blood Gourds",
-  "subtitle": "Portable storage",
-  "text": "Blood Gourds are wearable blood reservoirs. Keep them filled so you can continue casting when your own volume runs low. Different gourds hold different amounts and can be upgraded. Use a Scrying Podium to access your gourd slots and manage equipped storage.",
-  "icon": "hemomancy:blood_gourd_white"
-}

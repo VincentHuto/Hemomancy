@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Blood Moon",
+  "subtitle": "The Lady's immune response",
+  "text": "Blood Moons are a manifestation of the conflict between the Pale Lady and the Fungal Entity. When a Blood Moon rises, it is Our Lady expending a significant burst of her power to push back against the fungal infection for another cycle — a cosmic immune response. She wins these small battles, which is why the world is not already a sphere of flesh. But each one costs her something. The night after a Blood Moon, the moon may appear new or very dim. She is recovering.",
+  "icon": "hemomancy:sanguine_formation"
+}

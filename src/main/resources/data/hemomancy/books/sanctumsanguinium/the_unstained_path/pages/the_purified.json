@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "What Remains",
+  "subtitle": "The end of the path",
+  "text": "Once a practitioner completes full purification, they enter a brief coma and wake fundamentally changed. Their blood no longer flows in a conventional sense — the hemolytic process has embalmed their veins from the inside. Their eyes drain of color. They do not age. They do not hunger in the ordinary sense. They cannot die from blood loss — they have none. They can only be destroyed through fire, through force, or through the fungus itself. The Unstained Church does not need many members. A few immortal, devoted practitioners who arrive at purity and stay are sufficient. The Church grows slowly, surely, and endures.",
+  "icon": "hemomancy:hemolytic_solution"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "How It Spreads",
+  "subtitle": "Patient as geology",
+  "text": "The Entity extends hyphae tendrils across the surface of the worlds it touches. Bulb-shaped nodes at the tips of these tendrils eventually break free and drift as spores, seeding pockets of Erythromycelium across the land. The infection does not multiply exponentially. It is slow, deliberate, and geologically patient. It has been here eight hundred years, and the world is still recognizable. This patience is not weakness. It is certainty.",
+  "icon": "hemomancy:erythrocytic_mycelium"
+}

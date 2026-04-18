@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 4,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Charm of Vascularium",
-  "subtitle": "Declare yourself",
-  "text": "The Charm of Vascularium is a key focus item. Equip it in the Scrying Podium’s charm slot to interact with Hemomancy systems more fully and to align yourself with the Scarlet tradition.",
-  "icon": "hemomancy:charm_of_vascularium"
-}

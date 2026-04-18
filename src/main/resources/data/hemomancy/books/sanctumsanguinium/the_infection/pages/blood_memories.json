@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Blood Memories",
+  "subtitle": "Instructions in the veins",
+  "text": "The powers awakened through Hemomancy are not truly learned. They are dormant instructions left by the fungus, encoded into blood over generations to make infected hosts more useful and more capable of spreading the infection further. What the Harbingers believe are sacred inheritances — gifts their blood has always carried — are, in truth, a program. The infection writes its will into those it touches and waits for someone willing enough to read it.",
+  "icon": "hemomancy:hematic_memory"
+}
