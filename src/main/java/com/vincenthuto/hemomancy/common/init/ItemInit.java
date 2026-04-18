@@ -204,7 +204,7 @@ public class ItemInit {
 
     // Qliphoth Reagent
     public static final RegistryObject<Item> qliphoth_seed = BASEITEMS.register("qliphoth_seed",
-            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new QliphothSeedItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> qliphoth_pome = BASEITEMS.register("qliphoth_pome",
             () -> new QliphothPomeItem(new Item.Properties().rarity(Rarity.UNCOMMON)
                     .food(new FoodProperties.Builder().nutrition(4).saturationMod(0.8F).alwaysEat().build())));
