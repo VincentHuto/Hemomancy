@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Static factory producing {@link DialogueTree} variants for the Sanguine
  * Monolith block. Dialogue varies based on the player's current initiatory
- * degree (4 = Adept through 7+ = Archon).
+ * degree (5 = Illuminatus through 7+ = Archon).
  */
 public final class SanguineMonolithDialogueTrees {
 
@@ -82,7 +82,7 @@ public final class SanguineMonolithDialogueTrees {
 				.build();
 	}
 
-	/** Degree 7+ — Archon. The monolith speaks its final words. */
+	/** Degree 7+ — Archon. The monolith hints that it is beginning to crack. */
 	public static DialogueTree archon() {
 		return DialogueTree.builder(SPEAKER, MONOLITH_ICON, BLOCK_ENTITY_ID)
 				.addNode(new DialogueNode("root", List.of(

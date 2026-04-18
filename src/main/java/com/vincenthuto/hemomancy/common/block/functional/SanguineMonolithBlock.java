@@ -6,13 +6,18 @@ import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Sanguine Monolith — a craftable guidance block available to players who have
- * reached at least the 4th initiatory degree (Adept). Inspired by the SEELE
+ * reached at least the 5th initiatory degree (Illuminatus). Inspired by the SEELE
  * Monoliths from Neon Genesis Evangelion, it is a tall, dark, rectangular slab
  * that can be "conversed" with to receive hints about what to do next based on
  * the player's current advancement and progression level.
@@ -62,7 +67,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	};
 
 	/** Minimum initiatory degree required to commune with the monolith. */
-	private static final int MIN_DEGREE = 4;
+	private static final int MIN_DEGREE = 5;
 
 	public SanguineMonolithBlock(Properties properties) {
 		super(properties);
@@ -187,6 +192,15 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 
 		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
 			int degreeNumber = degree.getDegreeNumber();
+			if (degreeNumber >= 7 && worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity monolith) {
+				int interactions = monolith.incrementArchonInteractions();
+				if (interactions >= 2) {
+					explodeIntoBlackShards(worldIn, pos);
+					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
+					worldIn.destroyBlock(pos, false);
+					return;
+				}
+			}
 
 			DialogueTree tree = degreeNumber < MIN_DEGREE
 					? SanguineMonolithDialogueTrees.unworthy()
@@ -198,5 +212,18 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		});
 
 		return InteractionResult.SUCCESS;
+	}
+
+	private static void explodeIntoBlackShards(Level level, BlockPos pos) {
+		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
+		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
+		if (level instanceof ServerLevel serverLevel) {
+			serverLevel.sendParticles(ParticleTypes.SQUID_INK,
+					pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+					36, 0.45, 0.6, 0.45, 0.02);
+			serverLevel.sendParticles(ParticleTypes.SMOKE,
+					pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+					14, 0.4, 0.4, 0.4, 0.01);
+		}
 	}
 }

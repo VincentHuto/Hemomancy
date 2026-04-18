@@ -626,7 +626,7 @@
 	"hemomancy.rite.sanctified_rite.name": "Rite of the Bloodline Covenant",
 	"hemomancy.rite.archon_rite.name": "Rite of the Hematic Order",
 	"hemomancy.rite.bloom_of_qliphoth.name": "Bloom of the Qliphoth",
-	"hemomancy.rite.bloom_of_qliphoth.desc": "Summons a dark tree of the Qliphoth that empowers blood manipulations and grants regeneration within its 3-chunk radius.",
+	"hemomancy.rite.bloom_of_qliphoth.desc": "Summons a dark tree of the Qliphoth that empowers blood manipulations and grants regeneration within its 3-chunk radius. Requires a planted Qliphoth Seed at the rite center.",
 	"hemomancy.rite.pruning_of_qliphoth.name": "Pruning of the Qliphoth",
 	"hemomancy.rite.pruning_of_qliphoth.desc": "A small counter-rite that severs the roots of a nearby Qliphoth bloom, causing the dark tree to wither and vanish. Must be performed within the same chunk as the bloom.",
 
@@ -1400,9 +1400,10 @@
 	"hemomancy.monolith.guidance.sanctified.line1": "Sanctified of the Covenant, few have walked this far.",
 	"hemomancy.monolith.guidance.sanctified.line2": "Seek the living constructs — fuse organ and engram upon the Somatic Loom. Shape flesh as others shape stone.",
 
-	"hemomancy.monolith.guidance.archon": "Archon, you stand at the apex. The Order has no more to teach — only to witness. The blood remembers what words cannot. Forge your legacy in the crimson tide.",
-	"hemomancy.monolith.guidance.archon.line1": "Archon, you stand at the apex. The Order has no more to teach — only to witness.",
-	"hemomancy.monolith.guidance.archon.line2": "The blood remembers what words cannot. Forge your legacy in the crimson tide.",
+	"hemomancy.monolith.guidance.archon": "Archon... under your power the monolith begins to crack. Press further, and it may shatter into black shards.",
+	"hemomancy.monolith.guidance.archon.line1": "Archon... under your power the monolith begins to crack.",
+	"hemomancy.monolith.guidance.archon.line2": "Press further, and it may shatter into black shards.",
+	"item.hemomancy.qliphoth_seed": "Qliphoth Seed",
 
 	"hemomancy.dialogue.monolith.option.leave": "[Depart]",
 	"hemomancy.dialogue.monolith.option.understood": "[Understood.]",
