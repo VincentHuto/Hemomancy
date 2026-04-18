@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "hemomancy:chitinous_husk"
+    },
+    {
+      "item": "hemomancy:cleansing_hemolymph"
+    },
+    {
+      "item": "minecraft:leather_helmet"
+    }
+  ],
+  "result": {
+    "item": "hemomancy:hemolymphopoda_headpiece"
+  }
+}

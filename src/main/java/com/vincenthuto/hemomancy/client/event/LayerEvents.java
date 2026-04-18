@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
+import com.vincenthuto.hemomancy.client.model.armor.HemolymphopodaHeadArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
@@ -73,6 +74,7 @@ import com.vincenthuto.hemomancy.client.render.layer.player.BloodGourdLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.EquippedMorphlingLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.FungalElytraLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.HemolymphopodaHeadpieceLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.RenderScarsLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -187,6 +189,9 @@ public class LayerEvents {
 		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
 				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
 
+		event.registerLayerDefinition(HemolymphopodaHeadArmorModel.LAYER_LOCATION,
+				HemolymphopodaHeadArmorModel::createHeadLayer);
+
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_LAYER,
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_TENGU_LAYER,
@@ -255,6 +260,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
+			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 
 		}
 	}

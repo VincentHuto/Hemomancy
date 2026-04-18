@@ -467,6 +467,8 @@ public class ItemInit {
     public static final RegistryObject<Item> marrow_crown = BASEITEMS.register("marrow_crown",
             () -> new MarrowCrownArmorItem(EnumModArmorTiers.MARROW_CROWN, ArmorItem.Type.HELMET)
     );
+    public static final RegistryObject<Item> hemolymphopoda_headpiece = BASEITEMS.register("hemolymphopoda_headpiece",
+            () -> new HemolymphopodaHeadpieceArmorItem(EnumModArmorTiers.CHITINITE, ArmorItem.Type.HELMET));
 
     // Hematic
     public static final RegistryObject<Item> hematic_iron_helm = BASEITEMS.register("hematic_iron_helm",
