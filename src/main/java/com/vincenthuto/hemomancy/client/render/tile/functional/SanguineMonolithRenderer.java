@@ -107,6 +107,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 		renderVeinOverlay(ms, bufferIn, time, facing);
 		renderEyeOverlay(ms, bufferIn, time);
+		renderBackSymbol(ms, bufferIn, time);
 		ms.popPose();
 	}
 
@@ -361,6 +362,95 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				cx - sc * 0.014f, cy + sc * 0.020f, cz + 0.005f,
 				sc * 0.013f, sc * 0.013f,
 				255, 245, 235, (int)(205 * beat), 12);
+	}
+
+	// ── Back-face symbol ─────────────────────────────────────────────────────────
+
+	/**
+	 * Renders an 8-pointed star (two overlapping squares with their diagonals) on
+	 * the back face of the monolith. Dark red traces the N/E/S/W diamond + cross;
+	 * orange traces the NE/SE/SW/NW axis-aligned square + X diagonals.
+	 * Both layers pulse and fade independently.
+	 */
+	private void renderBackSymbol(PoseStack ms, MultiBufferSource bufferIn, float time) {
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		Matrix4f mat = ms.last().pose();
+
+		float cz = -0.252f; // back face
+		float cy  = 1.0f;   // vertical centre of the 2-block face
+		float R   = 0.390f;
+		float sq  = R * 0.7071f; // R/√2 — offset for 45° tips
+
+		// 8 outer tip coordinates
+		float nx  = 0,     ny  = cy + R;    // N
+		float ex  = R,     ey  = cy;        // E
+		float sx  = 0,     sy  = cy - R;    // S
+		float wx  = -R,    wy  = cy;        // W
+		float nex = sq,    ney = cy + sq;   // NE
+		float sex = sq,    sey = cy - sq;   // SE
+		float swx = -sq,   swy = cy - sq;   // SW
+		float nwx = -sq,   nwy = cy + sq;   // NW
+
+		// Independent slow pulses for each colour
+		float pulDR = 0.50f + 0.50f * Mth.sin(time * 0.022f);
+		float pulOR = 0.50f + 0.50f * Mth.sin(time * 0.022f + 1.5f);
+
+		int drR = 175, drG = 22, drB = 22;    // dark red
+		int orR = 228, orG = 115, orB = 20;   // orange
+
+		int drA  = (int)(210 * pulDR);
+		int orA  = (int)(210 * pulOR);
+		int drAg = (int)( 55 * pulDR);  // diffuse glow alpha
+		int orAg = (int)( 55 * pulOR);
+
+		float lw = 0.009f;   // line half-width
+		float gw = 0.020f;   // glow half-width
+		float czo = cz - 0.001f; // core lines sit slightly in front of glow
+
+		// ── Glow pass (wider, low alpha) ──
+		drawLine(mat, vc, nx,  ny,  ex,  ey,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, ex,  ey,  sx,  sy,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, sx,  sy,  wx,  wy,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, wx,  wy,  nx,  ny,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, nx,  ny,  sx,  sy,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, ex,  ey,  wx,  wy,  cz,  gw, drR, drG, drB, drAg);
+		drawLine(mat, vc, nex, ney, sex, sey, cz,  gw, orR, orG, orB, orAg);
+		drawLine(mat, vc, sex, sey, swx, swy, cz,  gw, orR, orG, orB, orAg);
+		drawLine(mat, vc, swx, swy, nwx, nwy, cz,  gw, orR, orG, orB, orAg);
+		drawLine(mat, vc, nwx, nwy, nex, ney, cz,  gw, orR, orG, orB, orAg);
+		drawLine(mat, vc, nex, ney, swx, swy, cz,  gw, orR, orG, orB, orAg);
+		drawLine(mat, vc, nwx, nwy, sex, sey, cz,  gw, orR, orG, orB, orAg);
+
+		// ── Core lines ──
+		// Dark red: diamond (N-E-S-W) + cross through centre
+		drawLine(mat, vc, nx,  ny,  ex,  ey,  czo, lw, drR, drG, drB, drA);
+		drawLine(mat, vc, ex,  ey,  sx,  sy,  czo, lw, drR, drG, drB, drA);
+		drawLine(mat, vc, sx,  sy,  wx,  wy,  czo, lw, drR, drG, drB, drA);
+		drawLine(mat, vc, wx,  wy,  nx,  ny,  czo, lw, drR, drG, drB, drA);
+		drawLine(mat, vc, nx,  ny,  sx,  sy,  czo, lw, drR, drG, drB, drA);
+		drawLine(mat, vc, ex,  ey,  wx,  wy,  czo, lw, drR, drG, drB, drA);
+		// Orange: axis-aligned square (NE-SE-SW-NW) + diagonal X
+		drawLine(mat, vc, nex, ney, sex, sey, czo, lw, orR, orG, orB, orA);
+		drawLine(mat, vc, sex, sey, swx, swy, czo, lw, orR, orG, orB, orA);
+		drawLine(mat, vc, swx, swy, nwx, nwy, czo, lw, orR, orG, orB, orA);
+		drawLine(mat, vc, nwx, nwy, nex, ney, czo, lw, orR, orG, orB, orA);
+		drawLine(mat, vc, nex, ney, swx, swy, czo, lw, orR, orG, orB, orA);
+		drawLine(mat, vc, nwx, nwy, sex, sey, czo, lw, orR, orG, orB, orA);
+	}
+
+	/** Draws a thin rectangle (ribbon) between two points, for crisp line rendering. */
+	private void drawLine(Matrix4f mat, VertexConsumer vc,
+			float x1, float y1, float x2, float y2, float z,
+			float halfW, int r, int g, int b, int alpha) {
+		float dx = x2 - x1, dy = y2 - y1;
+		float len = Mth.sqrt(dx * dx + dy * dy);
+		if (len < 1e-6f) return;
+		float px = -dy / len * halfW;
+		float py =  dx / len * halfW;
+		vc.vertex(mat, x1 + px, y1 + py, z).color(r, g, b, alpha).endVertex();
+		vc.vertex(mat, x1 - px, y1 - py, z).color(r, g, b, alpha).endVertex();
+		vc.vertex(mat, x2 - px, y2 - py, z).color(r, g, b, alpha).endVertex();
+		vc.vertex(mat, x2 + px, y2 + py, z).color(r, g, b, alpha).endVertex();
 	}
 
 	// ── Geometry helpers ─────────────────────────────────────────────────────────
