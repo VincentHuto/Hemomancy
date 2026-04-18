@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:hemolymphopoda_headpiece"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.lucky_horseshoe_crab.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.lucky_horseshoe_crab.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/root",
+  "criteria": {
+    "has_hemolymphopoda_headpiece": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:hemolymphopoda_headpiece"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_hemolymphopoda_headpiece"
+    ]
+  ]
+}
