@@ -278,7 +278,7 @@ public class UnsignedLedgerItem extends Item {
 		}
 
 		BlockPos recall = lodge.recallPoint();
-		ServerLevel targetLevel = player.server.overworld();
+		ServerLevel targetLevel = null;
 
 		// Resolve the correct dimension for the lodge
 		for (ServerLevel dim : player.server.getAllLevels()) {
@@ -286,6 +286,9 @@ public class UnsignedLedgerItem extends Item {
 				targetLevel = dim;
 				break;
 			}
+		}
+		if (targetLevel == null) {
+			targetLevel = player.server.overworld();
 		}
 
 		player.teleportTo(targetLevel,

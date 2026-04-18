@@ -178,12 +178,12 @@ public class CrimsonLodgeSavedData extends SavedData {
 	 * center (ritual location) and can be relocated by the bloodline leader.
 	 */
 	public static class LodgeEntry {
-		final UUID ownerUUID;
-		final BlockPos center;
-		final String dimension;
-		final int chunkRadius;
-		final long createdTick;
-		BlockPos recallPoint;
+		private final UUID ownerUUID;
+		private final BlockPos center;
+		private final String dimension;
+		private final int chunkRadius;
+		private final long createdTick;
+		private BlockPos recallPoint;
 
 		public LodgeEntry(UUID ownerUUID, BlockPos center, String dimension,
 				int chunkRadius, long createdTick, BlockPos recallPoint) {
