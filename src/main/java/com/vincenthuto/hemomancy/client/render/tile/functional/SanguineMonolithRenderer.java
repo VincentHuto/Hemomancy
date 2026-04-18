@@ -269,9 +269,9 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	 */
 	private void renderEyeOverlay(PoseStack ms, MultiBufferSource bufferIn, float time) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
-		Matrix4f mat = ms.last().pose();
 
 		float cz = +0.252f;
+		float tiltDeg = 22f; // outward tilt for flanking eyes
 
 		// Each eye pulses at a slightly different phase so they feel independent
 		float pulseC = 0.75f + 0.25f * Mth.sin(time * 0.05f);
@@ -281,12 +281,22 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float pulseR = 0.75f + 0.25f * Mth.sin(time * 0.05f + 2.2f);
 		float beatR  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 0.5f);
 
-		// Left eye — smaller, positioned lower
-		renderSingleEye(mat, vc, -0.245f, 1.35f, cz, 0.72f, time, pulseL, beatL);
-		// Centre eye — largest, slightly higher
-		renderSingleEye(mat, vc,  0.000f, 1.42f, cz, 0.90f, time, pulseC, beatC);
-		// Right eye — mirrors left
-		renderSingleEye(mat, vc, +0.245f, 1.35f, cz, 0.72f, time, pulseR, beatR);
+		// Left eye — rotated counterclockwise so top tip points outward
+		ms.pushPose();
+		ms.translate(-0.245f, 1.35f, 0f);
+		ms.mulPose(Vector3.ZP.rotationDegrees(-tiltDeg).toMoj());
+		renderSingleEye(ms.last().pose(), vc, 0f, 0f, cz, 0.72f, time, pulseL, beatL);
+		ms.popPose();
+
+		// Centre eye — upright
+		renderSingleEye(ms.last().pose(), vc, 0.000f, 1.42f, cz, 0.90f, time, pulseC, beatC);
+
+		// Right eye — rotated clockwise so top tip points outward
+		ms.pushPose();
+		ms.translate(+0.245f, 1.35f, 0f);
+		ms.mulPose(Vector3.ZP.rotationDegrees(+tiltDeg).toMoj());
+		renderSingleEye(ms.last().pose(), vc, 0f, 0f, cz, 0.72f, time, pulseR, beatR);
+		ms.popPose();
 	}
 
 	/**
