@@ -21,6 +21,10 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 1. [Getting Started](#1-getting-started)
 2. [Core Player Capabilities](#2-core-player-capabilities)
 3. [The Harbinger Path (Hematic Order)](#3-the-harbinger-path-hematic-order)
+   - 3.5 [Fungal Whisper Events](#35-fungal-whisper-events)
+   - 3.6 [The Fungal Spine and The Realm Beyond](#36-the-fungal-spine-and-the-realm-beyond)
+   - 3.7 [The Founding Sanctum (Degree 5)](#37-the-founding-sanctum-degree-5)
+   - 3.8 [The Saints System (Degree 3–4)](#38-the-saints-system-degree-34)
 4. [The Unstained Path (Anti-Hemomancy)](#4-the-unstained-path-anti-hemomancy)
 5. [Mutual Exclusion of Paths](#5-mutual-exclusion-of-paths)
 6. [Blood Manipulations](#6-blood-manipulations)
@@ -40,6 +44,7 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 20. [Projectile & Blood Construct Entities](#20-projectile--blood-construct-entities)
 21. [Status Effects & Potions](#21-status-effects--potions)
 22. [World Generation & Biomes](#22-world-generation--biomes)
+    - 22.1.1 [Blood Moons](#2211-blood-moons)
 23. [Structures](#23-structures)
 24. [Villagers & Professions](#24-villagers--professions)
 25. [Mod Compatibility (MnA / Curios / JEI)](#25-mod-compatibility)
@@ -52,6 +57,8 @@ Hemomancy is a blood magic mod built around the *quality* of blood manipulation 
 32. [Networking & Packets](#32-networking--packets)
 33. [Sound Events](#33-sound-events)
 34. [Particle Types](#34-particle-types)
+
+> **See also:** [LORE_REFERENCE.md](LORE_REFERENCE.md) for world lore, faction beliefs, character backstories, cosmology, and narrative themes.
 
 ---
 
@@ -192,6 +199,70 @@ At higher degrees (4–7), the ancient fungal consciousness begins intruding int
 | 7 Archon | Full truth | *"You have reached the apex of what the infection permits."* The Hematic Order as a reproductive strategy; each degree a stage of sporulation; *"There is no Hematic Order. There never was."* |
 
 Each degree has 3 variant whispers (indices 0–2) for variety. Some variants include branching "What was that?" / "Who are you?" follow-up nodes. A `whisper_truth_acknowledged` event fires when the Archon-tier truth is accepted.
+
+At Archon (Degree 7), **3–5 Fungal Whispers** fire before the Fungal Spine event triggers. The whispers are somewhat disabled during development to allow testing.
+
+### 3.6 The Fungal Spine and The Realm Beyond
+
+After reaching Archon and receiving the requisite Fungal Whispers, a **Fungal Spine** item buds out of the player's hand. Using it transports the player's consciousness to the Fungal Dimension.
+
+**The Fungal Dimension:**
+- A vast sphere of flesh, meat, and pulsing biology — the local "surface" of the fourth-dimensional Fungal Entity
+- Enormous hyphae tendrils arc into the sky; bulb-nodes at their tips eventually break off like spores falling back toward the world
+- The world and moon are visible in the sky, suggesting the space exists just above Earth
+- The player has no physical body here — they are an astral/consciousness projection
+- Everything here is hostile, even to an Archon
+- Fungal Whispers occur almost constantly, nearly harassing in frequency
+- The player keeps their Fungal Spine and can use it to return to the overworld
+- Digging to the bottom of the space and "puncturing" the core severs the connection temporarily (ejecting the player)
+- May contain **morphic pools** as alternate exits (planned)
+
+**Player Choice at the End:**
+- Stay silent and simply return; remain an Archon and tell no one
+- Continue deeper into the eldritch truth toward the true 8th Degree (transcendence)
+- The Archon may draw a Fungal Spine at any time to return or revisit
+
+> **⚠️ WIP:** Terrain generation, creature spawning, and player choice mechanics in the Fungal Dimension are still in early implementation. Spawn placement needs to be fixed to avoid spawning in the middle of water.
+
+### 3.7 The Founding Sanctum (Degree 5)
+
+At **Degree 5 (Illuminatus)**, a Harbinger can perform a founding rite that consecrates an area around their chosen base as a **Harbinger Sanctum**.
+
+- Covers a **5×5 chunk area** centered on the founding location
+- All Harbingers present in the sanctum receive enhanced effects: stronger regeneration, lower cooldowns, more potent blood manipulations
+- Intended to encourage collective settlement and cooperative play
+- A crafting material called **Quintessence** is granted by the Illuminatus rite and is required for the founding ritual
+
+> **⚠️ WIP:** Sanctum boundary detection, buff application, and Quintessence item are planned but not yet fully implemented.
+
+### 3.8 The Saints System (Degree 3–4)
+
+At around **Degree 3–4**, the Harbinger Vicar and/or the player's own research direct them to seek out **ancient Saints** — Hemomancers from the world's deep past whose power grew so extraordinary that they were entombed rather than buried.
+
+**Structure:** Each saint has a **Trial Chamber** structure containing:
+1. An entrance with a locking mechanism that seals the player inside upon entry
+2. The trial itself — a unique puzzle/survival challenge (blood slowly sapped throughout)
+3. A gateway that opens only upon trial completion
+4. An inner sarcophagus chamber with the saint's corpse
+
+**Extraction vs. Combat:**
+- If the player's **blood tendency** matches the saint's thematic affinity → peaceful blood sample extraction
+- If tendencies do not align → the saint rejects the player and awakens, beginning a boss fight
+- Killing the saint in a boss fight also yields the blood sample ("taking it by force")
+- Smearing **Foul Paste** on a sarcophagus deliberately triggers the boss fight even after peaceful extraction
+
+**Reward:** Each saint's blood is used to craft a unique, high-level **combined blood memory** — a special manipulation not available through normal memory weaving.
+
+There are **four Saints** in total; which one a player encounters first is partially randomized.
+
+#### Known Saints
+
+| Saint | Trial Type | Boss Mechanic | Thematic Tendency |
+|-------|-----------|---------------|------------------|
+| **Hemorath** | Four-basin blood-filling puzzle (fill each basin to correct level, monsters spawn throughout; wrong levels set you back) | Absorbs blood magic attacks, growing stronger — must be overloaded with blood magic until he bursts and exsanguinates | Ferric (iron, permanence) |
+| **The Chain Saint** *(name TBD — "nurse saint")* | Light-avoidance (her emitted light burns the player) | Must re-chain her and darken the room rather than fighting her directly | Vivacious / Lux (life, growth, uncontrolled healing) |
+
+> **⚠️ WIP:** Saints 3 and 4 are not yet finalized. Trial Chamber structure generation and saint boss AI are in active development.
 
 ---
 
@@ -1161,6 +1232,8 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 
 ## 19. Mob Entities
 
+> **Design Note — Arthropods as Natural Hemomancers:** In the Hemomancy worldbuilding, arthropods and crustaceans are treated as nature's own blood mages. They do not use blood magic consciously, but the same forces that let Hemomancers harden blood into iron or spin it into chitin are expressed instinctively across the insect and crustacean kingdoms (urchins growing blood spines, Chthonians growing iron mandibles, Chitinites growing hematic-iron shells, etc.). This informs the mod's use of these creatures as source material for crafting and the Morphling system.
+
 ### 19.1 Hostile / Monster Mobs
 
 | Entity | Texture | Category | Notes |
@@ -1171,8 +1244,8 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | **Erythromycelium Eruptus** | ![](src/main/resources/assets/hemomancy/textures/entity/erythromycelium_eruptus/model_erythromycelium_eruptus.png) | Monster | Large fungal eruption mob (1.5×3.0) |
 | **Blood Drunk Puppeteer** | ![](src/main/resources/assets/hemomancy/textures/entity/blood_drunk_puppeteer/model_blood_drunk_puppeteer.png) | Monster | Human-sized, controls dolls |
 | **Enthralled Doll** | ![](src/main/resources/assets/hemomancy/textures/entity/enthralled_doll/model_enthralled_doll.png) | Monster | Small (0.5×0.5), controlled by puppeteer |
-| **Chthonian** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian/model_chthonian.png) | Monster | Underground termite/ant creature |
-| **Chthonian Queen** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian_queen/model_chthonian_queen.png) | Monster | Boss variant of Chthonian |
+| **Chthonian** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian/model_chthonian.png) | Monster | Iron-mandible termite creature — actively chews through wood blocks and wooden tools in the area. Spawns in Chthonian Termite Mounds (Savanna biome). Part of the "arthropods as natural hemomancers" theme (they produce hematic iron shells biologically). |
+| **Chthonian Queen** | ![](src/main/resources/assets/hemomancy/textures/entity/chthonian_queen/model_chthonian_queen.png) | Monster | Boss variant of Chthonian; exactly 1 spawns per Termite Mound. Associated with gold (royal). The only gold-connected creature in the mod. |
 | **Lump of Thought** | ![](src/main/resources/assets/hemomancy/textures/entity/lump_of_thought/model_lump_of_thought.png) | Monster | Sentient thought blob |
 | **Morphling Polyp** (mob) | ![](src/main/resources/assets/hemomancy/textures/entity/morphling_polyp/model_morphling_polyp.png) | Monster | Wild morphling mob |
 | **Dessicant** | | Monster | Desiccating creature (ON_GROUND spawn) |
@@ -1208,6 +1281,7 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | **Harbinger Hermit** | | Creature | NPC Harbinger recluse; full degree 0–7 dialogue (`HarbingerHermitDialogueTrees`). Drops Rite Hint item on farewell. Invulnerable until player chooses "Farewell" option. |
 | **Harbinger Alchemist** | | Creature | NPC machine expert found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerAlchemistDialogueTrees`). Teaches crafting stations, dismisses purifying players. |
 | **Harbinger Vicar** | | Creature | NPC doctrine keeper found at Harbinger Outposts; full degree 0–7 dialogue (`HarbingerVicarDialogueTrees`). Delivers faction history lore; reveals secret "8th degree" at Archon. |
+| **Annetta Knowles (The Stained Priestess)** | | Boss (WIP) | High-ranking Unstained cleric boss. Bitten by a Chthonian (which only seek the infected), causing her sanity to shatter and her long-suppressed blood power to erupt. Has two phases: Phase 1 standard combat with Unstained powers; Phase 2 she extracts a hyper-solidified blood spear from herself (Spear of Longinus reference) as her primary weapon. Visuals: red hair, teal patina-blue eyes, awakened hemomantic power. Thematic domain: teeth, nails, hair (calcium/keratin materials). |
 | **Spectral Companion** | | Misc | Spectral ally entity |
 | **Sanguilith** | | Misc (MnA) | Large (1.5×3.25), blood-themed summoned monster (requires MnA). Summoned via `ComponentSummonSanguilith` spell. Ownable, duration-limited, targets nearby hostiles with swinging melee attacks. Max 4 nearby. Registered in `MnAPluginEntityInit`. Has custom `SanguilithModel` and `SanguilithRenderer`. |
 
@@ -1343,6 +1417,23 @@ Registered via 3 TerraBlender regions (`TestRegion1/2/3`) with custom surface ru
 > |---|---|---|---|
 > | ![](src/main/resources/assets/hemomancy/textures/environment/sun.png) Sun | ![](src/main/resources/assets/hemomancy/textures/environment/moon.png) Moon | ![](src/main/resources/assets/hemomancy/textures/environment/clouds.png) Clouds | ![](src/main/resources/assets/hemomancy/textures/environment/blood_moon_phases.png) Blood Moon Phases |
 
+### 22.1.1 Blood Moons
+
+Blood Moons are a world event distinct from normal nights, with their own moon texture phases (`blood_moon_phases.png`).
+
+**Frequency:** Approximately once every **60 nights** (intended to be rare). A ritual can trigger one manually, but at great cost — triggering a server-wide event intentionally is meant to be an expensive decision.
+
+**Effects while active:**
+- Harbingers / active Hemomancers: **enhanced strength and enhanced blood regeneration**
+- Non-blood-magic players: **weakness effect**
+- Hostile mob spawn rate is increased
+- Special hostile variants spawn more rapidly (Mosquito Boy variants and blood constructs)
+- Blood manipulation costs may be reduced for Harbingers (intended)
+
+**Lore significance:** Blood Moons represent the Pale Lady expending a burst of power to push back the fungal infection for another cycle. The moon appearing full and blood-red is her doing. After such a night, the moon may appear dim or new — she is recovering. See [LORE_REFERENCE.md](LORE_REFERENCE.md) §9 for the full cosmological explanation.
+
+> **⚠️ WIP:** Blood Moon gameplay effects (strength/weakness application, special spawns) are partially implemented. Manual triggering ritual and exact mechanical values are still being finalized.
+
 ### 22.2 World Features
 
 | Feature | Notes |
@@ -1375,6 +1466,8 @@ Managed via `ConfiguredFeatureInit` and `PlacedFeatureInit`:
 | **Qliphoth Bloom** | NBT structure | Qliphoth Bloom block structure placement |
 | **Blood Tower (Core)** | NBT structure | Core segment of the Blood Tower multi-piece structure |
 | **Blood Tower (Top 1)** | NBT structure | Top segment of the Blood Tower multi-piece structure |
+| **Saint Trial Chamber (Hemorath)** | NBT structure (WIP) | Locked dungeon for the First Saint — four blood-basin puzzle, blood-sapping room, inner sarcophagus chamber. Unlocks once all four basins are filled to the correct level. See §3.8. |
+| **Chthonian Termite Mound** | Feature/Structure (WIP) | Savanna biome structure. Always spawns with exactly 1 Chthonian Queen and a variable population of Chthonians. Contains a small loot chest (iron, gold, minerals). Chthonians will chew nearby wood. Spawn rate should be tuned (currently slightly over-common). |
 | **Plains Hemopothecary** | Village structure | Hemopothecary villager house for plains biome villages |
 | **Desert Hemopothecary** | Village structure | Hemopothecary villager house for desert biome villages |
 | **Taiga Hemopothecary** | Village structure | Hemopothecary villager house for taiga biome villages |
@@ -1638,6 +1731,15 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Harbinger Alchemist and Vicar NPCs** — Two new Harbinger Outpost NPCs fully implemented with degree 0–7 dialogue trees covering machine lore (Alchemist) and faction history/doctrine (Vicar). Both entities have entities registered, textures, lang keys, and dialogue handlers. Congeatio (Cryogenic Pulse, Glacial Bastion), Flammeus (Sanguine Ignition, Vitric Combustion), Tenebris (Void Shroud, Blood Eclipse), Mortem (Hemorrhage, Exsanguinate). Memory items and overlay textures for these manipulations may still need to be generated.
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
+- **Saints System (WIP)** — Four Saints planned. Trial Chamber structure for Hemorath (First Saint) is in early development. Hemorath boss fight mechanic (blood-absorb → exsanguinate puzzle) and The Chain Saint (light-avoidance, re-chaining mechanic) are designed but not yet implemented. Saints 3 and 4 are to be determined. See §3.8.
+- **Founding Sanctum (WIP)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum granting all Harbingers within enhanced effects. Quintessence material planned. See §3.7.
+- **Blood Moon Mechanics (WIP)** — Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented. See §22.1.1.
+- **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, player choice branching, and exit mechanics are in early development. See §3.6.
+- **Annetta Knowles / Stained Priestess (WIP)** — Boss entity planned. Two-phase fight designed (Unstained powers → blood spear phase 2). Model and AI not yet implemented. See §19.3.
+- **Chthonian Termite Mound (WIP)** — Savanna structure with guaranteed queen spawn and loot chest. Wood-chewing behavior for Chthonians is implemented; wooden plank chewing and wooden tool targeting are planned. Spawn rate needs tuning (currently over-common). See §23.
+- **Deep-Sea Iron Snail (WIP)** — Planned creature for deep ocean biomes, inspired by real-world Chrysomallon squamiferum (iron-sulfide shell snail from hydrothermal vents). Part of the arthropods-as-natural-hemomancers theme.
+- **Ghost Pipes as Unstained Material (WIP)** — Ghost Pipe plant (real-world Monotropa uniflora, white parasitic plant with no chlorophyll) registered in the mod. Planned role: Unstained crafting ingredient for alchemical and purification recipes. Acolyte gives "gather Ghost Pipe" as early task.
+- **Cleansed Stone and Pallid Lantern (WIP)** — Planned Unstained building materials: Cleansed Stone (Stone + Hemolytic Solution) and Pallid Lantern (Pale Silver + Pale Distillate + Glowstone). Neither recipe is yet implemented.
 
 ### 30.1 Unstained Expansion — Planned Features
 
@@ -1845,3 +1947,5 @@ Registered in `ParticleInit`:
 ---
 
 *This document should be kept up to date as development continues. Each section maps directly to the codebase structure under `com.vincenthuto.hemomancy`.*
+
+*For world lore, faction backstories, character narratives, cosmological themes, and design philosophy, see [LORE_REFERENCE.md](LORE_REFERENCE.md).*
