@@ -447,6 +447,7 @@ public class CardinalRiteEvents {
 	private static final String PALE_CONSECRATION_RITE = "cardinal_rite/pale_consecration";
 	private static final String SILTHMERES_REMEMBRANCE_RITE = "cardinal_rite/silthmeres_remembrance";
 	private static final String LETHE_COVENANT_RITE = "cardinal_rite/lethe_covenant";
+	private static final String LETHEAN_TIDE_RITE = "cardinal_rite/lethean_tide";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -746,6 +747,11 @@ public class CardinalRiteEvents {
 		// Rite of the Lethe Covenant: establish a grand Unstained domain
 		if (LETHE_COVENANT_RITE.equals(ritePath)) {
 			completeLetheCovenantRite(sLevel, caster, center);
+		}
+
+		// Rite of the Lethean Tide: cleanse an active Blood Moon
+		if (LETHEAN_TIDE_RITE.equals(ritePath)) {
+			completeLetheanTide(sLevel, caster);
 		}
 
 		// Rite of the Sanguine Eclipse: manually invoke a Blood Moon
@@ -1982,6 +1988,51 @@ public class CardinalRiteEvents {
 				Component.literal("The ritual tears the veil — the Blood Moon rises!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 				false);
+	}
+
+	/**
+	 * Rite of the Lethean Tide (Greater, 0 blood, Unstained):
+	 * Forcibly ends an active Blood Moon, broadcasts a cleansing message,
+	 * and grants the caster +10 purity. Requires purity >= 50.
+	 */
+	private static void completeLetheanTide(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
+				caster.displayClientMessage(
+						Component.literal("The tide will not answer — your purity is insufficient.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			ServerLevel overworld = sLevel.getServer().overworld();
+			BloodMoonSavedData bloodMoonData = BloodMoonSavedData.get(overworld);
+			if (!bloodMoonData.isActive()) {
+				caster.displayClientMessage(
+						Component.literal("There is no Blood Moon to cleanse.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			bloodMoonData.stop();
+			for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+			}
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(false));
+
+			unstained.addPurity(10f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					120, 7.0, 5.0, 7.0, 0.04);
+			caster.displayClientMessage(
+					Component.literal("The Lethean Tide rises — the Blood Moon is washed from the sky.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+					false);
+		});
 	}
 
 	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
