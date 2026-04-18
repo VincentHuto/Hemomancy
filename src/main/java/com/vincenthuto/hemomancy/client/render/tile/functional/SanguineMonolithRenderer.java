@@ -391,7 +391,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float[] vx = new float[8];
 		float[] vy = new float[8];
 		for (int i = 0; i < 8; i++) {
-			double a = Math.PI / 2.0 - i * Math.PI / 4.0; // 90° - i*45°, CW from top
+			double a = Math.PI / 2.0 + Math.PI / 8.0 - i * Math.PI / 4.0; // +22.5° offset → two vertices at bottom
 			vx[i] = (float)(R * Math.cos(a));
 			vy[i] = cy + (float)(R * Math.sin(a));
 		}
