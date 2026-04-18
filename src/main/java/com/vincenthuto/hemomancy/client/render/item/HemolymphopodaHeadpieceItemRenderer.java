@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.HemolymphopodaModel;
+import com.vincenthuto.hutoslib.math.Quaternion;
+import com.vincenthuto.hutoslib.math.Vector3;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -20,6 +22,12 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
+
+	// Dome pivot in the entity model is at (0, 23, -5.5) in pixel units.
+	// This translate (applied first to vertices) centres the dome at the origin
+	// before rotation and scale are applied.
+	private static final float DOME_CENTER_Y = -23.0f / 16.0f;
+	private static final float DOME_CENTER_Z = 5.5f / 16.0f;
 
 	private HemolymphopodaModel<?> model;
 
@@ -38,26 +46,26 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 					Minecraft.getInstance().getEntityModels().bakeLayer(HemolymphopodaModel.LAYER_LOCATION));
 		}
 
+		float scale;
+		switch (context) {
+		case GUI -> scale = 0.6f;
+		case GROUND -> scale = 0.4f;
+		case FIXED -> scale = 0.5f;
+		default -> scale = 0.5f;
+		}
+
 		poseStack.pushPose();
 
-		switch (context) {
-		case GUI -> {
-			poseStack.translate(0.5D, 1.25D, 0.5D);
-			poseStack.scale(0.15F, -0.15F, -0.15F);
-		}
-		case GROUND -> {
-			poseStack.translate(0.5D, 0.35D, 0.5D);
-			poseStack.scale(0.08F, -0.08F, -0.08F);
-		}
-		case FIXED -> {
-			poseStack.translate(0.5D, 0.5D, 0.5D);
-			poseStack.scale(0.1F, -0.1F, -0.1F);
-		}
-		default -> {
-			poseStack.translate(0.5D, 0.9D, 0.5D);
-			poseStack.scale(0.11F, -0.11F, -0.11F);
-		}
-		}
+		// (5) Place into item display space
+		poseStack.translate(0.5, 0.5, 0.5);
+		// (4) Scale down to fit the 1×1×1 item space
+		poseStack.scale(scale, scale, scale);
+		// (3) Flip entity-model Y convention so the shell faces up
+		poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
+		// (2) Rotate to an isometric angle so the shell shape is clearly visible
+		poseStack.mulPose(new Quaternion(Vector3.YP, 135, true).toMoj());
+		// (1) Centre the dome pivot at the local origin (applied first to vertices)
+		poseStack.translate(0.0f, DOME_CENTER_Y, DOME_CENTER_Z);
 
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		model.renderToBuffer(poseStack, consumer, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
@@ -65,3 +73,4 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 		poseStack.popPose();
 	}
 }
+

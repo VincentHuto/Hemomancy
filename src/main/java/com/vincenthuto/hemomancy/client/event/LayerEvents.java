@@ -8,6 +8,7 @@ import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.BloodLustArmorModel.EnumBloodLustMaskTypes;
 import com.vincenthuto.hemomancy.client.model.armor.ChitiniteArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.CurvedHornModel;
+import com.vincenthuto.hemomancy.client.model.armor.HemolymphopodaHeadArmorModel;
 import com.vincenthuto.hemomancy.client.model.armor.MarrowCrownModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenBloodGourdModel;
 import com.vincenthuto.hemomancy.client.model.armor.OpenCurvedHornModel;
@@ -187,6 +188,9 @@ public class LayerEvents {
 
 		event.registerLayerDefinition(MarrowCrownModel.LAYER_LOCATION,
 				() -> MarrowCrownModel.createHeadLayer(EquipmentSlot.HEAD));
+
+		event.registerLayerDefinition(HemolymphopodaHeadArmorModel.LAYER_LOCATION,
+				HemolymphopodaHeadArmorModel::createHeadLayer);
 
 		event.registerLayerDefinition(BloodLustArmorModel.BLOOD_LUST_HEAD_LAYER,
 				() -> BloodLustArmorModel.createHeadLayer(EquipmentSlot.HEAD, EnumBloodLustMaskTypes.NONE));

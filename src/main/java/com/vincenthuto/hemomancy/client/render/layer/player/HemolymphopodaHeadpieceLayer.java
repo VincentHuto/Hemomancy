@@ -38,8 +38,10 @@ public class HemolymphopodaHeadpieceLayer<T extends LivingEntity, M extends Huma
 
 		poseStack.pushPose();
 		this.getParentModel().head.translateAndRotate(poseStack);
-		poseStack.translate(0.0F, -0.22F, 0.0F);
-		poseStack.scale(0.08F, -0.08F, -0.08F);
+		// ty = -1.1 places the crab's underside (model Y=24) at the player's head top.
+		// Positive scale (no Y/Z flip) keeps the crab right-side up with shell facing up.
+		poseStack.translate(0.0F, -1.1F, 0.0F);
+		poseStack.scale(0.4F, 0.4F, 0.4F);
 		VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(TEXTURE));
 		CACHED_MODEL.get().renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 		poseStack.popPose();
