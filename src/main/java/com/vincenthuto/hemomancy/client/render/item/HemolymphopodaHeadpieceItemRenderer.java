@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.HemolymphopodaModel;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,16 +21,23 @@ public class HemolymphopodaHeadpieceItemRenderer extends BlockEntityWithoutLevel
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/hemolymphopoda/model_hemolymphopoda.png");
 
-	private final HemolymphopodaModel<?> model;
+	private HemolymphopodaModel<?> model;
 
 	public HemolymphopodaHeadpieceItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
-		this.model = new HemolymphopodaModel<>(modelSet.bakeLayer(HemolymphopodaModel.LAYER_LOCATION));
+		if (modelSet != null) {
+			this.model = new HemolymphopodaModel<>(modelSet.bakeLayer(HemolymphopodaModel.LAYER_LOCATION));
+		}
 	}
 
 	@Override
 	public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource buffer,
 			int light, int overlay) {
+		if (this.model == null) {
+			this.model = new HemolymphopodaModel<>(
+					Minecraft.getInstance().getEntityModels().bakeLayer(HemolymphopodaModel.LAYER_LOCATION));
+		}
+
 		poseStack.pushPose();
 
 		switch (context) {

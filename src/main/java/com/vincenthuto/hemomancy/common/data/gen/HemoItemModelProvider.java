@@ -65,6 +65,9 @@ public class HemoItemModelProvider extends ItemModelProvider {
 						.parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
 						.texture("layer0", modLoc("item/memories/memory_blank"))
 						.texture("layer1", modLoc("item/memories/" + itemPath + "_overlay"));
+			} else if (item.get() == ItemInit.hemolymphopoda_headpiece.get()) {
+				getBuilder("hemolymphopoda_headpiece")
+						.parent(new ModelFile.UncheckedModelFile("builtin/entity"));
 			} else {
 				basicItem(item.get());
 			}

@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import com.vincenthuto.hemomancy.client.render.item.HemolymphopodaHeadpieceItemRenderer;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -25,12 +24,17 @@ public class HemolymphopodaHeadpieceArmorItem extends ArmorItem {
 
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		Minecraft minecraft = Minecraft.getInstance();
 		consumer.accept(new IClientItemExtensions() {
+			private BlockEntityWithoutLevelRenderer renderer;
+
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return new HemolymphopodaHeadpieceItemRenderer(minecraft.getBlockEntityRenderDispatcher(),
-						minecraft.getEntityModels());
+				if (renderer == null) {
+					net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+					renderer = new HemolymphopodaHeadpieceItemRenderer(
+							minecraft.getBlockEntityRenderDispatcher(), minecraft.getEntityModels());
+				}
+				return renderer;
 			}
 		});
 	}

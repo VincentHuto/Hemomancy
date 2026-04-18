@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "hemomancy:item/chitinous_husk"
-  }
+  "parent": "builtin/entity"
 }
