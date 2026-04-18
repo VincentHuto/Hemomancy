@@ -259,6 +259,10 @@ public class BlockInit {
 			() -> new FlowerPotBlock(() -> ((FlowerPotBlock) Blocks.FLOWER_POT), BlockInit.stinkhorn_fungus,
 					BlockBehaviour.Properties.of().noCollission()));
 
+	public static final RegistryObject<Block> devils_tooth = CROSSBLOCKS.register("devils_tooth",
+			() -> new DevilsToothBlock(MobEffects.CONFUSION, 12,
+					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS)));
+
 	public static final RegistryObject<Block> lethean_poppy = CROSSBLOCKS.register("lethean_poppy",
 			() -> new LetheanPoppyBlock(MobEffects.REGENERATION, 8,
 					BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.GRASS).randomTicks()));

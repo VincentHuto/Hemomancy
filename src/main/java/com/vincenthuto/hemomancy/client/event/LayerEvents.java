@@ -33,6 +33,7 @@ import com.vincenthuto.hemomancy.client.model.entity.mob.monster.Erythromycelium
 import com.vincenthuto.hemomancy.client.model.entity.mob.monster.FargoneModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.arthropod.FerventChitiniteModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.FunglingModel;
+import com.vincenthuto.hemomancy.client.model.entity.mob.animal.ToothPecksModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.aquatic.HemolymphopodaModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LeechModel;
 import com.vincenthuto.hemomancy.client.model.entity.mob.animal.LumpOfThoughtModel;
@@ -148,6 +149,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(FargoneModel.LAYER_LOCATION, FargoneModel::createBodyLayer);
 		event.registerLayerDefinition(FunglingModel.LAYER_LOCATION, FunglingModel::createBodyLayer);
 		event.registerLayerDefinition(LeechModel.LAYER_LOCATION, LeechModel::createBodyLayer);
+		event.registerLayerDefinition(ToothPecksModel.LAYER_LOCATION, ToothPecksModel::createBodyLayer);
 		event.registerLayerDefinition(LumpOfThoughtModel.LAYER_LOCATION, LumpOfThoughtModel::createBodyLayer);
 		event.registerLayerDefinition(BloodDrunkPuppeteerModel.LAYER_LOCATION,
 				BloodDrunkPuppeteerModel::createbodyLayer);
