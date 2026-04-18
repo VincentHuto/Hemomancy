@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.client.render.tile.functional;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.functional.HarbingerSaintSarcophagus;
+import com.vincenthuto.hemomancy.client.model.tile.functional.HarbingerSaintSarcophagusModel;
 import com.vincenthuto.hemomancy.common.tile.functional.SaintSarcophagusBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -22,10 +22,10 @@ public class SaintSarcophagusRenderer implements BlockEntityRenderer<SaintSarcop
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_saint_sarcophagus.png");
 
-	private final HarbingerSaintSarcophagus model;
+	private final HarbingerSaintSarcophagusModel model;
 
 	public SaintSarcophagusRenderer(BlockEntityRendererProvider.Context context) {
-		this.model = new HarbingerSaintSarcophagus(context.bakeLayer(HarbingerSaintSarcophagus.LAYER_LOCATION));
+		this.model = new HarbingerSaintSarcophagusModel(context.bakeLayer(HarbingerSaintSarcophagusModel.LAYER_LOCATION));
 	}
 
 	@Override

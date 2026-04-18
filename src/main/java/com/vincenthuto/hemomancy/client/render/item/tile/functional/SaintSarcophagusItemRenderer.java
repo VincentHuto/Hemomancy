@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
-import com.vincenthuto.hemomancy.client.model.tile.functional.HarbingerSaintSarcophagus;
+import com.vincenthuto.hemomancy.client.model.tile.functional.HarbingerSaintSarcophagusModel;
 import com.vincenthuto.hutoslib.math.Quaternion;
 import com.vincenthuto.hutoslib.math.Vector3;
 
@@ -25,13 +25,13 @@ public class SaintSarcophagusItemRenderer extends BlockEntityWithoutLevelRendere
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Hemomancy.MOD_ID,
 			"textures/entity/model_saint_sarcophagus.png");
 
-	private HarbingerSaintSarcophagus model;
+	private HarbingerSaintSarcophagusModel model;
 
 	public SaintSarcophagusItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet) {
 		super(dispatcher, modelSet);
 		if (modelSet != null) {
-			this.model = new HarbingerSaintSarcophagus(
-					modelSet.bakeLayer(HarbingerSaintSarcophagus.LAYER_LOCATION));
+			this.model = new HarbingerSaintSarcophagusModel(
+					modelSet.bakeLayer(HarbingerSaintSarcophagusModel.LAYER_LOCATION));
 		}
 	}
 
@@ -41,8 +41,8 @@ public class SaintSarcophagusItemRenderer extends BlockEntityWithoutLevelRendere
 
 		if (this.model == null) {
 			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
-			this.model = new HarbingerSaintSarcophagus(
-					modelSet.bakeLayer(HarbingerSaintSarcophagus.LAYER_LOCATION));
+			this.model = new HarbingerSaintSarcophagusModel(
+					modelSet.bakeLayer(HarbingerSaintSarcophagusModel.LAYER_LOCATION));
 		}
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

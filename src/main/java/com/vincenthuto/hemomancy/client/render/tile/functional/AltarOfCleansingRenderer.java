@@ -58,10 +58,10 @@ public class AltarOfCleansingRenderer implements BlockEntityRenderer<AltarOfClea
 		// Rotate the model based on the block's facing direction
 		Direction facing = te.getBlockState().getValue(FACING);
 		float yRot = switch (facing) {
-			case NORTH -> 0f;
-			case EAST -> 90f;
-			case SOUTH -> 180f;
-			case WEST -> 270f;
+			case NORTH -> 180f;
+			case EAST -> 270f;
+			case SOUTH -> 0f;
+			case WEST -> 90f;
 			default -> 0f;
 		};
 

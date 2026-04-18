@@ -61,23 +61,45 @@ public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING
 private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 14, 16);
 
 /**
- * Filler offsets for a 2x3x2 multiblock structure.
- * The main block is at (0,0,0). Fillers cover:
- * - one block on each axis to form a 2-wide, 3-tall, 2-deep structure.
+ * Base filler offsets defined for SOUTH facing.
+ * 1-wide (X: 0), 3-deep (Z: -1,0,1), 2-tall (Y: 0,1).
+ * These get rotated based on the block's actual facing direction.
  */
-private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
-		new BlockPos(1, 0, 0),
-		new BlockPos(0, 0, 1),
-		new BlockPos(1, 0, 1),
-		new BlockPos(0, 1, 0),
-		new BlockPos(1, 1, 0),
-		new BlockPos(0, 1, 1),
-		new BlockPos(1, 1, 1),
-		new BlockPos(0, 2, 0),
-		new BlockPos(1, 2, 0),
-		new BlockPos(0, 2, 1),
-		new BlockPos(1, 2, 1),
+private static final BlockPos[] BASE_FILLER_OFFSETS = new BlockPos[] {
+		// Y=0 layer (excluding origin 0,0,0)
+		new BlockPos(0, 0, -1),
+		new BlockPos(0, 0,  1),
+		// Y=1 layer
+		new BlockPos(0, 1, -1),
+		new BlockPos(0, 1,  0),
+		new BlockPos(0, 1,  1),
 };
+
+/**
+ * Rotates a base offset (defined for SOUTH) to the given facing direction.
+ */
+private static BlockPos rotateOffset(BlockPos offset, Direction facing) {
+	int x = offset.getX();
+	int z = offset.getZ();
+	return switch (facing) {
+		case SOUTH -> offset;                                    // base direction
+		case NORTH -> new BlockPos(-x, offset.getY(), -z);
+		case WEST  -> new BlockPos( z, offset.getY(), -x);
+		case EAST  -> new BlockPos(-z, offset.getY(),  x);
+		default    -> offset;
+	};
+}
+
+/**
+ * Returns the filler offsets rotated for the given facing direction.
+ */
+private static BlockPos[] getRotatedOffsets(Direction facing) {
+	BlockPos[] rotated = new BlockPos[BASE_FILLER_OFFSETS.length];
+	for (int i = 0; i < BASE_FILLER_OFFSETS.length; i++) {
+		rotated[i] = rotateOffset(BASE_FILLER_OFFSETS[i], facing);
+	}
+	return rotated;
+}
 
 public SaintSarcophagusBlock(Properties properties) {
 super(properties);
@@ -86,7 +108,60 @@ this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.
 
 @Override
 public BlockPos[] getFillerOffsets() {
-	return FILLER_OFFSETS;
+	// Fallback — prefer the facing-aware overrides below
+	return BASE_FILLER_OFFSETS;
+}
+
+@Override
+public void placeFillers(Level level, BlockPos mainPos, BlockState mainState) {
+	Direction facing = mainState.getValue(FACING);
+	for (BlockPos offset : getRotatedOffsets(facing)) {
+		BlockPos fillerPos = mainPos.offset(offset);
+		level.setBlockAndUpdate(fillerPos, com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get().defaultBlockState());
+		BlockEntity be = level.getBlockEntity(fillerPos);
+		if (be instanceof com.vincenthuto.hemomancy.common.tile.FillerBlockEntity filler) {
+			filler.setMainBlockPos(mainPos);
+		}
+	}
+}
+
+@Override
+public void removeFillers(Level level, BlockPos mainPos) {
+	// Try all 4 rotations to ensure cleanup works even if state is gone
+	for (Direction dir : Direction.Plane.HORIZONTAL) {
+		for (BlockPos offset : getRotatedOffsets(dir)) {
+			BlockPos fillerPos = mainPos.offset(offset);
+			if (level.getBlockState(fillerPos).is(com.vincenthuto.hemomancy.common.init.BlockInit.filler_block.get())) {
+				level.removeBlock(fillerPos, false);
+			}
+		}
+	}
+}
+
+@Override
+public boolean canPlaceMultiBlock(Level level, BlockPos mainPos) {
+	// We don't know the facing yet at canPlace time, so we check from getStateForPlacement
+	// This default checks the SOUTH orientation as a fallback
+	for (BlockPos offset : BASE_FILLER_OFFSETS) {
+		BlockPos fillerPos = mainPos.offset(offset);
+		if (!level.getBlockState(fillerPos).canBeReplaced()) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Facing-aware placement check.
+ */
+private boolean canPlaceMultiBlock(Level level, BlockPos mainPos, Direction facing) {
+	for (BlockPos offset : getRotatedOffsets(facing)) {
+		BlockPos fillerPos = mainPos.offset(offset);
+		if (!level.getBlockState(fillerPos).canBeReplaced()) {
+			return false;
+		}
+	}
+	return true;
 }
 
 @Override
@@ -123,8 +198,9 @@ return SHAPE;
 public BlockState getStateForPlacement(BlockPlaceContext context) {
 BlockPos pos = context.getClickedPos();
 Level level = (Level) context.getLevel();
-if (pos.getY() + 2 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos)) {
-	return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+Direction facing = context.getHorizontalDirection().getOpposite();
+if (pos.getY() + 1 <= level.getMaxBuildHeight() && canPlaceMultiBlock(level, pos, facing)) {
+	return this.defaultBlockState().setValue(FACING, facing);
 }
 return null;
 }

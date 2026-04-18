@@ -59,12 +59,12 @@ public class AltarOfCleansingItemRenderer extends BlockEntityWithoutLevelRendere
 
 		if (isGui) {
 			// ── GUI / inventory slot ──
-			poseStack.translate(0.5, 0.85, 0.5);
-			poseStack.scale(0.3f, 0.3f, 0.3f);
+			poseStack.translate(0.5, 1, 0.5);
+			poseStack.scale(0.4f, 0.4f, 0.4f);
 			// Flip Y-down → Y-up (Blockbench convention)
 			poseStack.mulPose(new Quaternion(Vector3.XP, 180, true).toMoj());
 			// Isometric-ish viewing angle
-			poseStack.mulPose(new Quaternion(Vector3.YN, 45, true).toMoj());
+			poseStack.mulPose(new Quaternion(Vector3.YP, 130, true).toMoj());
 		} else if (displayContext == ItemDisplayContext.FIXED) {
 			// ── Item frame ──
 			poseStack.translate(0.5, 0.5, 0.5);
