@@ -93,12 +93,12 @@ public class UnstainedProgress implements IUnstainedProgress {
 
     @Override
     public float getSilverWardStrength() {
-        return silverWardEnabled ? purity / 100.0f : 0.0f;
+        return silverWardEnabled ? clarity / 100.0f : 0.0f;
     }
 
     @Override
     public float getVerdigrisAura() {
-        return verdigrisAuraEnabled ? clarity / 100.0f : 0.0f;
+        return verdigrisAuraEnabled ? purity / 100.0f : 0.0f;
     }
 
     @Override

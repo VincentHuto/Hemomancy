@@ -24,18 +24,18 @@ import net.minecraftforge.fml.common.Mod;
  *
  * <h3>Purity Stage Rewards</h3>
  * <ul>
- *   <li><b>TAINTED (25):</b> Silver Ward auto-applied while enabled (amplifier 0)</li>
- *   <li><b>CLEANSING (50):</b> Silver Ward amplifier 1 + night vision near Pallid Lanterns</li>
- *   <li><b>ABSOLVED (75):</b> Silver Ward amplifier 2 + bonus damage to hemomancy mobs</li>
- *   <li><b>PURIFIED (100):</b> Silver Ward amplifier 3 (full protection)</li>
+ *   <li><b>TAINTED (25):</b> Verdigris Aura auto-applied while enabled (amplifier 0)</li>
+ *   <li><b>CLEANSING (50):</b> Verdigris Aura amplifier 1 + night vision near Pallid Lanterns</li>
+ *   <li><b>ABSOLVED (75):</b> Verdigris Aura amplifier 2 + bonus damage to hemomancy mobs</li>
+ *   <li><b>PURIFIED (100):</b> Verdigris Aura amplifier 3 (maximum field radius)</li>
  * </ul>
  *
  * <h3>Clarity Stage Rewards</h3>
  * <ul>
- *   <li><b>DISCERNING (25):</b> Verdigris Aura auto-applied while enabled (amplifier 0)</li>
- *   <li><b>VIGILANT (50):</b> Verdigris Aura amplifier 1 + glowing on hemomancy mobs</li>
- *   <li><b>RESOLUTE (75):</b> Verdigris Aura amplifier 2</li>
- *   <li><b>ENLIGHTENED (100):</b> Verdigris Aura amplifier 3 (maximum field radius)</li>
+ *   <li><b>DISCERNING (25):</b> Silver Ward auto-applied while enabled (amplifier 0)</li>
+ *   <li><b>VIGILANT (50):</b> Silver Ward amplifier 1 + glowing on hemomancy mobs</li>
+ *   <li><b>RESOLUTE (75):</b> Silver Ward amplifier 2</li>
+ *   <li><b>ENLIGHTENED (100):</b> Silver Ward amplifier 3 (full protection)</li>
  * </ul>
  *
  * <h3>Silver Ward Damage Reduction</h3>
@@ -84,25 +84,25 @@ public class UnstainedMilestoneHandler {
 				checkClarityStageAdvancements(serverPlayer, clarityStage);
 			}
 
-			// ── Silver Ward: unlocked at TAINTED (25+), amplifier scales with stage ──
-			if (progress.isSilverWardEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
-				int wardAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
+			// ── Verdigris Aura: unlocked at TAINTED (25+), amplifier scales with purity stage ──
+			if (progress.isVerdigrisAuraEnabled() && purityStage.getLevel() >= EnumPurityStage.TAINTED.getLevel()) {
+				int auraAmplifier = purityStage.getLevel() - 1; // 0 at TAINTED, 1 at CLEANSING, 2 at ABSOLVED, 3 at PURIFIED
 				// Only refresh if no existing effect or existing effect is weaker
-				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward.get());
-				if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
-					serverPlayer.addEffect(new MobEffectInstance(
-							EffectInit.silver_ward.get(), AUTO_EFFECT_DURATION, wardAmplifier, false, false, true));
-				}
-			}
-
-			// ── Verdigris Aura: unlocked at DISCERNING clarity (25+) ──
-			if (progress.isVerdigrisAuraEnabled() && progress.hasClarityUnlocked()
-					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
-				int auraAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
 				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.verdigris_aura.get());
 				if (existing == null || existing.getAmplifier() < auraAmplifier || existing.getDuration() < 40) {
 					serverPlayer.addEffect(new MobEffectInstance(
 							EffectInit.verdigris_aura.get(), AUTO_EFFECT_DURATION, auraAmplifier, false, false, true));
+				}
+			}
+
+			// ── Silver Ward: unlocked at DISCERNING clarity (25+), amplifier scales with clarity stage ──
+			if (progress.isSilverWardEnabled() && progress.hasClarityUnlocked()
+					&& clarityStage.getLevel() >= EnumClarityStage.DISCERNING.getLevel()) {
+				int wardAmplifier = clarityStage.getLevel() - 1; // 0 at DISCERNING, 1 at VIGILANT, 2 at RESOLUTE, 3 at ENLIGHTENED
+				MobEffectInstance existing = serverPlayer.getEffect(EffectInit.silver_ward.get());
+				if (existing == null || existing.getAmplifier() < wardAmplifier || existing.getDuration() < 40) {
+					serverPlayer.addEffect(new MobEffectInstance(
+							EffectInit.silver_ward.get(), AUTO_EFFECT_DURATION, wardAmplifier, false, false, true));
 				}
 			}
 
