@@ -9,6 +9,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketCurvedHornAnimation;
 import com.vincenthuto.hemomancy.common.network.capa.PacketGourdScarSync;
 import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.network.capa.PacketLedgerAction;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
@@ -323,6 +324,11 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(VisceralMirrorUpdatePacket.class, networkID++)
 				.decoder(VisceralMirrorUpdatePacket::decode).encoder(VisceralMirrorUpdatePacket::encode)
 				.consumerNetworkThread(VisceralMirrorUpdatePacket::handle).add();
+
+		// Ledger action packet (client → server: summon NPCs, recall to lodge, set recall point)
+		CHANNELBLOODVOLUME.messageBuilder(PacketLedgerAction.class, networkID++)
+				.decoder(PacketLedgerAction::decode).encoder(PacketLedgerAction::encode)
+				.consumerNetworkThread(PacketLedgerAction::handle).add();
 
 	}
 
