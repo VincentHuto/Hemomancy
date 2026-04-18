@@ -1,0 +1,21 @@
+{
+  "type": "hemomancy:blood_structure_recipe",
+  "bloodCost": 175,
+  "heldItem": "hemomancy:sanguine_formation",
+  "hitBlock": "hemomancy:conscious_mass",
+  "pattern": [
+    ["PSP", "SIS", "PSP"],
+    ["SIS", "ICI", "SIS"],
+    ["PGP", "GIG", "PGP"]
+  ],
+  "key": {
+    "P": {"block": "hemomancy:hematic_iron_pillar"},
+    "S": {"block": "hemomancy:polished_venous_stone"},
+    "I": {"block": "hemomancy:hematic_iron_block"},
+    "C": {"block": "hemomancy:conscious_mass"},
+    "G": {"block": "hemomancy:sanguine_glass"}
+  },
+  "result": {
+    "item": "hemomancy:sanguine_monolith"
+  }
+}
