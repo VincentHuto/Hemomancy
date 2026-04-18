@@ -372,70 +372,52 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	 * orange traces the NE/SE/SW/NW axis-aligned square + X diagonals.
 	 * Both layers pulse and fade independently.
 	 */
+	/**
+	 * Renders a regular {8/3} octagram on the back face: 8 vertices equally spaced
+	 * on a circle, each connected to the vertex 3 steps away (skip-2). Even-indexed
+	 * chords are dark red, odd-indexed chords are orange — matching the two
+	 * interlocking tetragram halves of the reference image. Both colour groups pulse
+	 * independently.
+	 */
 	private void renderBackSymbol(PoseStack ms, MultiBufferSource bufferIn, float time) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 		Matrix4f mat = ms.last().pose();
 
-		float cz = -0.252f; // back face
-		float cy  = 1.0f;   // vertical centre of the 2-block face
-		float R   = 0.390f;
-		float sq  = R * 0.7071f; // R/√2 — offset for 45° tips
+		float cz = -0.252f; // back face (+z = front, -z = back in Pass-2 space)
+		float cy = 1.0f;    // vertical centre of the 2-block face
+		float R  = 0.400f;
 
-		// 8 outer tip coordinates
-		float nx  = 0,     ny  = cy + R;    // N
-		float ex  = R,     ey  = cy;        // E
-		float sx  = 0,     sy  = cy - R;    // S
-		float wx  = -R,    wy  = cy;        // W
-		float nex = sq,    ney = cy + sq;   // NE
-		float sex = sq,    sey = cy - sq;   // SE
-		float swx = -sq,   swy = cy - sq;   // SW
-		float nwx = -sq,   nwy = cy + sq;   // NW
+		// 8 octagon vertices, starting from N and going clockwise
+		float[] vx = new float[8];
+		float[] vy = new float[8];
+		for (int i = 0; i < 8; i++) {
+			double a = Math.PI / 2.0 - i * Math.PI / 4.0; // 90° - i*45°, CW from top
+			vx[i] = (float)(R * Math.cos(a));
+			vy[i] = cy + (float)(R * Math.sin(a));
+		}
 
-		// Independent slow pulses for each colour
+		int drR = 175, drG = 22, drB = 22;   // dark red  (even chords)
+		int orR = 228, orG = 115, orB = 20;  // orange    (odd chords)
+
 		float pulDR = 0.50f + 0.50f * Mth.sin(time * 0.022f);
 		float pulOR = 0.50f + 0.50f * Mth.sin(time * 0.022f + 1.5f);
 
-		int drR = 175, drG = 22, drB = 22;    // dark red
-		int orR = 228, orG = 115, orB = 20;   // orange
+		float lw = 0.009f;  // core half-width
+		float gw = 0.020f;  // glow half-width
+		float czo = cz - 0.001f; // core lines slightly in front of glow layer
 
-		int drA  = (int)(210 * pulDR);
-		int orA  = (int)(210 * pulOR);
-		int drAg = (int)( 55 * pulDR);  // diffuse glow alpha
-		int orAg = (int)( 55 * pulOR);
-
-		float lw = 0.009f;   // line half-width
-		float gw = 0.020f;   // glow half-width
-		float czo = cz - 0.001f; // core lines sit slightly in front of glow
-
-		// ── Glow pass (wider, low alpha) ──
-		drawLine(mat, vc, nx,  ny,  ex,  ey,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, ex,  ey,  sx,  sy,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, sx,  sy,  wx,  wy,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, wx,  wy,  nx,  ny,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, nx,  ny,  sx,  sy,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, ex,  ey,  wx,  wy,  cz,  gw, drR, drG, drB, drAg);
-		drawLine(mat, vc, nex, ney, sex, sey, cz,  gw, orR, orG, orB, orAg);
-		drawLine(mat, vc, sex, sey, swx, swy, cz,  gw, orR, orG, orB, orAg);
-		drawLine(mat, vc, swx, swy, nwx, nwy, cz,  gw, orR, orG, orB, orAg);
-		drawLine(mat, vc, nwx, nwy, nex, ney, cz,  gw, orR, orG, orB, orAg);
-		drawLine(mat, vc, nex, ney, swx, swy, cz,  gw, orR, orG, orB, orAg);
-		drawLine(mat, vc, nwx, nwy, sex, sey, cz,  gw, orR, orG, orB, orAg);
-
-		// ── Core lines ──
-		// Dark red: diamond (N-E-S-W) + cross through centre
-		drawLine(mat, vc, nx,  ny,  ex,  ey,  czo, lw, drR, drG, drB, drA);
-		drawLine(mat, vc, ex,  ey,  sx,  sy,  czo, lw, drR, drG, drB, drA);
-		drawLine(mat, vc, sx,  sy,  wx,  wy,  czo, lw, drR, drG, drB, drA);
-		drawLine(mat, vc, wx,  wy,  nx,  ny,  czo, lw, drR, drG, drB, drA);
-		drawLine(mat, vc, nx,  ny,  sx,  sy,  czo, lw, drR, drG, drB, drA);
-		drawLine(mat, vc, ex,  ey,  wx,  wy,  czo, lw, drR, drG, drB, drA);
-		// Orange: axis-aligned square (NE-SE-SW-NW) + diagonal X
-		drawLine(mat, vc, nex, ney, sex, sey, czo, lw, orR, orG, orB, orA);
-		drawLine(mat, vc, sex, sey, swx, swy, czo, lw, orR, orG, orB, orA);
-		drawLine(mat, vc, swx, swy, nwx, nwy, czo, lw, orR, orG, orB, orA);
-		drawLine(mat, vc, nwx, nwy, nex, ney, czo, lw, orR, orG, orB, orA);
-		drawLine(mat, vc, nex, ney, swx, swy, czo, lw, orR, orG, orB, orA);
-		drawLine(mat, vc, nwx, nwy, sex, sey, czo, lw, orR, orG, orB, orA);
+		// Draw all 8 {8/3} chords: vertex k → vertex (k+3) mod 8
+		for (int k = 0; k < 8; k++) {
+			int j = (k + 3) % 8;
+			boolean even = (k % 2 == 0);
+			int r  = even ? drR : orR;
+			int g  = even ? drG : orG;
+			int b  = even ? drB : orB;
+			int a  = (int)(210 * (even ? pulDR : pulOR));
+			int ag = (int)( 60 * (even ? pulDR : pulOR));
+			drawLine(mat, vc, vx[k], vy[k], vx[j], vy[j], cz,  gw, r, g, b, ag);
+			drawLine(mat, vc, vx[k], vy[k], vx[j], vy[j], czo, lw, r, g, b, a);
+		}
 	}
 
 	/** Draws a thin rectangle (ribbon) between two points, for crisp line rendering. */
