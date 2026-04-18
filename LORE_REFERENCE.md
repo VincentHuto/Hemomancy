@@ -30,7 +30,7 @@
 
 ## 1. World Overview & Timeline
 
-Hemomancy is set in the Minecraft world at approximately **1500 CE** by real-world reckoning — the late Middle Ages, a time when full plate armor was common, the first cannons existed, and the world still held a great many mysteries.
+Hemomancy is set in the Minecraft world at approximately **1500 CE** by real-world reckoning — the cusp of the Late Medieval and Early Modern period, a time when full plate armor was common, the first cannons existed, alchemy was a serious pursuit, and the world still held a great many mysteries.
 
 The **Erythrocytic Mycelium** (blood-cell fungus) has been a part of this world for roughly **800 years**, originating around 700–900 CE. To the common folk of the world it is simply another piece of nature — strange, somewhat unsettling, but no more remarkable than any other dangerous wilderness. It does not spread rapidly or uncontrollably. It does not devour the world. Entire regions bear no trace of it. Those who encounter it are more likely to find it merely eerie than genuinely threatening.
 
