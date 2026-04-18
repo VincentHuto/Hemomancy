@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.entity.mob.animal;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
-import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hemomancy.common.init.SoundInit;
 
@@ -37,10 +36,13 @@ import net.minecraftforge.network.NetworkHooks;
 
 public class ToothPecksEntity extends PathfinderMob {
 
+    public static final int MAX_FEED_COUNT = 5;
+
     private static final EntityDataAccessor<Boolean> LATCHED =
             SynchedEntityData.defineId(ToothPecksEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> FEED_COUNT =
+            SynchedEntityData.defineId(ToothPecksEntity.class, EntityDataSerializers.INT);
 
-    // Ticks to count down before detaching after taking a hit while latched
     private int detachHits = 0;
     private static final int HITS_TO_DETACH = 3;
 
@@ -61,6 +63,7 @@ public class ToothPecksEntity extends PathfinderMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(LATCHED, false);
+        this.entityData.define(FEED_COUNT, 0);
     }
 
     public boolean isLatched() {
@@ -69,6 +72,14 @@ public class ToothPecksEntity extends PathfinderMob {
 
     private void setLatched(boolean latched) {
         this.entityData.set(LATCHED, latched);
+    }
+
+    public int getFeedCount() {
+        return this.entityData.get(FEED_COUNT);
+    }
+
+    private void setFeedCount(int count) {
+        this.entityData.set(FEED_COUNT, Math.min(count, MAX_FEED_COUNT));
     }
 
     @Override
@@ -87,17 +98,17 @@ public class ToothPecksEntity extends PathfinderMob {
         super.tick();
         if (!level().isClientSide && isLatched()) {
             if (getTarget() instanceof Player player && player.isAlive()) {
-                // Cling to the player's position
                 Vec3 pp = player.position();
                 this.setPos(pp.x + 0.35, pp.y + 0.3, pp.z + 0.1);
                 this.setDeltaMovement(Vec3.ZERO);
 
-                // Drain blood and deal bite damage every 40 ticks
                 if (tickCount % 40 == 0) {
                     player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(v -> v.addDamage(1.0));
                     player.addEffect(new MobEffectInstance(EffectInit.blood_loss.get(), 100, 0));
                     player.hurt(player.damageSources().mobAttack(this), 0.5f);
                     playSound(SoundInit.ENTITY_TOOTH_PECKS_AMBIENT.get(), 0.4F, 1.0F + random.nextFloat() * 0.2F);
+                    // Grow redder and larger with each feed
+                    setFeedCount(getFeedCount() + 1);
                 }
             } else {
                 setLatched(false);
@@ -113,7 +124,6 @@ public class ToothPecksEntity extends PathfinderMob {
             if (detachHits >= HITS_TO_DETACH) {
                 setLatched(false);
                 detachHits = 0;
-                // Briefly slow the creature so the player can finish it off
                 this.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1));
             }
         }
@@ -131,6 +141,7 @@ public class ToothPecksEntity extends PathfinderMob {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Latched", isLatched());
         tag.putInt("DetachHits", detachHits);
+        tag.putInt("FeedCount", getFeedCount());
     }
 
     @Override
@@ -138,6 +149,7 @@ public class ToothPecksEntity extends PathfinderMob {
         super.readAdditionalSaveData(tag);
         setLatched(tag.getBoolean("Latched"));
         detachHits = tag.getInt("DetachHits");
+        setFeedCount(tag.getInt("FeedCount"));
     }
 
     @Override
@@ -183,7 +195,7 @@ public class ToothPecksEntity extends PathfinderMob {
             Player nearest = mob.level().getNearestPlayer(mob, 6.0);
             if (nearest == null || !nearest.isAlive()) return false;
             target = nearest;
-            return mob.distanceToSqr(nearest) < 2.25; // within 1.5 blocks
+            return mob.distanceToSqr(nearest) < 2.25;
         }
 
         @Override
@@ -206,8 +218,6 @@ public class ToothPecksEntity extends PathfinderMob {
         }
 
         @Override
-        public void tick() {
-            // Position/drain handled in entity tick()
-        }
+        public void tick() { }
     }
 }
