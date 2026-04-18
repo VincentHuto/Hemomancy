@@ -25,11 +25,12 @@ public class HemolymphopodaHeadpieceArmorItem extends ArmorItem {
 
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		Minecraft minecraft = Minecraft.getInstance();
 		consumer.accept(new IClientItemExtensions() {
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return new HemolymphopodaHeadpieceItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
-						Minecraft.getInstance().getEntityModels());
+				return new HemolymphopodaHeadpieceItemRenderer(minecraft.getBlockEntityRenderDispatcher(),
+						minecraft.getEntityModels());
 			}
 		});
 	}
