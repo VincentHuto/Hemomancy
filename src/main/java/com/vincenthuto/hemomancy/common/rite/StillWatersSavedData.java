@@ -15,7 +15,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 /**
  * World-level persistence for active Still Waters zones established by the
- * Rite of Still Waters. Each entry tracks the caster, zone centre, dimension,
+ * Rite of Still Waters. Each entry tracks the caster, zone center, dimension,
  * and the game-tick at which the zone expires.
  * <p>
  * While a Still Waters zone is active, players within it take 30% less magic
@@ -104,7 +104,7 @@ public class StillWatersSavedData extends SavedData {
 	 * A single Still Waters zone entry.
 	 *
 	 * @param ownerUUID   UUID of the player who cast the rite
-	 * @param center      centre block position
+	 * @param center      center block position
 	 * @param dimension   dimension registry-key string
 	 * @param blockRadius zone radius in blocks
 	 * @param expiryTick  world game-tick at which this entry expires

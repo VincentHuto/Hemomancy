@@ -16,7 +16,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 /**
  * World-level persistence for active Lethe Covenant domains established by
  * the Rite of the Lethe Covenant.  Each entry tracks the caster, domain
- * centre, dimension, chunk radius, and expiry tick.
+ * center, dimension, chunk radius, and expiry tick.
  * <p>
  * While a domain is active:
  * <ul>
@@ -107,7 +107,7 @@ public class LetheCovenantSavedData extends SavedData {
 	 * A single Lethe Covenant domain entry.
 	 *
 	 * @param ownerUUID   UUID of the player who cast the rite
-	 * @param center      centre block position
+	 * @param center      center block position
 	 * @param dimension   dimension registry-key string
 	 * @param chunkRadius radius in chunks
 	 * @param expiryTick  world game-tick at which this entry expires

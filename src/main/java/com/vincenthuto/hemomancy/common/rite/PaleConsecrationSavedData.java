@@ -15,7 +15,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 /**
  * World-level persistence for active Pale Consecration zones established by
- * the Rite of Pale Consecration. Each entry tracks the caster, zone centre,
+ * the Rite of Pale Consecration. Each entry tracks the caster, zone center,
  * dimension, radius, and expiry tick.
  * <p>
  * While active, hostile mobs inside the zone periodically take 1 damage and
@@ -102,7 +102,7 @@ public class PaleConsecrationSavedData extends SavedData {
 	 * A single Pale Consecration zone entry.
 	 *
 	 * @param ownerUUID   UUID of the player who cast the rite
-	 * @param center      centre block position
+	 * @param center      center block position
 	 * @param dimension   dimension registry-key string
 	 * @param blockRadius zone radius in blocks
 	 * @param expiryTick  world game-tick at which this entry expires
