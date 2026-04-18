@@ -1112,7 +1112,7 @@ public class CardinalRiteEvents {
 		}
 
 		CrimsonLodgeSavedData.LodgeEntry entry = new CrimsonLodgeSavedData.LodgeEntry(
-				caster.getUUID(), center, dimension, CRIMSON_LODGE_CHUNK_RADIUS, sLevel.getGameTime());
+				caster.getUUID(), center, dimension, CRIMSON_LODGE_CHUNK_RADIUS, sLevel.getGameTime(), center);
 		data.addLodge(entry);
 
 		int blockRadius = CRIMSON_LODGE_CHUNK_RADIUS * 16;

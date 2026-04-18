@@ -13,8 +13,10 @@ import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.rite.CrimsonLodgeEvents;
+import com.vincenthuto.hemomancy.common.rite.CrimsonLodgeSavedData;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -73,12 +75,27 @@ public class UnsignedLedgerItem extends Item {
 			IBloodVolume volume = playerIn.getCapability(BloodVolumeProvider.VOLUME_CAPA)
 					.orElseThrow(NullPointerException::new);
 
-			// Sneak-right-click on a signed ledger: summon recruited NPCs within Lodge radius
-			if (playerIn.isShiftKeyDown() && compound.getBoolean(TAG_STATE)) {
-				if (!worldIn.isClientSide) {
-					handleNpcSummon((ServerPlayer) playerIn, volume);
+			// ── Signed-ledger special actions (sneak / sprint) ──
+			if (compound.getBoolean(TAG_STATE) && !worldIn.isClientSide) {
+				ServerPlayer serverPlayer = (ServerPlayer) playerIn;
+
+				// Sprint + right-click inside own lodge = leader sets recall point
+				if (playerIn.isSprinting() && CrimsonLodgeEvents.isInCrimsonLodge(serverPlayer)) {
+					handleSetRecallPoint(serverPlayer, volume);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 				}
-				return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+
+				// Sneak + right-click: context-sensitive
+				if (playerIn.isShiftKeyDown()) {
+					if (CrimsonLodgeEvents.isInCrimsonLodge(serverPlayer)) {
+						// Inside lodge → summon recruited NPCs
+						handleNpcSummon(serverPlayer, volume);
+					} else {
+						// Outside lodge → recall to lodge
+						handleLodgeRecall(serverPlayer, volume);
+					}
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+				}
 			}
 
 			if (!compound.getBoolean(TAG_STATE)) {
@@ -201,15 +218,6 @@ public class UnsignedLedgerItem extends Item {
 			return;
 		}
 
-		// Must be within a Crimson Lodge radius
-		if (!CrimsonLodgeEvents.isInCrimsonLodge(player)) {
-			player.displayClientMessage(
-					Component.translatable("hemomancy.ledger.summon.not_in_lodge")
-							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
-					false);
-			return;
-		}
-
 		ServerLevel sLevel = (ServerLevel) player.level();
 		int summoned = 0;
 
@@ -237,6 +245,100 @@ public class UnsignedLedgerItem extends Item {
 			player.displayClientMessage(
 					Component.translatable("hemomancy.ledger.summon.already_near")
 							.withStyle(ChatFormatting.GRAY),
+					false);
+		}
+	}
+
+	/**
+	 * Teleports the player to their bloodline's Crimson Lodge recall point.
+	 * Works from anywhere — the player does not need to be inside the lodge.
+	 * The lodge must exist and the player must belong to a valid bloodline.
+	 */
+	private static void handleLodgeRecall(ServerPlayer player, IBloodVolume volume) {
+		Bloodline bloodline = volume.getBloodLine();
+
+		if (!bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.no_bloodline")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		CrimsonLodgeSavedData data = CrimsonLodgeSavedData.get(overworld);
+		CrimsonLodgeSavedData.LodgeEntry lodge = data.getLodgeForOwner(bloodline.getLeaderUUID());
+
+		if (lodge == null) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.no_lodge")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		BlockPos recall = lodge.recallPoint();
+		ServerLevel targetLevel = player.server.overworld();
+
+		// Resolve the correct dimension for the lodge
+		for (ServerLevel dim : player.server.getAllLevels()) {
+			if (dim.dimension().location().toString().equals(lodge.dimension())) {
+				targetLevel = dim;
+				break;
+			}
+		}
+
+		player.teleportTo(targetLevel,
+				recall.getX() + 0.5, recall.getY() + 1.0, recall.getZ() + 0.5,
+				player.getYRot(), player.getXRot());
+
+		targetLevel.playSound(null, recall, SoundEvents.ENDERMAN_TELEPORT,
+				SoundSource.PLAYERS, 1.0f, 0.7f);
+		player.displayClientMessage(
+				Component.translatable("hemomancy.ledger.recall.success")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+				false);
+	}
+
+	/**
+	 * Allows the bloodline leader to relocate the Crimson Lodge recall point
+	 * to their current position. The new point must be within the lodge's
+	 * radius. Only the leader may change the recall point.
+	 */
+	private static void handleSetRecallPoint(ServerPlayer player, IBloodVolume volume) {
+		Bloodline bloodline = volume.getBloodLine();
+
+		if (!bloodline.isValid()) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.no_bloodline")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		// Only the bloodline leader may change the recall point
+		if (!bloodline.getLeaderUUID().equals(player.getUUID())) {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.not_leader")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+
+		ServerLevel overworld = player.server.overworld();
+		CrimsonLodgeSavedData data = CrimsonLodgeSavedData.get(overworld);
+
+		if (data.setRecallPoint(player.getUUID(), player.blockPosition())) {
+			player.level().playSound(null, player.blockPosition(), SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
+					SoundSource.PLAYERS, 1.0f, 1.0f);
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.point_set")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
+					false);
+		} else {
+			player.displayClientMessage(
+					Component.translatable("hemomancy.ledger.recall.out_of_range")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
 		}
 	}
