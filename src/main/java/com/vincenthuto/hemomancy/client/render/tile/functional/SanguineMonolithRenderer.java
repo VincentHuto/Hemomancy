@@ -261,90 +261,96 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	// ── Eye overlay ──────────────────────────────────────────────────────────────
 
 	/**
-	 * Renders a vertically-almond-shaped blood-eye on the top half of the front face.
-	 * All layers are vertical ellipses; eyelid arcs meet at sharp horizontal corners
-	 * to form the classic almond/eye silhouette.
+	 * Renders three vertically-almond-shaped blood-eyes on the top half of the front
+	 * face: a larger centre eye flanked by two smaller side eyes, matching the
+	 * three-pupil motif from the reference art.
 	 *
-	 * cz is POSITIVE so the eye sits on the +Z local face, which is the FACING
-	 * direction after Pass 2's rotate(Y, -yRot) transform.
+	 * cz is POSITIVE — the front face is +Z in Pass-2's rotated local space.
 	 */
 	private void renderEyeOverlay(PoseStack ms, MultiBufferSource bufferIn, float time) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 		Matrix4f mat = ms.last().pose();
 
-		float cx = 0.0f;
-		float cy = 1.5f;
-		float cz = +0.252f;  // front face (+Z is the FACING direction in Pass-2 space)
+		float cz = +0.252f;
 
-		float pulse = 0.75f + 0.25f * Mth.sin(time * 0.05f);
-		float beat  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 1.2f);
+		// Each eye pulses at a slightly different phase so they feel independent
+		float pulseC = 0.75f + 0.25f * Mth.sin(time * 0.05f);
+		float beatC  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 1.2f);
+		float pulseL = 0.75f + 0.25f * Mth.sin(time * 0.05f + 1.1f);
+		float beatL  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 2.3f);
+		float pulseR = 0.75f + 0.25f * Mth.sin(time * 0.05f + 2.2f);
+		float beatR  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 0.5f);
 
-		// Ellipse semi-axes: sX (horizontal) narrower than sY (vertical) = almond
-		float glowInSX  = 0.160f, glowInSY  = 0.240f;
-		float glowOutSX = 0.215f, glowOutSY = 0.310f;
-		float sclInSX   = 0.110f, sclInSY   = 0.180f;
-		float sclOutSX  = 0.160f, sclOutSY  = 0.240f;
-		float irisSX    = 0.110f, irisSY    = 0.180f;
-		float pupilSX   = 0.050f, pupilSY   = 0.082f;
+		// Left eye — smaller, positioned lower
+		renderSingleEye(mat, vc, -0.245f, 1.35f, cz, 0.72f, time, pulseL, beatL);
+		// Centre eye — largest, slightly higher
+		renderSingleEye(mat, vc,  0.000f, 1.42f, cz, 0.90f, time, pulseC, beatC);
+		// Right eye — mirrors left
+		renderSingleEye(mat, vc, +0.245f, 1.35f, cz, 0.72f, time, pulseR, beatR);
+	}
 
-		// ── 1. Outer diffuse glow halo (elliptical ring) ──
+	/**
+	 * Draws one almond-shaped eye centred at (cx, cy) scaled by {@code sc}.
+	 * No sclera ring — layers: outer glow → eyelid arcs → iris → spokes → pupil → highlight.
+	 */
+	private void renderSingleEye(Matrix4f mat, VertexConsumer vc,
+			float cx, float cy, float cz, float sc,
+			float time, float pulse, float beat) {
+
+		float glowInSX  = sc * 0.120f, glowInSY  = sc * 0.185f;
+		float glowOutSX = sc * 0.165f, glowOutSY = sc * 0.245f;
+		float irisSX    = sc * 0.088f, irisSY    = sc * 0.145f;
+		float pupilSX   = sc * 0.040f, pupilSY   = sc * 0.065f;
+
+		// ── 1. Outer diffuse glow halo ──
 		drawEllipseRing(mat, vc, cx, cy, cz,
 				glowInSX, glowInSY, glowOutSX, glowOutSY,
-				180, 8, 8, (int)(38 * pulse), 28);
+				180, 8, 8, (int)(40 * pulse), 28);
 
-		// ── 2. Sclera (white elliptical ring) ──
-		drawEllipseRing(mat, vc, cx, cy, cz + 0.001f,
-				sclInSX, sclInSY, sclOutSX, sclOutSY,
-				235, 225, 220, (int)(190 * pulse), 28);
-
-		// ── 3. Eyelid arcs — almond shape with sharp corners at x = ±sclOutSX ──
-		//    ea: tall vertical semi-axis → controls how sharply the lid arches
-		//    eb: horizontal semi-axis = sclOutSX so the corners meet the iris edge
-		float lidEA = 0.295f, lidEB = sclOutSX;
-		int lidR = (int)(160 * pulse), lidG = (int)(12 * pulse), lidB2 = (int)(12 * pulse);
+		// ── 2. Eyelid arcs — almond corners meet at ±glowInSX ──
+		float lidEA = sc * 0.235f, lidEB = glowInSX;
+		int lidR = (int)(155 * pulse), lidG = (int)(10 * pulse), lidB = (int)(10 * pulse);
 		int lidAlpha = (int)(200 * pulse);
+		drawEyelidArc(mat, vc, cx, cy, cz + 0.001f,  lidEA, lidEB, 0, (float) Math.PI,
+				lidR, lidG, lidB, lidAlpha, 34);
+		drawEyelidArc(mat, vc, cx, cy, cz + 0.001f, -lidEA, lidEB, 0, (float) Math.PI,
+				lidR, lidG, lidB, lidAlpha, 34);
 
-		drawEyelidArc(mat, vc, cx, cy, cz + 0.002f,  lidEA, lidEB, 0, (float) Math.PI,
-				lidR, lidG, lidB2, lidAlpha, 36);
-		drawEyelidArc(mat, vc, cx, cy, cz + 0.002f, -lidEA, lidEB, 0, (float) Math.PI,
-				lidR, lidG, lidB2, lidAlpha, 36);
-
-		// ── 4. Red iris (filled vertical ellipse) ──
-		drawFilledEllipse(mat, vc, cx, cy, cz + 0.003f, irisSX, irisSY,
+		// ── 3. Red iris (filled vertical ellipse) ──
+		drawFilledEllipse(mat, vc, cx, cy, cz + 0.002f, irisSX, irisSY,
 				145, 8, 8, (int)(215 * pulse), 24);
 
-		// ── 5. 12 radiant spokes following the elliptical iris shape ──
-		float spkInSX = 0.060f, spkInSY = 0.095f;
-		float spkOutSX = irisSX - 0.010f, spkOutSY = irisSY - 0.012f;
-		float spkHalfW = 0.0055f;
-		int spokeR = (int)(200 * pulse), spokeG = (int)(18 * pulse), spokeB = (int)(12 * pulse);
-		int spokeAlpha = (int)(160 * pulse);
+		// ── 4. Radiant spokes along the elliptical iris edge ──
+		float spkInSX = sc * 0.048f, spkInSY = sc * 0.078f;
+		float spkOutSX = irisSX - sc * 0.008f, spkOutSY = irisSY - sc * 0.010f;
+		float spkHW = sc * 0.0050f;
+		int spkR = (int)(200 * pulse), spkG = (int)(18 * pulse), spkB = (int)(12 * pulse);
+		int spkA = (int)(155 * pulse);
 		for (int s = 0; s < 12; s++) {
 			double angle = Math.PI * 2.0 * s / 12.0 + time * 0.003;
 			float cosA = (float) Math.cos(angle);
 			float sinA = (float) Math.sin(angle);
-			// Points on inner and outer ellipses
 			float ix = cx + cosA * spkInSX,  iy = cy + sinA * spkInSY;
 			float ox = cx + cosA * spkOutSX, oy = cy + sinA * spkOutSY;
-			// Perpendicular direction for ribbon width
 			float dx = ox - ix, dy = oy - iy;
 			float len = Mth.sqrt(dx * dx + dy * dy);
 			if (len < 1e-6f) continue;
-			float nx = -dy / len * spkHalfW, ny = dx / len * spkHalfW;
-
-			vc.vertex(mat, ix + nx, iy + ny, cz + 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
-			vc.vertex(mat, ix - nx, iy - ny, cz + 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
-			vc.vertex(mat, ox - nx, oy - ny, cz + 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
-			vc.vertex(mat, ox + nx, oy + ny, cz + 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
+			float nx = -dy / len * spkHW, ny = dx / len * spkHW;
+			vc.vertex(mat, ix + nx, iy + ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
+			vc.vertex(mat, ix - nx, iy - ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
+			vc.vertex(mat, ox - nx, oy - ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
+			vc.vertex(mat, ox + nx, oy + ny, cz + 0.003f).color(spkR, spkG, spkB, spkA).endVertex();
 		}
 
-		// ── 6. Dark pupil (vertical ellipse) ──
-		drawFilledEllipse(mat, vc, cx, cy, cz + 0.005f, pupilSX, pupilSY,
+		// ── 5. Dark pupil ──
+		drawFilledEllipse(mat, vc, cx, cy, cz + 0.004f, pupilSX, pupilSY,
 				6, 0, 0, 245, 20);
 
-		// ── 7. Bright highlight dot (off-centre, top-left of pupil) ──
-		drawFilledEllipse(mat, vc, cx - 0.016f, cy + 0.024f, cz + 0.006f, 0.016f, 0.016f,
-				255, 245, 235, (int)(210 * beat), 12);
+		// ── 6. Bright highlight dot ──
+		drawFilledEllipse(mat, vc,
+				cx - sc * 0.014f, cy + sc * 0.020f, cz + 0.005f,
+				sc * 0.013f, sc * 0.013f,
+				255, 245, 235, (int)(205 * beat), 12);
 	}
 
 	// ── Geometry helpers ─────────────────────────────────────────────────────────
