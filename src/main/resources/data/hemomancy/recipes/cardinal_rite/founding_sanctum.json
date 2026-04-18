@@ -3,6 +3,7 @@
   "bloodCost": 2000,
   "riteType": "grand",
   "requiredDegree": 5,
+  "breakBlocksOnCreation": false,
   "riteName": "Rite of the Founding Sanctum",
   "riteDescription": "A grand consecration rite available only to the Illuminatus. The caster binds a Sanguine Quintessence to the earth, consecrating the surrounding ground as a Harbinger Sanctum. All Harbingers who dwell within its radius will be strengthened and sustained.",
   "pattern": [
