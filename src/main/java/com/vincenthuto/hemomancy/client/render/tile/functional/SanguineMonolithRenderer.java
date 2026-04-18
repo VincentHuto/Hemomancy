@@ -23,9 +23,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 /**
  * Renders the Sanguine Monolith as a black slab (1 wide × 2 tall × 0.5 deep)
- * with an animated red vein pattern crawling over the bottom third.
- * The veins use the same organic sine-wave tendril approach as the
- * {@code BloodlinePoolScreen} and {@code LedgerScreen} backgrounds.
+ * with an animated red vein pattern crawling over the bottom third, a glowing
+ * blood-eye on the top half of the front face, and a rising-from-ground
+ * animation on first placement.
  */
 public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMonolithBlockEntity> {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -37,6 +37,9 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	// ── Vein animation parameters ──
 	private static final int VEIN_COUNT = 12;
 	private static final float VEIN_ZONE_HEIGHT = 0.667f; // bottom third of 2-block height
+
+	/** How far below the base the monolith starts when first placed. */
+	private static final float RISE_Y_OFFSET = 2.5f;
 
 	// Pre-computed vein tendril parameters (seed-based for consistency)
 	private final float[][] veinParams;
@@ -76,9 +79,14 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			default    -> 0f;
 		};
 
+		float riseProgress = te.getRiseProgress(partialTicks);
+		// Smooth the rise with a slight ease-out curve
+		float easedProgress = 1f - (1f - riseProgress) * (1f - riseProgress);
+		float yOffset = -(1f - easedProgress) * RISE_Y_OFFSET;
+
 		// ── Pass 1: Render the black monolith body ──
 		ms.pushPose();
-		ms.translate(0.5D, 1.5D, 0.5D);
+		ms.translate(0.5D, 1.5D + yOffset, 0.5D);
 		ms.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
 		ms.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
 
@@ -88,24 +96,22 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				0.05F, 0.02F, 0.02F, 1.0F);
 		ms.popPose();
 
-		// ── Pass 2: Animated red vein overlay on the bottom third ──
+		// ── Pass 2: Animated vein overlay + eye (bottom third + top half front face) ──
 		float time = (te.getLevel() != null)
 				? te.getLevel().getGameTime() + partialTicks
 				: te.getTickCount() + partialTicks;
 
 		ms.pushPose();
-		ms.translate(0.5D, 0.0D, 0.5D);
+		ms.translate(0.5D, yOffset, 0.5D);
 		ms.mulPose(Vector3.YP.rotationDegrees(-yRot).toMoj());
 
 		renderVeinOverlay(ms, bufferIn, time, facing);
+		renderEyeOverlay(ms, bufferIn, time);
 		ms.popPose();
 	}
 
-	/**
-	 * Draws animated red vein tendrils on the front and back faces of the
-	 * monolith's bottom third. Each tendril is a sine-wave curve rendered
-	 * as small POSITION_COLOR quads on the surface.
-	 */
+	// ── Vein overlay ─────────────────────────────────────────────────────────────
+
 	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, Direction facing) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
@@ -249,6 +255,168 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				vc.vertex(mat, x, py + size, pz + size).color(r, g, b, alpha).endVertex();
 				vc.vertex(mat, x, py - size, pz + size).color(r, g, b, alpha).endVertex();
 			}
+		}
+	}
+
+	// ── Eye overlay ──────────────────────────────────────────────────────────────
+
+	/**
+	 * Renders a glowing blood-eye on the top half of the front face.
+	 * Composed of concentric discs (glow → sclera → iris → pupil → highlight),
+	 * 12 radiant spokes, and curved upper/lower eyelid arcs.
+	 */
+	private void renderEyeOverlay(PoseStack ms, MultiBufferSource bufferIn, float time) {
+		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
+		Matrix4f mat = ms.last().pose();
+
+		// Eye center: horizontal centre of face, middle of top half, just in front
+		float cx  = 0.0f;
+		float cy  = 1.5f;
+		float cz  = -0.252f;
+
+		float pulse = 0.75f + 0.25f * Mth.sin(time * 0.05f);
+		// Secondary beat for the pupil highlight
+		float beat  = 0.60f + 0.40f * Mth.sin(time * 0.12f + 1.2f);
+
+		// ── 1. Outer diffuse glow halo ──
+		drawRing(mat, vc, cx, cy, cz, 0.21f, 0.30f,
+				180, 8, 8, (int)(38 * pulse), 28);
+
+		// ── 2. Sclera (white ring) ──
+		drawRing(mat, vc, cx, cy, cz - 0.001f, 0.155f, 0.21f,
+				235, 225, 220, (int)(190 * pulse), 28);
+
+		// ── 3. Eyelid arcs — curved lines forming the almond / leaf eye shape ──
+		//    Top arc: ellipse semi-axes ea=0.30 (vertical), eb=0.25 (horizontal),
+		//    drawn from angle 0 → π (left to right over the top).
+		//    Bottom arc: same, angle π → 2π (left to right under the bottom).
+		float ea = 0.28f, eb = 0.25f;
+		int lidR = (int)(160 * pulse), lidG = (int)(12 * pulse), lidB = (int)(12 * pulse);
+		int lidAlpha = (int)(180 * pulse);
+
+		// Top eyelid
+		drawEyelidArc(mat, vc, cx, cy, cz - 0.002f, ea, eb, 0, (float) Math.PI,
+				lidR, lidG, lidB, lidAlpha, 30);
+		// Bottom eyelid
+		drawEyelidArc(mat, vc, cx, cy, cz - 0.002f, -ea, eb, 0, (float) Math.PI,
+				lidR, lidG, lidB, lidAlpha, 30);
+
+		// ── 4. Red iris (filled disc) ──
+		drawFilledDisc(mat, vc, cx, cy, cz - 0.003f, 0.155f,
+				145, 8, 8, (int)(215 * pulse), 24);
+
+		// ── 5. 12 radiant spokes from pupil edge outward ──
+		float spokeInner = 0.075f, spokeOuter = 0.145f, spokeHalfW = 0.006f;
+		int spokeR = (int)(200 * pulse), spokeG = (int)(18 * pulse), spokeB = (int)(12 * pulse);
+		int spokeAlpha = (int)(160 * pulse);
+		for (int s = 0; s < 12; s++) {
+			double angle = Math.PI * 2.0 * s / 12.0 + time * 0.003;
+			float cos = (float) Math.cos(angle);
+			float sin = (float) Math.sin(angle);
+			float ix1 = cx + cos * spokeInner - sin * spokeHalfW;
+			float iy1 = cy + sin * spokeInner + cos * spokeHalfW;
+			float ix2 = cx + cos * spokeInner + sin * spokeHalfW;
+			float iy2 = cy + sin * spokeInner - cos * spokeHalfW;
+			float ox1 = cx + cos * spokeOuter - sin * spokeHalfW;
+			float oy1 = cy + sin * spokeOuter + cos * spokeHalfW;
+			float ox2 = cx + cos * spokeOuter + sin * spokeHalfW;
+			float oy2 = cy + sin * spokeOuter - cos * spokeHalfW;
+
+			vc.vertex(mat, ix1, iy1, cz - 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
+			vc.vertex(mat, ox1, oy1, cz - 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
+			vc.vertex(mat, ox2, oy2, cz - 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
+			vc.vertex(mat, ix2, iy2, cz - 0.004f).color(spokeR, spokeG, spokeB, spokeAlpha).endVertex();
+		}
+
+		// ── 6. Dark pupil ──
+		drawFilledDisc(mat, vc, cx, cy, cz - 0.005f, 0.068f,
+				6, 0, 0, 245, 20);
+
+		// ── 7. Bright highlight dot (off-centre, top-left of pupil) ──
+		drawFilledDisc(mat, vc, cx - 0.018f, cy + 0.020f, cz - 0.006f, 0.018f,
+				255, 245, 235, (int)(210 * beat), 12);
+	}
+
+	// ── Geometry helpers ─────────────────────────────────────────────────────────
+
+	/**
+	 * Draws a filled disc using a degenerate-quad fan (two centre vertices + two
+	 * edge vertices per primitive, which rasterises as a pie-slice triangle).
+	 */
+	private void drawFilledDisc(Matrix4f mat, VertexConsumer vc,
+			float cx, float cy, float cz, float radius,
+			int r, int g, int b, int alpha, int segments) {
+		for (int i = 0; i < segments; i++) {
+			double a1 = 2.0 * Math.PI * i / segments;
+			double a2 = 2.0 * Math.PI * (i + 1) / segments;
+			float x1 = cx + (float)(Math.cos(a1) * radius);
+			float y1 = cy + (float)(Math.sin(a1) * radius);
+			float x2 = cx + (float)(Math.cos(a2) * radius);
+			float y2 = cy + (float)(Math.sin(a2) * radius);
+			// Degenerate quad → triangle (center, center, edge1, edge2)
+			vc.vertex(mat, cx, cy, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, cx, cy, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, x1, y1, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, x2, y2, cz).color(r, g, b, alpha).endVertex();
+		}
+	}
+
+	/**
+	 * Draws an annular ring as a series of quads between {@code innerR} and
+	 * {@code outerR}.
+	 */
+	private void drawRing(Matrix4f mat, VertexConsumer vc,
+			float cx, float cy, float cz, float innerR, float outerR,
+			int r, int g, int b, int alpha, int segments) {
+		for (int i = 0; i < segments; i++) {
+			double a1 = 2.0 * Math.PI * i / segments;
+			double a2 = 2.0 * Math.PI * (i + 1) / segments;
+			float ix1 = cx + (float)(Math.cos(a1) * innerR);
+			float iy1 = cy + (float)(Math.sin(a1) * innerR);
+			float ix2 = cx + (float)(Math.cos(a2) * innerR);
+			float iy2 = cy + (float)(Math.sin(a2) * innerR);
+			float ox1 = cx + (float)(Math.cos(a1) * outerR);
+			float oy1 = cy + (float)(Math.sin(a1) * outerR);
+			float ox2 = cx + (float)(Math.cos(a2) * outerR);
+			float oy2 = cy + (float)(Math.sin(a2) * outerR);
+
+			vc.vertex(mat, ix1, iy1, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, ox1, oy1, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, ox2, oy2, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, ix2, iy2, cz).color(r, g, b, alpha).endVertex();
+		}
+	}
+
+	/**
+	 * Draws one eyelid arc as a thin ribbon along an ellipse from angle 0 to
+	 * {@code endAngle}. {@code semiA} is the vertical semi-axis (negative to
+	 * flip for the lower lid), {@code semiB} is the horizontal semi-axis.
+	 */
+	private void drawEyelidArc(Matrix4f mat, VertexConsumer vc,
+			float cx, float cy, float cz,
+			float semiA, float semiB, float startAngle, float endAngle,
+			int r, int g, int b, int alpha, int segments) {
+		float halfW = 0.006f; // half-width of the arc ribbon
+		for (int i = 0; i < segments; i++) {
+			float t1 = startAngle + (endAngle - startAngle) * i / segments;
+			float t2 = startAngle + (endAngle - startAngle) * (i + 1) / segments;
+
+			float x1 = cx + semiB * Mth.cos(t1);
+			float y1 = cy + semiA * Mth.sin(t1);
+			float x2 = cx + semiB * Mth.cos(t2);
+			float y2 = cy + semiA * Mth.sin(t2);
+
+			// Perpendicular to the arc segment for ribbon width
+			float dx = x2 - x1, dy = y2 - y1;
+			float len = Mth.sqrt(dx * dx + dy * dy);
+			if (len < 1e-6f) continue;
+			float nx = -dy / len * halfW;
+			float ny =  dx / len * halfW;
+
+			vc.vertex(mat, x1 + nx, y1 + ny, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, x1 - nx, y1 - ny, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, x2 - nx, y2 - ny, cz).color(r, g, b, alpha).endVertex();
+			vc.vertex(mat, x2 + nx, y2 + ny, cz).color(r, g, b, alpha).endVertex();
 		}
 	}
 }

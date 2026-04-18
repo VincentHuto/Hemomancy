@@ -120,6 +120,9 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		super.setPlacedBy(level, pos, state, placer, stack);
 		if (!level.isClientSide) {
 			placeFillers(level, pos, state);
+			if (level.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity be) {
+				be.startRise(level.getGameTime());
+			}
 		}
 	}
 
@@ -161,12 +164,13 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
 			BlockEntityType<T> type) {
-		if (level.isClientSide) {
-			return null;
-		}
 		return (lvl, pos, st, be) -> {
 			if (be instanceof SanguineMonolithBlockEntity monolith) {
-				monolith.tick();
+				if (lvl.isClientSide) {
+					monolith.clientTick();
+				} else {
+					monolith.tick();
+				}
 			}
 		};
 	}
