@@ -83,7 +83,6 @@ import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
-import com.vincenthuto.hemomancy.client.screen.overlay.BloodMoonVeinOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
@@ -449,7 +448,6 @@ public class ClientEvents {
 			ManipCooldownOverlay.instance = new ManipCooldownOverlay();
 			UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
 			FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
-			BloodMoonVeinOverlay.instance = new BloodMoonVeinOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
@@ -577,10 +575,6 @@ public class ClientEvents {
 			event.registerAboveAll("fungal_whisper_vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				FungalWhisperVignetteOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
-			});
-			event.registerAboveAll("blood_moon_veins", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-				gui.setupOverlayRenderState(true, false);
-				BloodMoonVeinOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}
