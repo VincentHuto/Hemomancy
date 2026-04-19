@@ -2,7 +2,12 @@
 
 > This document covers **lore only**: world history, cosmic origins, factions, characters, beliefs, mythology, and narrative themes. For mechanics, systems, and code details see [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md).
 >
-> **Last Updated:** 2026-04-18 (from lore discussion transcript)
+> **Last Updated:** 2026-04-19 (gameplay/lore state alignment pass)
+
+> **Current Lore-State Snapshot (2026-04-19 audit):**
+> - Core narrative pillars are now directly represented in gameplay: Harbinger initiation/degrees, Unstained purification path, faction NPC dialogue trees, blood-memory manipulation framing, and fungal-whisper escalation.
+> - Several high-impact lore arcs are intentionally established as foreshadowed endgame content and remain WIP in gameplay implementation: full Fungal Dimension progression, Saints encounters/chambers, and the Stained Priestess storyline boss arc.
+> - This document remains canonical for worldbuilding intent; for implementation status and mechanics-level detail, treat [HEMOMANCY_REFERENCE.md](HEMOMANCY_REFERENCE.md) as the source of truth.
 
 ---
 
