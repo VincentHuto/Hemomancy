@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeTendrilFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.FungusFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.HyphaeFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.RedCanopyMushroomFeature;
+import com.vincenthuto.hemomancy.common.worldgen.feature.SilverBellsTowerFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SmallInfectedMushroomFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.SporeNexusTowerFeature;
 import com.vincenthuto.hemomancy.common.worldgen.feature.TermiteMoundFeature;
@@ -61,6 +62,9 @@ public class BaseFeatureInit {
 
 	public static final Feature<NoneFeatureConfiguration> SPORE_NEXUS_TOWER = register("spore_nexus_tower",
 			new SporeNexusTowerFeature(NoneFeatureConfiguration.CODEC));
+
+	public static final Feature<NoneFeatureConfiguration> SILVER_BELLS_TOWER = register("silver_bells_tower",
+			new SilverBellsTowerFeature(NoneFeatureConfiguration.CODEC));
 
 	private static <C extends FeatureConfiguration, F extends Feature<C>> F register(String key, F value) {
 		FEATURE_REGISTER.register(key, () -> value);
