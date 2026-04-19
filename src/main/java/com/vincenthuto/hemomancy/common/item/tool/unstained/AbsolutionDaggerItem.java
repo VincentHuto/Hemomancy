@@ -39,6 +39,7 @@ public class AbsolutionDaggerItem extends SwordItem {
 
 	/** How many hits before the CLEANSING+ cleanse triggers. */
 	private static final int CLEANSE_HIT_THRESHOLD = 10;
+	private static final float MAX_EXECUTION_BONUS_DAMAGE = 5.0F;
 
 	public AbsolutionDaggerItem(Tier tier, int attackDamageIn, float attackSpeedIn, Properties properties) {
 		super(tier, attackDamageIn, attackSpeedIn, properties);
@@ -52,6 +53,8 @@ public class AbsolutionDaggerItem extends SwordItem {
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		tooltip.add(Component.literal("On hit: Weakness I (2s)")
 				.withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.literal("Deals increased damage to low-health enemies.")
+				.withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("CLEANSING+: Every 10th hit strips a random beneficial effect.")
 				.withStyle(ChatFormatting.AQUA));
 	}
@@ -61,6 +64,14 @@ public class AbsolutionDaggerItem extends SwordItem {
 		if (!attacker.level().isClientSide && attacker instanceof Player player) {
 			// Always apply Weakness I for 2 seconds
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, false, true, true));
+			float maxHealth = target.getMaxHealth();
+			if (maxHealth > 0.0F) {
+				float missingHealthRatio = 1.0F - (target.getHealth() / maxHealth);
+				float executeBonusDamage = Math.max(0.0F, missingHealthRatio) * MAX_EXECUTION_BONUS_DAMAGE;
+				if (executeBonusDamage > 0.0F) {
+					target.hurt(attacker.damageSources().playerAttack(player), executeBonusDamage);
+				}
+			}
 
 			// At CLEANSING+ purity: every 10th hit strips a random positive effect
 			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
