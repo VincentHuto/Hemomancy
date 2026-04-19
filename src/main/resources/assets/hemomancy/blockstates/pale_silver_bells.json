@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "rung=false": {
+      "model": "hemomancy:block/pale_silver_bells"
+    },
+    "rung=true": {
+      "model": "hemomancy:block/pale_silver_bells"
+    }
+  }
+}

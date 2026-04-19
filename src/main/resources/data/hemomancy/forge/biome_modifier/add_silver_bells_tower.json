@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#hemomancy:silver_bells_tower_spawnlist",
+  "features": "hemomancy:silver_bells_tower",
+  "step": "surface_structures"
+}

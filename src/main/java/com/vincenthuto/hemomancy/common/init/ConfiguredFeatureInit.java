@@ -80,6 +80,7 @@ public class ConfiguredFeatureInit {
 
 	// Spore Nexus Tower - massive rare fungal spire for the fungal dimension
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SPORE_NEXUS_TOWER = createKey("spore_nexus_tower");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> SILVER_BELLS_TOWER = createKey("silver_bells_tower");
 
 	// Sporite Crystal patch feature
 	public static final ResourceKey<ConfiguredFeature<?, ?>> SPORITE_CRYSTAL_CLUSTER = createKey("sporite_crystal_cluster");
@@ -238,6 +239,7 @@ public class ConfiguredFeatureInit {
 		register(context, TERMITE_MOUND, BaseFeatureInit.TERMITE_MOUND, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, SPORE_NEXUS_TOWER, BaseFeatureInit.SPORE_NEXUS_TOWER, NoneFeatureConfiguration.INSTANCE);
+		register(context, SILVER_BELLS_TOWER, BaseFeatureInit.SILVER_BELLS_TOWER, NoneFeatureConfiguration.INSTANCE);
 
 		register(context, SPORITE_CRYSTAL_CLUSTER, Feature.SIMPLE_RANDOM_SELECTOR,
 				new SimpleRandomFeatureConfiguration(HolderSet.direct(PlacementUtils.inlinePlaced(Feature.RANDOM_PATCH,
