@@ -88,11 +88,17 @@ public class SanguineMonolithShatterRenderer {
 	}
 
 	private static Vec3 randomDirection(RandomSource random) {
-		double x = random.nextDouble() * 2.0 - 1.0;
-		double y = random.nextDouble() * 2.0 - 1.0;
-		double z = random.nextDouble() * 2.0 - 1.0;
-		Vec3 v = new Vec3(x, y, z);
-		return v.lengthSqr() < ZERO_LENGTH_THRESHOLD ? new Vec3(0, 1, 0) : v.normalize();
+		for (int i = 0; i < 8; i++) {
+			double x = random.nextDouble() * 2.0 - 1.0;
+			double y = random.nextDouble() * 2.0 - 1.0;
+			double z = random.nextDouble() * 2.0 - 1.0;
+			Vec3 v = new Vec3(x, y, z);
+			double lenSq = v.lengthSqr();
+			if (lenSq >= ZERO_LENGTH_THRESHOLD && lenSq <= 1.0) {
+				return v.normalize();
+			}
+		}
+		return new Vec3(0, 1, 0);
 	}
 
 	private static Vec3 rotate(Vec3 v, Vec3 axis, float angle) {

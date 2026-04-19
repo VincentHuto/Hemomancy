@@ -38,13 +38,14 @@ public class SpawnMonolithShatterBurstPacket {
 			return;
 		}
 		ClientLevel world = ((ClientLevel) clientLevel.get());
-		SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random);
+		ctx.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random));
 		ctx.setPacketHandled(true);
 	}
 
 	private Vec3 pos;
 
 	public SpawnMonolithShatterBurstPacket() {
+		this.pos = Vec3.ZERO;
 	}
 
 	public SpawnMonolithShatterBurstPacket(Vec3 pos) {
