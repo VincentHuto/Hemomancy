@@ -222,7 +222,7 @@ public class Hemomancy {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-
+        com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry.init();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
