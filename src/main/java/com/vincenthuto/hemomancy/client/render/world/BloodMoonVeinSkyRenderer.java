@@ -23,7 +23,8 @@ import org.joml.Matrix4f;
  * Sky renderer for animated blood-vein tendrils radiating from the moon's
  * position when a Blood Moon is active.
  *
- * <p>Uses the same pixel-art squiggle algorithm as {@link DialogueScreen}'s
+ * <p>Uses the same pixel-art squiggle algorithm as
+ * {@link com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen}'s
  * blood theme background, but tendrils are anchored to the top-centre of the
  * screen and fan outward in a downward arc, giving the impression of veins
  * growing from the moon into the sky.
