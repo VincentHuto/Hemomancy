@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.congeatio;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -66,7 +67,7 @@ public class CryogenicPulseManip extends BloodManipulation {
 						SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, false, true));
 				target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN,
 						FATIGUE_DURATION, FATIGUE_AMPLIFIER, false, true));
-				target.hurt(world.damageSources().freeze(), DAMAGE);
+				target.hurt(world.damageSources().freeze(), (float) (DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
 			}
 		}
 

@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.ductilis;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -44,7 +45,7 @@ public class ActivationPotentialManip extends BloodManipulation {
 							player.level().dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
 					HLPacketHandler.sendLightningSpawn(player.position().add(translation), speedVec, 64.0f,
 							player.level().dimension(), ParticleColor.YELLOW, 2, 10, 9, 0.2f);
-					target.hurt(player.damageSources().playerAttack(player), 5.0f);
+					target.hurt(player.damageSources().playerAttack(player), (float) (5.0f * SkillPointHelper.getCrimsonMasteryMultiplier()));
 				}
 			}
 		}

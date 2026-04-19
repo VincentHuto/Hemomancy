@@ -86,7 +86,7 @@ public class VitricCombustionManip extends BloodManipulation {
 			if (target.position().distanceTo(blastCenter) > blastRadius) continue;
 			Vec3 toTarget = target.position().subtract(blastCenter).normalize();
 			target.setSecondsOnFire(FIRE_SECONDS);
-			target.hurt(world.damageSources().explosion(null, player), BLAST_DAMAGE);
+			target.hurt(world.damageSources().explosion(null, player), (float) (BLAST_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
 			target.push(toTarget.x * KNOCKBACK_STRENGTH,
 					0.4 * KNOCKBACK_STRENGTH,
 					toTarget.z * KNOCKBACK_STRENGTH);

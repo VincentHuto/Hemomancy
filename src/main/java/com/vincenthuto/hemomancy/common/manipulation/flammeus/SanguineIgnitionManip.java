@@ -3,6 +3,7 @@ package com.vincenthuto.hemomancy.common.manipulation.flammeus;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -57,7 +58,7 @@ public class SanguineIgnitionManip extends BloodManipulation {
 		for (LivingEntity target : targets) {
 			if (target.distanceTo(player) <= RADIUS) {
 				target.setSecondsOnFire(FIRE_SECONDS);
-				target.hurt(world.damageSources().onFire(), IGNITION_DAMAGE);
+				target.hurt(world.damageSources().onFire(), (float) (IGNITION_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
 				hit++;
 			}
 		}
