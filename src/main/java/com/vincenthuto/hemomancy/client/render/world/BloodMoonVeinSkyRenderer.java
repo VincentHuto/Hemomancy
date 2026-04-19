@@ -25,6 +25,7 @@ public class BloodMoonVeinSkyRenderer {
 	private static final float MOON_PLANE_Y = -100.0F;
 	private static final float MOON_RADIUS = 15.0F;
 	private static final float TENDRIL_LENGTH = 22.0F;
+	private static final int HASH_MULTIPLIER = 0x045D9F3B;
 
 	public static void renderInSky(PoseStack poseStack, ClientLevel level, float partialTick) {
 		if (!BloodMoonClientState.isActive()) return;
@@ -88,10 +89,10 @@ public class BloodMoonVeinSkyRenderer {
 
 			float pulse = 0.7F + 0.3F * Mth.sin(gameTime * 0.06F + index * 0.5F + step * 0.25F);
 			float fade = (1.0F - t * 0.65F);
-			float tipBoost = 1.0F - Mth.abs(t - 0.25F) * 0.35F;
+			float bandBoost = 1.0F - Mth.abs(t - 0.25F) * 0.35F;
 
 			int alpha = (int) Mth.clamp(140.0F * weatherFade * fade * pulse, 20.0F, 180.0F);
-			int red = (int) Mth.clamp(170.0F * tipBoost + 60.0F * pulse, 0.0F, 255.0F);
+			int red = (int) Mth.clamp(170.0F * bandBoost + 60.0F * pulse, 0.0F, 255.0F);
 			int green = (int) Mth.clamp(6.0F + 10.0F * pulse, 0.0F, 255.0F);
 			int blue = (int) Mth.clamp(8.0F + 12.0F * pulse, 0.0F, 255.0F);
 			float size = 0.52F - t * 0.30F;
@@ -101,8 +102,8 @@ public class BloodMoonVeinSkyRenderer {
 	}
 
 	private static float seeded(int seed) {
-		int h = seed * 0x45d9f3b;
-		h = (h ^ (h >>> 16)) * 0x45d9f3b;
+		int h = seed * HASH_MULTIPLIER;
+		h = (h ^ (h >>> 16)) * HASH_MULTIPLIER;
 		h = h ^ (h >>> 16);
 		return (h & 0x7fffffff) / (float) Integer.MAX_VALUE;
 	}
