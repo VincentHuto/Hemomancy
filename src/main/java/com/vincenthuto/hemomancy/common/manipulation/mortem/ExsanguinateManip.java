@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -80,7 +81,7 @@ public class ExsanguinateManip extends BloodManipulation {
 		}
 
 		LivingEntity target = targetOpt.get();
-		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER;
+		float drainDamage = target.getHealth() * DRAIN_DAMAGE_MULTIPLIER * (float) SkillPointHelper.getCrimsonMasteryMultiplier();
 		target.hurt(world.damageSources().magic(), drainDamage);
 
 		// Restore blood to caster

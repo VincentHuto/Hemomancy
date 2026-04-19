@@ -83,7 +83,7 @@ public class BloodEclipseManip extends BloodManipulation {
 					BLINDNESS_TICKS, BLINDNESS_AMP, false, true));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS,
 					WEAKNESS_TICKS, WEAKNESS_AMP, false, true));
-			target.hurt(world.damageSources().magic(), SHADOW_DAMAGE);
+			target.hurt(world.damageSources().magic(), (float) (SHADOW_DAMAGE * SkillPointHelper.getCrimsonMasteryMultiplier()));
 			hit++;
 		}
 
