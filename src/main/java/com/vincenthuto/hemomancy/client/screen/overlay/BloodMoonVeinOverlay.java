@@ -88,11 +88,12 @@ public class BloodMoonVeinOverlay {
 	private MoonAnchor computeMoonScreenAnchor(int screenWidth, int screenHeight, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null || mc.player == null) return null;
+		if (screenWidth <= 0 || screenHeight <= 0) return null;
 
 		Vec3 moonDir = getMoonDirection(partialTick);
 		Vec3 forward = mc.player.getViewVector(partialTick).normalize();
 		Vec3 up = mc.player.getUpVector(partialTick).normalize();
-		Vec3 right = forward.cross(up);
+		Vec3 right = up.cross(forward);
 		if (right.lengthSqr() < 1.0E-8) return null;
 		right = right.normalize();
 
@@ -106,7 +107,7 @@ public class BloodMoonVeinOverlay {
 		double tanHalfFovY = Math.tan(Math.toRadians(fovDegrees * 0.5f));
 		if (!Double.isFinite(tanHalfFovY) || tanHalfFovY <= 0.0D) return null;
 
-		double aspect = (double) screenWidth / (double) Math.max(screenHeight, 1);
+		double aspect = (double) screenWidth / (double) screenHeight;
 		double ndcX = xCam / (zCam * tanHalfFovY * aspect);
 		double ndcY = yCam / (zCam * tanHalfFovY);
 		if (!Double.isFinite(ndcX) || !Double.isFinite(ndcY)) return null;
