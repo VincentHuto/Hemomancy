@@ -5,7 +5,9 @@ import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -15,9 +17,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * moon's approximate screen position when a Blood Moon is active.
  *
  * <p>Uses the same pixel-art squiggle algorithm as {@link DialogueScreen}'s
- * blood theme background, but tendrils are anchored to the top-centre of the
- * screen and fan outward in a downward arc, giving the impression of veins
- * growing from the moon into the sky.
+ * blood theme background, with tendrils anchored to the moon's projected
+ * screen position.
  */
 @OnlyIn(Dist.CLIENT)
 public class BloodMoonVeinOverlay {
@@ -65,10 +66,13 @@ public class BloodMoonVeinOverlay {
 		RenderSystem.defaultBlendFunc();
 
 		float time = System.nanoTime() / 1_000_000_000f;
-
-		// Approximate moon position: top-centre, ~12% down the screen.
-		int moonX = screenWidth / 2;
-		int moonY = (int) (screenHeight * 0.12f);
+		MoonAnchor moonAnchor = computeMoonScreenAnchor(screenWidth, screenHeight, partialTick);
+		if (moonAnchor == null) {
+			RenderSystem.disableBlend();
+			return;
+		}
+		int moonX = moonAnchor.x;
+		int moonY = moonAnchor.y;
 
 		// Soft radial glow around the moon — crimson halo.
 		drawMoonGlow(gfx, moonX, moonY);
@@ -80,6 +84,49 @@ public class BloodMoonVeinOverlay {
 
 		RenderSystem.disableBlend();
 	}
+
+	private MoonAnchor computeMoonScreenAnchor(int screenWidth, int screenHeight, float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || mc.player == null) return null;
+
+		Vec3 moonDir = getMoonDirection(partialTick);
+		Vec3 forward = mc.player.getViewVector(partialTick).normalize();
+		Vec3 up = mc.player.getUpVector(partialTick).normalize();
+		Vec3 right = up.cross(forward);
+		if (right.lengthSqr() < 1.0E-8) return null;
+		right = right.normalize();
+
+		double zCam = moonDir.dot(forward);
+		if (zCam <= 1.0E-4) return null; // Moon is behind the camera.
+
+		double xCam = moonDir.dot(right);
+		double yCam = moonDir.dot(up);
+
+		float fovDegrees = ((Number) mc.options.fov().get()).floatValue();
+		double tanHalfFovY = Math.tan(Math.toRadians(fovDegrees * 0.5f));
+		if (!Double.isFinite(tanHalfFovY) || tanHalfFovY <= 0.0D) return null;
+
+		double aspect = (double) screenWidth / (double) Math.max(screenHeight, 1);
+		double ndcX = xCam / (zCam * tanHalfFovY * aspect);
+		double ndcY = yCam / (zCam * tanHalfFovY);
+		if (!Double.isFinite(ndcX) || !Double.isFinite(ndcY)) return null;
+
+		int moonX = (int) Math.round((ndcX * 0.5D + 0.5D) * screenWidth);
+		int moonY = (int) Math.round((0.5D - ndcY * 0.5D) * screenHeight);
+		return new MoonAnchor(moonX, moonY);
+	}
+
+	private Vec3 getMoonDirection(float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
+		float dayTime = mc.level.getTimeOfDay(partialTick);
+		float angle = dayTime * Mth.TWO_PI;
+		float sin = Mth.sin(angle);
+		float cos = Mth.cos(angle);
+		// Mirrors the sky transform used by LevelRenderer for the moon orientation.
+		return new Vec3(sin, -cos, 0.0D).normalize();
+	}
+
+	private record MoonAnchor(int x, int y) {}
 
 	private void drawMoonGlow(GuiGraphics gfx, int cx, int cy) {
 		int maxRadius = 55;
