@@ -1,7 +1,5 @@
 package com.vincenthuto.hemomancy.client.render.world;
 
-import java.util.Random;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -19,54 +17,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
-/**
- * Sky renderer for animated blood-vein tendrils radiating from the moon's
- * position when a Blood Moon is active.
- *
- * <p>Uses the same pixel-art squiggle algorithm as
- * {@link com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen}'s
- * blood theme background, but tendrils are anchored to the top-centre of the
- * screen and fan outward in a downward arc, giving the impression of veins
- * growing from the moon into the sky.
- */
 @OnlyIn(Dist.CLIENT)
 public class BloodMoonVeinSkyRenderer {
 
-	private static final int TENDRIL_COUNT = 22;
+	private static final int TENDRIL_COUNT = 18;
+	private static final int TENDRIL_SEGMENTS = 28;
 	private static final float MOON_PLANE_Y = -100.0F;
-	private static final float STEP_LENGTH = 0.38F;
-	private static final float WORLD_SCALE = 0.18F;
-	private static final float POINT_SIZE = 0.24F;
-
-	/**
-	 * Per-tendril parameters (static, seeded once):
-	 * [0] startDX  — X offset from moon centre (pixels)
-	 * [1] startDY  — Y offset from moon centre (pixels)
-	 * [2] baseAngle — initial direction (radians; 0=right, PI/2=down)
-	 * [3] speed     — animation speed multiplier
-	 * [4] amplitude — perpendicular squiggle width
-	 * [5] frequency — squiggle spatial frequency
-	 * [6] length    — number of steps
-	 * [7] reserved
-	 * [8] brightness — colour brightness multiplier [0,1]
-	 */
-	private static final float[][] TENDRIL_PARAMS = new float[TENDRIL_COUNT][9];
-
-	static {
-		Random rand = new Random(7331L);
-		for (int i = 0; i < TENDRIL_COUNT; i++) {
-			// Start positions clustered within the moon disc (~16px radius)
-			TENDRIL_PARAMS[i][0] = (rand.nextFloat() - 0.5f) * 32f;
-			TENDRIL_PARAMS[i][1] = (rand.nextFloat() - 0.5f) * 32f;
-			TENDRIL_PARAMS[i][2] = (float) (rand.nextFloat() * Math.PI * 2.0);
-			TENDRIL_PARAMS[i][3] = 0.12f + rand.nextFloat() * 0.35f;
-			TENDRIL_PARAMS[i][4] = 2.5f + rand.nextFloat() * 8f;
-			TENDRIL_PARAMS[i][5] = 0.035f + rand.nextFloat() * 0.055f;
-			TENDRIL_PARAMS[i][6] = 90 + rand.nextInt(130);
-			TENDRIL_PARAMS[i][7] = 1f;
-			TENDRIL_PARAMS[i][8] = 0.35f + rand.nextFloat() * 0.65f;
-		}
-	}
+	private static final float MOON_RADIUS = 15.0F;
+	private static final float TENDRIL_LENGTH = 22.0F;
 
 	public static void renderInSky(PoseStack poseStack, ClientLevel level, float partialTick) {
 		if (!BloodMoonClientState.isActive()) return;
@@ -83,13 +41,14 @@ public class BloodMoonVeinSkyRenderer {
 		RenderSystem.depthMask(false);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-		float time = (level.getGameTime() + partialTick) * 0.05F;
+		float time = (level.getGameTime() + partialTick) * 0.04F;
 		Matrix4f matrix = poseStack.last().pose();
 		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
 		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
+		drawMoonShade(buffer, matrix, weatherFade);
 		for (int i = 0; i < TENDRIL_COUNT; i++) {
-			drawTendril(buffer, matrix, i, time, weatherFade);
+			drawTendril(buffer, matrix, i, time, weatherFade, level.getGameTime() + partialTick);
 		}
 
 		BufferUploader.drawWithShader(buffer.end());
@@ -97,48 +56,55 @@ public class BloodMoonVeinSkyRenderer {
 		RenderSystem.depthMask(true);
 	}
 
-	private static void drawTendril(BufferBuilder buffer, Matrix4f matrix, int index, float time, float weatherFade) {
-		float[] p = TENDRIL_PARAMS[index];
-		float startX = p[0] * WORLD_SCALE;
-		float startZ = p[1] * WORLD_SCALE;
-		float baseAngle = p[2];
-		float speed    = p[3];
-		float amplitude = p[4];
-		float frequency = p[5];
-		int   length   = (int) p[6];
-		float brightness = p[8];
+	private static void drawMoonShade(BufferBuilder buffer, Matrix4f matrix, float weatherFade) {
+		int outerAlpha = (int) (95.0F * weatherFade);
+		int innerAlpha = (int) (165.0F * weatherFade);
+		addPointQuad(buffer, matrix, 0.0F, MOON_PLANE_Y, 0.0F, MOON_RADIUS * 1.35F, 85, 0, 0, outerAlpha);
+		addPointQuad(buffer, matrix, 0.0F, MOON_PLANE_Y, 0.0F, MOON_RADIUS, 185, 15, 20, innerAlpha);
+	}
 
-		float angleDrift = baseAngle + 0.10f * Mth.sin(time * speed * 0.25f + index);
-		float cosA = Mth.cos(angleDrift);
-		float sinA = Mth.sin(angleDrift);
-		float timeOffset = time * speed * 1.6f;
+	private static void drawTendril(BufferBuilder buffer, Matrix4f matrix, int index, float time, float weatherFade, float gameTime) {
+		float indexRatio = (float) index / (float) TENDRIL_COUNT;
+		float baseAngle = indexRatio * Mth.TWO_PI + seeded(index * 11 + 3) * 0.8F;
+		float startRadius = MOON_RADIUS * (0.25F + seeded(index * 13 + 7) * 0.7F);
+		float startX = Mth.cos(baseAngle) * startRadius;
+		float startZ = Mth.sin(baseAngle) * startRadius;
+		float direction = baseAngle + (seeded(index * 17 + 5) - 0.5F) * 1.1F;
+		float dirX = Mth.cos(direction);
+		float dirZ = Mth.sin(direction);
+		float sideX = -dirZ;
+		float sideZ = dirX;
 
-		int baseRed   = (int) (30 + 55 * brightness);
-		int baseGreen = (int) (1  +  5 * brightness);
-		int baseBlue  = (int) (3  +  5 * brightness);
+		float wobbleSpeed = 1.1F + seeded(index * 19 + 9) * 1.0F;
+		float wobbleAmount = 1.3F + seeded(index * 23 + 2) * 1.7F;
+		float length = TENDRIL_LENGTH * (0.65F + seeded(index * 29 + 4) * 0.65F);
 
-		for (int step = 0; step < length; step++) {
-			float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
-			float micro    = (amplitude * 0.28f)
-					* Mth.sin(frequency * 2.4f * step + timeOffset * 1.35f + index);
-			float disp = squiggle + micro;
+		for (int step = 0; step < TENDRIL_SEGMENTS; step++) {
+			float t = (float) step / (float) (TENDRIL_SEGMENTS - 1);
+			float distance = t * length;
+			float wave = Mth.sin(time * wobbleSpeed + step * 0.55F + index * 0.85F) * wobbleAmount * (1.0F - t * 0.55F);
+			float x = startX + dirX * distance + sideX * wave;
+			float z = startZ + dirZ * distance + sideZ * wave;
 
-			float x = startX + (step * cosA * STEP_LENGTH - disp * sinA * WORLD_SCALE);
-			float z = startZ + (step * sinA * STEP_LENGTH + disp * cosA * WORLD_SCALE);
+			float pulse = 0.7F + 0.3F * Mth.sin(gameTime * 0.06F + index * 0.5F + step * 0.25F);
+			float fade = (1.0F - t * 0.65F);
+			float tipBoost = 1.0F - Mth.abs(t - 0.25F) * 0.35F;
 
-			float tipFade = 1f;
-			if (step < 12) tipFade = step / 12f;
-			else if (step > length - 12) tipFade = (length - step) / 12f;
+			int alpha = (int) Mth.clamp(140.0F * weatherFade * fade * pulse, 20.0F, 180.0F);
+			int red = (int) Mth.clamp(170.0F * tipBoost + 60.0F * pulse, 0.0F, 255.0F);
+			int green = (int) Mth.clamp(6.0F + 10.0F * pulse, 0.0F, 255.0F);
+			int blue = (int) Mth.clamp(8.0F + 12.0F * pulse, 0.0F, 255.0F);
+			float size = 0.52F - t * 0.30F;
 
-			float pulse = 0.65f + 0.35f * Mth.sin(time * 1.3f + index * 0.55f + step * 0.018f);
-
-			int a = (int) (Mth.clamp(tipFade * pulse * 95f, 4f, 100f) * weatherFade);
-			int r = (int) Mth.clamp(baseRed   * pulse,        0, 255);
-			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
-			int b = (int) Mth.clamp(baseBlue  * pulse * 0.4f, 0, 255);
-
-			addPointQuad(buffer, matrix, x, MOON_PLANE_Y, z, POINT_SIZE, r, g, b, a);
+			addPointQuad(buffer, matrix, x, MOON_PLANE_Y, z, size, red, green, blue, alpha);
 		}
+	}
+
+	private static float seeded(int seed) {
+		int h = seed * 0x45d9f3b;
+		h = (h ^ (h >>> 16)) * 0x45d9f3b;
+		h = h ^ (h >>> 16);
+		return (h & 0x7fffffff) / (float) Integer.MAX_VALUE;
 	}
 
 	private static void addPointQuad(BufferBuilder buffer, Matrix4f matrix, float x, float y, float z,
