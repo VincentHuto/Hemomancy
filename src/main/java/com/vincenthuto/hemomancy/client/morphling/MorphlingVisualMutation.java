@@ -8,8 +8,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Describes how an equipped morphling visually mutates the player's appearance.
- * The mutation is rendered as a translucent colored overlay on the player model,
- * scaled in intensity by the morphling's current maturity level.
+ *
+ * <p>Two independent layers are supported and can be combined freely:
+ * <ol>
+ *   <li><b>Color overlay</b> – the player's animated humanoid model is re-drawn
+ *       with a translucent tint (plain, emissive, or animated energy-swirl).
+ *       Intensity scales with maturity.</li>
+ *   <li><b>Model attachment</b> – an optional {@link MorphlingModelAttachment}
+ *       renders additional 3-D geometry (wings, tendrils, plating, etc.) parented
+ *       to one of the player's body parts.  Attach with {@link Builder#attach}.</li>
+ * </ol>
  */
 @OnlyIn(Dist.CLIENT)
 public class MorphlingVisualMutation {
@@ -45,9 +53,17 @@ public class MorphlingVisualMutation {
     /** UV scroll speed for the swirl texture (units per tick). */
     public final float swirlSpeed;
 
+    /**
+     * Optional 3-D model attachment rendered on top of the color overlay.
+     * Null means no extra geometry beyond the color tint.
+     */
+    @Nullable
+    public final MorphlingModelAttachment modelAttachment;
+
     private MorphlingVisualMutation(float r, float g, float b, float alpha,
             float pulseSpeed, boolean emissive,
-            @Nullable ResourceLocation swirlTexture, float swirlSpeed) {
+            @Nullable ResourceLocation swirlTexture, float swirlSpeed,
+            @Nullable MorphlingModelAttachment modelAttachment) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -56,6 +72,7 @@ public class MorphlingVisualMutation {
         this.emissive = emissive;
         this.swirlTexture = swirlTexture;
         this.swirlSpeed = swirlSpeed;
+        this.modelAttachment = modelAttachment;
     }
 
     public static Builder builder(float r, float g, float b, float alpha) {
@@ -68,6 +85,7 @@ public class MorphlingVisualMutation {
         private boolean emissive = false;
         private ResourceLocation swirlTexture = null;
         private float swirlSpeed = 0.01f;
+        private MorphlingModelAttachment modelAttachment = null;
 
         Builder(float r, float g, float b, float alpha) {
             this.r = r;
@@ -82,7 +100,7 @@ public class MorphlingVisualMutation {
             return this;
         }
 
-        /** Render at full brightness so the effect glows in the dark. */
+        /** Render the overlay at full brightness so the effect glows in the dark. */
         public Builder emissive() {
             this.emissive = true;
             return this;
@@ -95,8 +113,22 @@ public class MorphlingVisualMutation {
             return this;
         }
 
+        /**
+         * Attach a custom 3-D model to the player while this morphling is equipped.
+         * The attachment receives the same scaled alpha as the color overlay so
+         * model opacity also grows with maturity.
+         *
+         * <p>Use {@link MorphlingModelAttachment#of} for simple single-model
+         * attachments, or extend {@link MorphlingModelAttachment} for full control.
+         */
+        public Builder attach(MorphlingModelAttachment attachment) {
+            this.modelAttachment = attachment;
+            return this;
+        }
+
         public MorphlingVisualMutation build() {
-            return new MorphlingVisualMutation(r, g, b, alpha, pulseSpeed, emissive, swirlTexture, swirlSpeed);
+            return new MorphlingVisualMutation(r, g, b, alpha, pulseSpeed, emissive,
+                    swirlTexture, swirlSpeed, modelAttachment);
         }
     }
 }

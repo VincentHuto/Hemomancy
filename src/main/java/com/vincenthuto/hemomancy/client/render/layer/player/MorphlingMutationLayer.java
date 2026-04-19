@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.layer.player;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
 import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
@@ -88,6 +89,18 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
                     mutation.r, mutation.g, mutation.b, finalAlpha);
 
             poseStack.popPose();
+
+            // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
+            MorphlingModelAttachment attachment = mutation.modelAttachment;
+            if (attachment != null) {
+                poseStack.pushPose();
+                attachment.render(poseStack, buffer, packedLight, entity,
+                        (HumanoidModel<?>) model,
+                        limbSwing, limbSwingAmount, partialTicks,
+                        ageInTicks, netHeadYaw, headPitch,
+                        finalAlpha);
+                poseStack.popPose();
+            }
         });
     }
 
