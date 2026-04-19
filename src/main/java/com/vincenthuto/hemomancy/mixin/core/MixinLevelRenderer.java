@@ -2,9 +2,14 @@ package com.vincenthuto.hemomancy.mixin.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.screen.overlay.BloodMoonVeinOverlay;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import org.joml.Matrix4f;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +40,24 @@ public class MixinLevelRenderer {
 	private static final float BLOOD_MOON_GREEN = 0.05F;
 	/** Blue channel: near-zero to suppress blue, giving a vivid crimson. */
 	private static final float BLOOD_MOON_BLUE  = 0.05F;
+
+	@Inject(
+		method = "renderSky",
+		at = @At(
+			value = "INVOKE",
+			target = "net/minecraft/client/multiplayer/ClientLevel.getMoonPhase()I",
+			shift = At.Shift.BEFORE
+		),
+		require = 0
+	)
+	private void hemomancy$renderBloodMoonVeins(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick,
+			Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
+		if (!BloodMoonClientState.isActive()) return;
+		Minecraft mc = Minecraft.getInstance();
+		ClientLevel level = mc.level;
+		if (level == null) return;
+		BloodMoonVeinOverlay.renderInSky(poseStack, level, partialTick);
+	}
 
 	/**
 	 * Set the shader colour to blood-red right before the moon quad is rendered.
