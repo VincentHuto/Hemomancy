@@ -1,0 +1,100 @@
+package com.vincenthuto.hemomancy.client.render.layer.player;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.vincenthuto.hemomancy.client.morphling.MorphlingMutationRegistry;
+import com.vincenthuto.hemomancy.client.morphling.MorphlingVisualMutation;
+import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
+import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
+import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
+
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+/**
+ * Renders a colored translucent overlay on the player's model when they have
+ * a morphling equipped. Each morphling type defines its own tint color, pulse
+ * speed, and whether to use an animated swirl or a plain glowing skin overlay.
+ * The effect's intensity scales with the morphling's maturity level.
+ */
+@OnlyIn(Dist.CLIENT)
+public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidModel<T>>
+        extends RenderLayer<T, M> {
+
+    // Alpha multiplier per maturity level (0 = Unfed … 4 = Apex).
+    // Apex is the anchor — the mutation's design alpha is applied at full
+    // strength only at Apex, lower maturities render proportionally dimmer.
+    private static final float[] MATURITY_ALPHA_SCALE = { 0.18f, 0.32f, 0.50f, 0.72f, 1.00f };
+
+    public MorphlingMutationLayer(LivingEntityRenderer<T, M> renderer) {
+        super(renderer);
+    }
+
+    @Override
+    public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
+            float limbSwing, float limbSwingAmount, float partialTicks,
+            float ageInTicks, float netHeadYaw, float headPitch) {
+
+        if (!(entity instanceof Player player))
+            return;
+
+        player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
+            ItemStack morphlingStack = cap.getEquippedMorphling();
+            if (morphlingStack.isEmpty())
+                return;
+
+            MorphlingVisualMutation mutation = MorphlingMutationRegistry.get(morphlingStack);
+            if (mutation == null)
+                return;
+
+            int maturity = MorphlingItem.getMaturityLevel(morphlingStack);
+            float maturityScale = MATURITY_ALPHA_SCALE[maturity];
+
+            // Sine-wave pulse — amplitude is ±30 % of the alpha
+            float pulse = 1.0f;
+            if (mutation.pulseSpeed > 0f) {
+                pulse = 0.70f + 0.30f * (float) Math.sin(ageInTicks * mutation.pulseSpeed);
+            }
+
+            float finalAlpha = mutation.alpha * maturityScale * pulse;
+
+            M model = this.getParentModel();
+            poseStack.pushPose();
+
+            VertexConsumer consumer;
+            if (mutation.swirlTexture != null) {
+                float scrollU = (ageInTicks * mutation.swirlSpeed) % 1.0f;
+                float scrollV = (ageInTicks * mutation.swirlSpeed * 0.5f) % 1.0f;
+                consumer = buffer.getBuffer(RenderTypeInit.energySwirl(mutation.swirlTexture, scrollU, scrollV));
+            } else if (mutation.emissive) {
+                consumer = buffer.getBuffer(RenderType.entityTranslucentEmissive(getSkinTexture(player)));
+            } else {
+                consumer = buffer.getBuffer(RenderType.entityTranslucent(getSkinTexture(player)));
+            }
+
+            model.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY,
+                    mutation.r, mutation.g, mutation.b, finalAlpha);
+
+            poseStack.popPose();
+        });
+    }
+
+    private static ResourceLocation getSkinTexture(Player player) {
+        if (player instanceof AbstractClientPlayer acp) {
+            return acp.getSkinTextureLocation();
+        }
+        return DefaultPlayerSkin.getDefaultSkin(player.getUUID());
+    }
+}

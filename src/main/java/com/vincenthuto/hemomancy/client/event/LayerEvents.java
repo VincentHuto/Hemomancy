@@ -76,6 +76,7 @@ import com.vincenthuto.hemomancy.client.render.layer.player.CellHandLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.EquippedMorphlingLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.FungalElytraLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.HemolymphopodaHeadpieceLayer;
+import com.vincenthuto.hemomancy.client.render.layer.player.MorphlingMutationLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.RenderScarsLayer;
 import com.vincenthuto.hemomancy.client.render.layer.player.VascCharmLayer;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -262,6 +263,7 @@ public class LayerEvents {
 			livingRenderer.addLayer(new RenderScarsLayer(livingRenderer));
 			livingRenderer.addLayer(new VascCharmLayer(livingRenderer));
 			livingRenderer.addLayer(new FungalElytraLayer(livingRenderer));
+			livingRenderer.addLayer(new MorphlingMutationLayer<>(livingRenderer));
 			livingRenderer.addLayer(new EquippedMorphlingLayer(livingRenderer));
 			livingRenderer.addLayer(new HemolymphopodaHeadpieceLayer(livingRenderer));
 
