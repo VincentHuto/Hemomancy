@@ -71,7 +71,7 @@ public class BloodMoonVeinOverlay {
 		// The sky is rotated by Ry(-90°) * Rx(skyAngle*360°); the moon sits at
 		// (0,-1,0) in that local frame, which maps to (sin α, -cos α, 0) in world
 		// space where α = skyAngle * 2π.
-		float alpha = mc.level.getSkyAngle(partialTick) * (float) (Math.PI * 2.0);
+		float alpha = mc.level.getSunAngle(partialTick);
 		float moonDirX = Mth.sin(alpha);
 		float moonDirY = -Mth.cos(alpha);
 		// moonDirZ = 0 — the celestial plane runs along world X/Y
