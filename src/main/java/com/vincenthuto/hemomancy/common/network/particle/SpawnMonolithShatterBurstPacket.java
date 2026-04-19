@@ -38,9 +38,7 @@ public class SpawnMonolithShatterBurstPacket {
 			return;
 		}
 		ClientLevel world = ((ClientLevel) clientLevel.get());
-		if (world != null) {
-			SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random);
-		}
+		SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random);
 		ctx.setPacketHandled(true);
 	}
 

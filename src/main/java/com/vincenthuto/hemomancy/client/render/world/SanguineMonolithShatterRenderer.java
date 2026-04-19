@@ -26,6 +26,7 @@ public class SanguineMonolithShatterRenderer {
 	private static final double SPEED_VARIANCE = 0.24;
 	private static final double DRAG = 0.93;
 	private static final double GRAVITY = 0.015;
+	private static final double ZERO_LENGTH_THRESHOLD = 1.0e-5;
 
 	private static final List<Shard> ACTIVE_SHARDS = new ArrayList<>();
 
@@ -91,7 +92,7 @@ public class SanguineMonolithShatterRenderer {
 		double y = random.nextDouble() * 2.0 - 1.0;
 		double z = random.nextDouble() * 2.0 - 1.0;
 		Vec3 v = new Vec3(x, y, z);
-		return v.lengthSqr() < 1.0e-5 ? new Vec3(0, 1, 0) : v.normalize();
+		return v.lengthSqr() < ZERO_LENGTH_THRESHOLD ? new Vec3(0, 1, 0) : v.normalize();
 	}
 
 	private static Vec3 rotate(Vec3 v, Vec3 axis, float angle) {
