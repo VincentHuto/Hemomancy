@@ -1,7 +1,7 @@
 # Hemomancy — Complete Mod Reference
 
 > **Minecraft Version:** 1.20.1 (Forge)
-> **Last Updated:** 2026-04-15
+> **Last Updated:** 2026-04-19
 
 <!-- Texture base paths (relative from project root) -->
 <!-- Items:  src/main/resources/assets/hemomancy/textures/item/ -->
@@ -13,6 +13,12 @@
 <!-- MnA:    src/main/resources/assets/hemomancy/textures/mna/ -->
 
 Hemomancy is a blood magic mod built around the *quality* of blood manipulation rather than just quantity. It covers topics of gore, magic, exaggerated biology, fungi, secret societies, and cosmic horror. The power to control blood is the result of a **special fungal infection** — a sentient extraterrestrial fungus that deliberately broke off from a larger hive-mind organism (itself the physical manifestation of an outer-god-type entity) and landed on the Minecraft world, slowly taking hold.
+
+> **Current Gameplay State Snapshot (2026-04-19 audit):**
+> - Core progression systems are in place and playable: Harbinger degree progression, Unstained purity/clarity progression, blood manipulations, skills, bloodlines, morphlings, scars, armor set bonuses, and NPC dialogue trees.
+> - Content breadth is large and actively expanded (`ItemInit`, `BlockInit`, `EntityInit`, `ManipulationInit`, `EffectInit` all show substantial registered content; `SoundInit` now registers **78** custom sound events).
+> - Ongoing major WIP remains focused on advanced/endgame content: Fungal Dimension polish, Saints encounters, Founding Sanctum mechanics, Blood Moon balancing, and late-stage organ-effect tuning.
+> - Data-generation server providers and generated entity-loot workflow are still partially disabled (`DataGeneration` and `HemoEntityLootProvider`), so gameplay state should continue to be treated as evolving.
 
 ---
 
@@ -1919,13 +1925,14 @@ Notable packets:
 
 Registered in `SoundInit`:
 
-| Sound Event | Registry Key | Notes |
+| Sample Sound Event | Registry Key | Notes |
 |-------------|-------------|-------|
 | Abhorent Thought Ambient | `entity.abhorent_thought.ambient` | Idle sound for the Abhorent Thought mob |
-| Abhorent Thought Hurt | `entity.abhorent_thought.hurt` | Damage sound for the Abhorent Thought mob |
-| Abhorent Thought Death | `entity.abhorent_thought.death` | Death sound for the Abhorent Thought mob |
+| Crimson Doe Ambient | `entity.crimson_doe.ambient` | Ambient sound for the Crimson Doe creature |
+| Chthonian Queen Death | `entity.chthonian_queen.death` | Death sound for the Chthonian Queen |
+| Synapse Hound Hurt | `entity.synapse_hound.hurt` | Damage sound for the Synapse Hound monster |
 
-> **Note:** Only 3 custom sounds are currently registered. Most entities and interactions use vanilla Minecraft sounds (e.g., `SoundEvents.BOOK_PAGE_TURN`, `SoundEvents.ANVIL_USE`, `SoundEvents.EXPERIENCE_ORB_PICKUP`, etc.). Custom sounds for other mobs, manipulations, and rituals are a planned expansion.
+> **Status:** `SoundInit` currently registers **78 custom sound events** spanning multiple creature categories (animals, aquatic, arthropods, and monsters). Vanilla sounds are still used in many interactions where dedicated custom audio has not yet been authored.
 
 ---
 
