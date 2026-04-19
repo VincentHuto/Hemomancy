@@ -5,13 +5,11 @@ import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.joml.Vector3f;
 
 /**
  * HUD overlay that renders animated blood-vein tendrils radiating from the
@@ -67,26 +65,34 @@ public class BloodMoonVeinOverlay {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 
+		if (mc.player == null) return;
+
 		// Moon world-space direction derived from the sky's celestial angle.
 		// The sky is rotated by Ry(-90°) * Rx(skyAngle*360°); the moon sits at
 		// (0,-1,0) in that local frame, which maps to (sin α, -cos α, 0) in world
-		// space where α = skyAngle * 2π.
+		// space where α = sunAngle (radians).
 		float alpha = mc.level.getSunAngle(partialTick);
 		float moonDirX = Mth.sin(alpha);
 		float moonDirY = -Mth.cos(alpha);
-		// moonDirZ = 0 — the celestial plane runs along world X/Y
+		// moonDirZ = 0 — celestial plane runs along world X/Y
 
-		Camera camera = mc.gameRenderer.getMainCamera();
-		Vector3f forward = new Vector3f(camera.getLookVector());
-		Vector3f up      = new Vector3f(camera.getUpVector());
-		// right = forward × up (Minecraft's left-handed Y-up convention)
-		Vector3f right = new Vector3f(forward).cross(up);
+		// Build camera basis from player yaw/pitch directly, bypassing camera bob.
+		// Bob is a post-rotation applied to the view matrix after yaw/pitch; using the
+		// raw player angles produces a stable anchor point that does not oscillate.
+		float yaw   = Mth.lerp(partialTick, mc.player.yRotO, mc.player.getYRot());
+		float pitch = Mth.lerp(partialTick, mc.player.xRotO, mc.player.getXRot());
+		float sy = Mth.sin(yaw   * (float) (Math.PI / 180.0));
+		float cy = Mth.cos(yaw   * (float) (Math.PI / 180.0));
+		float sp = Mth.sin(pitch * (float) (Math.PI / 180.0));
+		float cp = Mth.cos(pitch * (float) (Math.PI / 180.0));
 
-		float dotForward = moonDirX * forward.x() + moonDirY * forward.y();
-		float dotRight   = moonDirX * right.x()   + moonDirY * right.y();
-		float dotUp      = moonDirX * up.x()       + moonDirY * up.y();
+		// moonDirZ = 0, so Z components of each basis vector vanish from dot products.
+		// forward = (-sy·cp, -sp, …)  right = (-cy, 0, …)  up = (-sy·sp, cp, …)
+		float dotForward = -moonDirX * sy * cp - moonDirY * sp;
+		float dotRight   = -moonDirX * cy;
+		float dotUp      = -moonDirX * sy * sp + moonDirY * cp;
 
-		// Moon is behind the camera — nothing to draw.
+		// Moon is behind or beside the camera — nothing to draw.
 		if (dotForward <= 0.01f) return;
 
 		// Project to GUI-scaled screen coords using the vertical FOV.
