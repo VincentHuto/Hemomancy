@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEnt
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
@@ -61,10 +62,15 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
 	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
+	private static final int SHARD_PARTICLE_COUNT = 84;
 	private static final int INK_PARTICLE_COUNT = 36;
 	private static final int SMOKE_PARTICLE_COUNT = 14;
 	private static final double SHATTER_PARTICLE_OFFSET_XZ = 0.5;
 	private static final double SHATTER_PARTICLE_OFFSET_Y = 0.8;
+	private static final double SHARD_MIN_SPEED = 0.18;
+	private static final double SHARD_MAX_SPEED = 0.45;
+	private static final double SHARD_VERTICAL_BOOST = 0.08;
+	private static final double SHARD_VERTICAL_VARIANCE = 0.14;
 	private static final double INK_SPREAD_XZ = 0.45;
 	private static final double INK_SPREAD_Y = 0.6;
 	private static final double SMOKE_SPREAD = 0.4;
@@ -205,7 +211,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			if (degreeNumber >= 7 && worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity monolith) {
 				int interactions = monolith.incrementArchonInteractions();
 				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
-					explodeIntoBlackShards(worldIn, pos);
+					explodeIntoBlackShards(worldIn, pos, state);
 					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
 					worldIn.destroyBlock(pos, false);
 					return;
@@ -224,15 +230,32 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		return InteractionResult.SUCCESS;
 	}
 
-	private static void explodeIntoBlackShards(Level level, BlockPos pos) {
+	private static void explodeIntoBlackShards(Level level, BlockPos pos, BlockState monolithState) {
 		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
 		if (level instanceof ServerLevel serverLevel) {
+			double centerX = pos.getX() + SHATTER_PARTICLE_OFFSET_XZ;
+			double centerY = pos.getY() + SHATTER_PARTICLE_OFFSET_Y;
+			double centerZ = pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ;
+
+			for (int i = 0; i < SHARD_PARTICLE_COUNT; i++) {
+				double theta = serverLevel.random.nextDouble() * Math.PI * 2.0;
+				double yAxis = serverLevel.random.nextDouble() * 2.0 - 1.0;
+				double radial = Math.sqrt(1.0 - yAxis * yAxis);
+				double speed = SHARD_MIN_SPEED + serverLevel.random.nextDouble() * (SHARD_MAX_SPEED - SHARD_MIN_SPEED);
+				double velocityX = Math.cos(theta) * radial * speed;
+				double velocityY = yAxis * speed + SHARD_VERTICAL_BOOST
+						+ serverLevel.random.nextDouble() * SHARD_VERTICAL_VARIANCE;
+				double velocityZ = Math.sin(theta) * radial * speed;
+				serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, monolithState),
+						centerX, centerY, centerZ, 1, velocityX, velocityY, velocityZ, 0);
+			}
+
 			serverLevel.sendParticles(ParticleTypes.SQUID_INK,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
+					centerX, centerY, centerZ,
 					INK_PARTICLE_COUNT, INK_SPREAD_XZ, INK_SPREAD_Y, INK_SPREAD_XZ, INK_SPEED);
 			serverLevel.sendParticles(ParticleTypes.SMOKE,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
+					centerX, centerY, centerZ,
 					SMOKE_PARTICLE_COUNT, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPEED);
 		}
 	}
