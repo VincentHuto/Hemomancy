@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -91,6 +92,20 @@ public class BloodMoonEvents {
 		if (!(level instanceof ServerLevel sl)) return false;
 		ServerLevel overworld = sl.getServer().overworld();
 		return BloodMoonSavedData.get(overworld).isActive();
+	}
+
+	// ---------------------------------------------------------------------------
+	// Player login sync
+	// ---------------------------------------------------------------------------
+
+	@SubscribeEvent
+	public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
+		ServerLevel overworld = player.server.overworld();
+		boolean active = BloodMoonSavedData.get(overworld).isActive();
+		PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> player),
+				new PacketSyncBloodMoon(active));
 	}
 
 	// ---------------------------------------------------------------------------
