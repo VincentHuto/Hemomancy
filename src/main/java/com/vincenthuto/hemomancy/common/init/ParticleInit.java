@@ -12,6 +12,7 @@ import com.vincenthuto.hemomancy.client.particle.factory.BloodAvatarHitParticleF
 import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.BloodClawParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
+import com.vincenthuto.hemomancy.client.particle.factory.MonolithShardParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.client.particle.type.AbsorbedBloodCellParticleType;
 import com.vincenthuto.hemomancy.client.particle.type.BloodAvatarHitParticleType;
@@ -22,6 +23,7 @@ import com.vincenthuto.hemomancy.client.particle.type.SerpentParticleType;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -54,6 +56,9 @@ public class ParticleInit {
 	public static final RegistryObject<ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
 			.register("absorbed_blood_cell", () -> new AbsorbedBloodCellParticleType());
 
+	public static final RegistryObject<SimpleParticleType> monolith_shard = PARTICLE_TYPES
+			.register("monolith_shard", () -> new SimpleParticleType(false));
+
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
 		Minecraft.getInstance().particleEngine.register(blood_avatar_hit.get(), BloodAvatarHitParticleFactory::new);
@@ -62,6 +67,6 @@ public class ParticleInit {
 		Minecraft.getInstance().particleEngine.register(blood_cell.get(), BloodCellParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(blood_claw.get(), BloodClawParticleFactory::new);
 		Minecraft.getInstance().particleEngine.register(absorbed_blood_cell.get(), AbsrobedBloodCellParticleFactory::new);
-
+		Minecraft.getInstance().particleEngine.register(monolith_shard.get(), MonolithShardParticleFactory::new);
 	}
 }

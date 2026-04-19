@@ -11,9 +11,11 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 
+import com.vincenthuto.hemomancy.common.init.ParticleInit;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -61,15 +63,10 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
 	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
-	private static final int INK_PARTICLE_COUNT = 36;
-	private static final int SMOKE_PARTICLE_COUNT = 14;
-	private static final double SHATTER_PARTICLE_OFFSET_XZ = 0.5;
-	private static final double SHATTER_PARTICLE_OFFSET_Y = 0.8;
-	private static final double INK_SPREAD_XZ = 0.45;
-	private static final double INK_SPREAD_Y = 0.6;
-	private static final double SMOKE_SPREAD = 0.4;
-	private static final double INK_SPEED = 0.02;
-	private static final double SMOKE_SPEED = 0.01;
+	private static final int SHARD_COUNT = 48;
+	private static final double SHARD_MIN_SPEED = 0.18;
+	private static final double SHARD_MAX_SPEED = 0.55;
+	private static final double SHARD_UPWARD_BIAS = 0.08;
 
 	/** Filler offsets: 1×2×1 — one filler block above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -228,12 +225,24 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
 		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.SQUID_INK,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
-					INK_PARTICLE_COUNT, INK_SPREAD_XZ, INK_SPREAD_Y, INK_SPREAD_XZ, INK_SPEED);
-			serverLevel.sendParticles(ParticleTypes.SMOKE,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
-					SMOKE_PARTICLE_COUNT, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPEED);
+			// Burst origin centred in the middle of the two-block monolith.
+			double cx = pos.getX() + 0.5;
+			double cy = pos.getY() + 1.0;
+			double cz = pos.getZ() + 0.5;
+			RandomSource rng = level.random;
+
+			for (int i = 0; i < SHARD_COUNT; i++) {
+				// Uniform sphere distribution via rejection sampling on azimuth + cosine elevation.
+				double theta = rng.nextDouble() * 2.0 * Math.PI;
+				double cosPhi = 2.0 * rng.nextDouble() - 1.0;
+				double sinPhi = Math.sqrt(1.0 - cosPhi * cosPhi);
+				double speed = SHARD_MIN_SPEED + rng.nextDouble() * (SHARD_MAX_SPEED - SHARD_MIN_SPEED);
+				double vx = speed * sinPhi * Math.cos(theta);
+				double vy = speed * cosPhi + SHARD_UPWARD_BIAS;
+				double vz = speed * sinPhi * Math.sin(theta);
+				// count=0 sends one particle with exact velocity (vx, vy, vz).
+				serverLevel.sendParticles(ParticleInit.monolith_shard.get(), cx, cy, cz, 0, vx, vy, vz, 1.0);
+			}
 		}
 	}
 }
