@@ -378,7 +378,11 @@ public class BloodCraftingKeyPressPacket {
 	}
 
 	private static boolean consumeCenterCatalyst(ServerLevel level, BlockPos centerPos, Item requiredItem) {
-		AABB centerBox = new AABB(centerPos).inflate(CATALYST_SEARCH_RADIUS_XZ, CATALYST_SEARCH_RADIUS_Y, CATALYST_SEARCH_RADIUS_XZ);
+		// Some rites compute center from pattern bounds, which can sit above the floor.
+		// Expand search downward to still catch catalysts planted at ground level.
+		AABB centerBox = new AABB(centerPos)
+				.inflate(CATALYST_SEARCH_RADIUS_XZ, CATALYST_SEARCH_RADIUS_Y, CATALYST_SEARCH_RADIUS_XZ)
+				.expandTowards(0.0D, -4.0D, 0.0D);
 		List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, centerBox,
 				e -> e.isAlive() && e.getItem().is(requiredItem));
 		if (entities.isEmpty()) {

@@ -1330,7 +1330,7 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Bloom of the Qliphoth (Degree 4, Lesser):
+	 * Bloom of the Qliphoth (Degree 7, Greater):
 	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
 	 * radius, all blood manipulations cost 25% less blood and players receive
 	 * passive health regeneration and enhanced blood regeneration.
