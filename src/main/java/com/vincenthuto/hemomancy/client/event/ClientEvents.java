@@ -16,6 +16,7 @@ import com.vincenthuto.hemomancy.client.render.world.BloodBallRenderer;
 import com.vincenthuto.hemomancy.client.render.world.BloodCraftRingRenderer;
 import com.vincenthuto.hemomancy.client.render.world.GourdVineRenderer;
 import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
+import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
 import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 import com.vincenthuto.hemomancy.client.data.BloodBallClientData;
 import com.vincenthuto.hemomancy.client.screen.item.CharmGourdScreen;
@@ -187,6 +188,7 @@ public class ClientEvents {
 			ManipCooldownOverlay.tick();
 			ActiveBloodCraftClientData.tick();
 			BloodBallClientData.tick();
+			SanguineMonolithShatterRenderer.tick();
 			if (FungalWhisperVignetteOverlay.instance != null) {
 				FungalWhisperVignetteOverlay.instance.tick();
 			}
@@ -287,6 +289,7 @@ public class ClientEvents {
 			BloodCraftRingRenderer.render(event.getPoseStack(), event.getPartialTick());
 			QliphothBloomRenderer.render(event.getPoseStack(), event.getPartialTick());
 			BloodBallRenderer.render(event.getPoseStack(), event.getPartialTick());
+			SanguineMonolithShatterRenderer.render(event.getPoseStack(), event.getPartialTick());
 		}
 	}
 

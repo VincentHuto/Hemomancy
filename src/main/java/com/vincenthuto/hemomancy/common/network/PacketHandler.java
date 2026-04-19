@@ -42,6 +42,7 @@ import com.vincenthuto.hemomancy.common.network.particle.GroundBloodDrawPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnAvatarParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnBloodClawParticlesPacket;
 import com.vincenthuto.hemomancy.common.network.particle.SpawnFlaskParticlesPacket;
+import com.vincenthuto.hemomancy.common.network.particle.SpawnMonolithShatterBurstPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.DialogueOptionPacket;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
@@ -266,6 +267,9 @@ public class PacketHandler {
 		CHANNELPARTICLES.messageBuilder(SpawnLivingToolParticlesPacket.class, networkID++)
 				.decoder(SpawnLivingToolParticlesPacket::decode).encoder(SpawnLivingToolParticlesPacket::encode)
 				.consumerNetworkThread(SpawnLivingToolParticlesPacket::handle).add();
+		CHANNELPARTICLES.messageBuilder(SpawnMonolithShatterBurstPacket.class, networkID++)
+				.decoder(SpawnMonolithShatterBurstPacket::decode).encoder(SpawnMonolithShatterBurstPacket::encode)
+				.consumerNetworkThread(SpawnMonolithShatterBurstPacket::handle).add();
 
 		CHANNELMORPHLINGJAR.registerMessage(networkID++, JarTogglePickupPacket.class, JarTogglePickupPacket::encode,
 				JarTogglePickupPacket::decode, JarTogglePickupPacket::handle);
@@ -355,6 +359,12 @@ public class PacketHandler {
 	public static void sendLivingToolBreakParticles(Vec3 pos, ParticleColor color, double radius,
 			ResourceKey<Level> dimension) {
 		SpawnLivingToolParticlesPacket msg = new SpawnLivingToolParticlesPacket(pos, color);
+		CHANNELPARTICLES.send(PacketDistributor.NEAR
+				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
+	}
+
+	public static void sendMonolithShatterBurst(Vec3 pos, double radius, ResourceKey<Level> dimension) {
+		SpawnMonolithShatterBurstPacket msg = new SpawnMonolithShatterBurstPacket(pos);
 		CHANNELPARTICLES.send(PacketDistributor.NEAR
 				.with(() -> new PacketDistributor.TargetPoint(pos.x, pos.y, pos.z, radius, dimension)), msg);
 	}
