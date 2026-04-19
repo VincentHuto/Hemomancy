@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.overlay;
+package com.vincenthuto.hemomancy.client.render.world;
 
 import java.util.Random;
 
@@ -20,16 +20,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 
 /**
- * HUD overlay that renders animated blood-vein tendrils radiating from the
- * moon's approximate screen position when a Blood Moon is active.
+ * Sky renderer for animated blood-vein tendrils radiating from the moon's
+ * position when a Blood Moon is active.
  *
- * <p>Uses the same pixel-art squiggle algorithm as {@link DialogueScreen}'s
+ * <p>Uses the same pixel-art squiggle algorithm as
+ * {@link com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen}'s
  * blood theme background, but tendrils are anchored to the top-centre of the
  * screen and fan outward in a downward arc, giving the impression of veins
  * growing from the moon into the sky.
  */
 @OnlyIn(Dist.CLIENT)
-public class BloodMoonVeinOverlay {
+public class BloodMoonVeinSkyRenderer {
 
 	private static final int TENDRIL_COUNT = 22;
 	private static final float MOON_PLANE_Y = -100.0F;
