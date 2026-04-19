@@ -239,7 +239,7 @@ At **Degree 5 (Illuminatus)**, a Harbinger can perform a founding rite that cons
 - Intended to encourage collective settlement and cooperative play
 - A crafting material called **Quintessence** is granted by the Illuminatus rite and is required for the founding ritual
 
-> **⚠️ WIP:** Sanctum boundary detection, buff application, and Quintessence item are planned but not yet fully implemented.
+> **Partially implemented:** Buff application logic is functional (`FoundingSanctumEvents` applies Damage Boost, Regeneration, and Damage Resistance to qualifying players within the sanctum radius). The Sanguine Quintessence item is registered, produced by the Exsanguination cardinal rite, and required as a placed catalyst at the sanctum heart. Sanctum locations are persisted via `FoundingSanctumSavedData`. Remaining WIP: sanctum boundary detection confirmation and full gameplay tuning.
 
 ### 3.8 The Saints System (Degree 3–4)
 
@@ -571,21 +571,21 @@ Skill bonuses are computed in `SkillPointHelper`.
 | Efficiency | ✅ Yes | `BloodManipulation.performAction()` — multiplies manipulation blood cost |
 | Manip Slots | ✅ Yes | `KnownManipulationEvents` — expands active manipulation slot count |
 | Last Wind | ✅ Yes | `BloodVolumeEvents` — passive blood regen when below 10% threshold |
-| Dynamic Use | ⚠️ Helper only | `SkillPointHelper.getDynamicUseMultiplier()` exists but no event caller found |
+| Dynamic Use | ✅ Yes | `BloodManipulation` — divides effective blood cost by multiplier when tendency matches |
 | Feeding Frenzy | ✅ Yes | `BloodVolumeEvents` — multiplies blood gained from kills |
-| Hemostasis | ⚠️ Helper only | `SkillPointHelper.getHemostasisMultiplier()` exists but no event caller found |
-| Sanguine Surge | ⚠️ Helper only | `SkillPointHelper.getSanguineSurgeRegen()` exists but no event caller found |
+| Hemostasis | ✅ Yes | `BloodVolumeEvents` — multiplies blood drained when taking damage |
+| Sanguine Surge | ✅ Yes | `BloodVolumeEvents` — adds passive blood regen per tick |
 | Crimson Mastery | ✅ Yes | `PyreticForgeManip` — scales items smelted per cast |
-| Vital Link | ⚠️ Helper only | `SkillPointHelper.getVitalLinkChance()` exists but no event caller found |
+| Vital Link | ✅ Yes | `KnownManipulationEvents` — chance to heal player on dealing manipulation damage |
 | Iron Will | ⚠️ Helper only | `SkillPointHelper.getIronWillReduction()` exists but no event caller found |
-| Blood Flow | ⚠️ Helper only | `SkillPointHelper.getBloodFlowMultiplier()` exists but no event caller found |
-| Coagulation | ⚠️ Helper only | `SkillPointHelper.getCoagulationChance()` exists but no event caller found |
+| Blood Flow | ✅ Yes | `BloodManipulation` — multiplies effective cooldown of manipulations |
+| Coagulation | ✅ Yes | `BloodLossEffect` — chance to block incoming bleed effect ticks |
 | Sanguine Reach | ✅ Yes | `BloodLampManip`, `CrimsonFlameConjurationManip`, `UmbralStepManip`, `SanguineExcavationManip` — scales range |
 | Scar Affinity | ⚠️ Helper only | Helper exists; scar effect potency scaling not yet wired |
 | Scar Resonance | ⚠️ Helper only | Helper exists; scar slot expansion not yet wired |
 | Scar Mastery | ⚠️ Helper only | Helper exists; scar effect duration not yet wired |
 
-> **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers (damage events, regen ticks, cooldown calculations, etc.) to have actual gameplay effects.
+> **Note:** Skills marked "⚠️ Helper only" have their bonus calculations fully implemented in `SkillPointHelper` but need to be wired into the relevant event handlers to have actual gameplay effects.
 
 ---
 
@@ -1576,7 +1576,7 @@ Full integration as a faction + spell system:
 - Hemomantic Wand Core, Arcane Living Staff, Mote of Mana — crafted via MnA systems (manaweaving, runeforging)
 - Hemomantic enchantments via MnA runeforging
 - Cross-mod advancements, JEI integration for MnA crafting recipes
-- Harbinger Mana HUD texture fix (current TODO)
+- Harbinger Mana HUD texture (`textures/mna/harbingers_resource_bars.png`) and resource hook (`HarbingersMana` implementing `ICastingResourceGuiProvider`) are implemented
 
 ### 25.2 Curios
 
@@ -1706,12 +1706,12 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 
 ## 30. Known WIP / Incomplete Systems
 
-- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 25 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
+- **Entity Loot Tables** — ~~All entity loot tables in `HemoEntityLootProvider` are entirely commented out.~~ **RESOLVED:** 37 entity loot table JSON files exist in `data/hemomancy/loot_tables/entities/` and are loaded automatically by Forge convention. The `HemoEntityLootProvider` data generator remains disabled but is not needed — loot tables work via the JSON files.
 - **Progression Codex / Liber Sanguinum** — `HemoProgressionScreen.setupEntries()` is entirely commented out. The `ENTRIES` list is empty, `EntryScreen.render()` is commented out. The guidebook opens but displays no content. Needs entry definitions and page content.
 - **Blood Fluid** (`FluidInit`) — Blood as a placeable fluid is entirely commented out / WIP
 - **Manipulation Rank Advancement** — Ritual-based forced rank upgrades described as WIP in lore
 - **Unstained Zealot Capability Check** — Uses reflection to check for `UnstainedProgressProvider` (suggests it was added incrementally)
-- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **PARTIALLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (7): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach. Still helper-only/not called from events (10): Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Iron Will, Blood Flow, Coagulation, Scar Affinity, Scar Resonance, Scar Mastery.
+- **Skill Effect Wiring** — ~~7 of 13 skills are not wired.~~ **MOSTLY RESOLVED:** All 18 skills in `SkillPointHelper` have helper methods. Fully wired into event handlers (13): Capacity, Efficiency, Manip Slots, Last Wind, Feeding Frenzy, Crimson Mastery, Sanguine Reach, Dynamic Use, Hemostasis, Sanguine Surge, Vital Link, Blood Flow, Coagulation. Still helper-only/not called from events (4): Iron Will, Scar Affinity, Scar Resonance, Scar Mastery.
 - **Loot Modifiers** (`AddItemModifier`) — framework exists, specific loot tables TBD
 - **Visceral Organs System** — Organ extraction ritual flow is implemented. Organ modification tiers and gameplay effects for each extracted organ still TBD. See §13.8 for details.
 - **Armor Set Bonuses** — ~~No set bonus logic exists.~~ **RESOLVED:** All 5 armor sets now have unique set bonuses implemented in `ArmorSetBonusHandler`: Hematic Iron (blood regen), Blood Lust (lifesteal), Barbed (thorns + Blood Loss), Chitinite (toughness + projectile reduction), Unstained (Blood Loss/Hemolysis immunity). The Marrow Crown artifact has a standalone +10% damage bonus when blood > 50%. See §15 for details.
@@ -1738,7 +1738,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 - **Scar Tier System** — All three tiers of scars now fully registered (10 Tier 1, 8 Tier 2, 8 Tier 3 = 26 total scars) with patterns for all. Individual gameplay bonuses beyond tendency alignment remain unimplemented.
 - **HemoItemModelProvider Enhancements** — Data generator now handles `BloodMemoryItem` 2-layer models, `ItemScarPattern` 2-layer models, and properly excludes special blocks (sanguine panes, cleansed sanguine panes, ash trails, engram, filler, crimson flames) from automatic block model generation.
 - **Saints System (WIP)** — Four Saints planned. Trial Chamber structure for Hemorath (First Saint) is in early development. Hemorath boss fight mechanic (blood-absorb → exsanguinate puzzle) and The Chain Saint (light-avoidance, re-chaining mechanic) are designed but not yet implemented. Saints 3 and 4 are to be determined. See §3.8.
-- **Founding Sanctum (WIP)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum granting all Harbingers within enhanced effects. Quintessence material planned. See §3.7.
+- **Founding Sanctum (Partially Implemented)** — Degree 5 Illuminatus ability to consecrate a 5×5 chunk area as a Harbinger Sanctum. Buff application logic (`FoundingSanctumEvents`), Sanguine Quintessence item, catalyst requirement, and sanctum persistence (`FoundingSanctumSavedData`) are implemented. Sanctum boundary detection and full gameplay tuning remain WIP. See §3.7.
 - **Blood Moon Mechanics (WIP)** — Blood Moon occurrence (every ~60 nights), gameplay effects (Harbinger buffs, non-Harbinger debuffs, enhanced mob spawning, ritual trigger) are designed but partially implemented. See §22.1.1.
 - **Fungal Dimension (WIP)** — The dimension (consciousness projection) accessible via Fungal Spine at Archon rank. Terrain generation, alien creature spawning, player choice branching, and exit mechanics are in early development. See §3.6.
 - **Annetta Knowles / Stained Priestess (WIP)** — Boss entity planned. Two-phase fight designed (Unstained powers → blood spear phase 2). Model and AI not yet implemented. See §19.3.
