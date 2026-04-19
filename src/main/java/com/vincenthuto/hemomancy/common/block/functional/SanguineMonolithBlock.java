@@ -13,9 +13,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEnt
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -61,15 +59,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE = Block.box(0, 0, 4, 16, 16, 12);
 	private static final int SHATTER_INTERACTION_THRESHOLD = 2;
-	private static final int INK_PARTICLE_COUNT = 36;
-	private static final int SMOKE_PARTICLE_COUNT = 14;
-	private static final double SHATTER_PARTICLE_OFFSET_XZ = 0.5;
-	private static final double SHATTER_PARTICLE_OFFSET_Y = 0.8;
-	private static final double INK_SPREAD_XZ = 0.45;
-	private static final double INK_SPREAD_Y = 0.6;
-	private static final double SMOKE_SPREAD = 0.4;
-	private static final double INK_SPEED = 0.02;
-	private static final double SMOKE_SPEED = 0.01;
+	private static final double SHATTER_PACKET_RADIUS = 64.0;
 
 	/** Filler offsets: 1×2×1 — one filler block above the base. */
 	private static final BlockPos[] FILLER_OFFSETS = new BlockPos[] {
@@ -207,7 +197,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 				if (interactions >= SHATTER_INTERACTION_THRESHOLD) {
 					explodeIntoBlackShards(worldIn, pos);
 					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
-					worldIn.destroyBlock(pos, false);
+					worldIn.removeBlock(pos, false);
 					return;
 				}
 			}
@@ -227,13 +217,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 	private static void explodeIntoBlackShards(Level level, BlockPos pos) {
 		level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 0.8f);
 		level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 1.0f, 0.6f);
-		if (level instanceof ServerLevel serverLevel) {
-			serverLevel.sendParticles(ParticleTypes.SQUID_INK,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
-					INK_PARTICLE_COUNT, INK_SPREAD_XZ, INK_SPREAD_Y, INK_SPREAD_XZ, INK_SPEED);
-			serverLevel.sendParticles(ParticleTypes.SMOKE,
-					pos.getX() + SHATTER_PARTICLE_OFFSET_XZ, pos.getY() + SHATTER_PARTICLE_OFFSET_Y, pos.getZ() + SHATTER_PARTICLE_OFFSET_XZ,
-					SMOKE_PARTICLE_COUNT, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPREAD, SMOKE_SPEED);
+		if (!level.isClientSide) {
+			PacketHandler.sendMonolithShatterBurst(
+					new net.minecraft.world.phys.Vec3(pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5),
+					SHATTER_PACKET_RADIUS,
+					level.dimension());
 		}
 	}
 }
