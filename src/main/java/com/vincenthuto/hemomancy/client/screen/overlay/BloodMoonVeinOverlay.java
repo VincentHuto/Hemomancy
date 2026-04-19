@@ -5,10 +5,13 @@ import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 
 /**
  * HUD overlay that renders animated blood-vein tendrils radiating from the
@@ -61,19 +64,46 @@ public class BloodMoonVeinOverlay {
 	public void renderHUD(GuiGraphics gfx, int screenWidth, int screenHeight, float partialTick) {
 		if (!BloodMoonClientState.isActive()) return;
 
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null) return;
+
+		// Moon world-space direction derived from the sky's celestial angle.
+		// The sky is rotated by Ry(-90°) * Rx(skyAngle*360°); the moon sits at
+		// (0,-1,0) in that local frame, which maps to (sin α, -cos α, 0) in world
+		// space where α = skyAngle * 2π.
+		float alpha = mc.level.getSkyAngle(partialTick) * (float) (Math.PI * 2.0);
+		float moonDirX = Mth.sin(alpha);
+		float moonDirY = -Mth.cos(alpha);
+		// moonDirZ = 0 — the celestial plane runs along world X/Y
+
+		Camera camera = mc.gameRenderer.getMainCamera();
+		Vector3f forward = new Vector3f(camera.getLookVector());
+		Vector3f up      = new Vector3f(camera.getUpVector());
+		// right = forward × up (Minecraft's left-handed Y-up convention)
+		Vector3f right = new Vector3f(forward).cross(up);
+
+		float dotForward = moonDirX * forward.x() + moonDirY * forward.y();
+		float dotRight   = moonDirX * right.x()   + moonDirY * right.y();
+		float dotUp      = moonDirX * up.x()       + moonDirY * up.y();
+
+		// Moon is behind the camera — nothing to draw.
+		if (dotForward <= 0.01f) return;
+
+		// Project to GUI-scaled screen coords using the vertical FOV.
+		float tanHalfFov = (float) Math.tan(Math.toRadians(mc.options.fov().get()) / 2.0);
+		float scale = (screenHeight / 2f) / tanHalfFov;
+		int moonX = (int) (screenWidth  / 2f + (dotRight / dotForward) * scale);
+		int moonY = (int) (screenHeight / 2f - (dotUp    / dotForward) * scale);
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 
 		float time = System.nanoTime() / 1_000_000_000f;
 
-		// Approximate moon position: top-centre, ~12% down the screen.
-		int moonX = screenWidth / 2;
-		int moonY = (int) (screenHeight * 0.12f);
-
 		// Soft radial glow around the moon — crimson halo.
 		drawMoonGlow(gfx, moonX, moonY);
 
-		// Animated vein tendrils.
+		// Animated vein tendrils anchored to the moon's true screen position.
 		for (int i = 0; i < TENDRIL_COUNT; i++) {
 			drawTendril(gfx, i, time, moonX, moonY, screenWidth, screenHeight);
 		}
