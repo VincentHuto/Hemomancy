@@ -73,7 +73,8 @@ public class SilthmereGlaiveItem extends SwordItem {
 				"A pale silver glaive forged in Silthmere's memory. Its reach keeps corruption at arm's length.")
 				.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		tooltip.add(Component.literal("+1.5 Attack Range").withStyle(ChatFormatting.WHITE));
-		tooltip.add(Component.literal("On hit: cleaves up to 3 enemies in front.").withStyle(ChatFormatting.WHITE));
+		tooltip.add(Component.literal("On hit: cleaves up to 2 additional enemies in front (3 total).")
+				.withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("Passive: removes Glowing from the wielder.").withStyle(ChatFormatting.WHITE));
 		tooltip.add(Component.literal("ABSOLVED+: killing a mob grants +0.5 purity.").withStyle(ChatFormatting.AQUA));
 	}

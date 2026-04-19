@@ -61,6 +61,11 @@ public class AbsolutionDaggerItem extends SwordItem {
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+		boolean hit = super.hurtEnemy(stack, target, attacker);
+		if (!hit) {
+			return false;
+		}
+
 		if (!attacker.level().isClientSide && attacker instanceof Player player) {
 			// Always apply Weakness I for 2 seconds
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, false, true, true));
@@ -98,7 +103,7 @@ public class AbsolutionDaggerItem extends SwordItem {
 				}
 			});
 		}
-		return super.hurtEnemy(stack, target, attacker);
+		return true;
 	}
 
 	@Override
