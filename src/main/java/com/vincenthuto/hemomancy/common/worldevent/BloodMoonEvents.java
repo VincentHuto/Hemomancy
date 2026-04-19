@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.worldevent;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.EntityInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
@@ -123,10 +124,16 @@ public class BloodMoonEvents {
 		if (!data.isActive()) return;
 
 		// Apply ambient player effects every EFFECT_INTERVAL_TICKS
+		// Harbingers (degree >= 1) are empowered; uninitiated players are weakened.
 		if (gameTime % EFFECT_INTERVAL_TICKS == 0) {
 			for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
-				player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
-				//player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+				int degree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
+				if (degree > 0) {
+					player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
+					player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+				} else {
+					player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
+				}
 			}
 		}
 

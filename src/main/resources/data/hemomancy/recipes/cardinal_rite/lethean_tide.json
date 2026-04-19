@@ -1,0 +1,29 @@
+{
+  "type": "hemomancy:cardinal_rite_recipe",
+  "bloodCost": 0,
+  "riteType": "greater",
+  "riteName": "Rite of the Lethean Tide",
+  "riteDescription": "An Unstained greater rite that calls upon the purifying waters of Lethe to wash away the crimson stain of a Blood Moon. The tide cleanses the sky and grants the caster a surge of purity. Requires purity of at least 50.",
+  "pattern": [
+    ["LSLSL", "S   S", "L   L", "S   S", "LSLSL"],
+    ["     ", " SLS ", " L L ", " SLS ", "     "],
+    ["  L  ", " SPS ", "LPLPL", " SPS ", "  L  "],
+    ["     ", " SLS ", " L L ", " SLS ", "     "],
+    ["LSLSL", "S   S", "L   L", "S   S", "LSLSL"]
+  ],
+  "key": {
+    "S": {
+      "block": "hemomancy:cleansed_stone"
+    },
+    "L": {
+      "block": "hemomancy:pallid_lantern"
+    },
+    "P": {
+      "block": "hemomancy:pale_silver_block"
+    }
+  },
+  "result": {
+    "item": "hemomancy:consecrated_copper_ingot"
+  },
+  "unstained": true
+}

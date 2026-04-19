@@ -27,6 +27,9 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
+import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
+import com.vincenthuto.hemomancy.common.worldevent.FoundingSanctumSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -423,6 +426,8 @@ public class CardinalRiteEvents {
 	private static final String PALLID_SHADOW_RITE = "cardinal_rite/pallid_shadow";
 	private static final String BLOOM_OF_QLIPHOTH_RITE = "cardinal_rite/bloom_of_qliphoth";
 	private static final String PRUNING_OF_QLIPHOTH_RITE = "cardinal_rite/pruning_of_qliphoth";
+	private static final String SANGUINE_ECLIPSE_RITE = "cardinal_rite/sanguine_eclipse";
+	private static final String FOUNDING_SANCTUM_RITE = "cardinal_rite/founding_sanctum";
 	private static final String SANGUINE_FERVOR_RITE = "cardinal_rite/sanguine_fervor";
 	private static final String ILLUMINATUS_RITE = "cardinal_rite/illuminatus_rite";
 
@@ -442,6 +447,7 @@ public class CardinalRiteEvents {
 	private static final String PALE_CONSECRATION_RITE = "cardinal_rite/pale_consecration";
 	private static final String SILTHMERES_REMEMBRANCE_RITE = "cardinal_rite/silthmeres_remembrance";
 	private static final String LETHE_COVENANT_RITE = "cardinal_rite/lethe_covenant";
+	private static final String LETHEAN_TIDE_RITE = "cardinal_rite/lethean_tide";
 
 	/** Eternal Covenant max blood volume bonus, applied once per player. */
 	private static final double ETERNAL_COVENANT_BONUS = 500.0;
@@ -741,6 +747,21 @@ public class CardinalRiteEvents {
 		// Rite of the Lethe Covenant: establish a grand Unstained domain
 		if (LETHE_COVENANT_RITE.equals(ritePath)) {
 			completeLetheCovenantRite(sLevel, caster, center);
+		}
+
+		// Rite of the Lethean Tide: cleanse an active Blood Moon
+		if (LETHEAN_TIDE_RITE.equals(ritePath)) {
+			completeLetheanTide(sLevel, caster);
+		}
+
+		// Rite of the Sanguine Eclipse: manually invoke a Blood Moon
+		if (SANGUINE_ECLIPSE_RITE.equals(ritePath)) {
+			completeSanguineEclipse(sLevel, caster);
+		}
+
+		// Rite of the Founding Sanctum: consecrate the surrounding area as a Harbinger Sanctum
+		if (FOUNDING_SANCTUM_RITE.equals(ritePath)) {
+			completeFoundingSanctum(sLevel, caster, center);
 		}
 
 		// Play completion sound
@@ -1944,6 +1965,99 @@ public class CardinalRiteEvents {
 		sLevel.sendParticles(ParticleTypes.END_ROD,
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
 				200, blockRadius * 0.2, 4.0, blockRadius * 0.2, 0.02);
+	}
+
+	private static void completeSanguineEclipse(ServerLevel sLevel, ServerPlayer caster) {
+		ServerLevel overworld = sLevel.getServer().overworld();
+		BloodMoonSavedData bloodMoonData = BloodMoonSavedData.get(overworld);
+		if (bloodMoonData.isActive()) {
+			caster.displayClientMessage(
+					Component.literal("A Blood Moon already reigns over this world...")
+							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+					false);
+			return;
+		}
+		long gameTime = overworld.getGameTime();
+		bloodMoonData.start(gameTime + 11900L);
+		for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		}
+		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(true));
+		caster.displayClientMessage(
+				Component.literal("The ritual tears the veil — the Blood Moon rises!")
+						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
+				false);
+	}
+
+	/**
+	 * Rite of the Lethean Tide (Greater, 0 blood, Unstained):
+	 * Forcibly ends an active Blood Moon, broadcasts a cleansing message,
+	 * and grants the caster +10 purity. Requires purity >= 50.
+	 */
+	private static void completeLetheanTide(ServerLevel sLevel, ServerPlayer caster) {
+		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
+				caster.displayClientMessage(
+						Component.literal("The tide will not answer — your purity is insufficient.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			ServerLevel overworld = sLevel.getServer().overworld();
+			BloodMoonSavedData bloodMoonData = BloodMoonSavedData.get(overworld);
+			if (!bloodMoonData.isActive()) {
+				caster.displayClientMessage(
+						Component.literal("There is no Blood Moon to cleanse.")
+								.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC),
+						false);
+				return;
+			}
+
+			bloodMoonData.stop();
+			for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
+						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+			}
+			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(false));
+
+			unstained.addPurity(10f);
+			UnstainedProgressEvents.syncProgress(caster, unstained);
+
+			sLevel.sendParticles(ParticleTypes.END_ROD,
+					caster.getX(), caster.getY() + 1.0, caster.getZ(),
+					120, 7.0, 5.0, 7.0, 0.04);
+			caster.displayClientMessage(
+					Component.literal("The Lethean Tide rises — the Blood Moon is washed from the sky.")
+							.withStyle(ChatFormatting.AQUA, ChatFormatting.ITALIC),
+					false);
+		});
+	}
+
+	private static void completeFoundingSanctum(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
+		FoundingSanctumSavedData sanctumData = FoundingSanctumSavedData.get(sLevel);
+		boolean isReconsecrating = sanctumData.hasSanctum(caster.getUUID());
+		sanctumData.consecrate(caster.getUUID(), center);
+		if (isReconsecrating) {
+			caster.displayClientMessage(
+					Component.literal("Your Founding Sanctum has been moved to this location.")
+							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					false);
+		} else {
+			for (ServerPlayer p : sLevel.getPlayers(ServerPlayer::isAlive)) {
+				p.sendSystemMessage(Component.literal(caster.getDisplayName().getString()
+						+ " has consecrated a Founding Sanctum.")
+						.withStyle(ChatFormatting.DARK_RED));
+			}
+			caster.displayClientMessage(
+					Component.literal("This ground is now consecrated. All Harbingers within will feel its power.")
+							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
+					false);
+		}
+		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
+				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
+				300, FoundingSanctumSavedData.SANCTUM_RADIUS * 0.3, 3.0, FoundingSanctumSavedData.SANCTUM_RADIUS * 0.3, 0.01);
 	}
 
 }
