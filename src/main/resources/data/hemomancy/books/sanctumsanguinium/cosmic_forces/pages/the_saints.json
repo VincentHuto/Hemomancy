@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Saints",
+  "subtitle": "Those who could not be buried",
+  "text": "The Saints are ancient Hemomancers whose power grew so extraordinary — or so uncontrolled — that they were entombed rather than buried. Their sarcophagi persist. Their bodies retain potent blood essence that can still be felt near their chambers. They sleep, not from peace, but from exhaustion. Four are known to the Order. Each one represents a tendency taken so far that the practitioner became an expression of it rather than a wielder of it. The old records say you should not go seeking them. The old records also say what they contain.",
+  "icon": "hemomancy:sanguine_formation"
+}

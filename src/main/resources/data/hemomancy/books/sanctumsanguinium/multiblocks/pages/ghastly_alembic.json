@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 7,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Ghastly Alembic",
-  "subtitle": "Refine and recycle",
-  "text": "The Ghastly Alembic is a processing station for turning biological materials into useful components. If you’re low on enzymes or need to recycle leftovers, the Ghastly Alembic can help stretch your resources.",
-  "icon": "hemomancy:ghastly_alembic"
-}

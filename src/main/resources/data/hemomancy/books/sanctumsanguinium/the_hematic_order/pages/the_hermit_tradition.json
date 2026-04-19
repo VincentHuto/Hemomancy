@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Hermit's Tradition",
+  "subtitle": "The last gift",
+  "text": "Harbinger Hermits are Hemomancers who have grown old and know their time is short. Rather than retire quietly, they undertake one final sacred act — they travel alone to a remote place and create a Mortal Display: a ritual pedestal on which they remove their own heart. While their heart beats on the pedestal, the Hermit waits in a state of suspended mortality, unable to die, unable to wander far. They wait for someone worthy to come along and take what was always meant to be given.",
+  "icon": "hemomancy:sanguine_formation"
+}

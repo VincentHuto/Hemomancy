@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Copper and Silver",
+  "subtitle": "What the materials mean",
+  "text": "Copper is naturally antiseptic — it does not harbor disease. The Unstained have known this for generations. Oxidized copper holds an additional sacred status: copper that has fully patinated has done its job, absorbing all the corruption it could until it was consecrated by that service. A person carrying fully patinated copper survived long enough for it to reach that state. The copper earned its color by protecting them. Pale Silver — the Unstained's highest-tier material — does not occur in nature. It is consecrated copper, refined through purification ritual until it achieves a purer state. It must be made.",
+  "icon": "hemomancy:hemolytic_plating"
+}

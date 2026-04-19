@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 5,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Living Syringe",
-  "subtitle": "Harvesting blood",
-  "text": "The Living Syringe primes itself, then draws blood from creatures you strike. Collected blood can be stored in vials and processed into useful components like enzymes and hematic dust. If you want to progress, learn to draw blood safely and consistently.",
-  "icon": "hemomancy:living_syringe"
-}

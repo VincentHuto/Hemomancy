@@ -1,9 +1,9 @@
 {
   "type": "hutoslib:page",
-  "ordinality": 5,
+  "ordinality": 3,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "The Unstained",
-  "subtitle": "Anti-blood zealots",
-  "text": "The Unstained are a resistance faction devoted to purging the infection’s influence. They favor blessed copper, antifungals, and hemolytic solutions that destroy blood on contact. Expect hostility as your scarlet power grows.",
+  "subtitle": "They were us, once",
+  "text": "The Unstained were not always separate from the Harbingers. Their original members were practitioners who had experienced blood magic firsthand and chose to leave. This is why they are so effective at opposing it — the founders knew it from the inside. Their methods of purification, their understanding of what hemolytic compounds do to blood-infused veins — this knowledge came from people who had once been what they now opposed.",
   "icon": "hemomancy:hemolytic_solution"
 }

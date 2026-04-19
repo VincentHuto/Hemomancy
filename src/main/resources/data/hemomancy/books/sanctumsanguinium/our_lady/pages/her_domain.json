@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 1,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Her Domain",
+  "subtitle": "The earth is her only realm",
+  "text": "The Pale Lady's domain is the Earth itself. She has no separate dimension, no underworld, no realm beyond. She is associated with still and cold water, with winter, with forgetting — her connection to the mythological River Lethe, the waters of forgetfulness. The moon is believed to be an expression of her watchful presence, a guardian eye. This is partly why she is outmatched by a being that exists partly outside the world. She is bound to it in a way the Entity is not. She knows this. She does not aspire to destroy the Entity. Her duty is to protect the world — not to pursue the source.",
+  "icon": "hemomancy:hemolytic_solution"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 0,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Rejection",
+  "subtitle": "An infection, not a gift",
+  "text": "The Unstained do not necessarily believe blood magic is evil in an absolute moral sense. They believe it is an infection — something that has colonized the bearer, not something that was ever truly theirs. As purification progresses, practitioners discover that what felt like personal power was always the fungus guiding them. The Unstained do not seek to convert or conquer. They welcome those who come to them and leave alone those who do not. A Harbinger wandering into an Unstained Church will receive a measured response — not a crusade.",
+  "icon": "hemomancy:hemolytic_solution"
+}

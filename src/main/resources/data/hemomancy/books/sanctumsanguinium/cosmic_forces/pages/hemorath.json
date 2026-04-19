@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 2,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "Hemorath",
+  "subtitle": "The First Saint",
+  "text": "One of the original great Archons of the Hematic Order, Hemorath represents the iron, unchanging, Ferric-tended aspect of blood magic — the belief that blood can be made permanent, solid, inevitable. He is described as tall, lanky, dry, and hollow-looking — desiccated but still animate. If roused to battle, he absorbs blood magic cast against him, growing more powerful with each attempt. The paradox is intentional. To overwhelm him with the very power he mastered was the only way the old Archons could put him down. They never found a cleaner way.",
+  "icon": "hemomancy:blood_stained_stone"
+}

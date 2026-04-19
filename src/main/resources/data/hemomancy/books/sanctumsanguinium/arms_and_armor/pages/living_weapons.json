@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 3,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Living Weapons",
-  "subtitle": "They hunger",
-  "text": "Living Weapons are the pinnacle of Hemomancy combat. The Living Blade, Living Axe, Living Spear, Living Baghnakh, and Living Crossbow are all blood-powered and do not lose durability. Instead they consume Blood Volume with each strike. The Sanguis Lancea is a throwable blood javelin. These weapons grow stronger with your mastery of blood.",
-  "icon": "hemomancy:living_blade"
-}

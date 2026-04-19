@@ -1,9 +1,0 @@
-{
-  "type": "hutoslib:page",
-  "ordinality": 3,
-  "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Tendency Gauge",
-  "subtitle": "Reading your alignment",
-  "text": "The Blood Tendency Gauge helps you view your current alignment across the eight Tendencies. Higher alignment unlocks stronger Manipulations and improves how reliably you can recall certain memories.",
-  "icon": "hemomancy:blood_tendency_gauge"
-}

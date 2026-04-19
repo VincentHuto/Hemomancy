@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -59,6 +60,11 @@ public class ScarEntityEventHandler {
 	/** scar slots 1–4 hold regular (non-fungal) scars. */
 	private static final int SCAR_SLOT_MIN = 1;
 	private static final int SCAR_SLOT_MAX = 4;
+
+	/** Effective max scar slot, expanded by the Scar Resonance skill (up to +3). */
+	private static int getEffectiveScarSlotMax() {
+		return SCAR_SLOT_MAX + SkillPointHelper.getScarResonanceSlots();
+	}
 
 	// --- Synergy bonus definitions (one per tendency) ---
 
@@ -155,7 +161,7 @@ public class ScarEntityEventHandler {
 		if (event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide) {
 
 			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-				// player events
+				// slot 5 is the special curved-horn slot, not a regular scar slot
 				ItemStack itemstack = scars.getStackInSlot(5);
 				if (itemstack.getItem() == ItemInit.curved_horn.get()) {
 					itemstack.hurtAndBreak(1, player, (p_220017_1_) -> {
@@ -226,7 +232,7 @@ public class ScarEntityEventHandler {
 	if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity target = event.getEntity();
 			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
+				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
 						scar.onPlayerAttack(player, target);
@@ -239,7 +245,7 @@ public class ScarEntityEventHandler {
 		if (event.getEntity() instanceof Player player && !player.level().isClientSide) {
 			if (event.getSource().getEntity() instanceof LivingEntity attacker) {
 				player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-					for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
+					for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 						ItemStack stack = scars.getStackInSlot(i);
 						if (stack.getItem() instanceof ItemScar scar) {
 							scar.onPlayerDefend(player, attacker);
@@ -255,7 +261,7 @@ public class ScarEntityEventHandler {
 		if (event.getSource().getEntity() instanceof Player player && !player.level().isClientSide) {
 			LivingEntity killed = event.getEntity();
 			player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-				for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
+				for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 					ItemStack stack = scars.getStackInSlot(i);
 					if (stack.getItem() instanceof ItemScar scar) {
 						scar.onPlayerKill(player, killed);
@@ -270,7 +276,7 @@ public class ScarEntityEventHandler {
 	private static void checkScarSynergy(Player player) {
 		player.getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
 			EnumMap<EnumBloodTendency, Integer> counts = new EnumMap<>(EnumBloodTendency.class);
-			for (int i = SCAR_SLOT_MIN; i <= SCAR_SLOT_MAX; i++) {
+			for (int i = SCAR_SLOT_MIN; i <= getEffectiveScarSlotMax(); i++) {
 				ItemStack stack = scars.getStackInSlot(i);
 				if (stack.getItem() instanceof ItemScar scar) {
 					counts.merge(scar.getAssignedTendency(), 1, Integer::sum);
@@ -288,11 +294,14 @@ public class ScarEntityEventHandler {
 
 				boolean hasSynergy = counts.getOrDefault(tendency, 0) >= 2;
 				boolean hasModifier = attr.getModifier(bonus.uuid()) != null;
+				double scaledAmount = bonus.amount() * SkillPointHelper.getScarAffinityMultiplier();
 
-				if (hasSynergy && !hasModifier) {
+				if (hasSynergy) {
+					// Remove and re-add so Scar Affinity level changes take effect immediately
+					if (hasModifier) attr.removePermanentModifier(bonus.uuid());
 					attr.addPermanentModifier(new AttributeModifier(
-							bonus.uuid(), bonus.name(), bonus.amount(), bonus.operation()));
-				} else if (!hasSynergy && hasModifier) {
+							bonus.uuid(), bonus.name(), scaledAmount, bonus.operation()));
+				} else if (hasModifier) {
 					attr.removePermanentModifier(bonus.uuid());
 				}
 			}

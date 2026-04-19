@@ -3,7 +3,7 @@
   "ordinality": 11,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Tenebris",
-  "subtitle": "Umbral by another name",
-  "text": "Tenebris is the in-code name for the Umbral tendency (darkness, stealth, the End). In Hemomancy, the Umbral Enzyme represents this tendency. If you see TENEBRIS requirements, use umbral-aligned enzymes and tactics.",
+  "subtitle": "Darkness, in the old tongue",
+  "text": "Tenebris — darkness, in the alchemical tongue. The ancient name for the Umbral tendency. Blood shaped in tenebris learns that most of existence is the absence of light, and that most of what happens in the world happens in that absence. It is not malevolent. It is simply comfortable with what others fear to acknowledge: that shadow is not the absence of something, but a presence in its own right.",
   "icon": "hemomancy:umbral_enzyme"
 }

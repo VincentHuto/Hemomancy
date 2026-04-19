@@ -2,8 +2,8 @@
   "type": "hutoslib:page",
   "ordinality": 0,
   "texture": "hemomancy:textures/gui/guide/page.png",
-  "title": "Tendency",
-  "subtitle": "Old Habits Never Die",
-  "text": "Blood Tendency is the elemental alignment of your blood, shaped by the creatures you slay. There are eight tendencies: Vivacious, Fervent, Frigid, Ruinous, Incandescent, Umbral, Neurotic, and Ferric. Each manipulation has a tendency affinity, and aligning your blood improves its potency. Use Enzymes to nudge your tendency in the desired direction.",
+  "title": "Blood Tendency",
+  "subtitle": "What the blood remembers killing",
+  "text": "Blood Tendency is the elemental alignment of your blood, shaped by what you have killed and consumed over time. There are eight tendencies: Vivacious, Fervent, Frigid, Ruinous, Incandescent, Umbral, Neurotic, and Ferric. The infection's dormant memories are keyed to these alignments — certain powers can only be drawn out by blood that has absorbed the right kind of violence. The tendency you carry is a record of what you are. The blood does not forget.",
   "icon": "hemomancy:blood_stained_stone"
 }

@@ -1,0 +1,9 @@
+{
+  "type": "hutoslib:page",
+  "ordinality": 4,
+  "texture": "hemomancy:textures/gui/guide/page.png",
+  "title": "The Qliphoth",
+  "subtitle": "The Tree of Death",
+  "text": "In the old Kabbalistic tradition, the Sephiroth are the ten attributes of the divine arranged in the Tree of Life. The Qliphoth are their opposites — the Tree of Death, the shells, the inverse emanations. In Hemomancy these are not good versus evil but complementary forces. Fungi are the cleanup crew of life. They are not evil because they consume the dead, just as ravens and vultures are not evil for the same. The Qliphoth Tree occupies the other side of the cycle. It cannot be cheated into existence. You cannot plant it. It must be summoned — because you cannot cheat god.",
+  "icon": "hemomancy:sanguine_formation"
+}

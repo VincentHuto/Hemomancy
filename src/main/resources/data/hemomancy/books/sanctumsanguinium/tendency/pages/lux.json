@@ -3,7 +3,7 @@
   "ordinality": 10,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Lux",
-  "subtitle": "Incandescent by another name",
-  "text": "Lux is the in-code name for the Incandescent tendency (light, flight, brilliance). In Hemomancy, the Incandescent Enzyme represents this tendency. If you see LUX requirements, lean into light-aligned enzymes and effects.",
+  "subtitle": "Light, in the old tongue",
+  "text": "Lux — light, in the alchemical tongue. The ancient name for the Incandescent tendency. Blood shaped by lux does not hide itself. It expands. It illuminates. It travels in all directions at once because containment is a concept foreign to it. The earliest records of lux-tended Hemomancers describe them as difficult to look at directly — not metaphorically. The blood had become so saturated with outward force that it simply glowed.",
   "icon": "hemomancy:incandescent_enzyme"
 }

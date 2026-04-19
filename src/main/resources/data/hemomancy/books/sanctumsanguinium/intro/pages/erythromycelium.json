@@ -1,9 +1,9 @@
 {
   "type": "hutoslib:page",
-  "ordinality": 7,
+  "ordinality": 1,
   "texture": "hemomancy:textures/gui/guide/page.png",
   "title": "Erythromycelium",
-  "subtitle": "The infection",
-  "text": "Erythromycelium is a fungal spread found in the world. It isn’t always malicious, but it is never harmless. Managed carefully, it enables Hemomancy; left unchecked, it warps ecosystems and attracts creatures drawn to blood.",
+  "subtitle": "The blood-cell fungus",
+  "text": "The Erythrocytic Mycelium has existed in this world for nearly eight hundred years. To the common folk it is simply another piece of nature — strange, somewhat unsettling, but no more remarkable than any other dangerous wilderness. It does not devour the world. It is patient. Entire regions bear no trace of it, and yet it endures, geologically slow, deliberately spreading its spores where something calls them.",
   "icon": "hemomancy:erythrocytic_mycelium"
 }
