@@ -25,7 +25,7 @@ public class BloodMoonVeinSkyRenderer {
 	private static final float MOON_PLANE_Y = -100.0F;
 	private static final float MOON_RADIUS = 15.0F;
 	private static final float TENDRIL_LENGTH = 22.0F;
-	private static final int HASH_MULTIPLIER = 0x045D9F3B;
+	private static final int SEEDED_HASH_MULTIPLIER = 0x045D9F3B;
 
 	public static void renderInSky(PoseStack poseStack, ClientLevel level, float partialTick) {
 		if (!BloodMoonClientState.isActive()) return;
@@ -102,8 +102,9 @@ public class BloodMoonVeinSkyRenderer {
 	}
 
 	private static float seeded(int seed) {
-		int h = seed * HASH_MULTIPLIER;
-		h = (h ^ (h >>> 16)) * HASH_MULTIPLIER;
+		// MurmurHash3-style integer mixing for deterministic pseudo-random values.
+		int h = seed * SEEDED_HASH_MULTIPLIER;
+		h = (h ^ (h >>> 16)) * SEEDED_HASH_MULTIPLIER;
 		h = h ^ (h >>> 16);
 		return (h & 0x7fffffff) / (float) Integer.MAX_VALUE;
 	}
