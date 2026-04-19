@@ -85,11 +85,10 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
         boolean flag = bakedModel.isGui3d();
         int j = this.getModelCount(itemstack);
 
-        // ── Item model (bob + spin) ──
+        // ── Item model (spin, no bob) ──
         poseStack.pushPose();
-        float bobOffset = Mth.sin((entityIn.getAge() + partialTicks) / 10.0F + entityIn.bobOffs) * 0.1F + 0.1F;
         float f2 = bakedModel.getTransforms().getTransform(ItemDisplayContext.GROUND).scale.y();
-        poseStack.translate(0.0D, bobOffset + 0.25F * f2, 0.0D);
+        poseStack.translate(0.0D, 0.25F * f2, 0.0D);
         float f3 = (entityIn.getAge() + partialTicks) / 20.0F + entityIn.bobOffs;
         poseStack.mulPose(Vector3.YP.rotation(f3).toMoj());
 
