@@ -100,18 +100,30 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.neophyte.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
+								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_machines", "machines_overview", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("alembic_lore", List.of(
 						"hemomancy.alchemist.neophyte.alembic_lore"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
+								null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("blood_gourd_basics", List.of(
+						"hemomancy.alchemist.neophyte.blood_gourd_basics"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_machines", "machines_overview", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("machines_overview", List.of(
 						"hemomancy.alchemist.machines_overview"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_gourds", "blood_gourd_basics",
+								null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
@@ -124,17 +136,25 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.votary.line1"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_centrifuge", "centrifuge_lore", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_alembic", "alembic_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("centrifuge_lore", List.of(
 						"hemomancy.alchemist.votary.centrifuge_lore"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
+						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
+				)))
+				.addNode(new DialogueNode("gourd_upgrades", List.of(
+						"hemomancy.alchemist.votary.gourd_upgrades"
+				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("alembic_lore", List.of(
 						"hemomancy.alchemist.neophyte.alembic_lore"
 				), List.of(
+						new DialogueOption("hemomancy.dialogue.alchemist.option.how_do_i_upgrade_my_gourd", "gourd_upgrades", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.build();
