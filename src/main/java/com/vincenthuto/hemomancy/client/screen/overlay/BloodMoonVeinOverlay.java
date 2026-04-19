@@ -92,7 +92,7 @@ public class BloodMoonVeinOverlay {
 		Vec3 moonDir = getMoonDirection(partialTick);
 		Vec3 forward = mc.player.getViewVector(partialTick).normalize();
 		Vec3 up = mc.player.getUpVector(partialTick).normalize();
-		Vec3 right = up.cross(forward);
+		Vec3 right = forward.cross(up);
 		if (right.lengthSqr() < 1.0E-8) return null;
 		right = right.normalize();
 
@@ -118,11 +118,13 @@ public class BloodMoonVeinOverlay {
 
 	private Vec3 getMoonDirection(float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		float dayTime = mc.level.getTimeOfDay(partialTick);
-		float angle = dayTime * Mth.TWO_PI;
+		float timeOfDay = mc.level.getTimeOfDay(partialTick);
+		float angle = timeOfDay * Mth.TWO_PI;
 		float sin = Mth.sin(angle);
 		float cos = Mth.cos(angle);
-		// Mirrors the sky transform used by LevelRenderer for the moon orientation.
+		// Mirrors the sky transform used by LevelRenderer:
+		// Y rotation by -90 and X rotation by time-of-day place the moon center on
+		// (x=sin(angle), y=-cos(angle), z=0) in world-space sky coordinates.
 		return new Vec3(sin, -cos, 0.0D).normalize();
 	}
 
