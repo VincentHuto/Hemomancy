@@ -131,7 +131,7 @@ public class BloodMoonVeinOverlay {
 
 			float pulse = 0.65f + 0.35f * Mth.sin(time * 1.3f + index * 0.55f + step * 0.018f);
 
-			int a = (int) Mth.clamp(tipFade * pulse * 95f * weatherFade, 4f, 100f);
+			int a = (int) (Mth.clamp(tipFade * pulse * 95f, 4f, 100f) * weatherFade);
 			int r = (int) Mth.clamp(baseRed   * pulse,        0, 255);
 			int g = (int) Mth.clamp(baseGreen * pulse * 0.5f, 0, 255);
 			int b = (int) Mth.clamp(baseBlue  * pulse * 0.4f, 0, 255);

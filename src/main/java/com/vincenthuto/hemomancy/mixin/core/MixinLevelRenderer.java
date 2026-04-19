@@ -54,7 +54,8 @@ public class MixinLevelRenderer {
 			Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
 		if (!BloodMoonClientState.isActive()) return;
 		Minecraft mc = Minecraft.getInstance();
-		if (!(mc.level instanceof ClientLevel level)) return;
+		ClientLevel level = mc.level;
+		if (level == null) return;
 		BloodMoonVeinOverlay.renderInSky(poseStack, level, partialTick);
 	}
 
