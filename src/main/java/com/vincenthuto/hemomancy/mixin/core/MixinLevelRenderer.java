@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.mixin.core;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.overlay.BloodMoonVeinOverlay;
+import com.vincenthuto.hemomancy.client.render.world.BloodMoonVeinSkyRenderer;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
 import net.minecraft.client.Camera;
@@ -56,7 +56,7 @@ public class MixinLevelRenderer {
 		Minecraft mc = Minecraft.getInstance();
 		ClientLevel level = mc.level;
 		if (level == null) return;
-		BloodMoonVeinOverlay.renderInSky(poseStack, level, partialTick);
+		BloodMoonVeinSkyRenderer.renderInSky(poseStack, level, partialTick);
 	}
 
 	/**
