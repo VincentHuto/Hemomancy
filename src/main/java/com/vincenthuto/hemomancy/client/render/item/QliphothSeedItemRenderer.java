@@ -29,20 +29,21 @@ import org.joml.Matrix4f;
  */
 public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
 
-    // Number of tendril roots
     private static final int TENDRIL_COUNT = 5;
-    // Segments per tendril (higher = smoother curve)
-    private static final int TENDRIL_SEGMENTS = 8;
-    // Y position where the tendril base starts (just below the seed)
+    private static final int TENDRIL_SEGMENTS = 12;
     private static final float START_Y = 0.08f;
-    // Total downward reach (into the ground surface)
-    private static final float REACH = 0.42f;
-    // Maximum horizontal spread at the tendril tip
-    private static final float MAX_SPREAD = 0.22f;
-    // Cross-section half-width of the black core
     private static final float CORE_WIDTH = 0.022f;
-    // Glow layer is wider than the core
     private static final float GLOW_WIDTH_MULT = 1.7f;
+
+    // Irregular base angles — not evenly spaced, breaks the "ring of fishhooks" look
+    private static final float[] BASE_ANGLES  = { 0.00f, 1.57f, 2.34f, 4.21f, 4.74f };
+    // Per-tendril reach and spread — each root has its own personality
+    private static final float[] TENDRIL_REACH  = { 0.38f, 0.50f, 0.32f, 0.48f, 0.42f };
+    private static final float[] TENDRIL_SPREAD = { 0.20f, 0.28f, 0.17f, 0.26f, 0.24f };
+    // Independent animation phases — roots move completely out of sync with each other
+    private static final float[] PHASE_A = { 0.00f, 1.94f, 3.57f, 5.21f, 2.83f };
+    private static final float[] PHASE_B = { 0.73f, 2.61f, 4.33f, 1.17f, 3.88f };
+    private static final float[] PHASE_C = { 1.51f, 3.27f, 0.65f, 4.89f, 2.14f };
 
     private final net.minecraft.client.renderer.entity.ItemRenderer itemRenderer;
     private final Random random = new Random();
@@ -127,35 +128,49 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
         VertexConsumer glowVC = bufferIn.getBuffer(RenderTypeInit.RITE_BOUNDARY_GLOW);
 
         for (int i = 0; i < TENDRIL_COUNT; i++) {
-            float baseAngle = (float) (i * Math.PI * 2.0 / TENDRIL_COUNT);
-            drawTendril(coreVC, glowVC, mat, time, baseAngle);
+            drawTendril(coreVC, glowVC, mat, time, i);
         }
 
         super.render(entityIn, entityYaw, partialTicks, poseStack, bufferIn, packedLightIn);
     }
 
-    /**
-     * Draws one root tendril. The tendril starts near the seed's base, curves
-     * outward and downward with a slow writhing animation, and tapers to a point.
-     */
     private static void drawTendril(VertexConsumer coreVC, VertexConsumer glowVC,
-            Matrix4f mat, float time, float baseAngle) {
+            Matrix4f mat, float time, int idx) {
+
+        float baseAngle = BASE_ANGLES[idx];
+        float reach     = TENDRIL_REACH[idx];
+        float spread    = TENDRIL_SPREAD[idx];
 
         float[] px = new float[TENDRIL_SEGMENTS + 1];
         float[] py = new float[TENDRIL_SEGMENTS + 1];
         float[] pz = new float[TENDRIL_SEGMENTS + 1];
 
         for (int i = 0; i <= TENDRIL_SEGMENTS; i++) {
-            float t = (float) i / TENDRIL_SEGMENTS;
-            // Low-freq swing of the whole arm + high-freq probe at the tip
-            float wave = (float) (
-                Math.sin(time * 0.65f + baseAngle * 2.1f) * 0.07f
-              + Math.sin(time * 1.9f + baseAngle * 1.3f + t * 4.5f) * 0.04f * t);
-            float spread = MAX_SPREAD * t * t; // quadratic: stays close at root, fans out at tip
-            float angle = baseAngle + wave;
-            px[i] = (float) Math.cos(angle) * spread;
-            py[i] = START_Y - t * REACH;
-            pz[i] = (float) Math.sin(angle) * spread;
+            float t   = (float) i / TENDRIL_SEGMENTS;
+            float tSq = t * t;
+
+            // Three independent radial waves: slow whole-arm drift, mid-length curl, fast tip twitch
+            float radWave =
+                (float)(Math.sin(time * 0.43f + PHASE_A[idx])             * 0.10f)
+              + (float)(Math.sin(time * 1.28f + PHASE_B[idx] + t * 3.5f)  * 0.07f * t)
+              + (float)(Math.sin(time * 2.51f + PHASE_C[idx] + t * 6.2f)  * 0.04f * tSq);
+
+            // Tangential wave — curls roots sideways so they don't just point radially outward
+            float tanWave =
+                (float)(Math.sin(time * 0.57f + PHASE_C[idx])             * 0.09f)
+              + (float)(Math.sin(time * 1.74f + PHASE_A[idx] + t * 4.0f)  * 0.06f * t);
+
+            float angle      = baseAngle + radWave;
+            float radialDist = spread * tSq;
+            float tangDist   = tanWave * tSq;
+
+            float cosA = (float) Math.cos(angle);
+            float sinA = (float) Math.sin(angle);
+            px[i] = cosA * radialDist - sinA * tangDist;
+            // Slight mid-root arch — roots bow outward before drooping down
+            py[i] = START_Y - t * reach
+                  + (float)(Math.sin(Math.PI * t) * Math.sin(time * 0.65f + PHASE_B[idx]) * 0.025f);
+            pz[i] = sinA * radialDist + cosA * tangDist;
         }
 
         for (int i = 0; i < TENDRIL_SEGMENTS; i++) {
@@ -163,39 +178,26 @@ public class QliphothSeedItemRenderer extends EntityRenderer<ItemEntity> {
             float w0 = CORE_WIDTH * (1.0f - t0);
             float w1 = CORE_WIDTH * (1.0f - (float)(i + 1) / TENDRIL_SEGMENTS);
 
-            // Compute segment direction
-            float dx = px[i+1] - px[i];
-            float dy = py[i+1] - py[i];
-            float dz = pz[i+1] - pz[i];
+            float dx = px[i+1] - px[i], dy = py[i+1] - py[i], dz = pz[i+1] - pz[i];
             float invLen = 1.0f / Mth.sqrt(dx*dx + dy*dy + dz*dz);
             dx *= invLen; dy *= invLen; dz *= invLen;
 
-            // First perpendicular — choose an axis not parallel to segment
             float ax = 1, ay = 0, az = 0;
             if (Math.abs(dx) > 0.9f) { ax = 0; az = 1; }
-            float c1x = dy*az - dz*ay;
-            float c1y = dz*ax - dx*az;
-            float c1z = dx*ay - dy*ax;
+            float c1x = dy*az - dz*ay, c1y = dz*ax - dx*az, c1z = dx*ay - dy*ax;
             float c1len = Mth.sqrt(c1x*c1x + c1y*c1y + c1z*c1z);
             if (c1len > 1e-5f) { c1x /= c1len; c1y /= c1len; c1z /= c1len; }
-
-            // Second perpendicular via cross product
-            float c2x = dy*c1z - dz*c1y;
-            float c2y = dz*c1x - dx*c1z;
-            float c2z = dx*c1y - dy*c1x;
+            float c2x = dy*c1z - dz*c1y, c2y = dz*c1x - dx*c1z, c2z = dx*c1y - dy*c1x;
 
             float coreAlpha = 0.88f - t0 * 0.30f;
             float glowAlpha = 0.55f - t0 * 0.45f;
-            float gw0 = w0 * GLOW_WIDTH_MULT;
-            float gw1 = w1 * GLOW_WIDTH_MULT;
+            float gw0 = w0 * GLOW_WIDTH_MULT, gw1 = w1 * GLOW_WIDTH_MULT;
 
-            // Core: near-black, very dark red tint
             drawCrossQuad(coreVC, mat,
                     px[i], py[i], pz[i], px[i+1], py[i+1], pz[i+1],
                     c1x, c1y, c1z, c2x, c2y, c2z,
                     w0, w1, 0.06f, 0.003f, 0.003f, coreAlpha);
 
-            // Glow: crimson/dark red halo around the core
             drawCrossQuad(glowVC, mat,
                     px[i], py[i], pz[i], px[i+1], py[i+1], pz[i+1],
                     c1x, c1y, c1z, c2x, c2y, c2z,
