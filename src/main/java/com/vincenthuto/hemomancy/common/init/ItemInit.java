@@ -924,6 +924,11 @@ public class ItemInit {
             "spawn_egg_venous_strider",
             () -> new ForgeSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));
 
+    // Cream body with blood-red spots
+    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_tooth_pecks = SPAWNEGGS.register(
+            "spawn_egg_tooth_pecks",
+            () -> new ForgeSpawnEggItem(EntityInit.tooth_pecks, 0xF0EAD6, 0x8B0000, new Item.Properties()));
+
     // Item Property Override
     @SuppressWarnings("deprecation")
     @SubscribeEvent

@@ -124,6 +124,7 @@ public class BloodMoonEvents {
 		if (!data.isActive()) return;
 
 		// Apply ambient player effects every EFFECT_INTERVAL_TICKS
+		// Harbingers (degree >= 1) are empowered; uninitiated players are weakened.
 		if (gameTime % EFFECT_INTERVAL_TICKS == 0) {
 			for (ServerPlayer player : sLevel.getPlayers(p -> p.isAlive())) {
 				applyBloodMoonEffects(player);

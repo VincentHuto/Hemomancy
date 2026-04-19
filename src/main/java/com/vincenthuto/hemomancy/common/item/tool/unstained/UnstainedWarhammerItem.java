@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
@@ -20,6 +22,8 @@ import net.minecraft.world.item.Tier;
  * wielder's purity level.
  */
 public class UnstainedWarhammerItem extends DiggerItem {
+	private static final int CRIPPLE_DURATION = 100;
+	private static final int CRIPPLE_AMPLIFIER = 0;
 
 	public UnstainedWarhammerItem(float attackDamage, float attackSpeed, Tier tier, Properties properties) {
 		super(attackDamage, attackSpeed, tier, BlockTags.MINEABLE_WITH_PICKAXE, properties);
@@ -40,6 +44,10 @@ public class UnstainedWarhammerItem extends DiggerItem {
 					target.push((-dx / dist) * total, 0.25, (-dz / dist) * total);
 				}
 			});
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
+					false, true, true));
+			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, CRIPPLE_DURATION, CRIPPLE_AMPLIFIER,
+					false, true, true));
 
 			player.level().playSound(null, target.blockPosition(),
 					SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.4f, 1.2f);

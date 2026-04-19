@@ -48,6 +48,7 @@ import com.vincenthuto.hemomancy.client.render.entity.mob.monster.Erythromyceliu
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.FargoneRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.FerventChitiniteRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.FunglingRenderer;
+import com.vincenthuto.hemomancy.client.render.entity.mob.animal.ToothPecksRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.arthropod.HemolymphopodaRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.animal.LeechRenderer;
 import com.vincenthuto.hemomancy.client.render.entity.mob.monster.LumpOfThoughtRenderer;
@@ -81,6 +82,7 @@ import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarScreen;
 import com.vincenthuto.hemomancy.client.screen.item.living.MorphlingJarViewerScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseManipScreen;
 import com.vincenthuto.hemomancy.client.screen.manips.RadialChooseVeinScreen;
+import com.vincenthuto.hemomancy.client.screen.overlay.BloodMoonVeinOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.BloodVolumeOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.EquippedMorphlingOverlay;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
@@ -394,6 +396,7 @@ public class ClientEvents {
 			event.registerEntityRenderer(EntityInit.fargone.get(), FargoneRenderer::new);
 			event.registerEntityRenderer(EntityInit.thirster.get(), ThirsterRenderer::new);
 			event.registerEntityRenderer(EntityInit.fungling.get(), FunglingRenderer::new);
+			event.registerEntityRenderer(EntityInit.tooth_pecks.get(), ToothPecksRenderer::new);
 			event.registerEntityRenderer(EntityInit.chitinite.get(), ChitiniteRenderer::new);
 			event.registerEntityRenderer(EntityInit.fervent_chitinite.get(), FerventChitiniteRenderer::new);
 			event.registerEntityRenderer(EntityInit.chthonian.get(), ChthonianRenderer::new);
@@ -443,6 +446,7 @@ public class ClientEvents {
 			ManipCooldownOverlay.instance = new ManipCooldownOverlay();
 			UnstainedGaugeOverlay.instance = new UnstainedGaugeOverlay();
 			FungalWhisperVignetteOverlay.instance = new FungalWhisperVignetteOverlay();
+			BloodMoonVeinOverlay.instance = new BloodMoonVeinOverlay();
 			// Tiles
 			BlockEntityRenderers.register(BlockEntityInit.scar_station.get(), ScarStationRenderer::new);
 			BlockEntityRenderers.register(BlockEntityInit.ghastly_alembic.get(), GhastlyAlembicRenderer::new);
@@ -570,6 +574,10 @@ public class ClientEvents {
 			event.registerAboveAll("fungal_whisper_vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 				gui.setupOverlayRenderState(true, false);
 				FungalWhisperVignetteOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
+			});
+			event.registerAboveAll("blood_moon_veins", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+				gui.setupOverlayRenderState(true, false);
+				BloodMoonVeinOverlay.instance.renderHUD(mStack, screenWidth, screenHeight, partialTicks);
 			});
 		}
 	}

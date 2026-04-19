@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": "#hemomancy:devils_tooth_spawnlist",
+  "spawners": [
+    {
+      "type": "hemomancy:tooth_pecks",
+      "weight": 15,
+      "minCount": 1,
+      "maxCount": 4
+    }
+  ]
+}

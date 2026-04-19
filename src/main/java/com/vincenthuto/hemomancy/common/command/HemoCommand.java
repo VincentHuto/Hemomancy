@@ -26,7 +26,9 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
+import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -34,6 +36,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -72,6 +75,10 @@ import net.minecraftforge.network.PacketDistributor;
  * /hemo organs get [player]
  * /hemo organs set &lt;organ&gt; &lt;0-3&gt; [player]
  * /hemo organs reset [player]
+ *
+ * ── Blood Moon ──
+ * /hemo bloodmoon summon
+ * /hemo bloodmoon cancel
  * </pre>
  */
 public class HemoCommand {
@@ -207,6 +214,13 @@ public class HemoCommand {
 								.executes(ctx -> resetOrgans(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> resetOrgans(ctx.getSource(), EntityArgument.getPlayer(ctx, "player"))))))
+
+				// ── Blood Moon ──
+				.then(Commands.literal("bloodmoon")
+						.then(Commands.literal("summon")
+								.executes(ctx -> summonBloodMoon(ctx.getSource())))
+						.then(Commands.literal("cancel")
+								.executes(ctx -> cancelBloodMoon(ctx.getSource()))))
 
 				// ── Manipulation Slots ──
 				.then(Commands.literal("slots")
@@ -626,6 +640,44 @@ public class HemoCommand {
 		} else {
 			source.sendFailure(Component.literal("Manipulation '" + manipName + "' was not equipped."));
 		}
+		return 1;
+	}
+
+	// ═══════════════════ Blood Moon ═══════════════════
+
+	private static int summonBloodMoon(CommandSourceStack source) {
+		ServerLevel overworld = source.getServer().overworld();
+		BloodMoonSavedData data = BloodMoonSavedData.get(overworld);
+		if (data.isActive()) {
+			source.sendFailure(Component.literal("A Blood Moon is already active."));
+			return 0;
+		}
+		data.start(overworld.getGameTime() + 11900L);
+		for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
+					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
+		}
+		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(true));
+		source.sendSuccess(() -> Component.literal("Blood Moon summoned.")
+				.withStyle(ChatFormatting.DARK_RED), true);
+		return 1;
+	}
+
+	private static int cancelBloodMoon(CommandSourceStack source) {
+		ServerLevel overworld = source.getServer().overworld();
+		BloodMoonSavedData data = BloodMoonSavedData.get(overworld);
+		if (!data.isActive()) {
+			source.sendFailure(Component.literal("No Blood Moon is currently active."));
+			return 0;
+		}
+		data.stop();
+		for (ServerPlayer p : overworld.getPlayers(ServerPlayer::isAlive)) {
+			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.end")
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		}
+		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(false));
+		source.sendSuccess(() -> Component.literal("Blood Moon cancelled.")
+				.withStyle(ChatFormatting.GRAY), true);
 		return 1;
 	}
 }
