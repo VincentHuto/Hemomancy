@@ -9,7 +9,7 @@ package com.vincenthuto.hemomancy.common.capability.player.skill;
  * <h3>Categories</h3>
  * <ul>
  *   <li><b>Discovery</b>  — finding Hemomancy items/blocks for the first time</li>
- *   <li><b>Degree</b>     — ascending through the seven initiatory degrees</li>
+ *   <li><b>Degree</b>     — ascending through the initiatory degrees</li>
  *   <li><b>Action</b>     — first-time gameplay actions</li>
  *   <li><b>Combat</b>     — tiered kill-count thresholds</li>
  *   <li><b>Practice</b>   — tiered manipulation-use thresholds</li>
@@ -89,6 +89,9 @@ public enum HemoMilestone {
 
     /** Reach Degree 7 — Archon of the Hematic Order. */
     ARCHON_ASCENSION("archon_ascension", 10, Category.DEGREE, 6, "Ascend to Archon"),
+
+    /** Reach Degree 8 — Apotheos of the Hematic Order. */
+    APOTHEOS_ASCENSION("apotheos_ascension", 12, Category.DEGREE, 7, "Ascend to Apotheos"),
 
     // ═══════════════════════════════════════════════════
     //  FIRST-TIME ACTIONS

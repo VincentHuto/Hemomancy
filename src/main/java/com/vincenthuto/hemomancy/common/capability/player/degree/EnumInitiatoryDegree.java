@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.degree;
 
 /**
- * The seven degrees of the Hematic Order.
+ * The eight degrees of the Hematic Order.
  * Each degree is a rank within the secret society that the player
  * advances through as part of their initiatory journey.
  */
@@ -25,8 +25,11 @@ public enum EnumInitiatoryDegree {
 	/** Degree 6 */
 	SANCTIFIED(6, "Sanctified of the Bloodline Covenant"),
 
-	/** Degree 7 — the highest rank */
-	ARCHON(7, "Archon of the Hematic Order");
+	/** Degree 7 */
+	ARCHON(7, "Archon of the Hematic Order"),
+
+	/** Degree 8 — final rank */
+	APOTHEOS(8, "Apotheos of the Hematic Order");
 
 	private final int number;
 	private final String title;
@@ -59,10 +62,10 @@ public enum EnumInitiatoryDegree {
 
 	/** Returns the degree that follows this one, or null if already at the highest. */
 	public EnumInitiatoryDegree next() {
-		return (number < 7) ? values()[number] : null;
+		return (number < 8) ? values()[number] : null;
 	}
 
-	/** Returns the degree with the given number (1–7), or null if not found. */
+	/** Returns the degree with the given number (1–8), or null if not found. */
 	public static EnumInitiatoryDegree byNumber(int number) {
 		for (EnumInitiatoryDegree d : values()) {
 			if (d.number == number) return d;

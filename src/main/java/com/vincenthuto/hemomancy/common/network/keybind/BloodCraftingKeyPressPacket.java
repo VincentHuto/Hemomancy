@@ -13,6 +13,7 @@ import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodCraftRing;
 import com.vincenthuto.hemomancy.common.event.PendingBloodCraftManager;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -44,6 +45,7 @@ import net.minecraftforge.network.PacketDistributor;
 public class BloodCraftingKeyPressPacket {
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
+	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
@@ -313,6 +315,16 @@ public class BloodCraftingKeyPressPacket {
 											.withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
 									.append(Component.literal(" rite tier (Degree " + requiredDegree + ")")
 											.withStyle(ChatFormatting.RED)),
+							false);
+					return;
+				}
+
+				// ── Apotheos gate: requires completed Qliphoth Communion ──
+				if (APOTHEOS_RITE_ID.equals(recipe.getId())
+						&& !player.getPersistentData().getBoolean(QliphothPomeItem.QLIPHOTH_COMMUNION_DONE_KEY)) {
+					player.displayClientMessage(
+							Component.literal("The Eighth Degree remains sealed. Consume all nine Qliphoth husks from a single bloom.")
+									.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 							false);
 					return;
 				}
