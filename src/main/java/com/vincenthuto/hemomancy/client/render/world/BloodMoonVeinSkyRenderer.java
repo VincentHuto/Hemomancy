@@ -71,8 +71,6 @@ public class BloodMoonVeinSkyRenderer {
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableDepthTest();
-		RenderSystem.depthMask(false);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		float time   = (level.getGameTime() + partialTick) * 0.045F;
@@ -88,9 +86,6 @@ public class BloodMoonVeinSkyRenderer {
 		// Restore the texture shader vanilla set before calling getMoonPhase() —
 		// without this the moon quad renders as a solid color square.
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.enableDepthTest();
-		RenderSystem.depthMask(true);
-		RenderSystem.disableBlend();
 	}
 
 	private static void drawTendril(BufferBuilder buf, Matrix4f mat,
