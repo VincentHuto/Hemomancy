@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import java.util.Random;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -70,7 +71,12 @@ public class BloodMoonVeinSkyRenderer {
 		if (weatherFade <= 0.01F) return;
 
 		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
+		// Additive blend: tendrils glow/add to the sky rather than replace it.
+		// Prevents overlapping roots from creating a dark ring around the moon.
+		RenderSystem.blendFuncSeparate(
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
+		);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		float time   = (level.getGameTime() + partialTick) * 0.045F;
@@ -86,6 +92,12 @@ public class BloodMoonVeinSkyRenderer {
 		// Restore the texture shader vanilla set before calling getMoonPhase() —
 		// without this the moon quad renders as a solid color square.
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		// Restore vanilla's additive blend used for sun/moon: black texels become
+		// transparent so the moon texture background doesn't appear as a black square.
+		RenderSystem.blendFuncSeparate(
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
+		);
 	}
 
 	private static void drawTendril(BufferBuilder buf, Matrix4f mat,
