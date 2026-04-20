@@ -1052,7 +1052,7 @@ public class SkillTreeScreen extends Screen {
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
 
 			String rankTitle = getCurrentInitiatoryRankTitle();
-			gfx.drawString(font, Component.literal("Harbinger Initiatory Rank: " + rankTitle)
+			gfx.drawString(font, Component.literal("Rank: " + rankTitle)
 					.withStyle(s -> s.withColor(0xFFAA6666)),
 					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
 					guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 2, 0);
