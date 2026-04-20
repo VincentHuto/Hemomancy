@@ -123,8 +123,16 @@ public class BloodMoonEvents {
 
 		BloodMoonSavedData data = BloodMoonSavedData.get(sLevel);
 
-		// Check if a currently-active blood moon has expired
+		// Check if a currently-active blood moon has expired naturally
 		if (data.isActive() && gameTime >= data.getEndTick()) {
+			endBloodMoon(sLevel, data, gameTime);
+			return;
+		}
+
+		// Cancel if the time was manually set into daytime (e.g. /time set day).
+		// Natural overnight expiry fires at dayTime ~442 via the check above,
+		// so the 1000-tick threshold avoids cancelling that brief post-dawn window.
+		if (data.isActive() && dayTime >= 1000L && dayTime < NIGHT_START_TICK) {
 			endBloodMoon(sLevel, data, gameTime);
 			return;
 		}
