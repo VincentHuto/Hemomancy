@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketOpenNormalInv;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLedgerAction;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
+import com.vincenthuto.hemomancy.common.network.capa.PacketKickBloodlinePlayer;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
@@ -224,6 +225,9 @@ public class PacketHandler {
 		CHANNELBLOODVOLUME.messageBuilder(PacketRequestPoolData.class, networkID++)
 				.decoder(PacketRequestPoolData::decode).encoder(PacketRequestPoolData::encode)
 				.consumerNetworkThread(PacketRequestPoolData::handle).add();
+		CHANNELBLOODVOLUME.messageBuilder(PacketKickBloodlinePlayer.class, networkID++)
+				.decoder(PacketKickBloodlinePlayer::decode).encoder(PacketKickBloodlinePlayer::encode)
+				.consumerNetworkThread(PacketKickBloodlinePlayer::handle).add();
 
 		// Bloodline whisper message packet (client → server, broadcast to bloodline)
 		CHANNELBLOODVOLUME.messageBuilder(PacketBloodlineMessage.class, networkID++)

@@ -6,6 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketBloodlineMessage;
+import com.vincenthuto.hemomancy.common.network.capa.PacketKickBloodlinePlayer;
 import com.vincenthuto.hemomancy.common.network.capa.PacketLumpDonate;
 import com.vincenthuto.hemomancy.common.network.capa.PacketRequestPoolData;
 import com.vincenthuto.hemomancy.common.network.capa.PacketUpdatePoolSettings;
@@ -16,11 +17,15 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * A standalone screen that lets the player view their bloodline's shared blood pool,
@@ -44,6 +49,10 @@ public class BloodlinePoolScreen extends Screen {
 	private Button applySettingsButton;
 	private EditBox messageField;
 	private Button sendMessageButton;
+	private Button kickPrevButton;
+	private Button kickNextButton;
+	private Button kickMemberButton;
+	private int kickTargetIndex;
 
 	// Cached capability data
 	private boolean trickleEnabled;
@@ -186,6 +195,43 @@ public class BloodlinePoolScreen extends Screen {
 			}
 		}).bounds(widgetX + widgetW - 54, y, 54, 18).build();
 		addRenderableWidget(sendMessageButton);
+
+		y += 28;
+
+		// ── Leader Member Management ──
+		if (player != null) {
+			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+				Bloodline line = vol.getBloodLine();
+				if (line.isValid() && player.getUUID().equals(line.getLeaderUUID())) {
+					kickPrevButton = Button.builder(Component.literal("<"), btn -> {
+						int size = getKickableMembers(player).size();
+						if (size > 0) {
+							kickTargetIndex = (kickTargetIndex - 1 + size) % size;
+						}
+					}).bounds(widgetX, y, 18, 18).build();
+					addRenderableWidget(kickPrevButton);
+
+					kickNextButton = Button.builder(Component.literal(">"), btn -> {
+						int size = getKickableMembers(player).size();
+						if (size > 0) {
+							kickTargetIndex = (kickTargetIndex + 1) % size;
+						}
+					}).bounds(widgetX + 98, y, 18, 18).build();
+					addRenderableWidget(kickNextButton);
+
+					kickMemberButton = Button.builder(Component.literal("Kick"), btn -> {
+						List<UUID> kickable = getKickableMembers(player);
+						if (!kickable.isEmpty()) {
+							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
+							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
+							kickTargetIndex = 0;
+						}
+					}).bounds(widgetX + 122, y, widgetW - 122, 18).build();
+					addRenderableWidget(kickMemberButton);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -284,6 +330,27 @@ public class BloodlinePoolScreen extends Screen {
 			// Bloodline message label
 			graphics.drawString(this.font, "Bloodline Message:", guiLeft + 12,
 					messageField.getY() - 11, 0xFFCC6666, true);
+
+			if (kickMemberButton != null) {
+				List<UUID> kickable = getKickableMembers(player);
+				if (kickable.isEmpty()) {
+					graphics.drawString(this.font, "No player members to expel.", guiLeft + 22,
+							kickMemberButton.getY() + 5, 0xFFAA6666, false);
+					kickMemberButton.active = false;
+					kickPrevButton.active = false;
+					kickNextButton.active = false;
+				} else {
+					kickMemberButton.active = true;
+					kickPrevButton.active = true;
+					kickNextButton.active = true;
+					kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
+					String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
+					graphics.drawString(this.font, "Expel Player:", guiLeft + 22,
+							kickMemberButton.getY() + 1, 0xFFCC6666, true);
+					graphics.drawString(this.font, shortTarget, guiLeft + 22,
+							kickMemberButton.getY() + 10, 0xFFCC8888, false);
+				}
+			}
 		});
 
 		// Render widgets on top
@@ -406,5 +473,26 @@ public class BloodlinePoolScreen extends Screen {
 			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
 			graphics.fill(ix, iy, ix + thickness, iy + thickness, color);
 		}
+	}
+
+	/** Resolves a UUID to a display name using the client's player info list, falling back to the UUID string. */
+	private static String resolvePlayerName(UUID uuid) {
+		PlayerInfo info = Minecraft.getInstance().getConnection() != null
+				? Minecraft.getInstance().getConnection().getPlayerInfo(uuid)
+				: null;
+		return info != null ? info.getProfile().getName() : uuid.toString();
+	}
+
+	private static List<UUID> getKickableMembers(LocalPlayer player) {
+		List<UUID> kickable = new ArrayList<>();
+		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			Bloodline bloodline = vol.getBloodLine();
+			for (UUID member : bloodline.getPlayerUUIDS()) {
+				if (!member.equals(player.getUUID())) {
+					kickable.add(member);
+				}
+			}
+		});
+		return kickable;
 	}
 }

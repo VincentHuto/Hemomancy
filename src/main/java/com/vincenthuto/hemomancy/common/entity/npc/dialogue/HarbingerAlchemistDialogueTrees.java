@@ -218,6 +218,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_blood_crafting", "blood_crafting_lore", null),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.tell_me_about_morphling_incubator", "incubator_lore", null),
 						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("blood_crafting_lore", List.of(
@@ -248,6 +249,7 @@ public final class HarbingerAlchemistDialogueTrees {
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.alchemist.option.what_remains", "final_machines", null),
 						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("final_machines", List.of(
@@ -273,6 +275,7 @@ public final class HarbingerAlchemistDialogueTrees {
 						"hemomancy.alchemist.archon.line2"
 				), List.of(
 						new DialogueOption("hemomancy.dialogue.recruit.option.pledge_blood", "recruit_offer", null),
+						new DialogueOption("hemomancy.dialogue.recruit.option.release_blood", null, "expel_harbinger"),
 						new DialogueOption("hemomancy.dialogue.alchemist.option.leave", null, null)
 				)))
 				.addNode(new DialogueNode("recruit_offer", List.of(

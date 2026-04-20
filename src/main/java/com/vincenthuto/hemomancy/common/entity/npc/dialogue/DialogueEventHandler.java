@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.HarbingerHermitEntity;
@@ -112,6 +113,9 @@ public class DialogueEventHandler {
 			case "recruit_harbinger" -> {
 				handleRecruitHarbinger(player, event.getEntityId());
 			}
+			case "expel_harbinger" -> {
+				handleExpelHarbinger(player, event.getEntityId());
+			}
 			case "whisper_dismiss" -> {
 				// Player dismissed the whisper — no gameplay effect, just acknowledged
 			}
@@ -202,6 +206,66 @@ public class DialogueEventHandler {
 							ParticleColor.BLOOD, 2, 12, 4, 0.6f);
 				}
 			}
+		});
+	}
+
+	/**
+	 * Removes a recruited Harbinger NPC from the player's bloodline. Only the
+	 * bloodline progenitor/leader may expel members.
+	 */
+	private static void handleExpelHarbinger(ServerPlayer player, int entityId) {
+		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+			Bloodline bloodline = volume.getBloodLine();
+			if (!bloodline.isValid()) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.no_bloodline")
+								.withStyle(ChatFormatting.RED),
+						false);
+				return;
+			}
+
+			if (!player.getUUID().equals(bloodline.getLeaderUUID())) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.not_leader")
+								.withStyle(ChatFormatting.RED),
+						false);
+				return;
+			}
+
+			Entity entity = player.level().getEntity(entityId);
+			if (entity == null) {
+				return;
+			}
+
+			if (!bloodline.hasNpcMember(entity.getUUID())) {
+				player.displayClientMessage(
+						Component.translatable("hemomancy.dialogue.recruit.not_member")
+								.withStyle(ChatFormatting.GRAY),
+						false);
+				return;
+			}
+
+			ServerLevel overworld = player.server.overworld();
+			BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
+			savedData.removeNpcMember(bloodline.getBloodlineUUID(), entity.getUUID());
+			Bloodline updatedLine = savedData.getBloodline(bloodline.getBloodlineUUID());
+			if (updatedLine == null) {
+				return;
+			}
+
+			for (ServerPlayer online : player.server.getPlayerList().getPlayers()) {
+				online.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(memberVolume -> {
+					if (updatedLine.hasMember(online.getUUID())) {
+						memberVolume.setBloodLine(updatedLine);
+						BloodVolumeEvents.syncVolume(online, memberVolume);
+					}
+				});
+			}
+
+			player.displayClientMessage(
+					Component.translatable("hemomancy.dialogue.recruit.expel.success", entity.getName())
+							.withStyle(ChatFormatting.DARK_RED),
+					false);
 		});
 	}
 }
