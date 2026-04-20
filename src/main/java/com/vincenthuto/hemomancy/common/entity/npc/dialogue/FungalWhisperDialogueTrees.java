@@ -232,6 +232,36 @@ public final class FungalWhisperDialogueTrees {
 	// ── One-shot event whispers ──
 
 	/**
+	 * One-shot whisper that fires when a Qliphoth Pome falls from the tree.
+	 * Sent only to the player who owns the bloom, so they know which husk to retrieve.
+	 *
+	 * @param huskIndex  The sequential husk index (0–8).
+	 */
+	public static DialogueTree pomeDropped(int huskIndex) {
+		/** Lang key suffixes for each husk pome-drop whisper, in consumption order (0–8). */
+		final String[] POME_DROP_LANG_KEYS = {
+				"hemomancy.whisper.pome_drop.nahemoth",
+				"hemomancy.whisper.pome_drop.samael",
+				"hemomancy.whisper.pome_drop.gamaliel",
+				"hemomancy.whisper.pome_drop.harab_serapel",
+				"hemomancy.whisper.pome_drop.golachab",
+				"hemomancy.whisper.pome_drop.thagirion",
+				"hemomancy.whisper.pome_drop.aarab_zaraq",
+				"hemomancy.whisper.pome_drop.satariel",
+				"hemomancy.whisper.pome_drop.ghagiel"
+		};
+		String langKey = (huskIndex >= 0 && huskIndex < POME_DROP_LANG_KEYS.length)
+				? POME_DROP_LANG_KEYS[huskIndex]
+				: "hemomancy.whisper.pome_drop.nahemoth";
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(langKey), List.of(
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	/**
 	 * Fires immediately after an Archon shatters the Sanguine Monolith and
 	 * the Qliphoth Seed falls out. The voice comments on what was always inside.
 	 */

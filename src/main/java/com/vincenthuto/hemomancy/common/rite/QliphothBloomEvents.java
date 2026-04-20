@@ -3,12 +3,13 @@ package com.vincenthuto.hemomancy.common.rite;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
+import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -20,6 +21,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -92,7 +94,7 @@ public class QliphothBloomEvents {
 			}
 
 			// ── Rare Qliphoth Pome drop ──
-			trySpawnPome(sLevel, bloom.center(), players);
+			trySpawnPome(sLevel, bloom);
 		}
 	}
 
@@ -108,13 +110,14 @@ public class QliphothBloomEvents {
 	 * tree ceases production for this bloom's lifecycle.
 	 * <p>
 	 * The spawned item entity is invulnerable (won't burn in fire/lava) and has
-	 * an unlimited lifespan so it never despawns. All players within the bloom's
-	 * radius receive a short dark whisper naming the husk that just fell.
+	 * an unlimited lifespan so it never despawns. The bloom owner (if online)
+	 * receives a one-shot Fungal Whisper dialogue naming the husk that fell.
 	 */
-	private static void trySpawnPome(ServerLevel level, BlockPos center, List<ServerPlayer> nearbyPlayers) {
+	private static void trySpawnPome(ServerLevel level, QliphothBloomSavedData.BloomEntry bloom) {
 		RandomSource rand = level.getRandom();
 		if (rand.nextInt(POME_DROP_CHANCE) != 0) return;
 
+		BlockPos center = bloom.center();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(level.getServer().overworld());
 		int alreadyDropped = data.getPomesDropped(center);
 		if (alreadyDropped >= QliphothBloomSavedData.MAX_POMES_PER_BLOOM) return;
@@ -154,14 +157,12 @@ public class QliphothBloomEvents {
 		pomeEntity.lifespan = Integer.MAX_VALUE;
 		level.addFreshEntity(pomeEntity);
 
-		// ── Notify nearby players which husk has fallen ──
-		String huskName = (alreadyDropped >= 0 && alreadyDropped < QliphothPomeItem.HUSK_NAMES.length)
-				? QliphothPomeItem.HUSK_NAMES[alreadyDropped]
-				: "unknown";
-		Component whisper = Component.literal("The fruit of " + huskName + " has fallen.")
-				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
-		for (ServerPlayer player : nearbyPlayers) {
-			player.displayClientMessage(whisper, true);
+		// ── Notify the bloom owner via Fungal Whisper dialogue ──
+		ServerPlayer owner = level.getServer().getPlayerList().getPlayer(bloom.ownerUUID());
+		if (owner != null) {
+			PacketHandler.CHANNELBLOODVOLUME.send(
+					PacketDistributor.PLAYER.with(() -> owner),
+					new OpenDialoguePacket(FungalWhisperDialogueTrees.pomeDropped(alreadyDropped)));
 		}
 	}
 
