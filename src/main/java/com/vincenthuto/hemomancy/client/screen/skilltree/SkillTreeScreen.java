@@ -84,6 +84,8 @@ public class SkillTreeScreen extends Screen {
 	private static final int NODE_SIZE = 26;
 	private static final int NODE_GAP_X = 80;
 	private static final int NODE_GAP_Y = 60;
+	private static final float TENDENCY_VALUE_DISTANCE_DIVISOR = 1.75f;
+	private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 18;
 
 	// ── Colours ──
 	private static final int COL_LINE_LOCKED      = 0x88444444;
@@ -1455,12 +1457,12 @@ public class SkillTreeScreen extends Screen {
 				HLGuiUtils.fracLine(gfx.pose(), cx2, cy2, lx, ly, 10, tend.getColor(), displace, 0.8);
 
 				// Numerical tendency value (matches TendencyViewScreen behavior)
-				double valueDist = outerRadius / 1.75;
+				double valueDist = outerRadius / TENDENCY_VALUE_DISTANCE_DIVISOR;
 				int valueX = screenX + (int) (Math.cos(Math.toRadians(rotAngle)) * valueDist);
 				int valueY = screenY + (int) (Math.sin(Math.toRadians(rotAngle)) * valueDist);
 				int tendColor = 0xFF000000 | tend.getColor().getColor();
 				gfx.drawCenteredString(font, String.valueOf(tendency.getAlignmentByTendency(tend)),
-						valueX, valueY - 18, tendColor);
+						valueX, valueY - TENDENCY_VALUE_VERTICAL_OFFSET, tendColor);
 
 				rotAngle += 45f;
 			}
