@@ -285,7 +285,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	private int getClientPlayerDegree() {
 		Minecraft mc = Minecraft.getInstance();
-		if (mc == null || mc.player == null) {
+		if (mc.player == null) {
 			return 0;
 		}
 		return mc.player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
