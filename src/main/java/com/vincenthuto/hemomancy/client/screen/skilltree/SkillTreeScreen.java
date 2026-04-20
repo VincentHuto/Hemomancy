@@ -84,6 +84,8 @@ public class SkillTreeScreen extends Screen {
 	private static final int NODE_SIZE = 26;
 	private static final int NODE_GAP_X = 80;
 	private static final int NODE_GAP_Y = 60;
+	private static final float TENDENCY_VALUE_DISTANCE_DIVISOR = 1.75f;
+	private static final int TENDENCY_VALUE_VERTICAL_OFFSET = 18;
 
 	// ── Colours ──
 	private static final int COL_LINE_LOCKED      = 0x88444444;
@@ -92,6 +94,7 @@ public class SkillTreeScreen extends Screen {
 	private static final int COL_NODE_BORDER_LOCK  = 0xFF333333;
 	private static final int COL_NODE_BORDER_UNLOCK= 0xFFCC2222;
 	private static final int COL_NODE_BORDER_AVAIL = 0xFFBB8833;
+	private static final int ALPHA_OPAQUE_MASK = 0xFF000000;
 
 	// ── GUI viewport (screen-space pixels, set in init()) ──
 	private int guiLeft, guiTop, guiWidth, guiHeight;
@@ -1431,6 +1434,7 @@ public class SkillTreeScreen extends Screen {
 			int outerRadius = (int) (280 * view.zoom);
 			int innerRadius = (int) (52 * view.zoom);
 			float spikeBaseWidth = 23.5f;
+			double valueDist = outerRadius / TENDENCY_VALUE_DISTANCE_DIVISOR;
 
 			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
 				float affVal = Mth.clamp(affs.getOrDefault(tend, 0f), 0f, 1f);
@@ -1453,6 +1457,13 @@ public class SkillTreeScreen extends Screen {
 				HLGuiUtils.fracLine(gfx.pose(), lx, ly, cx2, cy2, 10, tend.getColor(), displace, 1.1);
 				HLGuiUtils.fracLine(gfx.pose(), cx1, cy1, lx, ly, 10, tend.getColor(), displace, 0.8);
 				HLGuiUtils.fracLine(gfx.pose(), cx2, cy2, lx, ly, 10, tend.getColor(), displace, 0.8);
+
+				// Numerical tendency value (matches TendencyViewScreen behavior)
+				int valueX = screenX + (int) (Math.cos(Math.toRadians(rotAngle)) * valueDist);
+				int valueY = screenY + (int) (Math.sin(Math.toRadians(rotAngle)) * valueDist);
+				int tendColor = ALPHA_OPAQUE_MASK | tend.getColor().getColor();
+				gfx.drawCenteredString(font, String.valueOf(tendency.getAlignmentByTendency(tend)),
+						valueX, valueY - TENDENCY_VALUE_VERTICAL_OFFSET, tendColor);
 
 				rotAngle += 45f;
 			}
