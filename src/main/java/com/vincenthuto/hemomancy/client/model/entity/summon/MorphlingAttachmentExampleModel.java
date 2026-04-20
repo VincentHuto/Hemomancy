@@ -37,7 +37,7 @@ public class MorphlingAttachmentExampleModel extends EntityModel<LivingEntity> {
     private final ModelPart root;
 
     public MorphlingAttachmentExampleModel(ModelPart root) {
-        this.root = root.getChild("root");
+        this.root = root;
     }
 
     public static ModelLayerLocation layerFor(AttachmentPoint point) {
@@ -53,13 +53,13 @@ public class MorphlingAttachmentExampleModel extends EntityModel<LivingEntity> {
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("root",
+        PartDefinition partRoot = mesh.getRoot();
+        partRoot.addOrReplaceChild("root",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
-                        .addBox(-2f, -2f, -2f, 4f, 4f, 4f, CubeDeformation.NONE),
+                        .addBox(-3f, -3f, -3f, 6f, 6f, 6f, CubeDeformation.NONE),
                 PartPose.ZERO);
-        return LayerDefinition.create(mesh, 16, 16);
+        return LayerDefinition.create(mesh, 64, 64);
     }
 
     @Override

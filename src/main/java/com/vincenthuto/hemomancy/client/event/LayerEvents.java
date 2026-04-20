@@ -158,6 +158,7 @@ public class LayerEvents {
 		event.registerLayerDefinition(ErythromyceliumEruptusModel.LAYER_LOCATION,
 				ErythromyceliumEruptusModel::createBodyLayer);
 		event.registerLayerDefinition(EnthralledDollModel.LAYER_LOCATION, EnthralledDollModel::createBodyLayer);
+
 		event.registerLayerDefinition(BloodThrallModel.LAYER_LOCATION, BloodThrallModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingPolypModel.LAYER_LOCATION, MorphlingPolypModel::createBodyLayer);
 		event.registerLayerDefinition(MorphlingAttachmentExampleModel.HEAD_LAYER, MorphlingAttachmentExampleModel::createBodyLayer);

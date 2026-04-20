@@ -11,6 +11,7 @@ import com.vincenthuto.hemomancy.client.morphling.MorphlingModelAttachment.Attac
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -112,12 +113,16 @@ public class MorphlingMutationRegistry {
         return stack.isEmpty() ? null : REGISTRY.get(stack.getItem());
     }
 
+    // Use the same armor glow texture that works for the swirl overlay.
+    // The model's UV layout is now 64×64 to match this texture's dimensions.
+    private static final ResourceLocation DEBUG_ATTACHMENT_TEX = SWIRL_TEX;
+
     private static MorphlingModelAttachment exampleAttachment(AttachmentPoint point,
             float offX, float offY, float offZ, float scale) {
         return MorphlingModelAttachment.of(point, offX, offY, offZ, scale,
                 Lazy.of(() -> new MorphlingAttachmentExampleModel(
                         Minecraft.getInstance().getEntityModels().bakeLayer(
                                 MorphlingAttachmentExampleModel.layerFor(point)))),
-                SWIRL_TEX);
+                DEBUG_ATTACHMENT_TEX);
     }
 }

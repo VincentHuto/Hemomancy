@@ -1,39 +1,49 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
- * Server → Client packet that syncs the player's equipped morphling.
+ * Server → Client packet that syncs a player's equipped morphling.
+ * Carries the owner's UUID so that TRACKING_AND_SELF broadcasts can update
+ * the correct player's capability on any watching client.
  */
 public class SyncEquippedMorphlingPacket {
 
+	private final UUID playerUUID;
 	private final ItemStack morphlingStack;
 
-	public SyncEquippedMorphlingPacket(ItemStack stack) {
+	public SyncEquippedMorphlingPacket(UUID playerUUID, ItemStack stack) {
+		this.playerUUID = playerUUID;
 		this.morphlingStack = stack == null ? ItemStack.EMPTY : stack;
 	}
 
 	public static void encode(SyncEquippedMorphlingPacket msg, FriendlyByteBuf buf) {
+		buf.writeUUID(msg.playerUUID);
 		buf.writeItem(msg.morphlingStack);
 	}
 
 	public static SyncEquippedMorphlingPacket decode(FriendlyByteBuf buf) {
-		return new SyncEquippedMorphlingPacket(buf.readItem());
+		UUID uuid = buf.readUUID();
+		ItemStack stack = buf.readItem();
+		return new SyncEquippedMorphlingPacket(uuid, stack);
 	}
 
 	public static void handle(SyncEquippedMorphlingPacket msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
-			if (Minecraft.getInstance().player != null) {
-				Minecraft.getInstance().player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA)
-						.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));
-			}
+			if (Minecraft.getInstance().level == null) return;
+			Player target = Minecraft.getInstance().level.getPlayerByUUID(msg.playerUUID);
+			if (target == null) return;
+			target.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA)
+					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));
 		});
 		ctx.get().setPacketHandled(true);
 	}

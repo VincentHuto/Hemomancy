@@ -37,7 +37,7 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
     // Alpha multiplier per maturity level (0 = Unfed … 4 = Apex).
     // Apex is the anchor — the mutation's design alpha is applied at full
     // strength only at Apex, lower maturities render proportionally dimmer.
-    private static final float[] MATURITY_ALPHA_SCALE = { 0.18f, 0.32f, 0.50f, 0.72f, 1.00f };
+    private static final float[] MATURITY_ALPHA_SCALE = { 0.45f, 0.58f, 0.72f, 0.86f, 1.00f };
 
     public MorphlingMutationLayer(LivingEntityRenderer<T, M> renderer) {
         super(renderer);
@@ -91,15 +91,15 @@ public class MorphlingMutationLayer<T extends LivingEntity, M extends HumanoidMo
             poseStack.popPose();
 
             // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
+            // Render any additional 3-D model attachment (wings, plating, tendrils, etc.)
+            // SimpleBodyAttachment already does its own pushPose/popPose internally.
             MorphlingModelAttachment attachment = mutation.modelAttachment;
             if (attachment != null) {
-                poseStack.pushPose();
                 attachment.render(poseStack, buffer, packedLight, entity,
                         (HumanoidModel<?>) model,
                         limbSwing, limbSwingAmount, partialTicks,
                         ageInTicks, netHeadYaw, headPitch,
                         finalAlpha);
-                poseStack.popPose();
             }
         });
     }

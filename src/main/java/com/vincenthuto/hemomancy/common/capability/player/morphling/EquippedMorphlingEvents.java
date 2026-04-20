@@ -277,8 +277,8 @@ public class EquippedMorphlingEvents {
 	public static void syncToClient(ServerPlayer player) {
 		player.getCapability(EquippedMorphlingProvider.MORPHLING_CAPA).ifPresent(cap -> {
 			PacketHandler.CHANNELMORPHLINGJAR.send(
-					PacketDistributor.PLAYER.with(() -> player),
-					new SyncEquippedMorphlingPacket(cap.getEquippedMorphling()));
+					PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+					new SyncEquippedMorphlingPacket(player.getUUID(), cap.getEquippedMorphling()));
 		});
 	}
 

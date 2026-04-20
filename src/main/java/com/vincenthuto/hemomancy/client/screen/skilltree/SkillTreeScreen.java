@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
@@ -28,6 +29,7 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -117,6 +119,7 @@ public class SkillTreeScreen extends Screen {
 	private int skillContentW, skillContentH;
 
 	// ── Manipulation tree data ──
+	private int manipRingCenterX, manipRingCenterY;
 	private final Map<ManipulationTreeEntry, int[]> manipPositions = new HashMap<>();
 	private final Set<String> knownManipNames = new HashSet<>();
 	/** Lookup from manipulation name → its BloodMemoryItem's ItemStack. */
@@ -462,7 +465,7 @@ public class SkillTreeScreen extends Screen {
 			return;
 		}
 
-		int radius = Math.max(220, (int) Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.35));
+		int radius = Math.max(150, (int) Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.05));
 		int clusterHalf = Math.max(maxClusterW, maxClusterH) / 2;
 		float centerX = padding + clusterHalf + radius;
 		float centerY = padding + clusterHalf + radius;
@@ -511,6 +514,8 @@ public class SkillTreeScreen extends Screen {
 		}
 		manipContentW = maxX + offsetX + NODE_SIZE + padding;
 		manipContentH = maxY + offsetY + NODE_SIZE + 24 + padding;
+		manipRingCenterX = Math.round(centerX) + offsetX;
+		manipRingCenterY = Math.round(centerY) + offsetY;
 	}
 
 	private void cacheKnownManipulations() {
@@ -987,6 +992,7 @@ public class SkillTreeScreen extends Screen {
 			drawNodes(gfx);
 		} else if (activeTab == Tab.MANIPULATIONS) {
 			drawManipConnections(gfx);
+			drawManipTendencyStar(gfx);
 			drawManipNodes(gfx);
 		} else if (activeTab == Tab.CRAFTING) {
 			drawCraftingContent(gfx, mouseX, mouseY, partial);
@@ -1402,6 +1408,55 @@ public class SkillTreeScreen extends Screen {
 				gfx.fill(x2 - lw, midY,    x2 + lw, y2 - hn,  col);
 			}
 		}
+	}
+
+	// ────────────────────────────────────────────────────────────
+	//  Manipulation tree: tendency star
+	// ────────────────────────────────────────────────────────────
+
+	private void drawManipTendencyStar(GuiGraphics gfx) {
+		if (minecraft == null || minecraft.player == null) return;
+
+		int screenX = sx(manipRingCenterX);
+		int screenY = sy(manipRingCenterY);
+
+		// Cull if entirely outside the viewport
+		int starRadius = (int) (75 * view.zoom);
+		if (screenX + starRadius < guiLeft || screenX - starRadius > guiLeft + guiWidth
+				|| screenY + starRadius < guiTop || screenY - starRadius > guiTop + guiHeight) return;
+
+		minecraft.player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
+			Map<EnumBloodTendency, Float> affs = tendency.getTendency();
+			float rotAngle = -90f;
+			int outerRadius = (int) (280 * view.zoom);
+			int innerRadius = (int) (52 * view.zoom);
+			float spikeBaseWidth = 23.5f;
+
+			for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+				float affVal = Mth.clamp(affs.getOrDefault(tend, 0f), 0f, 1f);
+
+				// Base edge points of this spike
+				int cx1 = screenX + (int) (Math.cos(Math.toRadians(rotAngle + spikeBaseWidth)) * innerRadius);
+				int cy1 = screenY + (int) (Math.sin(Math.toRadians(rotAngle + spikeBaseWidth)) * innerRadius);
+				int cx2 = screenX + (int) (Math.cos(Math.toRadians(rotAngle - spikeBaseWidth)) * innerRadius);
+				int cy2 = screenY + (int) (Math.sin(Math.toRadians(rotAngle - spikeBaseWidth)) * innerRadius);
+
+				// Tip extends outward proportional to tendency value
+				double tipDist = (outerRadius - innerRadius) * affVal * 0.5 + innerRadius;
+				int lx = screenX + (int) (Math.cos(Math.toRadians(rotAngle)) * tipDist);
+				int ly = screenY + (int) (Math.sin(Math.toRadians(rotAngle)) * tipDist);
+
+				int displace = (int) ((Math.max(cx1, cx2) - Math.min(cx1, cx2)
+						+ Math.max(cy1, cy2) - Math.min(cy1, cy2)) / 2f);
+
+				HLGuiUtils.fracLine(gfx.pose(), lx, ly, cx1, cy1, 10, tend.getColor(), displace, 1.1);
+				HLGuiUtils.fracLine(gfx.pose(), lx, ly, cx2, cy2, 10, tend.getColor(), displace, 1.1);
+				HLGuiUtils.fracLine(gfx.pose(), cx1, cy1, lx, ly, 10, tend.getColor(), displace, 0.8);
+				HLGuiUtils.fracLine(gfx.pose(), cx2, cy2, lx, ly, 10, tend.getColor(), displace, 0.8);
+
+				rotAngle += 45f;
+			}
+		});
 	}
 
 	// ────────────────────────────────────────────────────────────
