@@ -324,6 +324,12 @@ public class SkillTreeScreen extends Screen {
 		view = viewForTab(activeTab);
 	}
 
+	private String getCurrentInitiatoryRankTitle() {
+		EnumInitiatoryDegree currentDegree = EnumInitiatoryDegree.byNumber(playerDegree);
+		if (playerDegree <= 0) return "Uninitiated";
+		return currentDegree != null ? currentDegree.getTitle() : ("Degree " + playerDegree);
+	}
+
 	/** Clamp pan for the active view. */
 	private void clampPan() {
 		view.clamp(contentWForTab(activeTab), contentHForTab(activeTab), guiWidth, guiHeight);
@@ -1044,6 +1050,12 @@ public class SkillTreeScreen extends Screen {
 					.withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
 					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
+
+			String rankTitle = getCurrentInitiatoryRankTitle();
+			gfx.drawString(font, Component.literal("Harbinger Initiatory Rank: " + rankTitle)
+					.withStyle(s -> s.withColor(0xFFAA6666)),
+					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
+					guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 2, 0);
 		}
 
 		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.SCARS) {
