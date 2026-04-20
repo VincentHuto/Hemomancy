@@ -33,3 +33,7 @@ libs/
 /src/generated/resources/data/hemomancy/tags/entity_types/Generate.py
 /src/main/resources/data/hemomancy/tags/entity_types/Generate.py
 
+/.superpowers/
+/.claude/
+
+

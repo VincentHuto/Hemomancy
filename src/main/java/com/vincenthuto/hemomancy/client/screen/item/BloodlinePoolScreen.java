@@ -200,34 +200,40 @@ public class BloodlinePoolScreen extends Screen {
 
 		// ── Leader Member Management ──
 		if (player != null) {
+				final LocalPlayer localPlayer = player;
+			final int kickRowY = y;
+			final int kickPrevX = widgetX;
+			final int kickNextX = widgetX + 98;
+			final int kickButtonX = widgetX + 122;
+			final int kickButtonW = widgetW - 122;
 			player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
 				Bloodline line = vol.getBloodLine();
-				if (line.isValid() && player.getUUID().equals(line.getLeaderUUID())) {
+				if (line.isValid() && localPlayer.getUUID().equals(line.getLeaderUUID())) {
 					kickPrevButton = Button.builder(Component.literal("<"), btn -> {
-						int size = getKickableMembers(player).size();
+						int size = getKickableMembers(localPlayer).size();
 						if (size > 0) {
 							kickTargetIndex = (kickTargetIndex - 1 + size) % size;
 						}
-					}).bounds(widgetX, y, 18, 18).build();
+					}).bounds(kickPrevX, kickRowY, 18, 18).build();
 					addRenderableWidget(kickPrevButton);
 
 					kickNextButton = Button.builder(Component.literal(">"), btn -> {
-						int size = getKickableMembers(player).size();
+						int size = getKickableMembers(localPlayer).size();
 						if (size > 0) {
 							kickTargetIndex = (kickTargetIndex + 1) % size;
 						}
-					}).bounds(widgetX + 98, y, 18, 18).build();
+					}).bounds(kickNextX, kickRowY, 18, 18).build();
 					addRenderableWidget(kickNextButton);
 
 					kickMemberButton = Button.builder(Component.literal("Kick"), btn -> {
-						List<UUID> kickable = getKickableMembers(player);
+						List<UUID> kickable = getKickableMembers(localPlayer);
 						if (!kickable.isEmpty()) {
 							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
 							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
 							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
 							kickTargetIndex = 0;
 						}
-					}).bounds(widgetX + 122, y, widgetW - 122, 18).build();
+					}).bounds(kickButtonX, kickRowY, kickButtonW, 18).build();
 					addRenderableWidget(kickMemberButton);
 				}
 			});
