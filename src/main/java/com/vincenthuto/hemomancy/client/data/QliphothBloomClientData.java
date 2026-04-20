@@ -2,7 +2,9 @@ package com.vincenthuto.hemomancy.client.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.core.BlockPos;
 
@@ -32,9 +34,16 @@ public class QliphothBloomClientData {
 	}
 
 	private static List<BloomEntry> activeBlooms = Collections.emptyList();
+	private static Set<BlockPos> activeCenters = Collections.emptySet();
 
 	public static void set(List<BloomEntry> blooms) {
-		activeBlooms = Collections.unmodifiableList(new ArrayList<>(blooms));
+		List<BloomEntry> bloomCopy = Collections.unmodifiableList(new ArrayList<>(blooms));
+		Set<BlockPos> centers = new HashSet<>(bloomCopy.size());
+		for (BloomEntry bloom : bloomCopy) {
+			centers.add(bloom.getCenter());
+		}
+		activeBlooms = bloomCopy;
+		activeCenters = Collections.unmodifiableSet(centers);
 	}
 
 	public static List<BloomEntry> getActiveBlooms() {
@@ -43,5 +52,10 @@ public class QliphothBloomClientData {
 
 	public static void clear() {
 		activeBlooms = Collections.emptyList();
+		activeCenters = Collections.emptySet();
+	}
+
+	public static boolean containsCenter(BlockPos pos) {
+		return activeCenters.contains(pos);
 	}
 }

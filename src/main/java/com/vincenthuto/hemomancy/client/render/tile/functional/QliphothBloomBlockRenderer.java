@@ -31,8 +31,7 @@ public class QliphothBloomBlockRenderer implements BlockEntityRenderer<QliphothB
 
 		// Active blooms are rendered in the world-stage renderer (after translucent blocks)
 		// to avoid ordering issues against transparent surfaces.
-		boolean handledByWorldRenderer = QliphothBloomClientData.getActiveBlooms().stream()
-				.anyMatch(entry -> entry.getCenter().equals(be.getBlockPos()));
+		boolean handledByWorldRenderer = QliphothBloomClientData.containsCenter(be.getBlockPos());
 		if (handledByWorldRenderer) {
 			return;
 		}
