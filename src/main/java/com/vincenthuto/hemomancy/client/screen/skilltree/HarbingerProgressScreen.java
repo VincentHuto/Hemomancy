@@ -1442,8 +1442,8 @@ public class HarbingerProgressScreen extends Screen {
 		minecraft.player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
 			Map<EnumBloodTendency, Float> affs = tendency.getTendency();
 			float rotAngle = -90f;
-			int outerRadius = (int) (360 * view.zoom);
-			int innerRadius = (int) (66 * view.zoom);
+			int outerRadius = (int) (210 * view.zoom);
+			int innerRadius = (int) (54 * view.zoom);
 			float spikeBaseWidth = 23.5f;
 			double valueDist = outerRadius / TENDENCY_VALUE_DISTANCE_DIVISOR;
 
