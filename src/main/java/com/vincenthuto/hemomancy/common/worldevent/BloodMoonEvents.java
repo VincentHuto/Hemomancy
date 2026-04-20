@@ -240,7 +240,7 @@ public class BloodMoonEvents {
 		boolean isHarbinger = InitiatoryDegreeProvider.getPlayerDegreeNumber(player) > 0;
 		if (isHarbinger) {
 			player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, EFFECT_DURATION, 1, true, false, true));
-			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, EFFECT_DURATION, 0, true, false, true));
+			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false, true));
 		} else {
 			player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, EFFECT_DURATION, 0, true, false, true));
 		}
