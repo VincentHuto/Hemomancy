@@ -36,6 +36,27 @@ Before brainstorming new features, here is what already exists:
 
 ---
 
+## Faction Block Palette Planning (Vanilla + Other Mods)
+
+Use this section as a recipe/ritual block-palette guardrail so new content is not always built from the same Hemomancy block set.
+
+| Faction Theme | Vanilla Block Palette (Primary Picks) | Other-Mod / Cross-Mod Palette (When Available) | Hemomancy Usage Rule |
+|---|---|---|---|
+| **Harbinger** | Deepslate Bricks, Polished Basalt, Red Nether Bricks, Iron Bars, Red Stained Glass, Dark Oak Planks | MnA arcane stone families, MnA runic brick/engraved stone families | Keep Hematic Iron / Engram blocks as accents, not full structure cores |
+| **Fungal** | Mushroom Stem, Red/Brown Mushroom Block, Moss Block, Rooted Dirt, Mud Bricks, Nether Wart Block | MnA nature/verdant stone families, biome-mod fungal/mycelial block sets | Pair infected Hemomancy blocks with at least 2 non-Hemomancy organic blocks |
+| **Unstained** | Smooth Quartz, Quartz Bricks, Calcite, Diorite, Oxidized/Waxed Copper Blocks, White Stained Glass | MnA sanctified/light stone families, shrine/chapel stone variants from worldgen mods | Keep blood-reactive blocks minimal; prefer clean white/copper/water-aligned materials |
+| **Chitinite / Arthropod** | Dripstone Blocks, Pointed Dripstone, Tuff Bricks, Polished Blackstone Bricks, Packed Mud | MnA earthy/chitin-adjacent carved stone sets, modded hive/amber/chitin block sets | Mix chitin-style blocks with mineral shell blocks; avoid pure blood-block builds |
+| **Neutral / Common Folk** | Stone Bricks, Cobblestone, Andesite, Oak Planks, Brick Blocks, Lanterns | Any non-occult builder palette from installed structure/worldgen mods | Use as baseline for villages/transition rituals before faction specialization |
+
+### Palette Use Rules for New Recipes & Rites
+
+1. Every new ritual multiblock should pull from at least **one Vanilla primary material** and **one non-Hemomancy material**.
+2. Avoid repeating the same `hitBlock` family in consecutive rite tiers unless the rite is explicitly a direct upgrade.
+3. If a recipe uses a Hemomancy-exclusive block as a key ingredient, diversify the surrounding pattern with faction-appropriate Vanilla blocks from this table.
+4. For cross-mod content, prefer MnA-associated blocks for structure identity and reserve Hemomancy blocks for functional anchors.
+
+---
+
 ## New Feature Ideas
 
 ### 1. New Spell Components
