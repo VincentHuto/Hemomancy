@@ -1454,6 +1454,14 @@ public class SkillTreeScreen extends Screen {
 				HLGuiUtils.fracLine(gfx.pose(), cx1, cy1, lx, ly, 10, tend.getColor(), displace, 0.8);
 				HLGuiUtils.fracLine(gfx.pose(), cx2, cy2, lx, ly, 10, tend.getColor(), displace, 0.8);
 
+				// Numerical tendency value (matches TendencyViewScreen behavior)
+				double valueDist = outerRadius / 1.75;
+				int valueX = screenX + (int) (Math.cos(Math.toRadians(rotAngle)) * valueDist);
+				int valueY = screenY + (int) (Math.sin(Math.toRadians(rotAngle)) * valueDist);
+				int tendColor = 0xFF000000 | tend.getColor().getColor();
+				gfx.drawCenteredString(font, String.valueOf(tendency.getAlignmentByTendency(tend)),
+						valueX, valueY - 18, tendColor);
+
 				rotAngle += 45f;
 			}
 		});
