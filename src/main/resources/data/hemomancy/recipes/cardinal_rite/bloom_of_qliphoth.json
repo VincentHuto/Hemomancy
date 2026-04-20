@@ -1,7 +1,7 @@
 {
   "type": "hemomancy:cardinal_rite_recipe",
   "bloodCost": 1200,
-  "riteType": "lesser",
+  "riteType": "grand",
   "requiredDegree": 7,
   "riteName": "Bloom of the Qliphoth",
   "riteDescription": "A dark rite that calls forth a blooming tree of the Qliphoth, its roots drinking deep from the blood of the earth. A Qliphoth Seed must be planted within the rite. Within its shadow, all blood manipulations are empowered and the flesh knits itself anew.",
