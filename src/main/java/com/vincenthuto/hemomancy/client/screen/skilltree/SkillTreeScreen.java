@@ -1046,8 +1046,10 @@ public class SkillTreeScreen extends Screen {
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
 
 			EnumInitiatoryDegree currentDegree = EnumInitiatoryDegree.byNumber(playerDegree);
-			String rankTitle = currentDegree != null ? currentDegree.getTitle() : "Uninitiated";
-			gfx.drawString(font, Component.literal("Harbinger Rank: " + rankTitle)
+			String rankTitle = playerDegree <= 0
+					? "Uninitiated"
+					: (currentDegree != null ? currentDegree.getTitle() : ("Degree " + playerDegree));
+			gfx.drawString(font, Component.literal("Harbinger Initiatory Rank: " + rankTitle)
 					.withStyle(s -> s.withColor(0xFFAA6666)),
 					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
 					guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 2, 0);
