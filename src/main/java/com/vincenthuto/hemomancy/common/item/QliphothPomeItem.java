@@ -52,7 +52,8 @@ import net.minecraftforge.network.PacketDistributor;
  *
  * <p>Consuming all nine pomes from a single bloom's lifecycle triggers the
  * Qliphoth Communion whisper and sets the {@link #QLIPHOTH_COMMUNION_DONE_KEY}
- * flag on the player's persistent data, opening the path to the Eighth Degree.
+ * flag on the player's persistent data, unlocking the Rite of Apotheos
+ * (the Eighth Degree gate).
  */
 public class QliphothPomeItem extends Item {
 

@@ -223,6 +223,7 @@ public class SkillPointGainEvents {
             case 5 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ILLUMINATUS_ASCENSION);
             case 6 -> SkillPointInit.tryAwardMilestone(HemoMilestone.SANCTIFIED_ASCENSION);
             case 7 -> SkillPointInit.tryAwardMilestone(HemoMilestone.ARCHON_ASCENSION);
+            case 8 -> SkillPointInit.tryAwardMilestone(HemoMilestone.APOTHEOS_ASCENSION);
             default -> false;
         };
 

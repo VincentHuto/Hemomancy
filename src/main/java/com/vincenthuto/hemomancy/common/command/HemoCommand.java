@@ -53,7 +53,7 @@ import net.minecraftforge.network.PacketDistributor;
  *
  * ── Initiatory Degree ──
  * /hemo degree get [player]
- * /hemo degree set &lt;0-7&gt; [player]
+ * /hemo degree set &lt;0-8&gt; [player]
  *
  * ── Skill Points (global static state) ──
  * /hemo skills get
@@ -123,7 +123,7 @@ public class HemoCommand {
 								.then(Commands.argument("player", EntityArgument.player())
 										.executes(ctx -> getDegree(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))))
 						.then(Commands.literal("set")
-								.then(Commands.argument("degree", IntegerArgumentType.integer(0, 7))
+								.then(Commands.argument("degree", IntegerArgumentType.integer(0, 8))
 										.executes(ctx -> setDegree(ctx.getSource(), ctx.getSource().getPlayerOrException(),
 												IntegerArgumentType.getInteger(ctx, "degree")))
 										.then(Commands.argument("player", EntityArgument.player())

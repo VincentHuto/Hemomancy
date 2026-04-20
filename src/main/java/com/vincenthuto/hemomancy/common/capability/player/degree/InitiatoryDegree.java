@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 public class InitiatoryDegree implements IInitiatoryDegree {
 
-	/** 0 = uninitiated; 1–7 = an actual degree */
+	/** 0 = uninitiated; 1–8 = an actual degree */
 	private int degreeNumber = 0;
 
 	@Override
@@ -25,17 +25,17 @@ public class InitiatoryDegree implements IInitiatoryDegree {
 
 	@Override
 	public boolean isMaxDegree() {
-		return degreeNumber >= 7;
+		return degreeNumber >= 8;
 	}
 
 	@Override
 	public void setDegreeNumber(int degree) {
-		this.degreeNumber = Math.max(0, Math.min(7, degree));
+		this.degreeNumber = Math.max(0, Math.min(8, degree));
 	}
 
 	@Override
 	public boolean advanceDegree() {
-		if (degreeNumber >= 7) return false;
+		if (degreeNumber >= 8) return false;
 		degreeNumber++;
 		return true;
 	}

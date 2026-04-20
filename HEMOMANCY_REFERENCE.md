@@ -93,7 +93,7 @@ All player-attached Forge capabilities, registered in `CapabilityInit`:
 | Equipped Morphling | `IEquippedMorphling` | Currently equipped morphling for the Living Staff |
 | Scar | `IScar` | Scar slot / scar binder state |
 | Scar Item Handler | `IScarsItemHandler` | Inventory for scar binder contents |
-| Initiatory Degree | `IInitiatoryDegree` | Harbinger rank (0–7) |
+| Initiatory Degree | `IInitiatoryDegree` | Harbinger rank (0–8) |
 | Unstained Progress | `IUnstainedProgress` | Purification path state (purity, clarity, flags) |
 | Earthen Vein Location | `IEarthenVeinLoc` | Block capability for earthen vein blocks |
 | Visceral Organs | `IVisceralOrgans` | Tracks extracted/modified organs (Spleen, Liver, Lungs, Kidneys, Heart) for the Visceral Mirror ritual system |
@@ -128,6 +128,7 @@ Progression through **Cardinal Rites** — multiblock blood rituals. Each rite a
 | 5 | Illuminatus of the Crimson Lodge | `illuminatus_rite` |
 | 6 | Sanctified of the Bloodline Covenant | `sanctified_rite` |
 | 7 | Archon of the Hematic Order | `archon_rite` |
+| 8 | Apotheos of the Hematic Order | `apotheos_rite` *(requires Qliphoth Communion flag)* |
 
 Cardinal Rites have:
 - A blood cost
@@ -1200,7 +1201,8 @@ Specific cardinal rite recipes include degree advancement rites (section 3.2) pl
 | Adept Rite | *(see JSON)* | Lesser | 3 → 4 | Fourth rite of the Hematic Order |
 | Rite of the Crimson Lodge | 2000 | Greater | 4 → 5 | Illuminates the inner secrets of the Crimson Lodge |
 | Rite of the Bloodline Covenant | 3000 | Greater | 5 → 6 | Consecrates the practitioner to the Bloodline Covenant |
-| Rite of the Hematic Order | 5000 | Grand | 6 → 7 | Crowns the practitioner as Archon — the highest rank |
+| Rite of the Hematic Order | 5000 | Grand | 6 → 7 | Crowns the practitioner as Archon |
+| Rite of Apotheos | 7000 | Grand | 7 → 8 | Final ascension beyond Archon; requires completed Qliphoth Communion |
 
 **Utility Rites:**
 
@@ -1766,7 +1768,7 @@ The `/hemomancy` command tree (via `HemoCommand`) provides:
 
 **Initiatory Degree:**
 - `get degree` — show current degree
-- `set degree <number>` — set degree (0–7)
+- `set degree <number>` — set degree (0–8)
 
 **Unstained Progress:**
 - `get unstained` — full overview (purity, clarity, stages)

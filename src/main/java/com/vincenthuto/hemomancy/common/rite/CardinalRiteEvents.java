@@ -484,6 +484,7 @@ public class CardinalRiteEvents {
 		DEGREE_RITE_PATHS.put("cardinal_rite/illuminatus_rite", 5);     // Illuminatus of the Crimson Lodge
 		DEGREE_RITE_PATHS.put("cardinal_rite/sanctified_rite", 6);      // Sanctified of the Bloodline Covenant
 		DEGREE_RITE_PATHS.put("cardinal_rite/archon_rite", 7);          // Archon of the Hematic Order
+		DEGREE_RITE_PATHS.put("cardinal_rite/apotheos_rite", 8);        // Apotheos of the Hematic Order
 	}
 
 	private static void completeRite(ServerLevel sLevel, ServerPlayer caster, ActiveCardinalRite rite) {
