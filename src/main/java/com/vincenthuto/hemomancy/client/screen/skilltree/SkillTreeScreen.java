@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
+import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.EnumSkillStates;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
@@ -410,14 +411,106 @@ public class SkillTreeScreen extends Screen {
 		manipContentW = 0;
 		manipContentH = 0;
 		if (ManipulationTreeInit.ENTRIES.isEmpty()) ManipulationTreeInit.init();
+		if (ManipulationTreeInit.ENTRIES.isEmpty()) return;
+
+		final int padding = 40;
+		Map<EnumBloodTendency, List<ManipulationTreeEntry>> byTendency = new java.util.EnumMap<>(EnumBloodTendency.class);
+		List<ManipulationTreeEntry> fallbackEntries = new ArrayList<>();
 
 		for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
-			int x = entry.getX();
-			int y = entry.getY();
-			manipPositions.put(entry, new int[]{x, y});
-			manipContentW = Math.max(manipContentW, x + NODE_SIZE + 20);
-			manipContentH = Math.max(manipContentH, y + NODE_SIZE + 24);
+			BloodManipulation manip = entry.resolve();
+			if (manip == null || manip.getTend() == null) {
+				fallbackEntries.add(entry);
+				continue;
+			}
+			byTendency.computeIfAbsent(manip.getTend(), k -> new ArrayList<>()).add(entry);
 		}
+
+		Map<ManipulationTreeEntry, int[]> rawPositions = new HashMap<>();
+		int maxClusterW = 0;
+		int maxClusterH = 0;
+		int tendencyCount = 0;
+		Map<EnumBloodTendency, int[]> boundsByTendency = new java.util.EnumMap<>(EnumBloodTendency.class);
+
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			List<ManipulationTreeEntry> group = byTendency.getOrDefault(tend, List.of());
+			if (group.isEmpty()) continue;
+			tendencyCount++;
+			int minX = Integer.MAX_VALUE;
+			int minY = Integer.MAX_VALUE;
+			int maxX = Integer.MIN_VALUE;
+			int maxY = Integer.MIN_VALUE;
+			for (ManipulationTreeEntry entry : group) {
+				minX = Math.min(minX, entry.getX());
+				minY = Math.min(minY, entry.getY());
+				maxX = Math.max(maxX, entry.getX());
+				maxY = Math.max(maxY, entry.getY());
+			}
+			boundsByTendency.put(tend, new int[]{minX, maxX, minY, maxY});
+			maxClusterW = Math.max(maxClusterW, maxX - minX + NODE_SIZE);
+			maxClusterH = Math.max(maxClusterH, maxY - minY + NODE_SIZE);
+		}
+
+		if (tendencyCount == 0) {
+			for (ManipulationTreeEntry entry : ManipulationTreeInit.ENTRIES) {
+				int x = entry.getX();
+				int y = entry.getY();
+				manipPositions.put(entry, new int[]{x, y});
+				manipContentW = Math.max(manipContentW, x + NODE_SIZE + 20);
+				manipContentH = Math.max(manipContentH, y + NODE_SIZE + 24);
+			}
+			return;
+		}
+
+		int radius = Math.max(220, (int) Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.35));
+		int clusterHalf = Math.max(maxClusterW, maxClusterH) / 2;
+		float centerX = padding + clusterHalf + radius;
+		float centerY = padding + clusterHalf + radius;
+
+		for (EnumBloodTendency tend : EnumBloodTendency.values()) {
+			List<ManipulationTreeEntry> group = byTendency.getOrDefault(tend, List.of());
+			if (group.isEmpty()) continue;
+
+			int[] b = boundsByTendency.get(tend);
+			float clusterCenterX = (b[0] + b[1]) * 0.5f;
+			float clusterCenterY = (b[2] + b[3]) * 0.5f;
+			double angle = Math.toRadians(-90f + tend.ordinal() * 45f);
+			float anchorX = centerX + (float) Math.cos(angle) * radius;
+			float anchorY = centerY + (float) Math.sin(angle) * radius;
+
+			for (ManipulationTreeEntry entry : group) {
+				int x = Math.round(anchorX + (entry.getX() - clusterCenterX));
+				int y = Math.round(anchorY + (entry.getY() - clusterCenterY));
+				rawPositions.put(entry, new int[]{x, y});
+			}
+		}
+
+		if (!fallbackEntries.isEmpty()) {
+			int y = Math.round(centerY + radius + clusterHalf + NODE_GAP_Y);
+			int startX = Math.round(centerX - ((fallbackEntries.size() - 1) * NODE_GAP_X) * 0.5f);
+			for (int i = 0; i < fallbackEntries.size(); i++) {
+				rawPositions.put(fallbackEntries.get(i), new int[]{startX + i * NODE_GAP_X, y});
+			}
+		}
+
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		for (int[] pos : rawPositions.values()) {
+			minX = Math.min(minX, pos[0]);
+			minY = Math.min(minY, pos[1]);
+			maxX = Math.max(maxX, pos[0]);
+			maxY = Math.max(maxY, pos[1]);
+		}
+		int offsetX = padding - minX;
+		int offsetY = padding - minY;
+		for (var e : rawPositions.entrySet()) {
+			int[] p = e.getValue();
+			manipPositions.put(e.getKey(), new int[]{p[0] + offsetX, p[1] + offsetY});
+		}
+		manipContentW = maxX + offsetX + NODE_SIZE + padding;
+		manipContentH = maxY + offsetY + NODE_SIZE + 24 + padding;
 	}
 
 	private void cacheKnownManipulations() {
@@ -3623,4 +3716,3 @@ public class SkillTreeScreen extends Screen {
 		return false;
 	}
 }
-
