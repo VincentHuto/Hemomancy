@@ -1,7 +1,9 @@
 package com.vincenthuto.hemomancy.common.rite;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -24,12 +26,25 @@ import net.minecraft.world.level.saveddata.SavedData;
  *   <li>Passive health regeneration (Regeneration I) every 2 seconds</li>
  *   <li>Enhanced blood regeneration rate</li>
  * </ul>
+ * <p>
+ * Each bloom tracks how many Qliphoth Pomes have been dropped from it.
+ * A tree's lifecycle produces exactly nine pomes (one per Qliphoth husk);
+ * after the ninth drop the tree ceases producing fruit until re-summoned.
  */
 public class QliphothBloomSavedData extends SavedData {
 
 	private static final String DATA_NAME = "hemomancy_qliphoth_blooms";
+	/** Maximum pomes a single bloom produces before its lifecycle is exhausted. */
+	public static final int MAX_POMES_PER_BLOOM = 9;
 
 	private final List<BloomEntry> blooms = new ArrayList<>();
+
+	/**
+	 * Tracks how many pomes have been dropped by each bloom, keyed by the
+	 * bloom center's {@link BlockPos#asLong()} value. Cleared when a bloom is
+	 * pruned or removed.
+	 */
+	private final Map<Long, Integer> pomesDroppedByBloom = new HashMap<>();
 
 	public QliphothBloomSavedData() {}
 
@@ -52,6 +67,15 @@ public class QliphothBloomSavedData extends SavedData {
 				data.blooms.add(new BloomEntry(ownerUUID, center, dimension, chunkRadius, createdTick));
 			}
 		}
+		if (tag.contains("pomesDropped", Tag.TAG_LIST)) {
+			ListTag pdList = tag.getList("pomesDropped", Tag.TAG_COMPOUND);
+			for (int i = 0; i < pdList.size(); i++) {
+				CompoundTag entry = pdList.getCompound(i);
+				long centerLong = entry.getLong("Center");
+				int count = entry.getInt("Count");
+				data.pomesDroppedByBloom.put(centerLong, count);
+			}
+		}
 		return data;
 	}
 
@@ -69,6 +93,16 @@ public class QliphothBloomSavedData extends SavedData {
 			list.add(bloomTag);
 		}
 		tag.put("blooms", list);
+
+		ListTag pdList = new ListTag();
+		for (Map.Entry<Long, Integer> pd : pomesDroppedByBloom.entrySet()) {
+			CompoundTag pdTag = new CompoundTag();
+			pdTag.putLong("Center", pd.getKey());
+			pdTag.putInt("Count", pd.getValue());
+			pdList.add(pdTag);
+		}
+		tag.put("pomesDropped", pdList);
+
 		return tag;
 	}
 
@@ -79,6 +113,35 @@ public class QliphothBloomSavedData extends SavedData {
 
 	public List<BloomEntry> getBlooms() {
 		return blooms;
+	}
+
+	/**
+	 * Returns the number of pomes already dropped from the bloom at the given
+	 * center position. Returns 0 if no pomes have been dropped yet.
+	 */
+	public int getPomesDropped(BlockPos center) {
+		return pomesDroppedByBloom.getOrDefault(center.asLong(), 0);
+	}
+
+	/**
+	 * Increments the pome-drop counter for the given bloom center and marks
+	 * the data as dirty. Returns the new count after incrementing.
+	 */
+	public int incrementPomesDropped(BlockPos center) {
+		long key = center.asLong();
+		int next = pomesDroppedByBloom.getOrDefault(key, 0) + 1;
+		pomesDroppedByBloom.put(key, next);
+		setDirty();
+		return next;
+	}
+
+	/**
+	 * Returns the remaining number of pomes this bloom can still drop,
+	 * i.e. {@link #MAX_POMES_PER_BLOOM} minus the number already dropped.
+	 * Returns 0 once the lifecycle is exhausted.
+	 */
+	public int getRemainingPomes(BlockPos center) {
+		return Math.max(0, MAX_POMES_PER_BLOOM - getPomesDropped(center));
 	}
 
 	/**
@@ -132,6 +195,7 @@ public class QliphothBloomSavedData extends SavedData {
 	/**
 	 * Remove the bloom whose center is in the same chunk as the given position
 	 * in the given dimension. Returns the removed entry, or null if none found.
+	 * Also clears the pomes-dropped counter for that bloom.
 	 */
 	public BloomEntry removeBloomInChunk(BlockPos pos, String dimension) {
 		int chunkX = pos.getX() >> 4;
@@ -143,6 +207,7 @@ public class QliphothBloomSavedData extends SavedData {
 			int bloomChunkZ = entry.center().getZ() >> 4;
 			if (bloomChunkX == chunkX && bloomChunkZ == chunkZ) {
 				blooms.remove(i);
+				pomesDroppedByBloom.remove(entry.center().asLong());
 				setDirty();
 				return entry;
 			}

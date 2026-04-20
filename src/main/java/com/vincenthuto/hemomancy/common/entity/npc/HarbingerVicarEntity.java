@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.HarbingerVicarDialogueTrees;
+import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -89,6 +90,16 @@ public class HarbingerVicarEntity extends PathfinderMob {
                 .orElse(false);
     }
 
+    /**
+     * Returns true if the player has an active Qliphoth Pome empowerment
+     * (the 3-minute manipulation-cost-reduction window from eating a pome).
+     * Checked server-side via persistent data.
+     */
+    private static boolean hasPomeEmpowerment(Player player) {
+        long expiry = player.getPersistentData().getLong(QliphothPomeItem.POME_EMPOWERMENT_KEY);
+        return expiry > 0 && player.level().getGameTime() < expiry;
+    }
+
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // Allow full damage while the Vicar is actively fighting a clarity-bearing player
@@ -130,6 +141,9 @@ public class HarbingerVicarEntity extends PathfinderMob {
             if (isPurifying(player)) {
                 // Purifying players receive a stern Harbinger warning
                 tree = HarbingerVicarDialogueTrees.purifying(this.getId());
+            } else if (degree >= 7 && hasPomeEmpowerment(player)) {
+                // Archon players with active pome empowerment receive the unsettled reaction
+                tree = HarbingerVicarDialogueTrees.archonPomeEmpowered(this.getId());
             } else {
                 tree = HarbingerVicarDialogueTrees.forDegree(degree, this.getId());
             }

@@ -274,4 +274,20 @@ public final class HarbingerVicarDialogueTrees {
 				)))
 				.build();
 	}
+
+	/**
+	 * Special Archon dialogue triggered when the player has an active Qliphoth
+	 * Pome empowerment. The Vicar is briefly, visibly unsettled — the only time
+	 * the player will ever see him like this.
+	 */
+	public static DialogueTree archonPomeEmpowered(int entityId) {
+		return DialogueTree.builder(SPEAKER, VICAR_ICON, entityId)
+				.addNode(new DialogueNode("greeting", List.of(
+						"hemomancy.vicar.archon.pome_empowered.line1",
+						"hemomancy.vicar.archon.pome_empowered.line2"
+				), List.of(
+						new DialogueOption("hemomancy.dialogue.vicar.option.leave", null, null)
+				)))
+				.build();
+	}
 }

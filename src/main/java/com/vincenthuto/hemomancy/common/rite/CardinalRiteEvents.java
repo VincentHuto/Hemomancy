@@ -27,6 +27,8 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.AncestralCommunionDialogueTrees;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
+import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodMoon;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonSavedData;
 import com.vincenthuto.hemomancy.common.worldevent.FoundingSanctumSavedData;
@@ -1330,13 +1332,15 @@ public class CardinalRiteEvents {
 	}
 
 	/**
-	 * Bloom of the Qliphoth (Degree 4, Lesser):
+	 * Bloom of the Qliphoth (Degree 7, Grand — Archon-tier summoning rite):
 	 * Summons a persistent Qliphoth Bloom at the rite center. Within a 3-chunk
 	 * radius, all blood manipulations cost 25% less blood and players receive
 	 * passive health regeneration and enhanced blood regeneration.
 	 * <p>
 	 * Places a 1×1×8 multi-block (QliphothBloomBlock + 7 fillers) at the
 	 * ritual center and registers the bloom in world SavedData.
+	 * The tree produces exactly nine pomes over its lifecycle — one for each
+	 * husk of the Qliphoth — then ceases dropping fruit until re-summoned.
 	 */
 	private static void completeBloomOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
@@ -1392,21 +1396,60 @@ public class CardinalRiteEvents {
 						+ blockRadius + " blocks.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+
+		// Fire the post-bloom Fungal Whisper so the Entity acknowledges the fruiting
+		PacketHandler.CHANNELBLOODVOLUME.send(
+				PacketDistributor.PLAYER.with(() -> caster),
+				new OpenDialoguePacket(FungalWhisperDialogueTrees.postBloom()));
 	}
 
 	/**
 	 * Pruning of the Qliphoth (Degree 0, Minor):
 	 * Removes a Qliphoth Bloom tree whose center is in the same chunk as the rite.
 	 * Destroys the physical multi-block and removes the SavedData entry.
+	 * <p>
+	 * If pomes remain in the tree's lifecycle, they are forcibly dropped as items.
+	 * A Harbinger pruner receives normal (live) pomes; an Unstained pruner receives
+	 * tainted pomes — the husks were severed before they were ready to ripen.
 	 */
 	private static void completePruningOfQliphoth(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		ServerLevel overworld = sLevel.getServer().overworld();
 		QliphothBloomSavedData data = QliphothBloomSavedData.get(overworld);
 		String dimension = sLevel.dimension().location().toString();
 
+		// Determine if the caster is on the Unstained path
+		final boolean[] prunerIsUnstained = { false };
+		caster.getCapability(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider.UNSTAINED_CAPA)
+				.ifPresent(unstained -> {
+					if (unstained.hasBegunPurification() || unstained.hasClarityUnlocked()) {
+						prunerIsUnstained[0] = true;
+					}
+				});
+
+		// Capture the remaining-pomes count BEFORE removal (removeBloomInChunk clears the counter)
+		// Find the bloom entry to get the center first
+		int chunkX = center.getX() >> 4;
+		int chunkZ = center.getZ() >> 4;
+		int pomesAlreadyDropped = 0;
+		BlockPos bloomCenter = null;
+		for (QliphothBloomSavedData.BloomEntry b : data.getBlooms()) {
+			if (!b.dimension().equals(dimension)) continue;
+			if ((b.center().getX() >> 4) == chunkX && (b.center().getZ() >> 4) == chunkZ) {
+				bloomCenter = b.center();
+				pomesAlreadyDropped = data.getPomesDropped(b.center());
+				break;
+			}
+		}
+
 		QliphothBloomSavedData.BloomEntry removed = data.removeBloomInChunk(center, dimension);
 
 		if (removed != null) {
+			// Drop any remaining pomes from the lifecycle as harvested items
+			int remaining = QliphothBloomSavedData.MAX_POMES_PER_BLOOM - pomesAlreadyDropped;
+			if (remaining > 0 && bloomCenter != null) {
+				dropRemainingPomesOnPrune(sLevel, bloomCenter, pomesAlreadyDropped, remaining, prunerIsUnstained[0]);
+			}
+
 			// Destroy the physical bloom block and its fillers
 			BlockPos bloomPos = removed.center();
 			BlockState bloomState = sLevel.getBlockState(bloomPos);
@@ -1428,6 +1471,34 @@ public class CardinalRiteEvents {
 					Component.literal("There is no Qliphoth bloom rooted in this chunk to prune.")
 							.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 					false);
+		}
+	}
+
+	/**
+	 * Drops the pomes still remaining in a bloom's lifecycle when it is pruned.
+	 * Pomes are tagged with their correct husk index (continuing from
+	 * {@code startHuskIndex}) and optionally as tainted if an Unstained player
+	 * performed the pruning.
+	 */
+	private static void dropRemainingPomesOnPrune(ServerLevel sLevel, BlockPos center,
+			int startHuskIndex, int count, boolean tainted) {
+		for (int i = 0; i < count; i++) {
+			ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
+			net.minecraft.nbt.CompoundTag tag = pomeStack.getOrCreateTag();
+			tag.putLong(QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
+			tag.putInt(QliphothPomeItem.HUSK_INDEX_KEY, startHuskIndex + i);
+			if (tainted) {
+				tag.putBoolean(QliphothPomeItem.TAINTED_KEY, true);
+			}
+			double x = center.getX() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
+			double y = center.getY() + 1.0;
+			double z = center.getZ() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
+			ItemEntity entity = new ItemEntity(sLevel, x, y, z, pomeStack);
+			entity.setPickUpDelay(10);
+			// Invulnerable and permanent — pomes must not be destroyed by the environment
+			entity.setInvulnerable(true);
+			entity.lifespan = Integer.MAX_VALUE;
+			sLevel.addFreshEntity(entity);
 		}
 	}
 

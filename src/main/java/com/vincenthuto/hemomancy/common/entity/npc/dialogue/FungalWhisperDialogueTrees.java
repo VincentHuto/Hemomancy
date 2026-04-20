@@ -16,6 +16,16 @@ import net.minecraft.resources.ResourceLocation;
  * player might dismiss. They plant the first seeds of doubt without revealing
  * anything explicit.
  * <p>
+ * Three additional one-shot whispers fire at specific world events:
+ * <ul>
+ *   <li>{@link #postMonolithShatter()} — fires immediately after an Archon
+ *       shatters the Sanguine Monolith and the Qliphoth Seed falls out.</li>
+ *   <li>{@link #postBloom()} — fires once after a player completes the Bloom
+ *       of the Qliphoth rite and the dark tree takes root.</li>
+ *   <li>{@link #qliphothCommunion()} — fires when a player has consumed all
+ *       nine pomes from a single bloom's lifecycle, completing the Communion.</li>
+ * </ul>
+ * <p>
  * The speaker is anonymous ("???") with a mystery question-mark icon.
  */
 public final class FungalWhisperDialogueTrees {
@@ -218,4 +228,89 @@ public final class FungalWhisperDialogueTrees {
 					.build();
 		};
 	}
+
+	// ── One-shot event whispers ──
+
+	/**
+	 * One-shot whisper that fires when a Qliphoth Pome falls from the tree.
+	 * Sent only to the player who owns the bloom, so they know which husk to retrieve.
+	 *
+	 * @param huskIndex  The sequential husk index (0–8).
+	 */
+	public static DialogueTree pomeDropped(int huskIndex) {
+		/** Lang key suffixes for each husk pome-drop whisper, in consumption order (0–8). */
+		final String[] POME_DROP_LANG_KEYS = {
+				"hemomancy.whisper.pome_drop.nahemoth",
+				"hemomancy.whisper.pome_drop.samael",
+				"hemomancy.whisper.pome_drop.gamaliel",
+				"hemomancy.whisper.pome_drop.harab_serapel",
+				"hemomancy.whisper.pome_drop.golachab",
+				"hemomancy.whisper.pome_drop.thagirion",
+				"hemomancy.whisper.pome_drop.aarab_zaraq",
+				"hemomancy.whisper.pome_drop.satariel",
+				"hemomancy.whisper.pome_drop.ghagiel"
+		};
+		String langKey = (huskIndex >= 0 && huskIndex < POME_DROP_LANG_KEYS.length)
+				? POME_DROP_LANG_KEYS[huskIndex]
+				: "hemomancy.whisper.pome_drop.nahemoth";
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(langKey), List.of(
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Fires immediately after an Archon shatters the Sanguine Monolith and
+	 * the Qliphoth Seed falls out. The voice comments on what was always inside.
+	 */
+	public static DialogueTree postMonolithShatter() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.post_shatter.line1",
+						"hemomancy.whisper.post_shatter.line2"
+				), List.of(
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Fires once for the caster after a Bloom of the Qliphoth rite completes
+	 * and the tree takes root. The Entity acknowledges the first fruit.
+	 */
+	public static DialogueTree postBloom() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.post_bloom.line1",
+						"hemomancy.whisper.post_bloom.line2"
+				), List.of(
+						new DialogueOption("hemomancy.whisper.option.dismiss", null, null)
+				)))
+				.build();
+	}
+
+	/**
+	 * Fires when a player has consumed all nine Qliphoth Pomes from a single
+	 * bloom's lifecycle, completing the Qliphoth Communion. Sets the
+	 * {@code qliphoth_communion_done} event flag and opens the path to the
+	 * Eighth Degree.
+	 */
+	public static DialogueTree qliphothCommunion() {
+		return DialogueTree.builder(SPEAKER, MYSTERY_ICON, 0)
+				.theme(DialogueTheme.FUNGAL)
+				.addNode(new DialogueNode("root", List.of(
+						"hemomancy.whisper.communion.line1",
+						"hemomancy.whisper.communion.line2",
+						"hemomancy.whisper.communion.line3"
+				), List.of(
+						new DialogueOption("hemomancy.whisper.option.i_am_listening", null,
+								"qliphoth_communion_done")
+				)))
+				.build();
+	}
 }
+
