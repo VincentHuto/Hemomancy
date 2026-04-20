@@ -330,6 +330,8 @@ public class BloodVolumeEvents {
 							globalLine.getBloodVolume(),
 							globalLine.getMaxBloodVolume(),
 							globalLine.getPlayerUUIDS().size()));
+		} else {
+			volume.setBloodLine(Bloodline.NOBLOODLINE);
 		}
 
 		syncVolume(player, volume);
