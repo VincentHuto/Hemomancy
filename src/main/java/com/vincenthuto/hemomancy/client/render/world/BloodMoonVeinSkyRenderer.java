@@ -36,7 +36,7 @@ public class BloodMoonVeinSkyRenderer {
 
 	private static final int   TENDRIL_COUNT  = 14;
 	private static final float MOON_PLANE_Y   = -100.0F;
-	private static final float MOON_RADIUS    = 16.0F;  // slightly inside the vanilla 40×40 moon quad
+	private static final float MOON_RADIUS    = 8;  // slightly inside the vanilla 40×40 moon quad
 	private static final int   STEPS          = 90;
 	private static final float STEP_LEN       = 1.1F;
 	private static final float TENDRIL_WIDTH  = 0.55F;  // half-width of ribbon
