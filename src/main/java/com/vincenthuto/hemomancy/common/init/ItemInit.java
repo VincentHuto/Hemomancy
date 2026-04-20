@@ -375,6 +375,15 @@ public class ItemInit {
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.hemorrhage));
     public static final RegistryObject<Item> memory_exsanguinate = BASEITEMS.register("memory_exsanguinate",
             () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.exsanguinate));
+    // Saint Canon Memories — imprinted from Sainted Mausoleums via Hallowed Residuum
+    public static final RegistryObject<Item> memory_crimson_tithe = BASEITEMS.register("memory_crimson_tithe",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.crimson_tithe));
+    public static final RegistryObject<Item> memory_unclosing_eye = BASEITEMS.register("memory_unclosing_eye",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.unclosing_eye));
+    public static final RegistryObject<Item> memory_bloom_of_rot = BASEITEMS.register("memory_bloom_of_rot",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.bloom_of_rot));
+    public static final RegistryObject<Item> memory_endless_hour = BASEITEMS.register("memory_endless_hour",
+            () -> new BloodMemoryItem(new Item.Properties(), ManipulationInit.endless_hour));
     // Living
     public static final RegistryObject<Item> blood_absorption = SPECIALITEMS.register("blood_absorption",
             () -> new BloodAbsorptionItem(new Item.Properties()));

@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:hallowed_residuum_velorum"
+  },
+  "congeatio": true,
+  "tenebris": true,
+  "result": "hemomancy:memory_endless_hour",
+  "count": 1
+}
