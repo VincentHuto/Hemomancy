@@ -257,7 +257,18 @@ At around **Degree 3–4**, the Harbinger Vicar and/or the player's own research
 - Killing the saint in a boss fight also yields the blood sample ("taking it by force")
 - Smearing **Foul Paste** on a sarcophagus deliberately triggers the boss fight even after peaceful extraction
 
-**Reward:** Each saint's blood is used to craft a unique, high-level **combined blood memory** — a special manipulation not available through normal memory weaving.
+**Reward (two output types):** Each saint yields two things from their blood:
+1. **Hallowed Residuum** (`hallowed_residuum_<saint>`) — extracted by processing a Consecrated Syringe in the Vial Centrifuge. Serves as the catalyst currency for both the Somatic Loom and the Morphling Incubator.
+2. **Canon Memory** (via Somatic Loom) — placing the Hallowed Residuum as the loom's catalyst and aligning the loom's tendencies to match the saint's pair unlocks that saint's unique SUMMA-rank blood manipulation.
+
+**Saint → Canon Memory → Incubator Fungal Scar (at-a-glance):**
+
+| Saint | Tendencies | Loom Recipe (mortem true etc.) | Canon Memory | Incubator Scar | Scar Catalysts |
+|-------|-----------|-------------------------------|--------------|----------------|----------------|
+| **Hemorath** | MORTEM + ANIMUS | `mortem: true`, `animus: true` + Residuum of Hemorath | Crimson Tithe | Talaromyces Minus | Hallowed Residuum of Hemorath + Vivianite Cluster + Spore Sac |
+| **Seraphae** | LUX + DUCTILIS | `lux: true`, `ductilis: true` + Residuum of Seraphae | Unclosing Eye | Noctifly Agaric | Hallowed Residuum of Seraphae + Phantom Membrane + Spore Sac |
+| **Putriciel** | MORTEM + FLAMMEUS | `mortem: true`, `flammeus: true` + Residuum of Putriciel | Bloom of Rot | Respergillus | Hallowed Residuum of Putriciel + Heart of the Sea + Spore Sac |
+| **Velorum** | CONGEATIO + TENEBRIS | `congeatio: true`, `tenebris: true` + Residuum of Velorum | Endless Hour | Lumina Devorans | Hallowed Residuum of Velorum + Echo Shard + Spore Sac |
 
 There are **four Saints** in total; which one a player encounters first is partially randomized.
 
@@ -265,10 +276,12 @@ There are **four Saints** in total; which one a player encounters first is parti
 
 | Saint | Trial Type | Boss Mechanic | Thematic Tendency |
 |-------|-----------|---------------|------------------|
-| **Hemorath** | Four-basin blood-filling puzzle (fill each basin to correct level, monsters spawn throughout; wrong levels set you back) | Absorbs blood magic attacks, growing stronger — must be overloaded with blood magic until he bursts and exsanguinates | Ferric (iron, permanence) |
-| **The Chain Saint** *(name TBD — "nurse saint")* | Light-avoidance (her emitted light burns the player) | Must re-chain her and darken the room rather than fighting her directly | Vivacious / Lux (life, growth, uncontrolled healing) |
+| **Hemorath** | Four-basin blood-filling puzzle (fill each basin to correct level, monsters spawn throughout; wrong levels set you back) | Absorbs blood magic attacks, growing stronger — must be overloaded with blood magic until he bursts and exsanguinates | MORTEM + ANIMUS (iron permanence, death/life) |
+| **Seraphae** | Light-based trial (WIP) | WIP | LUX + DUCTILIS (witness, light, neural) |
+| **Putriciel** | WIP | WIP | MORTEM + FLAMMEUS (absolution, rot-fire) |
+| **Velorum** | WIP | WIP | CONGEATIO + TENEBRIS (martyrdom, silence, frozen dark) |
 
-> **⚠️ WIP:** Saints 3 and 4 are not yet finalized. Trial Chamber structure generation and saint boss AI are in active development.
+> **⚠️ WIP:** Saints 2–4 (Seraphae, Putriciel, Velorum) have their code skeletons, Hallowed Residuum items, Canon Memory items, and incubator recipes implemented. Trial Chamber structure generation and saint boss AI are in active development.
 
 ---
 
@@ -703,14 +716,27 @@ Each scar has a corresponding **Scar Pattern** item used in crafting.
 
 ### 12.2 Functional Spores (Scar-type items)
 
-Special fungal scar items with active effects (extend `ItemFungalScar`):
+Special fungal scar items with active effects (extend `ItemFungalScar`). All four are **Degree 3–4 locked** and require **Hallowed Residuum** from a Saint's Preserved Corpus — they are crafted in the **Morphling Incubator**, not the Cerebral Scarring Station.
 
-| Item | Tendency | Effect |
-|------|----------|--------|
-| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Fungal spore with custom 3D render when equipped (specific effect TBD) |
-| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) effect while equipped in Scar Binder |
-| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Fungal spore with custom 3D render when equipped (specific effect TBD) |
-| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the Noctifly Agaric (Fungal Elytra) flight effect |
+| Item | Tendency | Active Effect | Saint Residuum Required | Other Catalysts |
+|------|----------|---------------|-------------------------|-----------------|
+| ![](src/main/resources/assets/hemomancy/textures/item/noctifly_agaric.png) Noctifly Agaric | Animus | Grants the `fungal_elytra` flight effect permanently while equipped | Seraphae | Phantom Membrane + Spore Sac |
+| ![](src/main/resources/assets/hemomancy/textures/item/respergillus.png) Respergillus | Animus | Fungal spore — 3D equipped render (specific effect TBD) | Putriciel | Heart of the Sea + Spore Sac |
+| ![](src/main/resources/assets/hemomancy/textures/item/talaromyces_minus.png) Talaromyces Minus | Ferric | Grants Haste (Dig Speed) while equipped in Scar Binder | Hemorath | Vivianite Cluster + Spore Sac |
+| ![](src/main/resources/assets/hemomancy/textures/item/lumina_devorans.png) Lumina Devorans | Tenebris | Fungal spore — 3D equipped render (specific effect TBD) | Velorum | Echo Shard + Spore Sac |
+
+**Incubator recipe format** (all four share the same structure):
+```json
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "hemomancy:hallowed_residuum_<saint>" },
+    { "item": "<vanilla_catalyst>" },
+    { "item": "hemomancy:spore_sac" }
+  ],
+  "result": { "item": "hemomancy:<scar_id>" }
+}
+```
 
 ### 12.3 Spores (Passive scar items)
 
@@ -785,6 +811,10 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/fervent_husk.png) Fervent Husk | Memory processing ingredient |
 | ![](src/main/resources/assets/hemomancy/textures/item/blood_stained_stone.png) Blood Stained Stone | Memory-related item |
 | Blood Memory (per manipulation) | One for each registered manipulation — using it teaches the player |
+| **Canon Memory: Crimson Tithe** | Saint manipulation memory (Hemorath) — obtained via Somatic Loom with Hallowed Residuum of Hemorath |
+| **Canon Memory: Unclosing Eye** | Saint manipulation memory (Seraphae) — obtained via Somatic Loom with Hallowed Residuum of Seraphae |
+| **Canon Memory: Bloom of Rot** | Saint manipulation memory (Putriciel) — obtained via Somatic Loom with Hallowed Residuum of Putriciel |
+| **Canon Memory: Endless Hour** | Saint manipulation memory (Velorum) — obtained via Somatic Loom with Hallowed Residuum of Velorum |
 
 **Memory Textures Gallery:**
 
@@ -801,6 +831,12 @@ One for each tendency:
 | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_umbral_step_overlay.png) Umbral Step | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_summon_thrall_overlay.png) Summon Thrall | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_cryogenic_pulse_overlay.png) Cryogenic Pulse | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_glacial_bastion_overlay.png) Glacial Bastion |
 | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_sanguine_ignition_overlay.png) Sanguine Ignition | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_vitric_combustion_overlay.png) Vitric Combustion | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_void_shroud_overlay.png) Void Shroud | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_blood_eclipse_overlay.png) Blood Eclipse |
 | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_hemorrhage_overlay.png) Hemorrhage | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_exsanguinate_overlay.png) Exsanguinate | | |
+
+**Saint Canon Memory Overlays (placeholder art — unique textures pending):**
+
+| | | | |
+|---|---|---|---|
+| ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_crimson_tithe_overlay.png) Crimson Tithe | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_unclosing_eye_overlay.png) Unclosing Eye | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_bloom_of_rot_overlay.png) Bloom of Rot | ![](src/main/resources/assets/hemomancy/textures/item/memories/memory_endless_hour_overlay.png) Endless Hour |
 
 > **Memory Overlay System:** All memory items now use a layered model system — each memory has a unique overlay texture (`textures/item/memories/memory_*_overlay.png`) composited on top of the base Hematic Memory texture. This provides visual distinction for each manipulation's memory item without requiring fully separate textures.
 
@@ -1128,7 +1164,7 @@ All applicable flowers have **potted** variants.
 | `scar_recipe` | `ScarRecipeSerializer` | Cerebral Scarring Station | Crafting scars |
 | `distillation_recipe` | `DistillationRecipeSerializer` | Ghastly Alembic / Pallid Retort | Shared distillation recipes. `pallid: true` targets Pallid Retort; omitted/false targets Ghastly Alembic. |
 | `recaller_recipe_type` | `RecallerRecipeSerializer` | Visceral Recaller | Creating Hematic Memories |
-| `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts. 13 recipes for all morphling types (bat, centipede, chitinite, fungal, leeches, mole, moth, pests, serpent, spider, tick, urchin). JEI-integrated via `IncubatorRecipeCategory`. |
+| `incubator_recipe_type` | `IncubatorRecipeSerializer` | Morphling Incubator | Growing Morphling Polyps into specific morphlings using enzyme catalysts (12 morphling recipes). **Also used for all 4 rare Functional Spore scars** (Noctifly Agaric, Respergillus, Talaromyces Minus, Lumina Devorans) which each require a saint Hallowed Residuum + vanilla catalyst + Spore Sac. JEI-integrated via `IncubatorRecipeCategory`. |
 | `blood_structure_recipe` | `BloodStructureRecipeSerializer` | In-world structure | Structure crafting (hit structure with catalyst + blood) |
 | `cardinal_rite_recipe` | `CardinalRiteRecipeSerializer` | Multiblock | Cardinal Rites for degree advancement |
 | Morphling Jar Upgrade | `CopyMorphlingJarRecipe.Serializer` | Crafting | Upgrading morphling jars |
@@ -1233,6 +1269,30 @@ Only blood-faction plants brew into hemomancy potions. Unstained plants (Puffbal
 | Roasted Gourd Seeds | Smelting | Gourd seeds in furnace |
 | Roasted Gourd Seeds | Smoking | Gourd seeds in smoker |
 | Roasted Gourd Seeds | Campfire Cooking | Gourd seeds on campfire |
+
+### 18.5 Saint Canon Memory Recipes (Somatic Loom)
+
+Each of the four saints yields a Canon Memory when the player places a Hallowed Residuum into the Somatic Loom's catalyst slot while the loom's tendency alignment matches the saint's paired tendencies (both must reach the TENDENCY_THRESHOLD of 3.0).
+
+| Canon Memory | Ingredient (catalyst slot) | Loom Tendencies Required | Unlocks Manipulation |
+|-------------|---------------------------|--------------------------|---------------------|
+| `memory_crimson_tithe` | Hallowed Residuum of Hemorath | MORTEM + ANIMUS | Crimson Tithe (SUMMA, MORTEM) |
+| `memory_unclosing_eye` | Hallowed Residuum of Seraphae | LUX + DUCTILIS | Unclosing Eye (SUMMA, LUX) |
+| `memory_bloom_of_rot` | Hallowed Residuum of Putriciel | MORTEM + FLAMMEUS | Bloom of Rot (SUMMA, MORTEM) |
+| `memory_endless_hour` | Hallowed Residuum of Velorum | CONGEATIO + TENEBRIS | Endless Hour (SUMMA, CONGEATIO) |
+
+> These are SUMMA-rank manipulations — the most costly and powerful tier. They are imprinted rather than learned; no blood cost reduction from Dynamic Use applies.
+
+### 18.6 Hallowed Residuum Extraction (Vial Centrifuge)
+
+Processing a **Consecrated Syringe** (tagged with a saint type) in the **Vial Centrifuge** yields the corresponding Hallowed Residuum. The syringe is obtained by using an empty Blood Vial on a consecrated Saint Sarcophagus.
+
+| Consecrated Syringe Tag | Output |
+|------------------------|--------|
+| `HEMORATH` | Hallowed Residuum of Hemorath |
+| `SERAPHAE` | Hallowed Residuum of Seraphae |
+| `PUTRICIEL` | Hallowed Residuum of Putriciel |
+| `VELORUM` | Hallowed Residuum of Velorum |
 
 ---
 

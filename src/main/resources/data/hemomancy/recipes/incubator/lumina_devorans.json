@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "hemomancy:hallowed_residuum_velorum" },
+    { "item": "minecraft:echo_shard" },
+    { "item": "hemomancy:spore_sac" }
+  ],
+  "result": {
+    "item": "hemomancy:lumina_devorans"
+  }
+}
