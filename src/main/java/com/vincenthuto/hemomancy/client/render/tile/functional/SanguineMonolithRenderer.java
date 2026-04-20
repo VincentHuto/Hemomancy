@@ -106,7 +106,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float time = (te.getLevel() != null)
 				? te.getLevel().getGameTime() + partialTicks
 				: te.getTickCount() + partialTicks;
-		TendrilVisualState tendrilVisual = computeTendrilVisualState();
+		TendrilVisualState tendrilVisual = computeTendrilVisualState(te);
 
 		ms.pushPose();
 		ms.translate(0.5D, yOffset, 0.5D);
@@ -185,8 +185,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.5f + step * 0.05f);
 				int alpha = (int) (Mth.clamp(tipFade * pulse * 200, 20, 220));
 				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
-				int g = (int) Mth.clamp(targetGreen * pulse * 0.4f, 0, 255);
-				int b = (int) Mth.clamp(targetBlue * pulse * 0.3f, 0, 255);
+				float gScale = state.whitePhase ? 1.0f : 0.4f;
+				float bScale = state.whitePhase ? 1.0f : 0.3f;
+				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
+				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
 
 				float size = 0.015f;
 				float z = faceZ;
@@ -258,8 +260,10 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.7f + step * 0.06f);
 				int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 15, 200));
 				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
-				int g = (int) Mth.clamp(targetGreen * pulse * 0.4f, 0, 255);
-				int b = (int) Mth.clamp(targetBlue * pulse * 0.3f, 0, 255);
+				float gScale = state.whitePhase ? 1.0f : 0.4f;
+				float bScale = state.whitePhase ? 1.0f : 0.3f;
+				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
+				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
 
 				float size = 0.012f;
 				float x = sideX;
@@ -272,17 +276,18 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		}
 	}
 
-	private TendrilVisualState computeTendrilVisualState() {
+	private TendrilVisualState computeTendrilVisualState(SanguineMonolithBlockEntity te) {
 		int degree = getClientPlayerDegree();
 		float growthProgress = Mth.clamp((degree - TIER_FIVE) / (float) TIER_RANGE, 0.0f, 1.0f);
 		float lengthScale = 1.0f + growthProgress * 0.65f;
 		float zoneHeight = Mth.clamp(VEIN_ZONE_HEIGHT * (1.0f + growthProgress * 0.45f), VEIN_ZONE_HEIGHT, 1.0f);
+		boolean whitePhase = te.getArchonInteractions() > 0;
 
-		if (degree >= TIER_SEVEN) {
-			return new TendrilVisualState(lengthScale, zoneHeight, 1.0f, 245, 245, 245);
+		if (whitePhase) {
+			return new TendrilVisualState(lengthScale, zoneHeight, 1.0f, 245, 245, 245, true);
 		}
 
-		return new TendrilVisualState(lengthScale, zoneHeight, growthProgress, 228, 120, 30);
+		return new TendrilVisualState(lengthScale, zoneHeight, growthProgress, 228, 120, 30, false);
 	}
 
 	private int getClientPlayerDegree() {
@@ -296,7 +301,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	}
 
 	private record TendrilVisualState(float lengthScale, float zoneHeight, float colorMix, int targetR, int targetG,
-			int targetB) {}
+			int targetB, boolean whitePhase) {}
 
 	// ── Eye overlay ──────────────────────────────────────────────────────────────
 
