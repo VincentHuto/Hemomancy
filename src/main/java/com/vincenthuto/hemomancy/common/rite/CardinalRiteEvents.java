@@ -1495,6 +1495,9 @@ public class CardinalRiteEvents {
 			double z = center.getZ() + 0.5 + (sLevel.getRandom().nextDouble() - 0.5) * 2.0;
 			ItemEntity entity = new ItemEntity(sLevel, x, y, z, pomeStack);
 			entity.setPickUpDelay(10);
+			// Invulnerable and permanent — pomes must not be destroyed by the environment
+			entity.setInvulnerable(true);
+			entity.lifespan = Integer.MAX_VALUE;
 			sLevel.addFreshEntity(entity);
 		}
 	}

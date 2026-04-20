@@ -4,8 +4,11 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.QliphothPomeItem;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -89,7 +92,7 @@ public class QliphothBloomEvents {
 			}
 
 			// ── Rare Qliphoth Pome drop ──
-			trySpawnPome(sLevel, bloom.center());
+			trySpawnPome(sLevel, bloom.center(), players);
 		}
 	}
 
@@ -103,8 +106,12 @@ public class QliphothBloomEvents {
 	 * ({@code hemomancy:husk_index}, 0–8) so players can track which of the
 	 * nine Qliphoth husks they are consuming. Once all nine have dropped the
 	 * tree ceases production for this bloom's lifecycle.
+	 * <p>
+	 * The spawned item entity is invulnerable (won't burn in fire/lava) and has
+	 * an unlimited lifespan so it never despawns. All players within the bloom's
+	 * radius receive a short dark whisper naming the husk that just fell.
 	 */
-	private static void trySpawnPome(ServerLevel level, BlockPos center) {
+	private static void trySpawnPome(ServerLevel level, BlockPos center, List<ServerPlayer> nearbyPlayers) {
 		RandomSource rand = level.getRandom();
 		if (rand.nextInt(POME_DROP_CHANCE) != 0) return;
 
@@ -121,8 +128,8 @@ public class QliphothBloomEvents {
 		// Build the tagged pome stack
 		ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
 		net.minecraft.nbt.CompoundTag tag = pomeStack.getOrCreateTag();
-		tag.putLong(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
-		tag.putInt(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.HUSK_INDEX_KEY, alreadyDropped);
+		tag.putLong(QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
+		tag.putInt(QliphothPomeItem.HUSK_INDEX_KEY, alreadyDropped);
 
 		// Register the drop in SavedData before spawning (so we don't double-count)
 		data.incrementPomesDropped(center);
@@ -141,7 +148,21 @@ public class QliphothBloomEvents {
 				(rand.nextDouble() - 0.5) * 0.1);
 		// Slight pickup delay so it looks like it just dropped
 		pomeEntity.setPickUpDelay(20);
+		// Invulnerable: won't be destroyed by fire, lava, explosions, or void
+		pomeEntity.setInvulnerable(true);
+		// Unlimited lifespan: the husk will wait until it is claimed
+		pomeEntity.lifespan = Integer.MAX_VALUE;
 		level.addFreshEntity(pomeEntity);
+
+		// ── Notify nearby players which husk has fallen ──
+		String huskName = (alreadyDropped >= 0 && alreadyDropped < QliphothPomeItem.HUSK_NAMES.length)
+				? QliphothPomeItem.HUSK_NAMES[alreadyDropped]
+				: "unknown";
+		Component whisper = Component.literal("The fruit of " + huskName + " has fallen.")
+				.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC);
+		for (ServerPlayer player : nearbyPlayers) {
+			player.displayClientMessage(whisper, true);
+		}
 	}
 
 	/**

@@ -103,7 +103,7 @@ public class QliphothPomeItem extends Item {
 	private static final long EMPOWERMENT_DURATION_TICKS = 3600L;
 
 	/** The nine Qliphoth husk names in consumption order (indices 0–8). */
-	private static final String[] HUSK_NAMES = {
+	public static final String[] HUSK_NAMES = {
 		"Nahemoth",
 		"Samael",
 		"Gamaliel",
