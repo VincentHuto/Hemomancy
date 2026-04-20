@@ -5,6 +5,7 @@ import org.joml.Matrix4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
@@ -41,6 +42,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	private static final float VEIN_ZONE_HEIGHT = 0.667f; // bottom third of 2-block height
 	private static final int TIER_FIVE = 5;
 	private static final int TIER_SEVEN = 7;
+	private static final int TIER_RANGE = TIER_SEVEN - TIER_FIVE;
 
 	/** How far below the base the monolith starts when first placed. */
 	private static final float RISE_Y_OFFSET = 2.5f;
@@ -272,7 +274,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	private TendrilVisualState computeTendrilVisualState() {
 		int degree = getClientPlayerDegree();
-		float growthProgress = Mth.clamp((degree - TIER_FIVE) / (float) (TIER_SEVEN - TIER_FIVE), 0.0f, 1.0f);
+		float growthProgress = Mth.clamp((degree - TIER_FIVE) / (float) TIER_RANGE, 0.0f, 1.0f);
 		float lengthScale = 1.0f + growthProgress * 0.65f;
 		float zoneHeight = Mth.clamp(VEIN_ZONE_HEIGHT * (1.0f + growthProgress * 0.45f), VEIN_ZONE_HEIGHT, 1.0f);
 
@@ -289,7 +291,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			return 0;
 		}
 		return mc.player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
-				.map(degree -> degree.getDegreeNumber())
+				.map(IInitiatoryDegree::getDegreeNumber)
 				.orElse(0);
 	}
 
