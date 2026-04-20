@@ -200,6 +200,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 					worldIn.removeBlock(pos, false);
 					return;
 				}
+				worldIn.sendBlockUpdated(pos, state, state, 3);
 			}
 
 			DialogueTree tree = degreeNumber < MIN_DEGREE
