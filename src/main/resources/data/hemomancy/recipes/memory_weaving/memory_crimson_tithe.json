@@ -1,0 +1,10 @@
+{
+  "type": "hemomancy:memory_weaving",
+  "ingredient": {
+    "item": "hemomancy:hallowed_residuum_hemorath"
+  },
+  "mortem": true,
+  "animus": true,
+  "result": "hemomancy:memory_crimson_tithe",
+  "count": 1
+}

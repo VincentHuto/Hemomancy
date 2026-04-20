@@ -5,11 +5,14 @@ import org.joml.Matrix4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -37,6 +40,9 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 	// ── Vein animation parameters ──
 	private static final int VEIN_COUNT = 12;
 	private static final float VEIN_ZONE_HEIGHT = 0.667f; // bottom third of 2-block height
+	private static final int TIER_FIVE = 5;
+	private static final int TIER_SEVEN = 7;
+	private static final int TIER_RANGE = TIER_SEVEN - TIER_FIVE;
 
 	/** How far below the base the monolith starts when first placed. */
 	private static final float RISE_Y_OFFSET = 2.5f;
@@ -100,12 +106,13 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float time = (te.getLevel() != null)
 				? te.getLevel().getGameTime() + partialTicks
 				: te.getTickCount() + partialTicks;
+		TendrilVisualState tendrilVisual = computeTendrilVisualState(te);
 
 		ms.pushPose();
 		ms.translate(0.5D, yOffset, 0.5D);
 		ms.mulPose(Vector3.YP.rotationDegrees(-yRot).toMoj());
 
-		renderVeinOverlay(ms, bufferIn, time, facing);
+		renderVeinOverlay(ms, bufferIn, time, tendrilVisual);
 		renderEyeOverlay(ms, bufferIn, time);
 		renderBackSymbol(ms, bufferIn, time);
 		ms.popPose();
@@ -113,24 +120,24 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 	// ── Vein overlay ─────────────────────────────────────────────────────────────
 
-	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, Direction facing) {
+	private void renderVeinOverlay(PoseStack ms, MultiBufferSource bufferIn, float time, TendrilVisualState state) {
 		VertexConsumer vc = bufferIn.getBuffer(RenderTypeInit.RADIANT_RENDER_TYPE);
 
 		// Render veins on front face (Z = -0.251 so it sits just above the model surface)
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, -0.251f, 1.0f, false);
+		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, -0.251f, 1.0f, false, state);
 
 		// Render veins on back face
-		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, 0.251f, 1.0f, true);
+		renderFaceVeins(ms, vc, time, 0.0f, 0.0f, 0.251f, 1.0f, true, state);
 
 		// Render veins on left side (X = -0.501)
-		renderSideVeins(ms, vc, time, -0.501f, 0.0f, 0.0f, false);
+		renderSideVeins(ms, vc, time, -0.501f, 0.0f, 0.0f, false, state);
 
 		// Render veins on right side (X = 0.501)
-		renderSideVeins(ms, vc, time, 0.501f, 0.0f, 0.0f, true);
+		renderSideVeins(ms, vc, time, 0.501f, 0.0f, 0.0f, true, state);
 	}
 
 	private void renderFaceVeins(PoseStack ms, VertexConsumer vc, float time,
-			float faceX, float faceY, float faceZ, float faceWidth, boolean flipNormal) {
+			float faceX, float faceY, float faceZ, float faceWidth, boolean flipNormal, TendrilVisualState state) {
 
 		Matrix4f mat = ms.last().pose();
 
@@ -142,7 +149,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float speed = p[3];
 			float amplitude = p[4];
 			float frequency = p[5];
-			int length = (int) p[6];
+			int length = Math.max(5, Mth.floor(p[6] * state.lengthScale));
 			float brightness = p[7];
 
 			float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.02f + i);
@@ -153,9 +160,12 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			int baseRed = (int) (100 + 80 * brightness);
 			int baseGreen = (int) (5 + 15 * brightness);
 			int baseBlue = (int) (5 + 10 * brightness);
+			int targetRed = (int) Mth.lerp(state.colorMix, baseRed, state.targetR);
+			int targetGreen = (int) Mth.lerp(state.colorMix, baseGreen, state.targetG);
+			int targetBlue = (int) Mth.lerp(state.colorMix, baseBlue, state.targetB);
 
 			for (int step = 0; step < length; step++) {
-				float t = step * 0.015f;
+				float t = step * 0.015f * state.lengthScale;
 				float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
 				float microSquiggle = (amplitude * 0.3f) * Mth.sin(frequency * 2.7f * step + timeOffset * 1.4f + i);
 				float displacement = squiggle + microSquiggle;
@@ -164,7 +174,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 				float py = faceY + startY + t * sinA + displacement * cosA;
 
 				// Stay within bottom third
-				if (py > VEIN_ZONE_HEIGHT || py < 0) continue;
+				if (py > state.zoneHeight || py < 0) continue;
 				// Stay within face width
 				if (Math.abs(px) > faceWidth * 0.5f) continue;
 
@@ -174,9 +184,11 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.5f + step * 0.05f);
 				int alpha = (int) (Mth.clamp(tipFade * pulse * 200, 20, 220));
-				int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-				int g = (int) Mth.clamp(baseGreen * pulse * 0.4f, 0, 255);
-				int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
+				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
+				float gScale = state.whitePhase ? 1.0f : 0.4f;
+				float bScale = state.whitePhase ? 1.0f : 0.3f;
+				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
+				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
 
 				float size = 0.015f;
 				float z = faceZ;
@@ -196,13 +208,13 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		float z = faceZ + (flipNormal ? -0.001f : 0.001f);
 
 		vc.vertex(mat, -hw, 0f, z).color(80, 5, 5, glowAlpha).endVertex();
-		vc.vertex(mat, -hw, VEIN_ZONE_HEIGHT * 0.8f, z).color(40, 2, 2, 0).endVertex();
-		vc.vertex(mat,  hw, VEIN_ZONE_HEIGHT * 0.8f, z).color(40, 2, 2, 0).endVertex();
+		vc.vertex(mat, -hw, state.zoneHeight * 0.8f, z).color(40, 2, 2, 0).endVertex();
+		vc.vertex(mat,  hw, state.zoneHeight * 0.8f, z).color(40, 2, 2, 0).endVertex();
 		vc.vertex(mat,  hw, 0f, z).color(80, 5, 5, glowAlpha).endVertex();
 	}
 
 	private void renderSideVeins(PoseStack ms, VertexConsumer vc, float time,
-			float sideX, float sideY, float sideZ, boolean rightSide) {
+			float sideX, float sideY, float sideZ, boolean rightSide, TendrilVisualState state) {
 
 		Matrix4f mat = ms.last().pose();
 		float halfDepth = 0.25f; // 0.5 blocks / 2
@@ -215,7 +227,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			float speed = p[3];
 			float amplitude = p[4] * 0.5f; // narrower on sides
 			float frequency = p[5];
-			int length = (int) (p[6] * 0.7f);
+			int length = Math.max(4, Mth.floor((p[6] * 0.7f) * state.lengthScale));
 			float brightness = p[7];
 
 			float angleDrift = baseAngle + 0.15f * Mth.sin(time * speed * 0.02f + i + 7);
@@ -226,16 +238,19 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			int baseRed = (int) (90 + 70 * brightness);
 			int baseGreen = (int) (5 + 12 * brightness);
 			int baseBlue = (int) (5 + 8 * brightness);
+			int targetRed = (int) Mth.lerp(state.colorMix, baseRed, state.targetR);
+			int targetGreen = (int) Mth.lerp(state.colorMix, baseGreen, state.targetG);
+			int targetBlue = (int) Mth.lerp(state.colorMix, baseBlue, state.targetB);
 
 			for (int step = 0; step < length; step++) {
-				float t = step * 0.015f;
+				float t = step * 0.015f * state.lengthScale;
 				float squiggle = amplitude * Mth.sin(frequency * step + timeOffset);
 				float displacement = squiggle;
 
 				float pz = sideZ + startZ + t * cosA - displacement * sinA;
 				float py = sideY + startY + t * sinA + displacement * cosA;
 
-				if (py > VEIN_ZONE_HEIGHT || py < 0) continue;
+				if (py > state.zoneHeight || py < 0) continue;
 				if (Math.abs(pz) > halfDepth) continue;
 
 				float tipFade = 1f;
@@ -244,9 +259,11 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 
 				float pulse = 0.6f + 0.4f * Mth.sin(time * 0.08f + i * 0.7f + step * 0.06f);
 				int alpha = (int) (Mth.clamp(tipFade * pulse * 180, 15, 200));
-				int r = (int) Mth.clamp(baseRed * pulse, 0, 255);
-				int g = (int) Mth.clamp(baseGreen * pulse * 0.4f, 0, 255);
-				int b = (int) Mth.clamp(baseBlue * pulse * 0.3f, 0, 255);
+				int r = (int) Mth.clamp(targetRed * pulse, 0, 255);
+				float gScale = state.whitePhase ? 1.0f : 0.4f;
+				float bScale = state.whitePhase ? 1.0f : 0.3f;
+				int g = (int) Mth.clamp(targetGreen * pulse * gScale, 0, 255);
+				int b = (int) Mth.clamp(targetBlue * pulse * bScale, 0, 255);
 
 				float size = 0.012f;
 				float x = sideX;
@@ -258,6 +275,33 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 			}
 		}
 	}
+
+	private TendrilVisualState computeTendrilVisualState(SanguineMonolithBlockEntity te) {
+		int degree = getClientPlayerDegree();
+		float growthProgress = Mth.clamp((degree - TIER_FIVE) / (float) TIER_RANGE, 0.0f, 1.0f);
+		float lengthScale = 1.0f + growthProgress * 0.65f;
+		float zoneHeight = Mth.clamp(VEIN_ZONE_HEIGHT * (1.0f + growthProgress * 0.45f), VEIN_ZONE_HEIGHT, 1.0f);
+		boolean whitePhase = te.getArchonInteractions() > 0;
+
+		if (whitePhase) {
+			return new TendrilVisualState(lengthScale, zoneHeight, 1.0f, 245, 245, 245, true);
+		}
+
+		return new TendrilVisualState(lengthScale, zoneHeight, growthProgress, 228, 120, 30, false);
+	}
+
+	private int getClientPlayerDegree() {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) {
+			return 0;
+		}
+		return mc.player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+				.map(IInitiatoryDegree::getDegreeNumber)
+				.orElse(0);
+	}
+
+	private record TendrilVisualState(float lengthScale, float zoneHeight, float colorMix, int targetR, int targetG,
+			int targetB, boolean whitePhase) {}
 
 	// ── Eye overlay ──────────────────────────────────────────────────────────────
 

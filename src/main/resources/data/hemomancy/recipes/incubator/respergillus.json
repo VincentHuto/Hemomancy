@@ -1,0 +1,11 @@
+{
+  "type": "hemomancy:incubator",
+  "catalysts": [
+    { "item": "hemomancy:hallowed_residuum_putriciel" },
+    { "item": "minecraft:heart_of_the_sea" },
+    { "item": "hemomancy:spore_sac" }
+  ],
+  "result": {
+    "item": "hemomancy:respergillus"
+  }
+}

@@ -48,6 +48,10 @@ public class SanguineMonolithBlockEntity extends BlockEntity implements IMultiBl
 		return tickCount;
 	}
 
+	public int getArchonInteractions() {
+		return archonInteractions;
+	}
+
 	/** Increments and returns the count of archon-tier interactions. */
 	public int incrementArchonInteractions() {
 		archonInteractions++;
