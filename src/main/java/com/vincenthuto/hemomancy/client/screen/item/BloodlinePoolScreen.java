@@ -224,6 +224,7 @@ public class BloodlinePoolScreen extends Screen {
 							int idx = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
 							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketKickBloodlinePlayer(kickable.get(idx)));
 							PacketHandler.CHANNELBLOODVOLUME.sendToServer(new PacketRequestPoolData());
+							kickTargetIndex = 0;
 						}
 					}).bounds(widgetX + 122, y, widgetW - 122, 18).build();
 					addRenderableWidget(kickMemberButton);
@@ -479,7 +480,7 @@ public class BloodlinePoolScreen extends Screen {
 		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
 			Bloodline bloodline = vol.getBloodLine();
 			for (UUID member : bloodline.getPlayerUUIDS()) {
-				if (!member.equals(player.getUUID()) && !member.equals(bloodline.getLeaderUUID())) {
+				if (!member.equals(player.getUUID())) {
 					kickable.add(member);
 				}
 			}
