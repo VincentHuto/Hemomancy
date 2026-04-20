@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:sanguine_formation"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.founding_sanctum_established.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.founding_sanctum_established.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_5_illuminatus",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

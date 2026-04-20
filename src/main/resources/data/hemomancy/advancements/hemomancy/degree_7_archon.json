@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:blood_crystal_shard"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_7_archon.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_7_archon.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_6_sanctified",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

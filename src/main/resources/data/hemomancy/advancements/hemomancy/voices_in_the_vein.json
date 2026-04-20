@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:spore_sac"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.voices_in_the_vein.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.voices_in_the_vein.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_7_archon",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

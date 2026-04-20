@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:scar_binder"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_4_adept.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_4_adept.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_3_initiate",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

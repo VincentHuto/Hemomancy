@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:sanguine_quintessence"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_5_illuminatus.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_5_illuminatus.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_4_adept",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

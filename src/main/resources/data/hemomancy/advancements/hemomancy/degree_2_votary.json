@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:sanguine_blob"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_2_votary.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_2_votary.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_1_neophyte",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

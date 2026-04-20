@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:fungal_spine"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.the_blood_beneath_the_blood.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.the_blood_beneath_the_blood.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_7_archon",
+  "criteria": {
+    "has_fungal_spine": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:fungal_spine"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_fungal_spine"
+    ]
+  ]
+}

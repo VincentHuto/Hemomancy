@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:fungal_spine"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_8_apotheos.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_8_apotheos.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_7_archon",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

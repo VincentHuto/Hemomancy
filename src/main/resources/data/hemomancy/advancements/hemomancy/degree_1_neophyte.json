@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:sanguine_conduit"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.degree_1_neophyte.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.degree_1_neophyte.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/the_first_awakening",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}
