@@ -90,13 +90,6 @@ public class QliphothBloomRenderer {
 		Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
 
 		for (QliphothBloomClientData.BloomEntry bloom : blooms) {
-			// Skip blooms that have a corresponding block in the world —
-			// those are rendered by QliphothBloomBlockRenderer via the BER pipeline.
-			BlockPos center = bloom.getCenter();
-			if (mc.level.getBlockState(center).getBlock() instanceof
-					com.vincenthuto.hemomancy.common.block.functional.QliphothBloomBlock) {
-				continue;
-			}
 			drawQliphothTree(poseStack, buffer, bloom, currentTime, cam);
 			drawPulsingRings(poseStack, buffer, bloom, currentTime, cam);
 		}
