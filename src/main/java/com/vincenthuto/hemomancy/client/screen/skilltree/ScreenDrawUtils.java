@@ -327,4 +327,87 @@ public final class ScreenDrawUtils {
 		if (!current.isEmpty()) lines.add(current.toString());
 		return lines;
 	}
+
+	// ── Shared tier-browser helpers ──────────────────────────────
+
+	/**
+	 * Truncates {@code text} to fit within {@code maxWidth} pixels,
+	 * appending {@code "…"} if necessary.
+	 */
+	public static String truncateText(Font font, String text, int maxWidth) {
+		if (font.width(text) <= maxWidth) return text;
+		int ellipsisW = font.width("...");
+		int targetW = maxWidth - ellipsisW;
+		while (text.length() > 1 && font.width(text) > targetW) {
+			text = text.substring(0, text.length() - 1);
+		}
+		return text + "...";
+	}
+
+	/**
+	 * Draws a small navigation button (used for layer-up / layer-down controls
+	 * and any other single-symbol buttons in the tier-browser tabs).
+	 */
+	public static void drawNavButton(GuiGraphics gfx, Font font,
+			int x, int y, int w, int h, String symbol,
+			boolean hovered, int hoverColor) {
+		int bg = hovered ? 0xDD1A0505 : 0x99120303;
+		gfx.fill(x, y, x + w, y + h, bg);
+		int bc = hovered ? hoverColor : 0xFF444444;
+		gfx.fill(x,         y,         x + w,     y + 1,     bc);
+		gfx.fill(x,         y + h - 1, x + w,     y + h,     bc);
+		gfx.fill(x,         y,         x + 1,     y + h,     bc);
+		gfx.fill(x + w - 1, y,         x + w,     y + h,     bc);
+		int textCol = hovered ? 0xFFEEDDFF : 0xFF888888;
+		gfx.drawCenteredString(font, symbol, x + w / 2, y + (h - 8) / 2, textCol);
+	}
+
+	private static final int LAYER_BTN_SIZE = 16;
+
+	/**
+	 * Draws ▲/▼ layer-control buttons and a centre label on the left side of the
+	 * 3D model area.  Returns {@code true} if a tooltip was rendered (so the
+	 * caller can skip its own tooltip logic).
+	 *
+	 * @param maxLayer   maximum layer index (0 = single-layer, no buttons drawn)
+	 * @param visibleLayer current layer selection (-1 = all)
+	 * @param tabColor   accent colour for the buttons
+	 */
+	public static void drawLayerButtons(GuiGraphics gfx, Font font,
+			int bx, int centerY, int maxLayer, int visibleLayer,
+			int tabColor, int mouseX, int mouseY) {
+		if (maxLayer <= 0) return;
+
+		int bs = LAYER_BTN_SIZE;
+
+		int upY   = centerY - bs - 14;
+		int downY = centerY + 14;
+
+		boolean upHov   = isOverLayerButton(mouseX, mouseY, bx, upY,   bs);
+		boolean downHov = isOverLayerButton(mouseX, mouseY, bx, downY, bs);
+
+		drawNavButton(gfx, font, bx, upY,   bs, bs, "\u25B2", upHov,   tabColor);
+		drawNavButton(gfx, font, bx, downY, bs, bs, "\u25BC", downHov, tabColor);
+
+		String label = visibleLayer < 0 ? "All" : "Y:" + (visibleLayer + 1);
+		gfx.drawCenteredString(font, label, bx + bs / 2, centerY - 4, 0xFFAAAAAA);
+
+		if (upHov) {
+			gfx.renderTooltip(font,
+					net.minecraft.network.chat.Component.literal("Layer Up"), mouseX, mouseY);
+		} else if (downHov) {
+			gfx.renderTooltip(font,
+					net.minecraft.network.chat.Component.literal("Layer Down"), mouseX, mouseY);
+		}
+	}
+
+	/** Hit-test for a layer button of {@link #LAYER_BTN_SIZE}×{@link #LAYER_BTN_SIZE}. */
+	public static boolean isOverLayerButton(double mx, double my, int bx, int by, int size) {
+		return mx >= bx && mx <= bx + size && my >= by && my <= by + size;
+	}
+
+	/** Convenience overload using the default {@link #LAYER_BTN_SIZE}. */
+	public static boolean isOverLayerButton(double mx, double my, int bx, int by) {
+		return isOverLayerButton(mx, my, bx, by, LAYER_BTN_SIZE);
+	}
 }

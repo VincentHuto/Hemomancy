@@ -10,7 +10,6 @@ import java.util.Random;
 import java.util.Set;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
@@ -28,25 +27,19 @@ import com.vincenthuto.hemomancy.common.network.capa.PacketUnlockSkill;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
+import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 import com.vincenthuto.hutoslib.client.screen.HLGuiUtils;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
-import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 
 /**
  * Skill tree screen opened from the Dendritic Distributor block.
@@ -130,72 +123,15 @@ public class HarbingerProgressScreen extends Screen {
 	/** Currently selected manipulation node (null = none selected). */
 	private ManipulationTreeEntry selectedManipEntry = null;
 
-	// ── Cardinal Rites data ──
-	private final List<CardinalRiteRecipe> riteRecipes = new ArrayList<>();
-	/** Rites grouped by CardinalRiteType for tier-based display. */
-	private final Map<CardinalRiteType, List<CardinalRiteRecipe>> ritesByTier = new java.util.LinkedHashMap<>();
-	private CardinalRiteType selectedRiteTier = null;      // null = no tier selected yet
-	private int selectedRiteIndexInTier = 0;               // index within the tier list
-	private float riteRotationAngle = 0f;
-	private boolean riteDragging = false;
-	private double riteDragLastX = 0;
-	private int riteVisibleLayer = -1;  // -1 = show all layers
-	private int riteMaxLayer = 0;
-
-	// ── Blood Crafting data ──
-	private final List<BloodStructureRecipe> craftingRecipes = new ArrayList<>();
-	/** Crafting recipes grouped by cost tier for tier-based display. */
-	private final Map<String, List<BloodStructureRecipe>> craftingByTier = new java.util.LinkedHashMap<>();
-	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
-	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
-	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };
-	private String selectedCraftingTier = null;             // null = no tier selected yet
-	private int selectedCraftingIndexInTier = 0;            // index within the tier list
-	private float craftingRotationAngle = 0f;
-	private boolean craftingDragging = false;
-	private double craftingDragLastX = 0;
-	private int craftingVisibleLayer = -1;  // -1 = show all layers
-	private int craftingMaxLayer = 0;
-
-	// ── Cerebral Scarring data ──
-	private final List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> ScarRecipes = new ArrayList<>();
-	/** Chisel recipes grouped by tier for tier-based display. */
-	private final Map<String, List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe>> chiselByTier = new java.util.LinkedHashMap<>();
-	private static final String[] SCAR_TIER_NAMES = { "Tier 1", "Tier 2", "Tier 3" };
-	private static final int[] SCAR_TIER_THRESHOLDS = { 1, 2, 3 };
-	/** Minimum initiatory degree required to see each scar tier. */
-	private static final int[] SCAR_TIER_DEGREE_REQ = { 4, 4, 5 };
-	private String selectedScarTier = null;
-	private int selectedScarIndexInTier = 0;
-
-	// Shared nav button dimensions
-	private static final int RITE_NAV_BTN_W = 24;
-	private static final int RITE_NAV_BTN_H = 18;
-	private static final int LAYER_BTN_SIZE = 16;
-
-	// ── Tier sidebar scroll offsets ──
-	private int riteSidebarScroll = 0;
-	private int craftingSidebarScroll = 0;
-	private int scarSidebarScroll = 0;
-
-	// ── Info panel scroll offsets ──
-	private int riteInfoScroll = 0;
-	private int craftingInfoScroll = 0;
+	// ── Tab state objects (replaces individual rites/crafting/scars field blocks) ──
+	private final RitesTabState    ritesState    = new RitesTabState();
+	private final CraftingTabState craftingState = new CraftingTabState();
+	private final ScarsTabState    scarsState    = new ScarsTabState();
 
 	// ── Materials & Processes data ──
 	private final Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
 	private int materialContentW, materialContentH;
 	private MaterialEntry selectedMaterial = null;
-
-	/** Minimum player degree required to view recipes in each rite tier. */
-	private static int riteMinDegree(CardinalRiteType type) {
-		return switch (type) {
-			case MINOR   -> 0;
-			case LESSER  -> 1;
-			case GREATER -> 3;
-			case GRAND   -> 5;
-		};
-	}
 
 	/** Minimum player degree required to see a manipulation of the given rank. */
 	private static int manipMinDegree(EnumManipulationRank rank) {
@@ -217,8 +153,6 @@ public class HarbingerProgressScreen extends Screen {
 		return playerDegree < manipMinDegree(manip.getRank());
 	}
 
-	/** Width of the tier sidebar on Crafting/Rites tabs (screen px). */
-	private static final int TIER_SIDEBAR_W = 130;
 
 	// ── Player initiatory degree (cached for rendering) ──
 	private int playerDegree = 0;
@@ -558,105 +492,34 @@ public class HarbingerProgressScreen extends Screen {
 	}
 
 	private void cacheRiteRecipes() {
-		riteRecipes.clear();
-		ritesByTier.clear();
+		ritesState.riteRecipes.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			// Only include blood-faction rites; unstained rites go to UnstainedProgressScreen
 			for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(minecraft.level)) {
-				if (!r.isUnstained()) {
-					riteRecipes.add(r);
-				}
+				if (!r.isUnstained()) ritesState.riteRecipes.add(r);
 			}
 		}
-		// Group by rite type (tier)
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			ritesByTier.put(type, new ArrayList<>());
-		}
-		for (CardinalRiteRecipe recipe : riteRecipes) {
-			ritesByTier.get(recipe.getRiteType()).add(recipe);
-		}
-		// Sort each tier by blood cost (ascending) so progression chains like
-		// dried gourd → pallid → crimson → ashen → horn appear in order
-		for (List<CardinalRiteRecipe> tierList : ritesByTier.values()) {
-			tierList.sort(java.util.Comparator.comparingDouble(CardinalRiteRecipe::getBloodCost));
-		}
-		// Default selection: first accessible tier with recipes
-		selectedRiteTier = null;
-		selectedRiteIndexInTier = 0;
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			if (!ritesByTier.getOrDefault(type, List.of()).isEmpty()
-					&& playerDegree >= riteMinDegree(type)) {
-				selectedRiteTier = type;
-				break;
-			}
-		}
+		ritesState.rebuildTierMap();
+		ritesState.autoSelectFirstTier(playerDegree);
 	}
 
 	private void cacheCraftingRecipes() {
-		craftingRecipes.clear();
-		craftingByTier.clear();
+		craftingState.craftingRecipes.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			// Only include blood-faction crafting; unstained crafting goes to UnstainedProgressScreen
 			for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(minecraft.level)) {
-				if (!r.isUnstained()) {
-					craftingRecipes.add(r);
-				}
+				if (!r.isUnstained()) craftingState.craftingRecipes.add(r);
 			}
 		}
-		// Initialise empty tier lists
-		for (String tierName : CRAFTING_TIER_NAMES) {
-			craftingByTier.put(tierName, new ArrayList<>());
-		}
-		// Sort recipes into blood-cost tiers
-		for (BloodStructureRecipe recipe : craftingRecipes) {
-			for (int i = 0; i < CRAFTING_TIER_THRESHOLDS.length; i++) {
-				if (recipe.getBloodCost() <= CRAFTING_TIER_THRESHOLDS[i]) {
-					craftingByTier.get(CRAFTING_TIER_NAMES[i]).add(recipe);
-					break;
-				}
-			}
-		}
-		// Default selection: first accessible tier with recipes
-		selectedCraftingTier = null;
-		selectedCraftingIndexInTier = 0;
-		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
-			if (!craftingByTier.getOrDefault(CRAFTING_TIER_NAMES[i], List.of()).isEmpty()
-					&& playerDegree >= CRAFTING_TIER_DEGREE_REQ[i]) {
-				selectedCraftingTier = CRAFTING_TIER_NAMES[i];
-				break;
-			}
-		}
+		craftingState.rebuildTierMap();
+		craftingState.autoSelectFirstTier(playerDegree);
 	}
 
 	private void cacheScarRecipes() {
-		ScarRecipes.clear();
-		chiselByTier.clear();
+		scarsState.scarRecipes.clear();
 		if (minecraft != null && minecraft.player != null && minecraft.level != null) {
-			ScarRecipes.addAll(com.vincenthuto.hemomancy.common.recipe.ScarRecipe.getAllRecipes(minecraft.level));
+			scarsState.scarRecipes.addAll(ScarRecipe.getAllRecipes(minecraft.level));
 		}
-		// Initialise empty tier lists
-		for (String tierName : SCAR_TIER_NAMES) {
-			chiselByTier.put(tierName, new ArrayList<>());
-		}
-		// Sort recipes into tiers based on recipe tier value
-		for (com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe : ScarRecipes) {
-			for (int i = 0; i < SCAR_TIER_THRESHOLDS.length; i++) {
-				if (recipe.getTier() <= SCAR_TIER_THRESHOLDS[i]) {
-					chiselByTier.get(SCAR_TIER_NAMES[i]).add(recipe);
-					break;
-				}
-			}
-		}
-		// Default selection: first accessible tier with recipes
-		selectedScarTier = null;
-		selectedScarIndexInTier = 0;
-		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
-			if (!chiselByTier.getOrDefault(SCAR_TIER_NAMES[i], List.of()).isEmpty()
-					&& playerDegree >= SCAR_TIER_DEGREE_REQ[i]) {
-				selectedScarTier = SCAR_TIER_NAMES[i];
-				break;
-			}
-		}
+		scarsState.rebuildTierMap();
+		scarsState.autoSelectFirstTier(playerDegree);
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -678,6 +541,11 @@ public class HarbingerProgressScreen extends Screen {
 	private boolean insideGui(double mx, double my) {
 		return mx >= guiLeft && mx < guiLeft + guiWidth
 			&& my >= guiTop  && my < guiTop  + guiHeight;
+	}
+
+	/** Builds the shared per-frame context used by all tab-view helpers. */
+	private ProgressScreenContext makeContext() {
+		return new ProgressScreenContext(font, guiLeft, guiTop, guiWidth, guiHeight, playerDegree);
 	}
 
 	// ────────────────────────────────────────────────────────────
@@ -709,127 +577,118 @@ public class HarbingerProgressScreen extends Screen {
 
 			if (insideGui(mx, my)) {
 				if (activeTab == Tab.CRAFTING) {
-					// Check tier sidebar click
-					String clickedTier = craftingTierUnder(mx, my);
+					ProgressScreenContext ctx = makeContext();
+					String clickedTier = CraftingTabView.tierUnder(ctx, craftingState, mx, my);
 					if (clickedTier != null) {
-						// Only allow selecting unlocked tiers
-						int tierIdx = java.util.Arrays.asList(CRAFTING_TIER_NAMES).indexOf(clickedTier);
-						if (tierIdx >= 0 && playerDegree >= CRAFTING_TIER_DEGREE_REQ[tierIdx]) {
-							// Toggle: collapse if already selected, otherwise open
-							if (clickedTier.equals(selectedCraftingTier)) {
-								selectedCraftingTier = null;
-								craftingSidebarScroll = 0;
-								craftingInfoScroll = 0;
+						int tierIdx = java.util.Arrays.asList(CraftingTabState.TIER_NAMES).indexOf(clickedTier);
+						if (tierIdx >= 0 && playerDegree >= CraftingTabState.TIER_DEGREE_REQ[tierIdx]) {
+							if (clickedTier.equals(craftingState.selectedCraftingTier)) {
+								craftingState.selectedCraftingTier = null;
+								craftingState.craftingSidebarScroll = 0;
+								craftingState.craftingInfoScroll = 0;
 							} else {
-								selectedCraftingTier = clickedTier;
-								selectedCraftingIndexInTier = 0;
-								craftingVisibleLayer = -1;
-								craftingSidebarScroll = 0;
-								craftingInfoScroll = 0;
+								craftingState.selectedCraftingTier = clickedTier;
+								craftingState.selectedCraftingIndexInTier = 0;
+								craftingState.craftingVisibleLayer = -1;
+								craftingState.craftingSidebarScroll = 0;
+								craftingState.craftingInfoScroll = 0;
 							}
 						}
 						return true;
 					}
-					// Check recipe list click
-					int clickedRecipeIdx = craftingRecipeUnder(mx, my);
+					int clickedRecipeIdx = CraftingTabView.recipeUnder(ctx, craftingState, mx, my);
 					if (clickedRecipeIdx >= 0) {
-						selectedCraftingIndexInTier = clickedRecipeIdx;
-						craftingVisibleLayer = -1;
-						craftingInfoScroll = 0;
+						craftingState.selectedCraftingIndexInTier = clickedRecipeIdx;
+						craftingState.craftingVisibleLayer = -1;
+						craftingState.craftingInfoScroll = 0;
 						return true;
 					}
-					// Check layer buttons
-					if (isOverLayerUpButton(mx, my, Tab.CRAFTING)) {
-						if (craftingVisibleLayer == -1) craftingVisibleLayer = craftingMaxLayer;
-						else if (craftingVisibleLayer < craftingMaxLayer) craftingVisibleLayer++;
-						else craftingVisibleLayer = -1; // wrap to "all"
+					if (CraftingTabView.isOverLayerUpButton(ctx, craftingState, mx, my)) {
+						int ml = craftingState.craftingMaxLayer;
+						if (craftingState.craftingVisibleLayer == -1) craftingState.craftingVisibleLayer = ml;
+						else if (craftingState.craftingVisibleLayer < ml) craftingState.craftingVisibleLayer++;
+						else craftingState.craftingVisibleLayer = -1;
 						return true;
 					}
-					if (isOverLayerDownButton(mx, my, Tab.CRAFTING)) {
-						if (craftingVisibleLayer == -1) craftingVisibleLayer = 0;
-						else if (craftingVisibleLayer > 0) craftingVisibleLayer--;
-						else craftingVisibleLayer = -1; // wrap to "all"
+					if (CraftingTabView.isOverLayerDownButton(ctx, craftingState, mx, my)) {
+						if (craftingState.craftingVisibleLayer == -1) craftingState.craftingVisibleLayer = 0;
+						else if (craftingState.craftingVisibleLayer > 0) craftingState.craftingVisibleLayer--;
+						else craftingState.craftingVisibleLayer = -1;
 						return true;
 					}
-					// Start rotation drag (only in the model area)
-					if (mx >= guiLeft + TIER_SIDEBAR_W + 4) {
-						craftingDragging = true;
-						craftingDragLastX = mx;
+					if (mx >= guiLeft + ProgressScreenContext.TIER_SIDEBAR_W + 4) {
+						craftingState.craftingDragging = true;
+						craftingState.craftingDragLastX = mx;
 					}
 					return true;
 				}
 				if (activeTab == Tab.SCARS) {
-					// Check tier sidebar click
-					String clickedScarTier = scarTierUnder(mx, my);
+					ProgressScreenContext ctx = makeContext();
+					String clickedScarTier = ScarsTabView.tierUnder(ctx, scarsState, mx, my);
 					if (clickedScarTier != null) {
-						int tierIdx = java.util.Arrays.asList(SCAR_TIER_NAMES).indexOf(clickedScarTier);
-						if (tierIdx >= 0 && playerDegree >= SCAR_TIER_DEGREE_REQ[tierIdx]) {
-							// Toggle: collapse if already selected, otherwise open
-							if (clickedScarTier.equals(selectedScarTier)) {
-								selectedScarTier = null;
-								scarSidebarScroll = 0;
+						int tierIdx = java.util.Arrays.asList(ScarsTabState.TIER_NAMES).indexOf(clickedScarTier);
+						if (tierIdx >= 0 && playerDegree >= ScarsTabState.TIER_DEGREE_REQ[tierIdx]) {
+							if (clickedScarTier.equals(scarsState.selectedScarTier)) {
+								scarsState.selectedScarTier = null;
+								scarsState.scarSidebarScroll = 0;
 							} else {
-								selectedScarTier = clickedScarTier;
-								selectedScarIndexInTier = 0;
-								scarSidebarScroll = 0;
+								scarsState.selectedScarTier = clickedScarTier;
+								scarsState.selectedScarIndexInTier = 0;
+								scarsState.scarSidebarScroll = 0;
 							}
 						}
 						return true;
 					}
-					// Check recipe list click
-					int clickedScarIdx = scarRecipeUnder(mx, my);
+					int clickedScarIdx = ScarsTabView.recipeUnder(ctx, scarsState, mx, my);
 					if (clickedScarIdx >= 0) {
-						selectedScarIndexInTier = clickedScarIdx;
+						scarsState.selectedScarIndexInTier = clickedScarIdx;
 						return true;
 					}
 					return true;
 				}
 				if (activeTab == Tab.RITES) {
-					// Check tier sidebar click
-					CardinalRiteType clickedRiteTier = riteTierUnder(mx, my);
+					ProgressScreenContext ctx = makeContext();
+					CardinalRiteType clickedRiteTier = RitesTabView.tierUnder(ctx, ritesState, mx, my);
 					if (clickedRiteTier != null) {
-						if (playerDegree >= riteMinDegree(clickedRiteTier)
-								&& !ritesByTier.getOrDefault(clickedRiteTier, List.of()).isEmpty()) {
-							// Toggle: collapse if already selected, otherwise open
-							if (clickedRiteTier == selectedRiteTier) {
-								selectedRiteTier = null;
-								riteSidebarScroll = 0;
-								riteInfoScroll = 0;
+						if (playerDegree >= RitesTabView.minDegree(clickedRiteTier)
+								&& !ritesState.ritesByTier.getOrDefault(clickedRiteTier, List.of()).isEmpty()) {
+							if (clickedRiteTier == ritesState.selectedRiteTier) {
+								ritesState.selectedRiteTier = null;
+								ritesState.riteSidebarScroll = 0;
+								ritesState.riteInfoScroll = 0;
 							} else {
-								selectedRiteTier = clickedRiteTier;
-								selectedRiteIndexInTier = 0;
-								riteVisibleLayer = -1;
-								riteSidebarScroll = 0;
-								riteInfoScroll = 0;
+								ritesState.selectedRiteTier = clickedRiteTier;
+								ritesState.selectedRiteIndexInTier = 0;
+								ritesState.riteVisibleLayer = -1;
+								ritesState.riteSidebarScroll = 0;
+								ritesState.riteInfoScroll = 0;
 							}
 						}
 						return true;
 					}
-					// Check recipe list click
-					int clickedRiteIdx = riteRecipeUnder(mx, my);
+					int clickedRiteIdx = RitesTabView.recipeUnder(ctx, ritesState, mx, my);
 					if (clickedRiteIdx >= 0) {
-						selectedRiteIndexInTier = clickedRiteIdx;
-						riteVisibleLayer = -1;
-						riteInfoScroll = 0;
+						ritesState.selectedRiteIndexInTier = clickedRiteIdx;
+						ritesState.riteVisibleLayer = -1;
+						ritesState.riteInfoScroll = 0;
 						return true;
 					}
-					// Check layer buttons
-					if (isOverLayerUpButton(mx, my, Tab.RITES)) {
-						if (riteVisibleLayer == -1) riteVisibleLayer = riteMaxLayer;
-						else if (riteVisibleLayer < riteMaxLayer) riteVisibleLayer++;
-						else riteVisibleLayer = -1; // wrap to "all"
+					if (RitesTabView.isOverLayerUpButton(ctx, ritesState, mx, my)) {
+						int ml = ritesState.riteMaxLayer;
+						if (ritesState.riteVisibleLayer == -1) ritesState.riteVisibleLayer = ml;
+						else if (ritesState.riteVisibleLayer < ml) ritesState.riteVisibleLayer++;
+						else ritesState.riteVisibleLayer = -1;
 						return true;
 					}
-					if (isOverLayerDownButton(mx, my, Tab.RITES)) {
-						if (riteVisibleLayer == -1) riteVisibleLayer = 0;
-						else if (riteVisibleLayer > 0) riteVisibleLayer--;
-						else riteVisibleLayer = -1; // wrap to "all"
+					if (RitesTabView.isOverLayerDownButton(ctx, ritesState, mx, my)) {
+						if (ritesState.riteVisibleLayer == -1) ritesState.riteVisibleLayer = 0;
+						else if (ritesState.riteVisibleLayer > 0) ritesState.riteVisibleLayer--;
+						else ritesState.riteVisibleLayer = -1;
 						return true;
 					}
-					// Start rotation drag (only in the model area)
-					if (mx >= guiLeft + TIER_SIDEBAR_W + 4) {
-						riteDragging = true;
-						riteDragLastX = mx;
+					if (mx >= guiLeft + ProgressScreenContext.TIER_SIDEBAR_W + 4) {
+						ritesState.riteDragging = true;
+						ritesState.riteDragLastX = mx;
 					}
 					return true;
 				}
@@ -865,22 +724,22 @@ public class HarbingerProgressScreen extends Screen {
 	public boolean mouseReleased(double mx, double my, int btn) {
 		if (btn == 0) {
 			isDragging = false;
-			riteDragging = false;
-			craftingDragging = false;
+			ritesState.riteDragging = false;
+			craftingState.craftingDragging = false;
 		}
 		return super.mouseReleased(mx, my, btn);
 	}
 
 	@Override
 	public boolean mouseDragged(double mx, double my, int btn, double dx, double dy) {
-		if (craftingDragging && btn == 0 && activeTab == Tab.CRAFTING) {
-			craftingRotationAngle += (float)(mx - craftingDragLastX) * 0.8f;
-			craftingDragLastX = mx;
+		if (craftingState.craftingDragging && btn == 0 && activeTab == Tab.CRAFTING) {
+			craftingState.craftingRotationAngle += (float)(mx - craftingState.craftingDragLastX) * 0.8f;
+			craftingState.craftingDragLastX = mx;
 			return true;
 		}
-		if (riteDragging && btn == 0 && activeTab == Tab.RITES) {
-			riteRotationAngle += (float)(mx - riteDragLastX) * 0.8f;
-			riteDragLastX = mx;
+		if (ritesState.riteDragging && btn == 0 && activeTab == Tab.RITES) {
+			ritesState.riteRotationAngle += (float)(mx - ritesState.riteDragLastX) * 0.8f;
+			ritesState.riteDragLastX = mx;
 			return true;
 		}
 		if (isDragging && btn == 0) {
@@ -903,37 +762,31 @@ public class HarbingerProgressScreen extends Screen {
 
 		// Rites, Crafting & Scars tabs — scroll the tier sidebar or info panel
 		if (activeTab == Tab.RITES || activeTab == Tab.CRAFTING || activeTab == Tab.SCARS) {
-			if (isOverTierSidebar(mx, my)) {
+			ProgressScreenContext ctx = makeContext();
+			if (ctx.isOverTierSidebar(mx, my)) {
 				int scrollAmt = (int)(-delta * 14);
 				if (activeTab == Tab.RITES) {
-					riteSidebarScroll = Math.max(0, riteSidebarScroll + scrollAmt);
-					clampRiteSidebarScroll();
+					ritesState.riteSidebarScroll = Math.max(0, ritesState.riteSidebarScroll + scrollAmt);
+					ritesState.clampSidebarScroll(ctx.tierSidebarVisibleH());
 				} else if (activeTab == Tab.CRAFTING) {
-					craftingSidebarScroll = Math.max(0, craftingSidebarScroll + scrollAmt);
-					clampCraftingSidebarScroll();
+					craftingState.craftingSidebarScroll = Math.max(0, craftingState.craftingSidebarScroll + scrollAmt);
+					craftingState.clampSidebarScroll(ctx.tierSidebarVisibleH());
 				} else {
-					scarSidebarScroll = Math.max(0, scarSidebarScroll + scrollAmt);
-					clampscarSidebarScroll();
+					scarsState.scarSidebarScroll = Math.max(0, scarsState.scarSidebarScroll + scrollAmt);
+					scarsState.clampSidebarScroll(ctx.tierSidebarVisibleH());
 				}
 			} else {
-				// Scroll the info panel (right side)
 				int scrollAmt = (int)(-delta * 14);
 				if (activeTab == Tab.RITES) {
-					riteInfoScroll = Math.max(0, riteInfoScroll + scrollAmt);
+					ritesState.riteInfoScroll = Math.max(0, ritesState.riteInfoScroll + scrollAmt);
 				} else if (activeTab == Tab.CRAFTING) {
-					craftingInfoScroll = Math.max(0, craftingInfoScroll + scrollAmt);
+					craftingState.craftingInfoScroll = Math.max(0, craftingState.craftingInfoScroll + scrollAmt);
 				}
 			}
 			return true;
 		}
 
-		// Remember the content-space point under the cursor
-		double cxBefore = cx(mx);
-		double cyBefore = cy(my);
-
 		view.applyScroll(guiLeft, guiTop, mx, my, delta);
-
-		// (cxBefore/cyBefore used only to anchor the zoom — already handled inside applyScroll)
 		savePan();
 		return true;
 	}
@@ -977,12 +830,12 @@ public class HarbingerProgressScreen extends Screen {
 		// Dim world behind GUI
 		renderBackground(gfx);
 
-		// Auto-rotate rite model when not dragging
-		if (activeTab == Tab.RITES && !riteDragging) {
-			riteRotationAngle += partial * 0.4f;
+		// Auto-rotate 3D models when not dragging
+		if (activeTab == Tab.RITES && !ritesState.riteDragging) {
+			ritesState.riteRotationAngle += partial * 0.4f;
 		}
-		if (activeTab == Tab.CRAFTING && !craftingDragging) {
-			craftingRotationAngle += partial * 0.4f;
+		if (activeTab == Tab.CRAFTING && !craftingState.craftingDragging) {
+			craftingState.craftingRotationAngle += partial * 0.4f;
 		}
 
 		// ── 1. Animated vein background (scissored to GUI bounds) ──
@@ -995,6 +848,8 @@ public class HarbingerProgressScreen extends Screen {
 		gfx.enableScissor(guiLeft + 2, guiTop + 2,
 				guiLeft + guiWidth - 2, guiTop + guiHeight - 2);
 
+		ProgressScreenContext ctx = makeContext();
+
 		if (activeTab == Tab.SKILLS) {
 			drawConnections(gfx);
 			drawNodes(gfx);
@@ -1003,11 +858,11 @@ public class HarbingerProgressScreen extends Screen {
 			drawManipTendencyStar(gfx);
 			drawManipNodes(gfx);
 		} else if (activeTab == Tab.CRAFTING) {
-			drawCraftingContent(gfx, mouseX, mouseY, partial);
+			CraftingTabView.draw(gfx, ctx, craftingState, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.SCARS) {
-			drawScarsContent(gfx, mouseX, mouseY, partial);
+			ScarsTabView.draw(gfx, ctx, scarsState, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.RITES) {
-			drawRiteContent(gfx, mouseX, mouseY, partial);
+			RitesTabView.draw(gfx, ctx, ritesState, mouseX, mouseY, partial);
 		} else if (activeTab == Tab.MATERIALS) {
 			drawMaterialNodes(gfx);
 		}
@@ -1906,1593 +1761,9 @@ public class HarbingerProgressScreen extends Screen {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	//  Blood Crafting tab — tier-based layout
+	//  Milestone drawer
 	// ────────────────────────────────────────────────────────────
 
-	private void drawCraftingContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		if (craftingRecipes.isEmpty()) {
-			gfx.drawCenteredString(font, "No Blood Crafting recipes found",
-					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
-			return;
-		}
-
-		// ── Recipe content (right of sidebar) ──
-		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
-		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
-
-		if (selectedCraftingTier == null) {
-			// Push z so these text labels are in front of any residual depth writes.
-			gfx.pose().pushPose();
-			gfx.pose().translate(0, 0, 400);
-			drawCraftingTierSidebar(gfx, mouseX, mouseY);
-			gfx.drawCenteredString(font, "Select a tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-
-		List<BloodStructureRecipe> tierRecipes = craftingByTier.getOrDefault(selectedCraftingTier, List.of());
-		if (tierRecipes.isEmpty()) {
-			gfx.pose().pushPose();
-			gfx.pose().translate(0, 0, 400);
-			drawCraftingTierSidebar(gfx, mouseX, mouseY);
-			gfx.drawCenteredString(font, "No recipes in this tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-		if (selectedCraftingIndexInTier >= tierRecipes.size()) selectedCraftingIndexInTier = 0;
-		BloodStructureRecipe recipe = tierRecipes.get(selectedCraftingIndexInTier);
-
-		// Layout: left half of content = 3D model, right half = info panel
-		int modelAreaW = contentW / 2;
-		int modelX = contentX;
-		int infoX = contentX + modelAreaW + 10;
-		int infoW = contentW - modelAreaW - 20;
-
-		// ── 3D multiblock preview (rendered first, at z=300) ──
-		drawCraftingModel(gfx, recipe, modelX + 10, guiTop + 30,
-				modelAreaW - 20, guiHeight - 60);
-
-		// Push z above the 3D model (z=300) so ALL 2D overlays always draw on top of the blocks.
-		gfx.pose().pushPose();
-		gfx.pose().translate(0, 0, 400);
-
-		// ── Tier sidebar (left) ──
-		drawCraftingTierSidebar(gfx, mouseX, mouseY);
-
-		// ── Layer buttons ──
-		drawLayerButtons(gfx, mouseX, mouseY, Tab.CRAFTING, craftingVisibleLayer, craftingMaxLayer);
-
-		// ── Info panel ──
-		drawCraftingInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
-
-		// ── Drag hint ──
-		gfx.drawCenteredString(font, "Drag to rotate",
-				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
-
-		gfx.pose().popPose();
-	}
-
-	/**
-	 * Draws the tier sidebar for Blood Crafting, showing all tiers as rows.
-	 * Locked tiers are greyed/obfuscated. Recipes within selected tier are listed below.
-	 */
-	private void drawCraftingTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		// Title (drawn above the scrollable area)
-		gfx.drawString(font, Component.literal("Tiers")
-				.withStyle(s -> s.withColor(Tab.CRAFTING.color).withBold(true)), sx + 2, sy, 0);
-		sy += 14;
-
-		// Separator
-		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF442222);
-		sy += 4;
-
-		// Scissor to clip scrollable content within the sidebar
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
-
-		// Apply scroll offset
-		sy -= craftingSidebarScroll;
-
-		// Tier rows
-		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
-			String tierName = CRAFTING_TIER_NAMES[i];
-			boolean locked = playerDegree < CRAFTING_TIER_DEGREE_REQ[i];
-			boolean selected = tierName.equals(selectedCraftingTier);
-			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
-
-			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH
-					&& mouseY >= clipTop && mouseY <= clipBottom;
-
-			// Background
-			int bg = selected ? 0xDD1A0808 : (hovered && !locked ? 0xBB180505 : 0x99120303);
-			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
-
-			// Border
-			int bc = locked ? 0xFF333333 : (selected ? Tab.CRAFTING.color : 0xFF555555);
-			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
-			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
-			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
-			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
-
-			if (locked) {
-				// Dark overlay + lock indicator
-				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
-				gfx.drawString(font, "[X] " + tierName + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
-			} else {
-				String label = tierName + " (" + recipes.size() + ")";
-				int textCol = selected ? 0xFFEEAAAA : 0xFF999999;
-				gfx.drawString(font, label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
-			}
-
-			// If this tier is selected, draw recipe list below
-			if (selected && !locked) {
-				sy += rowH + 2;
-				for (int j = 0; j < recipes.size(); j++) {
-					BloodStructureRecipe r = recipes.get(j);
-					boolean recSel = (j == selectedCraftingIndexInTier);
-					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16
-							&& mouseY >= clipTop && mouseY <= clipBottom;
-
-					int recBg = recSel ? 0xCC221010 : (recHov ? 0xAA1A0808 : 0x00000000);
-					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-
-					if (recSel) {
-						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.CRAFTING.color);
-					}
-
-					String recPath = r.getId().getPath();
-					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
-					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
-					int recCol = recSel ? 0xFFDDAAAA : 0xFF888888;
-					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
-					sy += 18;
-				}
-			}
-			sy += rowH + 2;
-		}
-
-		gfx.disableScissor();
-
-		// Draw scroll indicators if content overflows
-		int contentH = craftingSidebarContentH();
-		int visibleH = tierSidebarVisibleH();
-		if (contentH > visibleH) {
-			if (craftingSidebarScroll > 0) {
-				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
-			}
-			if (craftingSidebarScroll < contentH - visibleH) {
-				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
-			}
-		}
-	}
-
-	/** Returns the tier name clicked in the crafting sidebar, or null. */
-	private String craftingTierUnder(double mx, double my) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return null;
-
-		// Apply scroll offset
-		sy -= craftingSidebarScroll;
-
-		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
-			String tierName = CRAFTING_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedCraftingTier);
-			List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
-
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
-					&& my >= clipTop && my <= clipBottom) {
-				return tierName;
-			}
-
-			if (selected) {
-				sy += rowH + 2 + recipes.size() * 18;
-			}
-			sy += rowH + 2;
-		}
-		return null;
-	}
-
-	/** Returns the recipe index clicked within the selected crafting tier, or -1. */
-	private int craftingRecipeUnder(double mx, double my) {
-		if (selectedCraftingTier == null) return -1;
-		List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(selectedCraftingTier, List.of());
-		if (recipes.isEmpty()) return -1;
-
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return -1;
-
-		// Apply scroll offset
-		sy -= craftingSidebarScroll;
-
-		for (int i = 0; i < CRAFTING_TIER_NAMES.length; i++) {
-			String tierName = CRAFTING_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedCraftingTier);
-			List<BloodStructureRecipe> tierRecipes = craftingByTier.getOrDefault(tierName, List.of());
-
-			sy += rowH + 2; // skip tier row
-
-			if (selected) {
-				for (int j = 0; j < tierRecipes.size(); j++) {
-					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16
-							&& my >= clipTop && my <= clipBottom) {
-						return j;
-					}
-					sy += 18;
-				}
-				return -1;
-			}
-			// If not the selected tier, just advance past it
-		}
-		return -1;
-	}
-
-	/**
-	 * Renders the blood structure multiblock as an isometric 3D model preview.
-	 * Supports layer-by-layer viewing via craftingVisibleLayer.
-	 */
-	private void drawCraftingModel(GuiGraphics gfx, BloodStructureRecipe recipe,
-								   int areaX, int areaY, int areaW, int areaH) {
-		if (recipe.getPattern() == null) return;
-
-		List<BlockPosBlockPair> blockPairs = recipe.getPattern().getBlockPosBlockList();
-		if (blockPairs.isEmpty()) return;
-
-		// Determine bounding box of the structure
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-		for (BlockPosBlockPair pair : blockPairs) {
-			BlockPos pos = pair.getPos();
-			Block block = pair.getBlock();
-			if (block == null || block == Blocks.AIR) continue;
-			minX = Math.min(minX, pos.getX()); maxX = Math.max(maxX, pos.getX());
-			minY = Math.min(minY, pos.getY()); maxY = Math.max(maxY, pos.getY());
-			minZ = Math.min(minZ, pos.getZ()); maxZ = Math.max(maxZ, pos.getZ());
-		}
-		if (minX > maxX) return; // all air
-
-		// Track max layer for the layer buttons
-		craftingMaxLayer = maxY - minY;
-
-		float sizeX = maxX - minX + 1;
-		float sizeY = maxY - minY + 1;
-		float sizeZ = maxZ - minZ + 1;
-		float maxDim = Math.max(sizeX, Math.max(sizeY, sizeZ));
-
-		float scale = Math.min(areaW, areaH) / (maxDim * 1.8f);
-		int centerX = areaX + areaW / 2;
-		int centerY = areaY + areaH / 2;
-
-		PoseStack pose = gfx.pose();
-		pose.pushPose();
-
-		pose.translate(centerX, centerY, 300);
-		pose.scale(scale, -scale, scale);
-
-		// Isometric tilt + user rotation
-		pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
-		pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(craftingRotationAngle));
-
-		// Center the structure at origin
-		float offX = -(minX + sizeX / 2f);
-		float offY = -(minY + sizeY / 2f);
-		float offZ = -(minZ + sizeZ / 2f);
-
-		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-		for (BlockPosBlockPair pair : blockPairs) {
-			Block block = pair.getBlock();
-			if (block == null || block == Blocks.AIR) continue;
-			BlockPos pos = pair.getPos();
-
-			int relativeY = pos.getY() - minY;
-
-			// If a specific layer is selected, skip blocks above it
-			if (craftingVisibleLayer >= 0 && relativeY > craftingVisibleLayer) continue;
-
-			pose.pushPose();
-			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
-
-			// Dim blocks below the selected layer to highlight the current one
-			boolean dimmed = craftingVisibleLayer >= 0 && relativeY < craftingVisibleLayer;
-
-			try {
-				if (dimmed) {
-					// Render with reduced brightness
-					RenderSystem.enableBlend();
-					RenderSystem.defaultBlendFunc();
-				}
-				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
-						block.defaultBlockState(), pose, bufferSource,
-						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-			} catch (Exception e) {
-				// Silently skip blocks that can't be rendered
-			}
-
-			pose.popPose();
-		}
-
-		bufferSource.endBatch();
-		pose.popPose();
-	}
-
-	/**
-	 * Draws the information panel for the selected blood crafting recipe.
-	 */
-	private void drawCraftingInfoPanel(GuiGraphics gfx, BloodStructureRecipe recipe,
-									   int panelX, int panelY, int panelW) {
-		int clipTop = panelY;
-		int clipBottom = guiTop + guiHeight - 8;
-		int visibleH = clipBottom - clipTop;
-
-		// Clamp scroll
-		int totalH = measureCraftingInfoPanelHeight(recipe, panelW);
-		int maxScroll = Math.max(0, totalH - visibleH);
-		if (craftingInfoScroll > maxScroll) craftingInfoScroll = maxScroll;
-
-		gfx.enableScissor(panelX - 2, clipTop, panelX + panelW + 2, clipBottom);
-
-		int y = panelY - craftingInfoScroll;
-		int lineH = 12;
-
-		// ── Recipe name (derived from ID) — word-wrapped ──
-		String namePath = recipe.getId().getPath();
-		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
-		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
-		for (String titleLine : ScreenDrawUtils.wrapText(font,name, panelW)) {
-			gfx.drawString(font, Component.literal(titleLine)
-					.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
-			y += lineH;
-		}
-		y += 4;
-
-		// ── Separator line ──
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442222);
-		y += 6;
-
-		// ── Blood cost ──
-		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal((int) recipe.getBloodCost() + " mL").withStyle(s -> s.withColor(0xAA4444))), panelX, y, 0);
-		y += lineH + 4;
-
-		// ── Held item ──
-		ItemStack heldItem = recipe.getHeldItem();
-		if (heldItem != null && !heldItem.isEmpty()) {
-			gfx.drawString(font, Component.literal("Held Item:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-			y += lineH;
-
-			gfx.renderItem(heldItem, panelX, y);
-			gfx.renderItemDecorations(font, heldItem, panelX, y);
-			List<String> heldLines = ScreenDrawUtils.wrapText(font, heldItem.getHoverName().getString(), panelW - 20);
-			for (int li = 0; li < heldLines.size(); li++) {
-				int ix = li == 0 ? panelX + 20 : panelX + 4;
-				gfx.drawString(font, Component.literal(heldLines.get(li))
-						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-			}
-			y += Math.max(20, heldLines.size() * lineH + 4);
-		}
-
-		// ── Hit block ──
-		Block hitBlock = recipe.getHitBlock();
-		if (hitBlock != null && hitBlock != Blocks.AIR) {
-			gfx.drawString(font, Component.literal("Activate on:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-			y += lineH;
-
-			ItemStack hitStack = new ItemStack(hitBlock);
-			if (!hitStack.isEmpty()) {
-				gfx.renderItem(hitStack, panelX, y);
-				List<String> hitLines =ScreenDrawUtils.wrapText(font, hitStack.getHoverName().getString(), panelW - 20);
-				for (int li = 0; li < hitLines.size(); li++) {
-					int ix = li == 0 ? panelX + 20 : panelX + 4;
-					gfx.drawString(font, Component.literal(hitLines.get(li))
-							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-				}
-				y += Math.max(20, hitLines.size() * lineH + 4);
-			}
-		}
-
-		y += 4;
-
-		// ── Result item ──
-		ItemStack result = recipe.getResult();
-		if (result != null && !result.isEmpty()) {
-			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-			y += lineH;
-
-			gfx.renderItem(result, panelX, y);
-			gfx.renderItemDecorations(font, result, panelX, y);
-			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
-			for (int li = 0; li < resultLines.size(); li++) {
-				int ix = li == 0 ? panelX + 20 : panelX + 4;
-				gfx.drawString(font, Component.literal(resultLines.get(li))
-						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-			}
-			y += Math.max(20, resultLines.size() * lineH + 4);
-		}
-
-		y += 6;
-
-		// ── Block materials list ──
-		if (recipe.getPattern() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
-				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-				y += lineH;
-
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
-					if (block == null || block == Blocks.AIR) continue;
-					int count = entry.getValue();
-
-					ItemStack blockStack = new ItemStack(block);
-					if (!blockStack.isEmpty()) {
-						gfx.renderItem(blockStack, panelX + 2, y);
-						String countPrefix = " x" + count + "  ";
-						List<String> matLines =ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
-						for (int li = 0; li < matLines.size(); li++) {
-							gfx.drawString(font, Component.literal(matLines.get(li))
-									.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4 + li * lineH, 0);
-						}
-						y += Math.max(18, matLines.size() * lineH + 4);
-					}
-				}
-			}
-		}
-
-		gfx.disableScissor();
-
-		// Draw scroll indicators if content overflows
-		if (totalH > visibleH) {
-			if (craftingInfoScroll > 0) {
-				gfx.drawCenteredString(font, "\u25B2", panelX + panelW / 2, clipTop, 0xAAFFFFFF);
-			}
-			if (craftingInfoScroll < maxScroll) {
-				gfx.drawCenteredString(font, "\u25BC", panelX + panelW / 2, clipBottom - 10, 0xAAFFFFFF);
-			}
-		}
-	}
-
-	/** Measures the total content height of the crafting info panel (without clipping). */
-	private int measureCraftingInfoPanelHeight(BloodStructureRecipe recipe, int panelW) {
-		int y = 0;
-		int lineH = 12;
-
-		// Name
-		String namePath = recipe.getId().getPath();
-		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
-		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
-		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH;
-		y += 4 + 1 + 6; // gap + separator + gap
-
-		// Blood cost
-		y += lineH + 4;
-
-		// Held item
-		ItemStack heldItem = recipe.getHeldItem();
-		if (heldItem != null && !heldItem.isEmpty()) {
-			y += lineH; // label
-			List<String> heldLines = ScreenDrawUtils.wrapText(font, heldItem.getHoverName().getString(), panelW - 20);
-			y += Math.max(20, heldLines.size() * lineH + 4);
-		}
-
-		// Hit block
-		Block hitBlock = recipe.getHitBlock();
-		if (hitBlock != null && hitBlock != Blocks.AIR) {
-			y += lineH; // label
-			ItemStack hitStack = new ItemStack(hitBlock);
-			if (!hitStack.isEmpty()) {
-				List<String> hitLines = ScreenDrawUtils.wrapText(font, hitStack.getHoverName().getString(), panelW - 20);
-				y += Math.max(20, hitLines.size() * lineH + 4);
-			}
-		}
-
-		y += 4; // gap
-
-		// Result
-		ItemStack result = recipe.getResult();
-		if (result != null && !result.isEmpty()) {
-			y += lineH; // label
-			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
-			y += Math.max(20, resultLines.size() * lineH + 4);
-		}
-
-		y += 6; // gap
-
-		// Materials
-		if (recipe.getPattern() != null) {
-			Map<Block, Integer> blockCounts = recipe.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
-				y += lineH; // "Materials:" label
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
-					if (block == null || block == Blocks.AIR) continue;
-					ItemStack blockStack = new ItemStack(block);
-					if (!blockStack.isEmpty()) {
-						String countPrefix = " x" + entry.getValue() + "  ";
-						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
-						y += Math.max(18, matLines.size() * lineH + 4);
-					}
-				}
-			}
-		}
-
-		return y;
-	}
-
-	// (Old nav buttons removed — now using tier sidebar)
-
-	// ────────────────────────────────────────────────────────────
-	//  Scars tab — scar recipe display
-	// ────────────────────────────────────────────────────────────
-
-	private void drawScarsContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		if (ScarRecipes.isEmpty()) {
-			gfx.drawCenteredString(font, "No Scar recipes found",
-					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
-			return;
-		}
-
-		// ── Recipe content (right of sidebar) ──
-		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
-		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
-
-		// Push z so all overlays are above background
-		gfx.pose().pushPose();
-		gfx.pose().translate(0, 0, 400);
-
-		// ── Tier sidebar (left) ──
-		drawScarsTierSidebar(gfx, mouseX, mouseY);
-
-		if (selectedScarTier == null) {
-			gfx.drawCenteredString(font, "Select a tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-
-		List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> tierRecipes =
-				chiselByTier.getOrDefault(selectedScarTier, List.of());
-		if (tierRecipes.isEmpty()) {
-			gfx.drawCenteredString(font, "No recipes in this tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-		if (selectedScarIndexInTier >= tierRecipes.size()) selectedScarIndexInTier = 0;
-		com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe = tierRecipes.get(selectedScarIndexInTier);
-
-		// Layout: left half = 8×8 pattern grid, right half = info panel
-		int patternAreaW = contentW / 2;
-		int patternX = contentX;
-		int infoX = contentX + patternAreaW + 10;
-		int infoW = contentW - patternAreaW - 20;
-
-		// ── 8×8 Scar Pattern grid ──
-		drawscarPatternGrid(gfx, recipe, patternX + 10, guiTop + 30,
-				patternAreaW - 20, guiHeight - 60);
-
-		// ── Info panel ──
-		drawScarInfoPanel(gfx, recipe, infoX, guiTop + 30, infoW);
-
-		gfx.pose().popPose();
-	}
-
-	/**
-	 * Draws the 8×8 chisel pattern grid for a scar recipe.
-	 * Filled cells (value == 1) are drawn as solid colored squares;
-	 * empty cells are drawn as faint outlines.
-	 */
-	private void drawscarPatternGrid(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe,
-									 int areaX, int areaY, int areaW, int areaH) {
-		byte[][] pattern = recipe.getPattern();
-		if (pattern == null) return;
-
-		// Compute cell size to fit the grid in the available area
-		int gridDim = Math.min(areaW, areaH);
-		int cellSize = gridDim / 8;
-		int gridW = cellSize * 8;
-		int gridH = cellSize * 8;
-
-		// Centre the grid in the area
-		int gridX = areaX + (areaW - gridW) / 2;
-		int gridY = areaY + (areaH - gridH) / 2;
-
-		// Grid background
-		gfx.fill(gridX - 2, gridY - 2, gridX + gridW + 2, gridY + gridH + 2, 0xFF0A0404);
-		gfx.fill(gridX - 1, gridY - 1, gridX + gridW + 1, gridY + gridH + 1, Tab.SCARS.color & 0x33FFFFFF);
-
-		// Draw cells
-		int filledColor = Tab.SCARS.color;
-		int emptyBg = 0xFF120808;
-		int emptyBorder = 0xFF221111;
-
-		for (int row = 0; row < 8 && row < pattern.length; row++) {
-			for (int col = 0; col < 8 && col < pattern[row].length; col++) {
-				int cx = gridX + col * cellSize;
-				int cy = gridY + row * cellSize;
-
-				if (pattern[row][col] != 0) {
-					// Filled cell — solid color with pulse
-					float time = System.nanoTime() / 1_000_000_000f;
-					float pulse = 0.7f + 0.3f * (float) Math.sin(time * 2.0 + row * 0.5 + col * 0.3);
-					int r = (int) (((filledColor >> 16) & 0xFF) * pulse);
-					int g = (int) (((filledColor >> 8) & 0xFF) * pulse);
-					int b = (int) ((filledColor & 0xFF) * pulse);
-					int cellCol = 0xFF000000 | (r << 16) | (g << 8) | b;
-
-					gfx.fill(cx + 1, cy + 1, cx + cellSize - 1, cy + cellSize - 1, cellCol);
-					// Bright border
-					gfx.fill(cx, cy, cx + cellSize, cy + 1, filledColor);
-					gfx.fill(cx, cy + cellSize - 1, cx + cellSize, cy + cellSize, filledColor);
-					gfx.fill(cx, cy, cx + 1, cy + cellSize, filledColor);
-					gfx.fill(cx + cellSize - 1, cy, cx + cellSize, cy + cellSize, filledColor);
-				} else {
-					// Empty cell — faint outline
-					gfx.fill(cx + 1, cy + 1, cx + cellSize - 1, cy + cellSize - 1, emptyBg);
-					gfx.fill(cx, cy, cx + cellSize, cy + 1, emptyBorder);
-					gfx.fill(cx, cy + cellSize - 1, cx + cellSize, cy + cellSize, emptyBorder);
-					gfx.fill(cx, cy, cx + 1, cy + cellSize, emptyBorder);
-					gfx.fill(cx + cellSize - 1, cy, cx + cellSize, cy + cellSize, emptyBorder);
-				}
-			}
-		}
-
-		// Label below the grid
-		gfx.drawCenteredString(font, "Scar Pattern (8×8)", gridX + gridW / 2, gridY + gridH + 6, 0xFF888888);
-	}
-
-	/**
-	 * Draws the information panel for the selected chisel recipe.
-	 */
-	private void drawScarInfoPanel(GuiGraphics gfx, com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe,
-								   int panelX, int panelY, int panelW) {
-		int y = panelY;
-		int lineH = 12;
-
-		// ── Recipe name (derived from ID) — word-wrapped ──
-		String namePath = recipe.getId().getPath();
-		if (namePath.contains("/")) namePath = namePath.substring(namePath.lastIndexOf('/') + 1);
-		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
-		for (String titleLine : ScreenDrawUtils.wrapText(font, name, panelW)) {
-			gfx.drawString(font, Component.literal(titleLine)
-					.withStyle(s -> s.withColor(Tab.SCARS.color).withBold(true)), panelX, y, 0);
-			y += lineH;
-		}
-		y += 4;
-
-		// ── Separator line ──
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
-		y += 6;
-
-		// ── Tier ──
-		gfx.drawString(font, Component.literal("Tier: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(String.valueOf(recipe.getTier())).withStyle(s -> s.withColor(Tab.SCARS.color))), panelX, y, 0);
-		y += lineH + 4;
-
-		// ── Scar type ──
-		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(recipe.getScarType().name()).withStyle(s -> s.withColor(0xDDDDDD))), panelX, y, 0);
-		y += lineH + 4;
-
-		// ── Ingredients ──
-		gfx.drawString(font, Component.literal("Ingredients:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-		y += lineH;
-
-		// Ingredient 1
-		net.minecraft.world.item.crafting.Ingredient ing1 = recipe.getIngredient1();
-		if (ing1 != null && !ing1.isEmpty()) {
-			ItemStack[] items1 = ing1.getItems();
-			if (items1.length > 0) {
-				ItemStack display1 = items1[0];
-				gfx.renderItem(display1, panelX + 2, y);
-				gfx.renderItemDecorations(font, display1, panelX + 2, y);
-				List<String> lines1 = ScreenDrawUtils.wrapText(font, display1.getHoverName().getString(), panelW - 24);
-				for (int li = 0; li < lines1.size(); li++) {
-					int ix = li == 0 ? panelX + 22 : panelX + 4;
-					gfx.drawString(font, Component.literal(lines1.get(li))
-							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-				}
-				y += Math.max(20, lines1.size() * lineH + 4);
-			}
-		}
-
-		// Ingredient 2
-		net.minecraft.world.item.crafting.Ingredient ing2 = recipe.getIngredient2();
-		if (ing2 != null && !ing2.isEmpty()) {
-			ItemStack[] items2 = ing2.getItems();
-			if (items2.length > 0) {
-				ItemStack display2 = items2[0];
-				gfx.renderItem(display2, panelX + 2, y);
-				gfx.renderItemDecorations(font, display2, panelX + 2, y);
-				List<String> lines2 = ScreenDrawUtils.wrapText(font, display2.getHoverName().getString(), panelW - 24);
-				for (int li = 0; li < lines2.size(); li++) {
-					int ix = li == 0 ? panelX + 22 : panelX + 4;
-					gfx.drawString(font, Component.literal(lines2.get(li))
-							.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-				}
-				y += Math.max(20, lines2.size() * lineH + 4);
-			}
-		}
-
-		y += 6;
-
-		// ── Result item ──
-		ItemStack result = recipe.getResultItem();
-		if (result != null && !result.isEmpty()) {
-			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-			y += lineH;
-
-			gfx.renderItem(result, panelX, y);
-			gfx.renderItemDecorations(font, result, panelX, y);
-			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
-			for (int li = 0; li < resultLines.size(); li++) {
-				int ix = li == 0 ? panelX + 20 : panelX + 4;
-				gfx.drawString(font, Component.literal(resultLines.get(li))
-						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-			}
-			y += Math.max(20, resultLines.size() * lineH + 4);
-		}
-
-		y += 8;
-
-		// ── Per-scar lore ──
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF224444);
-		y += 6;
-		String loreText = ScarLoreData.getLore(ScarRecipeKey(recipe));
-		for (String loreLine : ScreenDrawUtils.wrapText(font, loreText, panelW)) {
-			gfx.drawString(font, Component.literal(loreLine)
-					.withStyle(s -> s.withColor(0xFF557788).withItalic(true)), panelX, y, 0);
-			y += lineH;
-		}
-	}
-
-	/**
-	 * Draws the tier sidebar for scars, showing all tiers as rows.
-	 * Locked tiers are greyed/obfuscated. Recipes within selected tier are listed below.
-	 */
-	private void drawScarsTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		// Title (drawn above the scrollable area)
-		gfx.drawString(font, Component.literal("Scar Tiers")
-				.withStyle(s -> s.withColor(Tab.SCARS.color).withBold(true)), sx + 2, sy, 0);
-		sy += 14;
-
-		// Separator
-		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF224444);
-		sy += 4;
-
-		// Scissor to clip scrollable content within the sidebar
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
-
-		// Apply scroll offset
-		sy -= scarSidebarScroll;
-
-		// Tier rows
-		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
-			String tierName = SCAR_TIER_NAMES[i];
-			boolean locked = playerDegree < SCAR_TIER_DEGREE_REQ[i];
-			boolean selected = tierName.equals(selectedScarTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
-					chiselByTier.getOrDefault(tierName, List.of());
-
-			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH
-					&& mouseY >= clipTop && mouseY <= clipBottom;
-
-			// Background
-			int bg = selected ? 0xDD0A1818 : (hovered && !locked ? 0xBB081414 : 0x99061010);
-			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
-
-			// Border
-			int bc = locked ? 0xFF333333 : (selected ? Tab.SCARS.color : 0xFF555555);
-			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
-			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
-			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
-			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
-
-			if (locked) {
-				// Dark overlay + lock indicator
-				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
-				gfx.drawString(font, "[X] " + tierName + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
-			} else {
-				String label = tierName + " (" + recipes.size() + ")";
-				int textCol = selected ? 0xFFAADDEE : 0xFF999999;
-				gfx.drawString(font, label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
-			}
-
-			// If this tier is selected, draw recipe list below
-			if (selected && !locked) {
-				sy += rowH + 2;
-				for (int j = 0; j < recipes.size(); j++) {
-					com.vincenthuto.hemomancy.common.recipe.ScarRecipe r = recipes.get(j);
-					boolean recSel = (j == selectedScarIndexInTier);
-					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16
-							&& mouseY >= clipTop && mouseY <= clipBottom;
-
-					int recBg = recSel ? 0xCC102020 : (recHov ? 0xAA0A1818 : 0x00000000);
-					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-
-					if (recSel) {
-						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.SCARS.color);
-					}
-
-					String recPath = r.getId().getPath();
-					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
-					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
-					int recCol = recSel ? 0xFFAADDEE : 0xFF888888;
-					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
-					sy += 18;
-				}
-			}
-			sy += rowH + 2;
-		}
-
-		gfx.disableScissor();
-
-		// Draw scroll indicators if content overflows
-		int contentH = scarSidebarContentH();
-		int visibleH = tierSidebarVisibleH();
-		if (contentH > visibleH) {
-			if (scarSidebarScroll > 0) {
-				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
-			}
-			if (scarSidebarScroll < contentH - visibleH) {
-				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
-			}
-		}
-	}
-
-	/** Returns the tier name clicked in the scars sidebar, or null. */
-	private String scarTierUnder(double mx, double my) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return null;
-
-		// Apply scroll offset
-		sy -= scarSidebarScroll;
-
-		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
-			String tierName = SCAR_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedScarTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
-					chiselByTier.getOrDefault(tierName, List.of());
-
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
-					&& my >= clipTop && my <= clipBottom) {
-				return tierName;
-			}
-
-			if (selected) {
-				sy += rowH + 2 + recipes.size() * 18;
-			}
-			sy += rowH + 2;
-		}
-		return null;
-	}
-
-	/** Returns the recipe index clicked within the selected scar tier, or -1. */
-	private int scarRecipeUnder(double mx, double my) {
-		if (selectedScarTier == null) return -1;
-		List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
-				chiselByTier.getOrDefault(selectedScarTier, List.of());
-		if (recipes.isEmpty()) return -1;
-
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return -1;
-
-		// Apply scroll offset
-		sy -= scarSidebarScroll;
-
-		for (int i = 0; i < SCAR_TIER_NAMES.length; i++) {
-			String tierName = SCAR_TIER_NAMES[i];
-			boolean selected = tierName.equals(selectedScarTier);
-			List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> tierRecipes =
-					chiselByTier.getOrDefault(tierName, List.of());
-
-			sy += rowH + 2; // skip tier row
-
-			if (selected) {
-				for (int j = 0; j < tierRecipes.size(); j++) {
-					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16
-							&& my >= clipTop && my <= clipBottom) {
-						return j;
-					}
-					sy += 18;
-				}
-				return -1;
-			}
-			// If not the selected tier, just advance past it
-		}
-		return -1;
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Cardinal Rites tab — tier-based layout
-	// ────────────────────────────────────────────────────────────
-
-	private void drawRiteContent(GuiGraphics gfx, int mouseX, int mouseY, float partial) {
-		if (riteRecipes.isEmpty()) {
-			gfx.drawCenteredString(font, "No Cardinal Rites found",
-					guiLeft + guiWidth / 2, guiTop + guiHeight / 2, 0xFF666666);
-			return;
-		}
-
-		// ── Recipe content (right of sidebar) ──
-		int contentX = guiLeft + TIER_SIDEBAR_W + 6;
-		int contentW = guiWidth - TIER_SIDEBAR_W - 10;
-
-		if (selectedRiteTier == null) {
-			gfx.pose().pushPose();
-			gfx.pose().translate(0, 0, 400);
-			drawRiteTierSidebar(gfx, mouseX, mouseY);
-			gfx.drawCenteredString(font, "Select a tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-
-		List<CardinalRiteRecipe> tierRites = ritesByTier.getOrDefault(selectedRiteTier, List.of());
-		if (tierRites.isEmpty()) {
-			gfx.pose().pushPose();
-			gfx.pose().translate(0, 0, 400);
-			drawRiteTierSidebar(gfx, mouseX, mouseY);
-			gfx.drawCenteredString(font, "No rites in this tier",
-					contentX + contentW / 2, guiTop + guiHeight / 2, 0xFF555555);
-			gfx.pose().popPose();
-			return;
-		}
-		if (selectedRiteIndexInTier >= tierRites.size()) selectedRiteIndexInTier = 0;
-		CardinalRiteRecipe rite = tierRites.get(selectedRiteIndexInTier);
-
-		// Layout: left half of content = 3D model, right half = info panel
-		int modelAreaW = contentW / 2;
-		int modelX = contentX;
-		int infoX = contentX + modelAreaW + 10;
-		int infoW = contentW - modelAreaW - 20;
-
-		// ── 3D multiblock preview (rendered first, at z=300) ──
-		drawRiteModel(gfx, rite, modelX + 10, guiTop + 30,
-				modelAreaW - 20, guiHeight - 60, partial);
-
-		// Push z above the 3D model (z=300) so ALL 2D overlays always draw on top of the blocks.
-		gfx.pose().pushPose();
-		gfx.pose().translate(0, 0, 400);
-
-		// ── Tier sidebar (left) ──
-		drawRiteTierSidebar(gfx, mouseX, mouseY);
-
-		// ── Layer buttons ──
-		drawLayerButtons(gfx, mouseX, mouseY, Tab.RITES, riteVisibleLayer, riteMaxLayer);
-
-		// ── Info panel ──
-		drawRiteInfoPanel(gfx, rite, infoX, guiTop + 30, infoW, mouseX, mouseY);
-
-		// ── Drag hint ──
-		gfx.drawCenteredString(font, "Drag to rotate",
-				modelX + modelAreaW / 2, guiTop + guiHeight - 18, 0x44888888);
-
-		gfx.pose().popPose();
-	}
-
-	/**
-	 * Draws the tier sidebar for Cardinal Rites, grouped by rite type.
-	 * Locked tiers are greyed/obfuscated based on player degree.
-	 */
-	private void drawRiteTierSidebar(GuiGraphics gfx, int mouseX, int mouseY) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		// Title (drawn above the scrollable area)
-		gfx.drawString(font, Component.literal("Rite Tiers")
-				.withStyle(s -> s.withColor(Tab.RITES.color).withBold(true)), sx + 2, sy, 0);
-		sy += 14;
-
-		// Separator
-		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF332244);
-		sy += 4;
-
-		// Scissor to clip scrollable content within the sidebar
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		gfx.enableScissor(sx, clipTop, sx + sw, clipBottom);
-
-		// Apply scroll offset
-		sy -= riteSidebarScroll;
-
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean locked = playerDegree < riteMinDegree(type);
-			boolean selected = (type == selectedRiteTier);
-			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
-
-			boolean hovered = mouseX >= sx && mouseX <= sx + sw
-					&& mouseY >= sy && mouseY <= sy + rowH
-					&& mouseY >= clipTop && mouseY <= clipBottom;
-
-			// Background
-			int bg = selected ? 0xDD120818 : (hovered && !locked ? 0xBB100616 : 0x990C0410);
-			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
-
-			// Border
-			int bc = locked ? 0xFF333333 : (selected ? Tab.RITES.color : 0xFF555555);
-			gfx.fill(sx, sy, sx + sw, sy + 1, bc);
-			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
-			gfx.fill(sx, sy, sx + 1, sy + rowH, bc);
-			gfx.fill(sx + sw - 1, sy, sx + sw, sy + rowH, bc);
-
-			// Tier size indicator
-			String sizeLabel = type.getSize() + "x" + type.getSize();
-			String tierLabel = HLTextUtils.toProperCase(type.getSerializedName());
-
-			if (locked) {
-				gfx.fill(sx + 1, sy + 1, sx + sw - 1, sy + rowH - 1, 0xBB000000);
-				gfx.drawString(font, "[X] " + tierLabel + " (Locked)", sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
-			} else {
-				int textCol = selected ? 0xFFDDBBEE : 0xFF999999;
-				gfx.drawString(font, tierLabel + " " + sizeLabel + " (" + recipes.size() + ")", sx + 4, sy + (rowH - 8) / 2, textCol, false);
-			}
-
-			// If this tier is selected, draw recipe list below
-			if (selected && !locked) {
-				sy += rowH + 2;
-				for (int j = 0; j < recipes.size(); j++) {
-					CardinalRiteRecipe r = recipes.get(j);
-					boolean recSel = (j == selectedRiteIndexInTier);
-					boolean recHov = mouseX >= sx + 4 && mouseX <= sx + sw - 4
-							&& mouseY >= sy && mouseY <= sy + 16
-							&& mouseY >= clipTop && mouseY <= clipBottom;
-
-					int recBg = recSel ? 0xCC180818 : (recHov ? 0xAA140614 : 0x00000000);
-					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-
-					if (recSel) {
-						gfx.fill(sx + 2, sy, sx + 3, sy + 16, Tab.RITES.color);
-					}
-
-					String recName = r.getRiteName();
-					if (recName == null || recName.isEmpty()) {
-						String ritePath = r.getId().getPath();
-						if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
-						recName = HLTextUtils.toProperCase(ritePath.replace("_", " "));
-					}
-					// Truncate long names
-					recName = truncateText(recName, sw - 16);
-					int recCol = recSel ? 0xFFDDBBEE : 0xFF888888;
-					gfx.drawString(font, recName, sx + 8, sy + 4, recCol, false);
-					sy += 18;
-				}
-			}
-			sy += rowH + 2;
-		}
-
-		gfx.disableScissor();
-
-		// Draw scroll indicators if content overflows
-		int contentH = riteSidebarContentH();
-		int visibleH = tierSidebarVisibleH();
-		if (contentH > visibleH) {
-			if (riteSidebarScroll > 0) {
-				// Up arrow indicator
-				gfx.drawCenteredString(font, "\u25B2", sx + sw / 2, clipTop, 0xAAFFFFFF);
-			}
-			if (riteSidebarScroll < contentH - visibleH) {
-				// Down arrow indicator
-				gfx.drawCenteredString(font, "\u25BC", sx + sw / 2, clipBottom - 10, 0xAAFFFFFF);
-			}
-		}
-	}
-
-	/** Returns the rite tier clicked in the sidebar, or null. */
-	private CardinalRiteType riteTierUnder(double mx, double my) {
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return null;
-
-		// Apply scroll offset
-		sy -= riteSidebarScroll;
-
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean selected = (type == selectedRiteTier);
-			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
-
-			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
-					&& my >= clipTop && my <= clipBottom) {
-				return type;
-			}
-
-			if (selected) {
-				sy += rowH + 2 + recipes.size() * 18;
-			}
-			sy += rowH + 2;
-		}
-		return null;
-	}
-
-	/** Returns the recipe index clicked within the selected rite tier, or -1. */
-	private int riteRecipeUnder(double mx, double my) {
-		if (selectedRiteTier == null) return -1;
-		List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(selectedRiteTier, List.of());
-		if (recipes.isEmpty()) return -1;
-
-		int sx = guiLeft + 4;
-		int sy = guiTop + 24 + 14 + 4;
-		int sw = TIER_SIDEBAR_W - 8;
-		int rowH = 22;
-
-		int clipTop = sy;
-		int clipBottom = guiTop + guiHeight - 4;
-		if (my < clipTop || my > clipBottom) return -1;
-
-		// Apply scroll offset
-		sy -= riteSidebarScroll;
-
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean selected = (type == selectedRiteTier);
-			List<CardinalRiteRecipe> tierRecipes = ritesByTier.getOrDefault(type, List.of());
-
-			sy += rowH + 2; // skip tier row
-
-			if (selected) {
-				for (int j = 0; j < tierRecipes.size(); j++) {
-					if (mx >= sx + 4 && mx <= sx + sw - 4
-							&& my >= sy && my <= sy + 16
-							&& my >= clipTop && my <= clipBottom) {
-						return j;
-					}
-					sy += 18;
-				}
-				return -1;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Renders the multiblock pattern as an isometric 3D model preview.
-	 * Uses Minecraft's block renderer to draw actual block models.
-	 * Supports layer-by-layer viewing via riteVisibleLayer.
-	 */
-	private void drawRiteModel(GuiGraphics gfx, CardinalRiteRecipe rite,
-							   int areaX, int areaY, int areaW, int areaH, float partial) {
-		if (rite.getPattern() == null) return;
-
-		List<BlockPosBlockPair> blockPairs = rite.getPattern().getBlockPosBlockList();
-		if (blockPairs.isEmpty()) return;
-
-		// Determine bounding box of the structure
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-		for (BlockPosBlockPair pair : blockPairs) {
-			BlockPos pos = pair.getPos();
-			Block block = pair.getBlock();
-			if (block == null || block == Blocks.AIR) continue;
-			minX = Math.min(minX, pos.getX()); maxX = Math.max(maxX, pos.getX());
-			minY = Math.min(minY, pos.getY()); maxY = Math.max(maxY, pos.getY());
-			minZ = Math.min(minZ, pos.getZ()); maxZ = Math.max(maxZ, pos.getZ());
-		}
-		if (minX > maxX) return; // all air
-
-		// Track max layer for the layer buttons
-		riteMaxLayer = maxY - minY;
-
-		float sizeX = maxX - minX + 1;
-		float sizeY = maxY - minY + 1;
-		float sizeZ = maxZ - minZ + 1;
-		float maxDim = Math.max(sizeX, Math.max(sizeY, sizeZ));
-
-		// Scale so the structure fits within the area
-		float scale = Math.min(areaW, areaH) / (maxDim * 1.8f);
-		// Center of the rendering area
-		int centerX = areaX + areaW / 2;
-		int centerY = areaY + areaH / 2;
-
-		PoseStack pose = gfx.pose();
-		pose.pushPose();
-
-		// Move to the center of the rendering area
-		pose.translate(centerX, centerY, 300);
-
-		// Apply scale
-		pose.scale(scale, -scale, scale);
-
-		// Apply isometric tilt
-		pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(30));
-		pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(riteRotationAngle));
-
-		// Center the structure at origin
-		float offX = -(minX + sizeX / 2f);
-		float offY = -(minY + sizeY / 2f);
-		float offZ = -(minZ + sizeZ / 2f);
-
-		MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-		for (BlockPosBlockPair pair : blockPairs) {
-			Block block = pair.getBlock();
-			if (block == null || block == Blocks.AIR) continue;
-			BlockPos pos = pair.getPos();
-
-			int relativeY = pos.getY() - minY;
-
-			// If a specific layer is selected, skip blocks above it
-			if (riteVisibleLayer >= 0 && relativeY > riteVisibleLayer) continue;
-
-			pose.pushPose();
-			pose.translate(pos.getX() + offX, pos.getY() + offY, pos.getZ() + offZ);
-
-			// Dim blocks below the selected layer to highlight the current one
-			boolean dimmed = riteVisibleLayer >= 0 && relativeY < riteVisibleLayer;
-
-			try {
-				Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
-						block.defaultBlockState(), pose, bufferSource,
-						dimmed ? 0x60006 : LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-			} catch (Exception e) {
-				// Silently skip blocks that can't be rendered
-			}
-
-			pose.popPose();
-		}
-
-		bufferSource.endBatch();
-		pose.popPose();
-	}
-
-	/**
-	 * Draws the information panel for the selected cardinal rite.
-	 */
-	private void drawRiteInfoPanel(GuiGraphics gfx, CardinalRiteRecipe rite,
-								   int panelX, int panelY, int panelW, int mouseX, int mouseY) {
-		int clipTop = panelY;
-		int clipBottom = guiTop + guiHeight - 8;
-		int visibleH = clipBottom - clipTop;
-
-		// Clamp scroll
-		int totalH = measureRiteInfoPanelHeight(rite, panelW);
-		int maxScroll = Math.max(0, totalH - visibleH);
-		if (riteInfoScroll > maxScroll) riteInfoScroll = maxScroll;
-
-		gfx.enableScissor(panelX - 2, clipTop, panelX + panelW + 2, clipBottom);
-
-		int y = panelY - riteInfoScroll;
-		int lineH = 12;
-
-		// ── Rite name ──
-		String name = rite.getRiteName();
-		if (name == null || name.isEmpty()) {
-			String ritePath = rite.getId().getPath();
-			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
-			name = HLTextUtils.toProperCase(ritePath.replace("_", " "));
-		}
-		// ── Rite name — word-wrapped ──
-		for (String titleLine :ScreenDrawUtils.wrapText(font, name, panelW)) {
-			gfx.drawString(font, Component.literal(titleLine)
-					.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
-			y += lineH;
-		}
-		y += 4;
-
-		// ── Separator line ──
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442244);
-		y += 6;
-
-		// ── Description ──
-		String desc = rite.getRiteDescription();
-		if (desc != null && !desc.isEmpty()) {
-			// Word-wrap the description
-			List<String> lines = ScreenDrawUtils.wrapText(font, desc, panelW);
-			for (String line : lines) {
-				gfx.drawString(font, Component.literal(line)
-						.withStyle(s -> s.withColor(0x999999).withItalic(true)), panelX, y, 0);
-				y += lineH;
-			}
-			y += 4;
-		}
-
-		// ── Rite type ──
-		CardinalRiteType type = rite.getRiteType();
-		String typeStr = HLTextUtils.toProperCase(type.getSerializedName()) + " (" + type.getSize() + "x" + type.getSize() + ")";
-		gfx.drawString(font, Component.literal("Type: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(typeStr).withStyle(s -> s.withColor(0xBB88CC))), panelX, y, 0);
-		y += lineH;
-
-		// ── Blood cost ──
-		gfx.drawString(font, Component.literal("Blood Cost: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal((int) rite.getBloodCost() + " mL").withStyle(s -> s.withColor(0xAA4444))), panelX, y, 0);
-		y += lineH;
-
-		// ── Required degree ──
-		int reqDeg = rite.getRequiredDegree() >= 0 ? rite.getRequiredDegree() : riteMinDegree(type);
-		if (reqDeg > 0) {
-			EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
-			String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
-			int degColor = playerDegree >= reqDeg ? 0xFF88CC88 : 0xFFCC4444;
-			gfx.drawString(font, Component.literal("Requires: ").withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))), panelX, y, 0);
-			y += lineH;
-		}
-
-		// ── Cast time ──
-		int ticks = type.getCastingDurationTicks();
-		float seconds = ticks / 20f;
-		gfx.drawString(font, Component.literal("Cast Time: ").withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(String.format("%.1fs", seconds)).withStyle(s -> s.withColor(0xAAAA88))), panelX, y, 0);
-		y += lineH + 6;
-
-		// ── Result item ──
-		ItemStack result = rite.getResult();
-		if (result != null && !result.isEmpty()) {
-			gfx.drawString(font, Component.literal("Result:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-			y += lineH;
-
-			gfx.renderItem(result, panelX, y);
-			gfx.renderItemDecorations(font, result, panelX, y);
-			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
-			for (int li = 0; li < resultLines.size(); li++) {
-				int ix = li == 0 ? panelX + 20 : panelX + 4;
-				gfx.drawString(font, Component.literal(resultLines.get(li))
-						.withStyle(s -> s.withColor(0xDDDDDD)), ix, y + 4 + li * lineH, 0);
-			}
-			y += Math.max(20, resultLines.size() * lineH + 4);
-		}
-
-		y += 6;
-
-		// ── Block materials list ──
-		if (rite.getPattern() != null) {
-			Map<Block, Integer> blockCounts = rite.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
-				gfx.drawString(font, Component.literal("Materials:").withStyle(s -> s.withColor(0x888888)), panelX, y, 0);
-				y += lineH;
-
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
-					if (block == null || block == Blocks.AIR) continue;
-					int count = entry.getValue();
-
-					ItemStack blockStack = new ItemStack(block);
-					if (!blockStack.isEmpty()) {
-						gfx.renderItem(blockStack, panelX + 2, y);
-						String countPrefix = " x" + count + "  ";
-						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
-						for (int li = 0; li < matLines.size(); li++) {
-							gfx.drawString(font, Component.literal(matLines.get(li))
-									.withStyle(s -> s.withColor(0xAAAAAA)), panelX + 20, y + 4 + li * lineH, 0);
-						}
-						y += Math.max(18, matLines.size() * lineH + 4);
-					}
-				}
-			}
-		}
-
-		gfx.disableScissor();
-
-		// Draw scroll indicators if content overflows
-		if (totalH > visibleH) {
-			if (riteInfoScroll > 0) {
-				gfx.drawCenteredString(font, "\u25B2", panelX + panelW / 2, clipTop, 0xAAFFFFFF);
-			}
-			if (riteInfoScroll < maxScroll) {
-				gfx.drawCenteredString(font, "\u25BC", panelX + panelW / 2, clipBottom - 10, 0xAAFFFFFF);
-			}
-		}
-	}
-
-	/** Measures the total content height of the rite info panel (without clipping). */
-	private int measureRiteInfoPanelHeight(CardinalRiteRecipe rite, int panelW) {
-		int y = 0;
-		int lineH = 12;
-
-		// Name
-		String name = rite.getRiteName();
-		if (name == null || name.isEmpty()) {
-			String ritePath = rite.getId().getPath();
-			if (ritePath.contains("/")) ritePath = ritePath.substring(ritePath.lastIndexOf('/') + 1);
-			name = HLTextUtils.toProperCase(ritePath.replace("_", " "));
-		}
-		y += ScreenDrawUtils.wrapText(font, name, panelW).size() * lineH;
-		y += 4 + 1 + 6; // gap + separator + gap
-
-		// Description
-		String desc = rite.getRiteDescription();
-		if (desc != null && !desc.isEmpty()) {
-			y += ScreenDrawUtils.wrapText(font, desc, panelW).size() * lineH + 4;
-		}
-
-		y += lineH; // type
-		y += lineH; // blood cost
-
-		CardinalRiteType type = rite.getRiteType();
-		int reqDeg = rite.getRequiredDegree() >= 0 ? rite.getRequiredDegree() : riteMinDegree(type);
-		if (reqDeg > 0) y += lineH; // degree
-
-		y += lineH + 6; // cast time + gap
-
-		// Result
-		ItemStack result = rite.getResult();
-		if (result != null && !result.isEmpty()) {
-			y += lineH; // "Result:" label
-			List<String> resultLines = ScreenDrawUtils.wrapText(font, result.getHoverName().getString(), panelW - 20);
-			y += Math.max(20, resultLines.size() * lineH + 4);
-		}
-
-		y += 6; // gap
-
-		// Materials
-		if (rite.getPattern() != null) {
-			Map<Block, Integer> blockCounts = rite.getPattern().getBlockCount(false);
-			if (!blockCounts.isEmpty()) {
-				y += lineH; // "Materials:" label
-				for (Map.Entry<Block, Integer> entry : blockCounts.entrySet()) {
-					Block block = entry.getKey();
-					if (block == null || block == Blocks.AIR) continue;
-					ItemStack blockStack = new ItemStack(block);
-					if (!blockStack.isEmpty()) {
-						String countPrefix = " x" + entry.getValue() + "  ";
-						List<String> matLines = ScreenDrawUtils.wrapText(font, countPrefix + blockStack.getHoverName().getString(), panelW - 20);
-						y += Math.max(18, matLines.size() * lineH + 4);
-					}
-				}
-			}
-		}
-
-		return y;
-	}
-
-	/** Truncates text to fit within maxWidth, appending "..." if necessary. */
-	private String truncateText(String text, int maxWidth) {
-		if (font.width(text) <= maxWidth) return text;
-		int ellipsisW = font.width("...");
-		int targetW = maxWidth - ellipsisW;
-		while (text.length() > 1 && font.width(text) > targetW) {
-			text = text.substring(0, text.length() - 1);
-		}
-		return text + "...";
-	}
-
-	// (Old rite nav buttons removed — now using tier sidebar)
-
-	private void drawNavButton(GuiGraphics gfx, int x, int y, int w, int h, String symbol, boolean hovered, int hoverColor) {
-		int bg = hovered ? 0xDD1A0505 : 0x99120303;
-		gfx.fill(x, y, x + w, y + h, bg);
-
-		int bc = hovered ? hoverColor : 0xFF444444;
-		gfx.fill(x, y, x + w, y + 1, bc);
-		gfx.fill(x, y + h - 1, x + w, y + h, bc);
-		gfx.fill(x, y, x + 1, y + h, bc);
-		gfx.fill(x + w - 1, y, x + w, y + h, bc);
-
-		int textCol = hovered ? 0xFFEEDDFF : 0xFF888888;
-		gfx.drawCenteredString(font, symbol, x + w / 2, y + (h - 8) / 2, textCol);
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Layer buttons (shared between Crafting & Rites)
-	// ────────────────────────────────────────────────────────────
-
-	/** Returns the X position for layer buttons (left edge of model area, right of sidebar). */
-	private int layerBtnX() { return guiLeft + TIER_SIDEBAR_W + 10; }
-
-	/** Returns the Y center for layer buttons (vertically centred in model area). */
-	private int layerBtnCenterY() { return guiTop + guiHeight / 2; }
-
-	/**
-	 * Draws ▲ (layer up) and ▼ (layer down) buttons and a layer indicator label
-	 * on the left side of the 3D model area.
-	 */
-	private void drawLayerButtons(GuiGraphics gfx, int mouseX, int mouseY,
-								  Tab tab, int visibleLayer, int maxLayer) {
-		if (maxLayer <= 0) return; // single-layer structure, no buttons needed
-
-		int bx = layerBtnX();
-		int cy = layerBtnCenterY();
-		int bs = LAYER_BTN_SIZE;
-		int color = tab.color;
-
-		// ▲ Up button
-		int upY = cy - bs - 14;
-		boolean upHov = isOverLayerUpButton(mouseX, mouseY, tab);
-		drawNavButton(gfx, bx, upY, bs, bs, "\u25B2", upHov, color);
-
-		// ▼ Down button
-		int downY = cy + 14;
-		boolean downHov = isOverLayerDownButton(mouseX, mouseY, tab);
-		drawNavButton(gfx, bx, downY, bs, bs, "\u25BC", downHov, color);
-
-		// Layer indicator between the buttons
-		String label = visibleLayer < 0 ? "All" : "Y:" + (visibleLayer + 1);
-		gfx.drawCenteredString(font, label, bx + bs / 2, cy - 4, 0xFFAAAAAA);
-
-		// Tooltip on hover
-		if (upHov) {
-			gfx.renderTooltip(font, Component.literal("Layer Up"), mouseX, mouseY);
-		} else if (downHov) {
-			gfx.renderTooltip(font, Component.literal("Layer Down"), mouseX, mouseY);
-		}
-	}
-
-	private boolean isOverLayerUpButton(double mx, double my, Tab tab) {
-		if (tab != Tab.CRAFTING && tab != Tab.RITES) return false;
-		int maxL = (tab == Tab.CRAFTING) ? craftingMaxLayer : riteMaxLayer;
-		if (maxL <= 0) return false;
-		int bx = layerBtnX();
-		int cy = layerBtnCenterY();
-		int upY = cy - LAYER_BTN_SIZE - 14;
-		return mx >= bx && mx <= bx + LAYER_BTN_SIZE
-			&& my >= upY && my <= upY + LAYER_BTN_SIZE;
-	}
-
-	private boolean isOverLayerDownButton(double mx, double my, Tab tab) {
-		if (tab != Tab.CRAFTING && tab != Tab.RITES) return false;
-		int maxL = (tab == Tab.CRAFTING) ? craftingMaxLayer : riteMaxLayer;
-		if (maxL <= 0) return false;
-		int bx = layerBtnX();
-		int cy = layerBtnCenterY();
-		int downY = cy + 14;
-		return mx >= bx && mx <= bx + LAYER_BTN_SIZE
-			&& my >= downY && my <= downY + LAYER_BTN_SIZE;
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Milestone drawer (left side, below home button)
-	// ────────────────────────────────────────────────────────────
-
-	/**
-	 * Draws the collapsible milestone drawer on the left side of the skill
-	 * tree screen, below the home button. Mirrors the sidebar pattern from
-	 * {@link UnstainedProgressScreen}.
-	 * <p>
-	 * Milestones whose {@code requiredDegree} exceeds the player's current
-	 * initiatory degree are hidden entirely.
-	 */
 	private void drawMilestoneDrawer(GuiGraphics gfx, int mouseX, int mouseY) {
 		int drawerX = guiLeft + HOME_BTN_PAD;
 		int drawerY = guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 4; // below home button
@@ -3639,88 +1910,6 @@ public class HarbingerProgressScreen extends Screen {
 	}
 
 	/** Returns true if the mouse is inside the tier sidebar region (Rites/Crafting/Scars). */
-	private boolean isOverTierSidebar(double mx, double my) {
-		return mx >= guiLeft && mx <= guiLeft + TIER_SIDEBAR_W
-			&& my >= guiTop && my <= guiTop + guiHeight;
-	}
-
-	/** Visible height of the scrollable area inside the tier sidebar. */
-	private int tierSidebarVisibleH() {
-		return guiHeight - 42 - 4; // 42 = title(14) + separator(4) + top padding(24); 4 = bottom margin
-	}
-
-	/** Total content height for the Rites tier sidebar. */
-	private int riteSidebarContentH() {
-		int rowH = 22;
-		int total = 0;
-		for (CardinalRiteType type : CardinalRiteType.values()) {
-			total += rowH + 2;
-			if (type == selectedRiteTier) {
-				List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
-				total += rowH + 2 + recipes.size() * 18;
-			}
-		}
-		return total;
-	}
-
-	/** Total content height for the Crafting tier sidebar. */
-	private int craftingSidebarContentH() {
-		int rowH = 22;
-		int total = 0;
-		for (String tierName : CRAFTING_TIER_NAMES) {
-			total += rowH + 2;
-			if (tierName.equals(selectedCraftingTier)) {
-				List<BloodStructureRecipe> recipes = craftingByTier.getOrDefault(tierName, List.of());
-				total += rowH + 2 + recipes.size() * 18;
-			}
-		}
-		return total;
-	}
-
-	/** Total content height for the Scars tier sidebar. */
-	private int scarSidebarContentH() {
-		int rowH = 22;
-		int total = 0;
-		for (String tierName : SCAR_TIER_NAMES) {
-			total += rowH + 2;
-			if (tierName.equals(selectedScarTier)) {
-				List<com.vincenthuto.hemomancy.common.recipe.ScarRecipe> recipes =
-						chiselByTier.getOrDefault(tierName, List.of());
-				total += rowH + 2 + recipes.size() * 18;
-			}
-		}
-		return total;
-	}
-
-	private void clampRiteSidebarScroll() {
-		int maxScroll = Math.max(0, riteSidebarContentH() - tierSidebarVisibleH());
-		riteSidebarScroll = Math.min(riteSidebarScroll, maxScroll);
-	}
-
-	private void clampCraftingSidebarScroll() {
-		int maxScroll = Math.max(0, craftingSidebarContentH() - tierSidebarVisibleH());
-		craftingSidebarScroll = Math.min(craftingSidebarScroll, maxScroll);
-	}
-
-	private void clampscarSidebarScroll() {
-		int maxScroll = Math.max(0, scarSidebarContentH() - tierSidebarVisibleH());
-		scarSidebarScroll = Math.min(scarSidebarScroll, maxScroll);
-	}
-
-	/** Returns the trailing path segment of a chisel recipe's ResourceLocation (e.g. {@code "scar_heart"}). */
-	private static String ScarRecipeKey(com.vincenthuto.hemomancy.common.recipe.ScarRecipe recipe) {
-		String path = recipe.getId().getPath();
-		return path.contains("/") ? path.substring(path.lastIndexOf('/') + 1) : path;
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Materials & Processes tab — node grid
-	// ────────────────────────────────────────────────────────────
-
-	/**
-	 * Builds a grid layout of material nodes grouped by category.
-	 * Each category starts a new row block; nodes flow left-to-right.
-	 */
 	private void buildMaterialLayout() {
 		List<MaterialEntry> entries = MaterialsData.getBloodEntries();
 		int[] bounds = new int[2];
