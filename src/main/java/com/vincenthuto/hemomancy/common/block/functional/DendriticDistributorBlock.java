@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.DendriticDistributorBlockEntity;
 
@@ -105,7 +106,7 @@ public class DendriticDistributorBlock extends BaseEntityBlock {
 		// Opens the Skill Tree screen (client-only)
 		if (worldIn.isClientSide) {
 			net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
-					() -> () -> com.vincenthuto.hemomancy.client.screen.skilltree.SkillTreeScreen.openScreen());
+					() -> () -> HarbingerProgressScreen.openScreen());
 		}
 		return InteractionResult.SUCCESS;
 

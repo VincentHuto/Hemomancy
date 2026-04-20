@@ -37,7 +37,7 @@ public final class MiniRecipeRenderer {
 	public record Theme(int slotBg, int slotDark, int slotLight, int arrowColor,
 						int labelDim, int costColor, int patternFilled, int patternEmpty) {}
 
-	/** Blood-faction theme — dark red/crimson, matching the SkillTreeScreen. */
+	/** Blood-faction theme — dark red/crimson, matching the HarbingerProgressScreen. */
 	public static final Theme BLOOD = new Theme(
 			0xFF1A0808, 0xFF0D0303, 0xFF3A1212,
 			0xFF606060, 0xFF606870, 0xFFAA4444,

@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Shared renderer for the "Materials &amp; Processes" tab that appears in both
- * {@link SkillTreeScreen} (blood faction) and {@link UnstainedProgressScreen}
+ * {@link HarbingerProgressScreen} (blood faction) and {@link UnstainedProgressScreen}
  * (Unstained faction).
  *
  * <p>Categories are arranged as visually distinct <b>clusters</b> packed into a

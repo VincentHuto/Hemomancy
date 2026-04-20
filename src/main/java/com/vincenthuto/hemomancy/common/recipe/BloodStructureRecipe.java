@@ -142,7 +142,7 @@ public class BloodStructureRecipe extends CustomRecipe {
 	/**
 	 * Returns whether this structure recipe belongs to the Unstained path.
 	 * Unstained recipes are displayed in the UnstainedProgressScreen instead
-	 * of the SkillTreeScreen.
+	 * of the HarbingerProgressScreen.
 	 */
 	public boolean isUnstained() {
 		return unstained;

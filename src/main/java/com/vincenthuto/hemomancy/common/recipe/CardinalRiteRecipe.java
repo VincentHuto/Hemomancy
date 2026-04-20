@@ -181,7 +181,7 @@ public class CardinalRiteRecipe extends CustomRecipe {
 	/**
 	 * Returns whether this rite belongs to the Unstained path rather than
 	 * the blood faction. Unstained rites are displayed in the
-	 * UnstainedProgressScreen instead of the SkillTreeScreen.
+	 * UnstainedProgressScreen instead of the HarbingerProgressScreen.
 	 */
 	public boolean isUnstained() {
 		return unstained;

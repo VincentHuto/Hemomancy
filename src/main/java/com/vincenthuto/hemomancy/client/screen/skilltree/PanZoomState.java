@@ -4,7 +4,7 @@ import net.minecraft.util.Mth;
 
 /**
  * Encapsulates all pan/zoom state for a single scrollable content view inside
- * a GUI viewport. Both {@link SkillTreeScreen} and {@link UnstainedProgressScreen}
+ * a GUI viewport. Both {@link HarbingerProgressScreen} and {@link UnstainedProgressScreen}
  * use one or more of these per-tab.
  *
  * <p>Usage pattern:

@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Static rendering helpers shared between {@link SkillTreeScreen}
+ * Static rendering helpers shared between {@link HarbingerProgressScreen}
  * and {@link UnstainedProgressScreen} (and any future skill/progress screens).
  */
 public final class ScreenDrawUtils {

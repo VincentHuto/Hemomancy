@@ -11,7 +11,6 @@ import java.util.Set;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
@@ -60,7 +59,7 @@ import net.minecraft.world.level.block.Blocks;
  *   <li>Skill nodes built dynamically from {@link SkillPointInit}</li>
  * </ul>
  */
-public class SkillTreeScreen extends Screen {
+public class HarbingerProgressScreen extends Screen {
 
 	// ── Tabs ──
 	private enum Tab {
@@ -235,13 +234,13 @@ public class SkillTreeScreen extends Screen {
 	//  Construction / opening
 	// ────────────────────────────────────────────────────────────
 
-	public SkillTreeScreen() {
+	public HarbingerProgressScreen() {
 		super(Component.translatable("screen.hemomancy.skill_tree"));
 	}
 
 	/** Call from the client side to open this screen. */
 	public static void openScreen() {
-		Minecraft.getInstance().setScreen(new SkillTreeScreen());
+		Minecraft.getInstance().setScreen(new HarbingerProgressScreen());
 	}
 
 	// ────────────────────────────────────────────────────────────

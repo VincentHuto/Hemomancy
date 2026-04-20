@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Static utility methods for drawing and hit-testing the five node shapes
- * (diamond, square, circle, triangle, hexagon) used by SkillTreeScreen
+ * (diamond, square, circle, triangle, hexagon) used by HarbingerProgressScreen
  * and UnstainedProgressScreen.
  * <p>
  * All methods are parameterised by centre coordinates and a half-size

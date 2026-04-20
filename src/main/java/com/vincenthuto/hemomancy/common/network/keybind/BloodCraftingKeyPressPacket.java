@@ -51,7 +51,7 @@ public class BloodCraftingKeyPressPacket {
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
 	private static final double BLOOM_CATALYST_MATCH_INFLATE_Y = 1.0;
 
-	// ── Tier degree requirements (must match SkillTreeScreen constants) ──
+	// ── Tier degree requirements (must match HarbingerProgressScreen constants) ──
 	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
 	private static final int[] CRAFTING_TIER_THRESHOLDS = { 100, 200, Integer.MAX_VALUE };
 	private static final int[] CRAFTING_TIER_DEGREE_REQ = { 0, 2, 4 };

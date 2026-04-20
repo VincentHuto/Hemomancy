@@ -1,16 +1,12 @@
 package com.vincenthuto.hemomancy.common.item;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.SkillTreeScreen;
-import net.minecraft.core.BlockPos;
+import com.vincenthuto.hemomancy.client.screen.skilltree.HarbingerProgressScreen;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 
 public class ItemSanguineConduit extends Item{
 
@@ -23,7 +19,7 @@ public class ItemSanguineConduit extends Item{
         // Opens the Skill Tree screen (client-only)
         if (lvl.isClientSide) {
             net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
-                    () -> SkillTreeScreen::openScreen);
+                    () -> HarbingerProgressScreen::openScreen);
         }
         return super.use(lvl, p_41433_, p_41434_);
     }

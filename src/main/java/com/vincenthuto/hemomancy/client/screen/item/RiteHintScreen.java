@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.screen.skilltree.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.client.screen.skilltree.ScreenDrawUtils;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -26,7 +27,7 @@ import net.minecraft.world.level.block.Blocks;
 /**
  * A read-only screen opened from a {@link com.vincenthuto.hemomancy.common.item.RiteHintItem}
  * that displays a single cardinal rite's 3D structure and info panel — similar to the
- * RITES tab in {@link com.vincenthuto.hemomancy.client.screen.skilltree.SkillTreeScreen},
+ * RITES tab in {@link HarbingerProgressScreen},
  * but focused on a single rite without the tier sidebar.
  * <p>
  * The screen looks like a weathered blood-stained parchment (grey/red tones).

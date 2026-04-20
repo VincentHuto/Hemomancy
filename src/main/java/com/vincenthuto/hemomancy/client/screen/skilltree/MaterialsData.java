@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
  * Static catalogue of material / process entries shown in the
  * "Materials &amp; Processes" tabs.
  * <p>
- * Blood-faction entries appear in the {@link SkillTreeScreen};
+ * Blood-faction entries appear in the {@link HarbingerProgressScreen};
  * Unstained/White Humor entries appear in the {@link UnstainedProgressScreen}.
  */
 public final class MaterialsData {
@@ -21,7 +21,7 @@ public final class MaterialsData {
 	private MaterialsData() {}
 
 	// ────────────────────────────────────────────────────────────
-	//  Blood faction — SkillTreeScreen
+	//  Blood faction — HarbingerProgressScreen
 	// ────────────────────────────────────────────────────────────
 
 	private static List<MaterialEntry> bloodEntries;

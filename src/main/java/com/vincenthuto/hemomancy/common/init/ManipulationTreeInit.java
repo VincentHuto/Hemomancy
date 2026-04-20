@@ -55,13 +55,12 @@ public class ManipulationTreeInit {
 		// Row 1 (middle) — MEDIOCRITAS
 		register("deadly_gaze",    ax,               TREE_TOP_Y + ROW_GAP,   "blood_shot");
 		register("blood_cloud",    ax + COL_GAP,     TREE_TOP_Y + ROW_GAP,   "blood_needle", "blood_shot");
-		register("summon_thrall",  ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP,   "blood_rush", "crimson_flame_conjuration");
+		register("summon_thrall",  ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP,   "blood_rush");
 
 		// Row 2 (bottom) — HUMILIS
 		register("blood_shot",     ax,               TREE_TOP_Y + ROW_GAP * 2);
 		register("blood_needle",   ax + COL_GAP,     TREE_TOP_Y + ROW_GAP * 2);
 		register("blood_rush",     ax + COL_GAP * 2, TREE_TOP_Y + ROW_GAP * 2);
-		register("crimson_flame_conjuration", ax + COL_GAP * 3, TREE_TOP_Y + ROW_GAP * 2);
 
 		// ═══════════════════════════════════════════
 		//  FERRIC tendency cluster  (grey / metallic)
@@ -128,6 +127,7 @@ public class ManipulationTreeInit {
 
 		// Row 1 (middle) — MEDIOCRITAS
 		register("pyretic_forge",        fmx,        TREE_TOP_Y + ROW_GAP,   "sanguine_ignition");
+		register("crimson_flame_conjuration", fmx + COL_GAP, TREE_TOP_Y + ROW_GAP * 2,   "sanguine_ignition");
 
 		// Row 2 (bottom) — HUMILIS
 		register("sanguine_ignition",    fmx,        TREE_TOP_Y + ROW_GAP * 2);

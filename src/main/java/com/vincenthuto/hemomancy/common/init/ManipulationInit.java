@@ -143,7 +143,7 @@ public class ManipulationInit {
 
 	public static final RegistryObject<BloodManipulation> crimson_flame_conjuration = MANIPS.register("crimson_flame_conjuration",
 			() -> new CrimsonFlameConjurationManip("crimson_flame_conjuration", 150, 0, 0, EnumManipulationType.QUICK,
-					EnumManipulationRank.HUMILIS, EnumBloodTendency.ANIMUS, EnumVeinSections.RIGHTARM)
+					EnumManipulationRank.HUMILIS, EnumBloodTendency.FLAMMEUS, EnumVeinSections.RIGHTARM)
 					.setCooldownTicks(15));
 
 	// ── Utilitarian Manipulations ──
