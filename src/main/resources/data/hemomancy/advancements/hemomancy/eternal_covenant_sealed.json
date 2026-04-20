@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:vitality_chalice"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.eternal_covenant_sealed.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.eternal_covenant_sealed.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_6_sanctified",
+  "criteria": {
+    "grant": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "grant"
+    ]
+  ]
+}

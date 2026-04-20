@@ -1714,10 +1714,12 @@ JEI recipe category support for:
 
 ## 27. Advancements
 
+### 27.1 Shared / Early Game
+
 | Advancement | Trigger |
 |-------------|---------|
 | **Strange Seeds** | Find Gourd Seeds from grass |
-| **The First Awakening** | Activate a Blood Temple's Mortal Display |
+| **The First Awakening** | Activate a Blood Temple's Mortal Display (programmatic) |
 | **Ashen Beginnings** | Craft Befouling Ash |
 | **Sanctum Sanguinium** | Obtain the Liber Sanguinum |
 | **Iron in the Blood** | Create first Hematic Iron Block via blood structure recipe |
@@ -1729,11 +1731,66 @@ JEI recipe category support for:
 | **Cultivator** | Obtain a Morphling Jar |
 | **The Blood Remembers** | Obtain a Living Blade |
 | **Old Habits** | Obtain any enzyme |
-| **Unstained** | Obtain Hemolytic Solution |
-| **Lady of the Forgotten Waters** | Obtain Tears of Silthmere |
-| **Path of Purity** | Obtain the Tome of the Unstained |
-| **Our Lady of Still Waters** | Obtain the Icon of Our Lady (challenge) |
-| **Bleeding a Stone** | Craft a ghastly_alembic |
+| **Bleeding a Stone** | Craft a Ghastly Alembic |
+
+### 27.2 Harbinger Path (programmatic + item triggers)
+
+All degree advancements are granted via `HarbingerAdvancementGranter.grantDegree()` inside the `DEGREE_RITE_PATHS` completion block of `CardinalRiteEvents`. They chain from `the_first_awakening`.
+
+| Advancement | JSON key | Frame | Trigger |
+|-------------|----------|-------|---------|
+| **Neophyte of the Crimson Veil** | `degree_1_neophyte` | task | Degree 1 rite (programmatic) |
+| **Votary of the Hematic Covenant** | `degree_2_votary` | task | Degree 2 rite (programmatic) |
+| **Initiate of the Scarlet Sanctum** | `degree_3_initiate` | task | Degree 3 rite (programmatic) |
+| **Adept of the Sanguine Brotherhood** | `degree_4_adept` | goal | Degree 4 rite (programmatic) |
+| **Illuminatus of the Crimson Lodge** | `degree_5_illuminatus` | goal | Degree 5 rite (programmatic) |
+| **Sanctified of the Bloodline Covenant** | `degree_6_sanctified` | goal | Degree 6 rite (programmatic) |
+| **Archon of the Hematic Order** | `degree_7_archon` | challenge | Degree 7 rite (programmatic) |
+| **Apotheos of the Hematic Order** | `degree_8_apotheos` | challenge | Degree 8 rite (programmatic) |
+
+**Order function milestones** — branches off the degree chain:
+
+| Advancement | JSON key | Parent | Trigger |
+|-------------|----------|--------|---------|
+| **Blood Is Bound** | `blood_is_bound` | `degree_3_initiate` | Bloodline founding rite succeeds (programmatic) |
+| **A Lodge of Crimson** | `crimson_lodge_consecrated` | `degree_5_illuminatus` | Crimson Lodge rite completes (programmatic) |
+| **This Ground Is Ours** | `founding_sanctum_established` | `degree_5_illuminatus` | Founding Sanctum first consecration (programmatic) |
+| **The Covenant Cannot Be Unmade** | `eternal_covenant_sealed` | `degree_6_sanctified` | Eternal Covenant rite completes (programmatic) |
+
+**Endgame / revelation milestones:**
+
+| Advancement | JSON key | Parent | Trigger |
+|-------------|----------|--------|---------|
+| **Voices in the Vein** | `voices_in_the_vein` | `degree_7_archon` | Ancestral Communion rite (programmatic) |
+| **The Blood Beneath the Blood** | `the_blood_beneath_the_blood` | `degree_7_archon` | Obtain Fungal Spine (inventory_changed) |
+
+**Mastery side branches:**
+
+| Advancement | JSON key | Parent | Trigger |
+|-------------|----------|--------|---------|
+| **Scars of the Mind** | `scars_of_the_mind` | `degree_4_adept` | Obtain Scar Binder or Scar Binder Upgraded (inventory_changed) |
+| **The Land Bleeds for You** | `sanguine_domain` | `degree_5_illuminatus` | Sanguine Dominion rite (programmatic) |
+
+### 27.3 Unstained Path (programmatic)
+
+All granted via `UnstainedAdvancementGranter.grantIfNotDone()` from `UnstainedMilestoneHandler` (tick-based threshold checks) and `CardinalRiteEvents` (clarity ascension rite, altar of cleansing).
+
+| Advancement | JSON key | Frame | Condition |
+|-------------|----------|-------|-----------|
+| **Unstained** | `unstained` | task | Obtain Hemolytic Solution |
+| **Lady of the Forgotten Waters** | `lady_of_forgotten_waters` | goal | Obtain Tears of Silthmere |
+| **Path of Purity** | `path_of_purity` | task | Obtain Tome of the Unstained |
+| **Our Lady of Still Waters** | `our_lady_of_still_waters` | challenge | Obtain Icon of Our Lady |
+| **Blessed by the Altar** | `blessed_by_the_altar` | goal | Use Altar of Cleansing (programmatic) |
+| **Tainted** | `tainted` | task | Purity ≥ 25 (programmatic) |
+| **Cleansing** | `cleansing` | task | Purity ≥ 50 (programmatic) |
+| **Absolved** | `absolved` | goal | Purity ≥ 75 (programmatic) |
+| **Purified** | `purified` | challenge | Purity = 100 (programmatic) |
+| **Clarity Awakened** | `clarity_awakened` | challenge | Clarity unlocked (programmatic) |
+| **Discerning** | `discerning` | task | Clarity ≥ 25 (programmatic) |
+| **Vigilant** | `vigilant` | goal | Clarity ≥ 50 (programmatic) |
+| **Resolute** | `resolute_stage` | goal | Clarity ≥ 75 (programmatic) |
+| **Enlightened** | `enlightened_seeker` | challenge | Clarity = 100 (programmatic) |
 
 ---
 

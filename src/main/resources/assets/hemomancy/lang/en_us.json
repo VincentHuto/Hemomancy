@@ -1365,5 +1365,41 @@
   "item.hemomancy.spawn_egg_tooth_pecks": "Spawn Egg Tooth Pecks",
   "subtitle.hemomancy.entity.tooth_pecks.ambient": "Tooth Pecks chatters",
   "subtitle.hemomancy.entity.tooth_pecks.hurt": "Tooth Pecks squeals",
-  "subtitle.hemomancy.entity.tooth_pecks.death": "Tooth Pecks crunches"
+  "subtitle.hemomancy.entity.tooth_pecks.death": "Tooth Pecks crunches",
+
+  "advancements.hemomancy.degree_1_neophyte.title": "Neophyte of the Crimson Veil",
+  "advancements.hemomancy.degree_1_neophyte.description": "Perform the Rite of Sanguine Initiation and take your first step into the Hematic Order",
+  "advancements.hemomancy.degree_2_votary.title": "Votary of the Hematic Covenant",
+  "advancements.hemomancy.degree_2_votary.description": "Complete the Rite of the Votary and bind yourself deeper into the blood covenant",
+  "advancements.hemomancy.degree_3_initiate.title": "Initiate of the Scarlet Sanctum",
+  "advancements.hemomancy.degree_3_initiate.description": "Complete the Rite of the Scarlet Sanctum and be granted formal entry into the Order",
+  "advancements.hemomancy.degree_4_adept.title": "Adept of the Sanguine Brotherhood",
+  "advancements.hemomancy.degree_4_adept.description": "Perform the Adept Rite — the blood now speaks through your scars",
+  "advancements.hemomancy.degree_5_illuminatus.title": "Illuminatus of the Crimson Lodge",
+  "advancements.hemomancy.degree_5_illuminatus.description": "Complete the Rite of the Crimson Lodge and be illuminated by the inner secrets of the Order",
+  "advancements.hemomancy.degree_6_sanctified.title": "Sanctified of the Bloodline Covenant",
+  "advancements.hemomancy.degree_6_sanctified.description": "Perform the Rite of the Bloodline Covenant — your name is written in the deepest marrow",
+  "advancements.hemomancy.degree_7_archon.title": "Archon of the Hematic Order",
+  "advancements.hemomancy.degree_7_archon.description": "Complete the Rite of the Hematic Order and ascend to Archon — the highest degree the blood-tide can bestow",
+  "advancements.hemomancy.degree_8_apotheos.title": "Apotheos of the Hematic Order",
+  "advancements.hemomancy.degree_8_apotheos.description": "Perform the Rite of Apotheos and transcend beyond the Order itself — the eighth degree is silence",
+
+  "advancements.hemomancy.blood_is_bound.title": "Blood Is Bound",
+  "advancements.hemomancy.blood_is_bound.description": "Found a bloodline — bind your essence to others who share the covenant",
+  "advancements.hemomancy.crimson_lodge_consecrated.title": "A Lodge of Crimson",
+  "advancements.hemomancy.crimson_lodge_consecrated.description": "Consecrate a Crimson Lodge and claim a sanctified ground for the Order",
+  "advancements.hemomancy.founding_sanctum_established.title": "This Ground Is Ours",
+  "advancements.hemomancy.founding_sanctum_established.description": "Consecrate your Founding Sanctum — claim the land for the Hematic Order",
+
+  "advancements.hemomancy.eternal_covenant_sealed.title": "The Covenant Cannot Be Unmade",
+  "advancements.hemomancy.eternal_covenant_sealed.description": "Seal the Eternal Covenant and permanently expand your capacity to hold the tide",
+  "advancements.hemomancy.voices_in_the_vein.title": "Voices in the Vein",
+  "advancements.hemomancy.voices_in_the_vein.description": "Complete the Rite of Ancestral Communion and hear what waits beneath the blood",
+  "advancements.hemomancy.the_blood_beneath_the_blood.title": "The Blood Beneath the Blood",
+  "advancements.hemomancy.the_blood_beneath_the_blood.description": "Obtain a Fungal Spine — the Order's true nature has found you",
+
+  "advancements.hemomancy.scars_of_the_mind.title": "Scars of the Mind",
+  "advancements.hemomancy.scars_of_the_mind.description": "Obtain a Scar Binder — the vascular arts are now written into your flesh",
+  "advancements.hemomancy.sanguine_domain.title": "The Land Bleeds for You",
+  "advancements.hemomancy.sanguine_domain.description": "Establish a Sanguine Domain — a territory where the blood-tide answers your call"
 }

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "hemomancy:scar_binder"
+    },
+    "title": {
+      "translate": "advancements.hemomancy.scars_of_the_mind.title"
+    },
+    "description": {
+      "translate": "advancements.hemomancy.scars_of_the_mind.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "hemomancy:hemomancy/degree_4_adept",
+  "criteria": {
+    "has_scar_binder": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "hemomancy:scar_binder",
+              "hemomancy:scar_binder_upgraded"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_scar_binder"
+    ]
+  ]
+}

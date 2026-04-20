@@ -41,6 +41,7 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncActiveRites;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
+import com.vincenthuto.hemomancy.common.event.HarbingerAdvancementGranter;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
@@ -603,6 +604,7 @@ public class CardinalRiteEvents {
 			// Bloodline founding rite: pre-sign the ledger with the caster's new bloodline
 			if (BLOODLINE_FOUNDING_RITE.equals(ritePath) && resultStack.getItem() instanceof UnsignedLedgerItem) {
 				presignBloodlineLedger(sLevel, caster, resultStack);
+				HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_BLOOD_IS_BOUND);
 			}
 
 			// Bloodline recall rite: re-issue a ledger from the caster's existing bloodline
@@ -791,6 +793,9 @@ public class CardinalRiteEvents {
 
 					// Award degree milestone skill points
 					SkillPointGainEvents.onDegreeReached(caster, targetDegree);
+
+					// Grant Harbinger degree advancement(s) for the new rank
+					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
 					caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
@@ -1108,6 +1113,7 @@ public class CardinalRiteEvents {
 						+ " blocks in every direction now bow to your crimson will.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_SANGUINE_DOMAIN);
 	}
 
 	/**
@@ -1145,6 +1151,7 @@ public class CardinalRiteEvents {
 						+ blockRadius + " blocks.")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD),
 				false);
+		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_CRIMSON_LODGE_CONSECRATED);
 	}
 
 	/**
@@ -1173,6 +1180,7 @@ public class CardinalRiteEvents {
 						+ (int) ETERNAL_COVENANT_BONUS + ".")
 						.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
 				false);
+		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_ETERNAL_COVENANT_SEALED);
 	}
 
 	/**
@@ -1193,6 +1201,7 @@ public class CardinalRiteEvents {
 				Component.literal("The ancient blood stirs... a voice rises from the depths.")
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				false);
+		HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_VOICES_IN_THE_VEIN);
 	}
 
 	/**
@@ -2126,6 +2135,7 @@ public class CardinalRiteEvents {
 					Component.literal("This ground is now consecrated. All Harbingers within will feel its power.")
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC),
 					false);
+			HarbingerAdvancementGranter.grantIfNotDone(caster, HarbingerAdvancementGranter.ADV_FOUNDING_SANCTUM_ESTABLISHED);
 		}
 		sLevel.sendParticles(ParticleTypes.CRIMSON_SPORE,
 				center.getX() + 0.5, center.getY() + 1.0, center.getZ() + 0.5,
