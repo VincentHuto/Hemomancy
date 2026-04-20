@@ -84,20 +84,11 @@ public class PacketKickBloodlinePlayer {
 				}
 
 				for (ServerPlayer online : leader.server.getPlayerList().getPlayers()) {
-					online.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(memberVolume -> {
-						if (online.getUUID().equals(msg.targetUUID)) {
-							memberVolume.setBloodLine(Bloodline.NOBLOODLINE);
-							BloodVolumeEvents.syncVolume(online, memberVolume);
-							online.displayClientMessage(
-									Component.translatable("hemomancy.bloodline.kick.you_were_removed",
-											leader.getName().getString())
-											.withStyle(ChatFormatting.DARK_RED),
-									false);
-						} else if (updatedLine.hasMember(online.getUUID())) {
-							memberVolume.setBloodLine(updatedLine);
-							BloodVolumeEvents.syncVolume(online, memberVolume);
-						}
-					});
+					if (online.getUUID().equals(msg.targetUUID)) {
+						notifyKickedPlayer(online, leader);
+					} else if (updatedLine.hasMember(online.getUUID())) {
+						syncMemberToUpdatedLine(online, updatedLine);
+					}
 				}
 
 				String removedName = leader.server.getProfileCache().get(msg.targetUUID)
@@ -110,5 +101,26 @@ public class PacketKickBloodlinePlayer {
 			});
 		});
 		ctx.get().setPacketHandled(true);
+	}
+
+	/** Clears the kicked player's bloodline, syncs them to client, and sends the removal notice. */
+	private static void notifyKickedPlayer(ServerPlayer kicked, ServerPlayer leader) {
+		kicked.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			vol.setBloodLine(Bloodline.NOBLOODLINE);
+			BloodVolumeEvents.syncVolume(kicked, vol);
+			kicked.displayClientMessage(
+					Component.translatable("hemomancy.bloodline.kick.you_were_removed",
+							leader.getName().getString())
+							.withStyle(ChatFormatting.DARK_RED),
+					false);
+		});
+	}
+
+	/** Updates an ongoing bloodline member's local capability to the freshly updated bloodline. */
+	private static void syncMemberToUpdatedLine(ServerPlayer member, Bloodline updatedLine) {
+		member.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(vol -> {
+			vol.setBloodLine(updatedLine);
+			BloodVolumeEvents.syncVolume(member, vol);
+		});
 	}
 }

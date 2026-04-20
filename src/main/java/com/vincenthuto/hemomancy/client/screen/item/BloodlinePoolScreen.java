@@ -17,6 +17,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -343,8 +344,7 @@ public class BloodlinePoolScreen extends Screen {
 					kickPrevButton.active = true;
 					kickNextButton.active = true;
 					kickTargetIndex = Mth.clamp(kickTargetIndex, 0, kickable.size() - 1);
-					String target = kickable.get(kickTargetIndex).toString();
-					String shortTarget = target.length() > 16 ? target.substring(0, 16) + "…" : target;
+					String shortTarget = resolvePlayerName(kickable.get(kickTargetIndex));
 					graphics.drawString(this.font, "Expel Player:", guiLeft + 22,
 							kickMemberButton.getY() + 1, 0xFFCC6666, true);
 					graphics.drawString(this.font, shortTarget, guiLeft + 22,
@@ -473,6 +473,14 @@ public class BloodlinePoolScreen extends Screen {
 			int color = (alpha << 24) | (r << 16) | (g << 8) | b;
 			graphics.fill(ix, iy, ix + thickness, iy + thickness, color);
 		}
+	}
+
+	/** Resolves a UUID to a display name using the client's player info list, falling back to the UUID string. */
+	private static String resolvePlayerName(UUID uuid) {
+		PlayerInfo info = Minecraft.getInstance().getConnection() != null
+				? Minecraft.getInstance().getConnection().getPlayerInfo(uuid)
+				: null;
+		return info != null ? info.getProfile().getName() : uuid.toString();
 	}
 
 	private static List<UUID> getKickableMembers(LocalPlayer player) {
