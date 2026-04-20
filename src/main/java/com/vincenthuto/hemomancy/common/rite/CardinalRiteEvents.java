@@ -1428,13 +1428,13 @@ public class CardinalRiteEvents {
 
 		// Capture the remaining-pomes count BEFORE removal (removeBloomInChunk clears the counter)
 		// Find the bloom entry to get the center first
-		int chunk = center.getX() >> 4;
+		int chunkX = center.getX() >> 4;
 		int chunkZ = center.getZ() >> 4;
 		int pomesAlreadyDropped = 0;
 		BlockPos bloomCenter = null;
 		for (QliphothBloomSavedData.BloomEntry b : data.getBlooms()) {
 			if (!b.dimension().equals(dimension)) continue;
-			if ((b.center().getX() >> 4) == chunk && (b.center().getZ() >> 4) == chunkZ) {
+			if ((b.center().getX() >> 4) == chunkX && (b.center().getZ() >> 4) == chunkZ) {
 				bloomCenter = b.center();
 				pomesAlreadyDropped = data.getPomesDropped(b.center());
 				break;
