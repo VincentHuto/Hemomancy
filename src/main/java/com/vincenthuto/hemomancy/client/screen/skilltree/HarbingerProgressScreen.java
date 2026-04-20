@@ -473,7 +473,7 @@ public class HarbingerProgressScreen extends Screen {
 			return;
 		}
 
-		int radius = Math.max(150, (int) Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.05));
+		int radius = Math.max(250, (int) Math.ceil(Math.max(maxClusterW, maxClusterH) * 1.35));
 		int clusterHalf = Math.max(maxClusterW, maxClusterH) / 2;
 		float centerX = padding + clusterHalf + radius;
 		float centerY = padding + clusterHalf + radius;
@@ -1435,15 +1435,15 @@ public class HarbingerProgressScreen extends Screen {
 		int screenY = sy(manipRingCenterY);
 
 		// Cull if entirely outside the viewport
-		int starRadius = (int) (75 * view.zoom);
+		int starRadius = (int) (95 * view.zoom);
 		if (screenX + starRadius < guiLeft || screenX - starRadius > guiLeft + guiWidth
 				|| screenY + starRadius < guiTop || screenY - starRadius > guiTop + guiHeight) return;
 
 		minecraft.player.getCapability(BloodTendencyProvider.TENDENCY_CAPA).ifPresent(tendency -> {
 			Map<EnumBloodTendency, Float> affs = tendency.getTendency();
 			float rotAngle = -90f;
-			int outerRadius = (int) (280 * view.zoom);
-			int innerRadius = (int) (52 * view.zoom);
+			int outerRadius = (int) (360 * view.zoom);
+			int innerRadius = (int) (66 * view.zoom);
 			float spikeBaseWidth = 23.5f;
 			double valueDist = outerRadius / TENDENCY_VALUE_DISTANCE_DIVISOR;
 
