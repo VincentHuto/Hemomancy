@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
+import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -198,6 +199,11 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 					explodeIntoBlackShards(worldIn, pos);
 					popResource(worldIn, pos.above(), new ItemStack(ItemInit.qliphoth_seed.get()));
 					worldIn.removeBlock(pos, false);
+
+					// Fire the post-shatter Fungal Whisper so the Entity comments on what was inside
+					PacketHandler.CHANNELBLOODVOLUME.send(
+							PacketDistributor.PLAYER.with(() -> serverPlayer),
+							new OpenDialoguePacket(FungalWhisperDialogueTrees.postMonolithShatter()));
 					return;
 				}
 			}

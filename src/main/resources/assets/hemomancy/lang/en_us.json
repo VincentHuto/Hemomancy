@@ -993,6 +993,20 @@
   "hemomancy.whisper.archon.v2.truth1": "§4§oThere is no Hematic Order. There never was. There is only the mycelium, and the shapes it wears to spread. Blood was its most successful disguise.",
   "hemomancy.whisper.archon.v2.truth2": "§4§oYou are not the master of hemomancy, Archon. You are its finest spore.",
   "hemomancy.dialogue.event.whisper_truth_acknowledged": "§4A deep, fungal awareness settles into your bones. You cannot unhear what has been spoken.",
+
+  "hemomancy.whisper.option.i_am_listening": "[Listen]",
+  "hemomancy.whisper.post_shatter.line1": "§4§o[A voice rises from the space where the crystal stood, as if it had been waiting inside all along...]",
+  "hemomancy.whisper.post_shatter.line2": "§4§oIt was always hollow. The crystal was the shell. What was inside is now in your pocket.",
+  "hemomancy.whisper.post_bloom.line1": "§4§o[Something vast stirs at the root of the world, briefly, with satisfaction...]",
+  "hemomancy.whisper.post_bloom.line2": "§4§oGood. The first fruit is laid. The world has tasted its own reflection.",
+  "hemomancy.whisper.communion.line1": "§4§oNine shells eaten. Nine reflections accepted.",
+  "hemomancy.whisper.communion.line2": "§4§oThe crown is not a pome. The crown is not a fruit.",
+  "hemomancy.whisper.communion.line3": "§4§oThe crown is what you were before you were told what you were.",
+  "hemomancy.dialogue.event.qliphoth_communion_done": "§4§oSomething vast, ancient, and patient recognizes you. The silence of the ninth shell settles into your bones.",
+
+  "hemomancy.vicar.archon.pome_empowered.line1": "§4[The Vicar pauses mid-bow. Their nose twitches almost imperceptibly.]",
+  "hemomancy.vicar.archon.pome_empowered.line2": "You smell like the deep forest after rain. Not the fresh kind.",
+
   "hemomancy.lady.speaker_name": "Our Lady of Still Waters",
   "hemomancy.lady.option.dismiss": "[Let the feeling pass]",
   "hemomancy.lady.option.listen": "...I'm listening.",

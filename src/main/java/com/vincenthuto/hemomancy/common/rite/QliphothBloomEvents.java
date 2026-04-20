@@ -97,10 +97,20 @@ public class QliphothBloomEvents {
 	 * Attempts to spawn a Qliphoth Pome item entity near the bloom's tree.
 	 * Only succeeds rarely (1 in {@link #POME_DROP_CHANCE}) and caps the number
 	 * of pome items on the ground nearby to prevent accumulation.
+	 * <p>
+	 * Each dropped pome is tagged with the bloom's center position
+	 * ({@code hemomancy:bloom_origin}) and the sequential husk index
+	 * ({@code hemomancy:husk_index}, 0–8) so players can track which of the
+	 * nine Qliphoth husks they are consuming. Once all nine have dropped the
+	 * tree ceases production for this bloom's lifecycle.
 	 */
 	private static void trySpawnPome(ServerLevel level, BlockPos center) {
 		RandomSource rand = level.getRandom();
 		if (rand.nextInt(POME_DROP_CHANCE) != 0) return;
+
+		QliphothBloomSavedData data = QliphothBloomSavedData.get(level.getServer().overworld());
+		int alreadyDropped = data.getPomesDropped(center);
+		if (alreadyDropped >= QliphothBloomSavedData.MAX_POMES_PER_BLOOM) return;
 
 		// Cap: don't drop if too many pome items already lying around the tree
 		AABB searchBox = new AABB(center).inflate(POME_SEARCH_RADIUS, 10, POME_SEARCH_RADIUS);
@@ -108,14 +118,22 @@ public class QliphothBloomEvents {
 				e -> e.isAlive() && e.getItem().is(ItemInit.qliphoth_pome.get())).size();
 		if (existingPomes >= POME_MAX_NEARBY) return;
 
+		// Build the tagged pome stack
+		ItemStack pomeStack = new ItemStack(ItemInit.qliphoth_pome.get());
+		net.minecraft.nbt.CompoundTag tag = pomeStack.getOrCreateTag();
+		tag.putLong(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.BLOOM_ORIGIN_KEY, center.asLong());
+		tag.putInt(com.vincenthuto.hemomancy.common.item.QliphothPomeItem.HUSK_INDEX_KEY, alreadyDropped);
+
+		// Register the drop in SavedData before spawning (so we don't double-count)
+		data.incrementPomesDropped(center);
+
 		// Spawn at the tree center with a small random horizontal offset,
 		// a few blocks up (as if falling from the canopy), with slight outward velocity
 		double spawnX = center.getX() + 0.5 + (rand.nextDouble() - 0.5) * 3.0;
 		double spawnY = center.getY() + 4.0 + rand.nextDouble() * 3.0;
 		double spawnZ = center.getZ() + 0.5 + (rand.nextDouble() - 0.5) * 3.0;
 
-		ItemEntity pomeEntity = new ItemEntity(level, spawnX, spawnY, spawnZ,
-				new ItemStack(ItemInit.qliphoth_pome.get()));
+		ItemEntity pomeEntity = new ItemEntity(level, spawnX, spawnY, spawnZ, pomeStack);
 		// Small random velocity so it tumbles away from the trunk
 		pomeEntity.setDeltaMovement(
 				(rand.nextDouble() - 0.5) * 0.1,

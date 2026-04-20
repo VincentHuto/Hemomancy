@@ -405,10 +405,10 @@ Hemomancy draws on this concept not as good-versus-evil but as complementary for
 
 The Qliphoth Tree:
 - Provides **blood volume regeneration** and enhanced regen auras in its area
-- Produces **Qliphoth Palm** fruits — eldritch, strange-looking fruits that currently cause blindness when eaten, with greater purposes planned
+- Produces **Qliphoth Pome** fruits — void-dark fruits grown around a crystallized blood core. Each pome is one of nine husks of the Qliphoth. Eating one causes a brief expansion of awareness into the void-register — perceived from the outside as darkness — alongside a surge of blood power and reduced manipulation costs. Nine pomes drop from a single tree's lifecycle, each corresponding to one of the nine corrupted shells of the Qliphoth system; eating all nine from a single bloom is the unnamed act that precedes the Eighth Degree.
 - **Must be summoned through ritual** — placed trees don't work, because you can't cheat god
 - Grows with slight random variation each time (no two trees are identical)
-- Can be removed by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained
+- Can be removed by the **Rite of Cult Pruning**, which can be performed by either Hemomancers or the Unstained. If the Unstained prune a tree that still bears pomes, those pomes are severed from their source incorrectly — tainted pomes that bring weakness rather than power.
 
 ---
 
@@ -476,7 +476,7 @@ Plants in Hemomancy are designed around real-world plant biology and carry both 
 | **Infected Fungus** | Fictional variant | Grants Confusion. Used in Foul Paste and the Potion of Mycorrhizal Mending. |
 | **Rafflesia** | Real parasitic plant (world's largest flower) | Extremely rare. A parasitic plant with no leaves, no chlorophyll — lives entirely inside other plants. Deeply fitting for the infection theme. |
 | **Puffball Mushroom** | Real fungus | Common fungus, used for Harbinger recipes. |
-| **Qliphoth Palm** | Fictional fruit | Produces blindness when eaten; eldritch in appearance; will have greater uses. |
+| **Qliphoth Pome** | Fictional fruit | A void-dark fruit grown around a crystallized blood core — one of nine husks of the Qliphoth. Eating causes a brief expansion of awareness into the void-register (perceived as darkness), a surge of blood power, and reduced manipulation costs. Nine drop from a single tree's lifecycle; consuming all nine from one bloom is the unnamed act that precedes the Eighth Degree. |
 
 ### 15.2 Unstained/Pale Lady Plants
 
