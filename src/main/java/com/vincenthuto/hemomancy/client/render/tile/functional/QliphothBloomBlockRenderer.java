@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 import com.vincenthuto.hemomancy.client.render.world.QliphothBloomRenderer;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.QliphothBloomBlockEntity;
@@ -27,6 +28,14 @@ public class QliphothBloomBlockRenderer implements BlockEntityRenderer<QliphothB
 
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
+
+		// Active blooms are rendered in the world-stage renderer (after translucent blocks)
+		// to avoid ordering issues against transparent surfaces.
+		boolean handledByWorldRenderer = QliphothBloomClientData.getActiveBlooms().stream()
+				.anyMatch(entry -> entry.getCenter().equals(be.getBlockPos()));
+		if (handledByWorldRenderer) {
+			return;
+		}
 
 		float currentTime = mc.level.getGameTime() + partialTick;
 
