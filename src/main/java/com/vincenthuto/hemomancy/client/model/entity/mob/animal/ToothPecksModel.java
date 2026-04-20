@@ -157,14 +157,14 @@ public class ToothPecksModel<T extends ToothPecksEntity> extends EntityModel<T> 
 
         // Walking leg swing
         float swing = Mth.cos(limbSwing * 0.8F) * 0.5F * limbSwingAmount;
-        leg_rf1.zRotation = (float) Math.toRadians(-30) + swing;
-        leg_rm1.zRotation = (float) Math.toRadians(-25) - swing;
-        leg_rb1.zRotation = (float) Math.toRadians(-25) + swing;
-        leg_rr1.zRotation = (float) Math.toRadians(-30) - swing;
-        leg_lf1.zRotation = (float) Math.toRadians( 30) - swing;
-        leg_lm1.zRotation = (float) Math.toRadians( 25) + swing;
-        leg_lb1.zRotation = (float) Math.toRadians( 25) - swing;
-        leg_lr1.zRotation = (float) Math.toRadians( 30) + swing;
+        leg_rf1.zRot = (float) Math.toRadians(-30) + swing;
+        leg_rm1.zRot = (float) Math.toRadians(-25) - swing;
+        leg_rb1.zRot = (float) Math.toRadians(-25) + swing;
+        leg_rr1.zRot = (float) Math.toRadians(-30) - swing;
+        leg_lf1.zRot = (float) Math.toRadians( 30) - swing;
+        leg_lm1.zRot = (float) Math.toRadians( 25) + swing;
+        leg_lb1.zRot = (float) Math.toRadians( 25) - swing;
+        leg_lr1.zRot = (float) Math.toRadians( 30) + swing;
 
         // Bite bob while latched
         body.y = entity.isLatched() ? (-3.0F + Mth.sin(ageInTicks * 0.4F) * 0.15F) : -3.0F;

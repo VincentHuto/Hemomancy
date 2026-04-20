@@ -21,6 +21,7 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -191,7 +192,7 @@ public class FungalPodiumBlock extends BaseEntityBlock {
 			performFungalGardensTravel(serverPlayer);
 		}
 
-		serverPlayer.getCooldowns().addCooldown(this, TRAVEL_COOLDOWN);
+		serverPlayer.getCooldowns().addCooldown(Item.byBlock(this), TRAVEL_COOLDOWN);
 		return InteractionResult.SUCCESS;
 	}
 
