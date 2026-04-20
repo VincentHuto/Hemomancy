@@ -46,6 +46,8 @@ public class BloodCraftingKeyPressPacket {
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final double CATALYST_SEARCH_RADIUS_XZ = 0.65;
 	private static final double CATALYST_SEARCH_RADIUS_Y = 1.0;
+	private static final double BLOOM_CATALYST_MATCH_INFLATE_XZ = 0.5;
+	private static final double BLOOM_CATALYST_MATCH_INFLATE_Y = 1.0;
 
 	// ── Tier degree requirements (must match SkillTreeScreen constants) ──
 	private static final String[] CRAFTING_TIER_NAMES = { "Basic", "Advanced", "Expert" };
@@ -332,9 +334,9 @@ public class BloodCraftingKeyPressPacket {
 
 				// Bloom of the Qliphoth requires a planted Qliphoth Seed catalyst at center
 				if (BLOOM_OF_QLIPHOTH_RITE_ID.equals(recipe.getId())) {
-					if (!consumeCenterCatalyst(sLevel, centerPos, ItemInit.qliphoth_seed.get())) {
+					if (!consumeCatalystWithinMatch(sLevel, match, bp, ItemInit.qliphoth_seed.get())) {
 						player.displayClientMessage(
-								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed at its center.")
+								Component.literal("The Bloom of the Qliphoth demands a planted Qliphoth Seed within the rite.")
 										.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
 								false);
 						return;
@@ -393,6 +395,49 @@ public class BloodCraftingKeyPressPacket {
 			entity.setItem(stack);
 		}
 		return true;
+	}
+
+	private static boolean consumeCatalystWithinMatch(ServerLevel level, BlockPattern.BlockPatternMatch match,
+			BlockPattern blockPattern, Item requiredItem) {
+		AABB matchBounds = getMatchBounds(match, blockPattern).inflate(
+				BLOOM_CATALYST_MATCH_INFLATE_XZ, BLOOM_CATALYST_MATCH_INFLATE_Y, BLOOM_CATALYST_MATCH_INFLATE_XZ);
+		List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, matchBounds,
+				e -> e.isAlive() && e.getItem().is(requiredItem));
+		if (entities.isEmpty()) {
+			return false;
+		}
+		ItemEntity entity = entities.get(0);
+		ItemStack stack = entity.getItem();
+		stack.shrink(1);
+		if (stack.isEmpty()) {
+			entity.discard();
+		} else {
+			entity.setItem(stack);
+		}
+		return true;
+	}
+
+	private static AABB getMatchBounds(BlockPattern.BlockPatternMatch match, BlockPattern blockPattern) {
+		int width = blockPattern.getWidth();
+		int height = blockPattern.getHeight();
+		int depth = blockPattern.getDepth();
+		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
+		for (int i = 0; i < width; ++i) {
+			for (int j = 0; j < height; ++j) {
+				for (int k = 0; k < depth; ++k) {
+					BlockPos matchPos = match.getBlock(i, j, k).getPos();
+					if (matchPos.getX() < minX) minX = matchPos.getX();
+					if (matchPos.getX() > maxX) maxX = matchPos.getX();
+					if (matchPos.getY() < minY) minY = matchPos.getY();
+					if (matchPos.getY() > maxY) maxY = matchPos.getY();
+					if (matchPos.getZ() < minZ) minZ = matchPos.getZ();
+					if (matchPos.getZ() > maxZ) maxZ = matchPos.getZ();
+				}
+			}
+		}
+		return new AABB(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1);
 	}
 
 	public ItemStack heldStack;
