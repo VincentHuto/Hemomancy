@@ -1044,6 +1044,13 @@ public class SkillTreeScreen extends Screen {
 					.withStyle(s -> s.withColor(0xFFBB8833).withBold(true)),
 					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
 					guiTop + HOME_BTN_PAD + (HOME_BTN_SIZE - 8) / 2, 0);
+
+			EnumInitiatoryDegree currentDegree = EnumInitiatoryDegree.byNumber(playerDegree);
+			String rankTitle = currentDegree != null ? currentDegree.getTitle() : "Uninitiated";
+			gfx.drawString(font, Component.literal("Harbinger Rank: " + rankTitle)
+					.withStyle(s -> s.withColor(0xFFAA6666)),
+					guiLeft + HOME_BTN_PAD + HOME_BTN_SIZE + 4,
+					guiTop + HOME_BTN_PAD + HOME_BTN_SIZE + 2, 0);
 		}
 
 		if (activeTab != Tab.RITES && activeTab != Tab.CRAFTING && activeTab != Tab.SCARS) {
