@@ -71,7 +71,12 @@ public class BloodMoonVeinSkyRenderer {
 		if (weatherFade <= 0.01F) return;
 
 		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
+		// Additive blend: tendrils glow/add to the sky rather than replace it.
+		// Prevents overlapping roots from creating a dark ring around the moon.
+		RenderSystem.blendFuncSeparate(
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
+		);
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		float time   = (level.getGameTime() + partialTick) * 0.045F;
