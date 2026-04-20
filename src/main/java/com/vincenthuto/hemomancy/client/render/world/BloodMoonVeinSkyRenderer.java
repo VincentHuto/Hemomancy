@@ -2,6 +2,7 @@ package com.vincenthuto.hemomancy.client.render.world;
 
 import java.util.Random;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -86,6 +87,12 @@ public class BloodMoonVeinSkyRenderer {
 		// Restore the texture shader vanilla set before calling getMoonPhase() —
 		// without this the moon quad renders as a solid color square.
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		// Restore vanilla's additive blend used for sun/moon: black texels become
+		// transparent so the moon texture background doesn't appear as a black square.
+		RenderSystem.blendFuncSeparate(
+			GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+			GlStateManager.SourceFactor.ONE,       GlStateManager.DestFactor.ZERO
+		);
 	}
 
 	private static void drawTendril(BufferBuilder buf, Matrix4f mat,
