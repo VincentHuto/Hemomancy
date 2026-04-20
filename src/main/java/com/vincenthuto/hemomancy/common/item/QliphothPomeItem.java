@@ -102,6 +102,7 @@ public class QliphothPomeItem extends Item {
 	private static final int DARKNESS_DURATION_TICKS = 140;
 	private static final int DARKNESS_TAINTED_DURATION_TICKS = 300;
 	private static final long EMPOWERMENT_DURATION_TICKS = 3600L;
+	private static final String POME_MESSAGE_KEY_BASE = "message.hemomancy.qliphoth_pome.consume.";
 
 	/** The nine Qliphoth husk names in consumption order (indices 0–8). */
 	public static final String[] HUSK_NAMES = {
@@ -217,16 +218,16 @@ public class QliphothPomeItem extends Item {
 		long expiryTick = level.getGameTime() + EMPOWERMENT_DURATION_TICKS;
 		player.getPersistentData().putLong(POME_EMPOWERMENT_KEY, expiryTick);
 
-		// Husk-flavoured eat message
-		String huskMsg = "The void-fruit's power floods your veins...";
+		// Husk-flavoured eat message (localized, one line per pome 1-9)
+		String consumeMessageKey = POME_MESSAGE_KEY_BASE + "default";
 		if (itemTag != null && itemTag.contains(HUSK_INDEX_KEY)) {
 			int huskIdx = itemTag.getInt(HUSK_INDEX_KEY);
 			if (huskIdx >= 0 && huskIdx < HUSK_NAMES.length) {
-				huskMsg = HUSK_NAMES[huskIdx] + " opens in your blood.";
+				consumeMessageKey = POME_MESSAGE_KEY_BASE + (huskIdx + 1);
 			}
 		}
 		player.displayClientMessage(
-				Component.literal(huskMsg)
+				Component.translatable(consumeMessageKey)
 						.withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC),
 				true);
 
