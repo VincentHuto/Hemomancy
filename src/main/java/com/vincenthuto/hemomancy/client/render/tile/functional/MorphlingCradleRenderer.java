@@ -7,6 +7,7 @@ import com.vincenthuto.hemomancy.client.model.tile.functional.MorphlingCradleMod
 import com.vincenthuto.hemomancy.common.block.functional.MorphlingCradleBlock;
 import com.vincenthuto.hemomancy.common.tile.functional.MorphlingCradleBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -56,7 +57,7 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 
 		ItemStack hosted = te.getHostedMorphling();
 		if (!hosted.isEmpty()) {
-			float time = (te.getLevel() != null ? te.getLevel().getGameTime() : 0) + partialTicks;
+			float time = ((te.getLevel() != null ? te.getLevel().getGameTime() : (Util.getMillis() / 50.0f)) + partialTicks);
 			poseStack.pushPose();
 			float itemY = switch (face) {
 				case CEILING -> 0.35F;

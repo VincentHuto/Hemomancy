@@ -55,8 +55,15 @@ public class MorphlingCradleBlock extends BaseEntityBlock {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		Direction clickedFace = context.getClickedFace();
-		AttachFace attachFace = clickedFace == Direction.DOWN ? AttachFace.CEILING : AttachFace.FLOOR;
-		Direction horizontal = context.getHorizontalDirection().getOpposite();
+		AttachFace attachFace;
+		Direction horizontal;
+		if (clickedFace.getAxis().isHorizontal()) {
+			attachFace = AttachFace.WALL;
+			horizontal = clickedFace;
+		} else {
+			attachFace = clickedFace == Direction.DOWN ? AttachFace.CEILING : AttachFace.FLOOR;
+			horizontal = context.getHorizontalDirection().getOpposite();
+		}
 		BlockState state = this.defaultBlockState().setValue(FACING, horizontal).setValue(FACE, attachFace);
 		return state.canSurvive(context.getLevel(), context.getClickedPos()) ? state : null;
 	}
