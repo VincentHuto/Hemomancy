@@ -25,6 +25,9 @@ public class BlockEntityInit {
 	public static final RegistryObject<BlockEntityType<MorphlingIncubatorBlockEntity>> morphling_incubator = TILES
 			.register("morphling_incubator", () -> BlockEntityType.Builder
 					.of(MorphlingIncubatorBlockEntity::new, BlockInit.morphling_incubator.get()).build(null));
+	public static final RegistryObject<BlockEntityType<MorphlingCradleBlockEntity>> morphling_cradle = TILES
+			.register("morphling_cradle", () -> BlockEntityType.Builder
+					.of(MorphlingCradleBlockEntity::new, BlockInit.morphling_cradle.get()).build(null));
 
 	public static final RegistryObject<BlockEntityType<UnstainedPodiumBlockEntity>> unstained_podium = TILES
 			.register("unstained_podium", () -> BlockEntityType.Builder
