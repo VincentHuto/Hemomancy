@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -31,23 +32,36 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 	@Override
 	public void render(MorphlingCradleBlockEntity te, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
-		poseStack.pushPose();
-		poseStack.translate(0.5D, 1.5D, 0.5D);
-		poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
-
 		AttachFace face = te.getBlockState().getValue(MorphlingCradleBlock.FACE);
-		float yRot = switch (te.getBlockState().getValue(MorphlingCradleBlock.FACING)) {
+		Direction facing = te.getBlockState().getValue(MorphlingCradleBlock.FACING);
+		float yRot = switch (facing) {
 			case NORTH -> 180f;
 			case EAST -> 270f;
 			case SOUTH -> 0f;
 			case WEST -> 90f;
 			default -> 0f;
 		};
-		poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
-		if (face == AttachFace.CEILING) {
+
+		poseStack.pushPose();
+		if (face == AttachFace.FLOOR) {
+			// Standard Blockbench Y-down → Y-up flip: root (y=24px=1.5 blocks) lands at y=0.
+			poseStack.translate(0.5D, 1.5D, 0.5D);
 			poseStack.mulPose(Vector3.XP.rotationDegrees(180f).toMoj());
-		} else if (face == AttachFace.WALL) {
-			poseStack.mulPose(Vector3.XP.rotationDegrees(90f).toMoj());
+			poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+		} else if (face == AttachFace.CEILING) {
+			// No X-flip: without it the model is naturally inverted (root at top = ceiling).
+			// translate y = -0.5 places root (1.5 blocks in model space) at y=1.0 (ceiling surface).
+			poseStack.translate(0.5D, -0.5D, 0.5D);
+			poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+		} else { // WALL
+			// Offset along the facing axis so the root (1.5 blocks model-depth) sits on the wall face.
+			// facing.getStepX/Z is ±1 for horizontal directions, so the translate moves the origin
+			// to the attachment face:  0.5 + step*1  gives 1.5 (positive axis) or -0.5 (negative axis).
+			double wallTX = 0.5 + facing.getStepX();
+			double wallTZ = 0.5 + facing.getStepZ();
+			poseStack.translate(wallTX, 0.5D, wallTZ);
+			poseStack.mulPose(Vector3.YP.rotationDegrees(yRot).toMoj());
+			poseStack.mulPose(Vector3.XP.rotationDegrees(-90f).toMoj());
 		}
 
 		VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
