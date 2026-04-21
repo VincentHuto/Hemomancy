@@ -21,7 +21,7 @@ public class MaterialsTabController implements IProgressTab {
     private final int nodeAccentColor;
     private final int panelSeparatorColor;
     private final int panelBgColor;
-    private final MiniRecipeRenderer renderer;
+    private final MiniRecipeRenderer.Theme renderer;
 
     /** Harbinger-flavoured controller using the orange-copper blood-magic palette. */
     public MaterialsTabController() {
@@ -45,7 +45,7 @@ public class MaterialsTabController implements IProgressTab {
     public MaterialsTabController(List<MaterialEntry> entries, EnumNodeShape nodeShape,
                                    int tabColor, int nodeTransparentColor, int nodeAccentColor,
                                    int panelSeparatorColor, int panelBgColor,
-                                   MiniRecipeRenderer renderer) {
+                                   MiniRecipeRenderer.Theme renderer) {
         this.entries              = entries;
         this.nodeShape            = nodeShape;
         this.tabColor             = tabColor;
