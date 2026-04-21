@@ -952,6 +952,18 @@ public class ItemInit {
         ItemProperties.register(bloody_vial.get(), Hemomancy.rloc("state"),
                 HemoItemProperties.booleanTag("state"));
 
+        ItemProperties.register(vial_rack.get(), Hemomancy.rloc("state"),
+                (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
+                    int emptyCount = VialRackItem.countEmptyVials(stack);
+                    if (emptyCount == VialRackItem.MAX_VIALS) {
+                        return 0.0F;
+                    }
+                    if (emptyCount == 0) {
+                        return 2.0F;
+                    }
+                    return 1.0F;
+                });
+
         ItemProperties.register(barbed_shield.get(), new ResourceLocation("blocking"),
                 (ItemStack stack, ClientLevel world, LivingEntity ent, int p_174679_) -> {
                     return ent != null && ent.isUsingItem() && ent.getUseItem() == stack ? 1.0F : 0.0F;
