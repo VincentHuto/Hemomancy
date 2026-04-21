@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.volume;
 
 import com.vincenthuto.hemomancy.Hemomancy;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
 import com.vincenthuto.hemomancy.common.entity.HemoEntityPredicates;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -60,7 +61,7 @@ public class BloodVolumeEvents {
 		Player player = event.player;
 		if (player.level().isClientSide) return;
 
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (!volume.isActive()) return;
 
 			// ── Skill: Capacity — add flat bonus to max blood ──
@@ -201,7 +202,7 @@ public class BloodVolumeEvents {
 		if (player.level().isClientSide) return;
 		if (!HemoServerConfig.BLOOD_DRAIN_ON_DAMAGE_ENABLED.get()) return;
 
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (volume.isActive()) {
 				// ── Skill: Iron Will — reduce incoming damage when blood is critically low ──
 				double ironWillThreshold = volume.getMaxBloodVolume() * SkillPointHelper.getIronWillThreshold();
@@ -242,7 +243,7 @@ public class BloodVolumeEvents {
 		// Bloodless entities yield no blood
 		if (HemoEntityPredicates.NOBLOOD.test(victim)) return;
 
-		player.getCapability(BloodVolumeProvider.VOLUME_CAPA).ifPresent(volume -> {
+		HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
 			if (volume.isActive()) {
 				double baseGain = HemoServerConfig.BLOOD_GAIN_PER_KILL.get();
 
@@ -275,8 +276,7 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = HemoCapabilityAccess.requireBloodVolume(player);
 		syncVolume(player, volume);
 		player.displayClientMessage(
 				Component.literal(
@@ -289,14 +289,12 @@ public class BloodVolumeEvents {
 		if (event.isWasDeath()) {
 			Player peorig = event.getOriginal();
 			peorig.revive();
-			IBloodVolume bloodVolumeOld = peorig.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new);
+			IBloodVolume bloodVolumeOld = HemoCapabilityAccess.requireBloodVolume(peorig);
 
 			Player playernew = event.getEntity();
 			peorig.reviveCaps();
 
-			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new);
+			IBloodVolume bloodVolumeNew = HemoCapabilityAccess.requireBloodVolume(playernew);
 			bloodVolumeNew.setActive(bloodVolumeOld.isActive());
 			bloodVolumeNew.setBloodVolume(bloodVolumeOld.getBloodVolume());
 			bloodVolumeNew.setMaxBloodVolume(bloodVolumeOld.getMaxBloodVolume());
@@ -313,8 +311,7 @@ public class BloodVolumeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IBloodVolume volume = player.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-				.orElseThrow(NullPointerException::new);
+		IBloodVolume volume = HemoCapabilityAccess.requireBloodVolume(player);
 
 		// Re-associate player with their global bloodline from saved data
 		ServerLevel overworld = player.server.overworld();
@@ -365,8 +362,7 @@ public class BloodVolumeEvents {
 	public static void playerRespawn(PlayerRespawnEvent event) {
 		Player playernew = event.getEntity();
 		if (!playernew.level().isClientSide) {
-			IBloodVolume bloodVolumeNew = playernew.getCapability(BloodVolumeProvider.VOLUME_CAPA)
-					.orElseThrow(IllegalStateException::new);
+			IBloodVolume bloodVolumeNew = HemoCapabilityAccess.requireBloodVolume(playernew);
 			syncVolume((ServerPlayer) playernew, bloodVolumeNew);
 		}
 	}
