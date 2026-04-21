@@ -348,7 +348,11 @@ public class UnstainedProgressScreen extends Screen {
 					}
 				}
 			}
-			if (activeTab == UTab.MATERIALS && insideGui(mx, my)) return materialsTab.mouseClicked(makeContext(), mx, my, btn);
+			if (activeTab == UTab.MATERIALS && insideGui(mx, my)) {
+				if (materialsTab.mouseClicked(makeContext(), mx, my, btn)) return true;
+				isDragging = true;
+				return true;
+			}
 			if (activeTab == UTab.RITES && insideGui(mx, my)) return ritesTab.mouseClicked(makeContext(), mx, my, btn);
 			if (activeTab == UTab.CRAFTING && insideGui(mx, my)) return craftingTab.mouseClicked(makeContext(), mx, my, btn);
 			if (insideGui(mx, my)) {
