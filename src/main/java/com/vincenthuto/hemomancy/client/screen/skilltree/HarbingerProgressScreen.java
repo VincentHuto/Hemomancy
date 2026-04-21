@@ -151,6 +151,7 @@ public class HarbingerProgressScreen extends Screen {
             if (clicked != null) { switchTab(clicked); return true; }
 
             if (activeTab == Tab.SKILLS && MilestoneDrawerView.isOverToggle(makeContext(), milestoneState, mx, my)) {
+                milestoneState.open = !milestoneState.open;
                 milestoneState.scrollOffset = 0;
                 return true;
             }
@@ -237,6 +238,7 @@ public class HarbingerProgressScreen extends Screen {
         }
 
         if (activeController().getPanZoomState() != null) {
+            if (!(activeTab == Tab.SKILLS && milestoneState.open)) {
                 gfx.drawString(font, String.format("%.0f%%", view.zoom * 100),
                         guiLeft + 5, guiTop + guiHeight - 12, 0x55888888, false);
             }
