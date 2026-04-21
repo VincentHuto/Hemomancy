@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
@@ -170,7 +169,7 @@ public class BloodManipulation  {
 					* com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getBloodFlowMultiplier());
 
 			// ── ManipLevel — per-use mastery further reduces cooldown ──
-			double levelCooldownMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			double levelCooldownMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
 					.map(k -> k.getManipLevel(this))
 					.map(ManipLevel::getCooldownMultiplier)
 					.orElse(1.0);
@@ -239,7 +238,7 @@ public class BloodManipulation  {
 				double effectiveCost = cost * com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper.getEfficiencyMultiplier() * costMultiplier;
 
 				// ── ManipLevel — per-use mastery reduces cost ──
-				double levelCostMultiplier = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				double levelCostMultiplier = HemoCapabilityAccess.getKnownManipulations(player)
 						.map(k -> k.getManipLevel(this))
 						.map(ManipLevel::getCostMultiplier)
 						.orElse(1.0);

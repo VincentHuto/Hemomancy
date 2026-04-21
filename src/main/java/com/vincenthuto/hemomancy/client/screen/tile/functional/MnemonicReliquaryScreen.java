@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.client.screen.tile.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
@@ -103,7 +103,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 			tendencyGroups.put(tend, new ArrayList<>());
 		}
 
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(known -> {
+		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			List<String> equipped = known.getEquippedManipNames();
 			equippedNames.addAll(equipped);
 

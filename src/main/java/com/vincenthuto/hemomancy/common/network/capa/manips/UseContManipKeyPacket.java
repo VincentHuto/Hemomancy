@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationType;
@@ -35,7 +34,7 @@ public class UseContManipKeyPacket {
 				return;
 			if (!player.level().isClientSide) {
 				float pTic = message.parTick;
-				IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+				IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 						.orElseThrow(NullPointerException::new);
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(player)
 						.orElseThrow(NullPointerException::new);

@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.client.event.ClientEvents.ClientModBusEvents;
 import com.vincenthuto.hemomancy.client.render.item.hematic.CellHandItemRenderer;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.BloodVolumeServerPacket;
@@ -133,7 +132,7 @@ public class BloodAbsorptionItem extends Item implements IDispellable, ICellHand
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
 				.orElseThrow(NullPointerException::new);
 		IBloodTendency tendency = HemoCapabilityAccess.getBloodTendency(playerIn)
 				.orElseThrow(NullPointerException::new);

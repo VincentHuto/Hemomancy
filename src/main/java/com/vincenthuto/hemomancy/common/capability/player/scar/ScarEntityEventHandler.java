@@ -9,7 +9,7 @@ import java.util.UUID;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointHelper;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
+
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.AttributeInit;
 import com.vincenthuto.hemomancy.common.init.EffectInit;
@@ -314,7 +314,7 @@ public class ScarEntityEventHandler {
 	public static void onBlockBreak(BreakEvent event) {
 
 		event.getPlayer().getCapability(ScarsCapabilities.SCARS).ifPresent(scars -> {
-			event.getPlayer().getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+			HemoCapabilityAccess.getKnownManipulations(event.getPlayer()).ifPresent(manips -> {
 
 				if (scars.getStackInSlot(0).getItem() == ItemInit.talaromyces_minus.get()
 						&& event.getPlayer().isShiftKeyDown()) {

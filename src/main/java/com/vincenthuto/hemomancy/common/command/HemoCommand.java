@@ -12,7 +12,6 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
@@ -596,7 +595,7 @@ public class HemoCommand {
 	// ═══════════════════ Manipulation Slots ═══════════════════
 
 	private static int getSlots(CommandSourceStack source, ServerPlayer player) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		java.util.List<String> equipped = known.getEquippedManipNames();
@@ -614,7 +613,7 @@ public class HemoCommand {
 	}
 
 	private static int equipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		int maxSlots = ManipSlotHelper.getMaxSlots(player);
 		if (known.equipManip(manipName, maxSlots)) {
@@ -631,7 +630,7 @@ public class HemoCommand {
 	}
 
 	private static int unequipManip(CommandSourceStack source, ServerPlayer player, String manipName) {
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		if (known.unequipManip(manipName)) {
 			source.sendSuccess(() -> Component.literal("Unequipped ")

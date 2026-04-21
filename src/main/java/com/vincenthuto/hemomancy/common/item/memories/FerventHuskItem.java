@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.memories;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.manips.KnownManipulationServerPacket;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
@@ -45,7 +45,7 @@ public class FerventHuskItem extends Item {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		IKnownManipulations known = playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(playerIn)
 				.orElseThrow(NullPointerException::new);
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if (!worldIn.isClientSide) {

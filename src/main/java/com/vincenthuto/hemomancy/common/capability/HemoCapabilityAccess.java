@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
+import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
+import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
@@ -92,5 +94,25 @@ return getVascularSystem(player).orElseThrow(IllegalStateException::new);
 
 public static IVascularSystem requireVascularSystem(Entity entity) {
 return getVascularSystem(entity).orElseThrow(IllegalStateException::new);
+}
+
+// ── Known Manipulations ───────────────────────────────────────────────────
+
+/** Access known manipulations from a player. */
+public static Optional<IKnownManipulations> getKnownManipulations(Player player) {
+return player.getCapability(KnownManipulationProvider.MANIP_CAPA);
+}
+
+/** Access known manipulations from any entity. */
+public static Optional<IKnownManipulations> getKnownManipulations(Entity entity) {
+return entity.getCapability(KnownManipulationProvider.MANIP_CAPA);
+}
+
+public static IKnownManipulations requireKnownManipulations(Player player) {
+return getKnownManipulations(player).orElseThrow(IllegalStateException::new);
+}
+
+public static IKnownManipulations requireKnownManipulations(Entity entity) {
+return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
 }
 }

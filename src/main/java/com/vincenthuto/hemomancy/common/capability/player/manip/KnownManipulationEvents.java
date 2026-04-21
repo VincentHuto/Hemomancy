@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.manip;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -45,7 +46,7 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new KnownManipulationServerPacket(known));
@@ -63,7 +64,7 @@ public class KnownManipulationEvents {
 		// Radiant Protection
 		if (e.getEntity() instanceof Player) {
 			Player player = (Player) e.getEntity();
-			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
 			if (known.isAvatarActive()) {
 				double dist = e.getEntity().distanceToSqr(player);
@@ -95,8 +96,8 @@ public class KnownManipulationEvents {
 		Player playernew = event.getEntity();
 		peorig.reviveCaps();
 
-		peorig.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(oldCap -> {
-			playernew.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(newCap -> {
+		HemoCapabilityAccess.getKnownManipulations(peorig).ifPresent(oldCap -> {
+			HemoCapabilityAccess.getKnownManipulations(playernew).ifPresent(newCap -> {
 				newCap.setCapa(oldCap);
 			});
 		});
@@ -112,7 +113,7 @@ public class KnownManipulationEvents {
 
 	public static void syncPlayerEvent(Player playerEntity) {
 		if (playerEntity instanceof ServerPlayer s) {
-			s.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(capa -> {
+			HemoCapabilityAccess.getKnownManipulations(s).ifPresent(capa -> {
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> s),
 						new KnownManipulationServerPacket(capa));
 			});
@@ -128,7 +129,7 @@ public class KnownManipulationEvents {
 
 		}
 		
-		entity.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+		HemoCapabilityAccess.getKnownManipulations(entity).ifPresent(manips -> {
 			if(manips.getLastVeinMineStart() != BlockPos.ZERO) {
 				manips.setLastVeinMineStart(BlockPos.ZERO);
 			}
@@ -138,7 +139,7 @@ public class KnownManipulationEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
 		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
 				new KnownManipulationServerPacket(known));
@@ -159,7 +160,7 @@ public class KnownManipulationEvents {
 	}
 
 	private static void syncAvatars(Player player, Collection<? extends Player> receivers) {
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(manips -> {
+		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(manips -> {
 			syncAvatar(player, receivers, manips.isAvatarActive());
 		});
 	}
@@ -189,7 +190,7 @@ public class KnownManipulationEvents {
 		}
 
 		// 4. Grant XP to the manipulation's level and check for rank-up
-		player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(known -> {
+		HemoCapabilityAccess.getKnownManipulations(player).ifPresent(known -> {
 			ManipLevel level = known.getManipLevel(manip);
 			if (level != null && level != ManipLevel.BLANK) {
 				level.setXp(level.getXp() + 1.0);

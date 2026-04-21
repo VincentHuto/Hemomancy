@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
@@ -23,7 +23,7 @@ public class UpdateCurrentManipPacket {
 				if (player == null)
 					return;
 				if (!player.level().isClientSide) {
-					IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+					IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 							.orElseThrow(NullPointerException::new);
 					List<BloodManipulation> manips = known.getManipList();
 					System.out.println(msg.selected);

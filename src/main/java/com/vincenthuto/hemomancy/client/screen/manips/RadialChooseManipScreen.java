@@ -11,7 +11,6 @@ import com.vincenthuto.hemomancy.client.screen.radial.GenericRadialMenu;
 import com.vincenthuto.hemomancy.client.screen.radial.IRadialMenuHost;
 import com.vincenthuto.hemomancy.client.screen.radial.RadialMenuItem;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.scar.IScarsItemHandler;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.item.bloodline.VasculariumCharmItem;
@@ -111,7 +110,7 @@ public class RadialChooseManipScreen extends Screen {
 		if (this.needsRecheckStacks) {
 			this.cachedMenuItems.clear();
 
-			IKnownManipulations manips = mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			IKnownManipulations manips = mc.HemoCapabilityAccess.getKnownManipulations(player)
 					.orElseThrow(NullPointerException::new);
 
 			// Only show manipulations that are currently memorized (equipped) at the Mnemonic Reliquary

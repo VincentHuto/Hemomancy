@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.manipulation.animus;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -31,7 +31,7 @@ public class SummonAvatarManip extends BloodManipulation {
 	@Override
 	public void getAction(Player playerIn, Level world, ItemStack heldItemMainhand, BlockPos position) {
 		if (playerIn.isAddedToWorld()) {
-			playerIn.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent((manip) -> {
+			HemoCapabilityAccess.getKnownManipulations(playerIn).ifPresent((manip) -> {
 				manip.setAvatarActive(!manip.isAvatarActive());
 				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
 						new KnownManipulationServerPacket(manip));

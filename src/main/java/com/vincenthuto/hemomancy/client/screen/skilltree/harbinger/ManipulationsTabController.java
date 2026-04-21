@@ -12,7 +12,6 @@ import java.util.Set;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.init.ManipulationTreeInit;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.EnumManipulationRank;
@@ -162,7 +161,7 @@ public class ManipulationsTabController implements IProgressTab {
         knownManipNames.clear();
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
-            mc.player.getCapability(KnownManipulationProvider.MANIP_CAPA).ifPresent(cap -> {
+            mc.HemoCapabilityAccess.getKnownManipulations(player).ifPresent(cap -> {
                 for (BloodManipulation m : cap.getManipList()) {
                     if (m != null && m.getName() != null) knownManipNames.add(m.getName());
                 }

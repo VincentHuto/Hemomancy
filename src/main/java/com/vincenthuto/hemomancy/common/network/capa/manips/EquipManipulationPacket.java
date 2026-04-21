@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
@@ -43,7 +43,7 @@ public class EquipManipulationPacket {
 			Player player = ctx.get().getSender();
 			if (player == null) return;
 
-			IKnownManipulations known = player.getCapability(KnownManipulationProvider.MANIP_CAPA)
+			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 					.orElse(null);
 			if (known == null) return;
 

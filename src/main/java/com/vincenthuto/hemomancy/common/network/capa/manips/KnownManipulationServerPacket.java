@@ -5,9 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
-import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.manipulation.BloodManipulation;
 import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 
@@ -110,8 +110,7 @@ public class KnownManipulationServerPacket {
 	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			
-			IKnownManipulations known = Minecraft.getInstance().player
-					.getCapability(KnownManipulationProvider.MANIP_CAPA).orElseThrow(IllegalStateException::new);
+			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(Minecraft.getInstance().player);
 			known.setKnownManips(msg.known);
 			known.setSelectedManip(msg.selected);
 			known.setVeinList(msg.veinList);
