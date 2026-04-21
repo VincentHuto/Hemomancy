@@ -411,7 +411,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		if (outputStack.isEmpty()) {
 			return true;
 		}
-		return outputStack.getItem() == resultStack.getItem()
+		return ItemStack.isSameItemSameTags(outputStack, resultStack)
 				&& outputStack.getCount() + resultStack.getCount() <= outputStack.getMaxStackSize();
 	}
 
