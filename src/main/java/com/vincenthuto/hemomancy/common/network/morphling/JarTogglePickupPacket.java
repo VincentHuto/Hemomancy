@@ -3,7 +3,7 @@ package com.vincenthuto.hemomancy.common.network.morphling;
 import java.util.function.Supplier;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /** Legacy packet – auto-pickup feature has been removed. Kept for wire compatibility. */
 public class JarTogglePickupPacket {

@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
 public class HemoCommonConfig {
 

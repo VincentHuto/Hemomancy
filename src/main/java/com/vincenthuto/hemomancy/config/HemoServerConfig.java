@@ -1,56 +1,56 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
 public class HemoServerConfig {
 
 	// ===== Blood Volume =====
-	public static ForgeConfigSpec.BooleanValue BLOOD_REGEN_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOOD_REGEN_RATE;
-	public static ForgeConfigSpec.IntValue BLOOD_REGEN_INTERVAL;
+	public static ModConfigSpec.BooleanValue BLOOD_REGEN_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOOD_REGEN_RATE;
+	public static ModConfigSpec.IntValue BLOOD_REGEN_INTERVAL;
 
 	// Blood drain on damage
-	public static ForgeConfigSpec.BooleanValue BLOOD_DRAIN_ON_DAMAGE_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOOD_DRAIN_PER_DAMAGE;
+	public static ModConfigSpec.BooleanValue BLOOD_DRAIN_ON_DAMAGE_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOOD_DRAIN_PER_DAMAGE;
 
 	// Blood gain on kill
-	public static ForgeConfigSpec.BooleanValue BLOOD_GAIN_ON_KILL_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOOD_GAIN_PER_KILL;
-	public static ForgeConfigSpec.DoubleValue BLOOD_GAIN_BOSS_MULTIPLIER;
+	public static ModConfigSpec.BooleanValue BLOOD_GAIN_ON_KILL_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOOD_GAIN_PER_KILL;
+	public static ModConfigSpec.DoubleValue BLOOD_GAIN_BOSS_MULTIPLIER;
 
 	// ===== Blood Tendency =====
-	public static ForgeConfigSpec.BooleanValue TENDENCY_SHIFT_ON_KILL_ENABLED;
-	public static ForgeConfigSpec.DoubleValue TENDENCY_SHIFT_AMOUNT;
-	public static ForgeConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
+	public static ModConfigSpec.BooleanValue TENDENCY_SHIFT_ON_KILL_ENABLED;
+	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_AMOUNT;
+	public static ModConfigSpec.DoubleValue TENDENCY_SHIFT_ON_MANIP_USE;
 
 	// ===== Vascular System =====
-	public static ForgeConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED;
-	public static ForgeConfigSpec.DoubleValue VASCULAR_DAMAGE_PER_HIT;
-	public static ForgeConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_MANIP_ENABLED;
-	public static ForgeConfigSpec.DoubleValue VASCULAR_MANIP_STRAIN;
-	public static ForgeConfigSpec.BooleanValue VASCULAR_PASSIVE_HEAL_ENABLED;
-	public static ForgeConfigSpec.DoubleValue VASCULAR_HEAL_RATE;
-	public static ForgeConfigSpec.IntValue VASCULAR_HEAL_INTERVAL;
-	public static ForgeConfigSpec.BooleanValue VASCULAR_DEBUFFS_ENABLED;
+	public static ModConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_DAMAGE_ENABLED;
+	public static ModConfigSpec.DoubleValue VASCULAR_DAMAGE_PER_HIT;
+	public static ModConfigSpec.BooleanValue VASCULAR_DEGRADATION_ON_MANIP_ENABLED;
+	public static ModConfigSpec.DoubleValue VASCULAR_MANIP_STRAIN;
+	public static ModConfigSpec.BooleanValue VASCULAR_PASSIVE_HEAL_ENABLED;
+	public static ModConfigSpec.DoubleValue VASCULAR_HEAL_RATE;
+	public static ModConfigSpec.IntValue VASCULAR_HEAL_INTERVAL;
+	public static ModConfigSpec.BooleanValue VASCULAR_DEBUFFS_ENABLED;
 
 	// ===== Bloodline =====
-	public static ForgeConfigSpec.BooleanValue BLOODLINE_POOL_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_CONTRIBUTION_RATE;
-	public static ForgeConfigSpec.IntValue BLOODLINE_POOL_CONTRIBUTION_INTERVAL;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_POOL_MIN_BLOOD_THRESHOLD;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_AUTO_DRAW_MAX_RATE;
-	public static ForgeConfigSpec.BooleanValue BLOODLINE_HEAL_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_AMOUNT;
-	public static ForgeConfigSpec.IntValue BLOODLINE_HEAL_INTERVAL;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_HEALTH_THRESHOLD;
-	public static ForgeConfigSpec.DoubleValue BLOODLINE_HEAL_RANGE;
+	public static ModConfigSpec.BooleanValue BLOODLINE_POOL_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOODLINE_POOL_CONTRIBUTION_RATE;
+	public static ModConfigSpec.IntValue BLOODLINE_POOL_CONTRIBUTION_INTERVAL;
+	public static ModConfigSpec.DoubleValue BLOODLINE_POOL_MIN_BLOOD_THRESHOLD;
+	public static ModConfigSpec.DoubleValue BLOODLINE_AUTO_DRAW_MAX_RATE;
+	public static ModConfigSpec.BooleanValue BLOODLINE_HEAL_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_AMOUNT;
+	public static ModConfigSpec.IntValue BLOODLINE_HEAL_INTERVAL;
+	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_HEALTH_THRESHOLD;
+	public static ModConfigSpec.DoubleValue BLOODLINE_HEAL_RANGE;
 
 	// ===== Morphling =====
-	public static ForgeConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
-	public static ForgeConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
-	public static ForgeConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
-	public static ForgeConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
+	public static ModConfigSpec.BooleanValue MORPHLING_PASSIVE_DRAIN_ENABLED;
+	public static ModConfigSpec.DoubleValue MORPHLING_DRAIN_RATE;
+	public static ModConfigSpec.IntValue MORPHLING_DRAIN_INTERVAL;
+	public static ModConfigSpec.BooleanValue MORPHLING_CRADLE_LEECH_TARGET_PLAYERS;
 
 	public static void registerServerConfig(Builder builder) {
 		// ───── Blood Volume ─────

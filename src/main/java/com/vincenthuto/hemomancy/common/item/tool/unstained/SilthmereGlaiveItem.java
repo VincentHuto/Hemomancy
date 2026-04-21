@@ -22,7 +22,7 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeMod;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 /**
  * Silthmere Glaive — a reach weapon for the Unstained path.
@@ -58,7 +58,7 @@ public class SilthmereGlaiveItem extends SwordItem {
 			ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 			builder.putAll(super.getDefaultAttributeModifiers(slot));
 			builder.put(
-					ForgeMod.ENTITY_REACH.get(),
+					NeoForgeMod.ENTITY_REACH.get(),
 					new AttributeModifier(REACH_UUID, "Glaive reach bonus",
 							REACH_BONUS, AttributeModifier.Operation.ADDITION));
 			return builder.build();

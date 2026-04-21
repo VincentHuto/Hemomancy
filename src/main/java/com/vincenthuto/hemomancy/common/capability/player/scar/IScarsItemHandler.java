@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.capability.player.scar;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 public interface IScarsItemHandler extends IItemHandlerModifiable {
 

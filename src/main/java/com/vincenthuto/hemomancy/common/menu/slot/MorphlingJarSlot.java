@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.common.itemhandler.MorphlingJarItemHandler;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class MorphlingJarSlot extends SlotItemHandler {
 	public MorphlingJarSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {

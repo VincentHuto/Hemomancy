@@ -45,16 +45,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ItemInit {
@@ -851,93 +851,93 @@ public class ItemInit {
             () -> new ItemScarPattern(new Item.Properties(), scar_oblivion, "scar_oblivion"));
 
     // Spawn Eggs
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
-            () -> new ForgeSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
-            () -> new ForgeSpawnEggItem(EntityInit.fargone, 7352833, 7958646, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
-            () -> new ForgeSpawnEggItem(EntityInit.thirster, 3093151, 9515521, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
-            () -> new ForgeSpawnEggItem(EntityInit.fungling, 7798794, 15711418, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_eruptor = SPAWNEGGS.register("spawn_egg_eruptor",
-            () -> new ForgeSpawnEggItem(EntityInit.erythromycelium_eruptus, 7798794, 12235264, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_leech = SPAWNEGGS.register("spawn_egg_leech",
+            () -> new DeferredSpawnEggItem(EntityInit.leech, 7761777, 4206080, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_fargone = SPAWNEGGS.register("spawn_egg_fargone",
+            () -> new DeferredSpawnEggItem(EntityInit.fargone, 7352833, 7958646, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_thirster = SPAWNEGGS.register("spawn_egg_thirster",
+            () -> new DeferredSpawnEggItem(EntityInit.thirster, 3093151, 9515521, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_fungling = SPAWNEGGS.register("spawn_egg_fungling",
+            () -> new DeferredSpawnEggItem(EntityInit.fungling, 7798794, 15711418, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_eruptor = SPAWNEGGS.register("spawn_egg_eruptor",
+            () -> new DeferredSpawnEggItem(EntityInit.erythromycelium_eruptus, 7798794, 12235264, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_chitinite = SPAWNEGGS.register(
             "spawn_egg_chitinite",
-            () -> new ForgeSpawnEggItem(EntityInit.chitinite, 3617335, 8553354, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.chitinite, 3617335, 8553354, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_fervent_chitinite = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_fervent_chitinite = SPAWNEGGS.register(
             "spawn_egg_fervent_chitinite",
-            () -> new ForgeSpawnEggItem(EntityInit.fervent_chitinite, 3617335, 12124160, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.fervent_chitinite, 3617335, 12124160, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_chthonian = SPAWNEGGS.register(
             "spawn_egg_chthonian",
-            () -> new ForgeSpawnEggItem(EntityInit.chthonian, 7488841, 2170666, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.chthonian, 7488841, 2170666, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_chthonian_queen = SPAWNEGGS.register(
             "spawn_egg_chthonian_queen",
-            () -> new ForgeSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.chthonian_queen, 7488841, 12235264, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_lump_of_thought = SPAWNEGGS.register(
             "spawn_egg_lump_of_thought",
-            () -> new ForgeSpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.lump_of_thought, 6094848, 11315361, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_abhorent_thought = SPAWNEGGS.register(
             "spawn_egg_abhorent_thought",
-            () -> new ForgeSpawnEggItem(EntityInit.abhorent_thought, 12124160, 4259840, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_barbed_urchin = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.abhorent_thought, 12124160, 4259840, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_barbed_urchin = SPAWNEGGS.register(
             "spawn_egg_barbed_urchin",
-            () -> new ForgeSpawnEggItem(EntityInit.barbed_urchin, 12124160, 4259840, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.barbed_urchin, 12124160, 4259840, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_morphling_polyp = SPAWNEGGS.register(
             "spawn_egg_morphling_polyp",
-            () -> new ForgeSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.morphling_polyp, 6881280, 0, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_blood_drunk_puppeteer = SPAWNEGGS.register(
             "spawn_egg_blood_drunk_puppeteer",
-            () -> new ForgeSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.blood_drunk_puppeteer, 12124160, 12152064, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_enthralled_doll = SPAWNEGGS.register(
             "spawn_egg_enthralled_doll",
-            () -> new ForgeSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.enthralled_doll, 12124160, 12564912, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_hemolymphopoda = SPAWNEGGS.register(
             "spawn_egg_hemolymphopoda",
-            () -> new ForgeSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.hemolymphopoda, 6579558, 4875998, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_dessicant = SPAWNEGGS.register(
             "spawn_egg_dessicant",
-            () -> new ForgeSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.dessicant, 0xC2A66E, 0x8B1A1A, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_cruor_fiend = SPAWNEGGS.register(
             "spawn_egg_cruor_fiend",
-            () -> new ForgeSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.cruor_fiend, 0x4A0000, 0xFF4500, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_void_drinker = SPAWNEGGS.register(
             "spawn_egg_void_drinker",
-            () -> new ForgeSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.void_drinker, 0x1A0033, 0x6A0DAD, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_frozen_clot = SPAWNEGGS.register(
             "spawn_egg_frozen_clot",
-            () -> new ForgeSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.frozen_clot, 0xA8D8EA, 0x5C0000, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_abyssal_siphon = SPAWNEGGS.register(
             "spawn_egg_abyssal_siphon",
-            () -> new ForgeSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.abyssal_siphon, 0x0D0D0D, 0x2D0037, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_synapse_hound = SPAWNEGGS.register(
             "spawn_egg_synapse_hound",
-            () -> new ForgeSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
+            () -> new DeferredSpawnEggItem(EntityInit.synapse_hound, 0x7DF9FF, 0x8B0000, new Item.Properties()));
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_myelin_borer = SPAWNEGGS.register(
             "spawn_egg_myelin_borer",
-            () -> new ForgeSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.myelin_borer, 0xE8D8C0, 0x7DF9FF, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_crimson_doe = SPAWNEGGS.register(
             "spawn_egg_crimson_doe",
-            () -> new ForgeSpawnEggItem(EntityInit.crimson_doe, 0xFAE6E6, 0x8B0000, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.crimson_doe, 0xFAE6E6, 0x8B0000, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_hemojelly = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_hemojelly = SPAWNEGGS.register(
             "spawn_egg_hemojelly",
-            () -> new ForgeSpawnEggItem(EntityInit.hemojelly, 0xFF6B8A, 0xCC2244, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.hemojelly, 0xFF6B8A, 0xCC2244, new Item.Properties()));
 
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_venous_strider = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_venous_strider = SPAWNEGGS.register(
             "spawn_egg_venous_strider",
-            () -> new ForgeSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.venous_strider, 0xF5DEB3, 0x8B4513, new Item.Properties()));
 
     // Cream body with blood-red spots
-    public static final RegistryObject<ForgeSpawnEggItem> spawn_egg_tooth_pecks = SPAWNEGGS.register(
+    public static final RegistryObject<DeferredSpawnEggItem> spawn_egg_tooth_pecks = SPAWNEGGS.register(
             "spawn_egg_tooth_pecks",
-            () -> new ForgeSpawnEggItem(EntityInit.tooth_pecks, 0xF0EAD6, 0x8B0000, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EntityInit.tooth_pecks, 0xF0EAD6, 0x8B0000, new Item.Properties()));
 
     // Item Property Override
     @SuppressWarnings("deprecation")

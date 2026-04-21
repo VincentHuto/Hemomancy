@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.ModConfig;
 
 public class HemoConfig {
 
@@ -13,19 +13,19 @@ public class HemoConfig {
 	}
 
 	private static void registerClientConfigs() {
-		ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+		ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
 		HemoClientConfig.registerClientConfig(CLIENT_BUILDER);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_BUILDER.build());
 	}
 
 	private static void registerCommonConfigs() {
-		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+		ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 		HemoCommonConfig.registerCommonConfig(COMMON_BUILDER);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_BUILDER.build());
 	}
 
 	private static void registerServerConfigs() {
-		ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+		ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
 		HemoServerConfig.registerServerConfig(SERVER_BUILDER);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_BUILDER.build());
 	}

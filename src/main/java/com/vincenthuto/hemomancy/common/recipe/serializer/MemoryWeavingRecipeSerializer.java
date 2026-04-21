@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class MemoryWeavingRecipeSerializer implements RecipeSerializer<MemoryWeavingRecipe> {
 	public static HashMap<ResourceLocation, MemoryWeavingRecipe> ALL_RECIPES = new HashMap<>();

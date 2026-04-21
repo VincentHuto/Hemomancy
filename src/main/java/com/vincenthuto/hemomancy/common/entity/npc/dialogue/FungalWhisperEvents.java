@@ -8,10 +8,10 @@ import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Periodically triggers mysterious "fungal whisper" dialogues for players who
@@ -22,7 +22,7 @@ import net.minecraftforge.network.PacketDistributor;
  * perceptible intrusive thoughts that plant seeds of doubt. As the player's
  * degree increases, the interval shortens and the content grows more explicit.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class FungalWhisperEvents {
 
 	/**

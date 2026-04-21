@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 public class BloodVolumeItemServerPacket {
 

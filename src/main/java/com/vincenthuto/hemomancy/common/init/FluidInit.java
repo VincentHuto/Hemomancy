@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.common.init;
 import com.vincenthuto.hemomancy.Hemomancy;
 
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 public class FluidInit {
 
@@ -42,11 +42,11 @@ public class FluidInit {
 //import net.minecraft.world.item.Items;
 //import net.minecraft.world.level.material.FlowingFluid;
 //import net.minecraft.world.level.material.Fluid;
-//import net.minecraftforge.fluids.FluidType;
-//import net.minecraftforge.fluids.ForgeFlowingFluid;
-//import net.minecraftforge.registries.DeferredRegister;
-//import net.minecraftforge.registries.ForgeRegistries;
-//import net.minecraftforge.registries.RegistryObject;
+//import net.neoforged.neoforge.fluids.FluidType;
+//import net.neoforged.neoforge.fluids.ForgeFlowingFluid;
+//import net.neoforged.neoforge.registries.DeferredRegister;
+//import net.neoforged.neoforge.registries.ForgeRegistries;
+//import net.neoforged.neoforge.registries.RegistryObject;
 //
 //public class FluidInit {
 //

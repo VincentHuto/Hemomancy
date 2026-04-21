@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs all active cardinal rite positions, sizes, and

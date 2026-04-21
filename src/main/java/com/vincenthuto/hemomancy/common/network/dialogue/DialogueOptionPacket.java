@@ -6,8 +6,8 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet sent when a player selects a dialogue option that
@@ -39,13 +39,13 @@ public class DialogueOptionPacket {
 			if (sender != null && msg.eventId != null && !msg.eventId.isEmpty()) {
 				if (msg.entityId == 0) {
 					// Disembodied voice (e.g. fungal whispers) — no entity to validate
-					MinecraftForge.EVENT_BUS.post(
+					NeoForge.EVENT_BUS.post(
 							new DialogueEvent(sender, msg.eventId, msg.entityId));
 				} else {
 					// Validate entity exists and is within interaction range
 					net.minecraft.world.entity.Entity entity = sender.level().getEntity(msg.entityId);
 					if (entity != null && sender.distanceTo(entity) <= 8.0) {
-						MinecraftForge.EVENT_BUS.post(
+						NeoForge.EVENT_BUS.post(
 								new DialogueEvent(sender, msg.eventId, msg.entityId));
 					}
 				}

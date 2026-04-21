@@ -30,23 +30,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+// ── NeoForge API imports (replaces net.minecraftforge.*) ─────────────────────
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.DistExecutor;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -59,18 +59,25 @@ public class Hemomancy {
     public static final String MOD_ID = "hemomancy";
     public static final DeferredRegister<CreativeModeTab> CREATIVETABS = DeferredRegister
             .create(Registries.CREATIVE_MODE_TAB, Hemomancy.MOD_ID);
-    public static final RegistryObject<CreativeModeTab> hemomancytab = CREATIVETABS.register("hemomancytab",
-            () -> CreativeModeTab.builder().title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
-                    .icon(() -> new ItemStack(ItemInit.sanguine_formation.get())).build());
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> hemomancytab = CREATIVETABS.register(
+            "hemomancytab",
+            () -> CreativeModeTab.builder()
+                    .title(Component.translatable("item_group." + MOD_ID + ".hemomancytab"))
+                    .icon(() -> new ItemStack(ItemInit.sanguine_formation.get()))
+                    .build());
     public static Hemomancy instance;
     public static boolean forcesLoaded = false;
     public ISidedProxy proxy;
 
-    public Hemomancy() {
+    /**
+     * NeoForge 1.21: the mod-event bus is injected into the constructor automatically.
+     * Remove any /* TODO: inject IEventBus via constructor – FMLJavaModLoadingContext removed */ calls.
+     */
+    public Hemomancy(IEventBus modEventBus) {
         forcesLoaded = ModList.get().isLoaded("forcesofreality");
         instance = this;
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        // NeoForge uses NeoForge.EVENT_BUS instead of NeoForge.EVENT_BUS
+        IEventBus forgeBus = NeoForge.EVENT_BUS;
         HemoConfig.register();
         VillagerInit.POINTS_OF_INTEREST.register(modEventBus);
         VillagerInit.PROFESSIONS.register(modEventBus);
@@ -107,15 +114,11 @@ public class Hemomancy {
         VillagerInit.STRUCTURE_PROCESSORS.register(modEventBus);
         LootModifierInit.LOOT_MODIFIERS.register(modEventBus);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
-            return () -> {
-                this.proxy = new ClientProxy();
-            };
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            this.proxy = new ClientProxy();
         });
-        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> {
-            return () -> {
-                this.proxy = new ServerProxy();
-            };
+        DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
+            this.proxy = new ServerProxy();
         });
         GeckoLib.initialize();
         modEventBus.addListener(this::clientSetup);
@@ -142,38 +145,26 @@ public class Hemomancy {
             modEventBus.addListener(MnAPluginRitualInit::registerRitualEffects);
             MnAPluginEntityInit.MNA_ENTITY_TYPES.register(modEventBus);
             modEventBus.addListener(MnAPluginEntityInit::onAttributeCreate);
-            // Blood Tithe & Spell↔Manipulation combo event handlers
             forgeBus.addListener(BloodTitheHandler::onCalculateManaCost);
             forgeBus.addListener(BloodTitheHandler::onSpellCast);
-            // Harbinger faction event handlers (registered manually to avoid class loading without MnA)
             modEventBus.register(HarbingerEventHandler.class);
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
-                return () -> {
-                    modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
-                    modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
-                    modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
-                    modEventBus.addListener(MnAPluginClientEvents::renderEntities);
-                    modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
-
-                    forgeBus.addListener(MnAPluginClientEvents::onClientTick);
-                    modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
-                    modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
-                };
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                modEventBus.addListener(MnAPluginClientEvents::onRegisterSpecialModels);
+                modEventBus.addListener(MnAPluginClientEvents::registerItemColors);
+                modEventBus.addListener(MnAPluginClientEvents::registerModelLayers);
+                modEventBus.addListener(MnAPluginClientEvents::renderEntities);
+                modEventBus.addListener(MnAPluginClientEvents::onClientSetupEvent);
+                forgeBus.addListener(MnAPluginClientEvents::onClientTick);
+                modEventBus.register(HarbingerEventHandler.HarbingerClientEventHandler.class);
+                modEventBus.addListener(MnAPluginBlockInit::registerBlocks);
             });
         }
         if (modList.isLoaded("curios")) {
             LOGGER.info("CURIOS WAS LOADED");
             modEventBus.addListener(CuriosPlugin::initCuriosSlots);
             modEventBus.addListener(CuriosPlugin::clientCurioSetup);
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> {
-                return () -> {
-
-                };
-            });
         }
-
     }
-
 
     // Combined a few methods into one more generic one
     public static ItemStack findItemInPlayerInv(Player player, Class<? extends Item> item) {
@@ -190,15 +181,16 @@ public class Hemomancy {
         return ItemStack.EMPTY;
     }
 
-
+    /**
+     * NeoForge 1.21: use ResourceLocation.fromNamespaceAndPath() – the two-arg
+     * constructor new ResourceLocation(ns, path) is deprecated in 1.21.
+     */
     public static ResourceLocation rloc(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
-
 
     public void buildContents(BuildCreativeModeTabContentsEvent populator) {
         if (populator.getTabKey() == hemomancytab.getKey()) {
-            // Items
             ItemInit.BASEITEMS.getEntries().forEach(i -> populator.accept(i.get()));
             ItemInit.HANDHELDITEMS.getEntries().forEach(i -> populator.accept(i.get()));
             ItemInit.SPECIALITEMS.getEntries().forEach(i -> populator.accept(i.get()));
@@ -226,7 +218,6 @@ public class Hemomancy {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
         event.enqueueWork(() -> {
             BookPlaceboReloadListener.INSTANCE.registerSerializer(Hemomancy.rloc("blood_structure_page"),
                     BloodStructurePageTemplate.SERIALIZER);
@@ -235,12 +226,9 @@ public class Hemomancy {
         SkillPointInit.init();
         ManipulationTreeInit.init();
         initUnstainedStageIcons();
-        PacketHandler.registerChannels();
+        PacketHandler.registerChannels(NeoForge.EVENT_BUS);
     }
 
-    /**
-     * Assigns icon items to each purity and clarity stage for rendering on the progress tree.
-     */
     private void initUnstainedStageIcons() {
         EnumPurityStage.CORRUPTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.blood_stained_stone.get()));
         EnumPurityStage.TAINTED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.lethean_poppy_wreath.get()));
@@ -253,5 +241,4 @@ public class Hemomancy {
         EnumClarityStage.RESOLUTE.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.tome_of_the_unstained.get()));
         EnumClarityStage.ENLIGHTENED.setIconItem(() -> new net.minecraft.world.item.ItemStack(ItemInit.pallid_icon.get()));
     }
-
 }

@@ -1,0 +1,102 @@
+modLoader="javafml" #mandatory
+
+# NeoForge loader 4+ covers all NeoForge 21.x releases
+loaderVersion="${loader_version_range}" #mandatory
+
+license="${mod_license}"
+
+issueTrackerURL="http://my.issue.tracker/" #optional
+
+[[mods]] #mandatory
+
+modId="${mod_id}" #mandatory
+
+version="${mod_version}" #mandatory
+
+displayName="Hemomancy; Sanguine Mastery" #mandatory
+
+updateJSONURL="http://myurl.me/" #optional
+
+displayURL="http://curseforge.com/" #optional
+
+logoFile="logo.png" #optional
+
+credits='''
+Thanks to these Folks! Who I looked to for help!
+Vazkii,WolfShotz,Direwolf20,baileyholl, and many others!
+And to the entire NeoForge & Forge Discords!
+'''
+
+authors="${mod_authors}" #optional
+
+description='''
+Channel the carnal fluid flowing through your veins, dont let it go to waste.
+Use it to crush your enemies, or boost yourself!
+After all its just sitting there!
+~Huto
+'''
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  Dependencies
+#  NeoForge format uses type="required" / type="optional" instead of mandatory=
+# ──────────────────────────────────────────────────────────────────────────────
+
+[[dependencies.hemomancy]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neoforge_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="hutoslib"
+    type="required"
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="jei"
+    type="optional"
+    versionRange="[8,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="terrablender"
+    type="required"
+    versionRange="[4.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.hemomancy]]
+    modId="geckolib"
+    type="required"
+    versionRange="[4.2,)"
+    ordering="NONE"
+    side="BOTH"
+
+# Mana and Artifice — optional, compat/mna is gated behind ModList.isLoaded("mna")
+# [[dependencies.hemomancy]]
+#     modId="mna"
+#     type="optional"
+#     versionRange="[1,)"
+#     ordering="NONE"
+#     side="BOTH"
+
+# Curios — optional, compat/curios gated behind ModList.isLoaded("curios")
+# [[dependencies.hemomancy]]
+#     modId="curios"
+#     type="optional"
+#     versionRange="[1,)"
+#     ordering="NONE"
+#     side="BOTH"
+
+    

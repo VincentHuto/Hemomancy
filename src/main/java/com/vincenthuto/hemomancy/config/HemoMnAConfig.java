@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
 
 /**
  * Server-side config options for all Hemomancy × Mana and Artifice cross-mod
@@ -10,33 +10,33 @@ import net.minecraftforge.common.ForgeConfigSpec.Builder;
 public class HemoMnAConfig {
 
 	// ===== Blood ↔ Mana Conversion =====
-	public static ForgeConfigSpec.DoubleValue MANA_TO_BLOOD_RATIO;
-	public static ForgeConfigSpec.DoubleValue BLOOD_TO_MANA_RATIO;
+	public static ModConfigSpec.DoubleValue MANA_TO_BLOOD_RATIO;
+	public static ModConfigSpec.DoubleValue BLOOD_TO_MANA_RATIO;
 
 	// ===== Blood Tithe =====
-	public static ForgeConfigSpec.BooleanValue BLOOD_TITHE_ENABLED;
-	public static ForgeConfigSpec.DoubleValue BLOOD_TITHE_MANA_REDUCTION;
-	public static ForgeConfigSpec.DoubleValue BLOOD_TITHE_BLOOD_PER_MANA;
+	public static ModConfigSpec.BooleanValue BLOOD_TITHE_ENABLED;
+	public static ModConfigSpec.DoubleValue BLOOD_TITHE_MANA_REDUCTION;
+	public static ModConfigSpec.DoubleValue BLOOD_TITHE_BLOOD_PER_MANA;
 
 	// ===== Living Thread Armor =====
-	public static ForgeConfigSpec.DoubleValue LIVING_THREAD_SET_BONUS_MAX_MANA;
-	public static ForgeConfigSpec.DoubleValue LIVING_THREAD_SET_BONUS_MANA_REGEN;
+	public static ModConfigSpec.DoubleValue LIVING_THREAD_SET_BONUS_MAX_MANA;
+	public static ModConfigSpec.DoubleValue LIVING_THREAD_SET_BONUS_MANA_REGEN;
 
 	// ===== Broken Mana Trapezohedron =====
-	public static ForgeConfigSpec.IntValue TRAPEZOHEDRON_EFFECT_RADIUS;
+	public static ModConfigSpec.IntValue TRAPEZOHEDRON_EFFECT_RADIUS;
 
 	// ===== Spell → Manipulation Combos =====
-	public static ForgeConfigSpec.BooleanValue SPELL_MANIP_COMBO_ENABLED;
-	public static ForgeConfigSpec.IntValue ARCANE_RESONANCE_DURATION;
-	public static ForgeConfigSpec.DoubleValue ARCANE_RESONANCE_BLOOD_REDUCTION;
-	public static ForgeConfigSpec.IntValue SANGUINE_CLARITY_DURATION;
-	public static ForgeConfigSpec.DoubleValue SANGUINE_CLARITY_MANA_REDUCTION;
+	public static ModConfigSpec.BooleanValue SPELL_MANIP_COMBO_ENABLED;
+	public static ModConfigSpec.IntValue ARCANE_RESONANCE_DURATION;
+	public static ModConfigSpec.DoubleValue ARCANE_RESONANCE_BLOOD_REDUCTION;
+	public static ModConfigSpec.IntValue SANGUINE_CLARITY_DURATION;
+	public static ModConfigSpec.DoubleValue SANGUINE_CLARITY_MANA_REDUCTION;
 
 	// ===== Sanguilith Summon =====
-	public static ForgeConfigSpec.DoubleValue SANGUILITH_HEALTH_PER_MAGNITUDE;
-	public static ForgeConfigSpec.IntValue SANGUILITH_MAX_SUMMONS;
+	public static ModConfigSpec.DoubleValue SANGUILITH_HEALTH_PER_MAGNITUDE;
+	public static ModConfigSpec.IntValue SANGUILITH_MAX_SUMMONS;
 
-	public static ForgeConfigSpec register() {
+	public static ModConfigSpec register() {
 		Builder builder = new Builder();
 
 		// ───── Blood ↔ Mana Conversion ─────

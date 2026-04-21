@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 
 public class VialCentrifugeBlock extends Block implements EntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -121,7 +121,7 @@ public class VialCentrifugeBlock extends Block implements EntityBlock {
 		if (blockEntity instanceof VialCentrifugeBlockEntity te) {
 			if (!level.isClientSide) {
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
-				NetworkHooks.openScreen((ServerPlayer) player, te, pos);
+				((ServerPlayer) player).openMenu(te, pos);
 			}
 		}
 	}

@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.render.item.tile.crafting.GhastlyAlembic
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class GhastlyAlembicBlockItem extends BlockItem {
 

@@ -10,9 +10,9 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.common.util.LogicalSidedProvider;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 public class SpawnFlaskParticlesPacket {
 	public static SpawnFlaskParticlesPacket decode(FriendlyByteBuf buf) {

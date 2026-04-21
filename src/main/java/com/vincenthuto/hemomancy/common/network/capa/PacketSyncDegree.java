@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegre
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet: synchronises the player's current initiatory degree.

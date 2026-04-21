@@ -35,7 +35,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 
 @SuppressWarnings("deprecation")
 public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMultiBlock {
@@ -158,7 +158,7 @@ public class MorphlingIncubatorBlock extends Block implements EntityBlock, IMult
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity instanceof MorphlingIncubatorBlockEntity te) {
 			VanillaPacketDispatcher.dispatchTEToNearbyPlayers(level, pos);
-			NetworkHooks.openScreen((ServerPlayer) player, te, pos);
+			((ServerPlayer) player).openMenu(te, pos);
 		}
 		return InteractionResult.CONSUME;
 	}

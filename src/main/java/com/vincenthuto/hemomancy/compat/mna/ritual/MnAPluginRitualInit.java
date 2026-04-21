@@ -4,7 +4,7 @@ import com.mna.Registries;
 import com.mna.api.tools.RLoc;
 import com.vincenthuto.hemomancy.Hemomancy;
 
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 public class MnAPluginRitualInit {
 

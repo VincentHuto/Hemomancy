@@ -31,7 +31,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 
 public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -66,7 +66,7 @@ public class ScarStationBlock extends Block implements EntityBlock, IMultiBlock 
 				VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
 				if (te.numPlayersUsing < 2) {
 					VanillaPacketDispatcher.dispatchTEToNearbyPlayers(worldIn, pos);
-					NetworkHooks.openScreen((ServerPlayer) player, te, pos);
+					((ServerPlayer) player).openMenu(te, pos);
 					return InteractionResult.SUCCESS;
 				}
 			} else {

@@ -3,8 +3,8 @@ package com.vincenthuto.hemomancy.client.morphling;
 import javax.annotation.Nullable;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Describes how an equipped morphling visually mutates the player's appearance.

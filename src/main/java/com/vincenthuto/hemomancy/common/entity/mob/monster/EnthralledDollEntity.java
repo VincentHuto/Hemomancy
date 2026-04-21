@@ -141,7 +141,7 @@ public class EnthralledDollEntity extends Monster implements OwnableEntity {
 		if (entity instanceof Player) {
 			return entity.mayInteract(pLevel, pPos);
 		} else {
-			return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
+			return entity == null || net.neoforged.neoforge.event.ForgeEventFactory.getMobGriefingEvent(pLevel, entity);
 		}
 	}
 

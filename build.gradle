@@ -1,10 +1,16 @@
+// ============================================================
+//  Hemomancy – NeoForge 1.21.1 build script
+//  Migrated from ForgeGradle/Forge 1.20.1 → NeoGradle/NeoForge 1.21.1
+// ============================================================
 plugins {
+    id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    // NeoGradle replaces ForgeGradle (7.1.25 from official MDK for 1.21.1)
+    id 'net.neoforged.gradle.userdev' version '7.1.25'
+    // Mixin annotation processor – still required alongside NeoGradle for refmap generation
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
@@ -15,158 +21,165 @@ base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+// MC 1.21.1 requires Java 21
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
 
-    mappings channel: mapping_channel, version: mapping_version
+// Access Transformer (NeoGradle 7 style)
+minecraft.accessTransformers.file 'src/main/resources/META-INF/accesstransformer.cfg'
 
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    runs {
-        // applies to all the run configs below
-        configureEach {
-            workingDirectory project.file("run/${it.name}")
-
-   
-         
-            arg "-mixin.config=hemomancy.mixins.json"
-            arg "-mixin.config=hemomancy.mna.mixins.json"
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        client {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--username', 'Huto'
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
-        }
-
-        server {
-            property 'forge.enabledGameTestNamespaces', mod_id
-            args '--nogui'
-        }
-
-        // This run config launches GameTestServer and runs all registered gametests, then exits.
-        // By default, the server will crash when no gametests are provided.
-        // The gametest system is also enabled by default for other run configs under the /test command.
-        gameTestServer {
-            property 'forge.enabledGameTestNamespaces', mod_id
-        }
-
-        data {
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            workingDirectory project.file('run-data')
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-        }
+// Parchment human-readable mappings
+subsystems {
+    parchment {
+        minecraftVersion = "1.21.1"
+        mappingsVersion = "2024.11.17"
     }
 }
+
+runs {
+    configureEach {
+        workingDirectory project.file("run/${name}")
+
+        systemProperty 'neoforge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+        systemProperty 'neoforge.logging.console.level', 'debug'
+
+        jvmArgument "-mixin.config=hemomancy.mixins.json"
+        jvmArgument "-mixin.config=hemomancy.mna.mixins.json"
+
+        modSource project.sourceSets.main
+    }
+
+    client {
+        client()
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        programArguments '--username', 'Huto'
+    }
+
+    server {
+        server()
+        programArgument '--nogui'
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    data {
+        data()
+        workingDirectory project.file('run-data')
+        programArguments.addAll '--mod', mod_id, '--all',
+                '--output', file('src/generated/resources/').absolutePath,
+                '--existing', file('src/main/resources/').absolutePath
+    }
+}
+
 mixin {
     add sourceSets.main, "hemomancy.refmap.json"
+    config "hemomancy.mixins.json"
+    config "hemomancy.mna.mixins.json"
 }
+
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-  maven {
-        url "https://www.cursemaven.com"
+    maven { url "https://www.cursemaven.com" }
+    maven { url = "https://maven.createmod.net" }    // Create, Ponder, Flywheel
+    maven { url = "https://maven.tterrag.com" }       // Registrate
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
+    maven {
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
-    maven { url = "https://maven.tterrag.com" } // Registrate
-    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
-  maven {
-    name = "Progwml6 maven"
-    url = "https://dvs1.progwml6.com/files/maven/"
-  }
-  maven {
-    name = "ModMaven"
-    url = "https://modmaven.k-4u.nl"
-  }
-  flatDir {
-      dir 'libs'
-   }
+    maven {
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"          // JEI
+    }
+    flatDir { dir 'libs' }
 }
 
-
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
-    // The "userdev" classifier will be requested and setup by ForgeGradle.
-    // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
-    // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf('com.github.glitchfiend:TerraBlender-forge:' + minecraft_version + '-' + terrablender_version)
-    implementation fg.deobf("curse.maven:geckolib-388172:5460312")
-    implementation fg.deobf("curse.maven:curios-309927:5066845")
-    implementation fg.deobf("curse.maven:mana-and-artifice-406360:6847805")
-    //implementation fg.deobf("curse.maven:magichem-982204:6281403")
-    implementation fg.deobf("com.aranaira:magichem:0.5.2-pre36")
-    implementation fg.deobf("curse.maven:the-one-probe-245211:4629624")
-    implementation fg.deobf("curse.maven:jei-238222:6075247")
-    //implementation fg.deobf("curse.maven:hutoslib-478643:4861117")
-    implementation fg.deobf("com.vincenthuto:hutoslib:6.0.0")
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // ── Core: NeoForge (replaces ForgeGradle minecraft + forge dep) ──────────────
+    implementation "net.neoforged:neoforge:${neoforge_version}"
 
-    //Dev Stuff to play with/ to help testing
-    implementation(fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false })
-    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
-    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
-    runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
-    implementation(fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}"))
+    // ── TerraBlender – NeoForge 1.21.1 build ─────────────────────────────────────
+    implementation "com.github.glitchfiend:TerraBlender-neoforge:${minecraft_version}-${terrablender_version}"
+
+    // ── GeckoLib – NeoForge 1.21.1 build ─────────────────────────────────────────
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+
+    // ── HutosLib – requires NeoForge 1.21 recompile; use local libs/ until published ──
+    implementation "com.vincenthuto:hutoslib:6.0.0"
+
+    // ── Curios – DISABLED: awaiting NeoForge 1.21.1 build ────────────────────────
+    // TODO: re-enable once top.theillusivec4.curios:curios-neoforge:1.21.1+X is released
+    // compileOnly "top.theillusivec4.curios:curios-neoforge:${minecraft_version}+${curios_version}"
+
+    // ── JEI – DISABLED: awaiting NeoForge 1.21.1 build ───────────────────────────
+    // TODO: re-enable once mezz.jei builds for 1.21.1+neoforge are published
+    // compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    // runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // ── Mana and Artifice – NOT available on NeoForge 1.21 ───────────────────────
+    // compat/mna is stub-gated behind ModList.isLoaded("mna") at runtime.
+    // Do NOT uncomment until a NeoForge 1.21 MnA build exists.
+    // implementation "curse.maven:mana-and-artifice-406360:XXXXXXX"
+
+    // ── Magichem – DISABLED: needs NeoForge 1.21 build ───────────────────────────
+    // implementation "com.aranaira:magichem:0.5.2-pre36"
+
+    // ── The One Probe – DISABLED: awaiting NeoForge 1.21 build ──────────────────
+    // implementation "curse.maven:the-one-probe-245211:XXXXXXX"
+
+    // ── Dev tools (compileOnly / runtimeOnly) – DISABLED until 1.21 builds exist ─
+    // implementation(...)  Create / Ponder / Flywheel / Registrate
+    // implementation "com.direwolf20:buildinggadgets2:X.X.X"
+
+    // ── MixinExtras ──────────────────────────────────────────────────────────────
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
-    implementation("io.github.llamalad7:mixinextras-forge:0.4.1")
-    implementation fg.deobf("com.direwolf20:buildinggadgets2:1.0.7")
+    implementation "io.github.llamalad7:mixinextras-neoforge:0.4.1"
 
+    // Mixin annotation processor
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
-            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
-            forge_version: forge_version, forge_version_range: forge_version_range,
-            loader_version_range: loader_version_range,
-            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-            mod_authors: mod_authors, mod_description: mod_description,
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neoforge_version       : neoforge_version,
+            neoforge_version_range : neoforge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
     ]
-  inputs.properties replaceProperties
+    inputs.properties replaceProperties
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
 }
 
-// Example for how to get properties into the manifest for reading at runtime.
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
                 'Specification-Vendor'    : mod_authors,
-                'Specification-Version'   : '1', // We are version 1 of ourselves
+                'Specification-Version'   : '1',
                 'Implementation-Title'    : project.name,
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "hemomancy.mixins.json,hemomancy.mna.mixins.json"
-
+                'MixinConfigs'            : 'hemomancy.mixins.json,hemomancy.mna.mixins.json'
         ])
     }
-
-    finalizedBy 'reobfJar'
+    // NOTE: NeoForge does NOT use reobfJar – jar is already Mojang-mapped at compile time
 }
 
 publishing {
@@ -183,5 +196,5 @@ publishing {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.encoding = 'UTF-8'
 }

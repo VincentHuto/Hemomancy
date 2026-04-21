@@ -1,12 +1,12 @@
 package com.vincenthuto.hemomancy.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class HemoClientConfig {
 
-	public static ForgeConfigSpec.IntValue HUD_LOCATION;
+	public static ModConfigSpec.IntValue HUD_LOCATION;
 
-	public static void registerClientConfig(ForgeConfigSpec.Builder CLIENT_BUILDER) {
+	public static void registerClientConfig(ModConfigSpec.Builder CLIENT_BUILDER) {
 		CLIENT_BUILDER.comment("Client settings for the power generator").push("powergen");
 
         HUD_LOCATION = CLIENT_BUILDER

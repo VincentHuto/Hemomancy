@@ -173,7 +173,7 @@ public class ManipulationsTabController implements IProgressTab {
 
     private void buildManipMemoryItemLookup() {
         if (!manipMemoryItems.isEmpty()) return;
-        for (Item item : net.minecraftforge.registries.ForgeRegistries.ITEMS) {
+        for (Item item : net.neoforged.neoforge.registries.ForgeRegistries.ITEMS) {
             if (item instanceof com.vincenthuto.hemomancy.common.item.memories.BloodMemoryItem memItem) {
                 BloodManipulation manip = memItem.getManip();
                 if (manip != null && manip.getName() != null) {

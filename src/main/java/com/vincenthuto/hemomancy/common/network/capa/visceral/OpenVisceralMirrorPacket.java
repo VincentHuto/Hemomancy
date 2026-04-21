@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that tells the client to open the Visceral Mirror

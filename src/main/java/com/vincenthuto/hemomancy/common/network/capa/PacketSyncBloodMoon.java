@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs blood moon active state so the client can check it

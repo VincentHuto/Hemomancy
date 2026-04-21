@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that carries a complete {@link DialogueTree} and

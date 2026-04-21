@@ -5,11 +5,11 @@ import com.vincenthuto.hemomancy.Hemomancy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
 /**
  * Handles tick-based cleanup and spawn-rate boosting for active Sanguine Fervor
@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
  * mob that spawns within the zone's chunk radius, effectively increasing local
  * mob density for the duration of the rite.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class SanguineFervorEvents {
 
 	/** How often (in ticks) the cleanup pass runs to remove expired entries. */

@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs all active Qliphoth Bloom positions and radii

@@ -8,7 +8,7 @@ import com.vincenthuto.hemomancy.common.init.AttributeInit.TriState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 public final class CPacketFlight {
 

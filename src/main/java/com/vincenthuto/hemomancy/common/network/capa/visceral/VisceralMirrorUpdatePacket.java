@@ -9,7 +9,7 @@ import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntit
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that carries ritual progress updates so the

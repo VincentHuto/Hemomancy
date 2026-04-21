@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet: synchronises the full skill tree state

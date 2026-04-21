@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Sent from client to server when a player places an ItemScarPattern

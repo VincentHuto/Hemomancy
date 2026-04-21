@@ -36,7 +36,7 @@ public class IncubatorRecipeSerializer implements RecipeSerializer<IncubatorReci
 			String resultId = GsonHelper.getAsString(json, "result");
 			int count = GsonHelper.getAsInt(json, "count", 1);
 			ResourceLocation resultLoc = new ResourceLocation(resultId);
-			result = new ItemStack(net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(resultLoc), count);
+			result = new ItemStack(net.neoforged.neoforge.registries.ForgeRegistries.ITEMS.getValue(resultLoc), count);
 		}
 
 		return new IncubatorRecipe(recipeId, catalysts, result);

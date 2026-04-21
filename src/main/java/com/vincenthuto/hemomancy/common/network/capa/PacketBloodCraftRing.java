@@ -6,7 +6,7 @@ import com.vincenthuto.hemomancy.client.data.ActiveBloodCraftClientData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Tells the client to spawn a collapsing bloody ring

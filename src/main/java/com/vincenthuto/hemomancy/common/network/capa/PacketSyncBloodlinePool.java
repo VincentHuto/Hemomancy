@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs the current state of the shared bloodline pool

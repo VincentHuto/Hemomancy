@@ -40,7 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 	private final BloodAvatarModel<T> modelBloodAvatar;
@@ -58,7 +58,7 @@ public class BloodAvatarLayer<T extends LivingEntity, M extends HumanoidModel<T>
 		if (!pItemStack.isEmpty()) {
 			pMatrixStack.pushPose();
 
-			pModel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(pMatrixStack, pModel,
+			pModel = net.neoforged.neoforge.client.ForgeHooksClient.handleCameraTransforms(pMatrixStack, pModel,
 					pItemDisplayContext, pLeftHand);
 			pMatrixStack.translate(-0.5D, -0.5D, -0.5D);
 			if (!pModel.isCustomRenderer()) {

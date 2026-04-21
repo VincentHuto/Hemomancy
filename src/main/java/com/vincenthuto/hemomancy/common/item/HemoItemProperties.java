@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.item;
 
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Shared ItemPropertyFunction factories to eliminate repetitive anonymous class

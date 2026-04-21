@@ -40,9 +40,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerBossEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
 /**
  * Hollow Vessel (Saint Hemorath) — a body drained of blood but still animate.
@@ -57,7 +57,7 @@ import net.minecraftforge.fml.common.Mod;
  * Phase 2 (50%→0%): faster attacks, shorter Hematic Collapse cadence, and
  * bloodvolume spent is amplified by 1.25× via {@link #onPlayerBloodSpend}.
  */
-@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public class HollowVesselEntity extends Monster {
 
 	private static final EntityDataAccessor<Boolean> DATA_COLLAPSE_CHARGING =

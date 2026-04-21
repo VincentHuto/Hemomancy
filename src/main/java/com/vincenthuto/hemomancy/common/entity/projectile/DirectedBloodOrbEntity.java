@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkHooks;
 
 public class DirectedBloodOrbEntity extends ThrowableProjectile {
 	public static EntityType<DirectedBloodOrbEntity> TYPE = EntityInit.directed_blood_orb.get();

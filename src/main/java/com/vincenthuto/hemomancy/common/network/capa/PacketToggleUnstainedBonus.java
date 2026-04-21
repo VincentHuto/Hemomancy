@@ -7,7 +7,7 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet: player toggles a passive Unstained bonus

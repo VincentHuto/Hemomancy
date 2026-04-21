@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.client.screen.overlay.ManipCooldownOverlay;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server-to-client packet that notifies the client a manipulation was cast

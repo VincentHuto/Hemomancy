@@ -24,11 +24,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class VeinMinerHelper {
 
@@ -132,7 +132,7 @@ public class VeinMinerHelper {
 	}
 
 	public static boolean hasBreakPermission(ServerPlayer player, BlockPos pos) {
-		return hasEditPermission(player, pos) && ForgeHooks.onBlockBreakEvent(player.getCommandSenderWorld(),
+		return hasEditPermission(player, pos) && CommonHooks.onBlockBreakEvent(player.getCommandSenderWorld(),
 				player.gameMode.getGameModeForPlayer(), player, pos) != -1;
 	}
 

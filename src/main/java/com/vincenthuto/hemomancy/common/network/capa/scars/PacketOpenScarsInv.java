@@ -5,8 +5,8 @@ import java.util.function.Supplier;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkHooks;
 
 public class PacketOpenScarsInv {
 

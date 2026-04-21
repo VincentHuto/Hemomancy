@@ -4,7 +4,7 @@ import com.mna.Registries;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.compat.mna.HemoSpellIconCompositor;
 
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import static com.vincenthuto.hemomancy.compat.mna.HemoSpellIconCompositor.borderedIcon;
 
