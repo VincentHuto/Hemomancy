@@ -1,12 +1,17 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /** Legacy packet – auto-pickup feature has been removed. Kept for wire compatibility. */
-public class JarTogglePickupPacket {
+public class JarTogglePickupPacket implements CustomPacketPayload {
+
+	public static final Type<JarTogglePickupPacket> TYPE = new Type<>(Hemomancy.rloc("jar_toggle_pickup_packet"));
+	public static final StreamCodec<FriendlyByteBuf, JarTogglePickupPacket> STREAM_CODEC = StreamCodec.of(JarTogglePickupPacket::encode, JarTogglePickupPacket::decode);
 	public static JarTogglePickupPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new JarTogglePickupPacket();
@@ -16,8 +21,12 @@ public class JarTogglePickupPacket {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final JarTogglePickupPacket message, final Supplier<NetworkEvent.Context> ctx) {
+	public static void handle(final JarTogglePickupPacket message, final IPayloadContext ctx) {
 		// Auto-pickup has been removed; this packet is now a no-op.
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

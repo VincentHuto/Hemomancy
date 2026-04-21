@@ -1,17 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.worldevent.BloodMoonClientState;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs blood moon active state so the client can check it
  * in {@link com.vincenthuto.hemomancy.common.manipulation.BloodManipulation}.
  */
-public class PacketSyncBloodMoon {
+public class PacketSyncBloodMoon implements CustomPacketPayload {
+
+	public static final Type<PacketSyncBloodMoon> TYPE = new Type<>(Hemomancy.rloc("packet_sync_blood_moon"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncBloodMoon> STREAM_CODEC = StreamCodec.of(PacketSyncBloodMoon::encode, PacketSyncBloodMoon::decode);
 
 	private final boolean active;
 
@@ -27,8 +32,12 @@ public class PacketSyncBloodMoon {
 		return new PacketSyncBloodMoon(buf.readBoolean());
 	}
 
-	public static void handle(PacketSyncBloodMoon msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> BloodMoonClientState.set(msg.active));
-		ctx.get().setPacketHandled(true);
+	public static void handle(final PacketSyncBloodMoon msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> BloodMoonClientState.set(msg.active));
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

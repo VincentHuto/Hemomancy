@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
@@ -10,13 +14,15 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class UpdateCurrentVeinPacket {
+public class UpdateCurrentVeinPacket implements CustomPacketPayload {
+
+	public static final Type<UpdateCurrentVeinPacket> TYPE = new Type<>(Hemomancy.rloc("update_current_vein_packet"));
+	public static final StreamCodec<FriendlyByteBuf, UpdateCurrentVeinPacket> STREAM_CODEC = StreamCodec.of(UpdateCurrentVeinPacket::encode, UpdateCurrentVeinPacket::decode);
 	public static class Handler {
-		public static void handle(final UpdateCurrentVeinPacket msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				Player player = ctx.get().getSender();
+		public static void handle(final UpdateCurrentVeinPacket msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				Player player = ctx.player();
 				if (player == null)
 					return;
 				if (!player.level().isClientSide) {
@@ -30,7 +36,6 @@ public class UpdateCurrentVeinPacket {
 					}
 				}
 			});
-			ctx.get().setPacketHandled(true);
 		}
 	}
 
@@ -47,5 +52,10 @@ public class UpdateCurrentVeinPacket {
 	public UpdateCurrentVeinPacket(int selectedIn) {
 		this.selected = selectedIn;
 
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

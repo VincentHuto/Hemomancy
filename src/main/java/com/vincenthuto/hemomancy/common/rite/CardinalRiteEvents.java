@@ -180,9 +180,7 @@ public class CardinalRiteEvents {
 				entries.add(new ActiveRiteClientData.RiteEntry(
 						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
 			}
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.ALL.noArg(),
-					new PacketSyncActiveRites(entries));
+			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
 	}
 
@@ -207,9 +205,7 @@ public class CardinalRiteEvents {
 				entries.add(new ActiveRiteClientData.RiteEntry(
 						rite.getCenterPos(), rite.getRiteSize(), rite.getProgress(), rite.getRecipeId()));
 			}
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.ALL.noArg(),
-					new PacketSyncActiveRites(entries));
+			PacketDistributor.sendToAllPlayers(new PacketSyncActiveRites(entries));
 		}
 	}
 
@@ -1189,9 +1185,7 @@ public class CardinalRiteEvents {
 		int variant = (int) ((sLevel.getGameTime() / 100) % AncestralCommunionDialogueTrees.VARIANT_COUNT);
 		DialogueTree tree = AncestralCommunionDialogueTrees.forVariant(variant);
 
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> caster),
-				new OpenDialoguePacket(tree));
+		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(tree));
 
 		caster.displayClientMessage(
 				Component.literal("The ancient blood stirs... a voice rises from the depths.")
@@ -1404,9 +1398,7 @@ public class CardinalRiteEvents {
 				false);
 
 		// Fire the post-bloom Fungal Whisper so the Entity acknowledges the fruiting
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> caster),
-				new OpenDialoguePacket(FungalWhisperDialogueTrees.postBloom()));
+		PacketHandler.sendToPlayer(caster, new OpenDialoguePacket(FungalWhisperDialogueTrees.postBloom()));
 	}
 
 	/**
@@ -1552,7 +1544,7 @@ public class CardinalRiteEvents {
 			}
 			com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms packet =
 					new com.vincenthuto.hemomancy.common.network.capa.PacketSyncQliphothBlooms(clientEntries);
-			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> player), packet);
+			PacketHandler.sendToPlayer(player, packet);
 		}
 	}
 
@@ -2060,7 +2052,7 @@ public class CardinalRiteEvents {
 			p.sendSystemMessage(Component.translatable("hemomancy.blood_moon.start")
 					.withStyle(ChatFormatting.DARK_RED, ChatFormatting.BOLD));
 		}
-		PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(true));
+		PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(true));
 		caster.displayClientMessage(
 				Component.literal("The ritual tears the veil — the Blood Moon rises!")
 						.withStyle(ChatFormatting.DARK_RED, ChatFormatting.ITALIC),
@@ -2097,7 +2089,7 @@ public class CardinalRiteEvents {
 				p.sendSystemMessage(Component.translatable("hemomancy.lethean_tide.end")
 						.withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
 			}
-			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.ALL.noArg(), new PacketSyncBloodMoon(false));
+			PacketDistributor.sendToAllPlayers(new PacketSyncBloodMoon(false));
 
 			unstained.addPurity(10f);
 			UnstainedProgressEvents.syncProgress(caster, unstained);

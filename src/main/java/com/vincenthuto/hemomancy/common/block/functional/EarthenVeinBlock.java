@@ -188,8 +188,7 @@ public class EarthenVeinBlock extends Block implements EntityBlock, SimpleWaterl
 				}
 			}
 			if (!worldIn.isClientSide) {
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new KnownManipulationServerPacket(known));
+				PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 
 			}
 		}

@@ -54,8 +54,7 @@ public class LetheanBrewItem extends Item {
 		known.setSelectedManip(BloodManipulation.BLANK);
 		known.getKnownManips().clear();
 		if (!p_42985_.isClientSide) {
-			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new KnownManipulationServerPacket(known));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 		}
 
 		if (player != null) {

@@ -25,7 +25,7 @@ public class BloodTendencyGaugeItem extends Item {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if (level.isClientSide) {
-			PacketHandler.CHANNELBLOODTENDENCY.sendToServer(new PacketOpenTendencyView());
+			PacketHandler.sendToServer(new PacketOpenTendencyView());
 		}
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}

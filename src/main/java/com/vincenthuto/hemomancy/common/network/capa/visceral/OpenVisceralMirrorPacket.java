@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
@@ -8,14 +11,16 @@ import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that tells the client to open the Visceral Mirror
  * screen. Carries all the organ data the screen needs so we don't have to
  * rely on an organ-capability sync channel.
  */
-public class OpenVisceralMirrorPacket {
+public class OpenVisceralMirrorPacket implements CustomPacketPayload {
+
+	public static final Type<OpenVisceralMirrorPacket> TYPE = new Type<>(Hemomancy.rloc("open_visceral_mirror_packet"));
+	public static final StreamCodec<FriendlyByteBuf, OpenVisceralMirrorPacket> STREAM_CODEC = StreamCodec.of(OpenVisceralMirrorPacket::encode, OpenVisceralMirrorPacket::decode);
 
 	private final BlockPos pos;
 	private final int[] organLevels;
@@ -61,14 +66,18 @@ public class OpenVisceralMirrorPacket {
 		return new OpenVisceralMirrorPacket(pos, organLevels, hasEcho, bloodVolume, maxBloodVolume, degree);
 	}
 
-	public static void handle(OpenVisceralMirrorPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final OpenVisceralMirrorPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			if (Minecraft.getInstance().player != null) {
 				VisceralMirrorScreen.open(
 						msg.pos, msg.organLevels, msg.hasEcho,
 						msg.bloodVolume, msg.maxBloodVolume, msg.degree);
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

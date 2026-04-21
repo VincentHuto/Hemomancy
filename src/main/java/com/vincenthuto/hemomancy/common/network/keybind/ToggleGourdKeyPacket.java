@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.item.tool.BloodGourdItem;
@@ -10,9 +13,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class ToggleGourdKeyPacket {
+public class ToggleGourdKeyPacket implements CustomPacketPayload {
+
+	public static final Type<ToggleGourdKeyPacket> TYPE = new Type<>(Hemomancy.rloc("toggle_gourd_key_packet"));
+	public static final StreamCodec<FriendlyByteBuf, ToggleGourdKeyPacket> STREAM_CODEC = StreamCodec.of(ToggleGourdKeyPacket::encode, ToggleGourdKeyPacket::decode);
 
 	public ToggleGourdKeyPacket() {
 	}
@@ -26,9 +31,9 @@ public class ToggleGourdKeyPacket {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final ToggleGourdKeyPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final ToggleGourdKeyPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null)
 				return;
 
@@ -51,7 +56,10 @@ public class ToggleGourdKeyPacket {
 				}
 			});
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }
-

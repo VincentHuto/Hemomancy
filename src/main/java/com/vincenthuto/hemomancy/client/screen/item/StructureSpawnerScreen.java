@@ -128,7 +128,7 @@ public class StructureSpawnerScreen extends AbstractContainerScreen<StructureSpa
 				if (currentY + ENTRY_HEIGHT > LIST_HEIGHT) break;
 				final ListRow entryRow = row;
 				Button btn = Button.builder(Component.literal(entryRow.displayName()), (press) -> {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+					PacketHandler.sendToServer(
 							new PlaceStructurePacket(entryRow.recipeId(), entryRow.type())
 					);
 					onClose();

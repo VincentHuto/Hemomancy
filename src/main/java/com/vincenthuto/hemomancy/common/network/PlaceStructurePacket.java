@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
@@ -15,9 +19,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PlaceStructurePacket {
+public class PlaceStructurePacket implements CustomPacketPayload {
+
+	public static final Type<PlaceStructurePacket> TYPE = new Type<>(Hemomancy.rloc("place_structure_packet"));
+	public static final StreamCodec<FriendlyByteBuf, PlaceStructurePacket> STREAM_CODEC = StreamCodec.of(PlaceStructurePacket::encode, PlaceStructurePacket::decode);
 
 	public enum StructureType {
 		BLOOD_STRUCTURE,
@@ -43,9 +49,9 @@ public class PlaceStructurePacket {
 		return new PlaceStructurePacket(id, type);
 	}
 
-	public static void handle(PlaceStructurePacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PlaceStructurePacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			// Creative-only check
@@ -149,6 +155,10 @@ public class PlaceStructurePacket {
 
 			player.sendSystemMessage(Component.literal("§aPlaced " + placed + " blocks for: " + msg.recipeId.getPath()));
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

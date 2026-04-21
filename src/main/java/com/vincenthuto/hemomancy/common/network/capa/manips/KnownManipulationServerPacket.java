@@ -1,9 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
@@ -14,9 +18,11 @@ import com.vincenthuto.hemomancy.common.manipulation.ManipLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class KnownManipulationServerPacket {
+public class KnownManipulationServerPacket implements CustomPacketPayload {
+
+	public static final Type<KnownManipulationServerPacket> TYPE = new Type<>(Hemomancy.rloc("known_manipulation_server_packet"));
+	public static final StreamCodec<FriendlyByteBuf, KnownManipulationServerPacket> STREAM_CODEC = StreamCodec.of(KnownManipulationServerPacket::encode, KnownManipulationServerPacket::decode);
 
 	
 	private List<VeinLocation> veinList = new ArrayList<>();
@@ -107,8 +113,8 @@ public class KnownManipulationServerPacket {
 		}
 
 	}
-	public static void handle(final KnownManipulationServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final KnownManipulationServerPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			
 			IKnownManipulations known = HemoCapabilityAccess.requireKnownManipulations(Minecraft.getInstance().player);
 			known.setKnownManips(msg.known);
@@ -121,7 +127,10 @@ public class KnownManipulationServerPacket {
 
 	
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

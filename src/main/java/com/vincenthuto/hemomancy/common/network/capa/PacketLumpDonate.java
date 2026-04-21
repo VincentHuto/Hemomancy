@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -14,13 +18,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Client → Server: Player requests a one-time lump donation to the shared bloodline pool.
  */
-public class PacketLumpDonate {
+public class PacketLumpDonate implements CustomPacketPayload {
+
+	public static final Type<PacketLumpDonate> TYPE = new Type<>(Hemomancy.rloc("packet_lump_donate"));
+	public static final StreamCodec<FriendlyByteBuf, PacketLumpDonate> STREAM_CODEC = StreamCodec.of(PacketLumpDonate::encode, PacketLumpDonate::decode);
 
 	private final double amount;
 
@@ -36,9 +42,9 @@ public class PacketLumpDonate {
 		return new PacketLumpDonate(buf.readDouble());
 	}
 
-	public static void handle(PacketLumpDonate msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PacketLumpDonate msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
@@ -68,9 +74,7 @@ public class PacketLumpDonate {
 						BloodVolumeEvents.syncVolume(player, volume);
 
 						// Sync pool data to the donor
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> player),
-								new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
 										globalLine.getMaxBloodVolume(),
 										globalLine.getPlayerUUIDS().size()));
 
@@ -81,6 +85,10 @@ public class PacketLumpDonate {
 				}
 			});
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

@@ -105,9 +105,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
                 tree = ZealotDialogueTrees.uninitiated(this.getId());
             }
 
-            PacketHandler.CHANNELBLOODVOLUME.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new OpenDialoguePacket(tree));
+            PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

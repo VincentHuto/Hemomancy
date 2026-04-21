@@ -27,9 +27,7 @@ public class UnstainedProgressEvents {
     }
 
     public static void syncProgress(ServerPlayer player, IUnstainedProgress progress) {
-        PacketHandler.CHANNELBLOODVOLUME.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                new PacketSyncUnstainedProgress(progress));
+        PacketHandler.sendToPlayer(player, new PacketSyncUnstainedProgress(progress));
     }
 
     @SubscribeEvent

@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
@@ -14,12 +18,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server: Leader/progenitor removes a player member from their bloodline.
  */
-public class PacketKickBloodlinePlayer {
+public class PacketKickBloodlinePlayer implements CustomPacketPayload {
+
+	public static final Type<PacketKickBloodlinePlayer> TYPE = new Type<>(Hemomancy.rloc("packet_kick_bloodline_player"));
+	public static final StreamCodec<FriendlyByteBuf, PacketKickBloodlinePlayer> STREAM_CODEC = StreamCodec.of(PacketKickBloodlinePlayer::encode, PacketKickBloodlinePlayer::decode);
 
 	private final UUID targetUUID;
 
@@ -35,9 +41,9 @@ public class PacketKickBloodlinePlayer {
 		return new PacketKickBloodlinePlayer(buf.readUUID());
 	}
 
-	public static void handle(PacketKickBloodlinePlayer msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer leader = ctx.get().getSender();
+	public static void handle(final PacketKickBloodlinePlayer msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer leader = ctx.player();
 			if (leader == null) return;
 
 			HemoCapabilityAccess.getBloodVolume(leader).ifPresent(volume -> {
@@ -100,7 +106,6 @@ public class PacketKickBloodlinePlayer {
 						false);
 			});
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	/** Clears the kicked player's bloodline, syncs them to client, and sends the removal notice. */
@@ -122,5 +127,10 @@ public class PacketKickBloodlinePlayer {
 			vol.setBloodLine(updatedLine);
 			BloodVolumeEvents.syncVolume(member, vol);
 		});
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

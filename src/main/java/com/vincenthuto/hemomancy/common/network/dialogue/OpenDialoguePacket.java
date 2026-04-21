@@ -1,18 +1,23 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that carries a complete {@link DialogueTree} and
  * triggers the dialogue screen on the receiving client.
  */
-public class OpenDialoguePacket {
+public class OpenDialoguePacket implements CustomPacketPayload {
+
+	public static final Type<OpenDialoguePacket> TYPE = new Type<>(Hemomancy.rloc("open_dialogue_packet"));
+	public static final StreamCodec<FriendlyByteBuf, OpenDialoguePacket> STREAM_CODEC = StreamCodec.of(OpenDialoguePacket::encode, OpenDialoguePacket::decode);
 
 	private final DialogueTree tree;
 
@@ -28,13 +33,17 @@ public class OpenDialoguePacket {
 		return new OpenDialoguePacket(DialogueTree.fromNetwork(buf));
 	}
 
-	public static void handle(OpenDialoguePacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final OpenDialoguePacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			// Must be handled on the client render thread
 			if (Minecraft.getInstance().player != null) {
 				com.vincenthuto.hemomancy.client.screen.dialogue.DialogueScreen.open(msg.tree);
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

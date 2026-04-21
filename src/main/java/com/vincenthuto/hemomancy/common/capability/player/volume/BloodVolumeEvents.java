@@ -268,9 +268,7 @@ public class BloodVolumeEvents {
 	// ───── Utility ─────
 
 	public static void syncVolume(ServerPlayer player, IBloodVolume volume) {
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new BloodVolumeServerPacket(volume));
+		PacketHandler.sendToPlayer(player, new BloodVolumeServerPacket(volume));
 	}
 
 	@SubscribeEvent
@@ -321,9 +319,7 @@ public class BloodVolumeEvents {
 			volume.setBloodLine(globalLine);
 
 			// Sync shared pool data to client
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> player),
-					new com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool(
+			PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.PacketSyncBloodlinePool(
 							globalLine.getBloodVolume(),
 							globalLine.getMaxBloodVolume(),
 							globalLine.getPlayerUUIDS().size()));
@@ -334,9 +330,7 @@ public class BloodVolumeEvents {
 		syncVolume(player, volume);
 
 		// Sync skill tree to client
-		com.vincenthuto.hemomancy.common.network.PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills(
+		com.vincenthuto.hemomancy.common.network.PacketHandler.sendToPlayer(player, new com.vincenthuto.hemomancy.common.network.capa.PacketSyncSkills(
 						com.vincenthuto.hemomancy.common.init.SkillPointInit.serializeAll()));
 
 		player.displayClientMessage(

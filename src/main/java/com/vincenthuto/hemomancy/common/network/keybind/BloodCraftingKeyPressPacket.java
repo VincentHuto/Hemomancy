@@ -1,9 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
@@ -39,10 +42,12 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BloodCraftingKeyPressPacket {
+public class BloodCraftingKeyPressPacket implements CustomPacketPayload {
+
+	public static final Type<BloodCraftingKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_crafting_key_press_packet"));
+	public static final StreamCodec<FriendlyByteBuf, BloodCraftingKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodCraftingKeyPressPacket::encode, BloodCraftingKeyPressPacket::decode);
 	private static final ResourceLocation BLOOM_OF_QLIPHOTH_RITE_ID = Hemomancy.rloc("cardinal_rite/bloom_of_qliphoth");
 	private static final ResourceLocation FOUNDING_SANCTUM_RITE_ID = Hemomancy.rloc("cardinal_rite/founding_sanctum");
 	private static final ResourceLocation APOTHEOS_RITE_ID = Hemomancy.rloc("cardinal_rite/apotheos_rite");
@@ -108,9 +113,9 @@ public class BloodCraftingKeyPressPacket {
 		return matchedRecipes;
 	}
 
-	public static void handle(final BloodCraftingKeyPressPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final BloodCraftingKeyPressPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null)
 				return;
 
@@ -125,7 +130,7 @@ public class BloodCraftingKeyPressPacket {
 					if (matchedPatterns != null) {
 						if (!matchedPatterns.isEmpty()) {
 							for (BloodStructureRecipe targetPattern : matchedPatterns) {
-								ServerLevel sLevel = (ServerLevel) ctx.get().getSender().level();
+								ServerLevel sLevel = (ServerLevel) ctx.player().level();
 								if (player.getMainHandItem().getItem() == targetPattern.getHeldItem().getItem()) {
 									// ── Tier degree check ──
 									int playerDegree = InitiatoryDegreeProvider.getPlayerDegreeNumber(player);
@@ -182,9 +187,7 @@ public class BloodCraftingKeyPressPacket {
 												float halfD = (maxZ - minZ) / 2.0f + 0.5f;
 												float startRadius = Math.max(halfW, halfD) + 2.0f;
 												int animDuration = 30; // ticks (~1.5 seconds)
-												PacketHandler.CHANNELBLOODVOLUME.send(
-														PacketDistributor.ALL.noArg(),
-														new PacketBloodCraftRing(ringCenter, startRadius,
+												PacketDistributor.sendToAllPlayers(new PacketBloodCraftRing(ringCenter, startRadius,
 																centerY, animDuration));
 
 												// ── Drain blood and consume held item now ──
@@ -192,9 +195,7 @@ public class BloodCraftingKeyPressPacket {
 												player.setItemInHand(InteractionHand.MAIN_HAND,
 														new ItemStack(oldStack.getItem(), oldStack.getCount() - 1));
 												bloodVolume.drain(targetPattern.getBloodCost());
-												PacketHandler.CHANNELBLOODVOLUME.send(
-														PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-														new BloodVolumeServerPacket(bloodVolume));
+												PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(bloodVolume));
 
 												// ── Schedule block breaking + result drop after ring collapses ──
 												PendingBloodCraftManager.schedule(
@@ -264,14 +265,13 @@ public class BloodCraftingKeyPressPacket {
 
 			// === Cardinal Rite Recipes (delayed casting) ===
 			if (!handled) {
-				tryStartCardinalRite(player, ctx);
+				tryStartCardinalRite(player);
 			}
 
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
-	private static void tryStartCardinalRite(Player player, Supplier<NetworkEvent.Context> ctx) {
+	private static void tryStartCardinalRite(Player player) {
 		ServerLevel sLevel = (ServerLevel) player.level();
 		ServerPlayer serverPlayer = (ServerPlayer) player;
 
@@ -456,5 +456,10 @@ public class BloodCraftingKeyPressPacket {
 
 	public BloodCraftingKeyPressPacket(ItemStack stack) {
 		this.heldStack = stack;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

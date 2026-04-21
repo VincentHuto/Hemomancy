@@ -1,20 +1,25 @@
 package com.vincenthuto.hemomancy.common.network.dialogue;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueEvent;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet sent when a player selects a dialogue option that
  * carries an event id. The server fires a {@link DialogueEvent} so that any
  * listener can react to the player's choice.
  */
-public class DialogueOptionPacket {
+public class DialogueOptionPacket implements CustomPacketPayload {
+
+	public static final Type<DialogueOptionPacket> TYPE = new Type<>(Hemomancy.rloc("dialogue_option_packet"));
+	public static final StreamCodec<FriendlyByteBuf, DialogueOptionPacket> STREAM_CODEC = StreamCodec.of(DialogueOptionPacket::encode, DialogueOptionPacket::decode);
 
 	private final String eventId;
 	private final int entityId;
@@ -33,9 +38,9 @@ public class DialogueOptionPacket {
 		return new DialogueOptionPacket(buf.readUtf(), buf.readInt());
 	}
 
-	public static void handle(DialogueOptionPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
+	public static void handle(final DialogueOptionPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player();
 			if (sender != null && msg.eventId != null && !msg.eventId.isEmpty()) {
 				if (msg.entityId == 0) {
 					// Disembodied voice (e.g. fungal whispers) — no entity to validate
@@ -51,6 +56,10 @@ public class DialogueOptionPacket {
 				}
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

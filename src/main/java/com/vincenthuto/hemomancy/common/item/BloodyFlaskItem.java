@@ -54,8 +54,7 @@ public class BloodyFlaskItem extends Item {
 					PacketHandler.sendBloodFlaskParticles(playerIn.position(), ParticleColor.BLOOD, 64f,
 							worldIn.dimension());
 				}
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer((ServerPlayer) playerIn, new BloodVolumeServerPacket(volume));
 				stack.shrink(1);
 				playerIn.broadcastBreakEvent(handIn);
 			}

@@ -118,7 +118,7 @@ public class RadialChooseVeinScreen extends Screen {
 						@Override
 						public boolean onClick() {
 							mc.player.playSound(SoundEvents.PORTAL_TRAVEL, 0.20f, 0.1F);
-							PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new TeleportToVeinPacket(current));
+							PacketHandler.sendToServer(new TeleportToVeinPacket(current));
 							RadialChooseVeinScreen.this.menu.close();
 							return true;
 						}

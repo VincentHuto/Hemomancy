@@ -1,19 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodAvatarHitParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class SpawnAvatarParticlesPacket {
+public class SpawnAvatarParticlesPacket implements CustomPacketPayload {
+
+	public static final Type<SpawnAvatarParticlesPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_avatar_particles_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SpawnAvatarParticlesPacket> STREAM_CODEC = StreamCodec.of(SpawnAvatarParticlesPacket::encode, SpawnAvatarParticlesPacket::decode);
 	public static SpawnAvatarParticlesPacket decode(FriendlyByteBuf buf) {
 		SpawnAvatarParticlesPacket msg = new SpawnAvatarParticlesPacket();
 		try {
@@ -35,18 +38,11 @@ public class SpawnAvatarParticlesPacket {
 
 	}
 
-	public static void handle(SpawnAvatarParticlesPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-		NetworkEvent.Context ctx = ctxSupplier.get();
-		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-		if (!clientLevel.isPresent()) {
-			return;
-		}
-		ClientLevel world = ((ClientLevel) clientLevel.get());
+	public static void handle(final SpawnAvatarParticlesPacket msg, final IPayloadContext ctxSupplier) {
+		ClientLevel world = Minecraft.getInstance().level;
+		if (world == null) return;
 		world.addParticle(BloodAvatarHitParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y,
 				msg.getPos().z, 0, 0, 0);
-
-		ctxSupplier.get().setPacketHandled(true);
 	}
 
 	Vec3 pos;
@@ -67,5 +63,10 @@ public class SpawnAvatarParticlesPacket {
 
 	public Vec3 getPos() {
 		return pos;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

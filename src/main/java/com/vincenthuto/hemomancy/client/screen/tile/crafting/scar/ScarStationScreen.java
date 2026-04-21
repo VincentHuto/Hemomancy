@@ -186,7 +186,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 				pattern = ScarRecipe.blank();
 				preview = ScarRecipe.blank();
 				refreshButtonsFromPattern();
-				PacketHandler.CHANNELSCARS.sendToServer(new PacketUpdateScarPattern(pattern));
+				PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 			}
 		}
 	}
@@ -470,7 +470,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		// Clear any existing confirmed pattern
 		pattern = ScarRecipe.blank();
 		refreshButtonsFromPattern();
-		PacketHandler.CHANNELSCARS.sendToServer(new PacketUpdateScarPattern(pattern));
+		PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 		// Set the preview (purple highlight, client-side only)
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -766,17 +766,17 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 					pattern = ScarRecipe.blank();
 					preview = ScarRecipe.blank();
 					refreshButtonsFromPattern();
-					PacketHandler.CHANNELSCARS.sendToServer(new PacketUpdateScarPattern(pattern));
+					PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 				}));
 		this.addRenderableWidget(ScarButton = new ScarActionButton(
 				left + 120, top + 36, 16, 16,
 				ScarActionButton.IconType.CHISEL, (press) -> {
 					if (te.contents.get(3).getItem() != Items.AIR) {
-						PacketHandler.CHANNELSCARS.sendToServer(new PacketScarCraftingEvent());
+						PacketHandler.sendToServer(new PacketScarCraftingEvent());
 						pattern = ScarRecipe.blank();
 						preview = ScarRecipe.blank();
 						refreshButtonsFromPattern();
-						PacketHandler.CHANNELSCARS.sendToServer(new PacketUpdateScarPattern(pattern));
+						PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 					}
 				}));
 		this.addRenderableWidget(loadPatternButton = new ScarActionButton(
@@ -922,7 +922,7 @@ public class ScarStationScreen extends AbstractContainerScreen<ScarStationMenu> 
 		if (isDragging && button == 0) {
 			isDragging = false;
 			// Sync the final pattern to the server in one batch
-			PacketHandler.CHANNELSCARS.sendToServer(new PacketUpdateScarPattern(pattern));
+			PacketHandler.sendToServer(new PacketUpdateScarPattern(pattern));
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);

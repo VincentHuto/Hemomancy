@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 import org.joml.Vector3d;
 
@@ -24,9 +28,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class GroundBloodDrawPacket {
+public class GroundBloodDrawPacket implements CustomPacketPayload {
+
+	public static final Type<GroundBloodDrawPacket> TYPE = new Type<>(Hemomancy.rloc("ground_blood_draw_packet"));
+	public static final StreamCodec<FriendlyByteBuf, GroundBloodDrawPacket> STREAM_CODEC = StreamCodec.of(GroundBloodDrawPacket::encode, GroundBloodDrawPacket::decode);
 
 	public static GroundBloodDrawPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
@@ -38,9 +44,9 @@ public class GroundBloodDrawPacket {
 		buffer.writeFloat(message.parTick);
 	}
 
-	public static void handle(final GroundBloodDrawPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final GroundBloodDrawPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
@@ -208,7 +214,6 @@ public class GroundBloodDrawPacket {
 			}
 
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	float parTick;
@@ -220,4 +225,8 @@ public class GroundBloodDrawPacket {
 		this.parTick = par;
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

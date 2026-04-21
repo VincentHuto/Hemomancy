@@ -83,9 +83,7 @@ public class UnstainedAcolyteEntity extends PathfinderMob {
         if (!player.level().isClientSide && hand == InteractionHand.MAIN_HAND && player instanceof ServerPlayer serverPlayer) {
             DialogueTree tree = selectDialogue(serverPlayer);
 
-            PacketHandler.CHANNELBLOODVOLUME.send(
-                    PacketDistributor.PLAYER.with(() -> serverPlayer),
-                    new OpenDialoguePacket(tree));
+            PacketHandler.sendToPlayer(serverPlayer, new OpenDialoguePacket(tree));
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }

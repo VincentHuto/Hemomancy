@@ -194,33 +194,31 @@ public class ClientEvents {
 		}
 
 		if (bloodFormation.consumeClick()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodFormationKeyPressPacket());
+			PacketHandler.sendToServer(new BloodFormationKeyPressPacket());
 		}
 
 		if (bloodCrafting.consumeClick()) {
-			PacketHandler.CHANNELBLOODVOLUME
-					.sendToServer(new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
+			PacketHandler.sendToServer(new BloodCraftingKeyPressPacket(HLClientUtils.getClientPlayer().getMainHandItem()));
 		}
 
 		if (bloodDraw.isDown()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
+			PacketHandler.sendToServer(new GroundBloodDrawPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (toggleGourd.consumeClick()) {
-			PacketHandler.CHANNELSCARS.sendToServer(new ToggleGourdKeyPacket());
+			PacketHandler.sendToServer(new ToggleGourdKeyPacket());
 		}
 		if (bloodBallDrop.consumeClick()) {
 			BloodBallClientData.drop();
 		}
 		if (openMorphlingJarViewer.consumeClick()) {
 			if (Screen.hasShiftDown()) {
-				PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new OpenMorphlingJarPacket());
+				PacketHandler.sendToServer(new OpenMorphlingJarPacket());
 			} else {
 				MorphlingJarViewerScreen.openScreen();
 			}
 		}
 		if (cycleSelectedManip.consumeClick()) {
-			PacketHandler.CHANNELKNOWNMANIPS
-					.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
+			PacketHandler.sendToServer(new ChangeSelectedManipPacket(HLClientUtils.getPartialTicks()));
 		}
 		if (useManip.consumeClick()) {
 			Minecraft mc = Minecraft.getInstance();
@@ -230,8 +228,7 @@ public class ClientEvents {
 							&& manip.getSelectedManip().getName().equals("venous_travel")) {
 						mc.setScreen(new RadialChooseVeinScreen(manip));
 					} else {
-						PacketHandler.CHANNELKNOWNMANIPS
-								.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
+						PacketHandler.sendToServer(new UseManipKeyPacket(HLClientUtils.getPartialTicks()));
 					}
 				});
 			}

@@ -72,9 +72,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 
 		// Sync blood volume
 		if (player instanceof ServerPlayer serverPlayer) {
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> serverPlayer),
-					new BloodVolumeServerPacket(volume));
+			PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 		}
 
 		player.displayClientMessage(
@@ -100,9 +98,7 @@ public class CrimsonTitheManip extends BloodManipulation {
 			// Drain double what was stored as punishment
 			volume.drain(storedAmount * 2.0);
 			if (player instanceof ServerPlayer serverPlayer) {
-				PacketHandler.CHANNELBLOODVOLUME.send(
-						PacketDistributor.PLAYER.with(() -> serverPlayer),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(volume));
 			}
 		}
 

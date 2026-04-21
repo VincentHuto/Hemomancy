@@ -1,21 +1,27 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.client.data.ActiveRiteClientData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs all active cardinal rite positions, sizes, and
  * progress so the client can render glowing boundary circles.
  */
-public class PacketSyncActiveRites {
+public class PacketSyncActiveRites implements CustomPacketPayload {
+
+	public static final Type<PacketSyncActiveRites> TYPE = new Type<>(Hemomancy.rloc("packet_sync_active_rites"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncActiveRites> STREAM_CODEC = StreamCodec.of(PacketSyncActiveRites::encode, PacketSyncActiveRites::decode);
 
 	private final List<ActiveRiteClientData.RiteEntry> entries;
 
@@ -46,10 +52,14 @@ public class PacketSyncActiveRites {
 		return new PacketSyncActiveRites(entries);
 	}
 
-	public static void handle(PacketSyncActiveRites msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final PacketSyncActiveRites msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			ActiveRiteClientData.set(msg.entries);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
@@ -9,13 +12,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet sent when the player clicks "Begin Extraction"
  * in the Visceral Mirror screen.
  */
-public class VisceralMirrorExtractPacket {
+public class VisceralMirrorExtractPacket implements CustomPacketPayload {
+
+	public static final Type<VisceralMirrorExtractPacket> TYPE = new Type<>(Hemomancy.rloc("visceral_mirror_extract_packet"));
+	public static final StreamCodec<FriendlyByteBuf, VisceralMirrorExtractPacket> STREAM_CODEC = StreamCodec.of(VisceralMirrorExtractPacket::encode, VisceralMirrorExtractPacket::decode);
 
 	private final BlockPos pos;
 	private final int organOrdinal;
@@ -34,9 +39,9 @@ public class VisceralMirrorExtractPacket {
 		return new VisceralMirrorExtractPacket(buf.readBlockPos(), buf.readInt());
 	}
 
-	public static void handle(VisceralMirrorExtractPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
+	public static void handle(final VisceralMirrorExtractPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player();
 			if (sender == null) return;
 
 			// Validate range
@@ -51,6 +56,10 @@ public class VisceralMirrorExtractPacket {
 
 			mirror.startRitual(sender, organs[msg.organOrdinal]);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

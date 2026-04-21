@@ -1,17 +1,30 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class SyncTrackingAvatarPacket {
+public class SyncTrackingAvatarPacket implements CustomPacketPayload {
+
+	public static void encode(SyncTrackingAvatarPacket msg, FriendlyByteBuf buf) {
+		msg.toBytes(buf);
+	}
+
+	public static SyncTrackingAvatarPacket decode(FriendlyByteBuf buf) {
+		return new SyncTrackingAvatarPacket(buf);
+	}
+
+	public static final Type<SyncTrackingAvatarPacket> TYPE = new Type<>(Hemomancy.rloc("sync_tracking_avatar_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SyncTrackingAvatarPacket> STREAM_CODEC = StreamCodec.of(SyncTrackingAvatarPacket::encode, SyncTrackingAvatarPacket::decode);
 
 	public int playerId;
 	public boolean isActive;
@@ -26,8 +39,12 @@ public class SyncTrackingAvatarPacket {
 		this.isActive = isActive;
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(SyncTrackingAvatarPacket msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
 				HemoCapabilityAccess.getKnownManipulations(p).ifPresent(b -> {
@@ -35,11 +52,15 @@ public class SyncTrackingAvatarPacket {
 				});
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(this.playerId);
 		buf.writeBoolean(this.isActive);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

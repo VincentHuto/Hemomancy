@@ -478,7 +478,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 		for (ManipIcon icon : equippedIcons) {
 			if (mx >= icon.x && mx < icon.x + ICON_SIZE
 					&& my >= icon.y && my < icon.y + ICON_SIZE) {
-				PacketHandler.CHANNELKNOWNMANIPS.sendToServer(
+				PacketHandler.sendToServer(
 						new EquipManipulationPacket(icon.manip.getName(), false));
 				equippedNames.remove(icon.manip.getName());
 				equippedManips.remove(icon.manip);
@@ -508,7 +508,7 @@ public class MnemonicReliquaryScreen extends AbstractContainerScreen<MnemonicRel
 
 			if (isInsideBrain(mx, my) && equippedManips.size() < maxSlots
 					&& !equippedNames.contains(draggingManip.getName())) {
-				PacketHandler.CHANNELKNOWNMANIPS.sendToServer(
+				PacketHandler.sendToServer(
 						new EquipManipulationPacket(draggingManip.getName(), true));
 				equippedNames.add(draggingManip.getName());
 				equippedManips.add(draggingManip);

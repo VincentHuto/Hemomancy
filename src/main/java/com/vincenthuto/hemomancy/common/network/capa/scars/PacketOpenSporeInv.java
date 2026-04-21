@@ -1,14 +1,26 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.menu.tile.functional.FungalImplantMenuProvider;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.NetworkHooks;
 
-public class PacketOpenSporeInv {
+public class PacketOpenSporeInv implements CustomPacketPayload {
+
+	public static void encode(PacketOpenSporeInv msg, FriendlyByteBuf buf) {
+	}
+
+	public static PacketOpenSporeInv decode(FriendlyByteBuf buf) {
+		return new PacketOpenSporeInv(buf);
+	}
+
+	public static final Type<PacketOpenSporeInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_spore_inv"));
+	public static final StreamCodec<FriendlyByteBuf, PacketOpenSporeInv> STREAM_CODEC = StreamCodec.of(PacketOpenSporeInv::encode, PacketOpenSporeInv::decode);
 
 	public PacketOpenSporeInv() {
 	}
@@ -19,11 +31,19 @@ public class PacketOpenSporeInv {
 	public void decode(FriendlyByteBuf buf) {
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ctx.get().getSender().doCloseContainer();
-			NetworkHooks.openScreen(ctx.get().getSender(), new FungalImplantMenuProvider());
+	public static void handle(PacketOpenSporeInv msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ctx.player().doCloseContainer();
+			NetworkHooks.openScreen(ctx.player(), new FungalImplantMenuProvider());
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

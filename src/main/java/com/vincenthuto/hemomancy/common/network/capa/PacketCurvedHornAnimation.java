@@ -1,15 +1,27 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.event.LayerEvents;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.DistExecutor;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketCurvedHornAnimation {
+public class PacketCurvedHornAnimation implements CustomPacketPayload {
+
+	public static void encode(PacketCurvedHornAnimation msg, FriendlyByteBuf buf) {
+	}
+
+	public static PacketCurvedHornAnimation decode(FriendlyByteBuf buf) {
+		return new PacketCurvedHornAnimation(buf);
+	}
+
+	public static final Type<PacketCurvedHornAnimation> TYPE = new Type<>(Hemomancy.rloc("packet_curved_horn_animation"));
+	public static final StreamCodec<FriendlyByteBuf, PacketCurvedHornAnimation> STREAM_CODEC = StreamCodec.of(PacketCurvedHornAnimation::encode, PacketCurvedHornAnimation::decode);
 
 	public PacketCurvedHornAnimation() {
 	}
@@ -20,11 +32,18 @@ public class PacketCurvedHornAnimation {
 	public void decode(FriendlyByteBuf buf) {
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> LayerEvents::playHornAnimation);
-		});
-		ctx.get().setPacketHandled(true);
+	public static void handle(PacketCurvedHornAnimation msg, IPayloadContext ctx) {
+		msg.handle(ctx);
 	}
 
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> LayerEvents::playHornAnimation);
+		});
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

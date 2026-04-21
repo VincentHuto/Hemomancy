@@ -142,7 +142,7 @@ public class FungalImplantationPylonBlock extends BaseEntityBlock implements IMu
 			BlockHitResult result) {
 		if (!player.isShiftKeyDown()) {
 			if (worldIn.isClientSide) {
-				PacketHandler.CHANNELSCARS.sendToServer(new PacketOpenSporeInv());
+				PacketHandler.sendToServer(new PacketOpenSporeInv());
 			}
 		} else {
 			if (!worldIn.isClientSide) {

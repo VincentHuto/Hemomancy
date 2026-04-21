@@ -1,22 +1,27 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
-import java.util.function.Supplier;
-
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that syncs a player's equipped morphling.
  * Carries the owner's UUID so that TRACKING_AND_SELF broadcasts can update
  * the correct player's capability on any watching client.
  */
-public class SyncEquippedMorphlingPacket {
+public class SyncEquippedMorphlingPacket implements CustomPacketPayload {
+
+	public static final Type<SyncEquippedMorphlingPacket> TYPE = new Type<>(Hemomancy.rloc("sync_equipped_morphling_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SyncEquippedMorphlingPacket> STREAM_CODEC = StreamCodec.of(SyncEquippedMorphlingPacket::encode, SyncEquippedMorphlingPacket::decode);
 
 	private final UUID playerUUID;
 	private final ItemStack morphlingStack;
@@ -37,15 +42,18 @@ public class SyncEquippedMorphlingPacket {
 		return new SyncEquippedMorphlingPacket(uuid, stack);
 	}
 
-	public static void handle(SyncEquippedMorphlingPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final SyncEquippedMorphlingPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			if (Minecraft.getInstance().level == null) return;
 			Player target = Minecraft.getInstance().level.getPlayerByUUID(msg.playerUUID);
 			if (target == null) return;
 			HemoCapabilityAccess.getEquippedMorphling(target)
 					.ifPresent(cap -> cap.setEquippedMorphling(msg.morphlingStack));
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

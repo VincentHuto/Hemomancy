@@ -1,17 +1,23 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BloodVolumeClientPacket {
+public class BloodVolumeClientPacket implements CustomPacketPayload {
+
+	public static final Type<BloodVolumeClientPacket> TYPE = new Type<>(Hemomancy.rloc("blood_volume_client_packet"));
+	public static final StreamCodec<FriendlyByteBuf, BloodVolumeClientPacket> STREAM_CODEC = StreamCodec.of(BloodVolumeClientPacket::encode, BloodVolumeClientPacket::decode);
 
 	public static BloodVolumeClientPacket decode(final FriendlyByteBuf packetBuffer) {
 		return new BloodVolumeClientPacket();
@@ -21,21 +27,24 @@ public class BloodVolumeClientPacket {
 
 	}
 
-	public static void handle(final BloodVolumeClientPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
+	public static void handle(final BloodVolumeClientPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player(); // the client that sent this packet
 			if (sender != null) {
 				IBloodVolume volume = HemoCapabilityAccess.getBloodVolume(sender)
 						.orElseThrow(IllegalStateException::new);
 				// Send message back to the client to set the information
-				PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> sender),
-						new BloodVolumeServerPacket(volume));
+				PacketHandler.sendToPlayer(sender, new BloodVolumeServerPacket(volume));
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public BloodVolumeClientPacket() {
 
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

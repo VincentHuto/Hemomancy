@@ -293,9 +293,7 @@ public class BloodManipulation  {
 						volume.addBloodSpend(effectiveCost);
 						com.vincenthuto.hemomancy.common.entity.boss.HollowVesselEntity
 								.onPlayerBloodSpend(player, effectiveCost);
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new BloodVolumeServerPacket(volume));
+						PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 						getAction(player, world, heldItemMainhand, position);
 
 						// Apply cross-system consequences: vascular strain, tendency shift, XP
@@ -314,9 +312,7 @@ public class BloodManipulation  {
 						}
 
 						startCooldown(player);
-						PacketHandler.CHANNELKNOWNMANIPS.send(
-								PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-								new ManipCooldownPacket(cooldownTicks));
+						PacketHandler.sendToPlayer((ServerPlayer) player, new ManipCooldownPacket(cooldownTicks));
 					} else {
 						player.displayClientMessage(Component.translatable("Not Enough Alignment for Manipulation!")
 								.withStyle(ChatFormatting.RED), true);

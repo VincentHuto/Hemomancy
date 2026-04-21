@@ -1,20 +1,23 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hutoslib.client.particle.factory.GlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.HLParticleUtils;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class SpawnFlaskParticlesPacket {
+public class SpawnFlaskParticlesPacket implements CustomPacketPayload {
+
+	public static final Type<SpawnFlaskParticlesPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_flask_particles_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SpawnFlaskParticlesPacket> STREAM_CODEC = StreamCodec.of(SpawnFlaskParticlesPacket::encode, SpawnFlaskParticlesPacket::decode);
 	public static SpawnFlaskParticlesPacket decode(FriendlyByteBuf buf) {
 		SpawnFlaskParticlesPacket msg = new SpawnFlaskParticlesPacket();
 		try {
@@ -36,19 +39,12 @@ public class SpawnFlaskParticlesPacket {
 
 	}
 
-	public static void handle(SpawnFlaskParticlesPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-		NetworkEvent.Context ctx = ctxSupplier.get();
-		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-		if (!clientLevel.isPresent()) {
-			return;
-		}
-		ClientLevel world = ((ClientLevel) clientLevel.get());
+	public static void handle(final SpawnFlaskParticlesPacket msg, final IPayloadContext ctxSupplier) {
+		ClientLevel world = Minecraft.getInstance().level;
+		if (world == null) return;
 		world.addParticle(GlowParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y + 1,
 				msg.getPos().z, HLParticleUtils.inRange(-3, 3) * 0.015f, HLParticleUtils.inRange(-3, 3) * 0.015f,
 				HLParticleUtils.inRange(-3, 3) * 0.015f);
-
-		ctxSupplier.get().setPacketHandled(true);
 	}
 
 	Vec3 pos;
@@ -69,5 +65,10 @@ public class SpawnFlaskParticlesPacket {
 
 	public Vec3 getPos() {
 		return pos;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

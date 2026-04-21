@@ -72,9 +72,7 @@ public class BloodMemoryItem extends Item {
 					if (!playerIn.isShiftKeyDown()) {
 						if (!known.doesListContainName(knownList, getManip())) {
 							knownList.put(getManip(), ManipLevel.BLANK);
-							PacketHandler.CHANNELKNOWNMANIPS.send(
-									PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-									new KnownManipulationServerPacket(known));
+							PacketHandler.sendToPlayer((ServerPlayer) playerIn, new KnownManipulationServerPacket(known));
 							stack.shrink(1);
 						} else {
 							playerIn.displayClientMessage(Component.literal("Player Already Knowns This Manipulation!")

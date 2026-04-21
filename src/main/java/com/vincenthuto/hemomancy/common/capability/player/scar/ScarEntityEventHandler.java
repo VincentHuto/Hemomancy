@@ -172,8 +172,7 @@ public class ScarEntityEventHandler {
 					ServerLevel world = (ServerLevel) player.level();
 					world.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.TOTEM_USE,
 							SoundSource.AMBIENT, 0.5f, 0.5f);
-					PacketHandler.CHANNELSCARS.sendTo(new PacketCurvedHornAnimation(),
-							((ServerPlayer) player).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+					PacketHandler.sendToPlayer((ServerPlayer) player, new PacketCurvedHornAnimation());
 
 					event.setCanceled(true);
 				}
@@ -337,12 +336,12 @@ public class ScarEntityEventHandler {
 			PacketGourdScarSync pkt = new PacketGourdScarSync(player.getId(), slot, stack,
 					bloodVolume.getBloodVolume());
 			for (Player receiver : receivers) {
-				PacketHandler.CHANNELSCARS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+				PacketHandler.sendToPlayer((ServerPlayer) receiver, pkt);
 			}
 		} else {
 			PacketScarSync pkt = new PacketScarSync(player.getId(), slot, stack);
 			for (Player receiver : receivers) {
-				PacketHandler.CHANNELSCARS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+				PacketHandler.sendToPlayer((ServerPlayer) receiver, pkt);
 			}
 		}
 

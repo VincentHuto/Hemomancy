@@ -300,7 +300,7 @@ public class DialogueScreen extends Screen {
 		DialogueOption opt = currentNode.options().get(index);
 
 		if (opt.eventId() != null && !opt.eventId().isEmpty()) {
-			PacketHandler.CHANNELBLOODVOLUME.sendToServer(
+			PacketHandler.sendToServer(
 					new DialogueOptionPacket(opt.eventId(), tree.entityId()));
 		}
 

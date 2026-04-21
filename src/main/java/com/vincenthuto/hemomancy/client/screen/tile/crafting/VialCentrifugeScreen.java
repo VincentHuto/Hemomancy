@@ -110,7 +110,7 @@ public class VialCentrifugeScreen extends AbstractContainerScreen<VialCentrifuge
 		// Check if click is on the start button
 		if (button == 0 && !this.menu.isSpinning()
 				&& mouseX >= btnX1 && mouseX < btnX2 && mouseY >= btnY1 && mouseY < btnY2) {
-			PacketHandler.CHANNELKNOWNMANIPS.sendToServer(new StartCentrifugeButtonPacket());
+			PacketHandler.sendToServer(new StartCentrifugeButtonPacket());
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);

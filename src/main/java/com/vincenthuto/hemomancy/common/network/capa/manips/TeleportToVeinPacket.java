@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
@@ -26,16 +30,18 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class TeleportToVeinPacket {
+public class TeleportToVeinPacket implements CustomPacketPayload {
+
+	public static final Type<TeleportToVeinPacket> TYPE = new Type<>(Hemomancy.rloc("teleport_to_vein_packet"));
+	public static final StreamCodec<FriendlyByteBuf, TeleportToVeinPacket> STREAM_CODEC = StreamCodec.of(TeleportToVeinPacket::encode, TeleportToVeinPacket::decode);
 
 	public static class Handler {
-		public static void handle(final TeleportToVeinPacket msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				ctx.get().enqueueWork(() -> {
-					Player player = ctx.get().getSender();
+		public static void handle(final TeleportToVeinPacket msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				ctx.enqueueWork(() -> {
+					Player player = ctx.player();
 					if (player == null)
 						return;
 					if (!player.level().isClientSide) {
@@ -60,9 +66,7 @@ public class TeleportToVeinPacket {
 										if (loc.getPosition().equals(selected.getPosition())) {
 											known.getVeinList().add(known.getVeinList().indexOf(loc), te.getLoc());
 											known.getVeinList().remove(loc);
-											PacketHandler.CHANNELKNOWNMANIPS.send(
-													PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-													new KnownManipulationServerPacket(known));
+											PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 										}
 									}
 								}
@@ -73,9 +77,7 @@ public class TeleportToVeinPacket {
 											true);
 									known.getVeinList().remove(selected);
 									known.setSelectedVein(VeinLocation.BLANK);
-									PacketHandler.CHANNELKNOWNMANIPS.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new KnownManipulationServerPacket(known));
+									PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 								} else {
 									ChunkPos chunkpos = new ChunkPos(bp);
 									((ServerLevel) player.level()).getChunkSource().addRegionTicket(
@@ -86,9 +88,7 @@ public class TeleportToVeinPacket {
 									player.displayClientMessage(Component.literal("TELEPORTING"), true);
 									HLParticleUtils.spawnPoof(ovw, bp, ParticleTypes.CRIMSON_SPORE);
 									HLParticleUtils.spawnPoof(ovw, bp, DustParticleOptions.REDSTONE);
-									PacketHandler.CHANNELBLOODVOLUME.send(
-											PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-											new BloodVolumeServerPacket(volume));
+									PacketHandler.sendToPlayer((ServerPlayer) player, new BloodVolumeServerPacket(volume));
 								}
 
 							} else {
@@ -97,9 +97,7 @@ public class TeleportToVeinPacket {
 								for (VeinLocation loc : known.getVeinList()) {
 									if (loc.getPosition().equals(selected.getPosition())) {
 										known.getVeinList().remove(known.getVeinList().indexOf(loc));
-										PacketHandler.CHANNELKNOWNMANIPS.send(
-												PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-												new KnownManipulationServerPacket(known));
+										PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 									}
 								}
 							}
@@ -109,8 +107,6 @@ public class TeleportToVeinPacket {
 						}
 					}
 				});
-
-				ctx.get().setPacketHandled(true);
 			});
 		}
 	}
@@ -127,5 +123,10 @@ public class TeleportToVeinPacket {
 
 	public TeleportToVeinPacket(VeinLocation current) {
 		this.selected = current;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

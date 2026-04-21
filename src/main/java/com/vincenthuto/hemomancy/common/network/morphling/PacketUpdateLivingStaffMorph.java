@@ -1,7 +1,10 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
@@ -16,14 +19,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketUpdateLivingStaffMorph {
+public class PacketUpdateLivingStaffMorph implements CustomPacketPayload {
+
+	public static final Type<PacketUpdateLivingStaffMorph> TYPE = new Type<>(Hemomancy.rloc("packet_update_living_staff_morph"));
+	public static final StreamCodec<FriendlyByteBuf, PacketUpdateLivingStaffMorph> STREAM_CODEC = StreamCodec.of(PacketUpdateLivingStaffMorph::encode, PacketUpdateLivingStaffMorph::decode);
 
 	public static class Handler {
-		public static void handle(final PacketUpdateLivingStaffMorph msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				ServerPlayer player = ctx.get().getSender();
+		public static void handle(final PacketUpdateLivingStaffMorph msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				ServerPlayer player = ctx.player();
 				if (player == null)
 					return;
 
@@ -67,7 +72,6 @@ public class PacketUpdateLivingStaffMorph {
 				// Sync to client
 				EquippedMorphlingEvents.syncToClient(player);
 			});
-			ctx.get().setPacketHandled(true);
 		}
 
 		/** Finds the jar in hand, offhand, scar slot 7, or anywhere in inventory. */
@@ -97,5 +101,10 @@ public class PacketUpdateLivingStaffMorph {
 	public PacketUpdateLivingStaffMorph(int selectedIn) {
 		this.selected = selectedIn;
 
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

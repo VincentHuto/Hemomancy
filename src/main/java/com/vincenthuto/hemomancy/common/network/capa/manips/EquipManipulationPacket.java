@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
@@ -12,14 +16,16 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Client → Server packet to equip or unequip a manipulation in the player's
  * limited manipulation slots.
  */
-public class EquipManipulationPacket {
+public class EquipManipulationPacket implements CustomPacketPayload {
+
+	public static final Type<EquipManipulationPacket> TYPE = new Type<>(Hemomancy.rloc("equip_manipulation_packet"));
+	public static final StreamCodec<FriendlyByteBuf, EquipManipulationPacket> STREAM_CODEC = StreamCodec.of(EquipManipulationPacket::encode, EquipManipulationPacket::decode);
 
 	private final String manipName;
 	private final boolean equip; // true = equip, false = unequip
@@ -38,9 +44,9 @@ public class EquipManipulationPacket {
 		return new EquipManipulationPacket(buf.readUtf(), buf.readBoolean());
 	}
 
-	public static void handle(EquipManipulationPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final EquipManipulationPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null) return;
 
 			IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
@@ -68,10 +74,12 @@ public class EquipManipulationPacket {
 			}
 
 			// Sync updated state back to client
-			PacketHandler.CHANNELKNOWNMANIPS.send(
-					PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new KnownManipulationServerPacket(known));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

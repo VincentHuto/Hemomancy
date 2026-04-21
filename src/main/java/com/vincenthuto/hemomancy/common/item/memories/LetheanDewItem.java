@@ -56,8 +56,7 @@ public class LetheanDewItem extends Item {
 		known.setSelectedManip(BloodManipulation.BLANK);
 
 		if (!p_42985_.isClientSide) {
-			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new KnownManipulationServerPacket(known));
+			PacketHandler.sendToPlayer((ServerPlayer) player, new KnownManipulationServerPacket(known));
 		}
 
 		if (player != null) {

@@ -1,15 +1,20 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
 import com.vincenthuto.hemomancy.common.tile.crafting.ScarStationBlockEntity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketUpdateScarPattern {
+public class PacketUpdateScarPattern implements CustomPacketPayload {
+
+	public static final Type<PacketUpdateScarPattern> TYPE = new Type<>(Hemomancy.rloc("packet_update_scar_pattern"));
+	public static final StreamCodec<FriendlyByteBuf, PacketUpdateScarPattern> STREAM_CODEC = StreamCodec.of(PacketUpdateScarPattern::encode, PacketUpdateScarPattern::decode);
 	public byte[][] pattern;
 
 	public PacketUpdateScarPattern(byte[][] patternIn) {
@@ -39,15 +44,19 @@ public class PacketUpdateScarPattern {
 
 	public static class Handler {
 
-		public static void handle(final PacketUpdateScarPattern msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				AbstractContainerMenu container = ctx.get().getSender().containerMenu;
+		public static void handle(final PacketUpdateScarPattern msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				AbstractContainerMenu container = ctx.player().containerMenu;
 				if (container instanceof ScarStationMenu) {
 					ScarStationBlockEntity station = ((ScarStationMenu) container).getTe();
 					station.setScarList(msg.getPattern());
 				}
 			});
-			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

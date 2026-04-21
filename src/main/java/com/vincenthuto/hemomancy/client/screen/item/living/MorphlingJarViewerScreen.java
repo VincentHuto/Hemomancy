@@ -381,9 +381,9 @@ public class MorphlingJarViewerScreen extends Screen {
 			if (dx * dx + dy * dy <= HIT_R * HIT_R) {
 				if (i == activeIndex) {
 					// Clicking the already-equipped morphling unequips it
-					PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new PacketUpdateLivingStaffMorph(-1));
+					PacketHandler.sendToServer(new PacketUpdateLivingStaffMorph(-1));
 				} else {
-					PacketHandler.CHANNELMORPHLINGJAR.sendToServer(new PacketUpdateLivingStaffMorph(i));
+					PacketHandler.sendToServer(new PacketUpdateLivingStaffMorph(i));
 				}
 				Player player = Minecraft.getInstance().player;
 				if (player != null)

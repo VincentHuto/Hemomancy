@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -10,13 +14,15 @@ import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Client → Server: Request the server to send the latest bloodline pool data.
  */
-public class PacketRequestPoolData {
+public class PacketRequestPoolData implements CustomPacketPayload {
+
+	public static final Type<PacketRequestPoolData> TYPE = new Type<>(Hemomancy.rloc("packet_request_pool_data"));
+	public static final StreamCodec<FriendlyByteBuf, PacketRequestPoolData> STREAM_CODEC = StreamCodec.of(PacketRequestPoolData::encode, PacketRequestPoolData::decode);
 
 	public PacketRequestPoolData() {
 	}
@@ -28,9 +34,9 @@ public class PacketRequestPoolData {
 		return new PacketRequestPoolData();
 	}
 
-	public static void handle(PacketRequestPoolData msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PacketRequestPoolData msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
@@ -40,15 +46,17 @@ public class PacketRequestPoolData {
 					BloodlineSavedData savedData = BloodlineSavedData.get(overworld);
 					Bloodline globalLine = savedData.getBloodline(bloodline.getBloodlineUUID());
 					if (globalLine != null) {
-						PacketHandler.CHANNELBLOODVOLUME.send(
-								PacketDistributor.PLAYER.with(() -> player),
-								new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
+						PacketHandler.sendToPlayer(player, new PacketSyncBloodlinePool(globalLine.getBloodVolume(),
 										globalLine.getMaxBloodVolume(),
 										globalLine.getPlayerUUIDS().size()));
 					}
 				}
 			});
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

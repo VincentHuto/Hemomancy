@@ -1,19 +1,24 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet: synchronises the full skill tree state
  * (every skill's {@code state} and {@code currentLevel}).
  */
-public class PacketSyncSkills {
+public class PacketSyncSkills implements CustomPacketPayload {
+
+	public static final Type<PacketSyncSkills> TYPE = new Type<>(Hemomancy.rloc("packet_sync_skills"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncSkills> STREAM_CODEC = StreamCodec.of(PacketSyncSkills::encode, PacketSyncSkills::decode);
 
 	private final ListTag data;
 
@@ -33,10 +38,14 @@ public class PacketSyncSkills {
 		return new PacketSyncSkills(list);
 	}
 
-	public static void handle(PacketSyncSkills msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final PacketSyncSkills msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			SkillPointInit.deserializeAll(msg.data);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

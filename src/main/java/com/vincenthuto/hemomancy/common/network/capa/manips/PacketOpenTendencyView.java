@@ -1,14 +1,26 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.menu.TendencyViewMenuProvider;
 import com.vincenthuto.hemomancy.common.menu.VascularViewMenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.NetworkHooks;
 
-import java.util.function.Supplier;
+public class PacketOpenTendencyView implements CustomPacketPayload {
 
-public class PacketOpenTendencyView {
+	public static void encode(PacketOpenTendencyView msg, FriendlyByteBuf buf) {
+	}
+
+	public static PacketOpenTendencyView decode(FriendlyByteBuf buf) {
+		return new PacketOpenTendencyView(buf);
+	}
+
+	public static final Type<PacketOpenTendencyView> TYPE = new Type<>(Hemomancy.rloc("packet_open_tendency_view"));
+	public static final StreamCodec<FriendlyByteBuf, PacketOpenTendencyView> STREAM_CODEC = StreamCodec.of(PacketOpenTendencyView::encode, PacketOpenTendencyView::decode);
 
 	public PacketOpenTendencyView() {
 	}
@@ -19,11 +31,19 @@ public class PacketOpenTendencyView {
 	public void decode(FriendlyByteBuf buf) {
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ctx.get().getSender().doCloseContainer();
-			NetworkHooks.openScreen(ctx.get().getSender(), new TendencyViewMenuProvider());
+	public static void handle(PacketOpenTendencyView msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ctx.player().doCloseContainer();
+			NetworkHooks.openScreen(ctx.player(), new TendencyViewMenuProvider());
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

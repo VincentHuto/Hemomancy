@@ -61,9 +61,7 @@ public class SkillPointGainEvents {
 
     /** Sends the current skill tree state (including milestones) to the given client. */
     private static void syncSkills(ServerPlayer player) {
-        PacketHandler.CHANNELBLOODVOLUME.send(
-                PacketDistributor.PLAYER.with(() -> player),
-                new PacketSyncSkills(SkillPointInit.serializeAll()));
+        PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
     }
 
     // ════════════════════════════════════════════════════════════

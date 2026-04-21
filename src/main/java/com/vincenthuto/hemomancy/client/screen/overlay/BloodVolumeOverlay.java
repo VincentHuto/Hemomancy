@@ -49,7 +49,7 @@ public class BloodVolumeOverlay {
 			if (bloodCap == null || !bloodCap.isActive()) return;
 			player.getCapability(ScarsCapabilities.SCARS).ifPresent(inv -> {
 				if (inv.getStackInSlot(5).getItem() instanceof VasculariumCharmItem charm) {
-					PacketHandler.CHANNELBLOODVOLUME.sendToServer(new BloodVolumeClientPacket());
+					PacketHandler.sendToServer(new BloodVolumeClientPacket());
 
 					var positionLoc = HemoClientConfig.HUD_LOCATION.get();
 					int posX, posY;

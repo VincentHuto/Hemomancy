@@ -1,16 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class BloodVolumeServerPacket {
+public class BloodVolumeServerPacket implements CustomPacketPayload {
+
+	public static final Type<BloodVolumeServerPacket> TYPE = new Type<>(Hemomancy.rloc("blood_volume_server_packet"));
+	public static final StreamCodec<FriendlyByteBuf, BloodVolumeServerPacket> STREAM_CODEC = StreamCodec.of(BloodVolumeServerPacket::encode, BloodVolumeServerPacket::decode);
 
 	public static BloodVolumeServerPacket decode(final FriendlyByteBuf packetBuffer) {
 		return new BloodVolumeServerPacket(packetBuffer.readBoolean(), packetBuffer.readDouble(),
@@ -28,8 +34,8 @@ public class BloodVolumeServerPacket {
 		packetBuffer.writeBoolean(msg.autoDrawEnabled);
 		packetBuffer.writeDouble(msg.autoDrawThreshold);
 	}
-	public static void handle(final BloodVolumeServerPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final BloodVolumeServerPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 
 			if (Minecraft.getInstance().player != null) {
 				IBloodVolume capa = HemoCapabilityAccess.getBloodVolume(Minecraft.getInstance().player)
@@ -45,7 +51,6 @@ public class BloodVolumeServerPacket {
 			}
 
 		});
-		ctx.get().setPacketHandled(true);
 	}
 	private boolean active;
 
@@ -82,5 +87,10 @@ public class BloodVolumeServerPacket {
 		this.trickleRate = volume.getTrickleRate();
 		this.autoDrawEnabled = volume.isAutoDrawEnabled();
 		this.autoDrawThreshold = volume.getAutoDrawThreshold();
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

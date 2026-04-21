@@ -48,8 +48,7 @@ public class KnownManipulationEvents {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
-		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new KnownManipulationServerPacket(known));
+		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 	}
 
 	@SubscribeEvent
@@ -114,8 +113,7 @@ public class KnownManipulationEvents {
 	public static void syncPlayerEvent(Player playerEntity) {
 		if (playerEntity instanceof ServerPlayer s) {
 			HemoCapabilityAccess.getKnownManipulations(s).ifPresent(capa -> {
-				PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> s),
-						new KnownManipulationServerPacket(capa));
+				PacketHandler.sendToPlayer(s, new KnownManipulationServerPacket(capa));
 			});
 		}
 	}
@@ -141,8 +139,7 @@ public class KnownManipulationEvents {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		IKnownManipulations known = HemoCapabilityAccess.getKnownManipulations(player)
 				.orElseThrow(IllegalStateException::new);
-		PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> player),
-				new KnownManipulationServerPacket(known));
+		PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 
 	}
 
@@ -155,7 +152,7 @@ public class KnownManipulationEvents {
 	public static void syncAvatar(Player player, Collection<? extends Player> receivers, boolean isAvatarActive) {
 		SyncTrackingAvatarPacket pkt = new SyncTrackingAvatarPacket(player.getId(), isAvatarActive);
 		for (Player receiver : receivers) {
-			PacketHandler.CHANNELKNOWNMANIPS.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) receiver), pkt);
+			PacketHandler.sendToPlayer((ServerPlayer) receiver, pkt);
 		}
 	}
 
@@ -203,9 +200,7 @@ public class KnownManipulationEvents {
 							false);
 				}
 			}
-			PacketHandler.CHANNELKNOWNMANIPS.send(
-					PacketDistributor.PLAYER.with(() -> player),
-					new KnownManipulationServerPacket(known));
+			PacketHandler.sendToPlayer(player, new KnownManipulationServerPacket(known));
 		});
 
 		// 5. Grant skill-point currency based on manipulation rank
@@ -222,9 +217,7 @@ public class KnownManipulationEvents {
 		SkillPointGainEvents.onManipulationUsed(player);
 
 		// Sync skill tree (which includes skill-point balance) back to client
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new PacketSyncSkills(SkillPointInit.serializeAll()));
+		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
 	}
 
 }

@@ -1,17 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.data.BloodlinePoolClientData;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs the current state of the shared bloodline pool
  * so the client can display it in the BloodlinePoolScreen.
  */
-public class PacketSyncBloodlinePool {
+public class PacketSyncBloodlinePool implements CustomPacketPayload {
+
+	public static final Type<PacketSyncBloodlinePool> TYPE = new Type<>(Hemomancy.rloc("packet_sync_bloodline_pool"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncBloodlinePool> STREAM_CODEC = StreamCodec.of(PacketSyncBloodlinePool::encode, PacketSyncBloodlinePool::decode);
 
 	private final float poolVolume;
 	private final float poolMax;
@@ -33,10 +38,14 @@ public class PacketSyncBloodlinePool {
 		return new PacketSyncBloodlinePool(buf.readFloat(), buf.readFloat(), buf.readInt());
 	}
 
-	public static void handle(PacketSyncBloodlinePool msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final PacketSyncBloodlinePool msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			BloodlinePoolClientData.set(msg.poolVolume, msg.poolMax, msg.memberCount);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.screen.tile.functional.VisceralMirrorScreen;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
@@ -9,13 +12,15 @@ import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntit
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet that carries ritual progress updates so the
  * Visceral Mirror screen can show a smooth progress bar.
  */
-public class VisceralMirrorUpdatePacket {
+public class VisceralMirrorUpdatePacket implements CustomPacketPayload {
+
+	public static final Type<VisceralMirrorUpdatePacket> TYPE = new Type<>(Hemomancy.rloc("visceral_mirror_update_packet"));
+	public static final StreamCodec<FriendlyByteBuf, VisceralMirrorUpdatePacket> STREAM_CODEC = StreamCodec.of(VisceralMirrorUpdatePacket::encode, VisceralMirrorUpdatePacket::decode);
 
 	private final BlockPos pos;
 	private final int phaseOrdinal;
@@ -61,14 +66,13 @@ public class VisceralMirrorUpdatePacket {
 		return new VisceralMirrorUpdatePacket(pos, phase, ritualTicks, totalRitualTicks, organ, statusMsg);
 	}
 
-	public static void handle(VisceralMirrorUpdatePacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final VisceralMirrorUpdatePacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			Minecraft mc = Minecraft.getInstance();
 			if (mc.screen instanceof VisceralMirrorScreen screen) {
 				screen.handleServerUpdate(msg);
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public BlockPos getPos() { return pos; }
@@ -82,5 +86,10 @@ public class VisceralMirrorUpdatePacket {
 		return phaseOrdinal >= 0 && phaseOrdinal < VisceralMirrorBlockEntity.RitualPhase.values().length
 				? VisceralMirrorBlockEntity.RitualPhase.values()[phaseOrdinal]
 				: VisceralMirrorBlockEntity.RitualPhase.IDLE;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

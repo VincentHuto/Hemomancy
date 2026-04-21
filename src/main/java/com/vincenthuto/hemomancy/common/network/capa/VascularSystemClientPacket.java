@@ -1,17 +1,23 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class VascularSystemClientPacket {
+public class VascularSystemClientPacket implements CustomPacketPayload {
+
+	public static final Type<VascularSystemClientPacket> TYPE = new Type<>(Hemomancy.rloc("vascular_system_client_packet"));
+	public static final StreamCodec<FriendlyByteBuf, VascularSystemClientPacket> STREAM_CODEC = StreamCodec.of(VascularSystemClientPacket::encode, VascularSystemClientPacket::decode);
 
 	public static VascularSystemClientPacket decode(final FriendlyByteBuf packetBuffer) {
 		return new VascularSystemClientPacket();
@@ -21,20 +27,23 @@ public class VascularSystemClientPacket {
 
 	}
 
-	public static void handle(final VascularSystemClientPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender(); // the client that sent this packet
+	public static void handle(final VascularSystemClientPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player(); // the client that sent this packet
 			if (sender != null) {
 				IVascularSystem BloodFlow = HemoCapabilityAccess.getVascularSystem(sender)
 						.orElseThrow(IllegalStateException::new);
-				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> sender),
-						new VascularSystemServerPacket(BloodFlow.getVascularSystem()));
+				PacketHandler.sendToPlayer(sender, new VascularSystemServerPacket(BloodFlow.getVascularSystem()));
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public VascularSystemClientPacket() {
 
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

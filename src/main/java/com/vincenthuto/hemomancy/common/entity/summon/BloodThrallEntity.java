@@ -304,9 +304,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
                     if (player instanceof ServerPlayer serverPlayer) {
-                        PacketHandler.CHANNELBLOODVOLUME.send(
-                                PacketDistributor.PLAYER.with(() -> serverPlayer),
-                                new BloodVolumeServerPacket(playerVol));
+                        PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVol));
                     }
                     player.displayClientMessage(
                             net.minecraft.network.chat.Component.literal(
@@ -324,9 +322,7 @@ public class BloodThrallEntity extends PathfinderMob implements OwnableEntity {
                     double bloodBack = ABSORB_BLOOD_RETURN + getCarriedBlood();
                     playerVol.fill(bloodBack);
                     if (player instanceof ServerPlayer serverPlayer) {
-                        PacketHandler.CHANNELBLOODVOLUME.send(
-                                PacketDistributor.PLAYER.with(() -> serverPlayer),
-                                new BloodVolumeServerPacket(playerVol));
+                        PacketHandler.sendToPlayer(serverPlayer, new BloodVolumeServerPacket(playerVol));
                     }
                 }
 

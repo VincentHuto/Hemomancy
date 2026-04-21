@@ -326,9 +326,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	 * ritual state and an optional status message.
 	 */
 	private void sendProgressUpdate(ServerPlayer player, String message) {
-		PacketHandler.CHANNELBLOODVOLUME.send(
-				PacketDistributor.PLAYER.with(() -> player),
-				new VisceralMirrorUpdatePacket(worldPosition, phase, ritualTicks,
+		PacketHandler.sendToPlayer(player, new VisceralMirrorUpdatePacket(worldPosition, phase, ritualTicks,
 						totalRitualTicks, targetOrgan, message));
 	}
 
@@ -338,9 +336,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 	 */
 	private void sendStatusToPlayer(Player player, String message) {
 		if (player instanceof ServerPlayer sp) {
-			PacketHandler.CHANNELBLOODVOLUME.send(
-					PacketDistributor.PLAYER.with(() -> sp),
-					new VisceralMirrorUpdatePacket(worldPosition, RitualPhase.IDLE,
+			PacketHandler.sendToPlayer(sp, new VisceralMirrorUpdatePacket(worldPosition, RitualPhase.IDLE,
 							0, 0, null, message));
 		}
 	}

@@ -44,8 +44,7 @@ public class HematicMemoryItem extends Item {
 //				.orElseThrow(NullPointerException::new);
 //		if (!worldIn.isClientSide) {
 //			volume.setActive(!volume.isActive());
-//			PacketHandler.CHANNELBLOODVOLUME.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn),
-//					new PacketBloodVolumeServer(volume));
+//			PacketHandler.sendToPlayer((ServerPlayer) playerIn, //					new PacketBloodVolumeServer(volume));
 //		}
 		return super.use(worldIn, playerIn, handIn);
 	}
