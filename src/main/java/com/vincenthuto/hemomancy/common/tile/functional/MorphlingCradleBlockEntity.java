@@ -60,11 +60,11 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 
 	private static final double[] SUPPORT_AURA_RANGE = new double[] { 8.0, 11.0, 15.0 };
 
-	private static final int[] LEECH_AURA_INTERVAL = new int[] { 12, 8, 6 };
-	private static final double[] LEECH_AURA_RANGE = new double[] { 4.0, 7.0, 10.0 };
-	private static final float[] LEECH_DRAIN_PER_HIT = new float[] { 1.5f, 3.0f, 5.0f };
-	private static final double[] LEECH_BUFFER_MAX = new double[] { 200.0, 600.0, 1200.0 };
-	private static final double[] LEECH_DISTRIBUTION_RANGE = new double[] { 6.0, 10.0, 28.0 };
+	private static final int[] STAGE_AURA_INTERVAL = new int[] { 12, 8, 6 };
+	private static final double[] STAGE_AURA_RANGE = new double[] { 4.0, 7.0, 10.0 };
+	private static final float[] STAGE_DRAIN_PER_HIT = new float[] { 1.5f, 3.0f, 5.0f };
+	private static final double[] STAGE_BUFFER_MAX = new double[] { 200.0, 600.0, 1200.0 };
+	private static final double[] STAGE_DISTRIBUTION_RANGE = new double[] { 6.0, 10.0, 28.0 };
 
 	private ItemStack morphlingItem = ItemStack.EMPTY;
 	private UUID ownerUUID = null;
@@ -246,17 +246,17 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	}
 
 	private void runLeechAura(int stageIdx) {
-		int interval = LEECH_AURA_INTERVAL[stageIdx];
+		int interval = STAGE_AURA_INTERVAL[stageIdx];
 		if (interval <= 0 || level.getGameTime() % interval != 0) return;
 
-		double range = LEECH_AURA_RANGE[stageIdx];
-		float drainPerHit = LEECH_DRAIN_PER_HIT[stageIdx];
+		double range = STAGE_AURA_RANGE[stageIdx];
+		float drainPerHit = STAGE_DRAIN_PER_HIT[stageIdx];
 		boolean canTargetPlayers = HemoServerConfig.MORPHLING_CRADLE_LEECH_TARGET_PLAYERS.get();
 
 		List<LivingEntity> targets = getTargets(range, canTargetPlayers);
 		for (LivingEntity target : targets) {
 			if (target.hurt(level.damageSources().magic(), drainPerHit)) {
-				double cap = LEECH_BUFFER_MAX[stageIdx];
+				double cap = STAGE_BUFFER_MAX[stageIdx];
 				bloodBuffer = Mth.clamp(bloodBuffer + drainPerHit, 0, cap);
 			}
 		}
@@ -266,7 +266,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private void distributeLeechBlood(int stageIdx) {
 		if (bloodBuffer <= 0) return;
 
-		double range = LEECH_DISTRIBUTION_RANGE[stageIdx];
+		double range = STAGE_DISTRIBUTION_RANGE[stageIdx];
 		if (range > 0) {
 			for (BlockPos p : BlockPos.betweenClosed(
 					worldPosition.offset((int) -range, (int) -range, (int) -range),
@@ -294,7 +294,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 				}
 			});
 		}
-		bloodBuffer = Mth.clamp(bloodBuffer, 0, LEECH_BUFFER_MAX[stageIdx]);
+		bloodBuffer = Mth.clamp(bloodBuffer, 0, STAGE_BUFFER_MAX[stageIdx]);
 		setChanged();
 	}
 
