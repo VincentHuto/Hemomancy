@@ -2,6 +2,8 @@ package com.vincenthuto.hemomancy.common.capability;
 
 import java.util.Optional;
 
+import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
+import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
@@ -114,5 +116,25 @@ return getKnownManipulations(player).orElseThrow(IllegalStateException::new);
 
 public static IKnownManipulations requireKnownManipulations(Entity entity) {
 return getKnownManipulations(entity).orElseThrow(IllegalStateException::new);
+}
+
+// ── Initiatory Degree ─────────────────────────────────────────────────────
+
+/** Access initiatory degree from a player. */
+public static Optional<IInitiatoryDegree> getInitiatoryDegree(Player player) {
+return player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA);
+}
+
+/** Access initiatory degree from any entity. */
+public static Optional<IInitiatoryDegree> getInitiatoryDegree(Entity entity) {
+return entity.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA);
+}
+
+public static IInitiatoryDegree requireInitiatoryDegree(Player player) {
+return getInitiatoryDegree(player).orElseThrow(IllegalStateException::new);
+}
+
+public static IInitiatoryDegree requireInitiatoryDegree(Entity entity) {
+return getInitiatoryDegree(entity).orElseThrow(IllegalStateException::new);
 }
 }

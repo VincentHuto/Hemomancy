@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.client.data;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.item.cosmetic.SanguineBlobItem;
 
 import net.minecraft.client.Minecraft;
@@ -71,7 +71,7 @@ public class BloodBallClientData {
 				|| player.getOffhandItem().getItem() instanceof SanguineBlobItem;
 		if (!holdsBlob) return false;
 
-		return player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		return HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(IInitiatoryDegree::getDegreeNumber)
 				.orElse(0) >= 3;
 	}

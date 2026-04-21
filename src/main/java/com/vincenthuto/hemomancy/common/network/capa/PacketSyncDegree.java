@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,7 +30,7 @@ public class PacketSyncDegree {
 	public static void handle(PacketSyncDegree msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			if (Minecraft.getInstance().player != null) {
-				Minecraft.getInstance().player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+				Minecraft.getInstance().HemoCapabilityAccess.getInitiatoryDegree(player)
 						.ifPresent(degree -> degree.setDegreeNumber(msg.degreeNumber));
 			}
 		});

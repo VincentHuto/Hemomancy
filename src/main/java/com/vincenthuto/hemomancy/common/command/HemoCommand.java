@@ -9,7 +9,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.skill.HemoMilestone;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
 import com.vincenthuto.hemomancy.common.capability.player.manip.ManipSlotHelper;
@@ -315,7 +314,7 @@ public class HemoCommand {
 	// ═══════════════════ Initiatory Degree ═══════════════════
 
 	private static int getDegree(CommandSourceStack source, ServerPlayer player) {
-		IInitiatoryDegree degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
 		int num = degree.getDegreeNumber();
 		EnumInitiatoryDegree enumDeg = EnumInitiatoryDegree.byNumber(num);
@@ -329,7 +328,7 @@ public class HemoCommand {
 	}
 
 	private static int setDegree(CommandSourceStack source, ServerPlayer player, int degreeNum) {
-		IInitiatoryDegree degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		IInitiatoryDegree degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.orElseThrow(IllegalStateException::new);
 		degree.setDegreeNumber(degreeNum);
 		InitiatoryDegreeEvents.syncDegree(player, degree);

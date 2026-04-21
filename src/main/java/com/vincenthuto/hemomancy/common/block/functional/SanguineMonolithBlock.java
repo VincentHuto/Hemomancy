@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.DialogueTree;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.FungalWhisperDialogueTrees;
 import com.vincenthuto.hemomancy.common.entity.npc.dialogue.SanguineMonolithDialogueTrees;
@@ -191,7 +191,7 @@ public class SanguineMonolithBlock extends Block implements EntityBlock, IMultiB
 			return InteractionResult.SUCCESS;
 		}
 
-		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
+		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
 			int degreeNumber = degree.getDegreeNumber();
 			if (degreeNumber >= 7 && worldIn.getBlockEntity(pos) instanceof SanguineMonolithBlockEntity monolith) {
 				int interactions = monolith.incrementArchonInteractions();

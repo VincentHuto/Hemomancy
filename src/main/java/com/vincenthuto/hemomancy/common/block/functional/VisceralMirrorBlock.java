@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
@@ -194,7 +193,7 @@ public class VisceralMirrorBlock extends Block implements EntityBlock, IMultiBlo
 				.map(IBloodVolume::getBloodVolume).orElse(0.0);
 		double maxBloodVol = HemoCapabilityAccess.getBloodVolume(player)
 				.map(IBloodVolume::getMaxBloodVolume).orElse(0.0);
-		int degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		int degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(d -> d.getDegreeNumber()).orElse(0);
 
 		// Send the packet to open the screen

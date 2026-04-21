@@ -13,7 +13,6 @@ import com.vincenthuto.hemomancy.client.particle.factory.BloodCellParticleFactor
 import com.vincenthuto.hemomancy.client.particle.factory.SerpentParticleFactory;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeEvents;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyEvents;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
@@ -783,7 +782,7 @@ public class CardinalRiteEvents {
 		// Check if this rite grants an initiatory degree
 		Integer targetDegree = DEGREE_RITE_PATHS.get(ritePath);
 		if (targetDegree != null) {
-			caster.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
+			HemoCapabilityAccess.getInitiatoryDegree(caster).ifPresent(degree -> {
 				int currentDegree = degree.getDegreeNumber();
 				if (currentDegree < targetDegree) {
 					degree.setDegreeNumber(targetDegree);

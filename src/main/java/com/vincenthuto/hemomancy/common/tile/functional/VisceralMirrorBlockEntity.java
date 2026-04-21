@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.tile.functional;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
@@ -130,7 +129,7 @@ public class VisceralMirrorBlockEntity extends BlockEntity {
 		if (phase != RitualPhase.IDLE) return false;
 
 		// Check initiatory degree
-		int degree = player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		int degree = HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(d -> d.getDegreeNumber()).orElse(0);
 		if (degree < REQUIRED_DEGREE) {
 			sendStatusToPlayer(player, "You lack the initiatory degree to peer into the visceral mirror.");

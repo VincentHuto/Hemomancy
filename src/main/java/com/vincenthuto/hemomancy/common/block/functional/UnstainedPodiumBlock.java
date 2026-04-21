@@ -163,7 +163,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 
 			// Mutual exclusion: reset initiatory degree (Harbingers path)
 			if (!worldIn.isClientSide && player instanceof ServerPlayer serverPlayer) {
-				player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree -> {
+				HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree -> {
 					if (degree.getDegreeNumber() > 0) {
 						degree.setDegreeNumber(0);
 						InitiatoryDegreeEvents.syncDegree(serverPlayer, degree);

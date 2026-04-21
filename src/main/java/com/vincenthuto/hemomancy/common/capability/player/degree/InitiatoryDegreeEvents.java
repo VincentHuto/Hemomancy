@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.common.capability.player.degree;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketSyncDegree;
@@ -34,14 +35,14 @@ public class InitiatoryDegreeEvents {
 	@SubscribeEvent
 	public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree ->
+		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
 				syncDegree(player, degree));
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerChangedDimensionEvent event) {
 		ServerPlayer player = (ServerPlayer) event.getEntity();
-		player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree ->
+		HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
 				syncDegree(player, degree));
 	}
 
@@ -49,7 +50,7 @@ public class InitiatoryDegreeEvents {
 	public static void playerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getEntity();
 		if (!player.level().isClientSide) {
-			player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA).ifPresent(degree ->
+			HemoCapabilityAccess.getInitiatoryDegree(player).ifPresent(degree ->
 					syncDegree((ServerPlayer) player, degree));
 		}
 	}
@@ -60,9 +61,9 @@ public class InitiatoryDegreeEvents {
 			Player original = event.getOriginal();
 			Player newPlayer = event.getEntity();
 			original.reviveCaps();
-			IInitiatoryDegree oldDegree = original.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+			IInitiatoryDegree oldDegree = HemoCapabilityAccess.getInitiatoryDegree(original)
 					.orElseThrow(IllegalStateException::new);
-			IInitiatoryDegree newDegree = newPlayer.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+			IInitiatoryDegree newDegree = HemoCapabilityAccess.getInitiatoryDegree(newPlayer)
 					.orElseThrow(IllegalStateException::new);
 			newDegree.setDegreeNumber(oldDegree.getDegreeNumber());
 			original.invalidateCaps();

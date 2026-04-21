@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.render.tile.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,7 +8,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.degree.IInitiatoryDegree;
 import com.vincenthuto.hemomancy.client.model.tile.functional.SanguineMonolithModel;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.RenderTypeInit;
 import com.vincenthuto.hemomancy.common.tile.functional.SanguineMonolithBlockEntity;
 import com.vincenthuto.hutoslib.math.Vector3;
@@ -295,7 +295,7 @@ public class SanguineMonolithRenderer implements BlockEntityRenderer<SanguineMon
 		if (mc.player == null) {
 			return 0;
 		}
-		return mc.player.getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+		return mc.HemoCapabilityAccess.getInitiatoryDegree(player)
 				.map(IInitiatoryDegree::getDegreeNumber)
 				.orElse(0);
 	}

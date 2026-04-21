@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.vincenthuto.hemomancy.client.screen.skilltree.shared.*;
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
-import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
 
 import net.minecraft.client.Minecraft;
@@ -86,8 +86,7 @@ public class HarbingerProgressScreen extends Screen {
         clearWidgets();
 
         if (Minecraft.getInstance().player != null) {
-            playerDegree = Minecraft.getInstance().player
-                    .getCapability(InitiatoryDegreeProvider.DEGREE_CAPA)
+            playerDegree = HemoCapabilityAccess.getInitiatoryDegree(Minecraft.getInstance().player)
                     .map(d -> d.getDegreeNumber()).orElse(0);
         }
 
