@@ -58,8 +58,12 @@ public class UnstainedProgressScreen extends Screen {
 	private UTab activeTab = UTab.PROGRESS;
 	private static final int TAB_HEIGHT = 16;
 	private static final int TAB_PAD = 4;
-	private final UnstainedRitesTabController ritesTab = new UnstainedRitesTabController();
-	private final UnstainedCraftingTabController craftingTab = new UnstainedCraftingTabController();
+	private final RitesTabController ritesTab = new RitesTabController(true);
+	private final CraftingTabController craftingTab = new CraftingTabController(true);
+	private final MaterialsTabController materialsTab = new MaterialsTabController(
+			MaterialsData.getUnstainedEntries(), EnumNodeShape.DIAMOND,
+			UTab.MATERIALS.color, 0x0080B0A0, 0xFF6088B0,
+			0xFF203050, 0xDD101828, MiniRecipeRenderer.UNSTAINED);
 
 	// ── Colours — silver/teal Unstained palette on dark blue ──
 	private static final int PURITY_COLOR       = 0xFFB0C0E0;
@@ -89,7 +93,6 @@ public class UnstainedProgressScreen extends Screen {
 
 	// ── Pan / zoom (encapsulated in PanZoomState) ──
 	private final PanZoomState progressView = new PanZoomState();
-	private final PanZoomState materialView = new PanZoomState();
 	/** Active view — points to whichever tab's PanZoomState is current. */
 	private PanZoomState view = progressView;
 	private boolean isDragging;
@@ -138,11 +141,6 @@ public class UnstainedProgressScreen extends Screen {
 	// Each: [startX ratio, startY ratio, size, velX, velY, phase, brightness]
 	private float[][] rhombusParams;
 
-	// ── Materials & Processes tab data ──
-	private final java.util.Map<MaterialEntry, int[]> materialPositions = new java.util.LinkedHashMap<>();
-	private int matContentW, matContentH;
-	private MaterialEntry selectedMaterial = null;
-
 	// ────────────────────────────────────────────────────────────
 	//  Construction / opening
 	// ────────────────────────────────────────────────────────────
@@ -174,15 +172,14 @@ public class UnstainedProgressScreen extends Screen {
 		clearWidgets();
 		cachePlayerData();
 		buildContentBounds();
-		buildMaterialLayout();
 		ProgressScreenContext ctx = makeContext();
 		ritesTab.onInit(ctx);
 		craftingTab.onInit(ctx);
+		materialsTab.onInit(ctx);
 		seedRhombusParams();
 
-		// Centre each tab's content
-		progressView.centreOn(contentW,    contentH,    guiWidth, guiHeight);
-		materialView.centreOn(matContentW, matContentH, guiWidth, guiHeight);
+		// Centre the progress view
+		progressView.centreOn(contentW, contentH, guiWidth, guiHeight);
 
 		view = viewForTab(activeTab);
 	}
@@ -274,14 +271,14 @@ public class UnstainedProgressScreen extends Screen {
 	private int contentW() {
 		return switch (activeTab) {
 			case PROGRESS  -> contentW;
-			case MATERIALS -> matContentW;
+			case MATERIALS -> materialsTab.getContentW();
 			default        -> 0; // RITES / CRAFTING don't pan
 		};
 	}
 	private int contentH() {
 		return switch (activeTab) {
 			case PROGRESS  -> contentH;
-			case MATERIALS -> matContentH;
+			case MATERIALS -> materialsTab.getContentH();
 			default        -> 0;
 		};
 	}
@@ -290,7 +287,7 @@ public class UnstainedProgressScreen extends Screen {
 	private PanZoomState viewForTab(UTab tab) {
 		return switch (tab) {
 			case PROGRESS  -> progressView;
-			case MATERIALS -> materialView;
+			case MATERIALS -> materialsTab.getPanZoomState();
 			default        -> view; // RITES / CRAFTING don't pan
 		};
 	}
@@ -351,13 +348,7 @@ public class UnstainedProgressScreen extends Screen {
 					}
 				}
 			}
-			if (activeTab == UTab.MATERIALS && insideGui(mx, my)) {
-				MaterialEntry matHit = materialNodeUnder(mx, my);
-				if (matHit != null) {
-					selectedMaterial = (selectedMaterial == matHit) ? null : matHit;
-					return true;
-				}
-			}
+			if (activeTab == UTab.MATERIALS && insideGui(mx, my)) return materialsTab.mouseClicked(makeContext(), mx, my, btn);
 			if (activeTab == UTab.RITES && insideGui(mx, my)) return ritesTab.mouseClicked(makeContext(), mx, my, btn);
 			if (activeTab == UTab.CRAFTING && insideGui(mx, my)) return craftingTab.mouseClicked(makeContext(), mx, my, btn);
 			if (insideGui(mx, my)) {
@@ -438,14 +429,14 @@ public class UnstainedProgressScreen extends Screen {
 		} else if (activeTab == UTab.CRAFTING) {
 			craftingTab.render(gfx, makeContext(), mouseX, mouseY, partial);
 		} else if (activeTab == UTab.MATERIALS) {
-			drawMaterialNodes(gfx);
+			materialsTab.render(gfx, makeContext(), mouseX, mouseY, partial);
 		}
 
 		gfx.disableScissor();
 
-		// 3b. Material info panel (outside scissor so it renders on top of nodes)
-		if (activeTab == UTab.MATERIALS && selectedMaterial != null) {
-			drawMaterialInfoPanel(gfx, selectedMaterial);
+		// 3b. Info panel overlay (outside scissor so it renders on top of nodes)
+		if (activeTab == UTab.MATERIALS) {
+			materialsTab.renderOverlay(gfx, makeContext(), mouseX, mouseY);
 		}
 
 		// 4. Milestones sidebar (fixed on far left, outside content scissor; Progress tab only)
@@ -493,7 +484,7 @@ public class UnstainedProgressScreen extends Screen {
 				gfx.renderTooltip(font, Component.literal(tipText), mouseX, mouseY);
 			}
 		} else if (activeTab == UTab.MATERIALS) {
-			drawMaterialTooltip(gfx, mouseX, mouseY);
+			materialsTab.renderTooltip(gfx, makeContext(), mouseX, mouseY);
 		}
 
 		super.render(gfx, mouseX, mouseY, partial);
@@ -1420,45 +1411,6 @@ public class UnstainedProgressScreen extends Screen {
 		int idx = ScreenDrawUtils.tabIndexUnder(font, buildTabDescs(),
 				guiLeft, guiTop, guiWidth, TAB_HEIGHT, TAB_PAD, mx, my);
 		return idx >= 0 ? UTab.values()[idx] : null;
-	}
-
-	// ────────────────────────────────────────────────────────────
-	//  Materials & Processes tab — delegate to MaterialsTabView
-	// ────────────────────────────────────────────────────────────
-
-	private void buildMaterialLayout() {
-		int[] bounds = new int[2];
-		MaterialsTabView.buildLayout(MaterialsData.getUnstainedEntries(),
-				materialPositions, bounds, NODE_SIZE);
-		matContentW = bounds[0];
-		matContentH = bounds[1];
-	}
-
-	private void drawMaterialNodes(GuiGraphics gfx) {
-		MaterialsTabView.drawNodes(gfx, font,
-				MaterialsData.getUnstainedEntries(), materialPositions,
-				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.DIAMOND,
-				UTab.MATERIALS.color, selectedMaterial,
-				0x0080B0A0, 0xFF6088B0);
-	}
-
-	private void drawMaterialInfoPanel(GuiGraphics gfx, MaterialEntry mat) {
-		MaterialsTabView.drawInfoPanel(gfx, font, mat,
-				guiLeft, guiTop, guiWidth,
-				UTab.MATERIALS.color, 0xFF203050, 0xDD101828,
-				MiniRecipeRenderer.UNSTAINED);
-	}
-
-	private void drawMaterialTooltip(GuiGraphics gfx, int mouseX, int mouseY) {
-		MaterialsTabView.drawTooltip(gfx, font, materialPositions,
-				view, guiLeft, guiTop, guiWidth, guiHeight, NODE_SIZE,
-				EnumNodeShape.DIAMOND, UTab.MATERIALS.color, 0xFF80B0A0,
-				mouseX, mouseY);
-	}
-
-	private MaterialEntry materialNodeUnder(double mx, double my) {
-		return MaterialsTabView.nodeUnder(materialPositions,
-				view, guiLeft, guiTop, NODE_SIZE, EnumNodeShape.DIAMOND, mx, my);
 	}
 
 	// ────────────────────────────────────────────────────────────

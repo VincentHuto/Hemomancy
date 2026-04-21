@@ -5,14 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 
 /**
  * Holds all mutable state for the Blood Crafting browser tab.
  * <p>
- * Owned by {@link HarbingerProgressScreen}; passed into the static methods on
- * {@link CraftingTabView} each frame.
+ * Shared by both the Harbinger and Unstained progress screens; passed into the
+ * static methods on {@link CraftingTabView} each frame.
  */
 public class CraftingTabState {
 
@@ -43,6 +42,22 @@ public class CraftingTabState {
 	public int craftingSidebarScroll = 0;
 	public int craftingInfoScroll = 0;
 
+	// ── Theme / behaviour flags ───────────────────────────────────
+	/** Accent colour used for borders, header text, layer buttons, and accents (default: Harbinger red). */
+	public int  tabColor          = 0xFFAA2222;
+	/** Horizontal separator colour under the tier-sidebar header (default: Harbinger dark red). */
+	public int  separatorColor    = 0xFF442222;
+	/** Title/selected-item text colour in the sidebar and info panel (default: Harbinger gold). */
+	public int  nameColor         = 0xFFEEAAAA;
+	/** Background colour for the selected sidebar row (default: Harbinger dark red). */
+	public int  rowBgSelected     = 0xDD1A0808;
+	/** Background colour for a hovered sidebar row (default: Harbinger dark red). */
+	public int  rowBgHovered      = 0xBB180505;
+	/** Background colour for a normal (unselected) sidebar row (default: Harbinger dark red). */
+	public int  rowBgNormal       = 0x99120303;
+	/** When {@code false}, all tiers are accessible regardless of player degree. */
+	public boolean enableDegreeLock = true;
+
 	// ── Data helpers ─────────────────────────────────────────────
 
 	/** Clears and rebuilds {@link #craftingByTier} from {@link #craftingRecipes}. */
@@ -65,7 +80,7 @@ public class CraftingTabState {
 		selectedCraftingIndexInTier = 0;
 		for (int i = 0; i < TIER_NAMES.length; i++) {
 			if (!craftingByTier.getOrDefault(TIER_NAMES[i], List.of()).isEmpty()
-					&& playerDegree >= TIER_DEGREE_REQ[i]) {
+					&& (!enableDegreeLock || playerDegree >= TIER_DEGREE_REQ[i])) {
 				selectedCraftingTier = TIER_NAMES[i];
 				break;
 			}

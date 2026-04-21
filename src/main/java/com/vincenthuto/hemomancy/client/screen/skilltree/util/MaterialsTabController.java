@@ -1,6 +1,7 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -11,12 +12,54 @@ public class MaterialsTabController implements IProgressTab {
     private MaterialEntry selectedEntry = null;
 
     private static final int NODE_SIZE = 26;
-    private static final int TAB_COLOR = 0xFFCC6644;
+
+    // ── Theme (Harbinger defaults) ────────────────────────────────
+    private final List<MaterialEntry> entries;
+    private final EnumNodeShape nodeShape;
+    private final int tabColor;
+    private final int nodeTransparentColor;
+    private final int nodeAccentColor;
+    private final int panelSeparatorColor;
+    private final int panelBgColor;
+    private final MiniRecipeRenderer renderer;
+
+    /** Harbinger-flavoured controller (existing behaviour preserved). */
+    public MaterialsTabController() {
+        this(MaterialsData.getBloodEntries(), EnumNodeShape.SQUARE,
+                0xFFCC6644, 0x00CC6644, 0xFFBB7733,
+                0xFF442222, 0xDD1A0505, MiniRecipeRenderer.BLOOD);
+    }
+
+    /**
+     * Creates a fully parametrised materials-tab controller.
+     *
+     * @param entries              the list of material entries to display
+     * @param nodeShape            shape of the node icons
+     * @param tabColor             primary accent colour
+     * @param nodeTransparentColor transparent version of the accent (alpha 0)
+     * @param nodeAccentColor      secondary accent colour for node highlights
+     * @param panelSeparatorColor  separator line colour in the info panel
+     * @param panelBgColor         background colour in the info panel
+     * @param renderer             recipe renderer style
+     */
+    public MaterialsTabController(List<MaterialEntry> entries, EnumNodeShape nodeShape,
+                                   int tabColor, int nodeTransparentColor, int nodeAccentColor,
+                                   int panelSeparatorColor, int panelBgColor,
+                                   MiniRecipeRenderer renderer) {
+        this.entries              = entries;
+        this.nodeShape            = nodeShape;
+        this.tabColor             = tabColor;
+        this.nodeTransparentColor = nodeTransparentColor;
+        this.nodeAccentColor      = nodeAccentColor;
+        this.panelSeparatorColor  = panelSeparatorColor;
+        this.panelBgColor         = panelBgColor;
+        this.renderer             = renderer;
+    }
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
         int[] bounds = new int[2];
-        MaterialsTabView.buildLayout(MaterialsData.getBloodEntries(), positions, bounds, NODE_SIZE);
+        MaterialsTabView.buildLayout(entries, positions, bounds, NODE_SIZE);
         contentW = bounds[0];
         contentH = bounds[1];
         panZoom.centreOn(contentW, contentH, ctx.guiWidth(), ctx.guiHeight());
@@ -25,9 +68,9 @@ public class MaterialsTabController implements IProgressTab {
     @Override
     public void render(GuiGraphics gfx, ProgressScreenContext ctx, int mx, int my, float partial) {
         MaterialsTabView.drawNodes(gfx, ctx.font(),
-                MaterialsData.getBloodEntries(), positions,
-                panZoom, ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, EnumNodeShape.SQUARE,
-                TAB_COLOR, selectedEntry, 0x00CC6644, 0xFFBB7733);
+                entries, positions,
+                panZoom, ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, nodeShape,
+                tabColor, selectedEntry, nodeTransparentColor, nodeAccentColor);
     }
 
     @Override
@@ -35,7 +78,7 @@ public class MaterialsTabController implements IProgressTab {
         if (selectedEntry != null) {
             MaterialsTabView.drawInfoPanel(gfx, ctx.font(), selectedEntry,
                     ctx.guiLeft(), ctx.guiTop(), ctx.guiWidth(),
-                    TAB_COLOR, 0xFF442222, 0xDD1A0505, MiniRecipeRenderer.BLOOD);
+                    tabColor, panelSeparatorColor, panelBgColor, renderer);
         }
     }
 
@@ -44,14 +87,14 @@ public class MaterialsTabController implements IProgressTab {
         MaterialsTabView.drawTooltip(gfx, ctx.font(), positions,
                 panZoom, ctx.guiLeft(), ctx.guiTop(),
                 ctx.guiWidth(), ctx.guiHeight(), NODE_SIZE,
-                EnumNodeShape.SQUARE, TAB_COLOR, 0xFFBB8833, mx, my);
+                nodeShape, tabColor, nodeAccentColor, mx, my);
     }
 
     @Override
     public boolean mouseClicked(ProgressScreenContext ctx, double mx, double my, int btn) {
         if (btn != 0) return false;
         MaterialEntry hit = MaterialsTabView.nodeUnder(positions, panZoom,
-                ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, EnumNodeShape.SQUARE, mx, my);
+                ctx.guiLeft(), ctx.guiTop(), NODE_SIZE, nodeShape, mx, my);
         if (hit != null) {
             selectedEntry = (selectedEntry == hit) ? null : hit;
             return true;

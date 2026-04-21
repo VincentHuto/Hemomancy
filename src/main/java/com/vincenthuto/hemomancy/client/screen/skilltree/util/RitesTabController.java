@@ -11,13 +11,38 @@ import net.minecraft.client.gui.GuiGraphics;
 public class RitesTabController implements IProgressTab {
     private final RitesTabState state = new RitesTabState();
 
+    /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
+    public RitesTabController() {}
+
+    /**
+     * Creates a rites-tab controller with a path-specific theme.
+     *
+     * @param unstained {@code true} for the Unstained path (teal/blue palette,
+     *                  no degree lock, hidden empty tiers);
+     *                  {@code false} for the Harbinger path (purple palette,
+     *                  degree lock active, all tiers shown).
+     */
+    public RitesTabController(boolean unstained) {
+        if (unstained) {
+            state.tabColor         = 0xFF8090BB;
+            state.separatorColor   = 0xFF203050;
+            state.nameColor        = 0xFFB0C0E0;
+            state.rowBgSelected    = 0xDD101828;
+            state.rowBgHovered     = 0xBB0C1420;
+            state.rowBgNormal      = 0x990A0E18;
+            state.enableDegreeLock = false;
+            state.hideEmptyTiers   = true;
+        }
+    }
+
     @Override
     public void onInit(ProgressScreenContext ctx) {
         Minecraft mc = Minecraft.getInstance();
+        boolean unstained = !state.enableDegreeLock; // proxy flag
         state.riteRecipes.clear();
         if (mc.player != null && mc.level != null)
             for (CardinalRiteRecipe r : CardinalRiteRecipe.getAllRecipes(mc.level))
-                if (!r.isUnstained()) state.riteRecipes.add(r);
+                if (r.isUnstained() == unstained) state.riteRecipes.add(r);
         state.rebuildTierMap();
         state.autoSelectFirstTier(ctx.playerDegree());
     }
@@ -36,8 +61,9 @@ public class RitesTabController implements IProgressTab {
         if (btn != 0) return false;
         CardinalRiteType clickedTier = RitesTabView.tierUnder(ctx, state, mx, my);
         if (clickedTier != null) {
-            if (ctx.playerDegree() >= RitesTabView.minDegree(clickedTier)
-                    && !state.ritesByTier.getOrDefault(clickedTier, List.of()).isEmpty()) {
+            boolean degreeOk = !state.enableDegreeLock
+                    || ctx.playerDegree() >= RitesTabView.minDegree(clickedTier);
+            if (degreeOk && !state.ritesByTier.getOrDefault(clickedTier, List.of()).isEmpty()) {
                 if (clickedTier == state.selectedRiteTier) {
                     state.selectedRiteTier = null;
                     state.riteSidebarScroll = 0;
