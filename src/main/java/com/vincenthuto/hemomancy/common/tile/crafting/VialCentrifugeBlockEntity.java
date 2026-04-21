@@ -50,7 +50,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public static final int SLOT_BLOOD = 1;
 	public static final int SLOT_FLASK_OUTPUT = 19;
 	public static final int INVENTORY_SIZE = 20;
-	private static final double BLOOD_GAIN_PER_OPERATION = 250D;
+	private static final double BLOOD_GAIN_PER_SPIN = 250D;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	public static final int SPIN_TOTAL_TIME = 200;
@@ -150,7 +150,10 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	private void addOperationBlood() {
 		IBloodVolume vol = resolveVolume();
 		if (vol == null || vol.isFull()) return;
-		vol.fill(BLOOD_GAIN_PER_OPERATION);
+		double spaceRemaining = vol.getMaxBloodVolume() - vol.getBloodVolume();
+		double amountToAdd = Math.min(BLOOD_GAIN_PER_SPIN, Math.max(0D, spaceRemaining));
+		if (amountToAdd <= 0) return;
+		vol.fill(amountToAdd);
 		sendUpdates();
 	}
 
