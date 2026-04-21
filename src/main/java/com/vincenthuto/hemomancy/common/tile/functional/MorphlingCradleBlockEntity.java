@@ -4,7 +4,6 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProv
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
@@ -65,7 +64,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private static final double[] LEECH_AURA_RANGE = new double[] { 4.0, 7.0, 10.0 };
 	private static final float[] LEECH_DRAIN_PER_HIT = new float[] { 1.5f, 3.0f, 5.0f };
 	private static final double[] LEECH_BUFFER_MAX = new double[] { 200.0, 600.0, 1200.0 };
-	private static final double[] LEECH_DISTRIBUTION_RANGE = new double[] { 0.0, 10.0, 28.0 };
+	private static final double[] LEECH_DISTRIBUTION_RANGE = new double[] { 6.0, 10.0, 28.0 };
 
 	private ItemStack morphlingItem = ItemStack.EMPTY;
 	private UUID ownerUUID = null;
@@ -193,11 +192,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			return;
 		}
 
-		boolean isLeechMorphling = morphlingItem.is(ItemInit.morphling_leeches.get());
 		MaturityStage stage = MaturityStage.fromStack(morphlingItem);
 		int idx = stage.ordinal();
 
-		if (isLeechMorphling) {
+		if (stage == MaturityStage.POLYP) {
 			setState(State.ACTIVE);
 			runLeechAura(idx);
 			distributeLeechBlood(idx);
@@ -267,7 +265,6 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 
 	private void distributeLeechBlood(int stageIdx) {
 		if (bloodBuffer <= 0) return;
-		if (stageIdx == MaturityStage.POLYP.ordinal()) return;
 
 		double range = LEECH_DISTRIBUTION_RANGE[stageIdx];
 		if (range > 0) {
