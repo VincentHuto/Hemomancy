@@ -117,6 +117,10 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		return copy;
 	}
 
+	public ItemStack getHostedMorphling() {
+		return morphlingItem;
+	}
+
 	public double receiveExternalBlood(double amount) {
 		if (amount <= 0) return 0;
 		double space = Math.max(0, INTERNAL_BUFFER_MAX - internalBlood);
