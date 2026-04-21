@@ -278,6 +278,8 @@
   "item.hemomancy.living_syringe": "Living Syringe",
   "item.hemomancy.vial_rack": "Vial Rack",
   "item.hemomancy.vial_rack.empty_count": "Empty Vials: %s/%s",
+  "item.hemomancy.vial_rack.shift_hint": "Hold Shift to view vial contents",
+  "item.hemomancy.vial_rack.slot_empty": "Empty",
   "item.hemomancy.living_syringe.loaded": "Loaded Rack: %s/%s empty",
   "item.hemomancy.living_syringe.no_rack": "No empty or partial vial rack in inventory.",
   "item.hemomancy.living_syringe.rack_full": "Rack is full; ejected.",

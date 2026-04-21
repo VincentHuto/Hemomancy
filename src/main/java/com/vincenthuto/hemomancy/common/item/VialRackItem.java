@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.item;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.NonNullList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class VialRackItem extends Item {
 	public static final String TAG_VIALS = "Vials";
@@ -25,20 +27,28 @@ public class VialRackItem extends Item {
 		super(properties.stacksTo(1));
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, level, tooltip, flagIn);
-		NonNullList<ItemStack> vials = getVials(stack);
-		tooltip.add(Component.translatable("item.hemomancy.vial_rack.empty_count", countEmptyVials(stack), MAX_VIALS));
-		Map<String, Integer> sampleCounts = new LinkedHashMap<>();
-		for (ItemStack vial : vials) {
-			if (!isEmptyVial(vial)) {
-				String key = vial.getHoverName().getString();
-				sampleCounts.merge(key, 1, Integer::sum);
+		int emptyCount = countEmptyVials(stack);
+		tooltip.add(Component.translatable("item.hemomancy.vial_rack.empty_count", emptyCount, MAX_VIALS));
+		if (Screen.hasShiftDown()) {
+			NonNullList<ItemStack> vials = getVials(stack);
+			for (int i = 0; i < vials.size(); i++) {
+				ItemStack vial = vials.get(i);
+				Component slotLabel = Component.literal("[" + (i + 1) + "] ").withStyle(ChatFormatting.DARK_GRAY);
+				if (isEmptyVial(vial)) {
+					tooltip.add(slotLabel.copy().append(
+							Component.translatable("item.hemomancy.vial_rack.slot_empty").withStyle(ChatFormatting.GRAY)));
+				} else {
+					tooltip.add(slotLabel.copy().append(vial.getHoverName().copy().withStyle(ChatFormatting.RED)));
+				}
 			}
-		}
-		for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
-			tooltip.add(Component.literal("- " + entry.getKey() + " x" + entry.getValue()));
+		} else {
+			if (emptyCount < MAX_VIALS) {
+				tooltip.add(Component.translatable("item.hemomancy.vial_rack.shift_hint").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+			}
 		}
 	}
 

@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.vincenthuto.hemomancy.client.particle.util.EntityParticleUtils;
+import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.item.BloodVialItem;
 import com.vincenthuto.hemomancy.common.item.VialRackItem;
-import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.network.PacketHandler;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -121,6 +123,9 @@ public class LivingSyringeItem extends LivingItemItem {
 		VialRackItem.setVials(rack, vials);
 		setLoadedRack(syringe, rack);
 		player.playSound(SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
+		PacketHandler.sendLivingToolBreakParticles(target.position().add(0, target.getBbHeight() * 0.5, 0),
+				EntityParticleUtils.getColorFromPredicate(EntityParticleUtils.getEntityPredicate(target)),
+				16, player.level().dimension());
 		if (VialRackItem.countEmptyVials(rack) <= 0) {
 			ejectRack(player, syringe);
 		}
@@ -141,6 +146,7 @@ public class LivingSyringeItem extends LivingItemItem {
 				if (candidate.isEmpty()) {
 					player.getInventory().setItem(i, ItemStack.EMPTY);
 				}
+				player.playSound(SoundEvents.ITEM_FRAME_ADD_ITEM, 0.8F, 1.0F);
 				return true;
 			}
 		}
