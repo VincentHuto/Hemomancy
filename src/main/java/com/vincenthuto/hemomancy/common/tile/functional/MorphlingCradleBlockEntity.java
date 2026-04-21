@@ -5,6 +5,7 @@ import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
+import com.vincenthuto.hemomancy.common.item.morphlings.IMorphling;
 import com.vincenthuto.hemomancy.common.item.morphlings.MorphlingItem;
 import com.vincenthuto.hemomancy.config.HemoServerConfig;
 import net.minecraft.core.BlockPos;
@@ -15,9 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
@@ -27,19 +25,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public class MorphlingCradleBlockEntity extends BlockEntity {
 
 	public enum State {
 		ACTIVE, DORMANT
-	}
-
-	private enum Mode {
-		LEECH, SPORE, ORB
 	}
 
 	private enum MaturityStage {
@@ -65,13 +59,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 	private static final double[] ACTION_COST = new double[] { 35.0, 60.0, 95.0 };
 	private static final int[] ACTION_INTERVAL = new int[] { 30, 24, 18 };
 
-	private static final double[] SPORE_RANGE = new double[] { 5.0, 7.0, 9.0 };
-	private static final int[] SPORE_DURATION = new int[] { 50, 80, 120 };
-	private static final int[] SPORE_AMPLIFIER = new int[] { 0, 0, 1 };
-	private static final int MIN_SPORE_WITHER_DURATION = 20;
-
-	private static final double[] ORB_RANGE = new double[] { 8.0, 11.0, 15.0 };
-	private static final float[] ORB_DAMAGE = new float[] { 3.0f, 5.0f, 7.0f };
+	private static final double[] SUPPORT_AURA_RANGE = new double[] { 8.0, 11.0, 15.0 };
 
 	private static final int[] LEECH_AURA_INTERVAL = new int[] { 12, 8, 6 };
 	private static final double[] LEECH_AURA_RANGE = new double[] { 4.0, 7.0, 10.0 };
@@ -205,14 +193,17 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			return;
 		}
 
-		Mode mode = getMode();
+		boolean isLeechMorphling = morphlingItem.is(ItemInit.morphling_leeches.get());
 		MaturityStage stage = MaturityStage.fromStack(morphlingItem);
 		int idx = stage.ordinal();
 
-		if (mode == Mode.LEECH) {
+		if (isLeechMorphling) {
 			setState(State.ACTIVE);
 			runLeechAura(idx);
 			distributeLeechBlood(idx);
+			if (level.getGameTime() % ACTION_INTERVAL[idx] == 0) {
+				runMorphlingAura(idx);
+			}
 			return;
 		}
 
@@ -227,34 +218,32 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 				setState(State.DORMANT);
 				return;
 			}
-			runAction(mode, idx);
+			runMorphlingAura(idx);
 		}
 	}
 
-	private void runAction(Mode mode, int stageIdx) {
-		if (mode == Mode.SPORE) {
-			double range = SPORE_RANGE[stageIdx];
-			int duration = SPORE_DURATION[stageIdx];
-			int amp = SPORE_AMPLIFIER[stageIdx];
-			List<LivingEntity> targets = getTargets(range, false);
-			for (LivingEntity target : targets) {
-				target.addEffect(new MobEffectInstance(MobEffects.POISON, duration, amp, true, true, true));
-				target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-						Math.max(MIN_SPORE_WITHER_DURATION, duration / 2), amp, true, true, true));
-			}
+	private void runMorphlingAura(int stageIdx) {
+		if (!(morphlingItem.getItem() instanceof IMorphling morphling) || ownerUUID == null) {
 			return;
 		}
 
-		double range = ORB_RANGE[stageIdx];
-		double cx = worldPosition.getX() + 0.5;
-		double cy = worldPosition.getY() + 0.5;
-		double cz = worldPosition.getZ() + 0.5;
-		Optional<LivingEntity> targetOpt = getTargets(range, false).stream()
-				.min(Comparator.comparingDouble(target -> target.distanceToSqr(cx, cy, cz)));
-		if (targetOpt.isPresent()) {
-			LivingEntity target = targetOpt.get();
-			DamageSource src = level.damageSources().magic();
-			target.hurt(src, ORB_DAMAGE[stageIdx]);
+		Set<UUID> allowedRecipients = new HashSet<>();
+		allowedRecipients.add(ownerUUID);
+		if (level instanceof ServerLevel serverLevel) {
+			BloodlineSavedData data = BloodlineSavedData.get(serverLevel.getServer().overworld());
+			Bloodline line = data.getBloodlineForPlayer(ownerUUID);
+			if (line != null && line.isValid()) {
+				allowedRecipients.addAll(line.getPlayerUUIDS());
+			}
+		}
+
+		double range = SUPPORT_AURA_RANGE[stageIdx];
+		AABB area = new AABB(worldPosition).inflate(range);
+		List<Player> nearbyPlayers = level.getEntitiesOfClass(Player.class, area, Player::isAlive);
+		for (Player nearby : nearbyPlayers) {
+			if (allowedRecipients.contains(nearby.getUUID())) {
+				morphling.onEquippedTick(nearby, morphlingItem);
+			}
 		}
 	}
 
@@ -352,12 +341,6 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			}
 			return target instanceof Monster;
 		});
-	}
-
-	private Mode getMode() {
-		if (morphlingItem.is(ItemInit.morphling_leeches.get())) return Mode.LEECH;
-		if (morphlingItem.is(ItemInit.morphling_fungal.get())) return Mode.SPORE;
-		return Mode.ORB;
 	}
 
 	private ServerPlayer getOwnerPlayer() {
