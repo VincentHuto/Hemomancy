@@ -1,6 +1,26 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "hemomancy:item/vial_rack"
-  }
+    "layer0": "hemomancy:item/vial_rack_empty"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hemomancy:state": 0
+      },
+      "model": "hemomancy:item/vial_rack_empty"
+    },
+    {
+      "predicate": {
+        "hemomancy:state": 1
+      },
+      "model": "hemomancy:item/vial_rack_partial"
+    },
+    {
+      "predicate": {
+        "hemomancy:state": 2
+      },
+      "model": "hemomancy:item/vial_rack_full"
+    }
+  ]
 }
