@@ -98,7 +98,7 @@ public class MorphlingCradleRenderer implements BlockEntityRenderer<MorphlingCra
 				poseStack.mulPose(Vector3.YP.rotationDegrees(time * 2.0F).toMoj());
 				poseStack.translate(0.0F, bob, 0.0F);
 			}
-			poseStack.scale(0.55F, 0.55F, 0.55F);
+			poseStack.scale(1F, 1.0F, 1F);
 			this.itemRenderer.renderStatic(null, hosted, ItemDisplayContext.GROUND, false,
 					poseStack, bufferIn, null, combinedLightIn, combinedOverlayIn, 0);
 			poseStack.popPose();
