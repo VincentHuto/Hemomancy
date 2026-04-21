@@ -1,20 +1,26 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.client.data.QliphothBloomClientData;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client: Syncs all active Qliphoth Bloom positions and radii
  * so the client can render the tree and pulsing rings.
  */
-public class PacketSyncQliphothBlooms {
+public class PacketSyncQliphothBlooms implements CustomPacketPayload {
+
+	public static final Type<PacketSyncQliphothBlooms> TYPE = new Type<>(Hemomancy.rloc("packet_sync_qliphoth_blooms"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncQliphothBlooms> STREAM_CODEC = StreamCodec.of(PacketSyncQliphothBlooms::encode, PacketSyncQliphothBlooms::decode);
 
 	private final List<QliphothBloomClientData.BloomEntry> entries;
 
@@ -41,10 +47,14 @@ public class PacketSyncQliphothBlooms {
 		return new PacketSyncQliphothBlooms(entries);
 	}
 
-	public static void handle(PacketSyncQliphothBlooms msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final PacketSyncQliphothBlooms msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			QliphothBloomClientData.set(msg.entries);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

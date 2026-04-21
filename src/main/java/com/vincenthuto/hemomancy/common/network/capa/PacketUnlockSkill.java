@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
@@ -16,7 +20,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
@@ -24,7 +27,10 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * The server validates prerequisites, checks blood cost, drains blood,
  * applies the change, and syncs back to the client.
  */
-public class PacketUnlockSkill {
+public class PacketUnlockSkill implements CustomPacketPayload {
+
+	public static final Type<PacketUnlockSkill> TYPE = new Type<>(Hemomancy.rloc("packet_unlock_skill"));
+	public static final StreamCodec<FriendlyByteBuf, PacketUnlockSkill> STREAM_CODEC = StreamCodec.of(PacketUnlockSkill::encode, PacketUnlockSkill::decode);
 
 	private final int skillId;
 
@@ -40,9 +46,9 @@ public class PacketUnlockSkill {
 		return new PacketUnlockSkill(buf.readInt());
 	}
 
-	public static void handle(PacketUnlockSkill msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PacketUnlockSkill msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			SkillPoint skill = SkillPointInit.getById(msg.skillId);
@@ -116,7 +122,6 @@ public class PacketUnlockSkill {
 				syncSkills(player);
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	/**
@@ -165,5 +170,10 @@ public class PacketUnlockSkill {
 	 */
 	private static void syncSkills(ServerPlayer player) {
 		PacketHandler.sendToPlayer(player, new PacketSyncSkills(SkillPointInit.serializeAll()));
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

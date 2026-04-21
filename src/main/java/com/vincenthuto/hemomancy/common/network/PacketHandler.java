@@ -221,7 +221,6 @@ public class PacketHandler {
     // ─────────────────────────────────────────────────────────────────────────
     //  Convenience send helpers
     //  NeoForge 1.21: PacketDistributor now has static send methods.
-    //  Old:  CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg)
     //  New:  PacketDistributor.sendToPlayer(player, msg)
     // ─────────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
-import java.util.function.Supplier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import javax.annotation.Nullable;
 
@@ -17,9 +19,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class OpenMorphlingJarPacket {
+public class OpenMorphlingJarPacket implements CustomPacketPayload {
+
+	public static final Type<OpenMorphlingJarPacket> TYPE = new Type<>(Hemomancy.rloc("open_morphling_jar_packet"));
+	public static final StreamCodec<FriendlyByteBuf, OpenMorphlingJarPacket> STREAM_CODEC = StreamCodec.of(OpenMorphlingJarPacket::encode, OpenMorphlingJarPacket::decode);
 	public static OpenMorphlingJarPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new OpenMorphlingJarPacket();
@@ -29,9 +33,9 @@ public class OpenMorphlingJarPacket {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final OpenMorphlingJarPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final OpenMorphlingJarPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			// Find jar in inventory first, then check scar slot 7
@@ -60,6 +64,10 @@ public class OpenMorphlingJarPacket {
 				});
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

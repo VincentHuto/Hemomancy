@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.menu.tile.crafting.ScarStationMenu;
@@ -11,9 +14,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketScarCraftingEvent {
+public class PacketScarCraftingEvent implements CustomPacketPayload {
+
+	public static final Type<PacketScarCraftingEvent> TYPE = new Type<>(Hemomancy.rloc("packet_scar_crafting_event"));
+	public static final StreamCodec<FriendlyByteBuf, PacketScarCraftingEvent> STREAM_CODEC = StreamCodec.of(PacketScarCraftingEvent::encode, PacketScarCraftingEvent::decode);
 
 	/** Minimum initiatory degree required to use the Cerebral Scar Station. */
 	private static final int REQUIRED_DEGREE = 4;
@@ -30,9 +35,9 @@ public class PacketScarCraftingEvent {
 
 	public static class Handler {
 
-		public static void handle(final PacketScarCraftingEvent msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				ServerPlayer player = ctx.get().getSender();
+		public static void handle(final PacketScarCraftingEvent msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				ServerPlayer player = ctx.player();
 				if (player == null) return;
 
 				// ── Degree gate: Scar crafting requires Adept (degree 4) ──
@@ -57,7 +62,11 @@ public class PacketScarCraftingEvent {
 					station.craftEvent();
 				}
 			});
-			ctx.get().setPacketHandled(true);
 		}
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

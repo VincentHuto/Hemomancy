@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -11,13 +15,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server: Player sends a message to all online members of their shared bloodline.
  * The message is broadcast as a dark red whisper with a flavour prefix.
  */
-public class PacketBloodlineMessage {
+public class PacketBloodlineMessage implements CustomPacketPayload {
+
+	public static final Type<PacketBloodlineMessage> TYPE = new Type<>(Hemomancy.rloc("packet_bloodline_message"));
+	public static final StreamCodec<FriendlyByteBuf, PacketBloodlineMessage> STREAM_CODEC = StreamCodec.of(PacketBloodlineMessage::encode, PacketBloodlineMessage::decode);
 
 	private static final int MAX_LENGTH = 256;
 
@@ -35,9 +41,9 @@ public class PacketBloodlineMessage {
 		return new PacketBloodlineMessage(buf.readUtf(MAX_LENGTH));
 	}
 
-	public static void handle(PacketBloodlineMessage msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
+	public static void handle(final PacketBloodlineMessage msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player();
 			if (sender == null) return;
 
 			String trimmed = msg.message.trim();
@@ -70,6 +76,10 @@ public class PacketBloodlineMessage {
 				}
 			});
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

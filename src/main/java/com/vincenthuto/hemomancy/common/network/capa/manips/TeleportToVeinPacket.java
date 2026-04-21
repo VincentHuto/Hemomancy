@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa.manips;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.block.vein.VeinLocation;
 import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulations;
@@ -26,16 +30,18 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class TeleportToVeinPacket {
+public class TeleportToVeinPacket implements CustomPacketPayload {
+
+	public static final Type<TeleportToVeinPacket> TYPE = new Type<>(Hemomancy.rloc("teleport_to_vein_packet"));
+	public static final StreamCodec<FriendlyByteBuf, TeleportToVeinPacket> STREAM_CODEC = StreamCodec.of(TeleportToVeinPacket::encode, TeleportToVeinPacket::decode);
 
 	public static class Handler {
-		public static void handle(final TeleportToVeinPacket msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				ctx.get().enqueueWork(() -> {
-					Player player = ctx.get().getSender();
+		public static void handle(final TeleportToVeinPacket msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				ctx.enqueueWork(() -> {
+					Player player = ctx.player();
 					if (player == null)
 						return;
 					if (!player.level().isClientSide) {
@@ -101,8 +107,6 @@ public class TeleportToVeinPacket {
 						}
 					}
 				});
-
-				ctx.get().setPacketHandled(true);
 			});
 		}
 	}
@@ -119,5 +123,10 @@ public class TeleportToVeinPacket {
 
 	public TeleportToVeinPacket(VeinLocation current) {
 		this.selected = current;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

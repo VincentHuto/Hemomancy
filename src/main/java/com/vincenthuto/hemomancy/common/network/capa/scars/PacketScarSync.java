@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.scars;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 
@@ -9,9 +12,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketScarSync {
+public class PacketScarSync implements CustomPacketPayload {
+
+	public static void encode(PacketScarSync msg, FriendlyByteBuf buf) {
+		msg.toBytes(buf);
+	}
+
+	public static PacketScarSync decode(FriendlyByteBuf buf) {
+		return new PacketScarSync(buf);
+	}
+
+	public static final Type<PacketScarSync> TYPE = new Type<>(Hemomancy.rloc("packet_scar_sync"));
+	public static final StreamCodec<FriendlyByteBuf, PacketScarSync> STREAM_CODEC = StreamCodec.of(PacketScarSync::encode, PacketScarSync::decode);
 
 	public int playerId;
 	public byte slot;
@@ -29,8 +42,12 @@ public class PacketScarSync {
 		this.mindscar = mindscar;
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(PacketScarSync msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			Entity p = Minecraft.getInstance().level.getEntity(playerId);
 			if (p instanceof Player) {
 				p.getCapability(ScarsCapabilities.SCARS).ifPresent(b -> {
@@ -38,12 +55,16 @@ public class PacketScarSync {
 				});
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public void toBytes(FriendlyByteBuf buf) {
 		buf.writeInt(this.playerId);
 		buf.writeByte(this.slot);
 		buf.writeItem(this.mindscar);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

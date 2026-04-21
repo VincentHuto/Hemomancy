@@ -1,6 +1,8 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
-import java.util.function.Supplier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import javax.annotation.Nullable;
 
@@ -15,9 +17,11 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class OpenLivingStaffPacket {
+public class OpenLivingStaffPacket implements CustomPacketPayload {
+
+	public static final Type<OpenLivingStaffPacket> TYPE = new Type<>(Hemomancy.rloc("open_living_staff_packet"));
+	public static final StreamCodec<FriendlyByteBuf, OpenLivingStaffPacket> STREAM_CODEC = StreamCodec.of(OpenLivingStaffPacket::encode, OpenLivingStaffPacket::decode);
 	public static OpenLivingStaffPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new OpenLivingStaffPacket();
@@ -27,9 +31,9 @@ public class OpenLivingStaffPacket {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final OpenLivingStaffPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final OpenLivingStaffPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (!Hemomancy.findItemInPlayerInv(player, LivingStaffItem.class).isEmpty()) {
 				player.openMenu(new MenuProvider() {
 					@Nullable
@@ -47,6 +51,10 @@ public class OpenLivingStaffPacket {
 				});
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

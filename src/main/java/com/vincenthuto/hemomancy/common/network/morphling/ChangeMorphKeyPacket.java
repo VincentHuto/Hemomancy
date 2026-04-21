@@ -1,10 +1,13 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingEvents;
@@ -18,14 +21,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class ChangeMorphKeyPacket {
+public class ChangeMorphKeyPacket implements CustomPacketPayload {
+
+	public static final Type<ChangeMorphKeyPacket> TYPE = new Type<>(Hemomancy.rloc("change_morph_key_packet"));
+	public static final StreamCodec<FriendlyByteBuf, ChangeMorphKeyPacket> STREAM_CODEC = StreamCodec.of(ChangeMorphKeyPacket::encode, ChangeMorphKeyPacket::decode);
 
 	public static class Handler {
-		public static void handle(final ChangeMorphKeyPacket msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
-				ServerPlayer player = ctx.get().getSender();
+		public static void handle(final ChangeMorphKeyPacket msg, final IPayloadContext ctx) {
+			ctx.enqueueWork(() -> {
+				ServerPlayer player = ctx.player();
 				if (player == null)
 					return;
 
@@ -64,7 +69,6 @@ public class ChangeMorphKeyPacket {
 
 				EquippedMorphlingEvents.syncToClient(player);
 			});
-			ctx.get().setPacketHandled(true);
 		}
 	}
 
@@ -77,5 +81,10 @@ public class ChangeMorphKeyPacket {
 
 	public ChangeMorphKeyPacket() {
 
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

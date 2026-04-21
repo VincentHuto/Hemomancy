@@ -1,17 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet: synchronises the player's current initiatory degree.
  */
-public class PacketSyncDegree {
+public class PacketSyncDegree implements CustomPacketPayload {
+
+	public static final Type<PacketSyncDegree> TYPE = new Type<>(Hemomancy.rloc("packet_sync_degree"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncDegree> STREAM_CODEC = StreamCodec.of(PacketSyncDegree::encode, PacketSyncDegree::decode);
 
 	private final int degreeNumber;
 
@@ -27,13 +32,17 @@ public class PacketSyncDegree {
 		return new PacketSyncDegree(buf.readInt());
 	}
 
-	public static void handle(PacketSyncDegree msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(final PacketSyncDegree msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			if (Minecraft.getInstance().player != null) {
 				Minecraft.getInstance().HemoCapabilityAccess.getInitiatoryDegree(player)
 						.ifPresent(degree -> degree.setDegreeNumber(msg.degreeNumber));
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

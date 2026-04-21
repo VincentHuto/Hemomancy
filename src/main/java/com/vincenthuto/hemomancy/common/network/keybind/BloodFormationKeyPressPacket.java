@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.keybind;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
@@ -19,10 +23,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
-import net.neoforged.neoforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BloodFormationKeyPressPacket {
+public class BloodFormationKeyPressPacket implements CustomPacketPayload {
+
+	public static final Type<BloodFormationKeyPressPacket> TYPE = new Type<>(Hemomancy.rloc("blood_formation_key_press_packet"));
+	public static final StreamCodec<FriendlyByteBuf, BloodFormationKeyPressPacket> STREAM_CODEC = StreamCodec.of(BloodFormationKeyPressPacket::encode, BloodFormationKeyPressPacket::decode);
 	public static BloodFormationKeyPressPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
 		return new BloodFormationKeyPressPacket();
@@ -32,14 +38,14 @@ public class BloodFormationKeyPressPacket {
 		buffer.writeByte(0);
 	}
 
-	public static void handle(final BloodFormationKeyPressPacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final BloodFormationKeyPressPacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null)
 				return;
 			IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(player)
 					.orElseThrow(NullPointerException::new);
-			ServerLevel sLevel = (ServerLevel) ctx.get().getSender().level();
+			ServerLevel sLevel = (ServerLevel) ctx.player().level();
 			if (player.getMainHandItem().getItem() instanceof SwordItem) {
 				if (bloodVolume.getBloodVolume() > 100) {
 					player.displayClientMessage(Component.literal("Blood has been drawn for a greater cause"), true);
@@ -59,7 +65,10 @@ public class BloodFormationKeyPressPacket {
 				}
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

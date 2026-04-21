@@ -1,8 +1,12 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -21,7 +25,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server: The ledger GUI sends an action request.
@@ -33,7 +36,10 @@ import net.neoforged.neoforge.network.NetworkEvent;
  *   <li>2 = Set recall point to current position (leader only, must be inside lodge)</li>
  * </ul>
  */
-public class PacketLedgerAction {
+public class PacketLedgerAction implements CustomPacketPayload {
+
+	public static final Type<PacketLedgerAction> TYPE = new Type<>(Hemomancy.rloc("packet_ledger_action"));
+	public static final StreamCodec<FriendlyByteBuf, PacketLedgerAction> STREAM_CODEC = StreamCodec.of(PacketLedgerAction::encode, PacketLedgerAction::decode);
 
 	public static final int ACTION_SUMMON_NPCS = 0;
 	public static final int ACTION_RECALL_TO_LODGE = 1;
@@ -53,9 +59,9 @@ public class PacketLedgerAction {
 		return new PacketLedgerAction(buf.readInt());
 	}
 
-	public static void handle(PacketLedgerAction msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PacketLedgerAction msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
@@ -66,7 +72,6 @@ public class PacketLedgerAction {
 				}
 			});
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	// ── Action Handlers (moved from UnsignedLedgerItem) ──
@@ -239,5 +244,10 @@ public class PacketLedgerAction {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

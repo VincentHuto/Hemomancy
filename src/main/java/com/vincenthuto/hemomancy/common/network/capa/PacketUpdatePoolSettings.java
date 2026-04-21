@@ -1,20 +1,26 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server: Player updates their per-player bloodline pool settings
  * (trickle donation and auto-draw configuration).
  */
-public class PacketUpdatePoolSettings {
+public class PacketUpdatePoolSettings implements CustomPacketPayload {
+
+	public static final Type<PacketUpdatePoolSettings> TYPE = new Type<>(Hemomancy.rloc("packet_update_pool_settings"));
+	public static final StreamCodec<FriendlyByteBuf, PacketUpdatePoolSettings> STREAM_CODEC = StreamCodec.of(PacketUpdatePoolSettings::encode, PacketUpdatePoolSettings::decode);
 
 	private final boolean trickleEnabled;
 	private final double trickleRate;
@@ -42,9 +48,9 @@ public class PacketUpdatePoolSettings {
 				buf.readBoolean(), buf.readDouble());
 	}
 
-	public static void handle(PacketUpdatePoolSettings msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer player = ctx.get().getSender();
+	public static void handle(final PacketUpdatePoolSettings msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer player = ctx.player();
 			if (player == null) return;
 
 			HemoCapabilityAccess.getBloodVolume(player).ifPresent(volume -> {
@@ -55,6 +61,10 @@ public class PacketUpdatePoolSettings {
 				BloodVolumeEvents.syncVolume(player, volume);
 			});
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

@@ -1,18 +1,21 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.render.world.SanguineMonolithShatterRenderer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class SpawnMonolithShatterBurstPacket {
+public class SpawnMonolithShatterBurstPacket implements CustomPacketPayload {
+
+	public static final Type<SpawnMonolithShatterBurstPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_monolith_shatter_burst_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SpawnMonolithShatterBurstPacket> STREAM_CODEC = StreamCodec.of(SpawnMonolithShatterBurstPacket::encode, SpawnMonolithShatterBurstPacket::decode);
 
 	public static SpawnMonolithShatterBurstPacket decode(FriendlyByteBuf buf) {
 		SpawnMonolithShatterBurstPacket msg = new SpawnMonolithShatterBurstPacket();
@@ -30,16 +33,10 @@ public class SpawnMonolithShatterBurstPacket {
 		buf.writeDouble(msg.getPos().z);
 	}
 
-	public static void handle(SpawnMonolithShatterBurstPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-		NetworkEvent.Context ctx = ctxSupplier.get();
-		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-		if (!clientLevel.isPresent()) {
-			return;
-		}
-		ClientLevel world = ((ClientLevel) clientLevel.get());
-		ctx.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random));
-		ctx.setPacketHandled(true);
+	public static void handle(final SpawnMonolithShatterBurstPacket msg, final IPayloadContext ctxSupplier) {
+		ClientLevel world = Minecraft.getInstance().level;
+		if (world == null) return;
+		ctxSupplier.enqueueWork(() -> SanguineMonolithShatterRenderer.spawnBurst(msg.getPos(), world.random));
 	}
 
 	private Vec3 pos;
@@ -54,5 +51,10 @@ public class SpawnMonolithShatterBurstPacket {
 
 	public Vec3 getPos() {
 		return pos;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

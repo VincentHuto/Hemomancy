@@ -1,11 +1,16 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class AirBloodDrawPacket {
+public class AirBloodDrawPacket implements CustomPacketPayload {
+
+	public static final Type<AirBloodDrawPacket> TYPE = new Type<>(Hemomancy.rloc("air_blood_draw_packet"));
+	public static final StreamCodec<FriendlyByteBuf, AirBloodDrawPacket> STREAM_CODEC = StreamCodec.of(AirBloodDrawPacket::encode, AirBloodDrawPacket::decode);
 
 	public static AirBloodDrawPacket decode(final FriendlyByteBuf buffer) {
 		buffer.readByte();
@@ -17,9 +22,9 @@ public class AirBloodDrawPacket {
 		buffer.writeFloat(message.parTick);
 	}
 
-	public static void handle(final AirBloodDrawPacket message, final Supplier<NetworkEvent.Context> ctx) {
-//		ctx.get().enqueueWork(() -> {
-//			Player player = ctx.get().getSender();
+	public static void handle(final AirBloodDrawPacket message, final IPayloadContext ctx) {
+//		ctx.enqueueWork(() -> {
+//			Player player = ctx.player();
 //			if (player == null)
 //				return;
 //			if (!player.level().isClientSide) {
@@ -53,7 +58,6 @@ public class AirBloodDrawPacket {
 //				}
 //			}
 //		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	float parTick;
@@ -65,4 +69,8 @@ public class AirBloodDrawPacket {
 		this.parTick = par;
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

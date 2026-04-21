@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa.visceral;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.common.tile.functional.VisceralMirrorBlockEntity;
 
@@ -8,13 +11,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet sent when the player clicks "Cancel" or closes
  * the Visceral Mirror screen during an active ritual.
  */
-public class VisceralMirrorCancelPacket {
+public class VisceralMirrorCancelPacket implements CustomPacketPayload {
+
+	public static final Type<VisceralMirrorCancelPacket> TYPE = new Type<>(Hemomancy.rloc("visceral_mirror_cancel_packet"));
+	public static final StreamCodec<FriendlyByteBuf, VisceralMirrorCancelPacket> STREAM_CODEC = StreamCodec.of(VisceralMirrorCancelPacket::encode, VisceralMirrorCancelPacket::decode);
 
 	private final BlockPos pos;
 
@@ -30,9 +35,9 @@ public class VisceralMirrorCancelPacket {
 		return new VisceralMirrorCancelPacket(buf.readBlockPos());
 	}
 
-	public static void handle(VisceralMirrorCancelPacket msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer sender = ctx.get().getSender();
+	public static void handle(final VisceralMirrorCancelPacket msg, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer sender = ctx.player();
 			if (sender == null) return;
 
 			if (sender.distanceToSqr(msg.pos.getX() + 0.5, msg.pos.getY() + 0.5,
@@ -43,6 +48,10 @@ public class VisceralMirrorCancelPacket {
 
 			mirror.cancelRitual(sender);
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

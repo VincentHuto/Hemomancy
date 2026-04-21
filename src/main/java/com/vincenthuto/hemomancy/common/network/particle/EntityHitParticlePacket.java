@@ -1,6 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.particle.factory.HitGlowParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
@@ -8,9 +11,11 @@ import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class EntityHitParticlePacket {
+public class EntityHitParticlePacket implements CustomPacketPayload {
+
+	public static final Type<EntityHitParticlePacket> TYPE = new Type<>(Hemomancy.rloc("entity_hit_particle_packet"));
+	public static final StreamCodec<FriendlyByteBuf, EntityHitParticlePacket> STREAM_CODEC = StreamCodec.of(EntityHitParticlePacket::encode, EntityHitParticlePacket::decode);
 
 	public static EntityHitParticlePacket decode(final FriendlyByteBuf buffer) {
 		return new EntityHitParticlePacket(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
@@ -23,9 +28,9 @@ public class EntityHitParticlePacket {
 
 	}
 
-	public static void handle(final EntityHitParticlePacket message, final Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			Player player = ctx.get().getSender();
+	public static void handle(final EntityHitParticlePacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			Player player = ctx.player();
 			if (player == null)
 				return;
 			if (!player.level().isClientSide) {
@@ -35,7 +40,6 @@ public class EntityHitParticlePacket {
 			}
 
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	double x, y, z;
@@ -49,4 +53,8 @@ public class EntityHitParticlePacket {
 		this.z = z;
 	}
 
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

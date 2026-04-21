@@ -1,7 +1,11 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.scar.ScarsCapabilities;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
@@ -12,9 +16,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketGourdScarSync {
+public class PacketGourdScarSync implements CustomPacketPayload {
+
+	public static void encode(PacketGourdScarSync msg, FriendlyByteBuf buf) {
+		msg.toBytes(buf);
+	}
+
+	public static PacketGourdScarSync decode(FriendlyByteBuf buf) {
+		return new PacketGourdScarSync(buf);
+	}
+
+	public static final Type<PacketGourdScarSync> TYPE = new Type<>(Hemomancy.rloc("packet_gourd_scar_sync"));
+	public static final StreamCodec<FriendlyByteBuf, PacketGourdScarSync> STREAM_CODEC = StreamCodec.of(PacketGourdScarSync::encode, PacketGourdScarSync::decode);
 
 	public int playerId;
 	public byte slot;
@@ -35,8 +49,12 @@ public class PacketGourdScarSync {
 		this.amount = amount;
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
+	public static void handle(PacketGourdScarSync msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
 			if (mindscar.getItem() instanceof BloodGourdItem gourd) {
 				IBloodVolume bloodVolume = HemoCapabilityAccess.getBloodVolume(mindscar)
 						.orElseThrow(NullPointerException::new);
@@ -50,7 +68,6 @@ public class PacketGourdScarSync {
 				}
 			}
 		});
-		ctx.get().setPacketHandled(true);
 	}
 
 	public void toBytes(FriendlyByteBuf buf) {
@@ -58,5 +75,10 @@ public class PacketGourdScarSync {
 		buf.writeByte(this.slot);
 		buf.writeItem(this.mindscar);
 		buf.writeDouble(this.amount);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

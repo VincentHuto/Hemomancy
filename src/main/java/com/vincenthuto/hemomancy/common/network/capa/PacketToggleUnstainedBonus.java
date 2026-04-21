@@ -1,19 +1,25 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Client → Server packet: player toggles a passive Unstained bonus
  * (Silver Ward or Verdigris Aura) on or off from the progress screen.
  */
-public class PacketToggleUnstainedBonus {
+public class PacketToggleUnstainedBonus implements CustomPacketPayload {
+
+	public static final Type<PacketToggleUnstainedBonus> TYPE = new Type<>(Hemomancy.rloc("packet_toggle_unstained_bonus"));
+	public static final StreamCodec<FriendlyByteBuf, PacketToggleUnstainedBonus> STREAM_CODEC = StreamCodec.of(PacketToggleUnstainedBonus::encode, PacketToggleUnstainedBonus::decode);
 
     /** 0 = Verdigris Aura (purity path), 1 = Silver Ward (clarity path) */
     private final int bonusId;
@@ -30,9 +36,9 @@ public class PacketToggleUnstainedBonus {
         return new PacketToggleUnstainedBonus(buf.readVarInt());
     }
 
-    public static void handle(PacketToggleUnstainedBonus msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    public static void handle(final PacketToggleUnstainedBonus msg, final IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            ServerPlayer player = ctx.player();
             if (player == null) return;
 
             HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
@@ -44,6 +50,10 @@ public class PacketToggleUnstainedBonus {
                 UnstainedProgressEvents.syncProgress(player, progress);
             });
         });
-        ctx.get().setPacketHandled(true);
     }
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

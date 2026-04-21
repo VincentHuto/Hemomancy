@@ -1,19 +1,22 @@
 package com.vincenthuto.hemomancy.common.network.particle;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.vincenthuto.hemomancy.client.particle.factory.BloodClawParticleFactory;
 import com.vincenthuto.hutoslib.client.particle.util.ParticleColor;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class SpawnBloodClawParticlesPacket {
+public class SpawnBloodClawParticlesPacket implements CustomPacketPayload {
+
+	public static final Type<SpawnBloodClawParticlesPacket> TYPE = new Type<>(Hemomancy.rloc("spawn_blood_claw_particles_packet"));
+	public static final StreamCodec<FriendlyByteBuf, SpawnBloodClawParticlesPacket> STREAM_CODEC = StreamCodec.of(SpawnBloodClawParticlesPacket::encode, SpawnBloodClawParticlesPacket::decode);
 	public static SpawnBloodClawParticlesPacket decode(FriendlyByteBuf buf) {
 		SpawnBloodClawParticlesPacket msg = new SpawnBloodClawParticlesPacket();
 		try {
@@ -35,18 +38,11 @@ public class SpawnBloodClawParticlesPacket {
 
 	}
 
-	public static void handle(SpawnBloodClawParticlesPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-		NetworkEvent.Context ctx = ctxSupplier.get();
-		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
-		Optional<?> clientLevel = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-		if (!clientLevel.isPresent()) {
-			return;
-		}
-		ClientLevel world = ((ClientLevel) clientLevel.get());
+	public static void handle(final SpawnBloodClawParticlesPacket msg, final IPayloadContext ctxSupplier) {
+		ClientLevel world = Minecraft.getInstance().level;
+		if (world == null) return;
 		world.addParticle(BloodClawParticleFactory.createData(msg.getColor()), msg.getPos().x, msg.getPos().y,
 				msg.getPos().z, 0f, 0, 0);
-
-		ctxSupplier.get().setPacketHandled(true);
 	}
 
 	Vec3 pos;
@@ -67,5 +63,10 @@ public class SpawnBloodClawParticlesPacket {
 
 	public Vec3 getPos() {
 		return pos;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

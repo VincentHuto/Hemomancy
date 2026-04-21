@@ -1,18 +1,24 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Server → Client packet: synchronises the player's current Unstained progress.
  */
-public class PacketSyncUnstainedProgress {
+public class PacketSyncUnstainedProgress implements CustomPacketPayload {
+
+	public static final Type<PacketSyncUnstainedProgress> TYPE = new Type<>(Hemomancy.rloc("packet_sync_unstained_progress"));
+	public static final StreamCodec<FriendlyByteBuf, PacketSyncUnstainedProgress> STREAM_CODEC = StreamCodec.of(PacketSyncUnstainedProgress::encode, PacketSyncUnstainedProgress::decode);
 
     private final boolean begunPurification;
     private final float purity;
@@ -103,8 +109,8 @@ public class PacketSyncUnstainedProgress {
         return new PacketSyncUnstainedProgress(buf);
     }
 
-    public static void handle(PacketSyncUnstainedProgress msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
+    public static void handle(final PacketSyncUnstainedProgress msg, final IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
             if (Minecraft.getInstance().player != null) {
                 Minecraft.getInstance().HemoCapabilityAccess.getUnstainedProgress(player)
                         .ifPresent(progress -> {
@@ -133,6 +139,10 @@ public class PacketSyncUnstainedProgress {
                         });
             }
         });
-        ctx.get().setPacketHandled(true);
     }
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
+	}
 }

@@ -1,12 +1,24 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class PacketOpenNormalInv {
+public class PacketOpenNormalInv implements CustomPacketPayload {
+
+	public static void encode(PacketOpenNormalInv msg, FriendlyByteBuf buf) {
+	}
+
+	public static PacketOpenNormalInv decode(FriendlyByteBuf buf) {
+		return new PacketOpenNormalInv(buf);
+	}
+
+	public static final Type<PacketOpenNormalInv> TYPE = new Type<>(Hemomancy.rloc("packet_open_normal_inv"));
+	public static final StreamCodec<FriendlyByteBuf, PacketOpenNormalInv> STREAM_CODEC = StreamCodec.of(PacketOpenNormalInv::encode, PacketOpenNormalInv::decode);
 
 	public PacketOpenNormalInv() {
 	}
@@ -17,14 +29,22 @@ public class PacketOpenNormalInv {
 	public void decode(FriendlyByteBuf buf) {
 	}
 
-	public void handle(Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			ServerPlayer playerEntity = ctx.get().getSender();
+	public static void handle(PacketOpenNormalInv msg, IPayloadContext ctx) {
+		msg.handle(ctx);
+	}
+
+	public void handle(IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			ServerPlayer playerEntity = ctx.player();
 			if (playerEntity != null) {
 				playerEntity.containerMenu.removed(playerEntity);
 				playerEntity.containerMenu = playerEntity.inventoryMenu;
 			}
 		});
-		ctx.get().setPacketHandled(true);
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }

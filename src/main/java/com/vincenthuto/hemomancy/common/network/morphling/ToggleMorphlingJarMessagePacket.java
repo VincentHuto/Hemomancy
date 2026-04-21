@@ -1,14 +1,19 @@
 package com.vincenthuto.hemomancy.common.network.morphling;
 
-import java.util.function.Supplier;
+import com.vincenthuto.hemomancy.Hemomancy;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-public class ToggleMorphlingJarMessagePacket {
+public class ToggleMorphlingJarMessagePacket implements CustomPacketPayload {
+
+	public static final Type<ToggleMorphlingJarMessagePacket> TYPE = new Type<>(Hemomancy.rloc("toggle_morphling_jar_message_packet"));
+	public static final StreamCodec<FriendlyByteBuf, ToggleMorphlingJarMessagePacket> STREAM_CODEC = StreamCodec.of(ToggleMorphlingJarMessagePacket::encode, ToggleMorphlingJarMessagePacket::decode);
 	public static ToggleMorphlingJarMessagePacket decode(final FriendlyByteBuf buffer) {
 		boolean en = buffer.readBoolean();
 		return new ToggleMorphlingJarMessagePacket(en);
@@ -18,21 +23,25 @@ public class ToggleMorphlingJarMessagePacket {
 		buffer.writeBoolean(message.enabled);
 	}
 
-	public static void handle(final ToggleMorphlingJarMessagePacket message, final Supplier<NetworkEvent.Context> ctx) {
-		if (ctx.get().getDirection().getReceptionSide().isClient())
-			ctx.get().enqueueWork(() -> {
-				boolean Pickup = message.enabled;
-				Minecraft.getInstance().player.displayClientMessage(
-						Component.literal(
-								I18n.get(Pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")),
-						true);
-			});
-		ctx.get().setPacketHandled(true);
+	public static void handle(final ToggleMorphlingJarMessagePacket message, final IPayloadContext ctx) {
+		ctx.enqueueWork(() -> {
+			if (Minecraft.getInstance().player == null) return;
+			boolean pickup = message.enabled;
+			Minecraft.getInstance().player.displayClientMessage(
+					Component.literal(
+							I18n.get(pickup ? "Hemomancy.autopickupenabled" : "Hemomancy.autopickupdisabled")),
+					true);
+		});
 	}
 
 	private boolean enabled;
 
 	public ToggleMorphlingJarMessagePacket(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 }
