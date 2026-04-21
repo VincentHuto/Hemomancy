@@ -5,16 +5,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
 
 /**
  * Holds all mutable state for the Cardinal Rites browser tab.
  * <p>
- * Owned by {@link HarbingerProgressScreen}; passed into the static methods on
- * {@link RitesTabView} each frame. Separating state from rendering logic
- * reduces the size of the main screen class.
+ * Shared by both the Harbinger and Unstained progress screens; passed into the
+ * static methods on {@link RitesTabView} each frame. Separating state from
+ * rendering logic reduces the size of the main screen class.
  */
 public class RitesTabState {
 
@@ -40,6 +39,24 @@ public class RitesTabState {
 	public int riteSidebarScroll = 0;
 	public int riteInfoScroll = 0;
 
+	// ── Theme / behaviour flags ───────────────────────────────────
+	/** Accent colour used for borders, header text, layer buttons, and accents (default: Harbinger purple). */
+	public int  tabColor          = 0xFF8844CC;
+	/** Horizontal separator colour under the tier-sidebar header (default: Harbinger dark purple). */
+	public int  separatorColor    = 0xFF332244;
+	/** Title/selected-item text colour in the sidebar and info panel (default: Harbinger pink-lavender). */
+	public int  nameColor         = 0xFFDDBBEE;
+	/** Background colour for the selected sidebar row (default: Harbinger dark purple). */
+	public int  rowBgSelected     = 0xDD120818;
+	/** Background colour for a hovered sidebar row (default: Harbinger dark purple). */
+	public int  rowBgHovered      = 0xBB100616;
+	/** Background colour for a normal (unselected) sidebar row (default: Harbinger dark purple). */
+	public int  rowBgNormal       = 0x990C0410;
+	/** When {@code false}, all tiers are accessible regardless of player degree. */
+	public boolean enableDegreeLock = true;
+	/** When {@code true}, tiers with zero recipes are hidden from the sidebar. */
+	public boolean hideEmptyTiers   = false;
+
 	// ── Data helpers ─────────────────────────────────────────────
 
 	/** Clears and rebuilds {@link #ritesByTier} from {@link #riteRecipes}. */
@@ -62,7 +79,7 @@ public class RitesTabState {
 		selectedRiteIndexInTier = 0;
 		for (CardinalRiteType type : CardinalRiteType.values()) {
 			if (!ritesByTier.getOrDefault(type, List.of()).isEmpty()
-					&& playerDegree >= RitesTabView.minDegree(type)) {
+					&& (!enableDegreeLock || playerDegree >= RitesTabView.minDegree(type))) {
 				selectedRiteTier = type;
 				break;
 			}
@@ -76,9 +93,11 @@ public class RitesTabState {
 		int rowH = 22;
 		int total = 0;
 		for (CardinalRiteType type : CardinalRiteType.values()) {
+			List<CardinalRiteRecipe> recipes = ritesByTier.getOrDefault(type, List.of());
+			if (hideEmptyTiers && recipes.isEmpty()) continue;
 			total += rowH + 2;
 			if (type == selectedRiteTier) {
-				total += rowH + 2 + ritesByTier.getOrDefault(type, List.of()).size() * 18;
+				total += rowH + 2 + recipes.size() * 18;
 			}
 		}
 		return total;

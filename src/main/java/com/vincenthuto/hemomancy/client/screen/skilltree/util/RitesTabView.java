@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteRecipe;
 import com.vincenthuto.hemomancy.common.recipe.CardinalRiteType;
@@ -24,7 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 
 /**
  * Static rendering and hit-testing helpers for the <em>Cardinal Rites</em>
- * browser tab of {@link HarbingerProgressScreen}.
+ * browser tab, shared by both the Harbinger and Unstained progress screens.
  * <p>
  * All mutable tab state lives in {@link RitesTabState}; the shared screen
  * geometry / font / player-degree context lives in {@link ProgressScreenContext}.
@@ -33,9 +32,6 @@ import net.minecraft.world.level.block.Blocks;
 public final class RitesTabView {
 
 	private RitesTabView() {}
-
-	// ── Tab accent colour (mirrors HarbingerProgressScreen.Tab.RITES) ──
-	static final int TAB_COLOR = 0xFF8844CC;
 
 	// ── Shared layer-button size (matches ScreenDrawUtils) ────────
 	private static final int LAYER_BTN_SIZE = 16;
@@ -117,7 +113,7 @@ public final class RitesTabView {
 		ScreenDrawUtils.drawLayerButtons(gfx, ctx.font(),
 				ctx.layerBtnX(), ctx.layerBtnCenterY(),
 				state.riteMaxLayer, state.riteVisibleLayer,
-				TAB_COLOR, mouseX, mouseY);
+				state.tabColor, mouseX, mouseY);
 		drawInfoPanel(gfx, ctx, state, rite, infoX, ctx.guiTop() + 30, infoW, mouseX, mouseY);
 		gfx.drawCenteredString(ctx.font(), "Drag to rotate",
 				modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() - 18, 0x44888888);
@@ -137,10 +133,10 @@ public final class RitesTabView {
 		int rowH = 22;
 
 		gfx.drawString(ctx.font(), Component.literal("Rite Tiers")
-				.withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), sx + 2, sy, 0);
+				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
-		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF332244);
+		gfx.fill(sx, sy, sx + sw, sy + 1, state.separatorColor);
 		sy += 4;
 
 		int clipTop    = sy;
@@ -150,19 +146,23 @@ public final class RitesTabView {
 		sy -= state.riteSidebarScroll;
 
 		for (CardinalRiteType type : CardinalRiteType.values()) {
-			boolean locked   = ctx.playerDegree() < minDegree(type);
 			boolean selected = (type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> recipes =
 					state.ritesByTier.getOrDefault(type, List.of());
+
+			if (state.hideEmptyTiers && recipes.isEmpty()) continue;
+
+			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < minDegree(type);
 
 			boolean hovered = mouseX >= sx && mouseX <= sx + sw
 					&& mouseY >= sy && mouseY <= sy + rowH
 					&& mouseY >= clipTop && mouseY <= clipBottom;
 
-			int bg = selected ? 0xDD120818 : (hovered && !locked ? 0xBB100616 : 0x990C0410);
+			int bg = selected ? state.rowBgSelected
+					: (hovered && !locked ? state.rowBgHovered : state.rowBgNormal);
 			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
 
-			int bc = locked ? 0xFF333333 : (selected ? TAB_COLOR : 0xFF555555);
+			int bc = locked ? 0xFF333333 : (selected ? state.tabColor : 0xFF555555);
 			gfx.fill(sx, sy,           sx + sw, sy + 1,     bc);
 			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
 			gfx.fill(sx, sy,           sx + 1,  sy + rowH,  bc);
@@ -176,7 +176,7 @@ public final class RitesTabView {
 				gfx.drawString(ctx.font(), "[X] " + tierLabel + " (Locked)",
 						sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
-				int textCol = selected ? 0xFFDDBBEE : 0xFF999999;
+				int textCol = selected ? state.nameColor : 0xFF999999;
 				gfx.drawString(ctx.font(),
 						tierLabel + " " + sizeLabel + " (" + recipes.size() + ")",
 						sx + 4, sy + (rowH - 8) / 2, textCol, false);
@@ -191,9 +191,10 @@ public final class RitesTabView {
 							&& mouseY >= sy && mouseY <= sy + 16
 							&& mouseY >= clipTop && mouseY <= clipBottom;
 
-					int recBg = recSel ? 0xCC180818 : (recHov ? 0xAA140614 : 0x00000000);
+					int recBg = recSel ? state.rowBgSelected
+							: (recHov ? state.rowBgHovered : 0x00000000);
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, TAB_COLOR);
+					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, state.tabColor);
 
 					String recName = r.getRiteName();
 					if (recName == null || recName.isEmpty()) {
@@ -202,7 +203,7 @@ public final class RitesTabView {
 						recName = HLTextUtils.toProperCase(ritePath.replace("_", " "));
 					}
 					recName = ScreenDrawUtils.truncateText(ctx.font(), recName, sw - 16);
-					int recCol = recSel ? 0xFFDDBBEE : 0xFF888888;
+					int recCol = recSel ? state.nameColor : 0xFF888888;
 					gfx.drawString(ctx.font(), recName, sx + 8, sy + 4, recCol, false);
 					sy += 18;
 				}
@@ -320,7 +321,7 @@ public final class RitesTabView {
 		int clipBottom = ctx.guiTop() + ctx.guiHeight() - 8;
 		int visibleH   = clipBottom - clipTop;
 
-		int totalH   = measureInfoPanelHeight(ctx.font(), ctx.playerDegree(), rite, panelW);
+		int totalH   = measureInfoPanelHeight(ctx.font(), ctx.playerDegree(), rite, panelW, state.enableDegreeLock);
 		int maxScroll = Math.max(0, totalH - visibleH);
 		if (state.riteInfoScroll > maxScroll) state.riteInfoScroll = maxScroll;
 
@@ -338,11 +339,11 @@ public final class RitesTabView {
 		}
 		for (String line : ScreenDrawUtils.wrapText(ctx.font(), name, panelW)) {
 			gfx.drawString(ctx.font(), Component.literal(line)
-					.withStyle(s -> s.withColor(0xCC66DD).withBold(true)), panelX, y, 0);
+					.withStyle(s -> s.withColor(state.nameColor).withBold(true)), panelX, y, 0);
 			y += lineH;
 		}
 		y += 4;
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442244);
+		gfx.fill(panelX, y, panelX + panelW, y + 1, state.separatorColor);
 		y += 6;
 
 		// Description
@@ -362,7 +363,7 @@ public final class RitesTabView {
 				+ " (" + type.getSize() + "x" + type.getSize() + ")";
 		gfx.drawString(ctx.font(), Component.literal("Type: ")
 				.withStyle(s -> s.withColor(0x888888))
-				.append(Component.literal(typeStr).withStyle(s -> s.withColor(0xBB88CC))),
+				.append(Component.literal(typeStr).withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF))),
 				panelX, y, 0);
 		y += lineH;
 
@@ -374,17 +375,19 @@ public final class RitesTabView {
 				panelX, y, 0);
 		y += lineH;
 
-		// Required degree
-		int reqDeg = minDegree(type);
-		if (reqDeg > 0) {
-			EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
-			String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
-			int degColor = ctx.playerDegree() >= reqDeg ? 0xFF88CC88 : 0xFFCC4444;
-			gfx.drawString(ctx.font(), Component.literal("Requires: ")
-					.withStyle(s -> s.withColor(0x888888))
-					.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))),
-					panelX, y, 0);
-			y += lineH;
+		// Required degree (only shown when degree locking is active)
+		if (state.enableDegreeLock) {
+			int reqDeg = minDegree(type);
+			if (reqDeg > 0) {
+				EnumInitiatoryDegree needed = EnumInitiatoryDegree.byNumber(reqDeg);
+				String degName = needed != null ? needed.getTitle() : ("Degree " + reqDeg);
+				int degColor = ctx.playerDegree() >= reqDeg ? 0xFF88CC88 : 0xFFCC4444;
+				gfx.drawString(ctx.font(), Component.literal("Requires: ")
+						.withStyle(s -> s.withColor(0x888888))
+						.append(Component.literal(degName).withStyle(s -> s.withColor(degColor))),
+						panelX, y, 0);
+				y += lineH;
+			}
 		}
 
 		// Cast time
@@ -457,7 +460,8 @@ public final class RitesTabView {
 	/** Measures the total (un-clipped) height of the rite info panel. */
 	public static int measureInfoPanelHeight(net.minecraft.client.gui.Font font,
 											  int playerDegree,
-											  CardinalRiteRecipe rite, int panelW) {
+											  CardinalRiteRecipe rite, int panelW,
+											  boolean enableDegreeLock) {
 		int y     = 0;
 		int lineH = 12;
 
@@ -476,9 +480,11 @@ public final class RitesTabView {
 		y += lineH; // type
 		y += lineH; // blood cost
 
-		CardinalRiteType type = rite.getRiteType();
-		int reqDeg = minDegree(type);
-		if (reqDeg > 0) y += lineH;
+		if (enableDegreeLock) {
+			CardinalRiteType type = rite.getRiteType();
+			int reqDeg = minDegree(type);
+			if (reqDeg > 0) y += lineH;
+		}
 
 		y += lineH + 6; // cast time
 
@@ -509,6 +515,14 @@ public final class RitesTabView {
 		return y;
 	}
 
+	/** @deprecated Use {@link #measureInfoPanelHeight(net.minecraft.client.gui.Font, int, CardinalRiteRecipe, int, boolean)} */
+	@Deprecated
+	public static int measureInfoPanelHeight(net.minecraft.client.gui.Font font,
+											  int playerDegree,
+											  CardinalRiteRecipe rite, int panelW) {
+		return measureInfoPanelHeight(font, playerDegree, rite, panelW, true);
+	}
+
 	// ────────────────────────────────────────────────────────────
 	//  Hit testing
 	// ────────────────────────────────────────────────────────────
@@ -529,6 +543,7 @@ public final class RitesTabView {
 			boolean selected = (type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> recipes =
 					state.ritesByTier.getOrDefault(type, List.of());
+			if (state.hideEmptyTiers && recipes.isEmpty()) continue;
 			if (mx >= sx && mx <= sx + sw && my >= sy && my <= sy + rowH
 					&& my >= clipTop && my <= clipBottom) return type;
 			if (selected) sy += rowH + 2 + recipes.size() * 18;
@@ -558,6 +573,7 @@ public final class RitesTabView {
 			boolean selected = (type == state.selectedRiteTier);
 			List<CardinalRiteRecipe> tierRecipes =
 					state.ritesByTier.getOrDefault(type, List.of());
+			if (state.hideEmptyTiers && tierRecipes.isEmpty()) continue;
 			sy += rowH + 2;
 			if (selected) {
 				for (int j = 0; j < tierRecipes.size(); j++) {

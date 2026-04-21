@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hutoslib.client.HLTextUtils;
 import com.vincenthuto.hutoslib.math.BlockPosBlockPair;
@@ -23,7 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 
 /**
  * Static rendering and hit-testing helpers for the <em>Blood Crafting</em>
- * browser tab of {@link HarbingerProgressScreen}.
+ * browser tab, shared by both the Harbinger and Unstained progress screens.
  * <p>
  * All mutable tab state lives in {@link CraftingTabState}; the shared screen
  * geometry / font / player-degree context lives in {@link ProgressScreenContext}.
@@ -31,9 +30,6 @@ import net.minecraft.world.level.block.Blocks;
 public final class CraftingTabView {
 
 	private CraftingTabView() {}
-
-	// ── Tab accent colour (mirrors HarbingerProgressScreen.Tab.CRAFTING) ──
-	static final int TAB_COLOR = 0xFFAA2222;
 
 	private static final int LAYER_BTN_SIZE = 16;
 
@@ -97,7 +93,7 @@ public final class CraftingTabView {
 		ScreenDrawUtils.drawLayerButtons(gfx, ctx.font(),
 				ctx.layerBtnX(), ctx.layerBtnCenterY(),
 				state.craftingMaxLayer, state.craftingVisibleLayer,
-				TAB_COLOR, mouseX, mouseY);
+				state.tabColor, mouseX, mouseY);
 		drawInfoPanel(gfx, ctx, state, recipe, infoX, ctx.guiTop() + 30, infoW);
 		gfx.drawCenteredString(ctx.font(), "Drag to rotate",
 				modelX + modelAreaW / 2, ctx.guiTop() + ctx.guiHeight() - 18, 0x44888888);
@@ -117,10 +113,10 @@ public final class CraftingTabView {
 		int rowH = 22;
 
 		gfx.drawString(ctx.font(), Component.literal("Tiers")
-				.withStyle(s -> s.withColor(TAB_COLOR).withBold(true)), sx + 2, sy, 0);
+				.withStyle(s -> s.withColor(state.tabColor).withBold(true)), sx + 2, sy, 0);
 		sy += 14;
 
-		gfx.fill(sx, sy, sx + sw, sy + 1, 0xFF442222);
+		gfx.fill(sx, sy, sx + sw, sy + 1, state.separatorColor);
 		sy += 4;
 
 		int clipTop    = sy;
@@ -131,7 +127,7 @@ public final class CraftingTabView {
 
 		for (int i = 0; i < CraftingTabState.TIER_NAMES.length; i++) {
 			String tierName = CraftingTabState.TIER_NAMES[i];
-			boolean locked   = ctx.playerDegree() < CraftingTabState.TIER_DEGREE_REQ[i];
+			boolean locked   = state.enableDegreeLock && ctx.playerDegree() < CraftingTabState.TIER_DEGREE_REQ[i];
 			boolean selected = tierName.equals(state.selectedCraftingTier);
 			List<BloodStructureRecipe> recipes =
 					state.craftingByTier.getOrDefault(tierName, List.of());
@@ -140,10 +136,10 @@ public final class CraftingTabView {
 					&& mouseY >= sy && mouseY <= sy + rowH
 					&& mouseY >= clipTop && mouseY <= clipBottom;
 
-			int bg = selected ? 0xDD1A0808 : (hovered && !locked ? 0xBB180505 : 0x99120303);
+			int bg = selected ? state.rowBgSelected : (hovered && !locked ? state.rowBgHovered : state.rowBgNormal);
 			gfx.fill(sx, sy, sx + sw, sy + rowH, bg);
 
-			int bc = locked ? 0xFF333333 : (selected ? TAB_COLOR : 0xFF555555);
+			int bc = locked ? 0xFF333333 : (selected ? state.tabColor : 0xFF555555);
 			gfx.fill(sx, sy,           sx + sw, sy + 1,     bc);
 			gfx.fill(sx, sy + rowH - 1, sx + sw, sy + rowH, bc);
 			gfx.fill(sx, sy,           sx + 1,  sy + rowH,  bc);
@@ -155,7 +151,7 @@ public final class CraftingTabView {
 						sx + 4, sy + (rowH - 8) / 2, 0xFF444444, false);
 			} else {
 				String label = tierName + " (" + recipes.size() + ")";
-				int textCol = selected ? 0xFFEEAAAA : 0xFF999999;
+				int textCol = selected ? state.nameColor : 0xFF999999;
 				gfx.drawString(ctx.font(), label, sx + 4, sy + (rowH - 8) / 2, textCol, false);
 			}
 
@@ -168,14 +164,14 @@ public final class CraftingTabView {
 							&& mouseY >= sy && mouseY <= sy + 16
 							&& mouseY >= clipTop && mouseY <= clipBottom;
 
-					int recBg = recSel ? 0xCC221010 : (recHov ? 0xAA1A0808 : 0x00000000);
+					int recBg = recSel ? state.rowBgSelected : (recHov ? state.rowBgHovered : 0x00000000);
 					gfx.fill(sx + 2, sy, sx + sw - 2, sy + 16, recBg);
-					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, TAB_COLOR);
+					if (recSel) gfx.fill(sx + 2, sy, sx + 3, sy + 16, state.tabColor);
 
 					String recPath = r.getId().getPath();
 					if (recPath.contains("/")) recPath = recPath.substring(recPath.lastIndexOf('/') + 1);
 					String recName = HLTextUtils.toProperCase(recPath.replace("_", " "));
-					int recCol = recSel ? 0xFFDDAAAA : 0xFF888888;
+					int recCol = recSel ? state.nameColor : 0xFF888888;
 					gfx.drawString(ctx.font(), recName, sx + 8, sy + 4, recCol, false);
 					sy += 18;
 				}
@@ -300,11 +296,11 @@ public final class CraftingTabView {
 		String name = HLTextUtils.toProperCase(namePath.replace("_", " "));
 		for (String line : ScreenDrawUtils.wrapText(ctx.font(), name, panelW)) {
 			gfx.drawString(ctx.font(), Component.literal(line)
-					.withStyle(s -> s.withColor(0xCC3333).withBold(true)), panelX, y, 0);
+					.withStyle(s -> s.withColor(state.tabColor & 0xFFFFFF).withBold(true)), panelX, y, 0);
 			y += lineH;
 		}
 		y += 4;
-		gfx.fill(panelX, y, panelX + panelW, y + 1, 0xFF442222);
+		gfx.fill(panelX, y, panelX + panelW, y + 1, state.separatorColor);
 		y += 6;
 
 		// Blood cost

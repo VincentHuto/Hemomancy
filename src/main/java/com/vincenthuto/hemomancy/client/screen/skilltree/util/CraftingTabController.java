@@ -7,6 +7,31 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class CraftingTabController implements IProgressTab {
     private final CraftingTabState state = new CraftingTabState();
+    private final boolean unstained;
+
+    /** Harbinger-flavoured controller (no-arg, existing behaviour preserved). */
+    public CraftingTabController() { this(false); }
+
+    /**
+     * Creates a crafting-tab controller with a path-specific theme.
+     *
+     * @param unstained {@code true} for the Unstained path (teal/blue palette,
+     *                  no degree lock);
+     *                  {@code false} for the Harbinger path (red palette,
+     *                  degree lock active).
+     */
+    public CraftingTabController(boolean unstained) {
+        this.unstained = unstained;
+        if (unstained) {
+            state.tabColor         = 0xFF80D0C0;
+            state.separatorColor   = 0xFF203050;
+            state.nameColor        = 0xFF80D0C0;
+            state.rowBgSelected    = 0xDD101828;
+            state.rowBgHovered     = 0xBB0C1420;
+            state.rowBgNormal      = 0x990A0E18;
+            state.enableDegreeLock = false;
+        }
+    }
 
     @Override
     public void onInit(ProgressScreenContext ctx) {
@@ -14,7 +39,7 @@ public class CraftingTabController implements IProgressTab {
         state.craftingRecipes.clear();
         if (mc.player != null && mc.level != null)
             for (BloodStructureRecipe r : BloodStructureRecipe.getAllRecipes(mc.level))
-                if (!r.isUnstained()) state.craftingRecipes.add(r);
+                if (r.isUnstained() == unstained) state.craftingRecipes.add(r);
         state.rebuildTierMap();
         state.autoSelectFirstTier(ctx.playerDegree());
     }
@@ -34,7 +59,9 @@ public class CraftingTabController implements IProgressTab {
         String clickedTier = CraftingTabView.tierUnder(ctx, state, mx, my);
         if (clickedTier != null) {
             int tierIdx = java.util.Arrays.asList(CraftingTabState.TIER_NAMES).indexOf(clickedTier);
-            if (tierIdx >= 0 && ctx.playerDegree() >= CraftingTabState.TIER_DEGREE_REQ[tierIdx]) {
+            boolean degreeOk = !state.enableDegreeLock
+                    || (tierIdx >= 0 && ctx.playerDegree() >= CraftingTabState.TIER_DEGREE_REQ[tierIdx]);
+            if (degreeOk) {
                 if (clickedTier.equals(state.selectedCraftingTier)) {
                     state.selectedCraftingTier = null;
                     state.craftingSidebarScroll = 0;
