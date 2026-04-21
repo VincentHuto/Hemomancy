@@ -90,7 +90,7 @@ public class PurityGainEvents {
 
     /** Add purity if the player has begun purification and isn't yet fully purified. */
     private static void tryAddPurity(ServerPlayer player, float amount) {
-        player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
             if (progress.hasBegunPurification() && !progress.isPurified()) {
                 progress.addPurity(amount);
                 UnstainedProgressEvents.syncProgress(player, progress);
@@ -152,7 +152,7 @@ public class PurityGainEvents {
         // Track milestones
         final float finalReward = reward;
         final boolean fHemo = isHemo, fUndead = isUndead, fHostile = isHostile, fFlawless = flawless;
-        player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
             if (!progress.hasBegunPurification() || progress.isPurified()) return;
             if (fHemo) {
                 progress.addHemoMobKill();
@@ -193,7 +193,7 @@ public class PurityGainEvents {
         if (event.wakeImmediately()) return;
 
         if (hasHemolysis(player)) {
-            serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+            HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
                 if (!progress.hasBegunPurification() || progress.isPurified()) return;
                 progress.addNightSlept();
                 if (!progress.hasSleptWithHemolysis()) progress.setSleptWithHemolysis(true);
@@ -218,7 +218,7 @@ public class PurityGainEvents {
         if (player.level().isClientSide) return;
         if (!(player instanceof ServerPlayer serverPlayer)) return;
 
-        serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
             if (!progress.hasBegunPurification() || progress.isPurified()) return;
             progress.addAdvancementEarned();
             if (!progress.hasEarnedAdvancement()) progress.setEarnedAdvancement(true);
@@ -239,7 +239,7 @@ public class PurityGainEvents {
         if (causer.level().isClientSide) return;
         if (!(causer instanceof ServerPlayer serverPlayer)) return;
 
-        serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
             if (!progress.hasBegunPurification() || progress.isPurified()) return;
             progress.addAnimalBreed();
             progress.addPurity(PURITY_BREED_ANIMAL);
@@ -260,7 +260,7 @@ public class PurityGainEvents {
         if (state.is(net.minecraft.tags.BlockTags.CROPS)
                 || state.is(net.minecraft.tags.BlockTags.SAPLINGS)
                 || state.is(net.minecraft.tags.BlockTags.FLOWERS)) {
-            player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+            HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
                 if (!progress.hasBegunPurification() || progress.isPurified()) return;
                 progress.addCropPlanted();
                 progress.addPurity(PURITY_PLANT_CROP);
@@ -286,7 +286,7 @@ public class PurityGainEvents {
         if (entity instanceof net.minecraft.world.entity.TamableAnimal tamed && tamed.isTame()) {
             LivingEntity owner = tamed.getOwner();
             if (owner instanceof ServerPlayer serverOwner) {
-                serverOwner.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+                HemoCapabilityAccess.getUnstainedProgress(serverOwner).ifPresent(progress -> {
                     if (!progress.hasBegunPurification() || progress.isPurified()) return;
                     progress.addPetHealed();
                     progress.addPurity(PURITY_HEAL_TAMED);
@@ -327,7 +327,7 @@ public class PurityGainEvents {
         // Throttle: only check once per second
         if (player.tickCount % 20 != 0) return;
 
-        serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
             if (!isOnUnstainedPath(progress)) return;
 
             long currentTick = player.tickCount;
@@ -371,7 +371,7 @@ public class PurityGainEvents {
      * uses any blood manipulation. Resets the abstinence timer.
      */
     public static void onBloodManipulationUsed(ServerPlayer player) {
-        player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+        HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
             if (progress.hasBegunPurification()) {
                 progress.setLastManipulationTick(player.tickCount);
                 UnstainedProgressEvents.syncProgress(player, progress);

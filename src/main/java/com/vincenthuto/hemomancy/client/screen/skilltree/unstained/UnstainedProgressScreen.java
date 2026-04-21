@@ -1,5 +1,6 @@
 package com.vincenthuto.hemomancy.client.screen.skilltree.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,6 @@ import com.vincenthuto.hemomancy.client.screen.skilltree.shared.RitesTabControll
 import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.capa.PacketToggleUnstainedBonus;
 
@@ -181,7 +181,7 @@ public class UnstainedProgressScreen extends Screen {
 
 	private void cachePlayerData() {
 		if (Minecraft.getInstance().player != null) {
-			Minecraft.getInstance().player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(cap -> {
+			Minecraft.getInstance().HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(cap -> {
 				begunPurification    = cap.hasBegunPurification();
 				purity               = cap.getPurity();
 				clarityUnlocked      = cap.hasClarityUnlocked();

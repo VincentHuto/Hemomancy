@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -66,7 +66,7 @@ public class SilthmereGlaiveEvents {
 		ItemStack mainhand = killer.getItemBySlot(EquipmentSlot.MAINHAND);
 		if (!(mainhand.getItem() instanceof SilthmereGlaiveItem)) return;
 
-		killer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(killer).ifPresent(progress -> {
 			if (!progress.hasBegunPurification() || progress.isPurified()) return;
 			if (EnumPurityStage.byPurity(progress.getPurity()).getLevel()
 					< EnumPurityStage.ABSOLVED.getLevel()) return;

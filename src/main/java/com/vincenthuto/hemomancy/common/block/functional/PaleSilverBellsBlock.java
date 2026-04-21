@@ -1,7 +1,7 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -50,7 +50,7 @@ public class PaleSilverBellsBlock extends Block {
 			return InteractionResult.CONSUME;
 		}
 
-		serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 			if (!progress.hasBegunPurification()) {
 				player.displayClientMessage(Component.translatable("hemomancy.silver_bells.not_on_path"), false);
 				return;

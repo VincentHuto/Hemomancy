@@ -17,7 +17,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.BloodTendencyE
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.capability.player.skill.SkillPointGainEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
@@ -795,7 +794,7 @@ public class CardinalRiteEvents {
 					HarbingerAdvancementGranter.grantDegree(caster, targetDegree);
 
 					// Mutual exclusion: reset Unstained progress (Harbingers and Unstained are opposed)
-					caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+					HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 						if (unstained.hasBegunPurification()) {
 							unstained.setBegunPurification(false);
 							unstained.setPurity(0);
@@ -1301,7 +1300,7 @@ public class CardinalRiteEvents {
 		}
 
 		final Player victim = target;
-		victim.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(victim).ifPresent(unstained -> {
 			boolean hadProgress = unstained.hasBegunPurification() || unstained.getPurity() > 0;
 
 			unstained.setBegunPurification(false);
@@ -1426,7 +1425,7 @@ public class CardinalRiteEvents {
 
 		// Determine if the caster is on the Unstained path
 		final boolean[] prunerIsUnstained = { false };
-		caster.getCapability(com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider.UNSTAINED_CAPA)
+		HemoCapabilityAccess.getUnstainedProgress(caster)
 				.ifPresent(unstained -> {
 					if (unstained.hasBegunPurification() || unstained.hasClarityUnlocked()) {
 						prunerIsUnstained[0] = true;
@@ -1644,7 +1643,7 @@ public class CardinalRiteEvents {
 	 * purity and sets the purification flag.
 	 */
 	private static void completeLetheanBaptism(ServerLevel sLevel, ServerPlayer caster) {
-		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification()) {
 				unstained.setBegunPurification(true);
 			}
@@ -1667,7 +1666,7 @@ public class CardinalRiteEvents {
 	 * Requires purity >= 25 (Tainted stage).
 	 */
 	private static void completeSilverVeil(ServerLevel sLevel, ServerPlayer caster) {
-		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (unstained.getPurity() < 25.0f) {
 				caster.displayClientMessage(
 						Component.literal("Your soul is not yet pure enough to bear the Silver Veil.")
@@ -1698,7 +1697,7 @@ public class CardinalRiteEvents {
 	 * Requires purity = 100 (Purified stage).
 	 */
 	private static void completeClarityAscension(ServerLevel sLevel, ServerPlayer caster) {
-		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (!unstained.isPurified()) {
 				caster.displayClientMessage(
 						Component.literal("You must achieve full purity before ascending to clarity.")
@@ -1821,7 +1820,7 @@ public class CardinalRiteEvents {
 	 */
 	private static void completeSilverDawn(ServerLevel sLevel, ServerPlayer caster, BlockPos center) {
 		// Require clarity to perform this rite
-		boolean hasClarityUnlocked = caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		boolean hasClarityUnlocked = HemoCapabilityAccess.getUnstainedProgress(caster)
 				.map(p -> p.hasClarityUnlocked()).orElse(false);
 		if (!hasClarityUnlocked) {
 			caster.displayClientMessage(
@@ -1854,7 +1853,7 @@ public class CardinalRiteEvents {
 				EffectInit.verdigris_aura.get(), SILVER_DAWN_AURA_DURATION, SILVER_DAWN_AURA_AMPLIFIER, false, true, true));
 
 		// Grant purity/clarity boost
-		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(progress -> {
 			progress.addClarity(5.0f);
 			UnstainedProgressEvents.syncProgress(caster, progress);
 		});
@@ -1973,7 +1972,7 @@ public class CardinalRiteEvents {
 
 		int[] affected = {0};
 		for (ServerPlayer target : nearby) {
-			target.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+			HemoCapabilityAccess.getUnstainedProgress(target).ifPresent(progress -> {
 				if (!progress.hasBegunPurification()) return;
 
 				progress.addPurity(REMEMBRANCE_PURITY);
@@ -2074,7 +2073,7 @@ public class CardinalRiteEvents {
 	 * and grants the caster +10 purity. Requires purity >= 50.
 	 */
 	private static void completeLetheanTide(ServerLevel sLevel, ServerPlayer caster) {
-		caster.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(caster).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification() || unstained.getPurity() < 50f) {
 				caster.displayClientMessage(
 						Component.literal("The tide will not answer — your purity is insufficient.")

@@ -1,8 +1,8 @@
 package com.vincenthuto.hemomancy.common.tile.crafting;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.google.common.collect.Lists;
 import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
-import com.vincenthuto.hemomancy.common.capability.player.white_humor.WhiteHumorVolumeProvider;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.init.RecipeInit;
@@ -297,7 +297,7 @@ public class PallidRetortBlockEntity extends BaseContainerBlockEntity
 
     @Nullable
     private IWhiteHumorVolume resolveVolume() {
-        return getCapability(WhiteHumorVolumeProvider.WHITE_HUMOR_VOLUME_CAPA).orElse(null);
+        return HemoCapabilityAccess.getWhiteHumorVolume(this).orElse(null);
     }
 
     // ---- Flask filling from stored blood ----

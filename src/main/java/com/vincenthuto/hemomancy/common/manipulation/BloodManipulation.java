@@ -10,7 +10,6 @@ import com.vincenthuto.hemomancy.common.capability.player.kinship.IBloodTendency
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationEvents;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.PurityGainEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -185,7 +184,7 @@ public class BloodManipulation  {
 	 * Sends the appropriate chat feedback to the player.
 	 */
 	private double getPurityCostMultiplier(Player player) {
-		var optUnstained = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA);
+		var optUnstained = HemoCapabilityAccess.getUnstainedProgress(player);
 		if (!optUnstained.isPresent()) {
 			return 1.0;
 		}

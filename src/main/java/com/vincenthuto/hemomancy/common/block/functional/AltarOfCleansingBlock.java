@@ -1,11 +1,11 @@
 package com.vincenthuto.hemomancy.common.block.functional;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import javax.annotation.Nullable;
 
 import com.vincenthuto.hemomancy.common.block.IMultiBlock;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.tile.functional.AltarOfCleansingBlockEntity;
 
@@ -162,7 +162,7 @@ public class AltarOfCleansingBlock extends Block implements EntityBlock, IMultiB
 
 		ItemStack stack = player.getItemInHand(handIn);
 
-		player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
 			if (!unstained.hasBegunPurification()) {
 				player.displayClientMessage(
 						Component.translatable("hemomancy.altar.not_on_path"), false);

@@ -1,7 +1,6 @@
 package com.vincenthuto.hemomancy.common.effect;
 
 import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
@@ -20,7 +19,7 @@ public class HemolysisEffect extends MobEffect {
 	@Override
 	public void applyEffectTick(LivingEntity entity, int amplifier) {
 		if (entity instanceof Player player) {
-			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
 				if (unstained.hasBegunPurification() && !unstained.isPurified()) {
 					// Passive purity gain for those on the Unstained path
 					float purityGain = 0.01f * (amplifier + 1);

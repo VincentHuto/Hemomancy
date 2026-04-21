@@ -16,7 +16,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityS
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.EnumOrgan;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.IVisceralOrgans;
 import com.vincenthuto.hemomancy.common.capability.player.visceral.VisceralOrgansProvider;
@@ -394,7 +393,7 @@ public class HemoCommand {
 	// ═══════════════════ Unstained Progression ═══════════════════
 
 	private static int getUnstainedOverview(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumPurityStage pStage = EnumPurityStage.byPurity(cap.getPurity());
 		EnumClarityStage cStage = EnumClarityStage.byClarity(cap.getClarity());
@@ -424,7 +423,7 @@ public class HemoCommand {
 	}
 
 	private static int toggleBegun(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(!cap.hasBegunPurification());
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -438,7 +437,7 @@ public class HemoCommand {
 	}
 
 	private static int getPurity(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumPurityStage stage = EnumPurityStage.byPurity(cap.getPurity());
 		source.sendSuccess(() -> Component.literal("")
@@ -451,7 +450,7 @@ public class HemoCommand {
 	}
 
 	private static int setPurity(CommandSourceStack source, ServerPlayer player, float value) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setPurity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -466,7 +465,7 @@ public class HemoCommand {
 	}
 
 	private static int toggleClarityUnlock(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarityUnlocked(!cap.hasClarityUnlocked());
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -480,7 +479,7 @@ public class HemoCommand {
 	}
 
 	private static int getClarity(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		EnumClarityStage stage = EnumClarityStage.byClarity(cap.getClarity());
 		source.sendSuccess(() -> Component.literal("")
@@ -493,7 +492,7 @@ public class HemoCommand {
 	}
 
 	private static int setClarity(CommandSourceStack source, ServerPlayer player, float value) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setClarity(value);
 		UnstainedProgressEvents.syncProgress(player, cap);
@@ -508,7 +507,7 @@ public class HemoCommand {
 	}
 
 	private static int resetUnstained(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(false);
 		cap.setPurity(0);
@@ -523,7 +522,7 @@ public class HemoCommand {
 	}
 
 	private static int maxUnstained(CommandSourceStack source, ServerPlayer player) {
-		IUnstainedProgress cap = player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		IUnstainedProgress cap = HemoCapabilityAccess.getUnstainedProgress(player)
 				.orElseThrow(IllegalStateException::new);
 		cap.setBegunPurification(true);
 		cap.setPurity(100);

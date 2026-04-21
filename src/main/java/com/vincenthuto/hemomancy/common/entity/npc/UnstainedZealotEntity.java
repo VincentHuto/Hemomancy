@@ -83,9 +83,7 @@ public class UnstainedZealotEntity extends PathfinderMob {
             boolean clarityUnlocked = false;
             boolean enlightened = false;
 
-            var unstainedOpt = player.getCapability(
-                    com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider.UNSTAINED_CAPA)
-                    .resolve();
+            var unstainedOpt = HemoCapabilityAccess.getUnstainedProgress(player);
             if (unstainedOpt.isPresent()) {
                 var progress = unstainedOpt.get();
                 hasBegunPurification = progress.hasBegunPurification();

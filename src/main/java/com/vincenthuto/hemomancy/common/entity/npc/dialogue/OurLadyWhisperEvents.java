@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.entity.npc.dialogue;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import com.vincenthuto.hemomancy.Hemomancy;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
 import com.vincenthuto.hemomancy.common.network.dialogue.OpenDialoguePacket;
 
@@ -62,7 +62,7 @@ public class OurLadyWhisperEvents {
 		// Coarse pre-check: only evaluate once every ~10 seconds
 		if ((player.tickCount + stagger) % 200 != 0) return;
 
-		serverPlayer.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+		HemoCapabilityAccess.getUnstainedProgress(serverPlayer).ifPresent(progress -> {
 			if (!progress.hasBegunPurification()) return;
 
 			float purity = progress.getPurity();

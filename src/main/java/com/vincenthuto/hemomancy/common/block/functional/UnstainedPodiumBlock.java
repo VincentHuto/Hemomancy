@@ -8,7 +8,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedPr
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumClarityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.EnumPurityStage;
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressEvents;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 import com.vincenthuto.hemomancy.common.network.PacketHandler;
@@ -139,7 +138,7 @@ public class UnstainedPodiumBlock extends Block implements EntityBlock {
 			return;
 		}
 
-		player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(unstained -> {
+		HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(unstained -> {
 			if (stack.getItem() == ItemInit.hemolytic_solution.get()) {
 				handleHemolyticSolution(worldIn, pos, player, stack, unstained);
 			} else if (stack.getItem() == ItemInit.consecrated_copper_ingot.get()) {

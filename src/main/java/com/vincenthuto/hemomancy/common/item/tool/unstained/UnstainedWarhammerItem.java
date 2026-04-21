@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item.tool.unstained;
 
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -33,7 +33,7 @@ public class UnstainedWarhammerItem extends DiggerItem {
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (attacker instanceof Player player && !player.level().isClientSide) {
 			// Apply knockback — warhammers are blunt impact weapons
-			player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA).ifPresent(progress -> {
+			HemoCapabilityAccess.getUnstainedProgress(player).ifPresent(progress -> {
 				// Extra knockback at higher purity
 				double bonus = progress.getPurity() / 100.0 * 0.4;
 				double total = 0.8 + bonus;
@@ -60,7 +60,7 @@ public class UnstainedWarhammerItem extends DiggerItem {
 	 * Purity-scaling damage bonus: up to +4 additional damage at full purity.
 	 */
 	public static float getPurityDamageBonus(Player player) {
-		return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+		return HemoCapabilityAccess.getUnstainedProgress(player)
 				.map(progress -> progress.getPurity() / 100.0f * 4.0f)
 				.orElse(0.0f);
 	}

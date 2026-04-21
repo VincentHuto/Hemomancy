@@ -1,9 +1,9 @@
 package com.vincenthuto.hemomancy.common.network.capa;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.function.Supplier;
 
 import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
-import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -106,7 +106,7 @@ public class PacketSyncUnstainedProgress {
     public static void handle(PacketSyncUnstainedProgress msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA)
+                Minecraft.getInstance().HemoCapabilityAccess.getUnstainedProgress(player)
                         .ifPresent(progress -> {
                             progress.setBegunPurification(msg.begunPurification);
                             progress.setPurity(msg.purity);

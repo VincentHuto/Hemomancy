@@ -10,10 +10,14 @@ import com.vincenthuto.hemomancy.common.capability.player.manip.IKnownManipulati
 import com.vincenthuto.hemomancy.common.capability.player.manip.KnownManipulationProvider;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.EquippedMorphlingProvider;
 import com.vincenthuto.hemomancy.common.capability.player.morphling.IEquippedMorphling;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.IUnstainedProgress;
+import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.IVascularSystem;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.IBloodVolume;
+import com.vincenthuto.hemomancy.common.capability.player.white_humor.IWhiteHumorVolume;
+import com.vincenthuto.hemomancy.common.capability.player.white_humor.WhiteHumorVolumeProvider;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -158,5 +162,50 @@ return getEquippedMorphling(player).orElseThrow(IllegalStateException::new);
 
 public static IEquippedMorphling requireEquippedMorphling(Entity entity) {
 return getEquippedMorphling(entity).orElseThrow(IllegalStateException::new);
+}
+
+// ── Unstained Progress ────────────────────────────────────────────────────
+
+/** Access unstained progress from a player. */
+public static Optional<IUnstainedProgress> getUnstainedProgress(Player player) {
+return player.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA);
+}
+
+/** Access unstained progress from any entity. */
+public static Optional<IUnstainedProgress> getUnstainedProgress(Entity entity) {
+return entity.getCapability(UnstainedProgressProvider.UNSTAINED_CAPA);
+}
+
+public static IUnstainedProgress requireUnstainedProgress(Player player) {
+return getUnstainedProgress(player).orElseThrow(IllegalStateException::new);
+}
+
+public static IUnstainedProgress requireUnstainedProgress(Entity entity) {
+return getUnstainedProgress(entity).orElseThrow(IllegalStateException::new);
+}
+
+// ── White Humor Volume ────────────────────────────────────────────────────
+
+/** Access white humor volume from a block entity (e.g. PallidRetortBlockEntity). */
+public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(BlockEntity be) {
+return be.getCapability(WhiteHumorVolumeProvider.WHITE_HUMOR_VOLUME_CAPA);
+}
+
+/** Access white humor volume from a player. */
+public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(Player player) {
+return player.getCapability(WhiteHumorVolumeProvider.WHITE_HUMOR_VOLUME_CAPA);
+}
+
+/** Access white humor volume from any entity. */
+public static Optional<IWhiteHumorVolume> getWhiteHumorVolume(Entity entity) {
+return entity.getCapability(WhiteHumorVolumeProvider.WHITE_HUMOR_VOLUME_CAPA);
+}
+
+public static IWhiteHumorVolume requireWhiteHumorVolume(BlockEntity be) {
+return getWhiteHumorVolume(be).orElseThrow(IllegalStateException::new);
+}
+
+public static IWhiteHumorVolume requireWhiteHumorVolume(Player player) {
+return getWhiteHumorVolume(player).orElseThrow(IllegalStateException::new);
 }
 }
