@@ -8,7 +8,7 @@ import net.minecraft.world.level.biome.Biome;
 
 public class TerraBiomeInit {
 
-	
+	//Comment to push, will add biomes later
 	//   public static final ResourceKey<Biome> HOT_RED = register("hot_red");
 	//     public static final ResourceKey<Biome> COLD_BLUE = register("cold_blue");
 
