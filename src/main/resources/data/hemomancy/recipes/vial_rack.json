@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "V": {
+      "item": "hemomancy:bloody_vial"
+    },
+    "S": {
+      "item": "hemomancy:hematic_iron_scrap"
+    }
+  },
+  "pattern": [
+    "VVV",
+    "VSV",
+    "VVV"
+  ],
+  "result": {
+    "item": "hemomancy:vial_rack"
+  },
+  "show_notification": true
+}
