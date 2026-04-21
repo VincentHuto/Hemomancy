@@ -177,7 +177,6 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		ItemStack incoming = held.copy();
 		incoming.setCount(1);
 		morphlingItem = incoming;
-		ownerUUID = player.getUUID();
 		state = State.DORMANT;
 		activationCooldown = SWAP_COOLDOWN_TICKS;
 		if (!player.getAbilities().instabuild) {
@@ -245,9 +244,11 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 		}
 
 		double range = ORB_RANGE[stageIdx];
+		double cx = worldPosition.getX() + 0.5;
+		double cy = worldPosition.getY() + 0.5;
+		double cz = worldPosition.getZ() + 0.5;
 		Optional<LivingEntity> targetOpt = getTargets(range, false).stream()
-				.min(Comparator.comparingDouble(target -> target.distanceToSqr(worldPosition.getX() + 0.5,
-						worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5)));
+				.min(Comparator.comparingDouble(target -> target.distanceToSqr(cx, cy, cz)));
 		if (targetOpt.isPresent()) {
 			LivingEntity target = targetOpt.get();
 			DamageSource src = level.damageSources().magic();
@@ -282,6 +283,7 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			for (BlockPos p : BlockPos.betweenClosed(
 					worldPosition.offset((int) -range, (int) -range, (int) -range),
 					worldPosition.offset((int) range, (int) range, (int) range))) {
+				if (bloodBuffer <= 0) break;
 				BlockEntity be = level.getBlockEntity(p);
 				if (!(be instanceof MorphlingCradleBlockEntity other)) continue;
 				if (other == this) continue;
@@ -388,7 +390,15 @@ public class MorphlingCradleBlockEntity extends BlockEntity {
 			morphlingItem = ItemStack.EMPTY;
 		}
 		ownerUUID = tag.hasUUID("OwnerUUID") ? tag.getUUID("OwnerUUID") : null;
-		state = tag.contains("State") ? State.valueOf(tag.getString("State")) : State.DORMANT;
+		if (tag.contains("State")) {
+			try {
+				state = State.valueOf(tag.getString("State"));
+			} catch (IllegalArgumentException ignored) {
+				state = State.DORMANT;
+			}
+		} else {
+			state = State.DORMANT;
+		}
 		activationCooldown = tag.getInt("ActivationCooldown");
 		bloodBuffer = tag.getDouble("BloodBuffer");
 		internalBlood = tag.getDouble("InternalBlood");
