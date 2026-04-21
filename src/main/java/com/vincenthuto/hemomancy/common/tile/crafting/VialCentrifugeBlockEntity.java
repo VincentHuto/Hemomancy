@@ -411,8 +411,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 		if (outputStack.isEmpty()) {
 			return true;
 		}
+		int maxAllowed = Math.min(outputStack.getMaxStackSize(), resultStack.getMaxStackSize());
 		return ItemStack.isSameItemSameTags(outputStack, resultStack)
-				&& outputStack.getCount() + resultStack.getCount() <= outputStack.getMaxStackSize();
+				&& outputStack.getCount() + resultStack.getCount() <= maxAllowed;
 	}
 
 	public boolean checkBalancedSpots(int a, int b) {
