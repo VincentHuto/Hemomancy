@@ -1,10 +1,11 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 
 /**

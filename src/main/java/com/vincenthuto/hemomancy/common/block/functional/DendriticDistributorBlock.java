@@ -2,7 +2,7 @@ package com.vincenthuto.hemomancy.common.block.functional;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.init.BlockEntityInit;
 import com.vincenthuto.hemomancy.common.tile.functional.DendriticDistributorBlockEntity;
 

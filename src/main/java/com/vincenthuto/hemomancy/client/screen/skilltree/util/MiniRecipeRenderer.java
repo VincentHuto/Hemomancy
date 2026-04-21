@@ -1,12 +1,12 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.vincenthuto.hemomancy.client.screen.skilltree.RecipeLookup.FoundRecipe;
-import com.vincenthuto.hemomancy.client.screen.skilltree.RecipeLookup.RecipeKind;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.FoundRecipe;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.RecipeLookup.RecipeKind;
 import com.vincenthuto.hemomancy.common.capability.player.kinship.EnumBloodTendency;
 import com.vincenthuto.hemomancy.common.recipe.BloodStructureRecipe;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;

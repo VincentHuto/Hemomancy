@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

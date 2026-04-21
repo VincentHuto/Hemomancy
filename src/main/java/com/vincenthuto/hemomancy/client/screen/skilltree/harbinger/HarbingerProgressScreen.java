@@ -1,8 +1,9 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.*;
 import com.vincenthuto.hemomancy.common.capability.player.degree.EnumInitiatoryDegree;
 import com.vincenthuto.hemomancy.common.capability.player.degree.InitiatoryDegreeProvider;
 import com.vincenthuto.hemomancy.common.init.SkillPointInit;
@@ -38,12 +39,12 @@ public class HarbingerProgressScreen extends Screen {
     private boolean isDragging;
     private PanZoomState view;
 
-    private final SkillsTabController        skills    = new SkillsTabController();
+    private final SkillsTabController skills    = new SkillsTabController();
     private final ManipulationsTabController  manips    = new ManipulationsTabController();
-    private final RitesTabController          rites     = new RitesTabController();
-    private final CraftingTabController       crafting  = new CraftingTabController();
+    private final RitesTabController rites     = new RitesTabController();
+    private final CraftingTabController crafting  = new CraftingTabController();
     private final ScarsTabController          scars     = new ScarsTabController();
-    private final MaterialsTabController      materials = new MaterialsTabController();
+    private final MaterialsTabController materials = new MaterialsTabController();
 
     private final VeinBackgroundRenderer  veinBg        = new VeinBackgroundRenderer();
     private final MilestoneDrawerState    milestoneState = new MilestoneDrawerState();

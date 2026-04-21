@@ -1,9 +1,11 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import com.vincenthuto.hemomancy.common.init.BlockInit;
 import com.vincenthuto.hemomancy.common.init.ItemInit;
 

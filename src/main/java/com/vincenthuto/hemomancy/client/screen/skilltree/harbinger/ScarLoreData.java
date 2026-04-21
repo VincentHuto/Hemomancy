@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
 /**
  * Available node shapes for skill tree and unstained progress nodes.

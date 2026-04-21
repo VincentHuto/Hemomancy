@@ -1,5 +1,7 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.util;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.unstained.UnstainedProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import net.minecraft.util.Mth;
 
 /**

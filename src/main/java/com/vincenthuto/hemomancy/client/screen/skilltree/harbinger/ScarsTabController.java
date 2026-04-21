@@ -1,5 +1,8 @@
-package com.vincenthuto.hemomancy.client.screen.skilltree;
+package com.vincenthuto.hemomancy.client.screen.skilltree.harbinger;
 
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.IProgressTab;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.PanZoomState;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.ProgressScreenContext;
 import com.vincenthuto.hemomancy.common.recipe.ScarRecipe;
 
 import net.minecraft.client.Minecraft;

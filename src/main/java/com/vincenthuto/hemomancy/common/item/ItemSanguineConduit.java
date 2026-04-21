@@ -1,6 +1,6 @@
 package com.vincenthuto.hemomancy.common.item;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.HarbingerProgressScreen;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.HarbingerProgressScreen;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;

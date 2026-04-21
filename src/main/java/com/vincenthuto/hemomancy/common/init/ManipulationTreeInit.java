@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.ManipulationTreeEntry;
+import com.vincenthuto.hemomancy.client.screen.skilltree.harbinger.ManipulationTreeEntry;
 
 /**
  * Defines the spatial layout and parent-child relationships of the

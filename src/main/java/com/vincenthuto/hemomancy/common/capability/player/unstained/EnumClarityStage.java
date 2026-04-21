@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import com.vincenthuto.hemomancy.client.screen.skilltree.EnumNodeShape;
+import com.vincenthuto.hemomancy.client.screen.skilltree.util.EnumNodeShape;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
