@@ -51,9 +51,13 @@ public class VialRackItem extends Item {
 	private static NonNullList<ItemStack> createDefaultVials() {
 		NonNullList<ItemStack> defaults = NonNullList.withSize(MAX_VIALS, ItemStack.EMPTY);
 		for (int i = 0; i < MAX_VIALS; i++) {
-			defaults.set(i, new ItemStack(ItemInit.bloody_vial.get()));
+			defaults.set(i, createDefaultVial());
 		}
 		return defaults;
+	}
+
+	public static ItemStack createDefaultVial() {
+		return new ItemStack(ItemInit.bloody_vial.get());
 	}
 
 	public static void ensureInitialized(ItemStack rack) {

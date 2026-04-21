@@ -217,7 +217,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 					break;
 				}
 				inventory.set(destination, rackVial.copyWithCount(1));
-				rackVials.set(i, new ItemStack(ItemInit.bloody_vial.get()));
+				rackVials.set(i, VialRackItem.createDefaultVial());
 				moved++;
 			}
 		}
@@ -229,6 +229,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	}
 
 	private int firstEmptyCentrifugeVialSlot() {
+		// Slots 2-9 are the centrifuge's 8 vial input positions.
 		for (int i = 2; i <= 9; i++) {
 			if (inventory.get(i).isEmpty()) {
 				return i;

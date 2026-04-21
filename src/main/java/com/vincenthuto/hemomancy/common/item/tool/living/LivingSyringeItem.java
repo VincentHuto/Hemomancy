@@ -64,7 +64,6 @@ public class LivingSyringeItem extends LivingItemItem {
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		stack.getOrCreateTag().putBoolean(TAG_STATE, hasLoadedRack(stack));
 		if (hasLoadedRack(stack)) {
 			ItemStack rack = getLoadedRack(stack);
 			VialRackItem.ensureInitialized(rack);
@@ -76,7 +75,7 @@ public class LivingSyringeItem extends LivingItemItem {
 	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
 		if (player.isShiftKeyDown()) {
 			if (!player.level().isClientSide) {
-				ejectRack(player.level(), player, stack);
+				ejectRack(player, stack);
 			}
 			return InteractionResult.sidedSuccess(player.level().isClientSide);
 		}
@@ -138,7 +137,10 @@ public class LivingSyringeItem extends LivingItemItem {
 				ItemStack loadedRack = candidate.copy();
 				loadedRack.setCount(1);
 				setLoadedRack(syringe, loadedRack);
-				player.getInventory().setItem(i, ItemStack.EMPTY);
+				candidate.shrink(1);
+				if (candidate.isEmpty()) {
+					player.getInventory().setItem(i, ItemStack.EMPTY);
+				}
 				return true;
 			}
 		}
