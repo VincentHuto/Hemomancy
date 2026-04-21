@@ -21,7 +21,6 @@ import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedPro
 import com.vincenthuto.hemomancy.common.capability.player.unstained.UnstainedProgressProvider;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodVolumeEvents;
 import com.vincenthuto.hemomancy.common.capability.player.volume.Bloodline;
 import com.vincenthuto.hemomancy.common.capability.player.volume.BloodlineSavedData;
@@ -930,7 +929,7 @@ public class CardinalRiteEvents {
 	 * Fully restores all vein sections to maximum health (100).
 	 */
 	private static void completeVascularMending(ServerPlayer caster) {
-		caster.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(caster).ifPresent(vascular -> {
 			for (EnumVeinSections section : EnumVeinSections.values()) {
 				java.util.Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
 				sys.put(section, 100f);
@@ -1755,7 +1754,7 @@ public class CardinalRiteEvents {
 							EffectInit.hemolysis.get(), 600, 2, false, true, true));
 
 					// Disrupt vascular system
-					target.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+					HemoCapabilityAccess.getVascularSystem(target).ifPresent(vascular -> {
 						Map<EnumVeinSections, Float> sys = vascular.getVascularSystem();
 						for (EnumVeinSections section : EnumVeinSections.values()) {
 							float current = sys.getOrDefault(section, 100f);

@@ -1,10 +1,10 @@
 package com.vincenthuto.hemomancy.common.effect;
 
+import com.vincenthuto.hemomancy.common.capability.HemoCapabilityAccess;
 import java.util.Map;
 
 import com.vincenthuto.hemomancy.common.capability.player.vascular.EnumVeinSections;
 import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemEvents;
-import com.vincenthuto.hemomancy.common.capability.player.vascular.VascularSystemProvider;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +31,7 @@ public class ArachnidAnastomosisEffect extends MobEffect {
 		if (entity == null || entity.level().isClientSide) return;
 		if (!(entity instanceof Player player)) return;
 
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			float healAmount = 0.5f + amplifier * 0.25f;
 			boolean changed = false;
 

@@ -53,7 +53,7 @@ public class VascularSystemEvents {
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			float strain = (float) (event.getAmount() * HemoServerConfig.VASCULAR_DAMAGE_PER_HIT.get().doubleValue());
 			EnumVeinSections section = determineSectionFromDamage(event, player);
 
@@ -123,7 +123,7 @@ public class VascularSystemEvents {
 	public static void applyManipStrain(ServerPlayer player, EnumVeinSections section) {
 		if (!HemoServerConfig.VASCULAR_DEGRADATION_ON_MANIP_ENABLED.get()) return;
 
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			float strain = HemoServerConfig.VASCULAR_MANIP_STRAIN.get().floatValue();
 			vascular.setVascularSectionHealth(section, -strain);
 
@@ -159,7 +159,7 @@ public class VascularSystemEvents {
 				.map(vol -> vol.isActive()).orElse(false);
 		if (!bloodActive) return;
 
-		player.getCapability(VascularSystemProvider.VASCULAR_CAPA).ifPresent(vascular -> {
+		HemoCapabilityAccess.getVascularSystem(player).ifPresent(vascular -> {
 			boolean changed = false;
 
 			// Passive healing
@@ -243,9 +243,9 @@ public class VascularSystemEvents {
 		Player playernew = event.getEntity();
 		if (event.isWasDeath()) {
 			peorig.reviveCaps();
-			IVascularSystem bloodVolumeNew = playernew.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+			IVascularSystem bloodVolumeNew = HemoCapabilityAccess.getVascularSystem(playernew)
 					.orElseThrow(IllegalStateException::new);
-			bloodVolumeNew.setVascularSystem(peorig.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+			bloodVolumeNew.setVascularSystem(HemoCapabilityAccess.getVascularSystem(peorig)
 					.orElseThrow(IllegalArgumentException::new).getVascularSystem());
 			peorig.invalidateCaps();
 		}
@@ -264,7 +264,7 @@ public class VascularSystemEvents {
 		if (event.getEntity() instanceof Player) {
 			Player player = event.getEntity();
 			if (!player.getCommandSenderWorld().isClientSide) {
-				IVascularSystem section = player.getCapability(VascularSystemProvider.VASCULAR_CAPA)
+				IVascularSystem section = HemoCapabilityAccess.getVascularSystem(player)
 						.orElseThrow(IllegalArgumentException::new);
 				PacketHandler.CHANNELVASCULARSYSTEM.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 						new VascularSystemServerPacket(section.getVascularSystem()));
