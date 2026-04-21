@@ -28,8 +28,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -131,7 +131,7 @@ public class DebugShowcaseItem extends Item {
 	 * Returns next Z offset after this group.
 	 */
 	private int placeItemChestGroup(ServerLevel level, BlockPos origin, int z,
-									String groupName, List<RegistryObject<Item>> items) {
+									String groupName, List<DeferredHolder<Item, ?>> items) {
 		if (items.isEmpty()) return z;
 
 		// Place label marker
@@ -143,7 +143,7 @@ public class DebugShowcaseItem extends Item {
 		int slotIndex = 0;
 		ChestBlockEntity currentChest = null;
 
-		for (RegistryObject<Item> itemReg : items) {
+		for (DeferredHolder<Item, ?> itemReg : items) {
 			// Start a new chest every 27 items (chest capacity)
 			if (slotIndex % 27 == 0) {
 				BlockPos chestPos = origin.offset(chestX, 0, z);
@@ -205,7 +205,7 @@ public class DebugShowcaseItem extends Item {
 			@SuppressWarnings("unchecked")
 			DeferredRegister<Block> register =
 					(DeferredRegister<Block>) group[1];
-			List<RegistryObject<Block>> blocks = new ArrayList<>(register.getEntries().stream().toList());
+			List<DeferredHolder<Block, ?>> blocks = new ArrayList<>(register.getEntries().stream().toList());
 
 			if (blocks.isEmpty()) continue;
 
@@ -213,7 +213,7 @@ public class DebugShowcaseItem extends Item {
 			z += 1;
 
 			int x = 0;
-			for (RegistryObject<Block> blockReg : blocks) {
+			for (DeferredHolder<Block, ?> blockReg : blocks) {
 				Block block = blockReg.get();
 				BlockPos pos = origin.offset(x, 0, z);
 
@@ -255,10 +255,10 @@ public class DebugShowcaseItem extends Item {
 		z += 2;
 
 		// Separate mob entities from projectile/misc entities
-		List<RegistryObject<EntityType<?>>> mobEntities = new ArrayList<>();
-		List<RegistryObject<EntityType<?>>> miscEntities = new ArrayList<>();
+		List<DeferredHolder<EntityType<?>, EntityType<?>>> mobEntities = new ArrayList<>();
+		List<DeferredHolder<EntityType<?>, EntityType<?>>> miscEntities = new ArrayList<>();
 
-		for (RegistryObject<EntityType<?>> entityReg : EntityInit.ENTITY_TYPES.getEntries()) {
+		for (var entityReg : EntityInit.ENTITY_TYPES.getEntries()) {
 			EntityType<?> type = entityReg.get();
 			MobCategory category = type.getCategory();
 			if (category == MobCategory.CREATURE || category == MobCategory.MONSTER
@@ -279,7 +279,7 @@ public class DebugShowcaseItem extends Item {
 
 		int penIndex = 0;
 		for (int i = 0; i < mobEntities.size(); i++) {
-			RegistryObject<EntityType<?>> entityReg = mobEntities.get(i);
+			DeferredHolder<EntityType<?>, EntityType<?>> entityReg = mobEntities.get(i);
 			EntityType<?> type = entityReg.get();
 
 			// Skip entities that might not have a renderer registered to prevent crashes
@@ -327,7 +327,7 @@ public class DebugShowcaseItem extends Item {
 			int slotIndex = 0;
 			ChestBlockEntity currentChest = null;
 
-			for (RegistryObject<EntityType<?>> entityReg : miscEntities) {
+			for (DeferredHolder<EntityType<?>, EntityType<?>> entityReg : miscEntities) {
 				if (slotIndex % 27 == 0) {
 					BlockPos chestPos = origin.offset(chestX, 0, z);
 					level.setBlock(chestPos.below(), Blocks.SMOOTH_STONE.defaultBlockState(), Block.UPDATE_CLIENTS);

@@ -28,8 +28,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 /**
  * Refactored ScarBinder viewer screen. Displays all stored scarPatterns
@@ -102,7 +102,7 @@ public class ScreenScarBinderViewer extends Screen {
 			ItemStack resultIcon,
 			String displayName,
 			byte[][] pattern,
-			RegistryObject<Item> scarRef,
+			DeferredHolder<Item, Item> scarRef,
 			ScarRecipe recipe
 	) {}
 

@@ -26,32 +26,32 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber(modid = Hemomancy.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ParticleInit {
 
 	
 	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister
-			.create(ForgeRegistries.PARTICLE_TYPES, Hemomancy.MOD_ID);
+			.create(Registries.PARTICLE_TYPE, Hemomancy.MOD_ID);
 
-	public static final RegistryObject<ParticleType<SerpentParticleData>> serpent = PARTICLE_TYPES.register("serpent",
+	public static final DeferredHolder<ParticleType<?>, ParticleType<SerpentParticleData>> serpent = PARTICLE_TYPES.register("serpent",
 			() -> new SerpentParticleType());
 
-	public static final RegistryObject<ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
+	public static final DeferredHolder<ParticleType<?>, ParticleType<HitColorParticleData>> hit_glow = PARTICLE_TYPES
 			.register("hit_glow", () -> new HitGlowParticleType());
 	
-	public static final RegistryObject<ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
+	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodAvatarHitParticleData>> blood_avatar_hit = PARTICLE_TYPES
 			.register("blood_avatar_hit", () -> new BloodAvatarHitParticleType());
 
-	public static final RegistryObject<ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
+	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodCellData>> blood_cell = PARTICLE_TYPES.register("blood_cell",
 			() -> new BloodCellParticleType());
-	public static final RegistryObject<ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",
+	public static final DeferredHolder<ParticleType<?>, ParticleType<BloodClawData>> blood_claw = PARTICLE_TYPES.register("blood_claw",
 			() -> new BloodClawParticleType());
 
-	public static final RegistryObject<ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
+	public static final DeferredHolder<ParticleType<?>, ParticleType<AbsorbedBloodCellData>> absorbed_blood_cell = PARTICLE_TYPES
 			.register("absorbed_blood_cell", () -> new AbsorbedBloodCellParticleType());
 
 	@SubscribeEvent

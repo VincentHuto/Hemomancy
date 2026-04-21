@@ -25,10 +25,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,22 +37,21 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class MnAPluginBlockInit {
-	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
-			Hemomancy.MOD_ID);
+	public static final DeferredRegister<Block> MNABLOCKS = DeferredRegister.createBlocks(Hemomancy.MOD_ID);
 
 
-	public static final RegistryObject<Block> broken_mana_trapazahedron = MNABLOCKS.register("broken_mana_trapazahedron", BrokenManaTrapazahedronBlock::new);
+	public static final DeferredBlock<Block> broken_mana_trapazahedron = MNABLOCKS.register("broken_mana_trapazahedron", BrokenManaTrapazahedronBlock::new);
 
 	public static List<Block> getAllBlockEntries() {
 		List<Block> blocks = new ArrayList<>();
-		MNABLOCKS.getEntries().stream().map(RegistryObject::get).forEach(blocks::add);
+		MNABLOCKS.getEntries().stream().map(DeferredHolder::get).forEach(blocks::add);
 
 		return blocks;
 	}
 
-	public static Stream<RegistryObject<Block>> getAllBlockEntriesAsStream() {
+	public static Stream<DeferredHolder<Block, ? extends Block>> getAllBlockEntriesAsStream() {
 
-		Stream<RegistryObject<Block>> combinedStream = Stream.of(MNABLOCKS.getEntries()).flatMap(Collection::stream);
+		Stream<DeferredHolder<Block, ? extends Block>> combinedStream = Stream.of(MNABLOCKS.getEntries()).flatMap(Collection::stream);
 
 		return combinedStream;
 	}
@@ -74,7 +74,7 @@ public class MnAPluginBlockInit {
 	}
 
 	public static void onRegisterItems(final RegisterEvent event) {
-		if (event.getRegistryKey() != ForgeRegistries.Keys.ITEMS) {
+		if (event.getRegistryKey() != Registries.ITEM) {
 			return;
 		}
 		var b = getAllBlockEntriesAsStream().map(m -> new Pair<>(m.get(), m.getId()))
@@ -85,6 +85,6 @@ public class MnAPluginBlockInit {
 
 	}
 	private static void registerBlockItem(RegisterEvent event, Pair<ResourceLocation, BlockItem> item) {
-		event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(item.getFirst(), item.getSecond()));
+		event.register(Registries.ITEM, helper -> helper.register(item.getFirst(), item.getSecond()));
 	}
 }

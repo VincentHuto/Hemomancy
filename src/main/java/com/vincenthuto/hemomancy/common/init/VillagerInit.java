@@ -15,17 +15,16 @@ import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 public class VillagerInit {
 
 	public static final DeferredRegister<PoiType> POINTS_OF_INTEREST = DeferredRegister
-			.create(ForgeRegistries.POI_TYPES, Hemomancy.MOD_ID);
+			.create(Registries.POINT_OF_INTEREST_TYPE, Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister
-			.create(ForgeRegistries.VILLAGER_PROFESSIONS, Hemomancy.MOD_ID);
+			.create(Registries.VILLAGER_PROFESSION, Hemomancy.MOD_ID);
 
 	public static final DeferredRegister<StructureProcessorType<?>> STRUCTURE_PROCESSORS = DeferredRegister
 			.create(Registries.STRUCTURE_PROCESSOR, Hemomancy.MOD_ID);
@@ -34,15 +33,15 @@ public class VillagerInit {
             ResourceKey.create(Registries.PROCESSOR_LIST, Hemomancy.rloc("hemopothecary_processors"));
 
 
-	public static final RegistryObject<StructureProcessorType<HemopothecaryProcessor>> HEMOPOTHECARY_PROCESSOR = STRUCTURE_PROCESSORS
+	public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<HemopothecaryProcessor>> HEMOPOTHECARY_PROCESSOR = STRUCTURE_PROCESSORS
 			.register("hemopothecary_processor", () -> HemopothecaryProcessor::codec);
 
-	public static final RegistryObject<PoiType> TABLE_POI = POINTS_OF_INTEREST.register("hemopothecary",
+	public static final DeferredHolder<PoiType, PoiType> TABLE_POI = POINTS_OF_INTEREST.register("hemopothecary",
 			() -> new PoiType(
 					ImmutableSet.copyOf(BlockInit.scrying_podium.get().getStateDefinition().getPossibleStates()), 1,
 					1));
 
-	public static final RegistryObject<VillagerProfession> HEMOPOTHECARY = PROFESSIONS.register("hemopothecary", () -> {
+	public static final DeferredHolder<VillagerProfession, VillagerProfession> HEMOPOTHECARY = PROFESSIONS.register("hemopothecary", () -> {
 		var key = Objects.requireNonNull(TABLE_POI.getKey());
 		return new VillagerProfession("hemopothecary", holder -> holder.is(key), holder -> holder.is(key),
 				Arrays.stream(new Item[] { ItemInit.befouling_ash.get() }).collect(ImmutableSet.toImmutableSet()),

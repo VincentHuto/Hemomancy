@@ -15,7 +15,6 @@ import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.ForgeRegistries;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 public class HemoBlockStateProvider extends BlockStateProvider {
 	public HemoBlockStateProvider(PackOutput gen, ExistingFileHelper exFileHelper) {
@@ -34,7 +33,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerBaseBlocks() {
-		for (RegistryObject<Block> b : BlockInit.BASEBLOCKS.getEntries()) {
+		for (var b : BlockInit.BASEBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block == BlockInit.erythrocytic_mycelium.get()) {
 				String name = getName(block);
@@ -56,7 +55,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerSlabBlocks() {
-		for (RegistryObject<Block> b : BlockInit.SLABBLOCKS.getEntries()) {
+		for (var b : BlockInit.SLABBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof SlabBlock slabBlock) {
 				String name = getName(block);
@@ -72,7 +71,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerStairBlocks() {
-		for (RegistryObject<Block> b : BlockInit.STAIRBLOCKS.getEntries()) {
+		for (var b : BlockInit.STAIRBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof StairBlock stairBlock) {
 				String name = getName(block);
@@ -86,7 +85,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerColumnBlocks() {
-		for (RegistryObject<Block> b : BlockInit.COLUMNBLOCKS.getEntries()) {
+		for (var b : BlockInit.COLUMNBLOCKS.getEntries()) {
 			Block block = b.get();
 			if (block instanceof RotatedPillarBlock pillarBlock) {
 				String name = getName(block);
@@ -101,7 +100,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerCrossBlocks() {
-		for (RegistryObject<Block> b : BlockInit.CROSSBLOCKS.getEntries()) {
+		for (var b : BlockInit.CROSSBLOCKS.getEntries()) {
 			String name = getName(b.get());
 			ModelFile model = models()
 					.withExistingParent(name, mcLoc("block/cross"))
@@ -112,7 +111,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerSpecialBlocks() {
-		for (RegistryObject<Block> b : BlockInit.SPECIALBLOCKS.getEntries()) {
+		for (var b : BlockInit.SPECIALBLOCKS.getEntries()) {
 			Block block = b.get();
 
 			if (block instanceof IronBarsBlock paneBlock) {
@@ -125,7 +124,7 @@ public class HemoBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerPottedBlocks() {
-		for (RegistryObject<Block> b : BlockInit.POTTEDBLOCKS.getEntries()) {
+		for (var b : BlockInit.POTTEDBLOCKS.getEntries()) {
 			Block block = b.get();
 			String name = getName(block);
 			if (block instanceof FlowerPotBlock potBlock) {
