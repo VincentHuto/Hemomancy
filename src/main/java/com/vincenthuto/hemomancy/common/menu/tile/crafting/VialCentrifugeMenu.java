@@ -147,6 +147,9 @@ public class VialCentrifugeMenu extends AbstractContainerMenu {
 	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack stack = ItemStack.EMPTY;
 		te.sendUpdates();
+		if (te.isSpinning() && index >= VIAL_START && index <= VIAL_END) {
+			return ItemStack.EMPTY;
+		}
 		Slot slot = this.slots.get(index);
 
 		if (slot != null && slot.hasItem()) {

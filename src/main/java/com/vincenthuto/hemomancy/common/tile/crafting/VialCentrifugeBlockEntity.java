@@ -50,6 +50,7 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public static final int SLOT_BLOOD = 1;
 	public static final int SLOT_FLASK_OUTPUT = 19;
 	public static final int INVENTORY_SIZE = 20;
+	private static final double BLOOD_GAIN_PER_OPERATION = 250D;
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
 	public static final int SPIN_TOTAL_TIME = 200;
@@ -131,8 +132,9 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 			te.spinningProgress--;
 			te.sendUpdates();
 			setChanged(level, pos, p_155016_);
-			if (te.spinningProgress == 11) {
+			if (te.spinningProgress == 0) {
 				te.outputResults();
+				te.addOperationBlood();
 			}
 			if (!te.inventory.isEmpty()) {
 				if (!((te.checkBalancedSpots(2, 6) && te.checkBalancedSpots(3, 7) && te.checkBalancedSpots(4, 8)
@@ -143,6 +145,13 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 				}
 			}
 		}
+	}
+
+	private void addOperationBlood() {
+		IBloodVolume vol = resolveVolume();
+		if (vol == null || vol.isFull()) return;
+		vol.fill(BLOOD_GAIN_PER_OPERATION);
+		sendUpdates();
 	}
 
 	private void outputResults() {
@@ -375,6 +384,10 @@ public class VialCentrifugeBlockEntity extends BaseContainerBlockEntity
 	public boolean checkBalancedSpots(int a, int b) {
 		return !((!inventory.get(a).isEmpty() && inventory.get(b).isEmpty())
 				|| (inventory.get(a).isEmpty() && !inventory.get(b).isEmpty()));
+	}
+
+	public boolean isSpinning() {
+		return this.spinningProgress > 0;
 	}
 
 	@Override
